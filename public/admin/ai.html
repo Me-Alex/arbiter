@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="ro">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Arbiter — Scan Insights</title>
+  <link rel="stylesheet" href="/css/theme.css">
+</head>
+<body>
+  <main>
+    <div class="page-header">
+      <div>
+        <h2>Scan Insights</h2>
+        <div class="text-xs muted" style="margin-top:4px">Deterministic summaries from the current verified scan</div>
+      </div>
+      <div class="meta">
+        <span class="chip outline">scan-derived</span>
+        <button class="ghost lang-toggle" data-lang-toggle>RO</button>
+      </div>
+    </div>
+
+    <div class="grid cols-2" style="gap:20px">
+      <div class="card card-elevated">
+        <h3>
+          <span>Data health</span>
+          <span class="h3-meta">from the published scan</span>
+        </h3>
+        <div id="scan-health" class="empty">loading published scan health…</div>
+      </div>
+
+      <!-- Insights -->
+      <div class="card">
+        <h3>
+          <span>Insights</span>
+          <span class="h3-meta" id="insights-count">—</span>
+        </h3>
+        <div id="ai-insights" class="empty">no insights yet</div>
+      </div>
+    </div>
+  </main>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/i18n.js"></script>
+  <script src="/js/sse.js"></script>
+  <script src="/js/app.js"></script>
+  <script src="/js/pages/ai.js"></script>
+</body>
+</html>

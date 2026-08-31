@@ -1,0 +1,55 @@
+{
+  "name": "arbiter",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Local-first sports arbitrage scanner for Romanian bookmakers",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "main": "electron/main.mjs",
+  "scripts": {
+    "start": "node src/server.mjs",
+    "start:modular": "node src/server-modular.mjs",
+    "desktop": "electron .",
+    "desktop:dev": "cross-env ARBITER_DEV=1 electron .",
+    "tinyfish:diagnose": "node scripts/diagnose-tinyfish-books.mjs",
+    "tinyfish:discover": "node scripts/discover-smoke.mjs",
+    "tinyfish:smoke": "node scripts/tinyfish-smoke.mjs",
+    "cleanup": "node scripts/cleanup.mjs",
+    "cleanup:staging": "node scripts/cleanup.mjs --staging-only",
+    "cleanup:logs": "node scripts/cleanup.mjs --logs-only",
+    "cleanup:backups": "node scripts/cleanup.mjs --backups-only",
+    "test": "node --test test/*.test.mjs",
+    "lint": "eslint src electron public/js scripts test"
+  },
+  "dependencies": {
+    "playwright": "^1.47.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.5",
+    "cross-env": "^7.0.3",
+    "electron": "^32.0.0",
+    "eslint": "^9.39.5"
+  },
+  "eslintConfig": {
+    "env": {
+      "node": true,
+      "browser": true,
+      "es2022": true
+    },
+    "parserOptions": {
+      "ecmaVersion": 2023,
+      "sourceType": "module"
+    },
+    "rules": {
+      "no-unused-vars": [
+        "warn",
+        {
+          "argsIgnorePattern": "^_",
+          "varsIgnorePattern": "^_"
+        }
+      ]
+    }
+  }
+}

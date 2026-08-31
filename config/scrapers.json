@@ -1,0 +1,148 @@
+{
+  "jobs": [
+    {
+      "id": "superbet",
+      "name": "Superbet (TinyFish)",
+      "enabled": true,
+      "engine": "tinyfish",
+      "script": "tinyfish-scraper.mjs",
+      "sourceIds": ["superbet"]
+    },
+    {
+      "id": "betano",
+      "name": "Betano (TinyFish)",
+      "enabled": true,
+      "engine": "tinyfish",
+      "script": "tinyfish-scraper.mjs",
+      "sourceIds": ["betano"]
+    },
+    {
+      "id": "fortuna",
+      "name": "Fortuna (TinyFish)",
+      "enabled": true,
+      "engine": "tinyfish",
+      "script": "tinyfish-scraper.mjs",
+      "sourceIds": ["fortuna"]
+    },
+    {
+      "id": "unibet",
+      "name": "Unibet (TinyFish)",
+      "enabled": true,
+      "engine": "tinyfish",
+      "script": "tinyfish-scraper.mjs",
+      "sourceIds": ["unibet"]
+    },
+    {
+      "id": "stanleybet",
+      "name": "Stanleybet (TinyFish)",
+      "enabled": true,
+      "engine": "tinyfish",
+      "script": "tinyfish-scraper.mjs",
+      "sourceIds": ["stanleybet"]
+    },
+    {
+      "id": "casa-pariurilor",
+      "name": "Casa Pariurilor (TinyFish)",
+      "enabled": true,
+      "engine": "tinyfish",
+      "script": "tinyfish-scraper.mjs",
+      "sourceIds": ["casa-pariurilor"]
+    },
+    {
+      "id": "excelbet",
+      "name": "ExcelBet (TinyFish)",
+      "enabled": true,
+      "engine": "tinyfish",
+      "script": "tinyfish-scraper.mjs",
+      "sourceIds": ["excelbet"]
+    },
+    {
+      "id": "netbet",
+      "name": "NetBet (TinyFish)",
+      "enabled": true,
+      "engine": "tinyfish",
+      "script": "tinyfish-scraper.mjs",
+      "sourceIds": ["netbet"]
+    },
+    {
+      "id": "admiral",
+      "name": "Admiral (TinyFish)",
+      "enabled": true,
+      "engine": "tinyfish",
+      "script": "tinyfish-scraper.mjs",
+      "sourceIds": ["admiral"]
+    },
+    {
+      "id": "winboss",
+      "name": "WinBoss (TinyFish)",
+      "enabled": true,
+      "engine": "tinyfish",
+      "script": "tinyfish-scraper.mjs",
+      "sourceIds": ["winboss"]
+    },
+    {
+      "id": "maxbet",
+      "name": "MaxBet (TinyFish)",
+      "enabled": true,
+      "engine": "tinyfish",
+      "script": "tinyfish-scraper.mjs",
+      "sourceIds": ["maxbet"]
+    },
+    {
+      "id": "las-vegas",
+      "name": "Las Vegas (TinyFish)",
+      "enabled": true,
+      "engine": "tinyfish",
+      "script": "tinyfish-scraper.mjs",
+      "sourceIds": ["las-vegas"]
+    },
+    {
+      "id": "don",
+      "name": "Don (TinyFish)",
+      "enabled": true,
+      "engine": "tinyfish",
+      "script": "tinyfish-scraper.mjs",
+      "sourceIds": ["don"]
+    },
+    {
+      "id": "topbet",
+      "name": "TopBet (TinyFish)",
+      "enabled": true,
+      "engine": "tinyfish",
+      "script": "tinyfish-scraper.mjs",
+      "sourceIds": ["topbet"]
+    },
+    {
+      "id": "million",
+      "name": "Million (TinyFish)",
+      "enabled": true,
+      "engine": "tinyfish",
+      "script": "tinyfish-scraper.mjs",
+      "sourceIds": ["million"]
+    },
+    {
+      "id": "baumbet",
+      "name": "Baumbet (TinyFish)",
+      "enabled": true,
+      "engine": "tinyfish",
+      "script": "tinyfish-scraper.mjs",
+      "sourceIds": ["baumbet"]
+    },
+    {
+      "id": "powerbet",
+      "name": "Powerbet (TinyFish)",
+      "enabled": true,
+      "engine": "tinyfish",
+      "script": "tinyfish-scraper.mjs",
+      "sourceIds": ["powerbet"]
+    },
+    {
+      "id": "winbet",
+      "name": "Winbet (TinyFish)",
+      "enabled": true,
+      "engine": "tinyfish",
+      "script": "tinyfish-scraper.mjs",
+      "sourceIds": ["winbet"]
+    }
+  ]
+}

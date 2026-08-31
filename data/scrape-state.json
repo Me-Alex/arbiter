@@ -1,0 +1,292 @@
+{
+  "runId": "2026-08-30T16:08:01.071Z",
+  "status": "completed-with-errors",
+  "startedAt": "2026-08-30T16:08:01.071Z",
+  "finishedAt": "2026-08-30T16:44:06.462Z",
+  "options": {
+    "bankroll": 1000,
+    "minRoiPercent": 0,
+    "maxMiddleRiskPercent": 15,
+    "minMiddleRoiPercent": 20,
+    "includeLive": false,
+    "includePast": false
+  },
+  "books": [
+    "superbet",
+    "betano",
+    "fortuna",
+    "unibet",
+    "stanleybet",
+    "casa-pariurilor",
+    "excelbet",
+    "netbet",
+    "admiral",
+    "winboss",
+    "maxbet",
+    "las-vegas",
+    "don",
+    "topbet",
+    "million",
+    "baumbet",
+    "powerbet",
+    "winbet"
+  ],
+  "jobs": [
+    {
+      "id": "superbet",
+      "name": "superbet",
+      "sourceIds": [],
+      "valid": false,
+      "status": "failed",
+      "events": 0,
+      "durationMs": 6787,
+      "error": {
+        "name": "TinyfishError",
+        "message": "tinyfish CLI exited 3221226505",
+        "code": "ECLIENT",
+        "field": null,
+        "status": null
+      },
+      "startedAt": "2026-08-30T16:43:58.785Z",
+      "finishedAt": "2026-08-30T16:44:05.572Z"
+    },
+    {
+      "id": "betano",
+      "name": "betano",
+      "sourceIds": [],
+      "valid": true,
+      "status": "ok",
+      "events": 0,
+      "durationMs": 40037,
+      "error": null,
+      "startedAt": "2026-08-30T16:08:01.141Z",
+      "finishedAt": "2026-08-30T16:08:41.178Z"
+    },
+    {
+      "id": "fortuna",
+      "name": "fortuna",
+      "sourceIds": [],
+      "valid": true,
+      "status": "ok",
+      "events": 0,
+      "durationMs": 549717,
+      "error": null,
+      "startedAt": "2026-08-30T16:08:01.141Z",
+      "finishedAt": "2026-08-30T16:17:10.858Z"
+    },
+    {
+      "id": "unibet",
+      "name": "unibet",
+      "sourceIds": [],
+      "valid": false,
+      "status": "failed",
+      "events": 0,
+      "durationMs": 6812,
+      "error": {
+        "name": "TinyfishError",
+        "message": "tinyfish CLI exited 3221226505",
+        "code": "ECLIENT",
+        "field": null,
+        "status": null
+      },
+      "startedAt": "2026-08-30T16:43:58.785Z",
+      "finishedAt": "2026-08-30T16:44:05.597Z"
+    },
+    {
+      "id": "stanleybet",
+      "name": "stanleybet",
+      "sourceIds": [],
+      "valid": true,
+      "status": "ok",
+      "events": 0,
+      "durationMs": 130852,
+      "error": null,
+      "startedAt": "2026-08-30T16:08:01.142Z",
+      "finishedAt": "2026-08-30T16:10:11.994Z"
+    },
+    {
+      "id": "casa-pariurilor",
+      "name": "casa-pariurilor",
+      "sourceIds": [],
+      "valid": true,
+      "status": "ok",
+      "events": 0,
+      "durationMs": 153202,
+      "error": null,
+      "startedAt": "2026-08-30T16:08:01.142Z",
+      "finishedAt": "2026-08-30T16:10:34.344Z"
+    },
+    {
+      "id": "excelbet",
+      "name": "excelbet",
+      "sourceIds": [],
+      "valid": true,
+      "status": "ok",
+      "events": 1,
+      "durationMs": 2151311,
+      "error": null,
+      "startedAt": "2026-08-30T16:08:01.143Z",
+      "finishedAt": "2026-08-30T16:43:52.454Z"
+    },
+    {
+      "id": "netbet",
+      "name": "netbet",
+      "sourceIds": [],
+      "valid": true,
+      "status": "ok",
+      "events": 0,
+      "durationMs": 2064292,
+      "error": null,
+      "startedAt": "2026-08-30T16:08:01.143Z",
+      "finishedAt": "2026-08-30T16:42:25.435Z"
+    },
+    {
+      "id": "admiral",
+      "name": "admiral",
+      "sourceIds": [],
+      "valid": false,
+      "status": "failed",
+      "events": 0,
+      "durationMs": 5082,
+      "error": {
+        "name": "TinyfishError",
+        "message": "tinyfish CLI exited 3221226505",
+        "code": "ECLIENT",
+        "field": null,
+        "status": null
+      },
+      "startedAt": "2026-08-30T16:43:58.783Z",
+      "finishedAt": "2026-08-30T16:44:03.865Z"
+    },
+    {
+      "id": "winboss",
+      "name": "winboss",
+      "sourceIds": [],
+      "valid": true,
+      "status": "ok",
+      "events": 1,
+      "durationMs": 2152899,
+      "error": null,
+      "startedAt": "2026-08-30T16:08:01.144Z",
+      "finishedAt": "2026-08-30T16:43:54.043Z"
+    },
+    {
+      "id": "maxbet",
+      "name": "maxbet",
+      "sourceIds": [],
+      "valid": false,
+      "status": "failed",
+      "events": 0,
+      "durationMs": 4900,
+      "error": {
+        "name": "TinyfishError",
+        "message": "tinyfish CLI exited 3221226505",
+        "code": "ECLIENT",
+        "field": null,
+        "status": null
+      },
+      "startedAt": "2026-08-30T16:43:58.784Z",
+      "finishedAt": "2026-08-30T16:44:03.684Z"
+    },
+    {
+      "id": "las-vegas",
+      "name": "las-vegas",
+      "sourceIds": [],
+      "valid": true,
+      "status": "ok",
+      "events": 2,
+      "durationMs": 2157493,
+      "error": null,
+      "startedAt": "2026-08-30T16:08:01.145Z",
+      "finishedAt": "2026-08-30T16:43:58.638Z"
+    },
+    {
+      "id": "don",
+      "name": "don",
+      "sourceIds": [],
+      "valid": true,
+      "status": "ok",
+      "events": 0,
+      "durationMs": 488182,
+      "error": null,
+      "startedAt": "2026-08-30T16:08:41.179Z",
+      "finishedAt": "2026-08-30T16:16:49.361Z"
+    },
+    {
+      "id": "topbet",
+      "name": "topbet",
+      "sourceIds": [],
+      "valid": true,
+      "status": "ok",
+      "events": 0,
+      "durationMs": 469683,
+      "error": null,
+      "startedAt": "2026-08-30T16:10:11.994Z",
+      "finishedAt": "2026-08-30T16:18:01.677Z"
+    },
+    {
+      "id": "million",
+      "name": "million",
+      "sourceIds": [],
+      "valid": true,
+      "status": "ok",
+      "events": 0,
+      "durationMs": 524046,
+      "error": null,
+      "startedAt": "2026-08-30T16:10:34.345Z",
+      "finishedAt": "2026-08-30T16:19:18.391Z"
+    },
+    {
+      "id": "baumbet",
+      "name": "baumbet",
+      "sourceIds": [],
+      "valid": true,
+      "status": "ok",
+      "events": 0,
+      "durationMs": 351084,
+      "error": null,
+      "startedAt": "2026-08-30T16:16:49.361Z",
+      "finishedAt": "2026-08-30T16:22:40.445Z"
+    },
+    {
+      "id": "powerbet",
+      "name": "powerbet",
+      "sourceIds": [],
+      "valid": true,
+      "status": "ok",
+      "events": 0,
+      "durationMs": 1597393,
+      "error": null,
+      "startedAt": "2026-08-30T16:17:10.858Z",
+      "finishedAt": "2026-08-30T16:43:48.251Z"
+    },
+    {
+      "id": "winbet",
+      "name": "winbet",
+      "sourceIds": [],
+      "valid": false,
+      "status": "failed",
+      "events": 0,
+      "durationMs": 1369643,
+      "error": {
+        "name": "TinyfishError",
+        "message": "tinyfish CLI exited 3221226505",
+        "code": "ECLIENT",
+        "field": null,
+        "status": null
+      },
+      "startedAt": "2026-08-30T16:18:01.677Z",
+      "finishedAt": "2026-08-30T16:40:51.319Z"
+    }
+  ],
+  "currentActivity": "Complete",
+  "summary": {
+    "completed": 17,
+    "failed": 5,
+    "events": 8
+  },
+  "currentStep": {
+    "label": "Complete",
+    "index": 4
+  }
+}

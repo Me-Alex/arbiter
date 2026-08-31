@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="ro">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Arbiter — Admin</title>
+  <link rel="stylesheet" href="/css/theme.css">
+</head>
+<body>
+  <div class="login">
+    <form class="card" id="login-form">
+      <div class="brand">
+        <div class="logo">A</div>
+        <div>
+          <h2>Arbiter Admin</h2>
+        </div>
+      </div>
+      <p class="muted">Local-only access · this build does not implement remote authentication.</p>
+      <div class="alert info" style="margin-top:14px;font-size:11.5px">
+        Administrative pages are available only through the loopback-bound local server. Do not expose this application to a network without real server-side authentication.
+      </div>
+      <div class="row" style="margin-top:18px">
+        <a href="/admin/scrape.html" class="primary" style="flex:1;text-align:center">Open local control</a>
+        <a href="/" class="muted" style="margin-left:8px">← back</a>
+      </div>
+    </form>
+  </div>
+  <script src="/js/i18n.js"></script>
+  <script src="/js/pages/login.js"></script>
+</body>
+</html>

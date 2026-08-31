@@ -1,0 +1,590 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Arbiter — Visual Preview</title>
+  <link rel="stylesheet" href="../public/css/theme.css">
+  <link rel="stylesheet" href="./preview.css">
+</head>
+<body>
+  <div class="preview-banner">
+    <span><strong>Visual preview</strong> — refreshed look across every dashboard surface</span>
+    <span>Static design reference — synthetic data only, never served by the app</span>
+  </div>
+
+  <div class="app">
+    <!-- ============== SIDEBAR ============== -->
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <div class="logo">A</div>
+        <div>
+          <div class="name">Arbiter<span class="badge">v0.1</span></div>
+        </div>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="label">Workspace</div>
+        <nav>
+          <a data-view="dashboard" class="active">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>
+            <span>Dashboard</span>
+          </a>
+          <a data-view="scrape">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7"/><polyline points="21 4 21 10 15 10"/></svg>
+            <span>Scrape</span>
+          </a>
+          <a data-view="scanner">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="20" y1="20" x2="16.5" y2="16.5"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+            <span>Scanner</span>
+          </a>
+          <a data-view="analytics">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="12" width="4" height="9" rx="1"/><rect x="10" y="7" width="4" height="14" rx="1"/><rect x="17" y="3" width="4" height="18" rx="1"/></svg>
+            <span>Analytics</span>
+          </a>
+          <a data-view="ai">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l1.8 5.4L19 9l-5.2 1.6L12 16l-1.8-5.4L5 9l5.2-1.6L12 2z"/><path d="M19 14l.9 2.6L22 17.5l-2.1.9L19 21l-.9-2.6L16 17.5l2.1-.9L19 14z" opacity="0.6"/></svg>
+            <span>AI</span>
+          </a>
+        </nav>
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="status"><span class="dot live"></span><span>Local · <span class="mono">127.0.0.1:3022</span></span></div>
+        <div class="row" style="gap:8px">
+          <span class="muted text-xs" style="flex:1">Language</span>
+          <button class="ghost lang-toggle">RO</button>
+        </div>
+      </div>
+    </aside>
+
+    <main>
+      <!-- ============== DASHBOARD ============== -->
+      <section class="view active" data-view-panel="dashboard">
+        <div class="page-header">
+          <div>
+            <h2>Dashboard</h2>
+            <div class="text-xs muted" style="margin-top:4px">last updated: 30/08/2026, 14:22:08</div>
+          </div>
+          <div class="meta">
+            <span class="chip blue"><span class="dot live"></span> Live odds</span>
+            <span class="chip outline"><span class="dot"></span> connected</span>
+            <button class="ghost lang-toggle">RO</button>
+          </div>
+        </div>
+
+        <div class="grid cols-4" style="margin-bottom:24px">
+          <div class="card card-hover">
+            <div class="kpi">
+              <div class="label">Opportunities <span class="chip green text-xs">+ confirmed</span></div>
+              <div class="value green">14</div>
+              <div class="delta"><span class="delta-up">▲ 12.5%</span> · auto-confirmed: <span class="strong">9</span></div>
+            </div>
+          </div>
+          <div class="card card-hover">
+            <div class="kpi">
+              <div class="label">Middles <span class="chip purple text-xs">2-way</span></div>
+              <div class="value purple">6</div>
+              <div class="delta">pending review: <span class="strong yellow">2</span></div>
+            </div>
+          </div>
+          <div class="card card-hover">
+            <div class="kpi">
+              <div class="label">+EV bets <span class="chip yellow text-xs">soft book</span></div>
+              <div class="value yellow">42</div>
+              <div class="delta"><span class="delta-up">▲ 4</span> · low hold: <span class="strong">17</span></div>
+            </div>
+          </div>
+          <div class="card card-hover">
+            <div class="kpi">
+              <div class="label">Sources <span class="chip text-xs">books</span></div>
+              <div class="value accent">12</div>
+              <div class="delta">events priced: <span class="strong tabnum">1,284</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3><span>Top opportunities</span><span class="h3-meta">Sorted by ROI · live updates every 15s</span></h3>
+
+          <div class="opp-card">
+            <div class="head">
+              <div style="flex:1;min-width:0">
+                <div class="match">FCSB <span class="muted">vs</span> CFR Cluj</div>
+                <div class="match-meta">
+                  <span class="chip">Football</span>
+                  <span>Liga 1</span>
+                  <span class="dim mono">MATCH_ODDS</span>
+                </div>
+              </div>
+              <div class="roi-wrap">
+                <div class="roi">+4.82%</div>
+                <div class="roi-meta"><span class="status confirmed">confirmed</span></div>
+                <div class="roi-bar"><div class="fill" style="width:58%"></div></div>
+              </div>
+            </div>
+            <div class="legs">
+              <div class="leg"><div class="book">betano</div><div class="selection">FCSB</div><div class="odds">2.45</div><div class="stake">stake 412 RON</div></div>
+              <div class="leg"><div class="book">superbet</div><div class="selection">CFR Cluj</div><div class="odds">3.10</div><div class="stake">stake 326 RON</div></div>
+              <div class="leg"><div class="book">fortuna</div><div class="selection">Draw</div><div class="odds">3.85</div><div class="stake">stake 262 RON</div></div>
+            </div>
+          </div>
+
+          <div class="opp-card">
+            <div class="head">
+              <div style="flex:1;min-width:0">
+                <div class="match">Real Madrid <span class="muted">vs</span> Barcelona</div>
+                <div class="match-meta">
+                  <span class="chip">Football</span>
+                  <span>La Liga</span>
+                  <span class="dim mono">MATCH_ODDS</span>
+                </div>
+              </div>
+              <div class="roi-wrap">
+                <div class="roi">+2.31%</div>
+                <div class="roi-meta"><span class="status pending">pending</span></div>
+                <div class="roi-bar"><div class="fill" style="width:28%"></div></div>
+              </div>
+            </div>
+            <div class="legs">
+              <div class="leg"><div class="book">betano</div><div class="selection">Real Madrid</div><div class="odds">2.10</div><div class="stake">stake 481 RON</div></div>
+              <div class="leg"><div class="book">unibet</div><div class="selection">Barcelona</div><div class="odds">3.60</div><div class="stake">stake 281 RON</div></div>
+              <div class="leg"><div class="book">netbet</div><div class="selection">Draw</div><div class="odds">4.20</div><div class="stake">stake 238 RON</div></div>
+            </div>
+          </div>
+
+          <div class="opp-card is-middle">
+            <div class="head">
+              <div style="flex:1;min-width:0">
+                <div class="match">Manchester City <span class="muted">vs</span> Liverpool</div>
+                <div class="match-meta">
+                  <span class="chip">Football</span>
+                  <span>Premier League</span>
+                  <span class="dim mono">TOTAL_GOALS · middle</span>
+                </div>
+              </div>
+              <div class="roi-wrap">
+                <div class="roi">+1.94%</div>
+                <div class="roi-meta"><span class="status confirmed">confirmed</span></div>
+                <div class="roi-bar"><div class="fill" style="width:23%"></div></div>
+              </div>
+            </div>
+            <div class="legs">
+              <div class="leg"><div class="book">stanleybet</div><div class="selection">Over 2.5</div><div class="odds">1.95</div><div class="stake">stake 519 RON</div></div>
+              <div class="leg"><div class="book">winboss</div><div class="selection">Under 2.5</div><div class="odds">2.05</div><div class="stake">stake 481 RON</div></div>
+            </div>
+          </div>
+
+          <div class="opp-card">
+            <div class="head">
+              <div style="flex:1;min-width:0">
+                <div class="match">Bayern <span class="muted">vs</span> Dortmund</div>
+                <div class="match-meta">
+                  <span class="chip">Football</span>
+                  <span>Bundesliga</span>
+                  <span class="dim mono">MATCH_ODDS</span>
+                </div>
+              </div>
+              <div class="roi-wrap">
+                <div class="roi">+1.84%</div>
+                <div class="roi-meta"><span class="status confirmed">confirmed</span></div>
+                <div class="roi-bar"><div class="fill" style="width:22%"></div></div>
+              </div>
+            </div>
+            <div class="legs">
+              <div class="leg"><div class="book">superbet</div><div class="selection">Bayern</div><div class="odds">1.65</div><div class="stake">stake 606 RON</div></div>
+              <div class="leg"><div class="book">fortuna</div><div class="selection">Dortmund</div><div class="odds">4.40</div><div class="stake">stake 227 RON</div></div>
+              <div class="leg"><div class="book">winboss</div><div class="selection">Draw</div><div class="odds">4.80</div><div class="stake">stake 167 RON</div></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============== SCRAPE ============== -->
+      <section class="view" data-view-panel="scrape">
+        <div class="page-header">
+          <div>
+            <h2>Scrape Control</h2>
+            <div class="text-xs muted" style="margin-top:4px">Orchestrate the TinyFish pipeline and watch live progress</div>
+          </div>
+          <div class="meta">
+            <span class="chip"><span class="dot live pulse"></span><span>running</span></span>
+            <button class="ghost lang-toggle">RO</button>
+          </div>
+        </div>
+
+        <div class="grid cols-4" style="margin-bottom:20px">
+          <div class="card card-hover"><div class="kpi"><div class="label">Status</div><div class="value accent"><span class="status running">running</span></div><div class="delta">started 14:18:42</div></div></div>
+          <div class="card card-hover"><div class="kpi"><div class="label">Completed Jobs</div><div class="value tabnum green">7</div><div class="delta"><span class="delta-up">▲</span> finished 14:20:11</div></div></div>
+          <div class="card card-hover"><div class="kpi"><div class="label">Failed Jobs</div><div class="value tabnum">1</div><div class="delta">betano-eu · timeout</div></div></div>
+          <div class="card card-hover"><div class="kpi"><div class="label">Last Scan</div><div class="value tabnum accent">1,284</div><div class="delta">opps: 14 · middles: 6</div></div></div>
+        </div>
+
+        <div class="card card-elevated" style="margin-bottom:20px">
+          <div class="row" style="align-items:flex-start">
+            <div style="flex:1;min-width:0">
+              <div class="row" style="gap:12px;margin-bottom:10px">
+                <div class="text-3xl strong tabnum accent" style="font-weight:800">67%</div>
+                <div class="muted" style="flex:1;font-size:13px">scraping fortuna events</div>
+                <span class="chip blue pulse">ETA 0:42</span>
+              </div>
+              <div class="progress" style="height:8px"><div class="bar" style="right:33%"></div></div>
+            </div>
+            <button class="ghost">Cancel</button>
+          </div>
+        </div>
+
+        <div class="card" style="margin-bottom:20px">
+          <h3><span>Pipeline</span><span class="h3-meta">5-stage cycle · scrape → scan → verify → catalog → complete</span></h3>
+          <div class="stepper">
+            <div class="step done"><span class="step-num">1</span> Scraping</div>
+            <div class="step active"><span class="step-num">2</span> Scanning</div>
+            <div class="step"><span class="step-num">3</span> Verifying</div>
+            <div class="step"><span class="step-num">4</span> Cataloging</div>
+            <div class="step"><span class="step-num">5</span> Complete</div>
+          </div>
+          <div class="activity-grid" style="margin-top:16px">
+            <div class="activity-cell"><div class="label">Activity</div><div class="value truncate">scanning fortuna events</div></div>
+            <div class="activity-cell"><div class="label">Active bookmaker</div><div class="value lg">fortuna</div></div>
+            <div class="activity-cell"><div class="label">Queue vs finished</div><div class="value lg tabnum">12 / 18</div></div>
+            <div class="activity-cell"><div class="label">Events / priced</div><div class="value lg tabnum">847 / 1,284</div></div>
+            <div class="activity-cell"><div class="label">Profile</div><div class="value"><span class="chip green">Trusted</span></div></div>
+            <div class="activity-cell"><div class="label">Run ID</div><div class="value truncate mono">run-2026-08-30T14</div></div>
+          </div>
+        </div>
+
+        <div class="grid cols-2" style="margin-bottom:20px">
+          <div class="card">
+            <h3><span>Configuration</span></h3>
+            <div class="field"><label>Profile</label><select><option>Trusted (min ROI 0%)</option><option>Review (min ROI 1.5%)</option></select></div>
+            <div class="grid cols-2">
+              <div class="field"><label>Bankroll</label><input type="number" value="1000"></div>
+              <div class="field"><label>Min ROI %</label><input type="number" value="0" step="0.1"></div>
+              <div class="field"><label>Max middle risk %</label><input type="number" value="15" step="0.5"></div>
+              <div class="field"><label>Min middle ROI %</label><input type="number" value="20" step="0.5"></div>
+            </div>
+            <div class="row">
+              <label class="checkbox"><input type="checkbox"> include live</label>
+              <label class="checkbox"><input type="checkbox"> include past</label>
+            </div>
+            <div class="row" style="margin-top:14px">
+              <button class="primary">Run scrape</button>
+              <button class="ghost">Save defaults</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3><span>Bookmakers</span><span class="h3-meta">12 / 12 selected</span></h3>
+            <div class="row" style="gap:6px;flex-wrap:wrap;margin-bottom:12px">
+              <label class="chip"><input type="checkbox" checked> betano</label>
+              <label class="chip"><input type="checkbox" checked> superbet</label>
+              <label class="chip"><input type="checkbox" checked> fortuna</label>
+              <label class="chip"><input type="checkbox" checked> unibet</label>
+              <label class="chip"><input type="checkbox" checked> netbet</label>
+              <label class="chip"><input type="checkbox" checked> winboss</label>
+              <label class="chip"><input type="checkbox" checked> stanleybet</label>
+              <label class="chip"><input type="checkbox" checked> casa</label>
+              <label class="chip"><input type="checkbox" checked> excelbet</label>
+              <label class="chip"><input type="checkbox" checked> admiral</label>
+              <label class="chip"><input type="checkbox" checked> maxbet</label>
+              <label class="chip"><input type="checkbox" checked> Get's Bet</label>
+            </div>
+            <div>
+              <div class="row" style="padding:8px 0;border-bottom:1px solid var(--border)"><span class="mono strong">betano</span><span class="status completed">completed</span><span class="spacer"></span><span class="muted mono">142 ev</span><span class="muted mono" style="min-width:60px;text-align:right">3,841ms</span></div>
+              <div class="row" style="padding:8px 0;border-bottom:1px solid var(--border)"><span class="mono strong">superbet</span><span class="status completed">completed</span><span class="spacer"></span><span class="muted mono">128 ev</span><span class="muted mono" style="min-width:60px;text-align:right">2,912ms</span></div>
+              <div class="row" style="padding:8px 0;border-bottom:1px solid var(--border)"><span class="mono strong">fortuna</span><span class="status running">running</span><span class="spacer"></span><span class="muted mono">84 ev</span><span class="muted mono" style="min-width:60px;text-align:right">—</span></div>
+              <div class="row" style="padding:8px 0;border-bottom:1px solid var(--border)"><span class="mono strong">betano-eu</span><span class="status failed">failed</span><span class="spacer"></span><span class="muted mono">0 ev</span><span class="muted mono" style="min-width:60px;text-align:right">30,000ms</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-bottom:20px">
+          <h3><span><span class="dot live pulse" style="margin-right:8px;vertical-align:middle"></span>Live log</span><span class="h3-meta">Streaming from orchestrator</span></h3>
+          <div class="log">
+            <div class="line info"><span class="time">14:18:42</span><span class="tag">orchestrator</span><span style="flex:1">starting scrape: 12 books, bankroll=1000</span></div>
+            <div class="line info"><span class="time">14:18:42</span><span class="tag">pipeline</span><span style="flex:1">launching 12 jobs in parallel</span></div>
+            <div class="line success"><span class="time">14:18:46</span><span class="tag">betano</span><span style="flex:1">betano ok (142 events, 3841ms)</span></div>
+            <div class="line success"><span class="time">14:18:45</span><span class="tag">superbet</span><span style="flex:1">superbet ok (128 events, 2912ms)</span></div>
+            <div class="line success"><span class="time">14:18:47</span><span class="tag">fortuna</span><span style="flex:1">fortuna ok (84 events, 1620ms)</span></div>
+            <div class="line warn"><span class="time">14:19:12</span><span class="tag">betano-eu</span><span style="flex:1">timeout after 30000ms</span></div>
+            <div class="line info"><span class="time">14:19:13</span><span class="tag">pipeline</span><span style="flex:1">scanning fortuna events</span></div>
+            <div class="line success"><span class="time">14:19:15</span><span class="tag">engine</span><span style="flex:1">scan: 14 opps, 6 middles</span></div>
+            <div class="line info"><span class="time">14:19:16</span><span class="tag">pipeline</span><span style="flex:1">verifying 20 targets</span></div>
+            <div class="line success"><span class="time">14:19:22</span><span class="tag">engine</span><span style="flex:1">verification: 9 confirmed, 8 review, 3 rejected</span></div>
+          </div>
+        </div>
+
+        <div class="grid cols-2">
+          <div class="card">
+            <h3><span>Last Scrape Run</span></h3>
+            <div class="table-wrap" style="border:0;background:transparent">
+              <table class="compact">
+                <thead><tr><th>ID</th><th class="num">Events</th><th class="num">Ms</th><th>Status</th></tr></thead>
+                <tbody>
+                  <tr><td class="mono">betano</td><td class="num tabnum">142</td><td class="num tabnum">3,841</td><td><span class="status ok">ok</span></td></tr>
+                  <tr><td class="mono">superbet</td><td class="num tabnum">128</td><td class="num tabnum">2,912</td><td><span class="status ok">ok</span></td></tr>
+                  <tr><td class="mono">fortuna</td><td class="num tabnum">84</td><td class="num tabnum">1,620</td><td><span class="status ok">ok</span></td></tr>
+                  <tr><td class="mono">unibet</td><td class="num tabnum">112</td><td class="num tabnum">3,201</td><td><span class="status ok">ok</span></td></tr>
+                  <tr><td class="mono">betano-eu</td><td class="num tabnum">0</td><td class="num tabnum">30,000</td><td><span class="status failed">failed</span> <span class="muted mono">TIMEOUT</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="card">
+            <h3><span>Scheduler</span></h3>
+            <div class="row" style="margin-bottom:12px">
+              <label class="checkbox"><input type="checkbox" checked> enabled</label>
+              <div class="spacer"></div>
+              <div class="field" style="margin:0"><label>Interval (min)</label><input type="number" value="15" style="width:80px"></div>
+              <button class="ghost">Save</button>
+            </div>
+            <div class="muted text-xs">last run: 30/08/2026 14:00 (ok)</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============== SCANNER ============== -->
+      <section class="view" data-view-panel="scanner">
+        <div class="page-header">
+          <div>
+            <h2>Scanner</h2>
+            <div class="text-xs muted" style="margin-top:4px">Run a manual scan against the current workspace</div>
+          </div>
+          <div class="meta"><button class="ghost lang-toggle">RO</button></div>
+        </div>
+
+        <div class="card" style="margin-bottom:20px">
+          <h3><span>Scan parameters</span><span class="h3-meta">Updates inline</span></h3>
+          <div class="grid cols-6" style="gap:14px">
+            <div class="field"><label>Bankroll</label><input type="number" value="1000"></div>
+            <div class="field"><label>Min ROI %</label><input type="number" value="0" step="0.1"></div>
+            <div class="field"><label>Max middle risk %</label><input type="number" value="15" step="0.5"></div>
+            <div class="field"><label>Min middle ROI %</label><input type="number" value="20" step="0.5"></div>
+            <div class="field"><label>Profile</label><select><option>Trusted</option><option>Review</option></select></div>
+            <div class="field" style="display:flex;align-items:flex-end"><button class="primary" style="width:100%">Re-scan</button></div>
+          </div>
+        </div>
+
+        <div class="grid cols-2" style="margin-bottom:20px">
+          <div class="card">
+            <h3><span><span style="color:var(--green)">●</span> Arbitrage</span><span class="h3-meta">3 opportunities</span></h3>
+            <div class="table-wrap" style="border:0;background:transparent">
+              <table class="compact">
+                <thead><tr><th>Match</th><th>Market</th><th class="num">ROI %</th><th class="num">Stake</th><th class="num">Profit</th><th>Status</th></tr></thead>
+                <tbody>
+                  <tr class="row-confirmed">
+                    <td><div class="strong">FCSB <span class="muted">vs</span> CFR Cluj</div><div class="secondary">Football · Liga 1</div></td>
+                    <td><div class="mono">MATCH_ODDS</div><div class="secondary">betano · superbet · fortuna</div></td>
+                    <td class="num tabnum"><span class="strong green">+4.82</span></td>
+                    <td class="num tabnum">1,000</td>
+                    <td class="num tabnum"><span class="strong">48.20</span></td>
+                    <td><span class="status confirmed">confirmed</span></td>
+                  </tr>
+                  <tr>
+                    <td><div class="strong">Real Madrid <span class="muted">vs</span> Barcelona</div><div class="secondary">Football · La Liga</div></td>
+                    <td><div class="mono">MATCH_ODDS</div><div class="secondary">betano · unibet · netbet</div></td>
+                    <td class="num tabnum"><span class="strong green">+2.31</span></td>
+                    <td class="num tabnum">1,000</td>
+                    <td class="num tabnum"><span class="strong">23.10</span></td>
+                    <td><span class="status pending">pending</span></td>
+                  </tr>
+                  <tr class="row-confirmed">
+                    <td><div class="strong">Bayern <span class="muted">vs</span> Dortmund</div><div class="secondary">Football · Bundesliga</div></td>
+                    <td><div class="mono">MATCH_ODDS</div><div class="secondary">superbet · fortuna · winboss</div></td>
+                    <td class="num tabnum"><span class="strong green">+1.84</span></td>
+                    <td class="num tabnum">1,000</td>
+                    <td class="num tabnum"><span class="strong">18.40</span></td>
+                    <td><span class="status confirmed">confirmed</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3><span><span style="color:var(--purple)">●</span> Middles</span><span class="h3-meta">3 middles</span></h3>
+            <div class="table-wrap" style="border:0;background:transparent">
+              <table class="compact">
+                <thead><tr><th>Match</th><th>Lines</th><th class="num">ROI %</th><th class="num">Risk %</th><th>Status</th></tr></thead>
+                <tbody>
+                  <tr class="row-confirmed">
+                    <td><div class="strong">Juventus <span class="muted">vs</span> Milan</div></td>
+                    <td><div class="mono text-xs">stanleybet -0.5 <span class="muted">@</span> <span class="strong">1.95</span></div><div class="mono text-xs">excelbet +0.5 <span class="muted">@</span> <span class="strong">2.10</span></div></td>
+                    <td class="num tabnum"><span class="strong purple">+28.40</span></td>
+                    <td class="num tabnum"><span class="yellow">12.0</span></td>
+                    <td><span class="status confirmed">confirmed</span></td>
+                  </tr>
+                  <tr>
+                    <td><div class="strong">PSG <span class="muted">vs</span> Marseille</div></td>
+                    <td><div class="mono text-xs">betano -1.5 <span class="muted">@</span> <span class="strong">1.92</span></div><div class="mono text-xs">netbet +1.5 <span class="muted">@</span> <span class="strong">2.20</span></div></td>
+                    <td class="num tabnum"><span class="strong purple">+22.10</span></td>
+                    <td class="num tabnum"><span class="yellow">14.5</span></td>
+                    <td><span class="status pending">pending</span></td>
+                  </tr>
+                  <tr class="row-confirmed">
+                    <td><div class="strong">Atletico <span class="muted">vs</span> Sevilla</div></td>
+                    <td><div class="mono text-xs">casa -0.5 <span class="muted">@</span> <span class="strong">1.88</span></div><div class="mono text-xs">maxbet +0.5 <span class="muted">@</span> <span class="strong">2.18</span></div></td>
+                    <td class="num tabnum"><span class="strong purple">+21.80</span></td>
+                    <td class="num tabnum"><span class="yellow">13.2</span></td>
+                    <td><span class="status confirmed">confirmed</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3><span><span style="color:var(--yellow)">●</span> Positive EV</span><span class="h3-meta">Top 100 by EV</span></h3>
+          <div class="table-wrap" style="border:0;background:transparent">
+            <table class="compact">
+              <thead><tr><th>Match</th><th>Selection</th><th>Book</th><th class="num">Odds</th><th class="num">EV %</th><th class="num">Stake</th></tr></thead>
+              <tbody>
+                <tr><td><div class="strong">Arsenal <span class="muted">vs</span> Tottenham</div></td><td>Arsenal</td><td class="mono accent">betano</td><td class="num tabnum">2.15</td><td class="num tabnum"><span class="strong yellow">+4.82</span></td><td class="num tabnum">465.12</td></tr>
+                <tr><td><div class="strong">Inter <span class="muted">vs</span> Roma</div></td><td>Inter</td><td class="mono accent">superbet</td><td class="num tabnum">1.85</td><td class="num tabnum"><span class="strong yellow">+3.91</span></td><td class="num tabnum">540.54</td></tr>
+                <tr><td><div class="strong">Chelsea <span class="muted">vs</span> Man Utd</div></td><td>Draw</td><td class="mono accent">fortuna</td><td class="num tabnum">3.40</td><td class="num tabnum"><span class="strong yellow">+2.18</span></td><td class="num tabnum">294.12</td></tr>
+                <tr><td><div class="strong">AC Milan <span class="muted">vs</span> Napoli</div></td><td>Over 2.5</td><td class="mono accent">unibet</td><td class="num tabnum">1.95</td><td class="num tabnum"><span class="strong yellow">+1.74</span></td><td class="num tabnum">512.82</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============== ANALYTICS ============== -->
+      <section class="view" data-view-panel="analytics">
+        <div class="page-header">
+          <div>
+            <h2>Analytics</h2>
+            <div class="text-xs muted" style="margin-top:4px">Tracker · market catalog · scan signals</div>
+          </div>
+          <div class="meta"><button class="ghost lang-toggle">RO</button></div>
+        </div>
+
+        <section style="margin-bottom:20px">
+          <div class="grid cols-4">
+            <div class="card card-hover"><div class="kpi"><div class="label">Opps (verified)</div><div class="value tabnum green">9</div></div></div>
+            <div class="card card-hover"><div class="kpi"><div class="label">Middles</div><div class="value tabnum purple">6</div></div></div>
+            <div class="card card-hover"><div class="kpi"><div class="label">+EV</div><div class="value tabnum yellow">42</div></div></div>
+            <div class="card card-hover"><div class="kpi"><div class="label">Low hold</div><div class="value tabnum accent">17</div></div></div>
+          </div>
+        </section>
+
+        <section style="margin-bottom:20px">
+          <div class="card">
+            <h3><span>Bet tracker</span><span class="h3-meta">3 items</span></h3>
+            <div class="row" style="margin-bottom:14px">
+              <button class="primary">Add bet</button>
+              <button class="ghost">Export CSV</button>
+              <button class="ghost">Import CSV</button>
+              <div class="spacer"></div>
+              <span class="chip"><span class="dot live"></span> syncing</span>
+            </div>
+            <div class="table-wrap" style="border:0;background:transparent">
+              <table class="compact">
+                <thead><tr><th>Event</th><th>Market</th><th>Selection</th><th>Book</th><th class="num">Odds</th><th class="num">Stake</th><th>Status</th><th class="num">Actions</th></tr></thead>
+                <tbody>
+                  <tr class="row-confirmed"><td class="mono">fcsb|cfr</td><td class="mono text-xs">MATCH_ODDS</td><td>FCSB</td><td class="mono accent">betano</td><td class="num tabnum">2.45</td><td class="num tabnum">412.00</td><td><span class="status won">won</span></td><td class="num"><div class="row" style="gap:4px;justify-content:flex-end"><button class="ghost sm">W</button><button class="ghost sm">L</button><button class="ghost sm">×</button></div></td></tr>
+                  <tr><td class="mono">real|barca</td><td class="mono text-xs">MATCH_ODDS</td><td>Real Madrid</td><td class="mono accent">betano</td><td class="num tabnum">2.10</td><td class="num tabnum">481.00</td><td><span class="status pending">pending</span></td><td class="num"><div class="row" style="gap:4px;justify-content:flex-end"><button class="ghost sm">W</button><button class="ghost sm">L</button><button class="ghost sm">×</button></div></td></tr>
+                  <tr class="row-rejected"><td class="mono">city|liv</td><td class="mono text-xs">TOTAL_GOALS</td><td>Under 2.5</td><td class="mono accent">winboss</td><td class="num tabnum">2.05</td><td class="num tabnum">481.00</td><td><span class="status lost">lost</span></td><td class="num"><div class="row" style="gap:4px;justify-content:flex-end"><button class="ghost sm">W</button><button class="ghost sm">L</button><button class="ghost sm">×</button></div></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <div class="card">
+            <h3><span>Market catalog</span><span class="h3-meta">discovered markets across all books</span></h3>
+            <div class="row" style="margin-bottom:14px">
+              <div class="field" style="flex:1;margin:0;max-width:320px"><input type="text" placeholder="Filter source / market..."></div>
+            </div>
+            <div class="table-wrap" style="border:0;background:transparent">
+              <table class="compact">
+                <thead><tr><th>Source</th><th>Market</th><th class="num">Events</th><th class="num">Selections</th></tr></thead>
+                <tbody>
+                  <tr><td class="mono accent">betano</td><td class="mono">MATCH_ODDS</td><td class="num tabnum">142</td><td class="num tabnum">426</td></tr>
+                  <tr><td class="mono accent">superbet</td><td class="mono">MATCH_ODDS</td><td class="num tabnum">128</td><td class="num tabnum">384</td></tr>
+                  <tr><td class="mono accent">fortuna</td><td class="mono">MATCH_ODDS</td><td class="num tabnum">84</td><td class="num tabnum">252</td></tr>
+                  <tr><td class="mono accent">unibet</td><td class="mono">MATCH_ODDS</td><td class="num tabnum">112</td><td class="num tabnum">336</td></tr>
+                  <tr><td class="mono accent">betano</td><td class="mono">TOTAL_GOALS</td><td class="num tabnum">142</td><td class="num tabnum">284</td></tr>
+                  <tr><td class="mono accent">superbet</td><td class="mono">TOTAL_GOALS</td><td class="num tabnum">128</td><td class="num tabnum">256</td></tr>
+                  <tr><td class="mono accent">fortuna</td><td class="mono">ASIAN_HANDICAP</td><td class="num tabnum">71</td><td class="num tabnum">213</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+      </section>
+
+      <!-- ============== AI ============== -->
+      <section class="view" data-view-panel="ai">
+        <div class="page-header">
+          <div>
+            <h2>AI Insights</h2>
+            <div class="text-xs muted" style="margin-top:4px">Ask the engine — surface patterns across books and markets</div>
+          </div>
+          <div class="meta">
+            <span class="chip purple">experimental</span>
+            <button class="ghost lang-toggle">RO</button>
+          </div>
+        </div>
+
+        <div class="grid cols-2" style="gap:20px">
+          <div class="card card-elevated">
+            <h3><span>Ask the engine</span><span class="h3-meta">natural language</span></h3>
+            <div class="field">
+              <textarea rows="5" style="resize:vertical;min-height:120px">Which bookmaker pairs have the highest arbitrage hit rate this week?</textarea>
+            </div>
+            <div class="row" style="margin-top:8px">
+              <button class="primary">Ask AI</button>
+              <span class="muted">ready</span>
+            </div>
+            <div class="row" style="margin-top:14px;gap:6px;flex-wrap:wrap">
+              <span class="chip outline">suggested</span>
+              <button class="ghost sm">Top arb hits today</button>
+              <button class="ghost sm">Compare Liga 1 books</button>
+              <button class="ghost sm">Stale opportunities</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3><span>Insights</span><span class="h3-meta">3 items</span></h3>
+            <div class="opp-card" style="margin-bottom:8px">
+              <div class="head">
+                <div style="flex:1;min-width:0">
+                  <div class="match">arb · confirmed</div>
+                  <div class="match-meta"><span class="chip purple">betano · superbet · fortuna</span></div>
+                </div>
+                <div class="roi-wrap"><div class="roi" style="font-size:18px">+4.82%</div><div class="roi-bar"><div class="fill" style="width:58%"></div></div></div>
+              </div>
+              <div class="muted text-sm" style="margin-top:8px;position:relative;z-index:1">FCSB vs CFR Cluj — MATCH_ODDS arb hit, stake distribution auto-balanced.</div>
+            </div>
+            <div class="opp-card" style="margin-bottom:8px">
+              <div class="head">
+                <div style="flex:1;min-width:0">
+                  <div class="match">arb · pending</div>
+                  <div class="match-meta"><span class="chip purple">betano · unibet · netbet</span></div>
+                </div>
+                <div class="roi-wrap"><div class="roi" style="font-size:18px">+2.31%</div><div class="roi-bar"><div class="fill" style="width:28%"></div></div></div>
+              </div>
+              <div class="muted text-sm" style="margin-top:8px;position:relative;z-index:1">Real Madrid vs Barcelona — prices moved since first scrape, re-verify before staking.</div>
+            </div>
+            <div class="opp-card is-middle" style="margin-bottom:8px">
+              <div class="head">
+                <div style="flex:1;min-width:0">
+                  <div class="match">middle · confirmed</div>
+                  <div class="match-meta"><span class="chip purple">stanleybet · excelbet</span></div>
+                </div>
+                <div class="roi-wrap"><div class="roi" style="font-size:18px">+28.40%</div><div class="roi-bar"><div class="fill" style="width:100%"></div></div></div>
+              </div>
+              <div class="muted text-sm" style="margin-top:8px;position:relative;z-index:1">Juventus vs Milan — ±0.5 handicap middle, 12% risk window, stable across both books.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="./preview.js"></script>
+</body>
+</html>

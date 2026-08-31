@@ -1,0 +1,32 @@
+{
+  "profiles": [
+    {
+      "id": "trusted-prematch",
+      "label": "Trusted \u00b7 Prematch",
+      "mode": "trusted",
+      "description": "Independent feeds with plausibility checks.",
+      "defaults": {
+        "bankroll": 1000,
+        "minRoiPercent": 0,
+        "maxMiddleRiskPercent": 15,
+        "minMiddleRoiPercent": 20,
+        "includeLive": false,
+        "includePast": false
+      }
+    },
+    {
+      "id": "review-live",
+      "label": "Review \u00b7 Live + Past",
+      "mode": "review",
+      "description": "Lower-confidence feeds \u2014 verify prices before placing stakes.",
+      "defaults": {
+        "bankroll": 500,
+        "minRoiPercent": 1,
+        "maxMiddleRiskPercent": 10,
+        "minMiddleRoiPercent": 30,
+        "includeLive": true,
+        "includePast": true
+      }
+    }
+  ]
+}

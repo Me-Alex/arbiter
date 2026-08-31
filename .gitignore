@@ -1,0 +1,15 @@
+node_modules/
+data/scrape.lock
+data/staging/
+data/backups/
+data/discovery/
+data/workspace/
+data/scrape-run-*.json
+data/latest-*.json
+data/bet-tracker.json
+data/alert-preferences.json
+data-smoke/
+.DS_Store
+*.log
+.vscode/
+.idea/

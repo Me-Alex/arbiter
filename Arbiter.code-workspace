@@ -1,0 +1,39 @@
+{
+  "folders": [
+    {
+      "name": "Arbiter",
+      "path": "."
+    }
+  ],
+  "settings": {
+    "files.eol": "\n",
+    "editor.tabSize": 2,
+    "editor.formatOnSave": false,
+    "javascript.preferences.importModuleSpecifier": "non-relative",
+    "eslint.workingDirectories": ["."]
+  },
+  "extensions": {
+    "recommendations": ["dbaeumer.vscode-eslint", "esbenp.prettier-vscode"]
+  },
+  "launch": {
+    "configurations": [
+      {
+        "type": "node",
+        "request": "launch",
+        "name": "Server",
+        "program": "${workspaceFolder}/src/server.mjs",
+        "env": {
+          "PORT": "3022",
+          "HOST": "127.0.0.1"
+        }
+      },
+      {
+        "type": "node",
+        "request": "launch",
+        "name": "Tests",
+        "program": "${workspaceFolder}/node_modules/.bin/_mocha_or_node_test",
+        "args": ["--test", "test/*.test.mjs"]
+      }
+    ]
+  }
+}

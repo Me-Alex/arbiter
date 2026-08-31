@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="ro">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Arbiter — Sports Arbitrage Scanner</title>
+  <link rel="stylesheet" href="/css/theme.css">
+</head>
+<body>
+  <main>
+    <div class="page-header">
+      <div>
+        <h2 data-i18n="dashboard">Tablă</h2>
+        <div class="text-xs muted" style="margin-top:4px">
+          <span id="last-updated">—</span>
+        </div>
+      </div>
+      <div class="meta">
+        <span class="chip blue"><span class="dot" id="data-health-dot"></span><span id="data-health">loading data health</span></span>
+        <span class="chip outline"><span class="dot"></span><span id="conn-state">connected</span></span>
+        <button class="ghost lang-toggle" data-lang-toggle>RO</button>
+      </div>
+    </div>
+
+    <!-- KPI strip -->
+    <div class="grid cols-4" style="margin-bottom:24px">
+      <div class="card">
+        <div class="kpi">
+          <div class="label">Opportunities <span class="chip green text-xs">+ confirmed</span></div>
+          <div class="value" id="m-opps">—</div>
+          <div class="delta">
+            auto-confirmed: <span class="strong" id="m-confirmed">—</span>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="kpi">
+          <div class="label">Middles <span class="chip purple text-xs">2-way</span></div>
+          <div class="value accent" id="m-middles">—</div>
+          <div class="delta">
+            pending review: <span class="strong yellow" id="m-review">—</span>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="kpi">
+          <div class="label">+EV bets <span class="chip yellow text-xs">soft book</span></div>
+          <div class="value" id="m-ev">—</div>
+          <div class="delta">
+            low hold: <span class="strong" id="m-low">—</span>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="kpi">
+          <div class="label">Sources <span class="chip text-xs">books</span></div>
+          <div class="value" id="m-src">—</div>
+          <div class="delta">
+            events priced: <span class="strong tabnum" id="m-events">—</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Top opportunities -->
+    <div class="card">
+      <h3>
+        <span>Top opportunities</span>
+        <span class="h3-meta">Sorted by ROI · live updates every 15s</span>
+      </h3>
+      <div id="opp-list"></div>
+    </div>
+  </main>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/i18n.js"></script>
+  <script src="/js/sse.js"></script>
+  <script src="/js/app.js"></script>
+  <script src="/js/pages/dashboard.js"></script>
+</body>
+</html>

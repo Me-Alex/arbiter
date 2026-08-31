@@ -1,0 +1,16 @@
+dialog.arbiter-modal {
+      border: 1px solid var(--border-strong);
+      background: var(--bg-1);
+      color: var(--text);
+      border-radius: var(--r-lg);
+      max-width: 460px;
+      width: calc(100% - 32px);
+      padding: var(--s-6) var(--s-8);
+      box-shadow: var(--shadow-lg);
+    }
+    dialog.arbiter-modal::backdrop { background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(4px); }
+    dialog.arbiter-modal header { display:flex; align-items:center; justify-content:space-between; margin-bottom:var(--s-4); }
+    dialog.arbiter-modal header h3 { margin:0; font-size:var(--fs-lg); }
+    dialog.arbiter-modal .grid { display:grid; grid-template-columns:1fr 1fr; gap:var(--s-4); }
+    dialog.arbiter-modal .field span { font-size:11px; color:var(--text-muted); display:block; margin-bottom:4px; }
+    dialog.arbiter-modal input, dialog.arbiter-modal select { width:100%; }

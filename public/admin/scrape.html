@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="ro">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Arbiter — Scrape Control</title>
+  <link rel="stylesheet" href="/css/theme.css">
+</head>
+<body>
+  <main>
+    <div class="page-header">
+      <div>
+        <h2 data-i18n="scrapeControl">Scrape Control</h2>
+        <div class="text-xs muted" style="margin-top:4px">Orchestrate the TinyFish pipeline and watch live progress</div>
+      </div>
+      <div class="meta">
+        <span class="chip"><span class="dot" id="head-dot"></span><span id="head-status">idle</span></span>
+        <button class="ghost lang-toggle" data-lang-toggle>RO</button>
+      </div>
+    </div>
+
+    <!-- KPI strip -->
+    <div class="grid cols-4" style="margin-bottom:20px">
+      <div class="card">
+        <div class="kpi">
+          <div class="label">Status</div>
+          <div class="value" id="m-status"><span class="status idle">idle</span></div>
+          <div class="delta" id="m-started">awaiting trigger</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="kpi">
+          <div class="label">Completed Jobs</div>
+          <div class="value tabnum green" id="m-completed">—</div>
+          <div class="delta" id="m-finished">—</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="kpi">
+          <div class="label">Failed Jobs</div>
+          <div class="value tabnum" id="m-failed">—</div>
+          <div class="delta" id="m-failed-detail">—</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="kpi">
+          <div class="label">Last Scan</div>
+          <div class="value tabnum accent" id="m-events">—</div>
+          <div class="delta"><span id="m-arb-summary">opps: — · middles: —</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Live progress card -->
+    <div class="card" id="progress-card" style="margin-bottom:20px;display:none">
+      <div class="row" style="align-items:flex-start">
+        <div style="flex:1;min-width:0">
+          <div class="row" style="gap:12px;margin-bottom:10px">
+            <div class="text-2xl strong tabnum" id="progress-pct">0%</div>
+            <div class="muted" id="progress-activity" style="flex:1">—</div>
+            <span class="chip blue pulse" id="progress-eta">ETA —</span>
+          </div>
+          <div class="progress" style="height:8px">
+            <div class="bar" id="progress-bar" style="right:100%"></div>
+          </div>
+        </div>
+        <button class="ghost" id="cancel-btn" data-i18n="cancel">Cancel</button>
+      </div>
+    </div>
+
+    <!-- Pipeline stepper -->
+    <div class="card" style="margin-bottom:20px">
+      <h3>
+        <span>Pipeline</span>
+        <span class="h3-meta">5-stage cycle · scrape → scan → verify → catalog → complete</span>
+      </h3>
+      <div class="stepper">
+        <div class="step" data-step="0"><span class="step-num">1</span> Scraping</div>
+        <div class="step" data-step="1"><span class="step-num">2</span> Scanning</div>
+        <div class="step" data-step="2"><span class="step-num">3</span> Verifying</div>
+        <div class="step" data-step="3"><span class="step-num">4</span> Cataloging</div>
+        <div class="step" data-step="4"><span class="step-num">5</span> Complete</div>
+      </div>
+
+      <div class="activity-grid" style="margin-top:16px">
+        <div class="activity-cell">
+          <div class="label">Activity</div>
+          <div class="value truncate" id="act-line">idle</div>
+        </div>
+        <div class="activity-cell">
+          <div class="label">Active bookmaker</div>
+          <div class="value lg" id="act-book">—</div>
+        </div>
+        <div class="activity-cell">
+          <div class="label">Queue vs finished</div>
+          <div class="value lg tabnum" id="act-qf">0 / 0</div>
+        </div>
+        <div class="activity-cell">
+          <div class="label">Events / priced</div>
+          <div class="value lg tabnum" id="act-events">0 / 0</div>
+        </div>
+        <div class="activity-cell">
+          <div class="label">Profile</div>
+          <div class="value" id="act-profile">—</div>
+        </div>
+        <div class="activity-cell">
+          <div class="label">Run ID</div>
+          <div class="value truncate mono" id="act-runid">—</div>
+        </div>
+      </div>
+    </div>
+
+    <div id="error-box" class="alert hidden"></div>
+
+    <!-- Configuration + Bookmakers -->
+    <div class="grid cols-2" style="margin-bottom:20px">
+      <div class="card">
+        <h3><span>Configuration</span></h3>
+        <div class="field">
+          <label>Profile</label>
+          <select id="profile"></select>
+        </div>
+        <div class="grid cols-2">
+          <div class="field"><label data-i18n="bankroll">Bankroll</label><input type="number" id="bankroll" value="1000" min="10" step="10"></div>
+          <div class="field"><label>Min ROI %</label><input type="number" id="min-roi" value="0" step="0.1"></div>
+          <div class="field"><label>Max middle risk %</label><input type="number" id="mid-risk" value="15" step="0.5"></div>
+          <div class="field"><label>Min middle ROI %</label><input type="number" id="mid-roi" value="20" step="0.5"></div>
+        </div>
+        <div class="row" style="margin-top:4px">
+          <label class="checkbox"><input type="checkbox" id="inc-live"> include live</label>
+          <label class="checkbox"><input type="checkbox" id="inc-past"> include past</label>
+        </div>
+        <div class="row" style="margin-top:14px">
+          <button class="primary" id="run-btn" data-i18n="runScrape">Run scrape</button>
+          <button class="ghost" id="save-btn">Profile help</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>
+          <span>Bookmakers</span>
+          <span class="h3-meta"><span id="bm-selected">12</span> / <span id="bm-total">12</span> selected</span>
+        </h3>
+        <div id="bookmaker-list" class="row" style="gap:6px;flex-wrap:wrap;margin-bottom:12px"></div>
+        <div id="job-rows"></div>
+      </div>
+    </div>
+
+    <!-- Live log -->
+    <div class="card" style="margin-bottom:20px">
+      <h3>
+        <span><span class="dot live pulse" style="margin-right:8px;vertical-align:middle"></span>Live log</span>
+        <span class="h3-meta">Streaming from orchestrator</span>
+      </h3>
+      <div class="log" id="log-panel"></div>
+    </div>
+
+    <!-- Last run + scheduler -->
+    <div class="grid cols-2">
+      <div class="card">
+        <h3><span>Last Scrape Run</span></h3>
+        <div class="table-wrap" style="border:0;background:transparent">
+          <table class="compact">
+            <thead><tr><th>ID</th><th class="num">Events</th><th class="num">Ms</th><th>Status</th></tr></thead>
+            <tbody id="last-run-table"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3><span data-i18n="scheduler">Scheduler</span></h3>
+        <div class="row" style="margin-bottom:12px">
+          <label class="checkbox"><input type="checkbox" id="sched-enabled"> enabled</label>
+          <div class="spacer"></div>
+          <div class="field" style="margin:0">
+            <label data-i18n="interval">Interval (min)</label>
+            <input type="number" id="sched-interval" value="15" min="1" max="1440" style="width:80px">
+          </div>
+          <button class="ghost" id="sched-save">Save</button>
+        </div>
+        <div class="muted text-xs" id="sched-last">—</div>
+      </div>
+    </div>
+
+    <!-- Recent scan history -->
+    <div class="card" style="margin-top:20px">
+      <h3><span>Recent Scan History</span></h3>
+      <div class="table-wrap" style="border:0;background:transparent">
+        <table class="compact">
+          <thead><tr><th>Run ID</th><th>Started</th><th class="num">Jobs</th><th class="num">Events</th><th>Status</th></tr></thead>
+          <tbody id="recent-table"></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/i18n.js"></script>
+  <script src="/js/sse.js"></script>
+  <script src="/js/app.js"></script>
+  <script src="/js/pages/scrape.js"></script>
+</body>
+</html>
