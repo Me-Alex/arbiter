@@ -1,6 +1,6 @@
 // sse.js — Server-Sent Events client with auto-reconnect.
 (function () {
-  function connect(onMessage) {
+  function connect(onMessage, onState) {
     const es = new EventSource('/api/events');
     es.addEventListener('scrape-update', (e) => safe(onMessage, 'scrape-update', JSON.parse(e.data)));
     es.addEventListener('scan-update', (e) => safe(onMessage, 'scan-update', JSON.parse(e.data)));
@@ -8,7 +8,8 @@
     es.addEventListener('verify-end', (e) => safe(onMessage, 'verify-end', JSON.parse(e.data)));
     es.addEventListener('job-complete', (e) => safe(onMessage, 'job-complete', JSON.parse(e.data)));
     es.addEventListener('heartbeat', () => { /* keepalive */ });
-    es.onerror = () => { /* browser will auto-reconnect */ };
+    es.onopen = () => { if (onState) safe(onState, 'open'); };
+    es.onerror = () => { if (onState) safe(onState, 'reconnecting'); /* browser will auto-reconnect */ };
     return es;
   }
   function safe(fn, type, payload) {

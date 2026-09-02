@@ -16,59 +16,82 @@
         </div>
       </div>
       <div class="meta">
-        <span class="chip blue"><span class="dot" id="data-health-dot"></span><span id="data-health">loading data health</span></span>
-        <span class="chip outline"><span class="dot"></span><span id="conn-state">connected</span></span>
+        <span class="chip blue"><span class="dot" id="data-health-dot"></span><span id="data-health" data-i18n="loadingDataHealth"></span></span>
+        <span class="chip outline"><span class="dot" id="conn-dot"></span><span id="conn-state" data-i18n="connected">connected</span></span>
         <button class="ghost lang-toggle" data-lang-toggle>RO</button>
       </div>
     </div>
 
     <!-- KPI strip -->
     <div class="grid cols-4" style="margin-bottom:24px">
-      <div class="card">
+      <a class="card card-hover" href="/admin/scanner.html">
         <div class="kpi">
-          <div class="label">Opportunities <span class="chip green text-xs">+ confirmed</span></div>
+          <div class="label"><span data-i18n="opportunities">Opportunities</span> <span class="chip green text-xs" data-i18n="confirmed">+ confirmed</span></div>
           <div class="value" id="m-opps">—</div>
           <div class="delta">
-            auto-confirmed: <span class="strong" id="m-confirmed">—</span>
+            <span data-i18n="autoConfirmed">auto-confirmed:</span> <span class="strong" id="m-confirmed">—</span>
           </div>
         </div>
-      </div>
-      <div class="card">
+      </a>
+      <a class="card card-hover" href="/admin/scanner.html">
         <div class="kpi">
-          <div class="label">Middles <span class="chip purple text-xs">2-way</span></div>
+          <div class="label"><span data-i18n="middlesLabel">Middles</span> <span class="chip purple text-xs" data-i18n="twoWay">2-way</span></div>
           <div class="value accent" id="m-middles">—</div>
           <div class="delta">
-            pending review: <span class="strong yellow" id="m-review">—</span>
+            <span data-i18n="pendingReview">pending review:</span> <span class="strong yellow" id="m-review">—</span>
           </div>
         </div>
-      </div>
-      <div class="card">
+      </a>
+      <a class="card card-hover" href="/admin/scanner.html">
         <div class="kpi">
-          <div class="label">+EV bets <span class="chip yellow text-xs">soft book</span></div>
+          <div class="label"><span data-i18n="evBets">+EV bets</span> <span class="chip yellow text-xs" data-i18n="softBook">soft book</span></div>
           <div class="value" id="m-ev">—</div>
           <div class="delta">
-            low hold: <span class="strong" id="m-low">—</span>
+            <span data-i18n="lowHold">low hold:</span> <span class="strong" id="m-low">—</span>
           </div>
         </div>
-      </div>
-      <div class="card">
+      </a>
+      <a class="card card-hover" href="/admin/scrape.html">
         <div class="kpi">
-          <div class="label">Sources <span class="chip text-xs">books</span></div>
+          <div class="label"><span data-i18n="sources">Sources</span> <span class="chip text-xs" data-i18n="books">books</span></div>
           <div class="value" id="m-src">—</div>
           <div class="delta">
-            events priced: <span class="strong tabnum" id="m-events">—</span>
+            <span data-i18n="eventsPriced">events priced:</span> <span class="strong tabnum" id="m-events">—</span>
           </div>
         </div>
-      </div>
+      </a>
     </div>
 
     <!-- Top opportunities -->
     <div class="card">
       <h3>
-        <span>Top opportunities</span>
-        <span class="h3-meta">Sorted by ROI · live updates every 15s</span>
+        <span data-i18n="topOpportunities">Top opportunities</span>
+        <span class="h3-meta" data-i18n="sortedByRoi">Sorted by ROI · live updates every 15s</span>
       </h3>
       <div id="opp-list"></div>
+    </div>
+
+    <!-- Top +EV bets -->
+    <div class="card" id="ev-card">
+      <h3>
+        <span data-i18n="topEvBets">Top +EV bets</span>
+        <a class="h3-meta" href="/admin/scanner.html" data-i18n="viewAllInScanner">View all in scanner</a>
+      </h3>
+      <div class="table-wrap">
+        <table class="compact">
+          <thead>
+            <tr>
+              <th data-i18n="match">Match</th>
+              <th data-i18n="selection">Selection</th>
+              <th data-i18n="bookmaker">Book</th>
+              <th class="num" data-i18n="odds">Odds</th>
+              <th class="num">EV%</th>
+              <th class="num" data-i18n="stake">Stake</th>
+            </tr>
+          </thead>
+          <tbody id="ev-list"></tbody>
+        </table>
+      </div>
     </div>
   </main>
 

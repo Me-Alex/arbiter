@@ -11,7 +11,7 @@
     <div class="page-header">
       <div>
         <h2 data-i18n="analytics">Analytics</h2>
-        <div class="text-xs muted" style="margin-top:4px">
+        <div class="text-xs muted" style="margin-top:4px" data-i18n="analyticsSubtitle">
           Tracker · market catalog · scan signals
         </div>
       </div>
@@ -23,30 +23,30 @@
     <!-- Signals -->
     <section id="signals" style="margin-bottom:20px">
       <div class="grid cols-4">
-        <div class="card">
+        <a class="card card-hover" href="/admin/scanner.html">
           <div class="kpi">
-            <div class="label">Opps (verified)</div>
+            <div class="label" data-i18n="oppsVerified">Opps (verified)</div>
             <div class="value tabnum green" id="k-opps">—</div>
           </div>
-        </div>
-        <div class="card">
+        </a>
+        <a class="card card-hover" href="/admin/scanner.html">
           <div class="kpi">
-            <div class="label">Middles</div>
+            <div class="label" data-i18n="middlesLabel">Middles</div>
             <div class="value tabnum purple" id="k-mids">—</div>
           </div>
-        </div>
-        <div class="card">
+        </a>
+        <a class="card card-hover" href="/admin/scanner.html">
           <div class="kpi">
-            <div class="label">+EV</div>
+            <div class="label" data-i18n="evBets">+EV</div>
             <div class="value tabnum yellow" id="k-ev">—</div>
           </div>
-        </div>
-        <div class="card">
+        </a>
+        <a class="card card-hover" href="/admin/scanner.html">
           <div class="kpi">
-            <div class="label">Low hold</div>
+            <div class="label" data-i18n="lowHoldLabel">Low hold</div>
             <div class="value tabnum accent" id="k-low">—</div>
           </div>
-        </div>
+        </a>
       </div>
     </section>
 
@@ -55,26 +55,26 @@
       <div class="card">
         <h3>
           <span data-i18n="tracker">Bet tracker</span>
-          <span class="h3-meta"><span id="tracker-count">0 items</span></span>
+          <span class="h3-meta"><span id="tracker-count">0</span></span>
         </h3>
         <div class="row" style="margin-bottom:14px">
           <button class="primary" id="add-bet" data-i18n="addBet">Add bet</button>
           <button class="ghost" id="export-csv" data-i18n="export">Export CSV</button>
           <button class="ghost" id="import-csv" data-i18n="import">Import CSV</button>
           <div class="spacer"></div>
-          <span class="chip"><span class="dot"></span> local tracker</span>
+          <span class="chip outline"><span class="dot"></span><span data-i18n="localTracker">local tracker</span></span>
         </div>
         <div class="table-wrap" style="border:0;background:transparent">
           <table class="compact" id="tracker-table">
             <thead><tr>
-              <th>Event</th>
-              <th>Market</th>
-              <th>Selection</th>
-              <th>Book</th>
-              <th class="num">Odds</th>
-              <th class="num">Stake</th>
-              <th>Status</th>
-              <th class="num">Actions</th>
+              <th data-i18n="event">Event</th>
+              <th data-i18n="market">Market</th>
+              <th data-i18n="selection">Selection</th>
+              <th data-i18n="bookmaker">Book</th>
+              <th class="num" data-i18n="odds">Odds</th>
+              <th class="num" data-i18n="stake">Stake</th>
+              <th data-i18n="status">Status</th>
+              <th class="num" data-i18n="actions">Actions</th>
             </tr></thead>
             <tbody></tbody>
           </table>
@@ -86,21 +86,21 @@
     <section id="catalog">
       <div class="card">
         <h3>
-          <span>Market catalog</span>
-          <span class="h3-meta">discovered markets across all books</span>
+          <span data-i18n="marketCatalog">Market catalog</span>
+          <span class="h3-meta" data-i18n="discoveredMarkets">discovered markets across all books</span>
         </h3>
         <div class="row" style="margin-bottom:14px">
           <div class="field" style="flex:1;margin:0;max-width:320px">
-            <input type="text" id="cat-search" placeholder="Filter source / market...">
+            <input type="text" id="cat-search" data-i18n-placeholder="filterPlaceholder" placeholder="Filter source / market...">
           </div>
         </div>
         <div class="table-wrap" style="border:0;background:transparent">
           <table class="compact" id="catalog-table">
             <thead><tr>
-              <th>Source</th>
-              <th>Market</th>
-              <th class="num">Events</th>
-              <th class="num">Selections</th>
+              <th data-i18n="bookmaker">Source</th>
+              <th data-i18n="market">Market</th>
+              <th class="num" data-i18n="events">Events</th>
+              <th class="num" data-i18n="selections">Selections</th>
             </tr></thead>
             <tbody></tbody>
           </table>
@@ -112,36 +112,36 @@
   <link rel="stylesheet" href="/css/analytics.css">
   <dialog id="add-bet-dialog" class="arbiter-modal" aria-labelledby="add-bet-title" aria-modal="true">
     <header>
-      <h3 id="add-bet-title">Add bet</h3>
-      <button type="button" class="ghost icon" aria-label="Close dialog" data-close-add-bet title="Close">×</button>
+      <h3 id="add-bet-title" data-i18n="addBet">Add bet</h3>
+      <button type="button" class="ghost icon" data-close-add-bet data-i18n-title="close" data-i18n-aria-label="close" title="Close">×</button>
     </header>
     <form id="add-bet-form" method="dialog" novalidate>
-      <div class="field"><label for="ab-selection">Selection *</label><input id="ab-selection" name="selection" type="text" required autocomplete="off" placeholder="e.g. FCSB"></div>
+      <div class="field"><label for="ab-selection" data-i18n="selection">Selection *</label><input id="ab-selection" name="selection" type="text" required autocomplete="off" placeholder="e.g. FCSB"></div>
       <div class="grid">
-        <div class="field"><label for="ab-odds">Odds *</label><input id="ab-odds" name="odds" type="number" step="0.01" min="1.01" required placeholder="2.10"></div>
-        <div class="field"><label for="ab-stake">Stake *</label><input id="ab-stake" name="stake" type="number" step="0.01" min="0.01" required placeholder="100"></div>
+        <div class="field"><label for="ab-odds" data-i18n="odds">Odds *</label><input id="ab-odds" name="odds" type="number" step="0.01" min="1.01" required placeholder="2.10"></div>
+        <div class="field"><label for="ab-stake" data-i18n="stake">Stake *</label><input id="ab-stake" name="stake" type="number" step="0.01" min="0.01" required placeholder="100"></div>
       </div>
       <div class="grid">
-        <div class="field"><label for="ab-source">Book</label><input id="ab-source" name="sourceId" type="text" placeholder="betano"></div>
-        <div class="field"><label for="ab-market">Market</label><input id="ab-market" name="marketKey" type="text" value="MATCH_ODDS"></div>
+        <div class="field"><label for="ab-source" data-i18n="bookmaker">Book</label><input id="ab-source" name="sourceId" type="text" placeholder="betano"></div>
+        <div class="field"><label for="ab-market" data-i18n="market">Market</label><input id="ab-market" name="marketKey" type="text" value="MATCH_ODDS"></div>
       </div>
       <div class="row" style="margin-top:var(--s-5)">
-        <button type="submit" class="primary">Save</button>
-        <button type="button" class="ghost" data-close-add-bet>Cancel</button>
+        <button type="submit" class="primary" data-i18n="save">Save</button>
+        <button type="button" class="ghost" data-close-add-bet data-i18n="cancel">Cancel</button>
       </div>
       <p id="add-bet-error" class="alert hidden" role="alert" aria-live="polite"></p>
     </form>
   </dialog>
   <dialog id="import-csv-dialog" class="arbiter-modal" aria-labelledby="import-csv-title" aria-modal="true">
     <header>
-      <h3 id="import-csv-title">Import CSV</h3>
-      <button type="button" class="ghost icon" aria-label="Close dialog" data-close-import-csv title="Close">×</button>
+      <h3 id="import-csv-title" data-i18n="import">Import CSV</h3>
+      <button type="button" class="ghost icon" data-close-import-csv data-i18n-title="close" data-i18n-aria-label="close" title="Close">×</button>
     </header>
     <form id="import-csv-form" method="dialog" novalidate>
-      <div class="field"><label for="import-csv-input">Paste CSV (id,... headers in row 1)</label><textarea id="import-csv-input" name="csv" rows="8" required placeholder="id,selection,odds,stake&#10;1,FCSB,2.10,100"></textarea></div>
+      <div class="field"><label for="import-csv-input" data-i18n="pasteCsv">Paste CSV (id,... headers in row 1)</label><textarea id="import-csv-input" name="csv" rows="8" required placeholder="id,selection,odds,stake&#10;1,FCSB,2.10,100"></textarea></div>
       <div class="row" style="margin-top:var(--s-5)">
-        <button type="submit" class="primary">Import</button>
-        <button type="button" class="ghost" data-close-import-csv>Cancel</button>
+        <button type="submit" class="primary" data-i18n="import">Import</button>
+        <button type="button" class="ghost" data-close-import-csv data-i18n="cancel">Cancel</button>
       </div>
       <p id="import-csv-error" class="alert hidden" role="alert" aria-live="polite"></p>
     </form>

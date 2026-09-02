@@ -26,7 +26,7 @@
         </a>`;
     }).join('');
 
-    const langBtn = `<button type="button" class="ghost lang-toggle" data-lang-toggle aria-label="Toggle language">${window.arbiterI18n.lang === 'ro' ? 'RO' : 'EN'}</button>`;
+    const langBtn = `<button type="button" class="ghost lang-toggle" data-lang-toggle aria-label="Toggle language">${window.arbiterI18n.t('language')}</button>`;
 
     const skip = `<a class="visually-hidden-focusable" href="#main-content" style="position:absolute;inset:8px auto auto 8px;background:var(--accent);color:#06121d;padding:8px 12px;border-radius:var(--r-sm);z-index:9999;transform:translateY(-100%);">Skip to content</a>`;
     // reveal on focus via CSS transform
@@ -44,17 +44,12 @@
         </div>
 
         <div class="sidebar-section">
-          <div class="label" id="nav-workspace">Workspace</div>
+          <div class="label" id="nav-workspace" data-i18n="workspace">Workspace</div>
           <nav aria-labelledby="nav-workspace" role="navigation">${nav}</nav>
         </div>
 
         <div class="sidebar-footer" role="contentinfo">
-          <div class="status" role="status" aria-live="polite">
-            <span class="dot live" aria-hidden="true"></span>
-            <span>Local · <span class="mono">127.0.0.1</span></span>
-          </div>
           <div class="row" style="gap:8px">
-            <span class="muted text-xs" style="flex:1">Language</span>
             ${langBtn}
           </div>
         </div>
@@ -69,11 +64,11 @@
     if (main && !main.id) main.id = 'main-content';
     main.setAttribute('role', 'main');
     main.setAttribute('aria-live', 'polite');
-    const wrap = document.createElement('div');
-    wrap.className = 'app';
-    const sidebar = document.createElement('div');
-    sidebar.innerHTML = buildSidebar(active);
-    document.body.insertBefore(sidebar, document.body.firstChild);
+    const app = document.createElement('div');
+    app.className = 'app';
+    app.innerHTML = buildSidebar(active);
+    document.body.insertBefore(app, document.body.firstChild);
+    app.appendChild(main);
     document.body.classList.add('has-sidebar');
     document.querySelectorAll('[data-lang-toggle]').forEach((btn) => btn.addEventListener('click', () => {
       const cur = window.arbiterI18n.lang;

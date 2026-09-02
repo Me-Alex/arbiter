@@ -11,24 +11,30 @@
     <div class="page-header">
       <div>
         <h2 data-i18n="scanner">Scanner</h2>
-        <div class="text-xs muted" style="margin-top:4px">Run a manual scan against the current workspace</div>
+        <div class="text-xs muted" style="margin-top:4px" data-i18n="scannerSubtitle">Run a manual scan against the current workspace</div>
       </div>
       <div class="meta">
+        <span class="chip outline"><span class="dot" id="conn-dot"></span><span id="conn-state" data-i18n="connected">connected</span></span>
         <button class="ghost lang-toggle" data-lang-toggle>RO</button>
       </div>
     </div>
 
+    <div id="scan-empty" class="hidden"></div>
+
     <!-- Scan parameters -->
     <div class="card" style="margin-bottom:20px">
-      <h3><span>Scan parameters</span><span class="h3-meta">Preview only · does not replace the published run</span></h3>
+      <h3>
+        <span data-i18n="scanParams">Scan parameters</span>
+        <span class="h3-meta" data-i18n="previewOnly">Preview only · does not replace the published run</span>
+      </h3>
       <div class="grid cols-6" style="gap:14px">
         <div class="field"><label data-i18n="bankroll">Bankroll</label><input type="number" id="bankroll" value="1000" min="10"></div>
-        <div class="field"><label>Min ROI %</label><input type="number" id="min-roi" value="0" step="0.1"></div>
-        <div class="field"><label>Max middle risk %</label><input type="number" id="mid-risk" value="15" step="0.5"></div>
-        <div class="field"><label>Min middle ROI %</label><input type="number" id="mid-roi" value="20" step="0.5"></div>
-        <div class="field"><label>Profile</label><select id="profile"></select></div>
+        <div class="field"><label data-i18n="minRoi">Min ROI %</label><input type="number" id="min-roi" value="0" step="0.1"></div>
+        <div class="field"><label data-i18n="maxMiddleRisk">Max middle risk %</label><input type="number" id="mid-risk" value="15" step="0.5"></div>
+        <div class="field"><label data-i18n="minMiddleRoi">Min middle ROI %</label><input type="number" id="mid-roi" value="20" step="0.5"></div>
+        <div class="field"><label data-i18n="profile">Profile</label><select id="profile"></select></div>
         <div class="field" style="display:flex;align-items:flex-end">
-          <button class="primary" id="rescan" style="width:100%">Re-scan</button>
+          <button class="primary" id="rescan" style="width:100%" data-i18n="rescan">Re-scan</button>
         </div>
       </div>
     </div>
@@ -37,18 +43,18 @@
     <div class="grid cols-2" style="margin-bottom:20px">
       <div class="card">
         <h3>
-          <span><span style="color:var(--green)">●</span> Arbitrage</span>
-          <span class="h3-meta" id="arb-count">0 opportunities</span>
+          <span><span style="color:var(--green)">●</span> <span data-i18n="arbitrage">Arbitrage</span></span>
+          <span class="h3-meta" id="arb-count">0</span>
         </h3>
         <div class="table-wrap" style="border:0;background:transparent">
           <table class="compact" id="arb-table">
             <thead><tr>
-              <th>Match</th>
-              <th>Market</th>
-              <th class="num">ROI %</th>
-              <th class="num">Stake</th>
-              <th class="num">Profit</th>
-              <th>Status</th>
+              <th data-i18n="match">Match</th>
+              <th data-i18n="market">Market</th>
+              <th class="num" data-i18n="roi">ROI %</th>
+              <th class="num" data-i18n="stake">Stake</th>
+              <th class="num" data-i18n="profit">Profit</th>
+              <th data-i18n="status">Status</th>
             </tr></thead>
             <tbody></tbody>
           </table>
@@ -56,17 +62,17 @@
       </div>
       <div class="card">
         <h3>
-          <span><span style="color:var(--purple)">●</span> Middles</span>
-          <span class="h3-meta" id="mid-count">0 middles</span>
+          <span><span style="color:var(--purple)">●</span> <span data-i18n="middlesLabel">Middles</span></span>
+          <span class="h3-meta" id="mid-count">0</span>
         </h3>
         <div class="table-wrap" style="border:0;background:transparent">
           <table class="compact" id="mid-table">
             <thead><tr>
-              <th>Match</th>
-              <th>Lines</th>
-              <th class="num">ROI %</th>
-              <th class="num">Risk %</th>
-              <th>Status</th>
+              <th data-i18n="match">Match</th>
+              <th data-i18n="lines">Lines</th>
+              <th class="num" data-i18n="roi">ROI %</th>
+              <th class="num" data-i18n="riskPct">Risk %</th>
+              <th data-i18n="status">Status</th>
             </tr></thead>
             <tbody></tbody>
           </table>
@@ -77,18 +83,18 @@
     <!-- +EV -->
     <div class="card">
       <h3>
-        <span><span style="color:var(--yellow)">●</span> Positive EV</span>
-        <span class="h3-meta">Top 100 by EV</span>
+        <span><span style="color:var(--yellow)">●</span> <span data-i18n="positiveEv">Positive EV</span></span>
+        <span class="h3-meta" data-i18n="top100ByEv">Top 100 by EV</span>
       </h3>
       <div class="table-wrap" style="border:0;background:transparent">
         <table class="compact" id="ev-table">
           <thead><tr>
-            <th>Match</th>
-            <th>Selection</th>
-            <th>Book</th>
-            <th class="num">Odds</th>
-            <th class="num">EV %</th>
-            <th class="num">Stake</th>
+            <th data-i18n="match">Match</th>
+            <th data-i18n="selection">Selection</th>
+            <th data-i18n="bookmaker">Book</th>
+            <th class="num" data-i18n="odds">Odds</th>
+            <th class="num" data-i18n="evPct">EV %</th>
+            <th class="num" data-i18n="stake">Stake</th>
           </tr></thead>
           <tbody></tbody>
         </table>

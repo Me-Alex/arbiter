@@ -11,7 +11,7 @@
     <div class="page-header">
       <div>
         <h2 data-i18n="scrapeControl">Scrape Control</h2>
-        <div class="text-xs muted" style="margin-top:4px">Orchestrate the TinyFish pipeline and watch live progress</div>
+        <div class="text-xs muted" style="margin-top:4px" data-i18n="scrapeSubtitle">Run validated public feeds and watch source health in real time</div>
       </div>
       <div class="meta">
         <span class="chip"><span class="dot" id="head-dot"></span><span id="head-status">idle</span></span>
@@ -23,30 +23,30 @@
     <div class="grid cols-4" style="margin-bottom:20px">
       <div class="card">
         <div class="kpi">
-          <div class="label">Status</div>
-          <div class="value" id="m-status"><span class="status idle">idle</span></div>
-          <div class="delta" id="m-started">awaiting trigger</div>
+          <div class="label" data-i18n="status">Status</div>
+          <div class="value center" id="m-status"><span class="status idle">idle</span></div>
+          <div class="delta" id="m-started" data-i18n="awaitingTrigger">awaiting trigger</div>
         </div>
       </div>
       <div class="card">
         <div class="kpi">
-          <div class="label">Completed Jobs</div>
+          <div class="label" data-i18n="completedJobs">Completed Jobs</div>
           <div class="value tabnum green" id="m-completed">—</div>
           <div class="delta" id="m-finished">—</div>
         </div>
       </div>
       <div class="card">
         <div class="kpi">
-          <div class="label">Failed Jobs</div>
+          <div class="label" data-i18n="failedJobs">Failed Jobs</div>
           <div class="value tabnum" id="m-failed">—</div>
           <div class="delta" id="m-failed-detail">—</div>
         </div>
       </div>
       <div class="card">
         <div class="kpi">
-          <div class="label">Last Scan</div>
+          <div class="label" data-i18n="lastScan">Last Scan</div>
           <div class="value tabnum accent" id="m-events">—</div>
-          <div class="delta"><span id="m-arb-summary">opps: — · middles: —</span></div>
+          <div class="delta"><span id="m-arb-summary"></span></div>
         </div>
       </div>
     </div>
@@ -71,42 +71,47 @@
     <!-- Pipeline stepper -->
     <div class="card" style="margin-bottom:20px">
       <h3>
-        <span>Pipeline</span>
-        <span class="h3-meta">5-stage cycle · scrape → scan → verify → catalog → complete</span>
+        <span data-i18n="pipeline">Pipeline</span>
+        <span class="h3-meta" data-i18n="pipelineMeta">5-stage cycle · scrape → scan → verify → catalog → complete</span>
       </h3>
       <div class="stepper">
-        <div class="step" data-step="0"><span class="step-num">1</span> Scraping</div>
-        <div class="step" data-step="1"><span class="step-num">2</span> Scanning</div>
-        <div class="step" data-step="2"><span class="step-num">3</span> Verifying</div>
-        <div class="step" data-step="3"><span class="step-num">4</span> Cataloging</div>
-        <div class="step" data-step="4"><span class="step-num">5</span> Complete</div>
+        <div class="step" data-step="0"><span class="step-num">1</span><span class="step-label" data-i18n="scraping">Scraping</span></div>
+        <div class="step" data-step="1"><span class="step-num">2</span><span class="step-label" data-i18n="scanning">Scanning</span></div>
+        <div class="step" data-step="2"><span class="step-num">3</span><span class="step-label" data-i18n="verifying">Verifying</span></div>
+        <div class="step" data-step="3"><span class="step-num">4</span><span class="step-label" data-i18n="cataloging">Cataloging</span></div>
+        <div class="step" data-step="4"><span class="step-num">5</span> <span class="step-label" id="step-complete">Complete</span></div>
       </div>
 
       <div class="activity-grid" style="margin-top:16px">
         <div class="activity-cell">
-          <div class="label">Activity</div>
+          <div class="label" data-i18n="activity">Activity</div>
           <div class="value truncate" id="act-line">idle</div>
         </div>
         <div class="activity-cell">
-          <div class="label">Active bookmaker</div>
+          <div class="label" data-i18n="activeBookmaker">Active bookmaker</div>
           <div class="value lg" id="act-book">—</div>
         </div>
         <div class="activity-cell">
-          <div class="label">Queue vs finished</div>
+          <div class="label" data-i18n="queueFinished">Queue vs finished</div>
           <div class="value lg tabnum" id="act-qf">0 / 0</div>
         </div>
         <div class="activity-cell">
-          <div class="label">Events / priced</div>
-          <div class="value lg tabnum" id="act-events">0 / 0</div>
+          <div class="label" data-i18n="events">Events</div>
+          <div class="value lg tabnum" id="act-events">0</div>
         </div>
         <div class="activity-cell">
-          <div class="label">Profile</div>
+          <div class="label" data-i18n="jobResult">Job result</div>
+          <div class="value" id="act-result">—</div>
+        </div>
+        <div class="activity-cell">
+          <div class="label" data-i18n="profile">Profile</div>
           <div class="value" id="act-profile">—</div>
         </div>
-        <div class="activity-cell">
-          <div class="label">Run ID</div>
-          <div class="value truncate mono" id="act-runid">—</div>
-        </div>
+      </div>
+
+      <div class="row" style="justify-content:space-between;margin-top:12px">
+        <span class="muted mono text-xs truncate" id="act-runid">—</span>
+        <span class="muted text-xs" id="act-duration"></span>
       </div>
     </div>
 
@@ -115,32 +120,48 @@
     <!-- Configuration + Bookmakers -->
     <div class="grid cols-2" style="margin-bottom:20px">
       <div class="card">
-        <h3><span>Configuration</span></h3>
+        <h3><span data-i18n="configuration">Configuration</span></h3>
         <div class="field">
-          <label>Profile</label>
+          <label data-i18n="profile">Profile</label>
           <select id="profile"></select>
+        </div>
+        <div class="field">
+          <label for="max-events" data-i18n="eventCollection">Event collection</label>
+          <select id="max-events" data-i18n-title="eventCollectionHint" title="All = every qualifying event available from each provider's public feed/window">
+            <option value="all" selected data-i18n="allEvents">All available events</option>
+            <option value="40">40 events</option>
+            <option value="100">100 events</option>
+            <option value="500">500 events</option>
+            <option value="1000">1,000 events</option>
+          </select>
+          <div class="muted text-xs" data-i18n="eventCollectionHint">All = every qualifying event available from each provider's public feed/window.</div>
         </div>
         <div class="grid cols-2">
           <div class="field"><label data-i18n="bankroll">Bankroll</label><input type="number" id="bankroll" value="1000" min="10" step="10"></div>
-          <div class="field"><label>Min ROI %</label><input type="number" id="min-roi" value="0" step="0.1"></div>
-          <div class="field"><label>Max middle risk %</label><input type="number" id="mid-risk" value="15" step="0.5"></div>
-          <div class="field"><label>Min middle ROI %</label><input type="number" id="mid-roi" value="20" step="0.5"></div>
+          <div class="field"><label data-i18n="minRoi">Min ROI %</label><input type="number" id="min-roi" value="0" step="0.1"></div>
+          <div class="field"><label data-i18n="maxMiddleRisk">Max middle risk %</label><input type="number" id="mid-risk" value="15" step="0.5"></div>
+          <div class="field"><label data-i18n="minMiddleRoi">Min middle ROI %</label><input type="number" id="mid-roi" value="20" step="0.5"></div>
         </div>
         <div class="row" style="margin-top:4px">
-          <label class="checkbox"><input type="checkbox" id="inc-live"> include live</label>
-          <label class="checkbox"><input type="checkbox" id="inc-past"> include past</label>
+          <label class="checkbox"><input type="checkbox" id="inc-live"> <span data-i18n="includeLive">include live</span></label>
+          <label class="checkbox"><input type="checkbox" id="inc-past"> <span data-i18n="includePast">include past</span></label>
         </div>
         <div class="row" style="margin-top:14px">
           <button class="primary" id="run-btn" data-i18n="runScrape">Run scrape</button>
-          <button class="ghost" id="save-btn">Profile help</button>
+          <button class="ghost" id="save-btn" data-i18n="profileHelp">Profile help</button>
         </div>
       </div>
 
       <div class="card">
         <h3>
-          <span>Bookmakers</span>
-          <span class="h3-meta"><span id="bm-selected">12</span> / <span id="bm-total">12</span> selected</span>
+          <span data-i18n="bookmakers">Bookmakers</span>
+          <span class="h3-meta"><span id="bm-selected">0</span> / <span id="bm-total">0</span> <span data-i18n="sourcesSelected">sources selected</span></span>
         </h3>
+        <div class="row" style="gap:8px;margin-bottom:8px">
+          <button type="button" class="ghost text-xs" id="btn-select-all" style="padding:2px 8px" data-i18n="selectAll">Toate</button>
+          <button type="button" class="ghost text-xs" id="btn-select-validated" style="padding:2px 8px" data-i18n="selectValidated">Doar validate</button>
+          <button type="button" class="ghost text-xs" id="btn-select-none" style="padding:2px 8px" data-i18n="selectNone">Niciuna</button>
+        </div>
         <div id="bookmaker-list" class="row" style="gap:6px;flex-wrap:wrap;margin-bottom:12px"></div>
         <div id="job-rows"></div>
       </div>
@@ -149,8 +170,8 @@
     <!-- Live log -->
     <div class="card" style="margin-bottom:20px">
       <h3>
-        <span><span class="dot live pulse" style="margin-right:8px;vertical-align:middle"></span>Live log</span>
-        <span class="h3-meta">Streaming from orchestrator</span>
+        <span><span class="dot live pulse" style="margin-right:8px;vertical-align:middle"></span><span data-i18n="liveLog">Live log</span></span>
+        <span class="h3-meta" data-i18n="streamingFrom">Streaming from orchestrator</span>
       </h3>
       <div class="log" id="log-panel"></div>
     </div>
@@ -158,10 +179,10 @@
     <!-- Last run + scheduler -->
     <div class="grid cols-2">
       <div class="card">
-        <h3><span>Last Scrape Run</span></h3>
+        <h3><span data-i18n="lastScrapeRun">Last Scrape Run</span></h3>
         <div class="table-wrap" style="border:0;background:transparent">
           <table class="compact">
-            <thead><tr><th>ID</th><th class="num">Events</th><th class="num">Ms</th><th>Status</th></tr></thead>
+            <thead><tr><th>ID</th><th class="num" data-i18n="events">Events</th><th class="num">Ms</th><th data-i18n="status">Status</th></tr></thead>
             <tbody id="last-run-table"></tbody>
           </table>
         </div>
@@ -170,13 +191,13 @@
       <div class="card">
         <h3><span data-i18n="scheduler">Scheduler</span></h3>
         <div class="row" style="margin-bottom:12px">
-          <label class="checkbox"><input type="checkbox" id="sched-enabled"> enabled</label>
+          <label class="checkbox"><input type="checkbox" id="sched-enabled"> <span data-i18n="enabled">enabled</span></label>
           <div class="spacer"></div>
           <div class="field" style="margin:0">
             <label data-i18n="interval">Interval (min)</label>
             <input type="number" id="sched-interval" value="15" min="1" max="1440" style="width:80px">
           </div>
-          <button class="ghost" id="sched-save">Save</button>
+          <button class="ghost" id="sched-save" data-i18n="save">Save</button>
         </div>
         <div class="muted text-xs" id="sched-last">—</div>
       </div>
@@ -184,10 +205,10 @@
 
     <!-- Recent scan history -->
     <div class="card" style="margin-top:20px">
-      <h3><span>Recent Scan History</span></h3>
+      <h3><span data-i18n="recentScanHistory">Recent Scan History</span></h3>
       <div class="table-wrap" style="border:0;background:transparent">
         <table class="compact">
-          <thead><tr><th>Run ID</th><th>Started</th><th class="num">Jobs</th><th class="num">Events</th><th>Status</th></tr></thead>
+          <thead><tr><th data-i18n="runId">Run ID</th><th data-i18n="started">Started</th><th class="num" data-i18n="jobs">Jobs</th><th class="num" data-i18n="events">Events</th><th data-i18n="status">Status</th></tr></thead>
           <tbody id="recent-table"></tbody>
         </table>
       </div>

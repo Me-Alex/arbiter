@@ -385,14 +385,6 @@ main > section + section { margin-top: var(--s-6); }
   margin-right: var(--s-1);
 }
 
-.sidebar-footer .status {
-  display: flex;
-  align-items: center;
-  gap: var(--s-2);
-  font-size: var(--fs-xs);
-  color: var(--text-muted);
-}
-
 .dot {
   width: 6px;
   height: 6px;
@@ -408,6 +400,7 @@ main > section + section { margin-top: var(--s-6); }
   animation: ping 2.4s var(--ease-out) infinite;
 }
 .dot.busy { background: var(--yellow); animation: ping 1.6s var(--ease-out) infinite; box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.5); }
+.dot.warn { background: var(--yellow); }
 .dot.error { background: var(--red); }
 
 @keyframes ping {
@@ -494,7 +487,8 @@ main > section + section { margin-top: var(--s-6); }
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: var(--s-2);
+  gap: var(--s-1) var(--s-2);
+  flex-wrap: wrap;
 }
 
 .kpi .value {
@@ -512,6 +506,11 @@ main > section + section { margin-top: var(--s-6); }
 .kpi .value.yellow { color: var(--yellow); }
 .kpi .value.accent { color: var(--accent); }
 .kpi .value.purple { color: var(--purple); }
+.kpi .value.center {
+  display: flex;
+  align-items: center;
+  min-height: 38px;
+}
 
 .kpi .delta {
   font-size: var(--fs-xs);
@@ -866,7 +865,7 @@ table tr[data-link] { cursor: pointer; }
 
 .step {
   position: relative;
-  padding: var(--s-3) var(--s-3) var(--s-2);
+  padding: var(--s-3) var(--s-2) var(--s-2);
   text-align: center;
   border-top: 2px solid var(--border);
   color: var(--text-dim);
@@ -875,6 +874,10 @@ table tr[data-link] { cursor: pointer; }
   text-transform: uppercase;
   letter-spacing: 0.06em;
   transition: all var(--t-base) var(--ease-out);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
 }
 
 .step .step-num {
@@ -886,7 +889,6 @@ table tr[data-link] { cursor: pointer; }
   background: var(--bg-2);
   color: var(--text-muted);
   font-size: 10.5px;
-  margin-right: var(--s-2);
   border: 1px solid var(--border);
   transition: all var(--t-base) var(--ease-out);
   font-family: var(--font-mono);
@@ -926,7 +928,7 @@ table tr[data-link] { cursor: pointer; }
 
 .activity-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: var(--s-3);
 }
 
@@ -1149,6 +1151,7 @@ input[type="checkbox"], input[type="radio"] {
 .alert.warn    { border-left-color: var(--yellow); color: var(--yellow); background: var(--yellow-soft); }
 .alert.info    { border-left-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
 .alert.success { border-left-color: var(--green); color: var(--green); background: var(--green-soft); }
+.alert a       { color: inherit; text-decoration: underline; font-weight: 600; }
 
 .empty {
   color: var(--text-dim);
@@ -1172,6 +1175,28 @@ input[type="checkbox"], input[type="radio"] {
   box-shadow: var(--shadow-sm), inset 0 1px 0 rgba(255, 255, 255, 0.03);
 }
 .empty-icon svg { width: 22px; height: 22px; }
+
+.empty .empty-actions {
+  margin-top: var(--s-4);
+  display: flex;
+  gap: var(--s-2);
+  justify-content: center;
+  flex-wrap: wrap;
+  font-style: normal;
+}
+
+/* KPI / card links */
+a.card {
+  display: block;
+  color: inherit;
+}
+a.card:hover {
+  color: inherit;
+  text-decoration: none;
+}
+
+.card h3 a.h3-meta { color: var(--text-dim); }
+.card h3 a.h3-meta:hover { color: var(--accent); }
 
 /* ============================================================
    Visitor dashboard — opportunity cards
@@ -1519,10 +1544,12 @@ input[type="checkbox"], input[type="radio"] {
   }
   main { padding: var(--s-5); }
   .grid.cols-2, .grid.cols-3, .grid.cols-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .activity-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
 @media (max-width: 600px) {
   .grid.cols-2, .grid.cols-3, .grid.cols-4, .grid.cols-6 { grid-template-columns: 1fr; }
+  .activity-grid { grid-template-columns: 1fr; }
   .opp-card .head { flex-direction: column; align-items: flex-start; }
   .opp-card .roi-wrap { text-align: left; width: 100%; }
   .opp-card .roi-meta { justify-content: flex-start; }

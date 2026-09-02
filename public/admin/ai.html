@@ -10,11 +10,12 @@
   <main>
     <div class="page-header">
       <div>
-        <h2>Scan Insights</h2>
-        <div class="text-xs muted" style="margin-top:4px">Deterministic summaries from the current verified scan</div>
+        <h2 data-i18n="ai">AI Insights</h2>
+        <div class="text-xs muted" style="margin-top:4px" data-i18n="aiSubtitle">Deterministic summaries from the current verified scan</div>
       </div>
       <div class="meta">
-        <span class="chip outline">scan-derived</span>
+        <span class="chip outline" data-i18n="scanDerived">scan-derived</span>
+        <span class="chip outline"><span class="dot" id="conn-dot"></span><span id="conn-state" data-i18n="connected">connected</span></span>
         <button class="ghost lang-toggle" data-lang-toggle>RO</button>
       </div>
     </div>
@@ -22,19 +23,19 @@
     <div class="grid cols-2" style="gap:20px">
       <div class="card card-elevated">
         <h3>
-          <span>Data health</span>
-          <span class="h3-meta">from the published scan</span>
+          <span data-i18n="dataHealth">Data health</span>
+          <span class="h3-meta" data-i18n="fromPublishedScan">from the published scan</span>
         </h3>
-        <div id="scan-health" class="empty">loading published scan health…</div>
+        <div id="scan-health" class="empty" data-i18n="loadingScanHealth">loading published scan health…</div>
       </div>
 
       <!-- Insights -->
       <div class="card">
         <h3>
-          <span>Insights</span>
+          <span data-i18n="insights">Insights</span>
           <span class="h3-meta" id="insights-count">—</span>
         </h3>
-        <div id="ai-insights" class="empty">no insights yet</div>
+        <div id="ai-insights" class="empty" data-i18n="noInsights">no insights yet</div>
       </div>
     </div>
   </main>

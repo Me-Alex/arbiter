@@ -14,14 +14,16 @@
         <div>
           <h2>Arbiter Admin</h2>
         </div>
+        <div class="spacer"></div>
+        <button type="button" class="ghost lang-toggle" data-lang-toggle aria-label="Toggle language">EN</button>
       </div>
-      <p class="muted">Local-only access · this build does not implement remote authentication.</p>
-      <div class="alert info" style="margin-top:14px;font-size:11.5px">
+      <p class="muted" data-i18n="loginMuted">Local-only access · this build does not implement remote authentication.</p>
+      <div class="alert info" style="margin-top:14px;font-size:11.5px" data-i18n="loginAlert">
         Administrative pages are available only through the loopback-bound local server. Do not expose this application to a network without real server-side authentication.
       </div>
       <div class="row" style="margin-top:18px">
-        <a href="/admin/scrape.html" class="primary" style="flex:1;text-align:center">Open local control</a>
-        <a href="/" class="muted" style="margin-left:8px">← back</a>
+        <a href="/admin/scrape.html" class="btn primary" style="flex:1" data-i18n="loginOpen">Open local control</a>
+        <a href="/" class="muted" data-i18n="back">← back</a>
       </div>
     </form>
   </div>
