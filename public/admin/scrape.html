@@ -3,8 +3,10 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <title>Arbiter — Scrape Control</title>
   <link rel="stylesheet" href="/css/theme.css">
+  <link rel="stylesheet" href="/css/scrape.css">
 </head>
 <body>
   <main>
@@ -20,29 +22,29 @@
     </div>
 
     <!-- KPI strip -->
-    <div class="grid cols-4" style="margin-bottom:20px">
-      <div class="card">
+    <div class="grid cols-4 scrape-kpis" style="margin-bottom:20px">
+      <div class="card kpi-card">
         <div class="kpi">
           <div class="label" data-i18n="status">Status</div>
           <div class="value center" id="m-status"><span class="status idle">idle</span></div>
           <div class="delta" id="m-started" data-i18n="awaitingTrigger">awaiting trigger</div>
         </div>
       </div>
-      <div class="card">
+      <div class="card kpi-card">
         <div class="kpi">
           <div class="label" data-i18n="completedJobs">Completed Jobs</div>
           <div class="value tabnum green" id="m-completed">—</div>
           <div class="delta" id="m-finished">—</div>
         </div>
       </div>
-      <div class="card">
+      <div class="card kpi-card kpi-card-failed">
         <div class="kpi">
           <div class="label" data-i18n="failedJobs">Failed Jobs</div>
           <div class="value tabnum" id="m-failed">—</div>
           <div class="delta" id="m-failed-detail">—</div>
         </div>
       </div>
-      <div class="card">
+      <div class="card kpi-card">
         <div class="kpi">
           <div class="label" data-i18n="lastScan">Last Scan</div>
           <div class="value tabnum accent" id="m-events">—</div>
@@ -52,7 +54,7 @@
     </div>
 
     <!-- Live progress card -->
-    <div class="card" id="progress-card" style="margin-bottom:20px;display:none">
+    <div class="card progress-card" id="progress-card" style="margin-bottom:20px;display:none">
       <div class="row" style="align-items:flex-start">
         <div style="flex:1;min-width:0">
           <div class="row" style="gap:12px;margin-bottom:10px">
@@ -101,11 +103,11 @@
         </div>
         <div class="activity-cell">
           <div class="label" data-i18n="jobResult">Job result</div>
-          <div class="value" id="act-result">—</div>
+          <div class="value result-value" id="act-result">—</div>
         </div>
         <div class="activity-cell">
           <div class="label" data-i18n="profile">Profile</div>
-          <div class="value" id="act-profile">—</div>
+          <div class="value result-value" id="act-profile">—</div>
         </div>
       </div>
 
@@ -118,12 +120,18 @@
     <div id="error-box" class="alert hidden"></div>
 
     <!-- Configuration + Bookmakers -->
-    <div class="grid cols-2" style="margin-bottom:20px">
-      <div class="card">
+    <div class="grid cols-2 scrape-workspace" style="margin-bottom:20px">
+      <div class="card config-card">
         <h3><span data-i18n="configuration">Configuration</span></h3>
         <div class="field">
           <label data-i18n="profile">Profile</label>
           <select id="profile"></select>
+        </div>
+        <div class="field">
+          <label data-i18n="sport">Sport</label>
+          <select id="sport-filter">
+            <option value="" data-i18n="allSports">All sports</option>
+          </select>
         </div>
         <div class="field">
           <label for="max-events" data-i18n="eventCollection">Event collection</label>
@@ -152,12 +160,12 @@
         </div>
       </div>
 
-      <div class="card">
+      <div class="card bookmakers-card">
         <h3>
           <span data-i18n="bookmakers">Bookmakers</span>
           <span class="h3-meta"><span id="bm-selected">0</span> / <span id="bm-total">0</span> <span data-i18n="sourcesSelected">sources selected</span></span>
         </h3>
-        <div class="row" style="gap:8px;margin-bottom:8px">
+        <div class="row bookmaker-actions" style="gap:8px;margin-bottom:8px">
           <button type="button" class="ghost text-xs" id="btn-select-all" style="padding:2px 8px" data-i18n="selectAll">Toate</button>
           <button type="button" class="ghost text-xs" id="btn-select-validated" style="padding:2px 8px" data-i18n="selectValidated">Doar validate</button>
           <button type="button" class="ghost text-xs" id="btn-select-none" style="padding:2px 8px" data-i18n="selectNone">Niciuna</button>
@@ -168,7 +176,7 @@
     </div>
 
     <!-- Live log -->
-    <div class="card" style="margin-bottom:20px">
+    <div class="card log-card" style="margin-bottom:20px">
       <h3>
         <span><span class="dot live pulse" style="margin-right:8px;vertical-align:middle"></span><span data-i18n="liveLog">Live log</span></span>
         <span class="h3-meta" data-i18n="streamingFrom">Streaming from orchestrator</span>
@@ -177,7 +185,7 @@
     </div>
 
     <!-- Last run + scheduler -->
-    <div class="grid cols-2">
+    <div class="grid cols-2 history-grid">
       <div class="card">
         <h3><span data-i18n="lastScrapeRun">Last Scrape Run</span></h3>
         <div class="table-wrap" style="border:0;background:transparent">
@@ -219,6 +227,8 @@
   <script src="/js/i18n.js"></script>
   <script src="/js/sse.js"></script>
   <script src="/js/app.js"></script>
-  <script src="/js/pages/scrape.js"></script>
+  <script src="/js/pages/common.js"></script>
+    <script src="/js/pages/scrape.js"></script
+
 </body>
 </html>
