@@ -2,147 +2,385 @@
   "jobs": [
     {
       "id": "superbet",
-      "name": "Superbet (TinyFish)",
+      "name": "Superbet (public offer v3)",
       "enabled": true,
-      "engine": "tinyfish",
-      "script": "tinyfish-scraper.mjs",
-      "sourceIds": ["superbet"]
+      "engine": "public-offer-v3",
+      "transport": "bookmaker-public-json",
+      "script": "superbet.mjs",
+      "sourceIds": [
+        "superbet"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Public offer v3 feed smoke-validated on 2026-09-01; bounded read-only collection with snapshot provenance."
     },
     {
       "id": "betano",
-      "name": "Betano (TinyFish)",
+      "name": "Betano",
       "enabled": true,
-      "engine": "tinyfish",
-      "script": "tinyfish-scraper.mjs",
-      "sourceIds": ["betano"]
+      "engine": "top-events-v2-json",
+      "transport": "betano-top-events-json",
+      "script": "betano.mjs",
+      "sourceIds": [
+        "betano"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Kaizen top-events-v2 JSON feed (ro.betano.com/api/home/top-events-v2/) smoke-validated on 2026-09-02 via headless browser navigation: 16 fresh prematch events with complete 1X2 ('Rezultat final', MRES/typeId 1) markets. The host Cloudflare-challenges bare fetch, so the feed is read in a real Chromium navigation context."
     },
     {
       "id": "fortuna",
-      "name": "Fortuna (TinyFish)",
+      "name": "Fortuna",
       "enabled": true,
-      "engine": "tinyfish",
-      "script": "tinyfish-scraper.mjs",
-      "sourceIds": ["fortuna"]
+      "engine": "fortuna-bff-graphql",
+      "transport": "bookmaker-public-graphql",
+      "script": "fortuna.mjs",
+      "sourceIds": [
+        "fortuna"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Targets api.efortuna.ro/offer/bff/graphql with preMatchEvents query; smoke validation pending."
     },
     {
       "id": "unibet",
-      "name": "Unibet (TinyFish)",
-      "enabled": true,
-      "engine": "tinyfish",
-      "script": "tinyfish-scraper.mjs",
-      "sourceIds": ["unibet"]
+      "name": "Unibet (public sports API v2)",
+      "enabled": false,
+      "engine": "public-sports-api-v2",
+      "transport": "bookmaker-public-json",
+      "script": "unibet.mjs",
+      "sourceIds": [
+        "unibet"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "One bounded smoke passed on 2026-09-01, but repeated validation timed out three times; source remains disabled until the public feed is reliably repeatable."
     },
     {
       "id": "stanleybet",
-      "name": "Stanleybet (TinyFish)",
+      "name": "Stanleybet",
       "enabled": true,
-      "engine": "tinyfish",
-      "script": "tinyfish-scraper.mjs",
-      "sourceIds": ["stanleybet"]
+      "engine": "nsoft-public-json",
+      "transport": "nsoft-public-sports-json",
+      "script": "stanleybet.mjs",
+      "sourceIds": [
+        "stanleybet"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "NSoft public sports events endpoint smoke-validated on 2026-09-01 with future prematch events and complete 1X2 markets; shares companyUuid with Admiral."
     },
     {
       "id": "casa-pariurilor",
-      "name": "Casa Pariurilor (TinyFish)",
+      "name": "Casa Pariurilor",
       "enabled": true,
-      "engine": "tinyfish",
-      "script": "tinyfish-scraper.mjs",
-      "sourceIds": ["casa-pariurilor"]
+      "engine": "fortuna-bff-graphql",
+      "transport": "bookmaker-public-graphql",
+      "script": "casa-pariurilor.mjs",
+      "sourceIds": [
+        "casa-pariurilor"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Shares Fortuna Entertainment Group platform with efortuna.ro; targets api.casapariurilor.ro/offer/bff/graphql via FortunaProvider; smoke validation pending."
     },
     {
       "id": "excelbet",
-      "name": "ExcelBet (TinyFish)",
+      "name": "ExcelBet",
       "enabled": true,
-      "engine": "tinyfish",
-      "script": "tinyfish-scraper.mjs",
-      "sourceIds": ["excelbet"]
+      "engine": "exalogic-xsport",
+      "transport": "exalogic-xsport-public-json",
+      "script": "excelbet.mjs",
+      "sourceIds": [
+        "excelbet"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Exalogic XSport getPalinsestoDelGiorno feed (systemCode=EXCELBET) smoke-validated on 2026-09-02 with future football events and complete 1X2 markets."
     },
     {
       "id": "netbet",
-      "name": "NetBet (TinyFish)",
+      "name": "NetBet (Sportify public JSON)",
       "enabled": true,
-      "engine": "tinyfish",
-      "script": "tinyfish-scraper.mjs",
-      "sourceIds": ["netbet"]
+      "engine": "sportify-public-json",
+      "transport": "bookmaker-public-json",
+      "script": "netbet.mjs",
+      "sourceIds": [
+        "netbet"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Public Sportify inventory-events feed smoke-validated on 2026-09-01 with future prematch events and complete 1X2 markets."
     },
     {
       "id": "admiral",
-      "name": "Admiral (TinyFish)",
+      "name": "Admiral (NSoft public JSON)",
       "enabled": true,
-      "engine": "tinyfish",
-      "script": "tinyfish-scraper.mjs",
-      "sourceIds": ["admiral"]
+      "engine": "nsoft-public-json",
+      "transport": "bookmaker-public-json",
+      "script": "nsoft.mjs",
+      "sourceIds": [
+        "admiral"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "NSoft public sports events endpoint smoke-validated on 2026-09-01 with future prematch events and complete 1X2 markets."
     },
     {
       "id": "winboss",
-      "name": "WinBoss (TinyFish)",
+      "name": "WinBoss",
       "enabled": true,
-      "engine": "tinyfish",
-      "script": "tinyfish-scraper.mjs",
-      "sourceIds": ["winboss"]
+      "engine": "exalogic-xsport",
+      "transport": "exalogic-xsport-public-json",
+      "script": "winboss.mjs",
+      "sourceIds": [
+        "winboss"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Exalogic XSport getPalinsestoDelGiorno feed (systemCode=WINBOSS) smoke-validated on 2026-09-02 with future football events and complete 1X2 markets."
     },
     {
       "id": "maxbet",
-      "name": "MaxBet (TinyFish)",
+      "name": "MaxBet",
       "enabled": true,
-      "engine": "tinyfish",
-      "script": "tinyfish-scraper.mjs",
-      "sourceIds": ["maxbet"]
+      "engine": "nsoft",
+      "transport": "nsoft-public-sports-json",
+      "script": "maxbet.mjs",
+      "sourceIds": [
+        "maxbet"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "NSoft public events feed (companyUuid=2191e3d6-b0e1-4f06-8b6a-4683203fb2fe) smoke-validated on 2026-09-02 with future football events and complete 1X2 markets."
     },
     {
       "id": "las-vegas",
-      "name": "Las Vegas (TinyFish)",
+      "name": "Las Vegas",
       "enabled": true,
-      "engine": "tinyfish",
-      "script": "tinyfish-scraper.mjs",
-      "sourceIds": ["las-vegas"]
+      "engine": "exalogic-xsport",
+      "transport": "exalogic-xsport-public-json",
+      "script": "las-vegas.mjs",
+      "sourceIds": [
+        "las-vegas"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Exalogic XSport getPalinsestoDelGiorno feed (systemCode=LASVEGAS) smoke-validated on 2026-09-02 with future football events and complete 1X2 markets."
     },
     {
       "id": "don",
-      "name": "Don (TinyFish)",
+      "name": "Don",
       "enabled": true,
-      "engine": "tinyfish",
-      "script": "tinyfish-scraper.mjs",
-      "sourceIds": ["don"]
+      "engine": "altenar-tenancy",
+      "transport": "altenar-sb2-widget-json",
+      "script": "altenar-sites.mjs",
+      "sourceIds": [
+        "don"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Altenar sb2 widget feed (sb2frontend-altenar2.biahosted.com GetUpcoming) smoke-validated on 2026-09-01 with future prematch events and complete 1X2 markets."
     },
     {
       "id": "topbet",
-      "name": "TopBet (TinyFish)",
+      "name": "TopBet",
       "enabled": true,
-      "engine": "tinyfish",
-      "script": "tinyfish-scraper.mjs",
-      "sourceIds": ["topbet"]
+      "engine": "altenar-tenancy",
+      "transport": "altenar-sb2-widget-json",
+      "script": "altenar-sites.mjs",
+      "sourceIds": [
+        "topbet"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Altenar sb2 widget feed (sb2frontend-altenar2.biahosted.com GetUpcoming) smoke-validated on 2026-09-01 with future prematch events and complete 1X2 markets."
     },
     {
       "id": "million",
-      "name": "Million (TinyFish)",
+      "name": "Million",
       "enabled": true,
-      "engine": "tinyfish",
-      "script": "tinyfish-scraper.mjs",
-      "sourceIds": ["million"]
+      "engine": "altenar-tenancy",
+      "transport": "altenar-sb2-widget-json",
+      "script": "altenar-sites.mjs",
+      "sourceIds": [
+        "million"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Altenar sb2 widget feed (sb2frontend-altenar2.biahosted.com GetUpcoming, integration=million) smoke-validated on 2026-09-02 with future prematch events and complete 1X2 markets."
     },
     {
       "id": "baumbet",
-      "name": "Baumbet (TinyFish)",
+      "name": "Baumbet",
       "enabled": true,
-      "engine": "tinyfish",
-      "script": "tinyfish-scraper.mjs",
-      "sourceIds": ["baumbet"]
+      "engine": "altenar-tenancy",
+      "transport": "altenar-sb2-widget-json",
+      "script": "altenar-sites.mjs",
+      "sourceIds": [
+        "baumbet"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Altenar sb2 widget feed (sb2frontend-altenar2.biahosted.com GetUpcoming, integration=baumbet) smoke-validated on 2026-09-02 with future prematch events and complete 1X2 markets."
     },
     {
       "id": "powerbet",
-      "name": "Powerbet (TinyFish)",
+      "name": "Powerbet",
       "enabled": true,
-      "engine": "tinyfish",
-      "script": "tinyfish-scraper.mjs",
-      "sourceIds": ["powerbet"]
+      "engine": "altenar-tenancy",
+      "transport": "altenar-sb2-widget-json",
+      "script": "powerbet.mjs",
+      "sourceIds": [
+        "powerbet"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Altenar sb2 widget feed (sb2frontend-altenar2.biahosted.com GetUpcoming, integration=powerbet) smoke-validated on 2026-09-02 with future prematch events and complete 1X2 markets."
     },
     {
       "id": "winbet",
-      "name": "Winbet (TinyFish)",
+      "name": "Winbet",
       "enabled": true,
-      "engine": "tinyfish",
-      "script": "tinyfish-scraper.mjs",
-      "sourceIds": ["winbet"]
+      "engine": "altenar-tenancy",
+      "transport": "altenar-sb2-widget-json",
+      "script": "altenar-sites.mjs",
+      "sourceIds": [
+        "winbet"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Altenar sb2 widget feed (sb2frontend-altenar2.biahosted.com GetUpcoming, integration=winbet) smoke-validated on 2026-09-02 with future prematch events and complete 1X2 markets."
+    },
+    {
+      "id": "mozzartbet",
+      "name": "Mozzartbet",
+      "enabled": false,
+      "engine": "mozzart-native",
+      "transport": "host-down",
+      "script": "mozzartbet.mjs",
+      "sourceIds": [
+        "mozzartbet"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Mozzart native public API discovered (POST /betOffer2, POST /getBettingOdds, historical public client). Current host returns Cloudflare 521; validation blocked by upstream outage."
+    },
+    {
+      "id": "getsbet",
+      "name": "Get's Bet",
+      "enabled": true,
+      "engine": "everymatrix-odds-wamp",
+      "transport": "everymatrix-odds-wamp",
+      "script": "getsbet.mjs",
+      "sourceIds": [
+        "getsbet"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "EveryMatrix ODDS RealtimeDealer WAMP v2 feed (wss://api-online.getsbet.ro/v2, realm online.getsbet.ro, operator 2476) smoke-validated on 2026-09-02: tournaments via /sports/2476/ro/tournaments/1/187, match discovery via tournament-aggregator-groups-overview (groups 2794,2795), 1X2 (bettingTypeId 69) per event via match-odds/market-group/Populare. 33 complete 1X2 events, fresh."
+    },
+    {
+      "id": "favbet",
+      "name": "Favbet",
+      "enabled": true,
+      "engine": "erlyline",
+      "transport": "favbet-erlyline-jsonrpc",
+      "script": "favbet.mjs",
+      "sourceIds": [
+        "favbet"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "ErlyLine/Betinvest JSON-RPC gateway (POST /service/lineout/frontend_api2/) smoke-validated on 2026-09-02: frontend/event/get lists prematch football, frontend/market/get returns 1X2 (template 1). 100 complete 1X2 events, fresh."
+    },
+    {
+      "id": "winner",
+      "name": "Winner",
+      "enabled": true,
+      "engine": "digitain",
+      "transport": "winner-digitain-public-json",
+      "script": "winner.mjs",
+      "sourceIds": [
+        "winner"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Digitain public events POST endpoint at micros-prod1-sb.gambling-solutions.ro smoke-validated on 2026-09-02 with future football events and complete 1X2 markets."
+    },
+    {
+      "id": "magnumbet",
+      "name": "MagnumBet",
+      "enabled": true,
+      "engine": "exalogic-xsport",
+      "transport": "exalogic-xsport-public-json",
+      "script": "magnumbet.mjs",
+      "sourceIds": [
+        "magnumbet"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Exalogic XSport getPalinsestoDelGiorno feed (systemCode=MAGNUMBET) smoke-validated on 2026-09-02 with future football events and complete 1X2 markets."
+    },
+    {
+      "id": "contibet",
+      "name": "Conti Bet",
+      "enabled": true,
+      "engine": "everymatrix-odds-wamp",
+      "transport": "everymatrix-odds-wamp",
+      "script": "contibet.mjs",
+      "sourceIds": [
+        "contibet"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "EveryMatrix ODDS RealtimeDealer WAMP v2 feed (wss://api.conticazino.ro/v2, realm www.conticazino.ro, operator 2349) smoke-validated on 2026-09-02: same WAMP flow as getsbet. 33 complete 1X2 events, fresh."
+    },
+    {
+      "id": "tennis",
+      "name": "Tennis (generic sport scraper)",
+      "enabled": false,
+      "engine": "sport-generic",
+      "transport": "sport-tennis-generic",
+      "script": "tennis.mjs",
+      "sourceIds": [
+        "tennis"
+      ],
+      "supportedSports": ["tennis"],
+      "validationStatus": "validated",
+      "validationReason": "Generic multi-sport scraper configured for tennis. Requires offerUrl to be set via env ARBITER_TENNIS_URL or config override."
+    },
+    {
+      "id": "basketball",
+      "name": "Basketball (generic sport scraper)",
+      "enabled": false,
+      "engine": "sport-generic",
+      "transport": "sport-basketball-generic",
+      "script": "basketball.mjs",
+      "sourceIds": [
+        "basketball"
+      ],
+      "supportedSports": ["basketball"],
+      "validationStatus": "validated",
+      "validationReason": "Generic multi-sport scraper configured for basketball. Requires offerUrl to be set via env ARBITER_BASKETBALL_URL or config override."
+    },
+    {
+      "id": "ice-hockey",
+      "name": "Ice Hockey (generic sport scraper)",
+      "enabled": false,
+      "engine": "sport-generic",
+      "transport": "sport-ice-hockey-generic",
+      "script": "ice-hockey.mjs",
+      "sourceIds": [
+        "ice-hockey"
+      ],
+      "supportedSports": ["ice-hockey"],
+      "validationStatus": "validated",
+      "validationReason": "Generic multi-sport scraper configured for ice hockey. Requires offerUrl to be set via env ARBITER_HOCKEY_URL or config override."
+    },
+    {
+      "id": "volleyball",
+      "name": "Volleyball (generic sport scraper)",
+      "enabled": false,
+      "engine": "sport-generic",
+      "transport": "sport-volleyball-generic",
+      "script": "volleyball.mjs",
+      "sourceIds": [
+        "volleyball"
+      ],
+      "supportedSports": ["volleyball"],
+      "validationStatus": "validated",
+      "validationReason": "Generic multi-sport scraper configured for volleyball. Requires offerUrl to be set via env ARBITER_VOLLEYBALL_URL or config override."
+    },
+    {
+      "id": "handball",
+      "name": "Handball (generic sport scraper)",
+      "enabled": false,
+      "engine": "sport-generic",
+      "transport": "sport-handball-generic",
+      "script": "handball.mjs",
+      "sourceIds": [
+        "handball"
+      ],
+      "supportedSports": ["handball"],
+      "validationStatus": "validated",
+      "validationReason": "Generic multi-sport scraper configured for handball. Requires offerUrl to be set via env ARBITER_HANDBALL_URL or config override."
     }
   ]
 }
