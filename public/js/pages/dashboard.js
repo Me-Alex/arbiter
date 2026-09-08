@@ -661,7 +661,12 @@ function handleOppListClick(e) {
   }
   if (e.target.closest('a')) return;
   const card = e.target.closest('.opp-card-v2');
-  if (card && eventDetailModal) eventDetailModal.openEventDetail(card);
+  if (!card) return;
+  if (eventDetailModal) eventDetailModal.openEventDetail(card);
+  else {
+    console.warn('[dashboard] event-detail-modal.js did not load; card click cannot open the dialog', card);
+    flashDetailUnavailable(card);
+  }
 }
 
 document.getElementById('opp-list').addEventListener('click', handleOppListClick);

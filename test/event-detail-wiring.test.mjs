@@ -72,6 +72,7 @@ function el(tag) {
     getAttribute(k) { return this._attrs[k] ?? null; },
     showModal() { this._attrs.open = ''; },
     close() { delete this._attrs.open; },
+    remove() { this._removed = true; },
     querySelector(sel) {
       if (sel === '.chip-market') return this._chipMarket || null;
       if (sel === '.legs') return this._legsEl || null;
@@ -265,6 +266,7 @@ assert(evDialogBody.innerHTML.includes('Total Goluri'), 'market name rendered');
 assert(!/betano\.ro\/offer/.test(evDialogBody.innerHTML), 'API sourceUrl is filtered out (no book-link for betano)');
 assert(evDialogBody.innerHTML.includes('1.85') && evDialogBody.innerHTML.includes('2.05'), 'odds matrix shows book odds');
 assert(evDialogBody.innerHTML.includes('best-edge'), 'lowest-edge book is flagged');
+// Fixture math: betano edge = 1/1.90 + 1/2.05 - 1 = +1.4% (pinned below; see Scenario 9 note).
 const edgeCell = evDialogBody.innerHTML.match(/edge-cell[^>]*">([^<]+)%/);
 assert(edgeCell && edgeCell[1] === '+1.7', `edge % computed (got ${edgeCell?.[1]})`);
 
@@ -297,6 +299,9 @@ assert(isEventUrl('http://nsoftcdn.com/x/getPalinsestoDelGiorno') === false, 'ex
 assert(isEventUrl('http://example.com/offer?dataFormat=x') === false, 'dataFormat= query rejected (T4)');
 
 // ---- Scenario 9: betano edge cell explicit assert (edge 1/1.90+1/2.05-1 = +1.4%) ----
+// The +1.4% edge cell and the +1.7% composite best-edge share a fixture:
+// maxbet 1.85+2.10 and betano 1.90+2.05. These pins encode that arithmetic —
+// if the edge formula is intentionally changed, update both expectations.
 evDialogBody.innerHTML = '';
 renderEventDetail({ events: liveEvents }, {});
 const betanoRow = evDialogBody.innerHTML.match(/<tr>([\s\S]*?betano[\s\S]*?)<\/tr>/)?.[1] || '';
@@ -460,5 +465,44 @@ let secondAppend = false;
 flashCard2.appendChild = () => { secondAppend = true; };
 flashDetailUnavailable(flashCard2);
 assert(!secondAppend, 'UX: duplicate notice not appended while one is visible');
+
+// ---- Scenario 18: UX consistency — plain-card click in the degraded state ----
+// The round-9 fix: when eventDetailModal is null, clicking the card body (not
+// the event-link button) must also flash the notice, so both affordances fail
+// loudly instead of the card click being a silent no-op.
+const handleDegraded = await eval(`(async () => {
+  const gl = globalThis;
+  const eventDetailModal = null; // module missing
+  const arbiterI18n = gl.arbiterI18n;
+  const document = gl.document;
+  const dashRenderLeg = ${dashFnSrcs.dashRenderLeg};
+  const swapMarketLegs = ${dashFnSrcs.swapMarketLegs};
+  const formatKickoff = ${dashFnSrcs.formatKickoff};
+  const flashDetailUnavailable = ${extractFn('flashDetailUnavailable', dashSrc)};
+  const handleOppListClick = ${extractFn(listenerName, dashSrc)};
+  return handleOppListClick;
+})()`);
+const degCard = el('article');
+let degAppend = null;
+degCard.closest = (sel) => (sel === '.opp-card-v2' ? degCard : null);
+degCard.appendChild = (n) => { degAppend = n; };
+const degChip = { dataset: { marketIdx: '0' }, closest: (sel) => (sel === '.opp-market-chip' ? degChip : sel === '.opp-card-v2' ? degCard : null) };
+const savedSetTimeout2 = globalThis.setTimeout;
+const capturedTimers2 = [];
+globalThis.setTimeout = (fn, ms) => { capturedTimers2.push({ fn, ms }); return 1; };
+try {
+  handleDegraded({ target: degCard });
+} finally {
+  globalThis.setTimeout = savedSetTimeout2;
+}
+assert(degAppend && degAppend.className.includes('dialog-note'), 'UX: plain-card click in degraded state flashes the notice');
+assert(degAppend && degAppend.textContent.includes('Detaliile evenimentului'), 'UX: plain-card notice carries localized message');
+assert(capturedTimers2.length === 1 && capturedTimers2[0].ms === 4000, 'UX: plain-card notice auto-dismisses after 4s');
+// A market-chip click must still NOT open/notify (chip branch returns early).
+const degCard2 = el('article');
+let degAppend2 = null;
+degCard2.appendChild = (n) => { degAppend2 = n; };
+handleDegraded({ target: degChip });
+assert(degAppend2 === null, 'UX: market-chip click in degraded state stays silent (no notice, no dialog)');
 
 console.log('\nAll real-wiring scenario checks complete.');

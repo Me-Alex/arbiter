@@ -51,7 +51,9 @@ test('refills tokens over time', async () => {
   limiter.take('/api/scrape', 'peer-a');
   limiter.take('/api/scrape', 'peer-a');
   assert.equal(limiter.take('/api/scrape', 'peer-a').ok, false);
-  await new Promise((r) => setTimeout(r, 5));
+  // Wait comfortably past the 1ms/token refill so a slow/fork-loaded CI runner
+  // can't starve the assertion (parity with the P1 micro-benchmark budget).
+  await new Promise((r) => setTimeout(r, 50));
   const after = limiter.take('/api/scrape', 'peer-a');
   assert.equal(after.ok, true);
 });
@@ -78,8 +80,25 @@ test('middleware blocks POST once exhausted', () => {
   assert.equal(check(req).ok, false);
 });
 
-test('peerKey prefers x-forwarded-for', () => {
-  assert.equal(peerKey({ headers: { 'x-forwarded-for': '10.0.0.5, 10.0.0.6' }, socket: { remoteAddress: '127.0.0.1' } }), '10.0.0.5');
+test('peerKey ignores x-forwarded-for from loopback, honors it from proxies', () => {
+  // loopback clients (including hostile web pages in the user's browser)
+  // cannot mint new buckets via spoofed XFF
+  assert.equal(peerKey({ headers: { 'x-forwarded-for': '10.0.0.5, 10.0.0.6' }, socket: { remoteAddress: '127.0.0.1' } }), '127.0.0.1');
+  assert.equal(peerKey({ headers: { 'x-forwarded-for': '10.0.0.5' }, socket: { remoteAddress: '::1' } }), '::1');
+  // non-loopback hop = a real reverse proxy is in front; trust its XFF
+  assert.equal(peerKey({ headers: { 'x-forwarded-for': '10.0.0.5, 10.0.0.6' }, socket: { remoteAddress: '192.168.1.10' } }), '10.0.0.5');
   assert.equal(peerKey({ headers: {}, socket: { remoteAddress: '192.168.1.10' } }), '192.168.1.10');
   assert.equal(peerKey({ headers: {}, socket: {} }), 'unknown');
+});
+
+test('prune evicts idle buckets and caps total memory', () => {
+  const limiter = new RateLimiter({ capacity: 1, refillPerSec: 0, maxBuckets: 5 });
+  const now = Date.now();
+  for (let i = 0; i < 10; i++) limiter.take('/api/scrape', `peer-${i}`);
+  assert.ok(limiter.buckets.size > 0);
+  limiter.prune(now + 10 * 60 * 1000); // everything is idle now
+  assert.equal(limiter.buckets.size, 0);
+  // refilling past maxBuckets forces eviction of the oldest half
+  for (let i = 0; i < 20; i++) limiter.take('/api/scrape', `peer-${i}`);
+  assert.ok(limiter.buckets.size <= 5, `buckets ${limiter.buckets.size} should be capped at maxBuckets`);
 });
