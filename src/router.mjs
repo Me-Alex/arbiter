@@ -1,9 +1,11 @@
-import { extname, resolve } from 'node:path';
+import { extname, resolve, sep, join } from 'node:path';
 import { promises as fs } from 'node:fs';
-import { csrfToken, assertLocalApiRequest, assertCsrf } from './shared/security.mjs';
+import { rotateCsrf, assertLocalApiRequest, assertCsrf } from './shared/security.mjs';
 import { sanitizeLogLine } from './shared/sanitize.mjs';
 import { RateLimiter, rateLimitMiddleware } from './shared/rate-limit.mjs';
+import { tryReadJson, readJson } from './shared/atomic-write.mjs';
 import { resolveScanRequest } from './scrape-orchestrator.mjs';
+import { sportOptions, getSport } from './sports/registry.mjs';
 
 /**
  * router.mjs — pure HTTP dispatch. All routes are co-located here so the
@@ -43,8 +45,12 @@ export function buildRouter(ctx) {
       uptimeSeconds: Math.floor(process.uptime()),
       timestamp: new Date().toISOString(),
     }),
-    'GET /api/csrf': () => sendJson(null, 200, { token: csrfToken() }),
+    'GET /api/csrf': () => sendJson(null, 200, { token: rotateCsrf() }),
     'GET /api/scrape/state': () => sendJson(null, 200, { state: orchestrator.scrapeState || emptyState() }),
+    'GET /api/scrape-run': async () => {
+      const run = await scanService.readLatestScrapeRun(dataDir);
+      return sendJson(null, 200, run || { jobs: [], opportunitiesCount: 0 });
+    },
     'POST /api/scrape': async (req) => {
       const body = await parseBody(req);
       const bookIds = Array.isArray(body.bookIds) ? body.bookIds : [];
@@ -67,6 +73,14 @@ export function buildRouter(ctx) {
     'POST /api/scan': async (req) => {
       const body = await parseBody(req);
       const options = resolveScanRequest(body);
+      // Validate sport against registry if provided
+      if (options.sport) {
+        if (!getSport(options.sport)) {
+          const err = new Error(`unknown sport "${options.sport}"`);
+          err.code = 'EBADINPUT';
+          throw err;
+        }
+      }
       const scan = await scanService.runScan({
         dataDir,
         sourceIds: Array.isArray(body.sourceIds) ? body.sourceIds : null,
@@ -76,21 +90,42 @@ export function buildRouter(ctx) {
         minMiddleRoiPercent: options.minMiddleRoiPercent,
         includeLive: options.includeLive,
         includePast: options.includePast,
+        sport: options.sport,
         publish: false,
       });
       return sendJson(null, 200, scan);
     },
+    'GET /api/scan/export.csv': async (req, res) => {
+      const { buildScanCsv } = await import('./scan-service.mjs');
+      const params = new URL(req.url, 'http://localhost').searchParams;
+      const types = params.getAll('type').flatMap((t) => t.split(',')).map((t) => t.trim()).filter(Boolean);
+      const scan = await scanService.readLatestScan(dataDir);
+      const csv = buildScanCsv(scan, types);
+      res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+      res.setHeader('Content-Disposition', 'attachment; filename="scan-findings.csv"');
+      res.statusCode = 200;
+      res.end(csv);
+      return null;
+    },
     'GET /api/catalog': async () => sendJson(null, 200, await scanService.readLatestCatalog(dataDir) || {}),
     'GET /api/scrapers': async () => {
-      const { promises: fsp } = await import('node:fs');
-      const raw = await fsp.readFile(configPath, 'utf8').catch(() => '{"jobs":[]}');
-      const cfg = JSON.parse(raw);
-      return sendJson(null, 200, { jobs: Array.isArray(cfg.jobs) ? cfg.jobs : [] });
+      const cfg = await tryReadJson(configPath, { jobs: [] });
+      const jobs = Array.isArray(cfg.jobs) ? cfg.jobs : [];
+      const enabledJobs = jobs.filter((job) => job.enabled !== false);
+      const validatedJobs = jobs.filter((job) => job.validationStatus === 'validated');
+      const experimentalJobs = jobs.filter((job) => job.validationStatus !== 'validated');
+      return sendJson(null, 200, { jobs, enabledJobs, validatedJobs, experimentalJobs });
+    },
+    'GET /api/scrapers/health': async () => {
+      const { ScraperBase } = await import('./scrapers/base.mjs');
+      const circuits = await ScraperBase.getCircuitBreakerState(dataDir);
+      return sendJson(null, 200, { circuits, timestamp: new Date().toISOString() });
+    },
+    'GET /api/sports': () => {
+      return sendJson(null, 200, { sports: sportOptions() });
     },
     'GET /api/profiles': async () => {
-      const { promises: fsp } = await import('node:fs');
-      const raw = await fsp.readFile(profilesPath, 'utf8').catch(() => '{"profiles":[]}');
-      const cfg = JSON.parse(raw);
+      const cfg = await tryReadJson(profilesPath, { profiles: [] });
       return sendJson(null, 200, { profiles: Array.isArray(cfg.profiles) ? cfg.profiles : [] });
     },
     'GET /api/scheduler': async () => sendJson(null, 200, await scheduler.status()),
@@ -137,6 +172,7 @@ export function buildRouter(ctx) {
 
   return async function route(req, res, parsedUrl) {
     try {
+      res.setHeader('X-Content-Type-Options', 'nosniff');
       if (parsedUrl.pathname.startsWith('/api/')) {
         assertLocalApiRequest(req);
       }
@@ -154,6 +190,15 @@ export function buildRouter(ctx) {
         });
       }
       res.setHeader('X-RateLimit-Remaining', String(limit.remaining));
+      if (req.method === 'GET' && parsedUrl.pathname.startsWith('/api/snapshot/')) {
+        return await readSnapshotRoute(res, parsedUrl, dataDir);
+      }
+      if (req.method === 'GET' && parsedUrl.pathname.startsWith('/api/odds/')) {
+        return await readOddsRoute(res, parsedUrl, dataDir);
+      }
+      if (req.method === 'GET' && parsedUrl.pathname === '/api/event-detail') {
+        return await readEventDetailRoute(res, parsedUrl, dataDir);
+      }
       const key = `${req.method} ${parsedUrl.pathname}`;
       const handler = handlers[key];
       if (handler) {
@@ -184,6 +229,12 @@ export function buildRouter(ctx) {
     } catch (err) {
       const status = err.statusCode || 500;
       logger('error', `route ${req.method} ${parsedUrl.pathname}: ${err.message}`);
+      if (res.headersSent) {
+        // Response already streaming (SSE, CSV export) — the error body can no
+        // longer be delivered; just terminate the connection cleanly.
+        res.end();
+        return null;
+      }
       return sendJson(res, status, {
         error: {
           name: err.name || 'Error',
@@ -193,6 +244,141 @@ export function buildRouter(ctx) {
       });
     }
   };
+}
+
+async function readSnapshotRoute(res, parsedUrl, dataDir) {
+  const sourceId = decodeURIComponent(parsedUrl.pathname.slice('/api/snapshot/'.length));
+  if (!/^[a-z0-9][a-z0-9-]*$/i.test(sourceId)) {
+    return sendJson(res, 400, { error: { name: 'BadRequest', message: 'invalid source id', code: 'EBADID' } });
+  }
+  let snapshot;
+  try {
+    snapshot = await readJson(join(dataDir, 'workspace', `${sourceId}_events.json`), null);
+  } catch {
+    return sendJson(res, 500, { error: { name: 'InvalidData', message: 'snapshot is invalid JSON', code: 'EINVALID' } });
+  }
+  if (!snapshot) return sendJson(res, 404, { error: { name: 'NotFound', message: 'snapshot not found', code: 'ENOTFOUND' } });
+  return sendJson(res, 200, snapshot);
+}
+
+async function readOddsRoute(res, parsedUrl, dataDir) {
+  const parts = parsedUrl.pathname.slice('/api/odds/'.length).split('/').filter(Boolean);
+  const sourceId = decodeURIComponent(parts[0] || '');
+  if (!/^[a-z0-9][a-z0-9-]*$/i.test(sourceId)) {
+    return sendJson(res, 400, { error: { name: 'BadRequest', message: 'invalid source id', code: 'EBADID' } });
+  }
+  let snapshot;
+  try {
+    snapshot = await readJson(join(dataDir, 'workspace', `${sourceId}_events.json`), null);
+  } catch {
+    return sendJson(res, 500, { error: { name: 'InvalidData', message: 'snapshot is invalid JSON', code: 'EINVALID' } });
+  }
+  if (!snapshot) return sendJson(res, 404, { error: { name: 'NotFound', message: 'snapshot not found', code: 'ENOTFOUND' } });
+  const params = parsedUrl.searchParams;
+  const eventKey = params.get('eventKey');
+  const marketKey = params.get('marketKey')?.toUpperCase();
+  const limit = Math.min(100, Math.max(1, Number.parseInt(params.get('limit') || '50', 10) || 50));
+  const events = (Array.isArray(snapshot.events) ? snapshot.events : []).filter((event) => !eventKey || event.eventKey === eventKey);
+  const result = [];
+  for (const event of events) {
+    for (const market of Array.isArray(event.markets) ? event.markets : []) {
+      if (marketKey && String(market.key).toUpperCase() !== marketKey) continue;
+      result.push({
+        eventKey: event.eventKey,
+        id: event.id,
+        sport: event.sport,
+        league: event.league,
+        kickoff: event.kickoff,
+        homeTeam: event.homeTeam,
+        awayTeam: event.awayTeam,
+        market: {
+          key: market.key,
+          name: market.name || market.key,
+          selections: Array.isArray(market.selections) ? market.selections : [],
+        },
+      });
+      if (result.length >= limit) return sendJson(res, 200, { sourceId, capturedAt: snapshot.capturedAt || null, results: result });
+    }
+  }
+  return sendJson(res, 200, { sourceId, capturedAt: snapshot.capturedAt || null, results: result });
+}
+
+// Small TTL cache for event-detail workspace reads. Snapshots change only when
+// the orchestrator promotes an atomic write, so re-reading and re-parsing up to
+// 30 files per request is pure waste. Keyed per dataDir so parallel server
+// instances never share state.
+const eventDetailCache = new Map();
+const EVENT_CACHE_TTL_MS = 2000;
+const EVENT_CACHE_MAX = 4;
+async function loadEventDetailSnapshots(dataDir) {
+  const now = Date.now();
+  const cached = eventDetailCache.get(dataDir);
+  if (cached && now - cached.at < EVENT_CACHE_TTL_MS) return cached.snapshots;
+  let dirEntries;
+  try { dirEntries = await fs.readdir(join(dataDir, 'workspace')); } catch { return []; }
+  const files = dirEntries.filter((f) => f.endsWith('_events.json')).slice(0, 30);
+  const snapshots = [];
+  for (const file of files) {
+    const snapshot = await tryReadJson(join(dataDir, 'workspace', file), null);
+    if (snapshot) snapshots.push({ sourceId: file.replace('_events.json', ''), snapshot });
+  }
+  if (eventDetailCache.size >= EVENT_CACHE_MAX) eventDetailCache.clear();
+  eventDetailCache.set(dataDir, { at: now, snapshots });
+  return snapshots;
+}
+
+async function readEventDetailRoute(res, parsedUrl, dataDir) {
+  const { normalizeClubIdentity, normalizeTeamName } = await import('./shared/text.mjs');
+
+  const params = parsedUrl.searchParams;
+  const sport = params.get('sport') || '';
+  const home = params.get('home') || '';
+  const away = params.get('away') || '';
+  const kickoff = params.get('kickoff') || '';
+
+  if (!sport || !home || !away) {
+    return sendJson(res, 400, { error: { name: 'BadRequest', message: 'sport, home, away are required', code: 'EBADQUERY' } });
+  }
+
+  const queryKickoff = Date.parse(kickoff);
+  const normSport = normalizeTeamName(sport);
+  const normHome = normalizeClubIdentity(home);
+  const normAway = normalizeClubIdentity(away);
+
+  const snapshots = await loadEventDetailSnapshots(dataDir);
+
+  const events = [];
+
+  for (const entry of snapshots) {
+    if (!entry || !Array.isArray(entry.snapshot.events)) continue;
+    const { sourceId, snapshot } = entry;
+
+    for (const ev of snapshot.events) {
+      if (normalizeTeamName(ev.sport || '') !== normSport) continue;
+      if (normalizeClubIdentity(ev.homeTeam || '') !== normHome) continue;
+      if (normalizeClubIdentity(ev.awayTeam || '') !== normAway) continue;
+      if (Number.isFinite(queryKickoff)) {
+        const evKickoff = Date.parse(ev.kickoff || '');
+        if (Number.isFinite(evKickoff) && Math.abs(evKickoff - queryKickoff) > 5 * 60 * 1000) continue;
+      }
+      events.push({
+        sourceId,
+        sourceUrl: ev.sourceUrl || null,
+        sport: ev.sport,
+        league: ev.league || '',
+        kickoff: ev.kickoff,
+        homeTeam: ev.homeTeam,
+        awayTeam: ev.awayTeam,
+        markets: Array.isArray(ev.markets) ? ev.markets.map((m) => ({
+          key: m.key,
+          name: m.name || m.key,
+          selections: Array.isArray(m.selections) ? m.selections : [],
+        })) : [],
+      });
+    }
+  }
+
+  return sendJson(res, 200, { events });
 }
 
 function emptyState() {
@@ -242,11 +428,12 @@ export async function parseBody(req) {
       const raw = Buffer.concat(chunks).toString('utf8');
       if (!raw) return resolve({});
       try {
-        resolve(JSON.parse(raw));
-      } catch (_err) {
-        const e = new Error('invalid JSON body');
+        resolve(parseJsonDepthLimited(raw));
+      } catch (err) {
+        const tooNested = err.code === 'EDEPTH';
+        const e = new Error(tooNested ? 'request body too nested' : 'invalid JSON body');
         e.statusCode = 400;
-        e.code = 'EBADJSON';
+        e.code = tooNested ? 'EDEPTH' : 'EBADJSON';
         reject(e);
       }
     });
@@ -254,11 +441,40 @@ export async function parseBody(req) {
   });
 }
 
+// Defend against a deeply-nested JSON body causing a stack overflow during
+// parse (a known Node DoS vector). We count the brute bracket depth on the
+// raw string (ignoring string literals) and reject before JSON.parse ever
+// gets a chance to recurse too far — cheap and deterministic.
+function parseJsonDepthLimited(raw, maxDepth = 128) {
+  let depth = 0;
+  let inString = false;
+  for (let i = 0; i < raw.length; i++) {
+    const ch = raw[i];
+    if (inString) {
+      if (ch === '\\') i++;
+      else if (ch === '"') inString = false;
+      continue;
+    }
+    if (ch === '"') { inString = true; continue; }
+    if (ch === '{' || ch === '[') {
+      if (++depth > maxDepth) {
+        const err = new Error('maximum JSON nesting depth exceeded');
+        err.code = 'EDEPTH';
+        throw err;
+      }
+    } else if (ch === '}' || ch === ']') {
+      depth--;
+    }
+  }
+  return JSON.parse(raw);
+}
+
 async function serveStatic(_req, res, parsedUrl, { publicDir }) {
   let p = parsedUrl.pathname;
   if (p === '/' || p === '') p = '/index.html';
-  const safe = resolve(publicDir, '.' + p);
-  if (!safe.startsWith(resolve(publicDir))) {
+  const root = resolve(publicDir);
+  const safe = resolve(root, '.' + p);
+  if (safe !== root && !safe.startsWith(root + sep)) {
     return sendJson(res, 403, { error: { name: 'Forbidden', message: 'path traversal', code: 'EFORBIDDEN' } });
   }
   try {
