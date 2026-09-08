@@ -454,7 +454,7 @@ try {
 } finally {
   globalThis.setTimeout = savedSetTimeout;
 }
-assert(appendedNode && appendedNode.className.includes('dialog-note'), 'UX: inline notice uses .dialog-note class');
+assert(appendedNode && appendedNode.className.includes('dialog-note--card'), 'UX: inline notice uses .dialog-note--card modifier');
 assert(appendedNode && appendedNode.getAttribute('data-detail-unavailable') !== null, 'UX: notice flagged data-detail-unavailable');
 assert(appendedNode && appendedNode.textContent.includes('Detaliile evenimentului'), 'UX: notice carries the localized message');
 assert(capturedTimers.length === 1 && capturedTimers[0].ms === 4000, 'UX: notice auto-dismisses after 4s');
@@ -495,7 +495,7 @@ try {
 } finally {
   globalThis.setTimeout = savedSetTimeout2;
 }
-assert(degAppend && degAppend.className.includes('dialog-note'), 'UX: plain-card click in degraded state flashes the notice');
+assert(degAppend && degAppend.className.includes('dialog-note--card'), 'UX: plain-card click in degraded state flashes the notice');
 assert(degAppend && degAppend.textContent.includes('Detaliile evenimentului'), 'UX: plain-card notice carries localized message');
 assert(capturedTimers2.length === 1 && capturedTimers2[0].ms === 4000, 'UX: plain-card notice auto-dismisses after 4s');
 // A market-chip click must still NOT open/notify (chip branch returns early).
@@ -504,5 +504,70 @@ let degAppend2 = null;
 degCard2.appendChild = (n) => { degAppend2 = n; };
 handleDegraded({ target: degChip });
 assert(degAppend2 === null, 'UX: market-chip click in degraded state stays silent (no notice, no dialog)');
+
+// ---- Scenario 19: module loaded but <dialog> markup absent ----
+// openEventDetail now returns false when evDialog is missing (its own guard),
+// and both dashboard branches flash the notice on that falsy return — so a
+// single-file HTML/JS coupling can't silently no-op either affordance.
+// Build a third module instance whose init() resolves NO dialog refs.
+const modal3 = await eval(`(async () => {
+  const gl = globalThis;
+  const helpers = {
+    paletteFor: (id) => gl.paletteFor(id),
+    fmtOdds: (n) => gl.fmtOdds(n),
+    fmtStake: (n) => gl.fmtStake(n),
+    parseStakeAmount: (s) => { if (!s || typeof s !== 'string') return null; const digits = s.match(/([\\d,]+(?:\\.\\d+)?)/); if (!digits) return null; const n = Number(digits[1].replace(/,/g, '')); return Number.isFinite(n) ? n : null; },
+    escapeHtml: (s) => gl.escapeHtml(s),
+    arbiterI18n: gl.arbiterI18n,
+    arbiterApi: gl.arbiterApi,
+    arbiterFormat: gl.window.arbiterFormat,
+    parseDate: (v) => { if (!v) return null; const d = new Date(v); return Number.isNaN(d.getTime()) ? null : d; },
+  };
+  const window = gl.window;
+  const document = { getElementById: () => null }; // no dialog markup anywhere
+  ${modalSrc.replace(/window\.EventDetailModal\s*=\s*\{/, 'window.__EDM3 = {')}
+  window.__EDM3.init(helpers);
+  return window.__EDM3;
+})()`);
+const handleNoDialog = await eval(`(async () => {
+  const gl = globalThis;
+  const eventDetailModal = window.__EDM3;
+  const arbiterI18n = gl.arbiterI18n;
+  const document = gl.document;
+  const dashRenderLeg = ${dashFnSrcs.dashRenderLeg};
+  const swapMarketLegs = ${dashFnSrcs.swapMarketLegs};
+  const formatKickoff = ${dashFnSrcs.formatKickoff};
+  const flashDetailUnavailable = ${extractFn('flashDetailUnavailable', dashSrc)};
+  const handleOppListClick = ${extractFn(listenerName, dashSrc)};
+  return handleOppListClick;
+})()`);
+const noDlgCard = el('article');
+let noDlgAppend = null;
+const noDlgEventLink = { closest: (sel) => (sel === '[data-event-link]' ? noDlgEventLink : sel === '.opp-card-v2' ? noDlgCard : null) };
+noDlgCard.closest = (sel) => (sel === '.opp-card-v2' ? noDlgCard : sel === '[data-event-link]' ? noDlgEventLink : null);
+noDlgCard.appendChild = (n) => { noDlgAppend = n; };
+const savedSetTimeout3 = globalThis.setTimeout;
+const capturedTimers3 = [];
+globalThis.setTimeout = (fn, ms) => { capturedTimers3.push({ fn, ms }); return 1; };
+try {
+  handleNoDialog({ target: noDlgEventLink }); // event-link affordance
+} finally {
+  globalThis.setTimeout = savedSetTimeout3;
+}
+assert(noDlgAppend && noDlgAppend.className.includes('dialog-note--card'), 'UX: dialog markup absent → event-link click flashes notice');
+assert(capturedTimers3.length === 1 && capturedTimers3[0].ms === 4000, 'UX: dialog-absent notice auto-dismisses after 4s');
+// Same for the plain-card affordance.
+const noDlgCard2 = el('article');
+let noDlgAppend2 = null;
+noDlgCard2.closest = (sel) => (sel === '.opp-card-v2' ? noDlgCard2 : null);
+noDlgCard2.appendChild = (n) => { noDlgAppend2 = n; };
+const savedSetTimeout4 = globalThis.setTimeout;
+globalThis.setTimeout = (fn, ms) => { capturedTimers3.push({ fn, ms }); return 1; };
+try {
+  handleNoDialog({ target: noDlgCard2 });
+} finally {
+  globalThis.setTimeout = savedSetTimeout4;
+}
+assert(noDlgAppend2 && noDlgAppend2.className.includes('dialog-note--card'), 'UX: dialog markup absent → plain-card click flashes notice');
 
 console.log('\nAll real-wiring scenario checks complete.');

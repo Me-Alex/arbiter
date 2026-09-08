@@ -629,7 +629,7 @@ function flashDetailUnavailable(card) {
   const existing = card.querySelector('.dialog-note[data-detail-unavailable]');
   if (existing) return; // already visible on this card
   const note = document.createElement('div');
-  note.className = 'dialog-note';
+  note.className = 'dialog-note dialog-note--card';
   note.setAttribute('data-detail-unavailable', '');
   note.textContent = arbiterI18n.t('detailUnavailable');
   card.appendChild(note);
@@ -652,7 +652,10 @@ function handleOppListClick(e) {
     const card = eventLink.closest('.opp-card-v2');
     if (!card) return;
     if (eventDetailModal) {
-      eventDetailModal.openEventDetail(card);
+      // openEventDetail reports whether the dialog actually opened; when the
+      // <dialog> markup is absent it silently returns false and we surface the
+      // same inline notice as the module-missing path.
+      if (eventDetailModal.openEventDetail(card) === false) flashDetailUnavailable(card);
     } else {
       console.warn('[dashboard] event-detail-modal.js did not load; event link cannot open the dialog', card);
       flashDetailUnavailable(card);
@@ -662,8 +665,9 @@ function handleOppListClick(e) {
   if (e.target.closest('a')) return;
   const card = e.target.closest('.opp-card-v2');
   if (!card) return;
-  if (eventDetailModal) eventDetailModal.openEventDetail(card);
-  else {
+  if (eventDetailModal) {
+    if (eventDetailModal.openEventDetail(card) === false) flashDetailUnavailable(card);
+  } else {
     console.warn('[dashboard] event-detail-modal.js did not load; card click cannot open the dialog', card);
     flashDetailUnavailable(card);
   }
