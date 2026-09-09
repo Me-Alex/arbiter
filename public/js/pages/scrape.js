@@ -1,8 +1,12 @@
 /* global createDropdown */
 const $ = (id) => document.getElementById(id);
+
+/**
+ * Cap on log-panel DOM nodes; oldest lines evicted beyond this.
+ * @const {number}
+ */
 const MAX_LOG_LINES = 500;
 
-const _sportsData = [];
 let _isFirstScrapeLoad = true;
 let _sse = null;
 
@@ -55,6 +59,15 @@ function fmtDuration(ms) {
   const m = Math.floor(s / 60);
   const r = s % 60;
   return r ? `${m}m ${r}s` : `${m}m`;
+}
+
+/**
+ * Count jobs that have reached a terminal state (used for progress %).
+ * @param {Array<object>} jobs
+ * @returns {number}
+ */
+function countDoneJobs(jobs) {
+  return jobs.filter((j) => j.status === 'ok' || j.status === 'failed' || j.status === 'skipped' || j.status === 'timeout' || j.status === 'locked').length;
 }
 
 function statusDotClass(job) {
@@ -341,13 +354,15 @@ function refreshJobRows() {
   }).join('') : `<div class="empty">${escapeHtml(t('noBookmakersSelected'))}</div>`;
 }
 
-function updateKpiCard(state, t) {
+/**
+ * Update the KPI strip (status chip, completed/failed counts, events, failed detail).
+ * @param {object} state
+ * @param {function} t - i18n translator
+ * @param {string} statusLabel - pre-resolved localized status label
+ */
+function updateKpiCard(state, t, statusLabel) {
   const summary = state.summary || {};
   const status = state.status || 'idle';
-  const statusLabel = status === 'completed-with-errors' ? t('completedWithErrors')
-    : status === 'completed' ? t('completedClean')
-      : status === 'failed' ? t('statusFailed')
-        : status;
   $('m-status').innerHTML = `<span class="status ${escapeHtml(status)}" title="${escapeHtml(status)}">${escapeHtml(statusLabel)}</span>`;
   $('head-status').textContent = statusLabel;
   const dot = $('head-dot');
@@ -370,13 +385,18 @@ function updateKpiCard(state, t) {
   $('m-failed-detail').title = failedJobs.map((j) => j.id).join(', ');
 }
 
+/**
+ * Update the live progress card (bar, percentage, ring, ETA, activity line).
+ * @param {object} state
+ * @param {function} t - i18n translator
+ */
 function updateProgressCard(state, _t) {
   const status = state.status || 'idle';
   const running = status === 'running';
   $('progress-card').classList.toggle('hidden', !running);
   const jobs = state.jobs || [];
   const total = jobs.length || 1;
-  const done = jobs.filter((j) => j.status === 'ok' || j.status === 'failed' || j.status === 'skipped' || j.status === 'timeout' || j.status === 'locked').length;
+  const done = countDoneJobs(jobs);
   const pct = Math.round((done / total) * 100);
   $('progress-bar').style.right = `${100 - pct}%`;
   $('progress-pct').textContent = `${pct}%`;
@@ -396,6 +416,11 @@ function updateProgressCard(state, _t) {
   }
 }
 
+/**
+ * Update the 5-stage pipeline stepper (active/done/error states, terminal label).
+ * @param {object} state
+ * @param {function} t - i18n translator
+ */
 function updateStepper(state, t) {
   const status = state.status || 'idle';
   const running = status === 'running';
@@ -426,6 +451,11 @@ function updateStepper(state, t) {
   }
 }
 
+/**
+ * Update the activity line (current activity, active bookmaker, queue/finished, result chips, profile, run id, duration).
+ * @param {object} state
+ * @param {function} t - i18n translator
+ */
 function updateActivityLine(state, t) {
   const status = state.status || 'idle';
   const summary = state.summary || {};
@@ -433,10 +463,10 @@ function updateActivityLine(state, t) {
   const jobs = state.jobs || [];
 
   // Human-readable activity line instead of the raw status string.
-  const nonFinal = ['idle'].includes(status);
+  const isIdle = status === 'idle';
   $('act-line').textContent = running
     ? state.currentActivity || t('scraping')
-    : nonFinal ? status
+    : isIdle ? status
       : status === 'completed-with-errors' ? `${summary.completed || 0} ${t('okShort')} · ${summary.failed || 0} ${t('failedShort')}`
         : status === 'completed' ? t('completedClean')
           : status === 'failed' ? t('statusFailed') : state.currentActivity || status;
@@ -444,7 +474,7 @@ function updateActivityLine(state, t) {
   const active = jobs.find((j) => j.status === 'running');
   $('act-book').textContent = active ? active.id : '—';
   const total = jobs.length || 1;
-  const done = jobs.filter((j) => j.status === 'ok' || j.status === 'failed' || j.status === 'skipped' || j.status === 'timeout' || j.status === 'locked').length;
+  const done = countDoneJobs(jobs);
   $('act-qf').textContent = `${done} / ${total}`;
 
   const ok = jobs.filter((j) => j.status === 'ok').length;
@@ -470,6 +500,11 @@ function updateActivityLine(state, t) {
   }
 }
 
+/**
+ * Update the error/alert box (shown on completed-with-errors or explicit error).
+ * @param {object} state
+ * @param {function} t - i18n translator
+ */
 function updateErrorBox(state, t) {
   const status = state.status || 'idle';
   const running = status === 'running';
@@ -511,7 +546,7 @@ function renderState(state) {
     if (live) live.textContent = statusLabel;
   }
 
-  updateKpiCard(state, t);
+  updateKpiCard(state, t, statusLabel);
   updateProgressCard(state, t);
   updateStepper(state, t);
   updateActivityLine(state, t);

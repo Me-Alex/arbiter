@@ -304,11 +304,7 @@ export class ScrapeOrchestrator {
 
     throwIfAborted();
     this._setStep('Complete', 4);
-    const failed = this.scrapeState.jobs.filter((job) => job.valid === false && job.status !== 'skipped').length;
-    // A scan failure is terminal even if every scrape job succeeded — don't
-    // report a clean "completed" for a run whose findings were never produced.
-    // A failed scan is terminal; a failed verification pass is not clean.
-    this.scrapeState.status = scanFailed ? 'failed' : failed === 0 && !verifyFailed ? 'completed' : 'completed-with-errors';
+    this.scrapeState.status = resolveTerminalStatus({ scanFailed, verifyFailed, jobs: this.scrapeState.jobs });
     this.scrapeState.finishedAt = new Date().toISOString();
     await this.persistState();
     this._broadcast('scrape-update', this.scrapeState);
@@ -402,6 +398,14 @@ function mergeMarketDiagnostics(jobs) {
     }
   }
   return [...map.values()].sort((a, b) => a.marketKey.localeCompare(b.marketKey));
+}
+
+export function resolveTerminalStatus({ scanFailed, verifyFailed, jobs = [] }) {
+  // A scan failure is terminal even if every scrape job succeeded — don't
+  // report a clean "completed" for a run whose findings were never produced.
+  // A failed scan is terminal; a failed verification pass is not clean.
+  const failed = jobs.filter((job) => job.valid === false && job.status !== 'skipped').length;
+  return scanFailed ? 'failed' : failed === 0 && !verifyFailed ? 'completed' : 'completed-with-errors';
 }
 
 export function resolveScanRequest(input) {

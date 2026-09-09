@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { mkdtemp, rm, writeFile, readFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { ScrapeOrchestrator, resolveScanRequest } from '../src/scrape-orchestrator.mjs';
+import { ScrapeOrchestrator, resolveScanRequest, resolveTerminalStatus } from '../src/scrape-orchestrator.mjs';
 
 function broadcaster() {
   const events = [];
@@ -269,4 +269,32 @@ test('restoreState recovers a mid-scrape state left by a crashed process', async
   assert.equal(orchestrator.scrapeState.currentStep, null);
 
   await rm(dataDir, { recursive: true });
+});
+
+test('resolveTerminalStatus: scan failure is terminal even when all scrape jobs succeeded', () => {
+  // The highest-consequence branch: a failed scan must NOT report 'completed'
+  // even if every scrape job is valid.
+  const jobs = [{ id: 'a', valid: true, status: 'ok' }, { id: 'b', valid: true, status: 'ok' }];
+  assert.equal(resolveTerminalStatus({ scanFailed: true, verifyFailed: false, jobs }), 'failed');
+  assert.equal(resolveTerminalStatus({ scanFailed: true, verifyFailed: true, jobs }), 'failed');
+});
+
+test('resolveTerminalStatus: clean run with no failures is completed', () => {
+  const jobs = [{ id: 'a', valid: true, status: 'ok' }];
+  assert.equal(resolveTerminalStatus({ scanFailed: false, verifyFailed: false, jobs }), 'completed');
+});
+
+test('resolveTerminalStatus: failed jobs yield completed-with-errors', () => {
+  const jobs = [{ id: 'a', valid: true, status: 'ok' }, { id: 'b', valid: false, status: 'failed' }];
+  assert.equal(resolveTerminalStatus({ scanFailed: false, verifyFailed: false, jobs }), 'completed-with-errors');
+});
+
+test('resolveTerminalStatus: skipped jobs do not count as failures', () => {
+  const jobs = [{ id: 'a', valid: true, status: 'ok' }, { id: 'b', valid: false, status: 'skipped' }];
+  assert.equal(resolveTerminalStatus({ scanFailed: false, verifyFailed: false, jobs }), 'completed');
+});
+
+test('resolveTerminalStatus: failed verification pass is not clean', () => {
+  const jobs = [{ id: 'a', valid: true, status: 'ok' }];
+  assert.equal(resolveTerminalStatus({ scanFailed: false, verifyFailed: true, jobs }), 'completed-with-errors');
 });
