@@ -1,6 +1,25 @@
-// Common UI helpers for Arbiter pages
-// Expose createDropdown, createChip, applyDesignTokens on window
-window.createDropdown = function(id, options, config = {}) {
+/**
+ * Common UI helpers for Arbiter pages.
+ *
+ * Exposes {@link createDropdown}, {@link createChip}, and
+ * {@link applyDesignTokens} on the global window object so
+ * every admin page can share the same widget builders.
+ *
+ * @module common
+ */
+
+/**
+ * Populate a `<select>` element with options and optionally persist
+ * the selected value to localStorage.
+ *
+ * @param {string} id        - DOM id of the `<select>` element.
+ * @param {Array<{value:string,text:string}>} options - Options to render.
+ * @param {Object}  [config] - Optional configuration.
+ * @param {string}  [config.storageKey] - localStorage key for persistence.
+ * @param {string}  [config.placeholder] - Placeholder option text.
+ * @returns {HTMLSelectElement|null} The populated select, or null if not found.
+ */
+window.createDropdown = function (id, options, config = {}) {
   const sel = document.getElementById(id);
   if (!sel) return null;
   const escape = (s) => s && typeof s === 'string' ? s.replace(/[&<>"]/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])) : '';
@@ -15,15 +34,187 @@ window.createDropdown = function(id, options, config = {}) {
   return sel;
 };
 
-window.createChip = function(text, extraClass = '') {
+/**
+ * Create a styled chip `<span>` element.
+ *
+ * @param {string} text        - Visible chip label.
+ * @param {string} [extraClass] - Additional CSS class(es) to append.
+ * @returns {HTMLSpanElement} The chip element.
+ */
+window.createChip = function (text, extraClass = '') {
   const span = document.createElement('span');
   span.className = 'chip ' + extraClass;
   span.textContent = text;
   return span;
 };
 
-window.applyDesignTokens = function(element) {
-  // Placeholder: could add token classes or styles dynamically if needed.
-  // Currently CSS uses var(--) tokens, so no action required.
-  return element;
+/**
+ * Apply design token theme to the document root and persist the choice.
+ * Sets `data-theme` on `document.documentElement` and saves to localStorage
+ * so the preference survives page reloads.
+ *
+ * @param {string} theme - 'light' or 'dark'.
+ * @returns {string} The applied theme.
+ */
+window.applyDesignTokens = function (theme) {
+  if (theme !== 'light' && theme !== 'dark') {
+    theme = document.documentElement.dataset.theme || 'dark';
+  }
+  document.documentElement.dataset.theme = theme;
+  localStorage.setItem('arbiter-theme', theme);
+  return theme;
+};
+
+/**
+ * Lightweight toast notification system.
+ *
+ * Renders a transient, dismissible toast in a fixed container (bottom-right).
+ * Used to confirm user actions (scrape start/complete, scheduler save, bet
+ * add, export) without making the user hunt for feedback.
+ *
+ * @namespace arbiterToast
+ * @see {@link toasts}
+ */
+(function () {
+  const CONTAINER_ID = 'toast-container';
+  const DEFAULT_DURATION = 3200;
+
+  function container() {
+    let el = document.getElementById(CONTAINER_ID);
+    if (!el) {
+      el = document.createElement('div');
+      el.id = CONTAINER_ID;
+      el.className = 'toast-container';
+      el.setAttribute('role', 'region');
+      el.setAttribute('aria-label', 'Notifications');
+      document.body.appendChild(el);
+    }
+    return el;
+  }
+
+  /**
+   * Show a toast notification.
+   *
+   * @param {string} message       - Message text (already translated by caller).
+   * @param {string} [type='info'] - One of 'info' | 'success' | 'error' | 'warning'.
+   * @param {Object} [opts]        - Options.
+   * @param {number} [opts.duration=3200] - Auto-dismiss delay in ms.
+   * @returns {HTMLDivElement} The toast element created.
+   */
+  window.showToast = function (message, type = 'info', opts = {}) {
+    const c = container();
+    const toast = document.createElement('div');
+    toast.className = 'toast toast-' + (['info', 'success', 'error', 'warning'].includes(type) ? type : 'info');
+    toast.setAttribute('role', type === 'error' ? 'alert' : 'status');
+    const span = document.createElement('span');
+    span.className = 'toast-msg';
+    span.textContent = message;
+    const close = document.createElement('button');
+    close.type = 'button';
+    close.className = 'toast-close';
+    close.setAttribute('aria-label', 'Dismiss');
+    close.innerHTML = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+    toast.appendChild(span);
+    toast.appendChild(close);
+    c.appendChild(toast);
+
+    const dismiss = () => {
+      toast.classList.add('toast-leave');
+      window.setTimeout(() => toast.remove(), 260);
+    };
+    close.addEventListener('click', dismiss);
+
+    const duration = opts.duration === null || opts.duration === undefined ? DEFAULT_DURATION : opts.duration;
+    let timer = null;
+    const arm = () => { timer = window.setTimeout(dismiss, duration); };
+    const disarm = () => { if (timer) { window.clearTimeout(timer); timer = null; } };
+    toast.addEventListener('mouseenter', disarm);
+    toast.addEventListener('mouseleave', arm);
+    arm();
+    return toast;
+  };
+
+  window.arbiterToast = { show: window.showToast };
+})();
+
+
+/**
+ * Shared number formatting utilities for consistent display across all pages.
+ *
+ * All financial/betting values should use these formatters instead of
+ * ad-hoc toFixed() or toLocaleString() calls.
+ */
+window.arbiterFormat = {
+  /**
+   * Format odds value (e.g. 2.35 → "2.35").
+   * @param {number} n - The odds value.
+   * @returns {string} Formatted odds string.
+   */
+  odds(n) {
+    return Number(n || 0).toFixed(2);
+  },
+
+  /**
+   * Format stake/profit values with thousand separators (e.g. 1500 → "1,500").
+   * @param {number} n - The monetary value.
+   * @returns {string} Formatted number string.
+   */
+  stake(n) {
+    return Number(n || 0).toLocaleString('en-US', { maximumFractionDigits: 0 });
+  },
+
+  /**
+   * Format ROI percentage (e.g. 3.456 → "3.46").
+   * @param {number} n - The ROI percentage.
+   * @returns {string} Formatted ROI string.
+   */
+  roi(n) {
+    return Number(n || 0).toFixed(2);
+  },
+
+  /**
+   * Format EV percentage (e.g. 2.1 → "2.10").
+   * @param {number} n - The EV percentage.
+   * @returns {string} Formatted EV string.
+   */
+  ev(n) {
+    return Number(n || 0).toFixed(2);
+  },
+
+  /**
+   * Format a count with thousand separators (e.g. 1234 → "1,234").
+   * @param {number} n - The count value.
+   * @returns {string} Formatted count string.
+   */
+  count(n) {
+    return Number(n || 0).toLocaleString('en-US');
+  },
+
+  /**
+   * Get the CSS class for ROI magnitude (for color-coded displays).
+   * @param {number} roi - The ROI percentage.
+   * @returns {string} CSS class name: 'roi-low', 'roi-mid', 'roi-high', or 'roi-hot'.
+   */
+  roiClass(roi) {
+    const r = Number(roi || 0);
+    if (r >= 5) return 'roi-hot';
+    if (r >= 3) return 'roi-high';
+    if (r >= 1) return 'roi-mid';
+    return 'roi-low';
+  },
+
+  /**
+   * Get a human-readable time ago string (e.g. "2m ago", "1h ago").
+   * @param {number} ms - Milliseconds elapsed.
+   * @returns {string} Human-readable time string.
+   */
+  timeAgo(ms) {
+    if (!ms) return '—';
+    const s = Math.max(0, Math.round(ms / 1000));
+    if (s < 60) return s + 's ago';
+    const m = Math.round(s / 60);
+    if (m < 60) return m + 'm ago';
+    const h = Math.round(m / 60);
+    return h + 'h ago';
+  },
 };

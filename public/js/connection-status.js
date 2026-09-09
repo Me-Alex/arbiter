@@ -7,6 +7,64 @@
  *
  * @module connection-status
  */
+
+/**
+ * Decide what the connection-status UI should do for an SSE state transition.
+ *
+ * Pure decision function (no DOM, no timers) so the debounce/filter rules can
+ * be unit tested in isolation:
+ * - identical states are ignored (no toast, no indicator update),
+ * - rapid re-flips within 2s are debounced except when we don't yet know the
+ *   previous state,
+ * - meaningful transitions map to a toast ('lost' | 'reconnected') or none.
+ *
+ * @param {string} prev       - Previous SSE state ('unknown' | 'open' | 'reconnecting').
+ * @param {string} next       - New SSE state ('open' | 'reconnecting').
+ * @param {number} now        - Current epoch ms.
+ * @param {number} lastChange - Epoch ms of the last ACCEPTED transition.
+ * @returns {{act: boolean, toast: 'lost'|'reconnected'|null, willUpdate: boolean}}
+ *   `act` controls whether the caller should proceed (update lastChange, toast,
+ *   refresh indicators). `willUpdate` mirrors `act` for readability.
+ */
+function decideStateTransition(prev, next, now, lastChange) {
+  if (prev === next) return { act: false, toast: null };
+  if (now - lastChange < 2000 && prev !== 'unknown') return { act: false, toast: null };
+  if (next === 'reconnecting' && prev === 'open') return { act: true, toast: 'lost' };
+  if (next === 'open' && prev === 'reconnecting') return { act: true, toast: 'reconnected' };
+  return { act: true, toast: null };
+}
+
+/**
+ * Decide what the data-freshness banner should show for a scan dataHealth.
+ *
+ * Pure decision function (no DOM) so the status→visibility/variant rules can be
+ * unit tested in isolation. `health` is the `dataHealth` object from `/api/scan`
+ * ({ status, actionableSourceCount }).
+ *
+ * @param {object} health - The dataHealth payload.
+ * @returns {{visible: boolean, className: string, message: string, link: boolean}}
+ *   `className` is the full banner class when visible, empty otherwise.
+ *   `message` is the (untranslated, unresolved) banner text; the caller passes
+ *   it through i18n + escaping. `link` indicates the scrape CTA should render.
+ */
+function decideHealthBanner(health) {
+  const status = (health && health.status) || 'unknown';
+  const actionable = Number(health && health.actionableSourceCount) || 0;
+
+  if (status === 'fresh' || status === 'unknown') {
+    return { visible: false, className: '', message: '', link: false };
+  }
+
+  const isStale = status === 'stale' || status === 'partial';
+  const className = 'data-freshness-banner visible' + (isStale ? '' : ' info');
+
+  if (status === 'empty') {
+    return { visible: true, className, message: 'noFreshData', link: true };
+  }
+  const suffix = actionable ? ` (${actionable} freshSources)` : '';
+  return { visible: true, className, message: `${status}${suffix}`, link: true };
+}
+
 (function () {
   'use strict';
 
@@ -68,24 +126,19 @@
     const prev = state;
     state = newState;
 
-    // Only toast on meaningful transitions
-    if (prev === newState) return;
-
-    // Avoid rapid-fire toasts (debounce 2 seconds)
-    if (now - lastChange < 2000 && prev !== 'unknown') return;
+    const decision = decideStateTransition(prev, newState, now, lastChange);
+    if (!decision.act) return;
     lastChange = now;
 
     const t = (typeof window.arbiterI18n !== 'undefined')
       ? window.arbiterI18n.t.bind(window.arbiterI18n)
       : (k) => k;
 
-    if (newState === 'reconnecting' && prev === 'open') {
-      // Connection lost
+    if (decision.toast === 'lost') {
       if (typeof window.showToast === 'function') {
         window.showToast(t('connectionLost') || 'Connection lost — reconnecting…', 'warning', { duration: 4000 });
       }
-    } else if (newState === 'open' && prev === 'reconnecting') {
-      // Reconnected
+    } else if (decision.toast === 'reconnected') {
       if (typeof window.showToast === 'function') {
         window.showToast(t('reconnected') || 'Reconnected', 'success', { duration: 2500 });
       }
@@ -182,27 +235,25 @@
       if (main) main.insertBefore(banner, main.firstChild);
     }
 
+    const decision = decideHealthBanner(health);
+    if (!decision.visible) {
+      banner.classList.remove('visible');
+      return;
+    }
+
+    banner.className = decision.className;
+
     const t = (typeof window.arbiterI18n !== 'undefined')
       ? window.arbiterI18n.t.bind(window.arbiterI18n)
       : (k) => k;
 
     const status = (health && health.status) || 'unknown';
-    const actionable = Number(health && health.actionableSourceCount) || 0;
-
-    if (status === 'fresh' || status === 'unknown') {
-      banner.classList.remove('visible');
-      return;
-    }
-
-    const isStale = status === 'stale' || status === 'partial';
-    banner.className = 'data-freshness-banner visible' + (isStale ? '' : ' info');
-
-    const iconSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>';
     const message = status === 'empty'
       ? t('noFreshData')
-      : `${t('dataHealth')}: ${status}${actionable ? ` (${actionable} ${t('freshSources')})` : ''}`;
+      : `${t('dataHealth')}: ${decision.message}`;
     const link = `<a href="/admin/scrape.html">${t('runScrape')}</a>`;
 
+    const iconSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>';
     banner.innerHTML = `${iconSvg}<span class="banner-text">${escapeHtml(message)} &mdash; ${link}</span>`;
   }
 

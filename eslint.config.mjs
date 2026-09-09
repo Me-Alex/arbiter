@@ -13,6 +13,7 @@ export default [
         arbiterApp: 'readonly',
         arbiterI18n: 'readonly',
         arbiterSse: 'readonly',
+        escapeHtml: 'readonly', // shared HTML escaper from api.js
         // node
         process: 'readonly',
         Buffer: 'readonly',
@@ -42,6 +43,12 @@ export default [
         prompt: 'readonly',
         alert: 'readonly',
         confirm: 'readonly',
+        performance: 'readonly',
+        requestAnimationFrame: 'readonly',
+        cancelAnimationFrame: 'readonly',
+        matchMedia: 'readonly',
+        Event: 'readonly',
+        CustomEvent: 'readonly',
       },
     },
     rules: {
