@@ -42,27 +42,23 @@ function decideStateTransition(prev, next, now, lastChange) {
  * ({ status, actionableSourceCount }).
  *
  * @param {object} health - The dataHealth payload.
- * @returns {{visible: boolean, className: string, message: string, link: boolean}}
+ * @returns {{visible: boolean, className: string, status: string, actionable: number, empty: boolean}}
  *   `className` is the full banner class when visible, empty otherwise.
- *   `message` is the (untranslated, unresolved) banner text; the caller passes
- *   it through i18n + escaping. `link` indicates the scrape CTA should render.
+ *   `status`/`actionable`/`empty` are the raw inputs the caller needs to
+ *   compose a translated, escaped message (i18n is an effect, not a decision).
  */
 function decideHealthBanner(health) {
   const status = (health && health.status) || 'unknown';
   const actionable = Number(health && health.actionableSourceCount) || 0;
 
   if (status === 'fresh' || status === 'unknown') {
-    return { visible: false, className: '', message: '', link: false };
+    return { visible: false, className: '', status, actionable: 0, empty: false };
   }
 
   const isStale = status === 'stale' || status === 'partial';
   const className = 'data-freshness-banner visible' + (isStale ? '' : ' info');
 
-  if (status === 'empty') {
-    return { visible: true, className, message: 'noFreshData', link: true };
-  }
-  const suffix = actionable ? ` (${actionable} freshSources)` : '';
-  return { visible: true, className, message: `${status}${suffix}`, link: true };
+  return { visible: true, className, status, actionable, empty: status === 'empty' };
 }
 
 (function () {
@@ -247,10 +243,9 @@ function decideHealthBanner(health) {
       ? window.arbiterI18n.t.bind(window.arbiterI18n)
       : (k) => k;
 
-    const status = (health && health.status) || 'unknown';
-    const message = status === 'empty'
+    const message = decision.empty
       ? t('noFreshData')
-      : `${t('dataHealth')}: ${decision.message}`;
+      : `${t('dataHealth')}: ${decision.status}${decision.actionable ? ` (${decision.actionable} ${t('freshSources')})` : ''}`;
     const link = `<a href="/admin/scrape.html">${t('runScrape')}</a>`;
 
     const iconSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>';
