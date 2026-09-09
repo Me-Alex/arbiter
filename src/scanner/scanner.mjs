@@ -3,7 +3,8 @@ import { promises as fs } from 'node:fs';
 import { groupByEvent, findArbitrage, findMiddles, findPositiveEV, findLowHold } from './engine.mjs';
 import { roundedArbitrageAllocation } from './market-contracts.mjs';
 import { DATA_STATUS, isActionableKickoff, snapshotQuality, sourceHealthSummary } from '../shared/data-quality.mjs';
-import { readJson, writeJsonAtomic } from '../shared/atomic-write.mjs';
+import { round2 } from '../shared/math.mjs';
+import { tryReadJson, writeJsonAtomic } from '../shared/atomic-write.mjs';
 
 /**
  * Scanner entry point. Reads every data/workspace/<book>_events.json into
@@ -19,11 +20,30 @@ export async function loadWorkspace(dataDir, qualityOptions = {}) {
   } catch (err) {
     if (err.code !== 'ENOENT') throw err;
   }
+
+  // Read + parse every snapshot with bounded parallelism — files are
+  // independent, so a scan over many books shouldn't serialize on disk I/O,
+  // but an unbounded Promise.all would load every payload into memory at once.
+  // A corrupt snapshot is skipped rather than failing the whole scan.
+  const filesToRead = files.filter((file) => file.endsWith('_events.json'));
+  const snaps = new Array(filesToRead.length);
+  const CONCURRENCY = 8;
+  let next = 0;
+  const worker = async () => {
+    while (true) {
+      const idx = next++;
+      if (idx >= filesToRead.length) return;
+      const file = filesToRead[idx];
+      const blob = await tryReadJson(join(dir, file), null);
+      if (blob) snaps[idx] = { file, blob };
+    }
+  };
+  await Promise.all(Array.from({ length: Math.min(CONCURRENCY, filesToRead.length) }, worker));
+  const snapshots = snaps.filter(Boolean);
+
   const events = [];
   const sources = [];
-  for (const file of files) {
-    if (!file.endsWith('_events.json')) continue;
-    const blob = await readJson(join(dir, file), null);
+  for (const { file, blob } of snapshots) {
     if (!blob || !Array.isArray(blob.events)) continue;
     const quality = snapshotQuality(blob, snapshotOptions);
     const runMismatch = expectedRunId && blob.runId !== expectedRunId;
@@ -33,13 +53,21 @@ export async function loadWorkspace(dataDir, qualityOptions = {}) {
       runId: blob.runId || null,
       capturedAt: blob.capturedAt || null,
       observedAt: blob.observedAt || blob.capturedAt || null,
+      sourceUrl: blob.sourceUrl || null,
+      transport: blob.transport || null,
       count: blob.events.length,
       dataStatus: runMismatch ? DATA_STATUS.STALE : quality.status,
       dataReason: runMismatch ? `snapshot belongs to run ${blob.runId || 'unknown'}, not ${expectedRunId}` : quality.reason,
       ageMs: quality.ageMs,
     };
     sources.push(source);
-    if (source.dataStatus !== DATA_STATUS.FRESH) continue;
+    if (source.dataStatus !== DATA_STATUS.FRESH || !source.runId || !source.sourceUrl || !source.transport) {
+      if (source.dataStatus === DATA_STATUS.FRESH) {
+        source.dataStatus = DATA_STATUS.PARTIAL;
+        source.dataReason = 'snapshot is missing runId, sourceUrl, or transport provenance';
+      }
+      continue;
+    }
     for (const event of blob.events) {
       events.push({ ...event, sourceId: event.sourceId || blob.sourceId, observedAt: source.observedAt, runId: source.runId });
     }
@@ -78,12 +106,14 @@ export async function scanWorkspace(args) {
     publish = true,
     prematchMaxAgeMs,
     liveMaxAgeMs,
+    sport = null,
   } = args;
 
   const qualityOptions = { prematchMaxAgeMs, liveMaxAgeMs, expectedRunId: scrapeRunId };
   const { events, sources } = await loadWorkspace(dataDir, qualityOptions);
   const filtered = events.filter((event) => {
     if (sourceIds && sourceIds.length && !sourceIds.includes(event.sourceId)) return false;
+    if (sport && event.sport && event.sport.toLowerCase() !== sport.toLowerCase()) return false;
     if (!includeLive && event.live === true) return false;
     if (!includePast && event.live !== true && !isActionableKickoff(event.kickoff)) return false;
     return true;
@@ -111,10 +141,25 @@ export async function scanWorkspace(args) {
     scrapedAt: capturedAt,
     scanStartedAt: new Date().toISOString(),
     scrapeRunId: scrapeRunId || commonRunId(sources),
+    /**
+     * Top-level data health contract:
+     * - `actionableSourceCount`: number of sources with status FRESH.
+     * - `status`: derives the WORST per-source health (FRESH wins only when >=1
+     *   source is fresh, then STALE > PARTIAL > EMPTY). This is what the
+     *   frontend freshness banner consumes — it differs from per-source
+     *   `dataStatus` (which lives on each snapshot source).
+     * - `sources`: per-source quality summary (see `quality` above).
+     */
     dataHealth: {
       actionableSourceCount: sources.filter((source) => source.dataStatus === DATA_STATUS.FRESH).length,
       sources: quality,
-      status: sources.some((source) => source.dataStatus === DATA_STATUS.FRESH) ? DATA_STATUS.FRESH : DATA_STATUS.EMPTY,
+      status: sources.some((source) => source.dataStatus === DATA_STATUS.FRESH)
+        ? DATA_STATUS.FRESH
+        : sources.some((source) => source.dataStatus === DATA_STATUS.STALE)
+          ? DATA_STATUS.STALE
+          : sources.some((source) => source.dataStatus === DATA_STATUS.PARTIAL)
+            ? DATA_STATUS.PARTIAL
+            : DATA_STATUS.EMPTY,
     },
     options: {
       bankroll,
@@ -174,5 +219,3 @@ function commonRunId(sources) {
   const runIds = new Set(sources.map((source) => source.runId).filter(Boolean));
   return runIds.size === 1 ? [...runIds][0] : null;
 }
-
-function round2(n) { return Math.round(n * 100) / 100; }

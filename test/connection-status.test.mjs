@@ -44,6 +44,20 @@ function makeRealT(lang) {
   return (key) => (realDict[lang] && realDict[lang][key]) || (realDict.en[key]) || key;
 }
 
+// Contract anchor: the camelCase status keys connection-status.js looks up
+// (status + Capitalized(token)) must exist in BOTH dictionaries, or a future
+// snake_case regression would silently render raw tokens.
+describe('i18n status keys', () => {
+  for (const lang of ['ro', 'en']) {
+    for (const token of ['stale', 'partial', 'empty']) {
+      it(`${lang}.status${token[0].toUpperCase()}${token.slice(1)} exists`, () => {
+        assert.ok(realDict[lang]['status' + token[0].toUpperCase() + token.slice(1)],
+          `missing ${lang} key status${token[0].toUpperCase()}${token.slice(1)}`);
+      });
+    }
+  }
+});
+
 // Extract a top-level `function NAME(...) { ... }` by brace matching.
 function extractFn(name, from = src) {
   const re = new RegExp(`function\\s+${name}\\s*\\(`);
@@ -296,12 +310,14 @@ describe('connection-status IIFE plumbing', () => {
     assert.match(bannerEl.innerHTML, /Nu există date proaspete/);
   });
 
-  it('setDataHealth escapes HTML in the status string (XSS guard)', () => {
+  it('setDataHealth neutralizes an injection-style status via the allowlist (XSS guard)', () => {
     const { api, bannerEl } = runModuleSandbox();
     api.setDataHealth({ status: '<script>alert(1)</script>' });
-    // The class gets the raw status applied; the text must be escaped.
+    // The payload is not in the allowlist → treated as unknown → hidden, so
+    // nothing script-like ever reaches innerHTML (defense in depth).
+    assert.equal(bannerEl.className, 'data-freshness-banner');
+    assert.ok(!bannerEl.classList.contains('visible'));
     assert.ok(!bannerEl.innerHTML.includes('<script>'));
-    assert.ok(bannerEl.innerHTML.includes('&lt;script&gt;'));
   });
 
   it('setDataHealth still renders when <main> is absent', () => {
@@ -388,13 +404,21 @@ describe('connection-status IIFE plumbing', () => {
     assert.equal(toasts.length, 0);
   });
 
-  it('setDataHealth falls back to raw status when the RO key is missing', () => {
+  it('setDataHealth hides the banner for unknown statuses (allowlist)', () => {
     const { api, bannerEl } = runModuleSandbox();
-    // 'weird' has no statusWeird key in the real dictionary → raw token shown.
     api.setDataHealth({ status: 'weird' });
-    // Unknown status is not stale/partial/empty → info variant + raw token.
-    assert.equal(bannerEl.className, 'data-freshness-banner visible info');
-    assert.match(bannerEl.innerHTML, /Starea datelor: weird/);
+    // 'weird' is not in the allowlist → treated as 'unknown' → no banner.
+    assert.equal(bannerEl.className, 'data-freshness-banner');
+    assert.ok(!bannerEl.classList.contains('visible'));
+  });
+
+  it('setDataHealth hides the banner for the real-but-unallowlisted failed status', () => {
+    const { api, bannerEl } = runModuleSandbox();
+    // 'failed' is a real DATA_STATUS but not in the banner allowlist →
+    // treated as 'unknown' → hidden (defense in depth).
+    api.setDataHealth({ status: 'failed' });
+    assert.equal(bannerEl.className, 'data-freshness-banner');
+    assert.ok(!bannerEl.classList.contains('visible'));
   });
 
   it('setDataHealth localizes partial via the real RO dictionary', () => {

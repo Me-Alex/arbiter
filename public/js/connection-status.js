@@ -48,7 +48,11 @@ function decideStateTransition(prev, next, now, lastChange) {
  *   compose a translated, escaped message (i18n is an effect, not a decision).
  */
 function decideHealthBanner(health) {
-  const status = (health && health.status) || 'unknown';
+  // Only known statuses may reach the HTML sink; anything else — including
+  // malicious/unknown tokens — is treated as 'unknown' (no banner).
+  const raw = (health && health.status) || 'unknown';
+  const KNOWN = new Set(['fresh', 'stale', 'partial', 'empty']);
+  const status = KNOWN.has(raw) ? raw : 'unknown';
   const actionable = Number(health && health.actionableSourceCount) || 0;
 
   if (status === 'fresh' || status === 'unknown') {
@@ -243,9 +247,10 @@ function decideHealthBanner(health) {
       ? window.arbiterI18n.t.bind(window.arbiterI18n)
       : (k) => k;
 
-    // t() returns the key string itself when a key is missing, so compare the
-// result against the key rather than relying on truthiness; unknown statuses
-// fall back to the raw server token.
+// t() returns the key string itself when a key is missing, so compare the
+    // result against the key rather than relying on truthiness; unknown statuses
+    // fall back to the raw server token (only reachable for allowlisted statuses
+    // whose translation is absent).
     const statusKey = 'status' + decision.status.charAt(0).toUpperCase() + decision.status.slice(1);
     const translated = t(statusKey);
     const statusLabel = translated === statusKey ? decision.status : translated;
