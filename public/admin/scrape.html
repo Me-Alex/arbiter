@@ -13,16 +13,20 @@
     <div class="page-header">
       <div>
         <h2 data-i18n="scrapeControl">Scrape Control</h2>
-        <div class="text-xs muted" style="margin-top:4px" data-i18n="scrapeSubtitle">Run validated public feeds and watch source health in real time</div>
+        <div class="text-xs muted mt-1" data-i18n="scrapeSubtitle">Run validated public feeds and watch source health in real time</div>
       </div>
       <div class="meta">
+        <span class="sse-status chip green" id="sse-status" data-connected-text="Live" data-disconnected-text="Reconnecting"><span class="dot live"></span><span data-i18n="live">Live</span></span>
         <span class="chip"><span class="dot" id="head-dot"></span><span id="head-status">idle</span></span>
-        <button class="ghost lang-toggle" data-lang-toggle>RO</button>
+        <button class="ghost lang-toggle" data-lang-toggle aria-label="Toggle language">RO</button>
       </div>
     </div>
 
+    <!-- Screen-reader summary of lifecycle changes (announced politely) -->
+    <div id="live-summary" role="status" aria-live="polite" class="visually-hidden"></div>
+
     <!-- KPI strip -->
-    <div class="grid cols-4 scrape-kpis" style="margin-bottom:20px">
+    <div class="grid cols-4 scrape-kpis mb-5">
       <div class="card kpi-card">
         <div class="kpi">
           <div class="label" data-i18n="status">Status</div>
@@ -54,16 +58,25 @@
     </div>
 
     <!-- Live progress card -->
-    <div class="card progress-card" id="progress-card" style="margin-bottom:20px;display:none">
-      <div class="row" style="align-items:flex-start">
-        <div style="flex:1;min-width:0">
-          <div class="row" style="gap:12px;margin-bottom:10px">
+    <div class="card progress-card mb-5 hidden" id="progress-card">
+      <div class="row flex-start">
+        <div class="ring-wrap" aria-hidden="true">
+          <div class="ring" id="progress-ring" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-label="Scrape progress">
+            <svg viewBox="0 0 44 44">
+              <circle class="ring-track" cx="22" cy="22" r="18"></circle>
+              <circle class="ring-fill" cx="22" cy="22" r="18"></circle>
+            </svg>
+            <div class="ring-label" id="progress-ring-pct">0%</div>
+          </div>
+        </div>
+        <div class="flex-1">
+          <div class="row gap-3 mb-2">
             <div class="text-2xl strong tabnum" id="progress-pct">0%</div>
-            <div class="muted" id="progress-activity" style="flex:1">—</div>
+            <div class="muted flex-1" id="progress-activity">—</div>
             <span class="chip blue pulse" id="progress-eta">ETA —</span>
           </div>
-          <div class="progress" style="height:8px">
-            <div class="bar" id="progress-bar" style="right:100%"></div>
+          <div class="progress h-progress" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-label="Scrape progress bar">
+            <div class="bar right-0" id="progress-bar"></div>
           </div>
         </div>
         <button class="ghost" id="cancel-btn" data-i18n="cancel">Cancel</button>
@@ -71,12 +84,12 @@
     </div>
 
     <!-- Pipeline stepper -->
-    <div class="card" style="margin-bottom:20px">
+    <div class="card mb-5">
       <h3>
         <span data-i18n="pipeline">Pipeline</span>
         <span class="h3-meta" data-i18n="pipelineMeta">5-stage cycle · scrape → scan → verify → catalog → complete</span>
       </h3>
-      <div class="stepper">
+      <div class="stepper" aria-label="Pipeline stages">
         <div class="step" data-step="0"><span class="step-num">1</span><span class="step-label" data-i18n="scraping">Scraping</span></div>
         <div class="step" data-step="1"><span class="step-num">2</span><span class="step-label" data-i18n="scanning">Scanning</span></div>
         <div class="step" data-step="2"><span class="step-num">3</span><span class="step-label" data-i18n="verifying">Verifying</span></div>
@@ -84,7 +97,7 @@
         <div class="step" data-step="4"><span class="step-num">5</span> <span class="step-label" id="step-complete">Complete</span></div>
       </div>
 
-      <div class="activity-grid" style="margin-top:16px">
+      <div class="activity-grid mt-4">
         <div class="activity-cell">
           <div class="label" data-i18n="activity">Activity</div>
           <div class="value truncate" id="act-line">idle</div>
@@ -111,24 +124,24 @@
         </div>
       </div>
 
-      <div class="row" style="justify-content:space-between;margin-top:12px">
+      <div class="row justify-between mt-3">
         <span class="muted mono text-xs truncate" id="act-runid">—</span>
         <span class="muted text-xs" id="act-duration"></span>
       </div>
     </div>
 
-    <div id="error-box" class="alert hidden"></div>
+    <div id="error-box" class="alert hidden" role="alert" aria-live="assertive"></div>
 
     <!-- Configuration + Bookmakers -->
-    <div class="grid cols-2 scrape-workspace" style="margin-bottom:20px">
-      <div class="card config-card">
+    <div class="grid cols-2 scrape-workspace mb-5">
+      <div class="card config-card" aria-label="Scrape configuration">
         <h3><span data-i18n="configuration">Configuration</span></h3>
         <div class="field">
-          <label data-i18n="profile">Profile</label>
+          <label for="profile" data-i18n="profile">Profile</label>
           <select id="profile"></select>
         </div>
         <div class="field">
-          <label data-i18n="sport">Sport</label>
+          <label for="sport-filter" data-i18n="sport">Sport</label>
           <select id="sport-filter">
             <option value="" data-i18n="allSports">All sports</option>
           </select>
@@ -145,16 +158,16 @@
           <div class="muted text-xs" data-i18n="eventCollectionHint">All = every qualifying event available from each provider's public feed/window.</div>
         </div>
         <div class="grid cols-2">
-          <div class="field"><label data-i18n="bankroll">Bankroll</label><input type="number" id="bankroll" value="1000" min="10" step="10"></div>
-          <div class="field"><label data-i18n="minRoi">Min ROI %</label><input type="number" id="min-roi" value="0" step="0.1"></div>
-          <div class="field"><label data-i18n="maxMiddleRisk">Max middle risk %</label><input type="number" id="mid-risk" value="15" step="0.5"></div>
-          <div class="field"><label data-i18n="minMiddleRoi">Min middle ROI %</label><input type="number" id="mid-roi" value="20" step="0.5"></div>
+          <div class="field"><label for="bankroll" data-i18n="bankroll">Bankroll</label><input type="number" id="bankroll" value="1000" min="10" step="10"></div>
+          <div class="field"><label for="min-roi" data-i18n="minRoi">Min ROI %</label><input type="number" id="min-roi" value="0" step="0.1"></div>
+          <div class="field"><label for="mid-risk" data-i18n="maxMiddleRisk">Max middle risk %</label><input type="number" id="mid-risk" value="15" step="0.5"></div>
+          <div class="field"><label for="mid-roi" data-i18n="minMiddleRoi">Min middle ROI %</label><input type="number" id="mid-roi" value="20" step="0.5"></div>
         </div>
-        <div class="row" style="margin-top:4px">
+        <div class="row mt-1">
           <label class="checkbox"><input type="checkbox" id="inc-live"> <span data-i18n="includeLive">include live</span></label>
           <label class="checkbox"><input type="checkbox" id="inc-past"> <span data-i18n="includePast">include past</span></label>
         </div>
-        <div class="row" style="margin-top:14px">
+        <div class="row mt-3">
           <button class="primary" id="run-btn" data-i18n="runScrape">Run scrape</button>
           <button class="ghost" id="save-btn" data-i18n="profileHelp">Profile help</button>
         </div>
@@ -165,32 +178,37 @@
           <span data-i18n="bookmakers">Bookmakers</span>
           <span class="h3-meta"><span id="bm-selected">0</span> / <span id="bm-total">0</span> <span data-i18n="sourcesSelected">sources selected</span></span>
         </h3>
-        <div class="row bookmaker-actions" style="gap:8px;margin-bottom:8px">
-          <button type="button" class="ghost text-xs" id="btn-select-all" style="padding:2px 8px" data-i18n="selectAll">Toate</button>
-          <button type="button" class="ghost text-xs" id="btn-select-validated" style="padding:2px 8px" data-i18n="selectValidated">Doar validate</button>
-          <button type="button" class="ghost text-xs" id="btn-select-none" style="padding:2px 8px" data-i18n="selectNone">Niciuna</button>
+        <div class="row bookmaker-actions gap-2 mb-2">
+          <button type="button" class="ghost text-xs btn-sm" id="btn-select-all" data-i18n="selectAll">Toate</button>
+          <button type="button" class="ghost text-xs btn-sm" id="btn-select-validated" data-i18n="selectValidated">Doar validate</button>
+          <button type="button" class="ghost text-xs btn-sm" id="btn-select-none" data-i18n="selectNone">Niciuna</button>
         </div>
-        <div id="bookmaker-list" class="row" style="gap:6px;flex-wrap:wrap;margin-bottom:12px"></div>
-        <div id="job-rows"></div>
+        <div class="bm-search mb-2">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="search" id="bm-filter" placeholder="Filter sources…" data-i18n-placeholder="filterSources" aria-label="Filter bookmakers">
+        </div>
+        <div id="bookmaker-list" class="row gap-2 flex-wrap mb-3"></div>
+        <div id="job-rows" tabindex="-1"></div>
       </div>
     </div>
 
     <!-- Live log -->
-    <div class="card log-card" style="margin-bottom:20px">
+    <div class="card log-card mb-5">
       <h3>
-        <span><span class="dot live pulse" style="margin-right:8px;vertical-align:middle"></span><span data-i18n="liveLog">Live log</span></span>
+        <span><span class="dot live pulse mr-2 valign-mid"></span><span data-i18n="liveLog">Live log</span></span>
         <span class="h3-meta" data-i18n="streamingFrom">Streaming from orchestrator</span>
       </h3>
-      <div class="log" id="log-panel"></div>
+      <div class="log" id="log-panel" role="log" aria-live="polite" aria-label="Live scrape log"></div>
     </div>
 
     <!-- Last run + scheduler -->
     <div class="grid cols-2 history-grid">
       <div class="card">
         <h3><span data-i18n="lastScrapeRun">Last Scrape Run</span></h3>
-        <div class="table-wrap" style="border:0;background:transparent">
+        <div class="table-wrap table-clean">
           <table class="compact">
-            <thead><tr><th>ID</th><th class="num" data-i18n="events">Events</th><th class="num">Ms</th><th data-i18n="status">Status</th></tr></thead>
+            <caption class="sr-only">Last scrape run results</caption>
+            <thead><tr><th scope="col">ID</th><th scope="col" class="num" data-i18n="events">Events</th><th scope="col" class="num">Ms</th><th scope="col" data-i18n="status">Status</th></tr></thead>
             <tbody id="last-run-table"></tbody>
           </table>
         </div>
@@ -198,27 +216,16 @@
 
       <div class="card">
         <h3><span data-i18n="scheduler">Scheduler</span></h3>
-        <div class="row" style="margin-bottom:12px">
+        <div class="row mb-3">
           <label class="checkbox"><input type="checkbox" id="sched-enabled"> <span data-i18n="enabled">enabled</span></label>
           <div class="spacer"></div>
-          <div class="field" style="margin:0">
-            <label data-i18n="interval">Interval (min)</label>
-            <input type="number" id="sched-interval" value="15" min="1" max="1440" style="width:80px">
+          <div class="field m-0">
+            <label for="sched-interval" data-i18n="interval">Interval (min)</label>
+            <input type="number" id="sched-interval" value="15" min="1" max="1440" class="w-80">
           </div>
           <button class="ghost" id="sched-save" data-i18n="save">Save</button>
         </div>
         <div class="muted text-xs" id="sched-last">—</div>
-      </div>
-    </div>
-
-    <!-- Recent scan history -->
-    <div class="card" style="margin-top:20px">
-      <h3><span data-i18n="recentScanHistory">Recent Scan History</span></h3>
-      <div class="table-wrap" style="border:0;background:transparent">
-        <table class="compact">
-          <thead><tr><th data-i18n="runId">Run ID</th><th data-i18n="started">Started</th><th class="num" data-i18n="jobs">Jobs</th><th class="num" data-i18n="events">Events</th><th data-i18n="status">Status</th></tr></thead>
-          <tbody id="recent-table"></tbody>
-        </table>
       </div>
     </div>
   </main>
@@ -228,7 +235,8 @@
   <script src="/js/sse.js"></script>
   <script src="/js/app.js"></script>
   <script src="/js/pages/common.js"></script>
-    <script src="/js/pages/scrape.js"></script
+  <script src="/js/connection-status.js"></script>
+    <script src="/js/pages/scrape.js"></script>
 
 </body>
 </html>

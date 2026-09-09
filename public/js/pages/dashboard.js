@@ -550,14 +550,6 @@ function initCardNavigation() {
 arbiterSse.connect((type, payload) => {
   if (type === 'scrape-update' && payload && payload.status === 'completed') refresh();
   if (type === 'scan-update') refresh();
-}, (state) => {
-  const t = arbiterI18n.t.bind(arbiterI18n);
-  const indicator = document.getElementById('sse-status');
-  if (indicator) {
-    indicator.className = `live-indicator ${state === 'open' ? 'connected' : 'disconnected'}`;
-    const label = indicator.querySelector('span:last-child');
-    if (label) label.textContent = state === 'open' ? 'Live' : t('reconnecting');
-  }
 });
 
 /* ---------------- Event detail modal ---------------- */

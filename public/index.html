@@ -3,102 +3,134 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <title>Arbiter — Sports Arbitrage Scanner</title>
   <link rel="stylesheet" href="/css/theme.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
 </head>
-<body>
+<body class="has-sidebar">
   <main>
-    <div class="page-header">
-      <div>
-        <h2 data-i18n="dashboard">Tablă</h2>
-        <div class="text-xs muted" style="margin-top:4px">
-          <span id="last-updated">—</span>
+    <!-- ============== QUICK STATS BAR ============== -->
+    <div class="dash-quickbar mb-5" aria-label="Dashboard summary">
+      <div class="qb-cell">
+        <div class="l">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <span data-i18n="opportunities">Opportunities</span>
         </div>
+        <div class="v green" id="qb-opps" aria-live="polite">—</div>
+        <div class="s" id="qb-opps-sub">—</div>
       </div>
-      <div class="meta">
-        <span class="chip blue"><span class="dot" id="data-health-dot"></span><span id="data-health" data-i18n="loadingDataHealth"></span></span>
-        <span class="chip outline"><span class="dot" id="conn-dot"></span><span id="conn-state" data-i18n="connected">connected</span></span>
-        <button class="ghost lang-toggle" data-lang-toggle>RO</button>
+      <div class="qb-cell">
+        <div class="l">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+          <span data-i18n="bestRoi">Best ROI</span>
+        </div>
+        <div class="v" id="qb-best-roi">—</div>
+        <div class="s" id="qb-best-roi-match">—</div>
+      </div>
+      <div class="qb-cell">
+        <div class="l">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          <span data-i18n="totalEvents">Total events</span>
+        </div>
+        <div class="v accent" id="qb-events">—</div>
+        <div class="s" id="qb-sources">—</div>
+      </div>
+      <div class="qb-cell">
+        <div class="l">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <span data-i18n="lastScrape">Last scrape</span>
+        </div>
+        <div class="v" id="qb-scrape-time">—</div>
+        <div class="s" id="qb-scrape-status">—</div>
       </div>
     </div>
 
-    <!-- KPI strip -->
-    <div class="grid cols-4" style="margin-bottom:24px">
-      <a class="card card-hover" href="/admin/scanner.html">
-        <div class="kpi">
-          <div class="label"><span data-i18n="opportunities">Opportunities</span> <span class="chip green text-xs" data-i18n="confirmed">+ confirmed</span></div>
-          <div class="value" id="m-opps">—</div>
-          <div class="delta">
-            <span data-i18n="autoConfirmed">auto-confirmed:</span> <span class="strong" id="m-confirmed">—</span>
+    <!-- ============== MAIN GRID ============== -->
+    <div class="dash-grid">
+      <!-- TOP: Top opportunities (full width) -->
+      <section class="card dashboard-section full" aria-labelledby="opportunities-heading">
+        <div class="dash-section-head">
+          <h2 id="opportunities-heading">
+            <span data-i18n="topOpportunities">Top opportunities</span>
+            <span class="count" id="opps-count" aria-live="polite">0</span>
+          </h2>
+          <div class="meta">
+            <span class="live-indicator connected" id="sse-status">
+              <span class="dot"></span>
+              <span>Live</span>
+            </span>
+            <span class="muted">·</span>
+            <span class="last-updated" id="last-updated">—</span>
+            <span class="muted">·</span>
+            <a class="accent" href="/api/scan/export.csv" download data-i18n="exportCsv">Export CSV</a>
           </div>
         </div>
-      </a>
-      <a class="card card-hover" href="/admin/scanner.html">
-        <div class="kpi">
-          <div class="label"><span data-i18n="middlesLabel">Middles</span> <span class="chip purple text-xs" data-i18n="twoWay">2-way</span></div>
-          <div class="value accent" id="m-middles">—</div>
-          <div class="delta">
-            <span data-i18n="pendingReview">pending review:</span> <span class="strong yellow" id="m-review">—</span>
-          </div>
-        </div>
-      </a>
-      <a class="card card-hover" href="/admin/scanner.html">
-        <div class="kpi">
-          <div class="label"><span data-i18n="evBets">+EV bets</span> <span class="chip yellow text-xs" data-i18n="softBook">soft book</span></div>
-          <div class="value" id="m-ev">—</div>
-          <div class="delta">
-            <span data-i18n="lowHold">low hold:</span> <span class="strong" id="m-low">—</span>
-          </div>
-        </div>
-      </a>
-      <a class="card card-hover" href="/admin/scrape.html">
-        <div class="kpi">
-          <div class="label"><span data-i18n="sources">Sources</span> <span class="chip text-xs" data-i18n="books">books</span></div>
-          <div class="value" id="m-src">—</div>
-          <div class="delta">
-            <span data-i18n="eventsPriced">events priced:</span> <span class="strong tabnum" id="m-events">—</span>
-          </div>
-        </div>
-      </a>
-    </div>
+        <div id="opp-list" aria-live="polite" aria-busy="true"></div>
+      </section>
 
-    <!-- Top opportunities -->
-    <div class="card">
-      <h3>
-        <span data-i18n="topOpportunities">Top opportunities</span>
-        <span class="h3-meta" data-i18n="sortedByRoi">Sorted by ROI · live updates every 15s</span>
-      </h3>
-      <div id="opp-list"></div>
-    </div>
+      <!-- BOTTOM LEFT: Top +EV bets -->
+      <section class="card dashboard-section" id="ev-card" aria-labelledby="ev-heading">
+        <div class="dash-section-head">
+          <h2 id="ev-heading">
+            <span data-i18n="topEvBets">Top +EV bets</span>
+            <span class="count" id="ev-count" aria-live="polite">0</span>
+          </h2>
+          <a class="meta accent" href="/admin/scanner.html" data-i18n="viewAllInScanner">View all in scanner →</a>
+        </div>
+        <div class="table-wrap">
+          <table class="compact ev-table">
+            <caption class="sr-only">Top positive expected value bets</caption>
+            <thead>
+              <tr>
+                <th scope="col" data-i18n="match">Match</th>
+                <th scope="col" data-i18n="selection">Selection</th>
+                <th scope="col" data-i18n="bookmaker">Book</th>
+                <th scope="col" class="num" data-i18n="odds">Odds</th>
+                <th scope="col" class="num">EV%</th>
+                <th scope="col" class="num" data-i18n="stake">Stake</th>
+              </tr>
+            </thead>
+            <tbody id="ev-list"></tbody>
+          </table>
+        </div>
+      </section>
 
-    <!-- Top +EV bets -->
-    <div class="card" id="ev-card">
-      <h3>
-        <span data-i18n="topEvBets">Top +EV bets</span>
-        <a class="h3-meta" href="/admin/scanner.html" data-i18n="viewAllInScanner">View all in scanner</a>
-      </h3>
-      <div class="table-wrap">
-        <table class="compact">
-          <thead>
-            <tr>
-              <th data-i18n="match">Match</th>
-              <th data-i18n="selection">Selection</th>
-              <th data-i18n="bookmaker">Book</th>
-              <th class="num" data-i18n="odds">Odds</th>
-              <th class="num">EV%</th>
-              <th class="num" data-i18n="stake">Stake</th>
-            </tr>
-          </thead>
-          <tbody id="ev-list"></tbody>
-        </table>
-      </div>
+      <!-- BOTTOM RIGHT: Source health -->
+      <section class="card dashboard-section" aria-labelledby="source-health-heading">
+        <div class="dash-section-head">
+          <h2 id="source-health-heading">
+            <span data-i18n="sources">Source health</span>
+            <span class="count" id="src-count" aria-live="polite">0</span>
+          </h2>
+          <a class="meta accent" href="/admin/scrape.html" data-i18n="viewDetails">View details →</a>
+        </div>
+        <div id="source-health" class="source-health" aria-live="polite" aria-busy="true"></div>
+      </section>
     </div>
   </main>
+
+  <!-- Event detail modal: click an opportunity card to see all odds/markets -->
+  <dialog id="event-detail-dialog" class="arbiter-modal" aria-modal="true" aria-labelledby="event-detail-title">
+    <div class="dialog-head">
+      <div>
+        <h3 id="event-detail-title"></h3>
+        <div class="match-chips"></div>
+      </div>
+      <button class="dialog-close" type="button" data-close-event-detail aria-label="Close">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="dialog-body" id="event-detail-body"></div>
+  </dialog>
 
   <script src="/js/api.js"></script>
   <script src="/js/i18n.js"></script>
   <script src="/js/sse.js"></script>
   <script src="/js/app.js"></script>
+  <script src="/js/pages/common.js"></script>
+  <script src="/js/connection-status.js"></script>
+  <script src="/js/pages/event-detail-modal.js"></script>
   <script src="/js/pages/dashboard.js"></script>
 </body>
 </html>
