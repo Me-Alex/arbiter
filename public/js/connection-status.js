@@ -243,9 +243,10 @@ function decideHealthBanner(health) {
       ? window.arbiterI18n.t.bind(window.arbiterI18n)
       : (k) => k;
 
+    const statusLabel = t('status_' + decision.status) || decision.status;
     const message = decision.empty
       ? t('noFreshData')
-      : `${t('dataHealth')}: ${decision.status}${decision.actionable ? ` (${decision.actionable} ${t('freshSources')})` : ''}`;
+      : `${t('dataHealth')}: ${statusLabel}${decision.actionable ? ` (${decision.actionable} ${t('freshSources')})` : ''}`;
     const link = `<a href="/admin/scrape.html">${t('runScrape')}</a>`;
 
     const iconSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>';

@@ -170,17 +170,23 @@ function el(tag) {
   return node;
 }
 
-function runModuleSandbox() {
+function runModuleSandbox({ noMain = false, withApi = false } = {}) {
   // Fresh DOM shim per invocation so tests are isolated.
   const mainEl = el('main');
   const bannerEl = el('div');
   let created = 0;
 
+  const i18nMap = { noFreshData: 'NU', dataHealth: 'DH', freshSources: 'FS', runScrape: 'RS', connectionLost: 'CL', reconnected: 'RC', status_stale: 'STALE', status_partial: 'PARTIAL', status_empty: 'EMPTY' };
+  const quote = (v) => JSON.stringify(v);
+  // Build the source with the chosen i18n map as an inline object literal so
+  // the sandboxed module sees the SAME keys the real dictionaries carry.
+  const i18nLiteral = `{ ${Object.entries(i18nMap).map(([k, v]) => `${quote(k)}: ${quote(v)}`).join(', ')} }`;
+
   const documentShim = {
     readyState: 'complete',
     createElement: (tag) => { if (tag === 'div' && created === 0) { created++; return bannerEl; } return el(tag); },
     getElementById: (id) => (id === 'data-freshness-banner' ? createdBanner() : null),
-    querySelector: (sel) => (sel === 'main' ? mainEl : null),
+    querySelector: (sel) => (sel === 'main' ? (noMain ? null : mainEl) : null),
     querySelectorAll: () => [],
     addEventListener() {},
   };
@@ -195,12 +201,23 @@ function runModuleSandbox() {
     _advance: (ms) => { fakeNow += ms; },
   };
 
+  // Optional arbiterApi stub for wrapApiForToasts tests.
+  const apiStub = withApi
+    ? {
+        get: async () => 'ok',
+        post: async () => { throw Object.assign(new Error('boom'), { status: 500 }); },
+        put: async () => 'ok',
+        del: async () => 'ok',
+      }
+    : undefined;
+
   const sandbox = {
     window: {
       showToast: (msg, type, opts = {}) => { toasts.push({ msg, type, opts }); },
       arbiterI18n: {
-        t: (k) => ({ noFreshData: 'NU', dataHealth: 'DH', freshSources: 'FS', runScrape: 'RS', connectionLost: 'CL', reconnected: 'RC' }[k] || k),
+        t: (k) => i18nMap[k] || k,
       },
+      arbiterApi: apiStub,
       document: documentShim,
       setTimeout: (fn) => { fn(); return 1; },
       clearTimeout: () => {},
@@ -217,7 +234,7 @@ function runModuleSandbox() {
     `${src}\nreturn window.arbiterConnectionStatus;`);
   const escape = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const api = fn(sandbox.window, documentShim, console, FakeDate, Math, Number, escape);
-  return { api, bannerEl, mainEl, toasts, documentShim, advance: (ms) => FakeDate._advance(ms) };
+  return { api, bannerEl, mainEl, toasts, documentShim, apiStub, advance: (ms) => FakeDate._advance(ms) };
 }
 
 describe('connection-status IIFE plumbing', () => {
@@ -225,7 +242,8 @@ describe('connection-status IIFE plumbing', () => {
     const { api, bannerEl, toasts } = runModuleSandbox();
     api.setDataHealth({ status: 'stale', actionableSourceCount: 2 });
     assert.equal(bannerEl.className, 'data-freshness-banner visible');
-    assert.match(bannerEl.innerHTML, /DH: stale \(2 FS\)/);
+    // status token is localized via status_stale → STALE in the sandbox map
+    assert.match(bannerEl.innerHTML, /DH: STALE \(2 FS\)/);
     assert.match(bannerEl.innerHTML, /RS/);
     assert.ok(!toasts.length);
   });
@@ -256,11 +274,11 @@ describe('connection-status IIFE plumbing', () => {
     assert.ok(bannerEl.innerHTML.includes('&lt;script&gt;'));
   });
 
-  it('setDataHealth with no main element still renders the banner', () => {
-    const { api, bannerEl } = runModuleSandbox();
-    // Clear the main reference so insertBefore is a no-op on the shim
+  it('setDataHealth still renders when <main> is absent', () => {
+    const { api, bannerEl, mainEl } = runModuleSandbox({ noMain: true });
     api.setDataHealth({ status: 'stale' });
     assert.equal(bannerEl.className, 'data-freshness-banner visible');
+    assert.equal(mainEl._firstChild, undefined, 'banner not inserted into <main>');
   });
 
   it('setState toasts on lost connection then reconnected', () => {
@@ -289,5 +307,37 @@ describe('connection-status IIFE plumbing', () => {
     api.setState('open');        // reconnected toast
     assert.equal(toasts.length, 2);
     assert.equal(toasts[1].type, 'success');
+  });
+
+  it('wrapApiForToasts toasts on a failing POST', async () => {
+    const { apiStub, toasts } = runModuleSandbox({ withApi: true });
+    await assert.rejects(apiStub.post('/api/x', {}), /boom/);
+    assert.equal(toasts.length, 1);
+    assert.equal(toasts[0].type, 'error');
+    assert.equal(toasts[0].msg, 'boom');
+  });
+
+  it('wrapApiForToasts stays silent for 401 and 403', async () => {
+    const { apiStub, toasts } = runModuleSandbox({ withApi: true });
+    apiStub.post = async () => {
+      throw Object.assign(new Error('nope'), { status: 403 });
+    };
+    apiStub.get = async () => {
+      throw Object.assign(new Error('no auth'), { status: 401 });
+    };
+    await assert.rejects(apiStub.post('/api/y', {}), /nope/);
+    await assert.rejects(apiStub.get('/api/z'), /no auth/);
+    assert.equal(toasts.length, 0);
+  });
+
+  it('wrapApiForToasts does not double-wrap (single _toastsWired guard)', async () => {
+    const { apiStub, toasts } = runModuleSandbox({ withApi: true });
+    // The module wrapped once at init. Re-entering init / calling the wrapper
+    // twice must not stack wrappers.
+    assert.equal(apiStub._toastsWired, true);
+    const before = toasts.length;
+    // The wrapper captured the ORIGINAL post (which throws 'boom').
+    await assert.rejects(apiStub.post('/api/x', {}), /boom/);
+    assert.equal(toasts.length, before + 1, 'exactly one toast: not double-wrapped');
   });
 });
