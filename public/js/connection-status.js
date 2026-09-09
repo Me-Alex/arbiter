@@ -243,7 +243,12 @@ function decideHealthBanner(health) {
       ? window.arbiterI18n.t.bind(window.arbiterI18n)
       : (k) => k;
 
-    const statusLabel = t('status_' + decision.status) || decision.status;
+    // t() returns the key string itself when a key is missing, so compare the
+// result against the key rather than relying on truthiness; unknown statuses
+// fall back to the raw server token.
+    const statusKey = 'status' + decision.status.charAt(0).toUpperCase() + decision.status.slice(1);
+    const translated = t(statusKey);
+    const statusLabel = translated === statusKey ? decision.status : translated;
     const message = decision.empty
       ? t('noFreshData')
       : `${t('dataHealth')}: ${statusLabel}${decision.actionable ? ` (${decision.actionable} ${t('freshSources')})` : ''}`;

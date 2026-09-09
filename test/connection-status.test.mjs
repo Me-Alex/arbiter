@@ -9,6 +9,40 @@ import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 
 const src = readFileSync(join(import.meta.dirname, '..', 'public/js/connection-status.js'), 'utf8');
+const i18nSrc = readFileSync(join(import.meta.dirname, '..', 'public/js/i18n.js'), 'utf8');
+
+// Extract the `const dict = { ro: {...}, en: {...} };` literal from i18n.js by
+// brace matching, then evaluate it so the sandbox uses the REAL dictionary.
+function extractConst(name, from) {
+  const re = new RegExp(`const\\s+${name}\\s*=\\s*\\{`);
+  const m = re.exec(from);
+  if (!m) throw new Error('cannot find const ' + name);
+  let depth = 0;
+  let i = from.indexOf('{', m.index);
+  if (i === -1) throw new Error('no open brace for ' + name);
+  for (; i < from.length; i++) {
+    const ch = from[i];
+    if (ch === '{') depth++;
+    else if (ch === '}') {
+      depth--;
+      if (depth === 0) break;
+    }
+  }
+  return from.slice(m.index, i + 1);
+}
+
+// In the real dictionary, keys are quoted or bare; the extracted literal is
+// valid JS, so evaluate it directly.
+const dictSrc = `${extractConst('dict', i18nSrc)}; return dict;`;
+const realDict = new Function(dictSrc)();
+const REAL_RO = realDict.ro;
+const REAL_EN = realDict.en;
+
+// Replace the sandbox i18n with the REAL dictionary (RO so translated words
+// like 'învechit' land in the banner), mirroring i18n.js's t() exactly.
+function makeRealT(lang) {
+  return (key) => (realDict[lang] && realDict[lang][key]) || (realDict.en[key]) || key;
+}
 
 // Extract a top-level `function NAME(...) { ... }` by brace matching.
 function extractFn(name, from = src) {
@@ -176,12 +210,6 @@ function runModuleSandbox({ noMain = false, withApi = false } = {}) {
   const bannerEl = el('div');
   let created = 0;
 
-  const i18nMap = { noFreshData: 'NU', dataHealth: 'DH', freshSources: 'FS', runScrape: 'RS', connectionLost: 'CL', reconnected: 'RC', status_stale: 'STALE', status_partial: 'PARTIAL', status_empty: 'EMPTY' };
-  const quote = (v) => JSON.stringify(v);
-  // Build the source with the chosen i18n map as an inline object literal so
-  // the sandboxed module sees the SAME keys the real dictionaries carry.
-  const i18nLiteral = `{ ${Object.entries(i18nMap).map(([k, v]) => `${quote(k)}: ${quote(v)}`).join(', ')} }`;
-
   const documentShim = {
     readyState: 'complete',
     createElement: (tag) => { if (tag === 'div' && created === 0) { created++; return bannerEl; } return el(tag); },
@@ -201,13 +229,14 @@ function runModuleSandbox({ noMain = false, withApi = false } = {}) {
     _advance: (ms) => { fakeNow += ms; },
   };
 
-  // Optional arbiterApi stub for wrapApiForToasts tests.
+  // Optional arbiterApi stub for wrapApiForToasts tests. Injected BEFORE the
+  // module wraps, so the wrapper captures these exact functions.
   const apiStub = withApi
     ? {
         get: async () => 'ok',
         post: async () => { throw Object.assign(new Error('boom'), { status: 500 }); },
-        put: async () => 'ok',
-        del: async () => 'ok',
+        put: async () => { throw new Error('put fail'); },
+        del: async () => { throw new Error('del fail'); },
       }
     : undefined;
 
@@ -215,7 +244,7 @@ function runModuleSandbox({ noMain = false, withApi = false } = {}) {
     window: {
       showToast: (msg, type, opts = {}) => { toasts.push({ msg, type, opts }); },
       arbiterI18n: {
-        t: (k) => i18nMap[k] || k,
+        t: makeRealT('ro'), // RO dictionary: 'învechit' etc. land in the banner
       },
       arbiterApi: apiStub,
       document: documentShim,
@@ -242,9 +271,9 @@ describe('connection-status IIFE plumbing', () => {
     const { api, bannerEl, toasts } = runModuleSandbox();
     api.setDataHealth({ status: 'stale', actionableSourceCount: 2 });
     assert.equal(bannerEl.className, 'data-freshness-banner visible');
-    // status token is localized via status_stale → STALE in the sandbox map
-    assert.match(bannerEl.innerHTML, /DH: STALE \(2 FS\)/);
-    assert.match(bannerEl.innerHTML, /RS/);
+    // Status token is localized via the REAL RO dictionary ('învechit').
+    assert.match(bannerEl.innerHTML, /Starea datelor: învechit \(2 surse actuale\)/);
+    assert.match(bannerEl.innerHTML, /Pornește rǎzuirea/);
     assert.ok(!toasts.length);
   });
 
@@ -263,7 +292,8 @@ describe('connection-status IIFE plumbing', () => {
     const { api, bannerEl } = runModuleSandbox();
     api.setDataHealth({ status: 'empty' });
     assert.equal(bannerEl.className, 'data-freshness-banner visible info');
-    assert.match(bannerEl.innerHTML, /NU/);
+    // Real RO text for empty status.
+    assert.match(bannerEl.innerHTML, /Nu există date proaspete/);
   });
 
   it('setDataHealth escapes HTML in the status string (XSS guard)', () => {
@@ -339,5 +369,37 @@ describe('connection-status IIFE plumbing', () => {
     // The wrapper captured the ORIGINAL post (which throws 'boom').
     await assert.rejects(apiStub.post('/api/x', {}), /boom/);
     assert.equal(toasts.length, before + 1, 'exactly one toast: not double-wrapped');
+  });
+
+  it('wrapApiForToasts toasts for failing PUT and DEL', async () => {
+    const { apiStub, toasts } = runModuleSandbox({ withApi: true });
+    // The wrappers captured the throwing put/del injected via withApi.
+    await assert.rejects(apiStub.put('/api/a', {}), /put fail/);
+    await assert.rejects(apiStub.del('/api/b'), /del fail/);
+    assert.equal(toasts.length, 2);
+    assert.ok(toasts.every((t) => t.type === 'error'));
+  });
+
+  it('wrapApiForToasts honors _silent errors (no toast)', async () => {
+    const { apiStub, toasts } = runModuleSandbox({ withApi: true });
+    const silent = Object.assign(new Error('quiet'), { _silent: true });
+    apiStub.post = async () => { throw silent; };
+    await assert.rejects(apiStub.post('/api/x', {}), /quiet/);
+    assert.equal(toasts.length, 0);
+  });
+
+  it('setDataHealth falls back to raw status when the RO key is missing', () => {
+    const { api, bannerEl } = runModuleSandbox();
+    // 'weird' has no statusWeird key in the real dictionary → raw token shown.
+    api.setDataHealth({ status: 'weird' });
+    // Unknown status is not stale/partial/empty → info variant + raw token.
+    assert.equal(bannerEl.className, 'data-freshness-banner visible info');
+    assert.match(bannerEl.innerHTML, /Starea datelor: weird/);
+  });
+
+  it('setDataHealth localizes partial via the real RO dictionary', () => {
+    const { api, bannerEl } = runModuleSandbox();
+    api.setDataHealth({ status: 'partial', actionableSourceCount: 1 });
+    assert.match(bannerEl.innerHTML, /Starea datelor: parțial \(1 surse actuale\)/);
   });
 });
