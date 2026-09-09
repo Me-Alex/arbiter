@@ -17,6 +17,22 @@ async function seed(dir, books) {
   }
 }
 
+// Seed WITHOUT the provenance fields (runId/sourceUrl/transport) so the
+// FRESH → PARTIAL provenance downgrade path (scanner.mjs:64-68) triggers.
+async function seedNoProvenance(dir, books) {
+  await mkdir(join(dir, 'workspace'), { recursive: true });
+  for (const [, file, payload] of books) {
+    await writeFile(join(dir, 'workspace', file), JSON.stringify(payload), 'utf8');
+  }
+}
+
+const EVENT = {
+  id: 'a1', sourceId: 'a', eventKey: 'k1',
+  sport: 'Football', league: 'Liga 1', kickoff: '2030-01-01T00:00:00Z',
+  homeTeam: 'H', awayTeam: 'A',
+  markets: [{ key: 'MATCH_ODDS', selections: [{ name: 'H', odds: 2.0 }] }],
+};
+
 test('loadWorkspace reads every *_events.json and aggregates', async () => {
   const dir = await mkdtemp(join(tmpdir(), 'arbiter-'));
   const e1 = {
@@ -114,6 +130,51 @@ test('scanWorkspace derives stale dataHealth when only stale sources exist', asy
   await seed(dir, [['a', 'a_events.json', { schemaVersion: 2, sourceId: 'a', capturedAt: staleCapturedAt, dataStatus: 'fresh', events: [e1] }]]);
   const scan = await scanWorkspace({ dataDir: dir, bankroll: 1000 });
   assert.equal(scan.dataHealth.status, 'stale');
+  assert.equal(scan.dataHealth.actionableSourceCount, 0);
+  await rm(dir, { recursive: true });
+});
+
+test('scanWorkspace dataHealth is fresh when mixed fresh + stale sources exist', async () => {
+  const dir = await mkdtemp(join(tmpdir(), 'arbiter-'));
+  const freshAt = new Date().toISOString();
+  const staleAt = new Date(Date.now() - 30 * 60 * 1000).toISOString();
+  await seed(dir, [
+    ['a', 'a_events.json', { schemaVersion: 2, sourceId: 'a', capturedAt: freshAt, dataStatus: 'fresh', events: [EVENT] }],
+    ['b', 'b_events.json', { schemaVersion: 2, sourceId: 'b', capturedAt: staleAt, dataStatus: 'stale', events: [] }],
+  ]);
+  const scan = await scanWorkspace({ dataDir: dir, bankroll: 1000 });
+  assert.equal(scan.dataHealth.status, 'fresh');
+  assert.equal(scan.dataHealth.actionableSourceCount, 1);
+  await rm(dir, { recursive: true });
+});
+
+test('scanWorkspace dataHealth prefers stale over partial', async () => {
+  const dir = await mkdtemp(join(tmpdir(), 'arbiter-'));
+  const staleAt = new Date(Date.now() - 30 * 60 * 1000).toISOString();
+  const missingProv = { schemaVersion: 2, sourceId: 'b', capturedAt: new Date().toISOString(), events: [] };
+  await seed(dir, [
+    ['a', 'a_events.json', { schemaVersion: 2, sourceId: 'a', capturedAt: staleAt, dataStatus: 'stale', events: [] }],
+  ]);
+  await seedNoProvenance(dir, [['b', 'b_events.json', missingProv]]);
+  const scan = await scanWorkspace({ dataDir: dir, bankroll: 1000 });
+  assert.equal(scan.dataHealth.status, 'stale');
+  await rm(dir, { recursive: true });
+});
+
+test('scanWorkspace dataHealth is empty when no sources exist', async () => {
+  const dir = await mkdtemp(join(tmpdir(), 'arbiter-'));
+  await seed(dir, []);
+  const scan = await scanWorkspace({ dataDir: dir, bankroll: 1000 });
+  assert.equal(scan.dataHealth.status, 'empty');
+  assert.equal(scan.dataHealth.actionableSourceCount, 0);
+  await rm(dir, { recursive: true });
+});
+
+test('scanWorkspace downgrades fresh source without provenance to partial', async () => {
+  const dir = await mkdtemp(join(tmpdir(), 'arbiter-'));
+  await seedNoProvenance(dir, [['a', 'a_events.json', { schemaVersion: 2, sourceId: 'a', capturedAt: new Date().toISOString(), dataStatus: 'fresh', events: [EVENT] }]]);
+  const scan = await scanWorkspace({ dataDir: dir, bankroll: 1000 });
+  assert.equal(scan.dataHealth.status, 'partial');
   assert.equal(scan.dataHealth.actionableSourceCount, 0);
   await rm(dir, { recursive: true });
 });

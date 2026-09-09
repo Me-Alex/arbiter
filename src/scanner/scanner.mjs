@@ -144,10 +144,12 @@ export async function scanWorkspace(args) {
     /**
      * Top-level data health contract:
      * - `actionableSourceCount`: number of sources with status FRESH.
-     * - `status`: derives the WORST per-source health (FRESH wins only when >=1
-     *   source is fresh, then STALE > PARTIAL > EMPTY). This is what the
-     *   frontend freshness banner consumes — it differs from per-source
-     *   `dataStatus` (which lives on each snapshot source).
+     * - `status`: derives the WORST per-source health (FRESH wins only when
+     *   >=1 source is fresh, then STALE > PARTIAL > FAILED > EMPTY). This is
+     *   what the frontend freshness banner consumes — it differs from
+     *   per-source `dataStatus` (which lives on each snapshot source).
+     *   CANCELLED/UNKNOWN sources intentionally degrade to EMPTY ("no usable
+     *   data") rather than surfacing as a banner state.
      * - `sources`: per-source quality summary (see `quality` above).
      */
     dataHealth: {
@@ -159,7 +161,9 @@ export async function scanWorkspace(args) {
           ? DATA_STATUS.STALE
           : sources.some((source) => source.dataStatus === DATA_STATUS.PARTIAL)
             ? DATA_STATUS.PARTIAL
-            : DATA_STATUS.EMPTY,
+            : sources.some((source) => source.dataStatus === DATA_STATUS.FAILED)
+              ? DATA_STATUS.FAILED
+              : DATA_STATUS.EMPTY,
     },
     options: {
       bankroll,

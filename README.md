@@ -210,7 +210,7 @@ Arbiter supports multiple sports through a central **sport registry** (`src/spor
 All routes are loopback-only; mutations require the `x-arbiter-token` CSRF header (fetch `GET /api/csrf` first).
 
 - `GET /api/health` — liveness + uptime.
-- `GET /api/scan` — latest published scan (opportunities, middles, positiveEv, lowHold, sources, dataHealth).
+- `GET /api/scan` — latest published scan (opportunities, middles, positiveEv, lowHold, sources, dataHealth). `dataHealth.status` is worst-per-source: `fresh` if any source is fresh, else `stale` > `partial` > `failed` > `empty`; `dataHealth.actionableSourceCount` is the number of fresh sources.
 - `POST /api/scan` — run a scan now with `{ bankroll, minRoiPercent, maxMiddleRiskPercent, minMiddleRoiPercent, includeLive, includePast, sport }` (not published). Optional `sport` (e.g. `"tennis"`) filters events and scrapers to the selected sport.
 - `GET /api/sports` — list registered sports with id and display name.
 - `GET /api/scan/export.csv` — download scan findings as CSV; optional `?type=opportunities,middles,positiveEv,lowHold` filter.
