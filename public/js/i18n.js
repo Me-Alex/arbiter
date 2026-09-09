@@ -230,6 +230,9 @@
       systemHealth: 'Stare sistem',
       engineActive: 'Scanare activă',
       terminalSubtitle: 'Terminal Arbitraj',
+      live: 'Live',
+      connectionLost: 'Conexiune pierdută — reconectare…',
+      reconnected: 'Reconectat',
     },
     en: {
       dashboard: 'Dashboard',
@@ -460,6 +463,9 @@
       systemHealth: 'System Health',
       engineActive: 'Scanner Active',
       terminalSubtitle: 'Arbitrage Terminal',
+      live: 'Live',
+      connectionLost: 'Connection lost — reconnecting…',
+      reconnected: 'Reconnected',
     },
   };
 

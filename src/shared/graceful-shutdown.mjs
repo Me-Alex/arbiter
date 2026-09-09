@@ -5,6 +5,8 @@
  * requests, then closes the server socket. `onShutdown` callbacks
  * (e.g. stopping the scheduler, closing the broadcaster) run in
  * registration order before `process.exit`.
+ *
+ * @module graceful-shutdown
  */
 
 const registered = new Set();
@@ -29,6 +31,9 @@ export function installShutdown({ server, logger = () => {}, tasks = [], timeout
     shuttingDown = true;
     logger('info', `received ${signal}, shutting down`);
 
+    // A fatal crash must not look like a clean exit to a supervisor.
+    const exitCode = signal === 'uncaughtException' ? 1 : 0;
+
     const hardExit = setTimeout(() => {
       logger('error', `shutdown timed out after ${timeoutMs}ms, exiting`);
       process.exit(1);
@@ -42,7 +47,7 @@ export function installShutdown({ server, logger = () => {}, tasks = [], timeout
       await new Promise((resolve) => server.close(() => resolve()));
       logger('info', 'shutdown complete');
       clearTimeout(hardExit);
-      process.exit(0);
+      process.exit(exitCode);
     } catch (err) {
       logger('error', `shutdown error: ${err.message}`);
       clearTimeout(hardExit);
