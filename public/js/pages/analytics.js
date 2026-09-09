@@ -1,15 +1,25 @@
 arbiterApp.mount('analytics');
     const $ = (id) => document.getElementById(id);
+    let _isFirstAnalyticsLoad = true;
 
-    function escapeHtml(value) {
-      return String(value ?? '').replace(/[&<>'"]/g, (char) => ({
-        '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;',
-      })[char]);
+    // Skeleton loading states for tables while data loads
+    const TABLE_SKELETON_ROWS = 4;
+    function skeletonRow(cols) {
+      return `<tr class="loading-row"><td colspan="${cols}"><div class="skeleton skeleton-line" style="width:${60 + Math.random() * 30}%"></div></td></tr>`;
     }
+    function showTableSkeleton(tableId, cols) {
+      const tbody = document.querySelector(`#${tableId} tbody`);
+      if (tbody) tbody.innerHTML = Array(TABLE_SKELETON_ROWS).fill('').map(() => skeletonRow(cols)).join('');
+    }
+
+    // Show skeleton loading immediately
+    showTableSkeleton('tracker-table', 8);
+    showTableSkeleton('catalog-table', 4);
 
     function eventLabel(value) {
       const parts = String(value || '').split('|').slice(-2);
-      return parts.map(escapeHtml).join(' <span class="muted">vs</span> ');
+      const vs = arbiterI18n.t.bind(arbiterI18n)('vs');
+      return parts.map(escapeHtml).join(` <span class="muted">${vs}</span> `);
     }
 
     async function init() {
@@ -19,6 +29,15 @@ arbiterApp.mount('analytics');
       $('k-mids').textContent = (scan.middles || []).length;
       $('k-ev').textContent = (scan.positiveEv || []).length;
       $('k-low').textContent = (scan.lowHold || []).length;
+
+      // Flash effect on KPI cards (skip first load)
+      if (!_isFirstAnalyticsLoad) {
+        document.querySelectorAll('.analytics-kpis .kpi-card').forEach((card, i) => {
+          setTimeout(() => card.classList.add('flash'), i * 40);
+          setTimeout(() => card.classList.remove('flash'), 500 + i * 40);
+        });
+      }
+      _isFirstAnalyticsLoad = false;
 
       const cat = await arbiterApi.get('/api/catalog').catch(() => ({}));
       const tb = document.querySelector('#catalog-table tbody');
@@ -30,7 +49,11 @@ arbiterApp.mount('analytics');
             <td class="mono">${escapeHtml(m.marketKey)}</td>
             <td class="num tabnum">${Number(m.eventCount || 0).toLocaleString()}</td>
             <td class="num tabnum">${Number(m.selectionCount || 0).toLocaleString()}</td>
-          </tr>`).join('') : `<tr><td colspan="4" class="empty">${escapeHtml(t('noMarkets'))}</td></tr>`;
+          </tr>`).join('') : `<tr><td colspan="4"><div class="empty">
+            <div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="12" width="4" height="9" rx="1"/><rect x="10" y="7" width="4" height="14" rx="1"/><rect x="17" y="3" width="4" height="18" rx="1"/></svg></div>
+            <div>${escapeHtml(t('noMarkets'))}</div>
+            <div class="empty-actions"><a class="btn primary" href="/admin/scrape.html">${escapeHtml(t('runScrape'))}</a></div>
+          </div></td></tr>`;
       };
       renderCatalog(all);
       $('cat-search').addEventListener('input', (e) => {
@@ -57,20 +80,30 @@ arbiterApp.mount('analytics');
           <td class="num tabnum">${(b.stake || 0).toFixed(2)}</td>
           <td><span class="status ${escapeHtml(b.status || 'pending')}">${escapeHtml(b.status || 'pending')}</span></td>
           <td class="num">
-            <div class="row" style="gap:4px;justify-content:flex-end">
-              <button class="ghost sm" data-action="won" data-id="${escapeHtml(b.id)}" title="${escapeHtml(t('markWon'))}" aria-label="${escapeHtml(t('markWon'))}">W</button>
-              <button class="ghost sm" data-action="lost" data-id="${escapeHtml(b.id)}" title="${escapeHtml(t('markLost'))}" aria-label="${escapeHtml(t('markLost'))}">L</button>
-              <button class="ghost sm" data-action="del" data-id="${escapeHtml(b.id)}" title="${escapeHtml(t('delete'))}" aria-label="${escapeHtml(t('delete'))}">×</button>
+            <div class="row gap-2" style="justify-content:flex-end">
+              <button class="ghost sm" data-action="won" data-id="${escapeHtml(b.id)}" title="${escapeHtml(t('markWon'))}" aria-label="${escapeHtml(t('markWon'))}">
+                <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 8 7 12 13 4"/></svg>
+              </button>
+              <button class="ghost sm" data-action="lost" data-id="${escapeHtml(b.id)}" title="${escapeHtml(t('markLost'))}" aria-label="${escapeHtml(t('markLost'))}">
+                <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="4" x2="12" y2="12"/><line x1="12" y1="4" x2="4" y2="12"/></svg>
+              </button>
+              <button class="ghost sm danger" data-action="del" data-id="${escapeHtml(b.id)}" title="${escapeHtml(t('delete'))}" aria-label="${escapeHtml(t('delete'))}">
+                <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 4 8 9 13 4"/><line x1="3" y1="4" x2="3" y2="14" /><line x1="13" y1="4" x2="13" y2="14" /></svg>
+              </button>
             </div>
           </td>
         </tr>
-      `).join('') : `<tr><td colspan="8" class="empty">${escapeHtml(t('noBets'))}</td></tr>`;
+      `).join('') : `<tr><td colspan="8"><div class="empty">
+            <div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
+            <div>${escapeHtml(t('noBets'))}</div>
+          </div></td></tr>`;
       tb.querySelectorAll('button[data-action]').forEach((btn) => {
         btn.addEventListener('click', async () => {
           const id = btn.getAttribute('data-id');
           const action = btn.getAttribute('data-action');
           try {
             if (action === 'del') {
+              if (!window.confirm(t('confirmDelete') || t('delete') + '?')) return;
               await arbiterApi.del('/api/tracker/' + encodeURIComponent(id));
             } else {
               await arbiterApi.put('/api/tracker/' + encodeURIComponent(id), { status: action === 'won' ? 'won' : 'lost' });
