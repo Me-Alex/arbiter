@@ -1,0 +1,339 @@
+/* Scrape control page: focused layout refinements layered over the shared theme. */
+.scrape-kpis { gap: 12px; }
+.scrape-kpis .kpi-card { min-height: 132px; overflow: hidden; transition: transform var(--t-fast) var(--ease-out), border-color var(--t-fast) var(--ease-out); }
+.scrape-kpis .kpi-card:hover { transform: translateY(-2px); border-color: var(--border-bright); }
+.scrape-kpis .kpi-card::after {
+  content: '';
+  position: absolute;
+  width: 120px;
+  height: 120px;
+  right: -42px;
+  bottom: -58px;
+  border-radius: 50%;
+  background: var(--accent-soft);
+  pointer-events: none;
+}
+.scrape-kpis .kpi-card-failed::after { background: var(--red-soft); }
+.scrape-workspace { align-items: start; }
+.config-card, .bookmakers-card { min-height: 100%; }
+.bookmakers-card { max-height: 60vh; overflow-y: auto; }
+.config-card h3, .bookmakers-card h3 { align-items: baseline; }
+.config-card .field { margin-bottom: 14px; }
+.config-card #max-events {
+  border-color: var(--accent-line);
+  background: linear-gradient(90deg, var(--accent-soft), var(--bg-0) 42%);
+  font-weight: 600;
+}
+.config-card .row:last-child { padding-top: 4px; }
+.config-card #run-btn { min-width: 132px; }
+.progress-card {
+  border-color: var(--accent-line);
+  background: linear-gradient(135deg, rgba(56,189,248,.08), transparent 42%), var(--bg-1);
+}
+.progress-card .progress { height: 10px !important; }
+#progress-activity { min-width: 160px; }
+#bookmaker-list {
+  min-height: 78px;
+  align-content: flex-start;
+  padding: 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  background: rgba(0,0,0,.12);
+}
+#bookmaker-list .chip-group { padding: 0 2px 4px; }
+#bookmaker-list .chip-group-title { margin-top: 2px !important; }
+#bookmaker-list label.chip {
+  padding: 6px 10px;
+  cursor: pointer;
+  user-select: none;
+  border-color: var(--border-strong);
+}
+#bookmaker-list label.chip:hover { border-color: var(--accent-line); background: var(--bg-3); }
+#bookmaker-list label.chip:has(input:checked) {
+  border-color: var(--accent-line);
+  box-shadow: 0 0 0 2px var(--accent-soft);
+  color: var(--text);
+}
+#bookmaker-list label.chip.green:has(input:checked) {
+  border-color: rgba(52,211,153,.5);
+  box-shadow: 0 0 0 2px var(--green-soft);
+}
+#bookmaker-list input { margin: 0 2px 0 0; }
+#job-rows { margin-top: 12px; max-height: 40vh; overflow-y: auto; }
+#job-rows > .row { min-height: 38px; gap: 10px; }
+#job-rows > .row:last-child { border-bottom: 0 !important; }
+#job-rows .mono.strong { min-width: 110px; overflow: hidden; text-overflow: ellipsis; }
+
+/* ---------- Inline-style replacements ---------- */
+.log-line-flex { flex: 1; min-width: 0; }
+.chip-group-full { width: 100%; min-width: 100%; }
+.chip-group-title { margin: 10px 0 6px; letter-spacing: 0.06em; text-transform: uppercase; }
+.chip-row-wrap { gap: 6px; flex-wrap: wrap; }
+.job-row-item {
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+  transition: background var(--t-fast) var(--ease-out);
+}
+.job-row-item:hover { background: var(--bg-2); }
+.job-row-duration { min-width: 60px; text-align: right; }
+
+/* ---------- Job row enter animation ---------- */
+@keyframes jobRowSlideIn {
+  from { opacity: 0; transform: translateX(-8px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+#job-rows > .row {
+  animation: jobRowSlideIn var(--t-fast) var(--ease-out) both;
+}
+
+/* ---------- Stepper state transitions ---------- */
+.stepper .step {
+  transition: background var(--t-fast) var(--ease-out),
+              border-color var(--t-fast) var(--ease-out),
+              color var(--t-fast) var(--ease-out),
+              box-shadow var(--t-fast) var(--ease-out);
+}
+@keyframes stepPop {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.12); }
+  100% { transform: scale(1); }
+}
+.stepper .step.step-pop { animation: stepPop 0.35s var(--ease-out); }
+
+/* ---------- Per-source dot glow pop ---------- */
+@keyframes dotPop {
+  0%   { box-shadow: 0 0 0 0 currentColor; }
+  70%  { box-shadow: 0 0 0 6px transparent; }
+  100% { box-shadow: 0 0 0 0 transparent; }
+}
+#bookmaker-list label.chip .dot.pop {
+  animation: dotPop 0.5s var(--ease-out);
+}
+
+/* ---------- Focus-visible styles ---------- */
+#bookmaker-list label.chip:focus-visible {
+  outline: 2px solid var(--ring-strong);
+  outline-offset: 2px;
+}
+.config-card button:focus-visible,
+.bookmakers-card button:focus-visible,
+.progress-card button:focus-visible {
+  outline: 2px solid var(--ring-strong);
+  outline-offset: 2px;
+}
+.config-card select:focus-visible,
+.config-card input:focus-visible {
+  border-color: var(--ring-strong);
+  box-shadow: 0 0 0 2px var(--accent-soft);
+}
+
+/* ---------- Error box & log panel ---------- */
+#error-box { margin-top: 0; }
+#error-box.error-visible { animation: scrapeSlideIn var(--t-fast) var(--ease-out); }
+#log-panel:empty::before {
+  content: 'Waiting for orchestrator activity…';
+  display: block;
+  padding: 28px 12px;
+  color: var(--text-dim);
+  text-align: center;
+  font-family: var(--font-sans);
+  font-style: italic;
+}
+#log-panel {
+  max-height: 320px;
+  overflow-y: auto;
+}
+#last-run-table td:first-child, #recent-table td:first-child { max-width: 190px; overflow: hidden; text-overflow: ellipsis; }
+
+/* ---------- Search / filter box ---------- */
+.bm-search {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  background: var(--bg-2);
+  transition: border-color var(--t-fast) var(--ease-out);
+}
+.bm-search:focus-within {
+  border-color: var(--ring-strong);
+  box-shadow: 0 0 0 2px var(--accent-soft);
+}
+.bm-search svg { color: var(--text-dim); flex-shrink: 0; }
+.bm-search input {
+  flex: 1;
+  min-width: 0;
+  background: transparent;
+  border: 0;
+  outline: 0;
+  color: var(--text);
+  font-size: 13px;
+}
+.bm-search input::placeholder { color: var(--text-dim); }
+
+/* ---------- Collapsible chip groups ---------- */
+#bookmaker-list .chip-group-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 4px 0 8px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+}
+.chip-group-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: 0;
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  padding: 2px 4px;
+  transition: color var(--t-fast) var(--ease-out);
+}
+.chip-group-toggle:hover { color: var(--text-strong); }
+.chip-group-toggle .chev { transition: transform var(--t-fast) var(--ease-out); }
+.chip-group-toggle[aria-expanded="false"] .chev { transform: rotate(-90deg); }
+.chip-group-toggle .group-count {
+  font-family: var(--font-mono);
+  font-weight: 400;
+  color: var(--text-dim);
+}
+
+.group-select {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  font-family: var(--font-mono);
+  padding: 2px 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--r-full);
+  cursor: pointer;
+  color: var(--text-dim);
+  transition: all var(--t-fast) var(--ease-out);
+}
+.group-select:hover { border-color: var(--accent-line); }
+.group-select input { margin: 0; accent-color: var(--accent); }
+.group-select.all-checked {
+  border-color: var(--green-line);
+  color: var(--green);
+  background: var(--green-soft);
+}
+.group-select.some-checked {
+  border-color: var(--yellow-line);
+  color: var(--yellow);
+  background: var(--yellow-soft);
+}
+.group-select.none-checked { opacity: 0.6; }
+.group-selected-count { min-width: 20px; text-align: center; }
+
+/* ---------- Mobile breakpoints ---------- */
+@media (max-width: 980px) {
+  .scrape-kpis { gap: 10px; }
+  #progress-activity { min-width: 120px; }
+  .scrape-workspace { grid-template-columns: 1fr; }
+  .history-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 600px) {
+  .scrape-kpis .kpi-card { min-height: 110px; }
+  .progress-card > .row { align-items: stretch !important; }
+  .progress-card #cancel-btn { width: 100%; }
+  #progress-activity { min-width: 0; width: 100%; order: 3; }
+  #bookmaker-list label.chip { max-width: 100%; white-space: normal; }
+  #job-rows > .row { align-items: flex-start; }
+  #job-rows .spacer { display: none; }
+  #job-rows .mono.strong { flex: 1 1 100%; }
+  .config-card .row:last-child button { flex: 1 1 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .scrape-kpis .kpi-card::after { display: none; }
+}
+
+/* ---------- Entrance animations ---------- */
+@keyframes scrapeSlideIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.scrape-kpis .kpi-card {
+  animation: scrapeSlideIn var(--t-slow) var(--ease-out) both;
+}
+.scrape-kpis .kpi-card:nth-child(1) { animation-delay: 0ms; }
+.scrape-kpis .kpi-card:nth-child(2) { animation-delay: 50ms; }
+.scrape-kpis .kpi-card:nth-child(3) { animation-delay: 100ms; }
+.scrape-kpis .kpi-card:nth-child(4) { animation-delay: 150ms; }
+
+.scrape-workspace > .card {
+  animation: scrapeSlideIn var(--t-slow) var(--ease-out) both;
+}
+.scrape-workspace > .card:nth-child(1) { animation-delay: 100ms; }
+.scrape-workspace > .card:nth-child(2) { animation-delay: 180ms; }
+
+.log-card, .history-grid > .card {
+  animation: scrapeSlideIn var(--t-slow) var(--ease-out) both;
+}
+.log-card { animation-delay: 200ms; }
+.history-grid > .card:nth-child(1) { animation-delay: 250ms; }
+.history-grid > .card:nth-child(2) { animation-delay: 300ms; }
+
+/* ---------- Data update flash ---------- */
+@keyframes scrapeFlash {
+  0%   { background: var(--accent-soft); }
+  100% { background: transparent; }
+}
+
+.scrape-kpis .kpi-card.flash {
+  animation: scrapeFlash 0.5s var(--ease-out);
+}
+
+/* ---------- Progress ring ---------- */
+.ring-wrap { display: grid; place-items: center; margin-right: var(--s-4); }
+.ring { position: relative; width: 52px; height: 52px; }
+.ring svg { transform: rotate(-90deg); width: 100%; height: 100%; }
+.ring-track { fill: none; stroke: var(--bg-3); stroke-width: 5; }
+.ring-fill {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 5;
+  stroke-linecap: round;
+  stroke-dasharray: 113.1;
+  stroke-dashoffset: 113.1;
+  transition: stroke-dashoffset 0.6s var(--ease-out), stroke var(--t-fast) var(--ease-out);
+}
+.ring-label {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+.ring.complete .ring-fill { stroke: var(--green); }
+.ring.failed .ring-fill { stroke: var(--red); }
+
+/* ---------- Progress bar glow ---------- */
+.progress-card .bar {
+  transition: right 0.4s var(--ease-out);
+  box-shadow: 0 0 8px var(--accent);
+}
+
+/* ---------- Bookmaker chip hover ---------- */
+#bookmaker-list label.chip {
+  transition: all var(--t-fast) var(--ease-out);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scrape-kpis .kpi-card, .scrape-workspace > .card, .log-card, .history-grid > .card {
+    animation: none !important;
+  }
+}

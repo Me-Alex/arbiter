@@ -1,9 +1,10 @@
 import { join } from 'node:path';
-import { runScraperBatch, persistRunReport, loadScraperJobs } from './scraper-service.mjs';
+import { runScraperBatch, persistRunReport, loadScraperJobs, normalizeScrapeParallel, toProgressJob } from './scraper-service.mjs';
 import { scanWorkspace } from './scanner/scanner.mjs';
 import { buildMarketCatalog } from './scanner/market-catalog.mjs';
 import { runVerificationPass } from './verification.mjs';
-import { writeJsonAtomic, readJson } from './shared/atomic-write.mjs';
+import { writeJsonAtomic, tryReadJson } from './shared/atomic-write.mjs';
+import { emptyScan } from './scan-service.mjs';
 
 /**
  * scrape-orchestrator.mjs — owns the full lifecycle:
@@ -37,13 +38,19 @@ export class ScrapeOrchestrator {
   }
 
   async restoreState() {
-    const s = await readJson(join(this.dataDir, STATE_FILENAME), null);
+    const s = await tryReadJson(
+      join(this.dataDir, STATE_FILENAME),
+      null,
+      (err) => this.logger('warn', `corrupt ${STATE_FILENAME}, starting fresh: ${err.message}`),
+    );
     if (s && ['running', 'cancelling'].includes(s.status)) {
       // Previous process died mid-scrape; mark it terminal so the dashboard
       // never displays a phantom active run.
       s.status = 'completed-with-errors';
       s.finishedAt = new Date().toISOString();
       s.recovered = true;
+      s.currentActivity = null;
+      s.currentStep = null;
       this.scrapeState = s;
       await this.persistState();
     } else if (s) {
@@ -61,6 +68,8 @@ export class ScrapeOrchestrator {
    *     minMiddleRoiPercent?: number,
    *     includeLive?: boolean,
    *     includePast?: boolean,
+   *     maxEvents?: number|'all',
+   *     sport?: string,
    *   },
    * }} args
    */
@@ -71,21 +80,49 @@ export class ScrapeOrchestrator {
       throw err;
     }
     const jobs = await loadScraperJobs(this.configPath);
+    const sportFilter = scanOptions?.sport ? String(scanOptions.sport).trim().toLowerCase() : null;
+    if (sportFilter) {
+      // Validate against the sport registry
+      const { getSport } = await import('./sports/registry.mjs');
+      if (!getSport(sportFilter)) {
+        const err = new Error(`unknown sport "${scanOptions.sport}"`);
+        err.code = 'EBADINPUT';
+        throw err;
+      }
+    }
     const enabledIds = new Set();
     for (const job of jobs) {
       if (job.enabled !== false) {
+        // If a sport filter is active, only include scrapers that explicitly support that sport
+        if (sportFilter) {
+          if (Array.isArray(job.supportedSports) && job.supportedSports.includes(sportFilter)) {
+            // matches filter — include
+          } else {
+            continue; // no supportedSports or doesn't match — exclude
+          }
+        }
         enabledIds.add(job.id);
         if (Array.isArray(job.sourceIds)) job.sourceIds.forEach((sourceId) => enabledIds.add(sourceId));
       }
     }
-    const selected = [...new Set(bookIds)].filter((id) => enabledIds.has(id));
+    const requested = Array.isArray(bookIds) && bookIds.length > 0
+      ? bookIds
+      : jobs.filter((job) => {
+          if (job.enabled === false) return false;
+          if (sportFilter && Array.isArray(job.supportedSports) && job.supportedSports.length > 0) {
+            return job.supportedSports.includes(sportFilter);
+          }
+          return true;
+        }).map((job) => job.id);
+    const selected = [...new Set(requested)].filter((id) => enabledIds.has(id));
     if (selected.length === 0) {
-      const err = new Error('no enabled valid bookIds selected');
+      const err = new Error('no enabled bookmaker jobs selected');
       err.code = 'EBADINPUT';
       throw err;
     }
 
     const runId = new Date().toISOString();
+    scanOptions = resolveScanRequest(scanOptions);
     this.scrapeState = {
       runId,
       status: 'running',
@@ -104,6 +141,9 @@ export class ScrapeOrchestrator {
     // Run in background. Errors here are encoded into scrapeState.
     this._pipeline = this._runPipeline(selected, scanOptions, runId, this._abortController.signal)
       .catch((err) => {
+        if (this._abortController?.signal.aborted || err?.code === 'ECANCELLED') {
+          return this._finishCancelled(runId);
+        }
         this.logger('error', `pipeline failed: ${err.message}`);
         if (this.scrapeState && this.scrapeState.runId === runId) {
           this.scrapeState.status = 'completed-with-errors';
@@ -118,6 +158,15 @@ export class ScrapeOrchestrator {
         this._pipeline = null;
       });
     return this.scrapeState;
+  }
+
+  async _finishCancelled(runId) {
+    if (!this.scrapeState || this.scrapeState.runId !== runId) return;
+    this.scrapeState.status = 'cancelled';
+    this.scrapeState.finishedAt = new Date().toISOString();
+    this.scrapeState.currentActivity = 'scrape cancelled';
+    await this.persistState();
+    this._broadcast('scrape-update', this.scrapeState);
   }
 
   async cancel() {
@@ -140,15 +189,7 @@ export class ScrapeOrchestrator {
         throw err;
       }
     };
-    const finishCancelled = async () => {
-      if (!this.scrapeState || this.scrapeState.runId !== runId) return;
-      this.scrapeState.status = 'cancelled';
-      this.scrapeState.finishedAt = new Date().toISOString();
-      this.scrapeState.currentActivity = 'scrape cancelled';
-      await this.persistState();
-      this._broadcast('scrape-update', this.scrapeState);
-    };
-    const stepNames = ['Scraping', 'Scanning', 'Verifying', 'Cataloging', 'Complete'];
+    const finishCancelled = async () => this._finishCancelled(runId);
     this._setStep('Scraping', 0);
 
     const onEvent = (e) => this._handleScrapeEvent(e);
@@ -156,12 +197,14 @@ export class ScrapeOrchestrator {
     try {
       batch = await runScraperBatch({
         books,
-        parallel: 12,
+        parallel: normalizeScrapeParallel(process.env.ARBITER_SCRAPE_PARALLEL || 4),
         dataDir: this.dataDir,
         runId,
         signal,
         onEvent,
         logger: this.logger,
+        maxEvents: scanOptions.maxEvents,
+        sport: scanOptions.sport,
       });
     } catch (err) {
       if (signal?.aborted || err?.code === 'ECANCELLED') {
@@ -188,11 +231,13 @@ export class ScrapeOrchestrator {
       completed: batch.report.jobs.filter((j) => j.valid).length,
       failed: batch.report.jobs.filter((j) => !j.valid).length,
       events: batch.report.jobs.reduce((acc, j) => acc + (j.events || 0), 0),
+      markets: mergeMarketDiagnostics(batch.report.jobs),
     };
 
     throwIfAborted();
     this._setStep('Scanning', 1);
     let scan;
+    let scanFailed = false;
     try {
       scan = await scanWorkspace({
         dataDir: this.dataDir,
@@ -205,6 +250,7 @@ export class ScrapeOrchestrator {
         minMiddleRoiPercent: scanOptions.minMiddleRoiPercent ?? 20,
         includeLive: scanOptions.includeLive ?? false,
         includePast: scanOptions.includePast ?? false,
+        sport: scanOptions.sport,
         publish: false,
       });
       this._broadcast('scan-update', {
@@ -214,11 +260,13 @@ export class ScrapeOrchestrator {
         lowHold: scan.lowHold.length,
       });
     } catch (err) {
+      scanFailed = true;
       this.logger('error', `scan failed: ${err.message}`);
       this.scrapeState.error = { name: 'ScanError', message: String(err.message).slice(0, 500) };
     }
 
     throwIfAborted();
+    let verifyFailed = false;
     if (scan && scan.opportunities.length) {
       this._setStep('Verifying', 2);
       try {
@@ -235,37 +283,36 @@ export class ScrapeOrchestrator {
           },
         );
       } catch (err) {
+        verifyFailed = true;
         this.logger('error', `verification failed: ${err.message}`);
       }
     }
 
     throwIfAborted();
     // Publish only after the scan and any verification pass have completed.
-    await writeJsonAtomic(join(this.dataDir, 'latest-scan.json'), scan || {
-      schemaVersion: 2,
-      scrapeRunId: runId,
-      dataHealth: { status: 'empty' },
-      opportunities: [], middles: [], positiveEv: [], lowHold: [],
-    });
+    await writeJsonAtomic(join(this.dataDir, 'latest-scan.json'), scan || emptyScan({ scrapeRunId: runId }));
 
     this._setStep('Cataloging', 3);
-    try {
-      throwIfAborted();
-      await buildMarketCatalog(this.dataDir, scan);
-    } catch (err) {
-      this.logger('error', `catalog failed: ${err.message}`);
+    if (scan) {
+      try {
+        throwIfAborted();
+        await buildMarketCatalog(this.dataDir, scan);
+      } catch (err) {
+        this.logger('error', `catalog failed: ${err.message}`);
+      }
     }
 
     throwIfAborted();
     this._setStep('Complete', 4);
     const failed = this.scrapeState.jobs.filter((job) => job.valid === false && job.status !== 'skipped').length;
-    this.scrapeState.status = failed === 0 ? 'completed' : 'completed-with-errors';
+    // A scan failure is terminal even if every scrape job succeeded — don't
+    // report a clean "completed" for a run whose findings were never produced.
+    // A failed scan is terminal; a failed verification pass is not clean.
+    this.scrapeState.status = scanFailed ? 'failed' : failed === 0 && !verifyFailed ? 'completed' : 'completed-with-errors';
     this.scrapeState.finishedAt = new Date().toISOString();
     await this.persistState();
     this._broadcast('scrape-update', this.scrapeState);
 
-    // silence "unused" warning
-    void stepNames;
   }
 
   _setStep(label, index) {
@@ -298,6 +345,7 @@ export class ScrapeOrchestrator {
         j.events = result.events;
         j.durationMs = result.durationMs;
         j.error = result.error || null;
+        j.marketDiagnostics = result.marketDiagnostics || null;
         j.startedAt = result.startedAt;
         j.finishedAt = result.finishedAt;
       }
@@ -322,6 +370,7 @@ export class ScrapeOrchestrator {
             j.events = rj.events;
             j.durationMs = rj.durationMs;
             j.error = rj.error || null;
+            j.marketDiagnostics = rj.marketDiagnostics || null;
           }
         }
       }
@@ -334,19 +383,25 @@ export class ScrapeOrchestrator {
   }
 }
 
-function toProgressJob(id) {
-  return {
-    id,
-    name: id,
-    sourceIds: [],
-    valid: false,
-    status: 'pending',
-    events: 0,
-    durationMs: 0,
-    error: null,
-    startedAt: null,
-    finishedAt: null,
-  };
+function mergeMarketDiagnostics(jobs) {
+  const map = new Map();
+  for (const job of Array.isArray(jobs) ? jobs : []) {
+    for (const market of job.marketDiagnostics?.markets || []) {
+      const entry = map.get(market.marketKey) || {
+        marketKey: market.marketKey,
+        eventCount: 0,
+        selectionCount: 0,
+        completeCount: 0,
+        incompleteCount: 0,
+      };
+      entry.eventCount += market.eventCount || 0;
+      entry.selectionCount += market.selectionCount || 0;
+      entry.completeCount += market.completeCount || 0;
+      entry.incompleteCount += market.incompleteCount || 0;
+      map.set(market.marketKey, entry);
+    }
+  }
+  return [...map.values()].sort((a, b) => a.marketKey.localeCompare(b.marketKey));
 }
 
 export function resolveScanRequest(input) {
@@ -357,6 +412,8 @@ export function resolveScanRequest(input) {
     minMiddleRoiPercent = 20,
     includeLive = false,
     includePast = false,
+    maxEvents,
+    sport,
   } = input || {};
   return {
     bankroll: clampNumber(bankroll, 10, 1000000, 1000),
@@ -365,7 +422,16 @@ export function resolveScanRequest(input) {
     minMiddleRoiPercent: clampNumber(minMiddleRoiPercent, 0, 100, 20),
     includeLive: Boolean(includeLive),
     includePast: Boolean(includePast),
+    maxEvents: normalizeMaxEvents(maxEvents),
+    sport: sport ? String(sport).trim().toLowerCase() : undefined,
   };
+}
+
+function normalizeMaxEvents(value) {
+  if (String(value ?? '').trim().toLowerCase() === 'all') return 'all';
+  if (value === undefined || value === null || value === '') return undefined;
+  const number = Number(value);
+  return Number.isInteger(number) && number > 0 ? Math.min(number, 5000) : undefined;
 }
 
 function clampNumber(v, lo, hi, fallback) {
