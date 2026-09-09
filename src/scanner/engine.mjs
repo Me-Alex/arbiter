@@ -1,4 +1,5 @@
-import { impliedProbability } from '../shared/text.mjs';
+import { eventIdentityKey, impliedProbability } from '../shared/text.mjs';
+import { round2, round4 } from '../shared/math.mjs';
 import { canonicalOutcome, supportedContractForMarket } from './market-contracts.mjs';
 
 /**
@@ -28,8 +29,9 @@ export function groupByEvent(events) {
   const out = new Map();
   for (const e of events) {
     if (!e || !e.eventKey) continue;
-    if (!out.has(e.eventKey)) out.set(e.eventKey, []);
-    out.get(e.eventKey).push(e);
+    const identity = eventIdentityKey(e) || e.eventKey;
+    if (!out.has(identity)) out.set(identity, []);
+    out.get(identity).push(e);
   }
   return out;
 }
@@ -75,7 +77,7 @@ export function findArbitrage(grouped, { minRoiPercent = 0 } = {}) {
     for (const ev of instances) {
       for (const m of ev.markets || []) {
         if (!m || !Array.isArray(m.selections)) continue;
-        const contract = supportedContractForMarket(m.key);
+        const contract = supportedContractForMarket(m.key, ev.sport);
         if (!contract) continue;
         const key = `${eventKey}::${m.key}`;
         let bucket = buckets.get(key);
@@ -94,23 +96,26 @@ export function findArbitrage(grouped, { minRoiPercent = 0 } = {}) {
             marketKey: m.key,
             homeTeam: ev.homeTeam,
             awayTeam: ev.awayTeam,
+            handicap: s.handicap ?? null,
+            sport: ev.sport,
           });
           if (!outcome) continue;
           const odds = Number(s.odds);
           if (!Number.isFinite(odds) || odds <= 1) continue;
           const choices = bucket.choices.get(outcome);
-          const cur = choices.get(ev.sourceId);
-          if (!cur || odds > cur.odds) {
-            choices.set(ev.sourceId, {
-              sourceId: ev.sourceId,
-              selection: s.name,
-              outcome,
-              odds,
-              handicap: s.handicap ?? null,
-              marketKey: m.key,
-              eventKey,
-            });
-          }
+            const cur = choices.get(ev.sourceId);
+            if (!cur || odds > cur.odds) {
+              choices.set(ev.sourceId, {
+                sourceId: ev.sourceId,
+                selection: s.name,
+                outcome,
+                odds,
+                handicap: s.handicap ?? null,
+                marketKey: m.key,
+                eventKey,
+                eventUrl: ev.sourceUrl || null,
+              });
+            }
         }
       }
     }
@@ -181,6 +186,7 @@ export function findMiddles(grouped, {
             handicap: Number(s.handicap),
             marketKey: m.key,
             eventKey,
+            eventUrl: ev.sourceUrl || null,
           });
         }
       }
@@ -189,18 +195,53 @@ export function findMiddles(grouped, {
 
   for (const b of buckets.values()) {
     if (b.legs.length < 2) continue;
+
+    // 1) Totals middles: Over line X vs Under line Y where Y > X
+    const overLegs = b.legs.filter((l) => /^(?:over|peste)\b/i.test(l.selection));
+    const underLegs = b.legs.filter((l) => /^(?:under|sub)\b/i.test(l.selection));
+    for (const low of overLegs) {
+      for (const high of underLegs) {
+        if (high.handicap <= low.handicap || high.sourceId === low.sourceId) continue;
+        const gap = high.handicap - low.handicap; // e.g., 3.5 - 2.5 = 1.0
+        const stake = 100;
+        const minPayout = Math.min(stake * low.odds, stake * high.odds);
+        const worstCaseLoss = Math.max(0, (stake * 2) - minPayout);
+        const gainIfBothWin = stake * (high.odds - 1) + stake * (low.odds - 1);
+        const roiPercent = (gainIfBothWin / (stake * 2)) * 100;
+        const riskPercent = (worstCaseLoss / (stake * 2)) * 100;
+        if (riskPercent > maxMiddleRiskPercent) continue;
+        if (roiPercent < minMiddleRoiPercent) continue;
+        const ev = b.meta.event;
+        out.push({
+          type: SIGNAL_TYPES.MIDDLE,
+          eventKey: b.eventKey,
+          marketKey: b.marketKey,
+          sport: ev.sport,
+          league: ev.league,
+          kickoff: ev.kickoff,
+          homeTeam: ev.homeTeam,
+          awayTeam: ev.awayTeam,
+          legs: [low, high],
+          gap,
+          roiPercent: round2(roiPercent),
+          riskPercent: round2(riskPercent),
+        });
+      }
+    }
+
+    // 2) Handicap point spread middles: negative vs positive handicap
     const sides = b.legs.filter((l) => l.handicap < 0);
     const others = b.legs.filter((l) => l.handicap > 0);
     for (const low of sides) {
       for (const high of others) {
         if (high.handicap <= low.handicap) continue;
         const gap = high.handicap - low.handicap; // e.g., 3.0 - 2.5 = 0.5
-        // Worst-case (one side pushes) loss vs best-case (both win) profit.
-        const stake = 100; // normalize, real allocation is in bankroll-allocation
-        const lossIfPush = stake; // one stake lost
+        const stake = 100;
+        const minPayout = Math.min(stake * low.odds, stake * high.odds);
+        const worstCaseLoss = Math.max(0, (stake * 2) - minPayout);
         const gainIfBothWin = stake * (high.odds - 1) + stake * (low.odds - 1);
         const roiPercent = (gainIfBothWin / (stake * 2)) * 100;
-        const riskPercent = (lossIfPush / (stake * 2)) * 100;
+        const riskPercent = (worstCaseLoss / (stake * 2)) * 100;
         if (riskPercent > maxMiddleRiskPercent) continue;
         if (roiPercent < minMiddleRoiPercent) continue;
         const ev = b.meta.event;
@@ -343,6 +384,3 @@ export function buildSignalIndex(scan) {
   for (const m of scan.middles || []) for (const l of m.legs || []) consider({ ...m, legs: [l] });
   return index;
 }
-
-function round2(n) { return Math.round(n * 100) / 100; }
-function round4(n) { return Math.round(n * 10000) / 10000; }

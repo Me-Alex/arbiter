@@ -438,7 +438,7 @@ const dataAttrs = [
     markets ? `data-group="${escapeHtml(JSON.stringify(markets.map((m) => ({
       roiPercent: m.roiPercent,
       marketKey: m.marketKey || m.market || '',
-      legs: (m.legs || []).map((l) => ({ sourceId: l.sourceId, selection: l.selection, odds: l.odds, stake: l.stake })),
+      legs: (m.legs || []).map((l) => ({ sourceId: l.sourceId, selection: l.selection, odds: l.odds, stake: l.stake, eventUrl: l.eventUrl || null })),
     }))))}"` : '',
   ].join(' ');
 
@@ -584,7 +584,8 @@ if (eventDetailModal) {
 function dashRenderLeg(l, t, roiPercent) {
   if (eventDetailModal) return eventDetailModal.renderLeg(l, t, roiPercent);
   const pal = paletteFor(l.sourceId);
-  return `<div class="leg">
+  const url = l.eventUrl ? ` data-event-url="${escapeHtml(l.eventUrl)}"` : '';
+  return `<div class="leg"${url}>
       <div class="head">
         <span class="book" style="color:${pal.color};">${escapeHtml(l.sourceId)}</span>
         <span class="stake">${t('stake')} ${fmtStake(l.stake)}</span>

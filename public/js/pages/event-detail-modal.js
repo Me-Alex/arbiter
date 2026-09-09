@@ -45,7 +45,8 @@
   // market-chip swap path — a single source of truth for leg markup.
   function renderLeg(l, t, roiPercent) {
     const pal = helpers.paletteFor(l.sourceId);
-    return `<div class="leg">
+    const url = l.eventUrl ? ` data-event-url="${helpers.escapeHtml(l.eventUrl)}"` : '';
+    return `<div class="leg"${url}>
       <div class="head">
         <span class="book" style="color:${pal.color};">${helpers.escapeHtml(l.sourceId)}</span>
         <span class="stake">${t('stake')} ${helpers.fmtStake(l.stake)}</span>
@@ -94,22 +95,23 @@
    * @param {Element} card
    * @returns {{legs:Array, marketLabel:string}|null}
    */
-  function collectCardLegs(card) {
-    if (!card || !card.querySelector) return null;
-    const marketLabel = card.querySelector('.chip-market')?.textContent?.trim() || '';
-    const legs = [];
-    for (const leg of card.querySelectorAll('.leg')) {
-      if (!leg || !leg.querySelector) continue;
-      const book = leg.querySelector('.book')?.textContent?.trim() || '';
-      const stakeLabel = leg.querySelector('.stake')?.textContent?.trim() || '';
-      const pick = leg.querySelector('.pick')?.textContent?.trim() || '';
-      const oddsEl = leg.querySelector('.odds');
-      const odds = oddsEl ? parseFloat(oddsEl.textContent) : NaN;
-      const profit = leg.querySelector('.profit')?.textContent?.trim() || '';
-      legs.push({ book, stakeLabel, stakeAmount: helpers.parseStakeAmount(stakeLabel), pick, odds: Number.isFinite(odds) ? odds : null, profit });
-    }
-    return legs.length ? { legs, marketLabel } : null;
+function collectCardLegs(card) {
+  if (!card || !card.querySelector) return null;
+  const marketLabel = card.querySelector('.chip-market')?.textContent?.trim() || '';
+  const legs = [];
+  for (const leg of card.querySelectorAll('.leg')) {
+    if (!leg || !leg.querySelector) continue;
+    const book = leg.querySelector('.book')?.textContent?.trim() || '';
+    const stakeLabel = leg.querySelector('.stake')?.textContent?.trim() || '';
+    const pick = leg.querySelector('.pick')?.textContent?.trim() || '';
+    const oddsEl = leg.querySelector('.odds');
+    const odds = oddsEl ? parseFloat(oddsEl.textContent) : NaN;
+    const profit = leg.querySelector('.profit')?.textContent?.trim() || '';
+    const eventUrl = (typeof leg.getAttribute === 'function' ? leg.getAttribute('data-event-url') : leg.eventUrl) || null;
+    legs.push({ book, stakeLabel, stakeAmount: helpers.parseStakeAmount(stakeLabel), pick, odds: Number.isFinite(odds) ? odds : null, profit, eventUrl });
   }
+  return legs.length ? { legs, marketLabel } : null;
+}
 
   /**
    * Render the live event view into the dialog body. `data` is the raw
@@ -295,12 +297,16 @@
       const stakeText = leg.stakeAmount !== null && leg.stakeAmount !== undefined
         ? `${t('stake')} ${helpers.fmtStake(leg.stakeAmount)}`
         : leg.stakeLabel || '';
+      const url = leg.eventUrl;
+      const linkIcon = url
+        ? `<a class="book-link" href="${helpers.escapeHtml(url)}" target="_blank" rel="noopener" title="Open ${helpers.escapeHtml(book)} →"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>`
+        : '';
       return `
       <tr>
         <td>
           <div class="bookmaker-cell">
             <span class="book-avatar" style="color:${pal.color};background:${pal.bg};border:1px solid ${pal.border};">${helpers.escapeHtml(book.slice(0, 2))}</span>
-            ${helpers.escapeHtml(book)}
+            ${helpers.escapeHtml(book)}${linkIcon}
           </div>
         </td>
         <td class="odds-cell-row"><span>${leg.odds ? helpers.fmtOdds(leg.odds) : '—'}</span></td>

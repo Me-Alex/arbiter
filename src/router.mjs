@@ -355,15 +355,21 @@ async function readEventDetailRoute(res, parsedUrl, dataDir) {
 
     for (const ev of snapshot.events) {
       if (normalizeTeamName(ev.sport || '') !== normSport) continue;
-      if (normalizeClubIdentity(ev.homeTeam || '') !== normHome) continue;
-      if (normalizeClubIdentity(ev.awayTeam || '') !== normAway) continue;
       if (Number.isFinite(queryKickoff)) {
         const evKickoff = Date.parse(ev.kickoff || '');
         if (Number.isFinite(evKickoff) && Math.abs(evKickoff - queryKickoff) > 5 * 60 * 1000) continue;
       }
+      // Match by normalized club identity, with an eventKey-token fallback for
+      // scrapers whose team names don't normalize identically to the query.
+      const evHome = normalizeClubIdentity(ev.homeTeam || '');
+      const evAway = normalizeClubIdentity(ev.awayTeam || '');
+      const homeMatch = evHome === normHome || eventKeyTokensMatch(ev.eventKey, normHome, normAway);
+      const awayMatch = evAway === normAway || eventKeyTokensMatch(ev.eventKey, normHome, normAway);
+      if (!homeMatch || !awayMatch) continue;
       events.push({
         sourceId,
         sourceUrl: ev.sourceUrl || null,
+        eventUrl: ev.sourceUrl || null,
         sport: ev.sport,
         league: ev.league || '',
         kickoff: ev.kickoff,
@@ -379,6 +385,19 @@ async function readEventDetailRoute(res, parsedUrl, dataDir) {
   }
 
   return sendJson(res, 200, { events });
+}
+
+function eventKeyTokensMatch(eventKey, normHome, normAway) {
+  if (!eventKey) return false;
+  const tokens = String(eventKey).toLowerCase().split('|');
+  const homeTokens = new Set(normHome.split(' '));
+  const awayTokens = new Set(normAway.split(' '));
+  let homeHits = 0, awayHits = 0;
+  for (const tok of tokens) {
+    if (homeTokens.has(tok)) homeHits++;
+    if (awayTokens.has(tok)) awayHits++;
+  }
+  return homeHits > 0 && awayHits > 0;
 }
 
 function emptyState() {
