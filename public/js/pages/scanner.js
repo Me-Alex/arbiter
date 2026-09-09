@@ -105,6 +105,11 @@
       const health = scan.dataHealth || {};
       const healthStatus = health.status || 'empty';
       const noData = healthStatus !== 'fresh';
+
+      // Update data-freshness banner (A4)
+      if (window.arbiterConnectionStatus && window.arbiterConnectionStatus.setDataHealth) {
+        window.arbiterConnectionStatus.setDataHealth(health);
+      }
       const healthLabel = healthStatus === 'fresh' ? t('freshSources') : healthStatus;
       $('health-state').textContent = healthLabel;
       $('health-state').className = `health-${escapeHtml(healthStatus)}`;

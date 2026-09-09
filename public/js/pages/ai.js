@@ -53,6 +53,10 @@ async function refresh() {
   const scan = await arbiterApi.get('/api/scan').catch(() => ({}));
   renderHealth(scan);
   renderInsights(scan);
+  // Update data-freshness banner (A4)
+  if (window.arbiterConnectionStatus && window.arbiterConnectionStatus.setDataHealth) {
+    window.arbiterConnectionStatus.setDataHealth(scan.dataHealth || {});
+  }
 }
 
 refresh();

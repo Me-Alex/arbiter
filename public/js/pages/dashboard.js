@@ -87,6 +87,11 @@ async function refresh() {
   const health = scan.dataHealth || {};
   const healthStatus = health.status || t('noPublishedData');
 
+    // Update data-freshness banner (A4)
+    if (window.arbiterConnectionStatus && window.arbiterConnectionStatus.setDataHealth) {
+      window.arbiterConnectionStatus.setDataHealth(health);
+    }
+
 
     // Count chips with animation
     const totalOpps = opportunities.length + middles.length;

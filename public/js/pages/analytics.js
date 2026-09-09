@@ -30,6 +30,11 @@ arbiterApp.mount('analytics');
       $('k-ev').textContent = (scan.positiveEv || []).length;
       $('k-low').textContent = (scan.lowHold || []).length;
 
+      // Update data-freshness banner (A4)
+      if (window.arbiterConnectionStatus && window.arbiterConnectionStatus.setDataHealth) {
+        window.arbiterConnectionStatus.setDataHealth(scan.dataHealth || {});
+      }
+
       // Flash effect on KPI cards (skip first load)
       if (!_isFirstAnalyticsLoad) {
         document.querySelectorAll('.analytics-kpis .kpi-card').forEach((card, i) => {

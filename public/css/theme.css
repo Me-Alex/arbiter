@@ -1653,6 +1653,43 @@ input[type="checkbox"], input[type="radio"] {
    Alerts & empty states
    ============================================================ */
 
+/* ---------- Data-freshness banner (A4) ---------- */
+.data-freshness-banner {
+  display: none;
+  align-items: center;
+  gap: var(--s-3);
+  padding: var(--s-3) var(--s-4);
+  margin-bottom: var(--s-4);
+  border-radius: var(--r-md);
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  line-height: 1.4;
+  border-left: 3px solid var(--yellow);
+  background: var(--yellow-soft);
+  color: var(--yellow);
+  animation: fadeIn var(--t-slow) var(--ease-out);
+}
+.data-freshness-banner.visible {
+  display: flex;
+}
+.data-freshness-banner.info {
+  border-left-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+.data-freshness-banner svg {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+}
+.data-freshness-banner .banner-text { flex: 1; min-width: 0; }
+.data-freshness-banner a {
+  color: inherit;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
 .alert {
   border-left: 3px solid var(--red);
   background: var(--red-soft);

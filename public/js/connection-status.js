@@ -163,6 +163,49 @@
     init();
   }
 
+  /**
+   * Show or hide a data-freshness banner at the top of the page.
+   * Pages call this after loading scan data to inform the user when
+   * live workspace snapshots are missing or stale.
+   *
+   * @param {object} health - The dataHealth object from /api/scan.
+   */
+  function setDataHealth(health) {
+    let banner = document.getElementById('data-freshness-banner');
+    if (!banner) {
+      banner = document.createElement('div');
+      banner.id = 'data-freshness-banner';
+      banner.className = 'data-freshness-banner';
+      banner.setAttribute('role', 'status');
+      banner.setAttribute('aria-live', 'polite');
+      const main = document.querySelector('main');
+      if (main) main.insertBefore(banner, main.firstChild);
+    }
+
+    const t = (typeof window.arbiterI18n !== 'undefined')
+      ? window.arbiterI18n.t.bind(window.arbiterI18n)
+      : (k) => k;
+
+    const status = (health && health.status) || 'unknown';
+    const actionable = Number(health && health.actionableSourceCount) || 0;
+
+    if (status === 'fresh' || status === 'unknown') {
+      banner.classList.remove('visible');
+      return;
+    }
+
+    const isStale = status === 'stale' || status === 'partial';
+    banner.className = 'data-freshness-banner visible' + (isStale ? '' : ' info');
+
+    const iconSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>';
+    const message = status === 'empty'
+      ? t('noFreshData')
+      : `${t('dataHealth')}: ${status}${actionable ? ` (${actionable} ${t('freshSources')})` : ''}`;
+    const link = `<a href="/admin/scrape.html">${t('runScrape')}</a>`;
+
+    banner.innerHTML = `${iconSvg}<span class="banner-text">${escapeHtml(message)} &mdash; ${link}</span>`;
+  }
+
   /** Public API for programmatic status updates. */
   window.arbiterConnectionStatus = {
     /** Manually set the connection state. */
@@ -171,5 +214,7 @@
     refresh: updateIndicators,
     /** Get current state. */
     getState: () => state,
+    /** Show/hide data-freshness banner based on scan data health. */
+    setDataHealth,
   };
 })();
