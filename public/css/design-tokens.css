@@ -1,0 +1,291 @@
+/* Design Tokens - extracted from theme.css */
+:root {
+  /* Surface scale */
+  --bg-0: #05080d;
+  --bg-1: #0a0e16;
+  --bg-2: #121823;
+  --bg-3: #1a2231;
+  --bg-4: #232f41;
+  --bg-5: #2c3a4d;
+  --surface-highlight: rgba(255, 255, 255, 0.035);
+  --surface-overlay: rgba(10, 14, 22, 0.82);
+
+  /* Borders */
+  --border: #1c2532;
+  --border-strong: #2a3647;
+  --border-bright: #3a4a60;
+  --border-glass: rgba(255, 255, 255, 0.06);
+
+  /* Text */
+  --text: #e6edf5;
+  --text-strong: #ffffff;
+  --text-muted: #94a3b8;
+  --text-dim: #64748b;
+  --text-faint: #475569;
+
+  /* Accent (sky) */
+  --accent: #5cc6ff;
+  --accent-2: #38bdf8;
+  --accent-strong: #0ea5e9;
+  --accent-glow: rgba(56, 189, 248, 0.55);
+  --accent-soft: rgba(56, 189, 248, 0.10);
+  --accent-line: rgba(56, 189, 248, 0.30);
+  --accent-grad: linear-gradient(135deg, #6dd5fa 0%, #38bdf8 50%, #818cf8 100%);
+  --accent-grad-soft: linear-gradient(135deg, rgba(56,189,248,.18) 0%, rgba(129,140,248,.12) 100%);
+
+  /* Premium accent (lime) */
+  --lime: #a3e635;
+  --lime-soft: rgba(163, 230, 53, 0.12);
+  --lime-strong: #84cc16;
+  --lime-glow: rgba(163, 230, 53, 0.45);
+
+  /* Semantic colours */
+  --green: #34d399;
+  --green-soft: rgba(52, 211, 153, 0.12);
+  --green-strong: #10b981;
+  --green-glow: rgba(52, 211, 153, 0.45);
+
+  --yellow: #fbbf24;
+  --yellow-soft: rgba(251, 191, 36, 0.12);
+  --yellow-strong: #f59e0b;
+
+  --red: #f87171;
+  --red-soft: rgba(248, 113, 113, 0.12);
+  --red-strong: #ef4444;
+
+  --purple: #a78bfa;
+  --purple-soft: rgba(167, 139, 250, 0.12);
+  --purple-strong: #8b5cf6;
+
+  --cyan: #22d3ee;
+  --cyan-soft: rgba(34, 211, 238, 0.12);
+
+  --magenta: #f472b6;
+  --magenta-soft: rgba(244, 114, 182, 0.12);
+
+  /* Effects */
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.35);
+  --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.32), 0 1px 2px rgba(0, 0, 0, 0.25);
+  --shadow: 0 4px 12px rgba(0, 0, 0, 0.35), 0 16px 32px rgba(0, 0, 0, 0.28);
+  --shadow-lg: 0 16px 32px rgba(0, 0, 0, 0.42), 0 32px 64px rgba(0, 0, 0, 0.32);
+  --shadow-xl: 0 24px 48px rgba(0, 0, 0, 0.55), 0 48px 96px rgba(0, 0, 0, 0.40);
+  --shadow-inset: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  --shadow-glow: 0 0 32px rgba(56, 189, 248, 0.20);
+  --ring: 0 0 0 3px var(--accent-soft);
+  --ring-strong: 0 0 0 1px var(--accent-line), 0 0 0 4px var(--accent-soft);
+
+  /* Radii */
+  --r-xs: 4px;
+  --r-sm: 6px;
+  --r-md: 10px;
+  --r-lg: 14px;
+  --r-xl: 20px;
+  --r-2xl: 28px;
+  --r-3xl: 36px;
+  --r-full: 999px;
+
+  /* Spacing */
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 20px;
+  --s-6: 24px;
+  --s-8: 32px;
+  --s-10: 40px;
+  --s-12: 48px;
+  --s-16: 64px;
+  --s-20: 80px;
+
+  /* Typography */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --font-display: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+
+  --fs-xs: 11px;
+  --fs-sm: 12px;
+  --fs-md: 13px;
+  --fs-lg: 14px;
+  --fs-xl: 16px;
+  --fs-2xl: 20px;
+  --fs-3xl: 26px;
+  --fs-4xl: 34px;
+  --fs-5xl: 44px;
+  --fs-6xl: 60px;
+  --lh-tight: 1.15;
+  --lh-body: 1.55;
+  --content-max: 1480px;
+
+  /* Motion */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --t-fast: 140ms;
+  --t-base: 200ms;
+  --t-slow: 340ms;
+  --t-slower: 520ms;
+  --t-slowest: 800ms;
+
+  /* Layout */
+  --sidebar-w: 240px;
+  --header-h: 60px;
+
+  /* Backdrop patterns */
+  --grad-page:
+    radial-gradient(1200px 700px at 85% -12%, rgba(56, 189, 248, 0.10), transparent 55%),
+    radial-gradient(900px 500px at -10% 100%, rgba(167, 139, 250, 0.07), transparent 55%),
+    radial-gradient(700px 400px at 50% 50%, rgba(34, 211, 238, 0.03), transparent 60%),
+    var(--bg-0);
+
+  --grad-aurora:
+    radial-gradient(1100px 600px at 80% -10%, rgba(56, 189, 248, 0.18), transparent 50%),
+    radial-gradient(900px 500px at 0% 30%, rgba(163, 230, 53, 0.10), transparent 50%),
+    radial-gradient(700px 600px at 50% 100%, rgba(167, 139, 250, 0.12), transparent 55%),
+    radial-gradient(600px 400px at 100% 80%, rgba(34, 211, 238, 0.08), transparent 50%);
+
+  --grad-mesh:
+    radial-gradient(at 27% 37%, rgba(56, 189, 248, 0.18) 0px, transparent 50%),
+    radial-gradient(at 97% 21%, rgba(167, 139, 250, 0.18) 0px, transparent 50%),
+    radial-gradient(at 52% 99%, rgba(34, 211, 238, 0.15) 0px, transparent 50%),
+    radial-gradient(at 10% 29%, rgba(163, 230, 53, 0.10) 0px, transparent 50%),
+    radial-gradient(at 97% 96%, rgba(244, 114, 182, 0.10) 0px, transparent 50%),
+    radial-gradient(at 33% 50%, rgba(96, 165, 250, 0.10) 0px, transparent 50%);
+
+  --grid-bg:
+    linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px) 0 0/32px 32px,
+    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px) 0 0/32px 32px;
+
+  --grid-bg-fine:
+    linear-gradient(rgba(255, 255, 255, 0.018) 1px, transparent 1px) 0 0/24px 24px,
+    linear-gradient(90deg, rgba(255, 255, 255, 0.018) 1px, transparent 1px) 0 0/24px 24px;
+
+  --dot-bg:
+    radial-gradient(circle, rgba(255, 255, 255, 0.04) 1px, transparent 1px) 0 0/24px 24px;
+
+  /* Extra spacing (used by sidebar) */
+  --s-7: 28px;
+
+  /* ROI magnitude color scale */
+  --roi-low: var(--text-muted);
+  --roi-mid: var(--green);
+  --roi-high: var(--green-strong);
+  --roi-hot: var(--green);
+  --roi-hot-glow: 0 0 8px rgba(52, 211, 153, 0.35);
+
+  /* Derived surface colors */
+  --surface-logo-text: #06121d;
+  --surface-btn-primary-text: #04141d;
+  --surface-log-bg: #03060a;
+  --surface-card-elevated-end: #06090e;
+  --surface-scan-tint: rgba(96, 201, 250, 0.08);
+
+  /* Semantic line colors (used by group-select, chips, etc.) */
+  --green-line: rgba(52, 211, 153, 0.28);
+  --yellow-line: rgba(251, 191, 36, 0.28);
+  --red-line: rgba(248, 113, 113, 0.28);
+}
+
+/* ============================================================
+   Light-mode override — activated by [data-theme="light"]
+   Inherits the token names, swaps values for a light surface.
+   ============================================================ */
+[data-theme="light"] {
+  /* Surface scale */
+  --bg-0: #f8fafc;
+  --bg-1: #ffffff;
+  --bg-2: #f1f5f9;
+  --bg-3: #e2e8f0;
+  --bg-4: #cbd5e1;
+  --bg-5: #94a3b8;
+  --surface-highlight: rgba(0, 0, 0, 0.02);
+  --surface-overlay: rgba(255, 255, 255, 0.85);
+
+  /* Borders */
+  --border: #e2e8f0;
+  --border-strong: #cbd5e1;
+  --border-bright: #94a3b8;
+  --border-glass: rgba(0, 0, 0, 0.06);
+
+  /* Text */
+  --text: #1e293b;
+  --text-strong: #0f172a;
+  --text-muted: #64748b;
+  --text-dim: #94a3b8;
+  --text-faint: #cbd5e1;
+
+  /* Accent (sky — slightly darker for contrast) */
+  --accent: #0284c7;
+  --accent-2: #0369a1;
+  --accent-strong: #075985;
+  --accent-glow: rgba(2, 132, 199, 0.30);
+  --accent-soft: rgba(2, 132, 199, 0.08);
+  --accent-line: rgba(2, 132, 199, 0.25);
+  --accent-grad: linear-gradient(135deg, #0ea5e9 0%, #0284c7 50%, #7c3aed 100%);
+  --accent-grad-soft: linear-gradient(135deg, rgba(2,132,199,.12) 0%, rgba(124,58,237,.08) 100%);
+
+  /* Lime */
+  --lime: #65a30d;
+  --lime-soft: rgba(101, 163, 13, 0.10);
+  --lime-strong: #4d7c0f;
+  --lime-glow: rgba(101, 163, 13, 0.25);
+
+  /* Semantic colours */
+  --green: #059669;
+  --green-soft: rgba(5, 150, 105, 0.10);
+  --green-strong: #047857;
+  --green-glow: rgba(5, 150, 105, 0.25);
+  --green-line: rgba(5, 150, 105, 0.25);
+
+  --yellow: #d97706;
+  --yellow-soft: rgba(217, 119, 6, 0.10);
+  --yellow-strong: #b45309;
+  --yellow-line: rgba(217, 119, 6, 0.25);
+
+  --red: #dc2626;
+  --red-soft: rgba(220, 38, 38, 0.10);
+  --red-strong: #b91c1c;
+  --red-line: rgba(220, 38, 38, 0.25);
+
+  --purple: #7c3aed;
+  --purple-soft: rgba(124, 58, 237, 0.10);
+  --purple-strong: #6d28d9;
+
+  --cyan: #0891b2;
+  --cyan-soft: rgba(8, 145, 178, 0.10);
+
+  --magenta: #db2777;
+  --magenta-soft: rgba(219, 39, 119, 0.10);
+
+  /* Effects — lighter shadows */
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.06);
+  --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.07), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow: 0 4px 12px rgba(0, 0, 0, 0.08), 0 16px 32px rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 16px 32px rgba(0, 0, 0, 0.10), 0 32px 64px rgba(0, 0, 0, 0.06);
+  --shadow-xl: 0 24px 48px rgba(0, 0, 0, 0.12), 0 48px 96px rgba(0, 0, 0, 0.08);
+  --shadow-inset: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  --shadow-glow: 0 0 32px rgba(2, 132, 199, 0.12);
+  --ring: 0 0 0 3px var(--accent-soft);
+  --ring-strong: 0 0 0 1px var(--accent-line), 0 0 0 4px var(--accent-soft);
+
+  /* Backdrop patterns — disabled / very subtle in light mode */
+  --grad-page: var(--bg-0);
+  --grad-aurora: var(--bg-0);
+  --grad-mesh: var(--bg-0);
+  --grid-bg: none;
+  --grid-bg-fine: none;
+  --dot-bg: none;
+
+  /* ROI magnitude color scale */
+  --roi-low: var(--text-muted);
+  --roi-mid: var(--green);
+  --roi-high: var(--green-strong);
+  --roi-hot: var(--green-strong);
+  --roi-hot-glow: 0 0 8px rgba(5, 150, 105, 0.20);
+
+  /* Derived surface colors */
+  --surface-logo-text: #f0fdfa;
+  --surface-btn-primary-text: #ffffff;
+  --surface-log-bg: #f1f5f9;
+  --surface-card-elevated-end: #ffffff;
+  --surface-scan-tint: rgba(2, 132, 199, 0.06);
+}
