@@ -50,7 +50,13 @@ const BOOK_PALETTE = [
   { color: '#f87171', bg: 'rgba(248, 113, 113, 0.12)', border: 'rgba(248, 113, 113, 0.30)' },
 ];
 
+// Shared formatters — single source of truth in /js/format.js (window.arbiterFormat).
+// These wrappers delegate to the shared implementation when available but remain
+// fully self-contained so they can be extracted and unit-tested in isolation.
 function paletteFor(id) {
+  if (typeof window !== 'undefined' && window.arbiterFormat && window.arbiterFormat.paletteFor) {
+    return window.arbiterFormat.paletteFor(id);
+  }
   if (!id) return BOOK_PALETTE[0];
   let h = 0;
   for (let i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) >>> 0;
@@ -58,15 +64,23 @@ function paletteFor(id) {
 }
 
 function fmtStake(n) {
+  if (typeof window !== 'undefined' && window.arbiterFormat && window.arbiterFormat.fmtStake) {
+    return window.arbiterFormat.fmtStake(n);
+  }
   return Number(n || 0).toLocaleString('en-US', { maximumFractionDigits: 0 });
 }
 
 function fmtOdds(n) {
+  if (typeof window !== 'undefined' && window.arbiterFormat && window.arbiterFormat.fmtOdds) {
+    return window.arbiterFormat.fmtOdds(n);
+  }
   return Number(n || 0).toFixed(2);
 }
 
-/** Extract the numeric stake amount from a localized stake label like "Miză 500" or "Stake 500". */
 function parseStakeAmount(label) {
+  if (typeof window !== 'undefined' && window.arbiterFormat && window.arbiterFormat.parseStakeAmount) {
+    return window.arbiterFormat.parseStakeAmount(label);
+  }
   if (!label || typeof label !== 'string') return null;
   const digits = label.match(/([\d,]+(?:\.\d+)?)/);
   if (!digits) return null;
@@ -318,22 +332,15 @@ async function refresh() {
   }
 }
 
-// Format a raw market key into a human-readable label with threshold
+// Format a raw market key into a human-readable label with threshold.
+// Single source of truth in /js/format.js; this wrapper keeps it testable.
 function fmtMarketKey(key) {
+  if (window.arbiterFormat && window.arbiterFormat.fmtMarketKey) {
+    // Use shared formatter but apply local pretty-names on top
+    const shared = window.arbiterFormat.fmtMarketKey(key);
+    if (shared) return shared;
+  }
   if (!key) return '';
-  const ou1hMatch = /^OVER_UNDER_(\d+)_(\d+)_1H$/i.exec(key);
-  if (ou1hMatch) return `O/U ${ou1hMatch[1]}.${ou1hMatch[2]} 1H`;
-  const ouMatch = /^OVER_UNDER_(\d+)_(\d+)$/i.exec(key);
-  if (ouMatch) return `O/U ${ouMatch[1]}.${ouMatch[2]}`;
-  const cornersOuMatch = /^CORNERS_OVER_UNDER_(\d+)_(\d+)$/i.exec(key);
-  if (cornersOuMatch) return `Corners O/U ${cornersOuMatch[1]}.${cornersOuMatch[2]}`;
-  const cardsOuMatch = /^CARDS_OVER_UNDER_(\d+)_(\d+)$/i.exec(key);
-  if (cardsOuMatch) return `Cards O/U ${cardsOuMatch[1]}.${cardsOuMatch[2]}`;
-  const ahMatch = /^AH_([0-9_]+)$/i.exec(key);
-  if (ahMatch) return `AH ${ahMatch[1].replace('_', '.')}`;
-  const hcapMatch = /^HANDICAP_([0-9_]+)$/i.exec(key);
-  if (hcapMatch) return `H ${hcapMatch[1].replace('_', '.')}`;
-  // Prettify other known keys
   const pretty = {
     MATCH_WINNER: '1X2',
     MATCH_ODDS: '1X2',
@@ -370,13 +377,19 @@ const BADGE_RECENT_MS = 30 * 60 * 1000; // <30 min
 // ROI bar scale: map roiPercent onto the 0-100 fill width.
 const ROI_BAR_SCALE = 12;
 
-// Format a kickoff timestamp for display, tolerating malformed values.
-// Preferred implementation is the modal module's shared parseDate; a local
-// tolerant fallback keeps renderOppV2 standalone (e.g. in harnesses).
+// Shared formatters are loaded once via /js/format.js (see window.arbiterFormat).
 function formatKickoff(kickoff) {
-  const parse = (window.EventDetailModal && window.EventDetailModal.parseDate) || ((v) => { if (!v) return null; const d = new Date(v); return Number.isNaN(d.getTime()) ? null : d; });
-  const d = parse(kickoff);
-  return d ? d.toLocaleString() : '';
+  if (window.arbiterFormat && window.arbiterFormat.formatKickoff) return window.arbiterFormat.formatKickoff(kickoff);
+  // standalone fallback (keeps the function self-contained for tests/harnesses)
+  if (!kickoff) return '';
+  const d = new Date(kickoff);
+  return Number.isNaN(d.getTime()) ? '' : d.toLocaleString();
+}
+function parseDate(value) {
+  if (window.arbiterFormat && window.arbiterFormat.parseDate) return window.arbiterFormat.parseDate(value);
+  if (!value) return null;
+  const d = new Date(value);
+  return Number.isNaN(d.getTime()) ? null : d;
 }
 
 function renderOppV2(o, allMarkets) {
@@ -400,11 +413,10 @@ function renderOppV2(o, allMarkets) {
   const detectedAt = o.detectedAt || o.createdAt || o.firstSeen;
   let timeBadge = '';
   if (detectedAt) {
-    const parse = (window.EventDetailModal && window.EventDetailModal.parseDate) || ((v) => { if (!v) return null; const d = new Date(v); return Number.isNaN(d.getTime()) ? null : d; });
-    const detectedDate = parse(detectedAt);
+    const detectedDate = parseDate(detectedAt);
     if (detectedDate) {
       const ageMs = Date.now() - detectedDate.getTime();
-      const ageText = window.arbiterFormat?.timeAgo(ageMs) || '—';
+      const ageText = (window.arbiterFormat && window.arbiterFormat.timeAgo(ageMs)) || '—';
       let badgeClass = 'time-badge';
       if (ageMs < BADGE_FRESH_MS) badgeClass += ' fresh'; // <5min
       else if (ageMs < BADGE_RECENT_MS) badgeClass += ' recent'; // <30min
