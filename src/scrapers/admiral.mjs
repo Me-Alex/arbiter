@@ -11,8 +11,8 @@ export default class AdmiralScraper extends ProviderContract {
     super({ baseUrl: 'https://www.admiral.ro', locale: 'ro-RO', ...opts });
   }
 
-  async fetchRaw() {
-    return await this.fetchJson('/feeds/prematch.json');
+  async fetchRaw({ signal } = {}) {
+    return await this.fetchJson('/feeds/prematch.json', { signal });
   }
 
   parse(raw) {
@@ -69,6 +69,7 @@ export default class AdmiralScraper extends ProviderContract {
         awayTeam: r.awayTeam,
         eventKey,
         markets,
+        sourceUrl: (this.baseUrl && r.id) ? `${this.baseUrl}/eveniment/${r.id}` : null,
       });
     }
     return out;

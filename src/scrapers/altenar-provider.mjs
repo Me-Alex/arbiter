@@ -2,6 +2,7 @@ import ProviderContract from './provider-contract.mjs';
 import { normalizeTeamName } from '../shared/text.mjs';
 import { ValidationError, TimeoutError, isRetryable, backoffMs } from '../shared/errors.mjs';
 import { writeJsonAtomicSync } from '../shared/atomic-write.mjs';
+import { combineAbortSignals } from '../shared/abort.mjs';
 import { promises as fs } from 'node:fs';
 import { dirname, join } from 'node:path';
 
@@ -33,6 +34,15 @@ import { dirname, join } from 'node:path';
  * versioned override (`AltenarProviderV2`) instead of duplicating scrapers.
  */
 export class AltenarProvider extends ProviderContract {
+  constructor(opts = {}) {
+    super(opts);
+    // Preserve tenant identity on extracted events for scanner source filtering.
+    if (opts.id) this.id = opts.id;
+    if (opts.name) this.name = opts.name;
+    if (Array.isArray(opts.sourceIds) && opts.sourceIds.length) this.sourceIds = opts.sourceIds;
+    else if (opts.id) this.sourceIds = [opts.id];
+  }
+
   /**
    * Convert Altenar tenant payload to our RawEvent[] intermediate shape.
    *
@@ -124,6 +134,7 @@ export class AltenarProvider extends ProviderContract {
         awayTeam: r.awayTeam,
         eventKey,
         markets,
+        sourceUrl: (this.baseUrl && r.id) ? `${this.baseUrl}/eveniment/${r.id}` : null,
       });
     }
     return out;
@@ -154,6 +165,8 @@ export class AltenarTenant {
     this.id = cfg.id;
     this.name = cfg.name;
     this.sourceIds = [cfg.id];
+    this.timeoutMs = cfg.timeoutMs ?? 90_000;
+    this.maxAttempts = cfg.maxAttempts ?? 1;
     this.provider = new AltenarProvider({
       id: cfg.id,
       name: cfg.name,
@@ -164,6 +177,8 @@ export class AltenarTenant {
       dataDir: cfg.dataDir,
       logger: cfg.logger,
       runId: cfg.runId,
+      timeoutMs: this.timeoutMs,
+      maxAttempts: this.maxAttempts,
     });
   }
 
@@ -266,8 +281,10 @@ async function runScraperLifecycle(self, logger = () => {}, signal) {
         schemaVersion: 2,
         runId: self.provider.runId || null,
         sourceId: self.sourceIds?.[0] || self.id,
+        sourceUrl: raw?.sourceUrl || null,
+        transport: raw?.transport || self.provider.transport || null,
         capturedAt,
-        observedAt: capturedAt,
+        observedAt: raw?.observedAt || capturedAt,
         dataStatus: validated.length > 0 ? 'fresh' : 'empty',
         events: validated,
       });
@@ -350,20 +367,9 @@ async function withAbort(promise, signal) {
   return Promise.race([
     promise,
     new Promise((_resolve, reject) => {
-      if (signal.aborted) return reject(new TimeoutError('aborted', { code: 'EABORTED' }));
-      signal.addEventListener('abort', () => reject(new TimeoutError('aborted', { code: 'EABORTED' })), { once: true });
+        if (signal.aborted) return reject(new TimeoutError('operation timed out', { code: 'ETIMEOUT' }));
+        signal.addEventListener('abort', () => reject(new TimeoutError('operation timed out', { code: 'ETIMEOUT' })), { once: true });
     }),
   ]);
 }
 
-function combineAbortSignals(...signals) {
-  const active = signals.filter(Boolean);
-  if (active.length === 0) return undefined;
-  if (active.length === 1) return active[0];
-  const controller = new AbortController();
-  for (const signal of active) {
-    if (signal.aborted) controller.abort();
-    else signal.addEventListener('abort', () => controller.abort(), { once: true });
-  }
-  return controller.signal;
-}
