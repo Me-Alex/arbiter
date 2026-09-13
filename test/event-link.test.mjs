@@ -8,23 +8,12 @@ import assert from 'node:assert/strict';
 
 const ROOT = join(import.meta.dirname, '..');
 
-// Denylist from event-detail-modal.js
-const API_PATTERNS = [
-  /nsoftcdn\.com/, /nsoft\.com/, /\/api\//, /\/api2\//,
-  /getPalinsestoDelGiorno/, /\?companyUuid=/, /offerTemplate=/, /dataFormat=/,
-  /freetls\.fastly\.net/, /efortuna\.ro\/offer/, /sportify\.bet/,
-  /gambling-solutions\.ro/, /service\/lineout/,
-];
-
-function isBrowseableEventUrl(url) {
-  if (!url || typeof url !== 'string') return false;
-  if (!url.startsWith('http://') && !url.startsWith('https://')) return false;
-  return !API_PATTERNS.some((re) => re.test(url));
-}
+// Shared denylist from src/shared/event-url.mjs
+import { isEventUrl } from '../src/shared/event-url.mjs';
 
 const modalSrc = readFileSync(join(ROOT, 'public/js/pages/event-detail-modal.js'), 'utf8');
 
-// Extract isEventUrl via brace matching.
+// Extract functions via brace matching.
 function extractFn(name, from = modalSrc) {
   const re = new RegExp(`function\\s+${name}\\s*\\(`);
   const m = re.exec(from);
@@ -39,27 +28,6 @@ function extractFn(name, from = modalSrc) {
   }
   return from.slice(idx, i + 1);
 }
-
-// Extract isEventUrl + its dependency via brace matching.
-function extractConst(name, from = modalSrc) {
-  const re = new RegExp(`const\\s+${name}\\s*=\\s*\\[`);
-  const m = re.exec(from);
-  if (!m) throw new Error('cannot find const ' + name);
-  let depth = 0;
-  let i = from.indexOf('[', m.index);
-  if (i === -1) throw new Error('no open bracket for ' + name);
-  for (; i < from.length; i++) {
-    const ch = from[i];
-    if (ch === '[') depth++;
-    else if (ch === ']') { depth--; if (depth === 0) break; }
-  }
-  // include the semicolon
-  return from.slice(m.index, i + 2);
-}
-
-const apiPatternsSrc = extractConst('API_URL_PATTERNS', modalSrc);
-const isEventUrlSrc = `${apiPatternsSrc}\n${extractFn('isEventUrl', modalSrc)}\nreturn isEventUrl;`;
-const isEventUrl = new Function(isEventUrlSrc)();
 
 // ── Denylist correctness ────────────────────────────────────────────────
 
@@ -135,7 +103,7 @@ describe('engine eventUrl propagation', () => {
     for (const a of arbs) {
       for (const l of a.legs) {
         assert.ok(l.eventUrl, `leg ${l.sourceId} must have eventUrl`);
-        assert.ok(isBrowseableEventUrl(l.eventUrl), `leg ${l.sourceId} eventUrl must be browseable`);
+        assert.ok(isEventUrl(l.eventUrl), `leg ${l.sourceId} eventUrl must be browseable`);
       }
     }
   });

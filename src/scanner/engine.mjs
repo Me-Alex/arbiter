@@ -300,7 +300,7 @@ export function findPositiveEV(grouped, { minRoiPercent = 0 } = {}) {
             b = { eventKey, marketKey: m.key, selection: s.name, legs: [], meta: { event: ev, market: m } };
             buckets.set(k, b);
           }
-          b.legs.push({ sourceId: ev.sourceId, odds: s.odds, handicap: s.handicap ?? null });
+          b.legs.push({ sourceId: ev.sourceId, odds: s.odds, handicap: s.handicap ?? null, eventUrl: ev.sourceUrl || null });
         }
       }
     }

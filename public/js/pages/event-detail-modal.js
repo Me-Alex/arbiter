@@ -14,7 +14,7 @@
   let helpers = {};
 
   // Dialog elements resolved lazily on first open so the module works whether
-  // the page renders the <dialog> before or after this script runs.
+  // the page renders the <dialog> before or after this script loads.
   let evDialog, evDialogTitle, evDialogMeta, evDialogBody;
 
   // Serial token so a stale in-flight response can't overwrite a newer open's
@@ -22,23 +22,13 @@
   let eventDetailReqSeq = 0;
 
   // Denylist of scraper API/CDN/backend endpoints that are operationally not
-  // browseable event pages. Keeping it here (module scope) means it is built
-  // once instead of per render, and a reviewer can see at a glance why these
-  // URLs are rejected — do not delete as "dead code".
+  // browseable event pages. Single source of truth: src/shared/event-url.mjs.
+  // Keep this copy in sync with that file — both define the same patterns.
   const API_URL_PATTERNS = [
-    /nsoftcdn\.com/,      // exalogic CDN (excelbet, las-vegas, winboss, magnumbet)
-    /nsoft\.com/,
-    /\/api\//,
-    /\/api2\//,
-    /getPalinsestoDelGiorno/,   // exalogic scrapers
-    /\?companyUuid=/,
-    /offerTemplate=/,
-    /dataFormat=/,
-    /freetls\.fastly\.net/,     // superbet CDN API
-    /efortuna\.ro\/offer/,      // fortuna API
-    /sportify\.bet/,            // netbet API
-    /gambling-solutions\.ro/,   // winner API
-    /service\/lineout/,         // favbet API
+    /nsoftcdn\.com/, /nsoft\.com/, /\/api\//, /\/api2\//,
+    /getPalinsestoDelGiorno/, /\?companyUuid=/, /offerTemplate=/, /dataFormat=/,
+    /freetls\.fastly\.net/, /efortuna\.ro\/offer/, /sportify\.bet/,
+    /gambling-solutions\.ro/, /service\/lineout/,
   ];
 
   // Render a single leg row used by both the opportunity card and the
@@ -83,6 +73,7 @@
    */
   function isEventUrl(url) {
     if (!url || typeof url !== 'string') return false;
+    if (url.length > 2048) return false;
     if (!url.startsWith('http://') && !url.startsWith('https://')) return false;
     return !API_URL_PATTERNS.some((re) => re.test(url));
   }
