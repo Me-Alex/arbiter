@@ -11,7 +11,25 @@ export function parseOdds(value) {
   return Number.isFinite(n) && n > 1 ? n : null;
 }
 
+/**
+ * Read a decimal price from whatever shape the provider sent it in.
+ *
+ * Most feeds send a bare number, but Kambi wraps it: `{ decimal: 1.95 }`. The
+ * legacy adapters read those with `Number(value)`, which is NaN for an object,
+ * so every selection was filtered out and the event silently disappeared.
+ * Returning `null` rather than NaN keeps the caller's `> 1` check meaningful.
+ *
+ * @param {unknown} odds
+ * @returns {number|null}
+ */
 export function decimalOdds(odds) {
+  if (odds && typeof odds === 'object') {
+    // Kambi: { decimal: 1.95 }. Anything else in this shape is not a price.
+    if (odds.decimal !== undefined) return decimalOdds(odds.decimal);
+    if (odds.price !== undefined) return decimalOdds(odds.price);
+    if (odds.value !== undefined) return decimalOdds(odds.value);
+    return null;
+  }
   const n = Number(odds);
   return Number.isFinite(n) && n > 1 ? n : null;
 }

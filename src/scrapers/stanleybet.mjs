@@ -1,5 +1,5 @@
 import ProviderContract from './provider-contract.mjs';
-import { normalizeTeamName } from '../shared/text.mjs';
+import { normalizeTeamName, decimalOdds } from '../shared/text.mjs';
 import { buildEventKey, flattenMarkets } from './_http-helpers.mjs';
 
 /**
@@ -41,7 +41,7 @@ export default class StanleybetScraper extends ProviderContract {
       for (const m of extras) {
         const sels = (m?.selections || []).map((s) => ({
           name: s?.label || s?.name || '',
-          odds: Number(s?.odds ?? s?.price ?? NaN),
+          odds: decimalOdds(s?.odds ?? s?.price ?? s),
           handicap: s?.handicap ?? s?.total ?? null,
           group: 'Main',
         })).filter((s) => Number.isFinite(s.odds) && s.odds > 1);

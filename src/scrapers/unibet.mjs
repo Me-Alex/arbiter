@@ -1,5 +1,5 @@
 import ProviderContract from './provider-contract.mjs';
-import { normalizeTeamName } from '../shared/text.mjs';
+import { normalizeTeamName, decimalOdds } from '../shared/text.mjs';
 
 /**
  * Unibet scraper (Kambi platform). Same shape considerations as Betano.
@@ -58,7 +58,7 @@ export default class UnibetScraper extends ProviderContract {
           const selections = sels.map((s) => ({
             id: String(s?.id ?? ''),
             name: String(s?.label || s?.name || '').trim(),
-            odds: Number(s?.odds ?? s?.price ?? NaN),
+            odds: decimalOdds(s?.odds ?? s?.price ?? s),
             handicap: s?.criterion?.value ?? s?.handicap ?? null,
             group: 'Main',
           })).filter((s) => Number.isFinite(s.odds) && s.odds > 1);
