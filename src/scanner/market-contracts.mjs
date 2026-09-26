@@ -104,7 +104,11 @@ export function isFullTimeMarket(m = {}) {
  * is not a full-time result market, whatever the adapter labelled it.
  */
 const SUB_SETTLEMENT_WORDS = [
-  /repriza\s*1/i, /repriza\s*2/i, /prima\s*repriza/i, /a\s*doua\s*repriza/i,
+  // Romanian, in both the ordinal-first and the word-first orderings a book
+  // actually emits. `1. repriza` is the FEG spelling and the one a new adapter
+  // is most likely to copy, so matching only `repriza 1` left it open.
+  /\brepriza\s*[12]\b/i, /\b[12]\.?\s*repriza\b/i,
+  /\bprima\s*repriza\b/i, /\ba\s*doua\s*repriza\b/i,
   /\b1st\s*half\b/i, /\b2nd\s*half\b/i, /\bfirst\s*half\b/i, /\bsecond\s*half\b/i,
   /\bhalf\s*time\s*or\s*full\b/i, /\bpauza\s*sau\s*final\b/i,
   /\bhalf\s*time\b/i, /\bpauza\b/i,

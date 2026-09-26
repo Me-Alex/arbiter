@@ -6,6 +6,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
 import ScraperBase from '../src/scrapers/base.mjs';
+import { isMatchResultMarket } from '../src/scanner/market-contracts.mjs';
 
 /**
  * The contract every adapter inherits, expressed as a test rather than as a
@@ -163,6 +164,30 @@ for (const name of ['Rezultat repriza 1', '1st Half Result', 'Pauza sau Final', 
     assert.equal(out[0].markets.length, 0);
   });
 }
+
+for (const name of ['1. repriza', '2. repriza', '1 repriza', 'Repriza 1', 'Repriza 2', 'Rezultat 1. repriza']) {
+  test(`a market named "${name}" is dropped in either Romanian word order`, () => {
+    // The FEG family spells it ordinal-first ("1. repriza") while the hand-written
+    // list only matched word-first ("repriza 1"). A new adapter copying the FEG
+    // spelling therefore published a half-time price on a literal {1, X, 2}
+    // selection set, which every other check accepts.
+    const events = [event([oneXTwo('MATCH_ODDS_1H', { name, period: 'fulltime' })])];
+    const out = fakeScraper([])._dropNonFullTimeLookalikes(events);
+    assert.equal(out[0].markets.length, 0,
+      `"${name}" settles before the final whistle and must not be bucketed as a full-time result`);
+  });
+}
+
+test('an unknown opaque key on a half-time market is not promoted to a full-time result', () => {
+  // The engine reads a literal {1, X, 2} set on a non-FEG opaque key as the
+  // match-result contract, so the name check is the only thing standing between
+  // a new provider's first-half price and a fabricated arbitrage.
+  const lookalike = oneXTwo('4477', { name: '1. repriza', period: 'fulltime' });
+  const real = oneXTwo('547');
+  assert.equal(isMatchResultMarket(lookalike), false);
+  assert.equal(isMatchResultMarket(real), true,
+    'the genuine full-time market on the same shape is still accepted');
+});
 
 test('a legitimate full-time market with no settlement window survives', () => {
   // The FEG family stamps `period: 'unknown'` on every market, and a real
