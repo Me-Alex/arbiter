@@ -194,3 +194,50 @@ test('the NSoft tenants route to the NSoft adapter, not the legacy one', async (
     );
   }
 });
+
+/**
+ * A class in the DIRECT registry with no job routing to it needs a recorded
+ * reason, not just a comment.
+ *
+ * The decision to keep these four is a judgement: their endpoints are gone,
+ * but the parsers are the only written reference for the ProviderContract
+ * shape and the Kambi offer format, and an endpoint can come back. A judgement
+ * that lives only in a comment stops being true the moment the comment is not
+ * read — and nothing would notice, because nothing would fail.
+ *
+ * So the reason is asserted: every registered scraper either has an enabled
+ * job, or a validationReason in the config that says why it does not.
+ */
+test('every registered scraper is either used or has a recorded reason', async () => {
+  const fs = await import('node:fs/promises');
+  const { ALL_SCRAPERS } = await import('../src/scrapers/index.mjs');
+  const cfg = JSON.parse(await fs.readFile(new URL('../config/scrapers.json', import.meta.url), 'utf8'));
+  const jobs = cfg.jobs || [];
+
+  const orphans = [];
+  for (const id of ALL_SCRAPERS) {
+    const job = jobs.find((j) => j.id === id);
+    if (job && job.enabled !== false) continue;
+    if (job && typeof job.validationReason === 'string' && job.validationReason.trim().length > 20) continue;
+    orphans.push(id);
+  }
+
+  assert.deepEqual(orphans, [],
+    'these scrapers are registered but neither enabled nor explained: ' + orphans.join(', '));
+});
+
+test('the four legacy classes each carry the reason they are kept', async () => {
+  const fs = await import('node:fs/promises');
+  const files = ['maxbet', 'admiral', 'stanleybet', 'unibet'];
+  for (const id of files) {
+    const src = await fs.readFile(new URL(`../src/scrapers/${id}.mjs`, import.meta.url), 'utf8');
+    const header = src.slice(0, 1500);
+    assert.match(header, /LEGACY/, `${id} says it is legacy`);
+    // A reason, not just a label: either the endpoint's state or the fact
+    // that another adapter serves this book.
+    assert.ok(
+      /retired|endpoint|not the live path|disabled/i.test(header),
+      `${id} states why it is not in use`,
+    );
+  }
+});
