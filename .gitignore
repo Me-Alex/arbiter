@@ -20,6 +20,10 @@ data-verify*/
 # in here is disposable by construction and is regenerated on demand.
 scratch/
 
+# Output of `npm run smoke:live`: a per-book health snapshot written on every
+# run. It is a measurement, not a source file.
+data-health.json
+
 # Images produced by tooling rather than authored for the repo.
 generated-images/
 

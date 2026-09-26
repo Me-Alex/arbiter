@@ -121,7 +121,10 @@ for (const job of targets) {
 await fs.rm(dataDir, { recursive: true, force: true });
 
 const failed = rows.filter((r) => r.verdict === 'FAIL');
-console.log('\nsmoke:live — ' + new Date().toISOString());
+const finishedAt = new Date().toISOString();
+const passed = rows.length - failed.length;
+
+console.log(`\nsmoke:live — ${finishedAt}`);
 for (const r of rows) {
   const line = [`  ${r.verdict.padEnd(4)} ${r.id.padEnd(16)}`];
   if (r.events !== undefined) line.push(`events=${String(r.events).padStart(4)}`);
@@ -130,7 +133,59 @@ for (const r of rows) {
   console.log(line.join(' '));
   if (r.hint) console.log(`       ${r.hint}`);
 }
-console.log(`\n${rows.length - failed.length}/${rows.length} jobs passed the live smoke\n`);
+console.log(`\n${passed}/${rows.length} jobs passed the live smoke\n`);
+
+// ---- Publish the result, not just a message about it --------------------
+//
+// Printing a line is invisible a week later. The point of a scheduled gate is
+// that someone learns a book stopped returning events without remembering to
+// go and look, so the result is written where a run leaves it: a job summary
+// that shows up in the Actions UI, and a JSON file that can be accumulated.
+
+const report = {
+  finishedAt,
+  passed,
+  total: rows.length,
+  ok: failed.length === 0,
+  minEvents,
+  jobs: rows.map((r) => ({ id: r.id, verdict: r.verdict, events: r.events ?? null, ms: r.ms ?? null, why: r.why ?? null })),
+};
+
+// 1. GitHub Actions job summary, when running under Actions.
+const summaryPath = process.env.GITHUB_STEP_SUMMARY;
+if (summaryPath) {
+  const table = [
+    '| Book | Verdict | Events | Time | Note |',
+    '|---|---|---|---|---|',
+    ...rows.map((r) => `| ${r.id} | ${r.verdict === 'ok' ? 'ok' : '**FAIL**'} | ${r.events ?? '—'} | ${r.ms !== undefined ? r.ms + 'ms' : '—'} | ${(r.why || '').replace(/\|/g, '\\|')} |`),
+  ].join('\n');
+  await fs.appendFile(summaryPath, [
+    '### Live smoke',
+    '',
+    `**${passed}/${rows.length}** enabled jobs returned usable events at ${finishedAt}.`,
+    '',
+    table,
+    '',
+    failed.length
+      ? 'A failure means an enabled bookmaker stopped returning usable events, or stopped completing. It is the signal that a feed moved, a parser drifted, or an endpoint was retired.'
+      : 'All enabled jobs returned events. A book with genuinely nothing scheduled would still fail here — that is intended, and a book that starts returning nothing is a change worth knowing about.',
+    '',
+  ].join('\n'));
+}
+
+// 2. A machine-readable file, so runs can be accumulated over time.
+const reportPath = process.env.SMOKE_REPORT_PATH
+  || join(process.cwd(), 'data-health.json');
+try {
+  await fs.writeFile(reportPath, JSON.stringify(report, null, 2) + '\n');
+  if (!process.env.GITHUB_STEP_SUMMARY || reportPath !== summaryPath) {
+    console.log(`report written to ${reportPath}`);
+  }
+} catch (err) {
+  // A read-only checkout must not fail the gate; the exit code below is the
+  // signal that matters.
+  console.warn(`could not write ${reportPath}: ${err.message}`);
+}
 
 if (failed.length > 0) {
   console.error('live smoke failed for: ' + failed.map((f) => f.id).join(', '));

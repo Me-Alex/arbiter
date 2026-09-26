@@ -87,16 +87,19 @@ jobs:
       # have caught a scraper silently collecting nothing, which is how four
       # separate defects survived a green unit suite: a run that reports
       # "status: ok, events: 0" looks exactly like a quiet market day.
+      #
+      # The gate writes its own result: a per-book table into the job summary
+      # and a machine-readable report. Keeping it `if: always()` means the
+      # table is there to read precisely when the run failed, which is the only
+      # time anyone opens it.
       - name: Smoke the enabled adapters
         run: npm run smoke:live -- --timeout 55000
 
-      - name: Summarise
+      - name: Archive the smoke report
         if: always()
-        run: |
-          {
-            echo '### Live smoke'
-            echo
-            echo 'A failure here means an enabled bookmaker job stopped returning'
-            echo 'usable events, or stopped completing. It is the signal that a feed'
-            echo 'moved, a parser drifted, or an endpoint was retired.'
-          } >> "$GITHUB_STEP_SUMMARY"
+        uses: actions/upload-artifact@v4
+        with:
+          name: data-health
+          path: data-health.json
+          if-no-files-found: ignore
+          retention-days: 90
