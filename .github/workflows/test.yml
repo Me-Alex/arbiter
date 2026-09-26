@@ -43,6 +43,14 @@ jobs:
       - name: Install
         run: npm ci
 
+      # `npm ci` installs the playwright *package* but not the browser
+      # binaries, and test/scrape-ui.browser.test.mjs launches a real Chromium.
+      # Without this the unit gate fails on a clean runner for a reason that has
+      # nothing to do with the code. The system libraries are needed too, which
+      # is what `install-deps` resolves.
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
       - name: Lint
         run: npm run lint
 
@@ -67,6 +75,12 @@ jobs:
 
       - name: Install
         run: npm ci
+
+      # betano is the one adapter that drives a real browser, so the live gate
+      # needs the same binaries the unit gate does. Without them it fails on
+      # the launch rather than on anything to do with the feed.
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
 
       # The gate exits non-zero when an enabled job brings back no usable
       # events, or does not complete cleanly. This is the check that would
