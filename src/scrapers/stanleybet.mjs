@@ -3,8 +3,17 @@ import { normalizeTeamName, decimalOdds } from '../shared/text.mjs';
 import { buildEventKey, flattenMarkets } from './_http-helpers.mjs';
 
 /**
- * Stanleybet scraper. Stanleybet publishes a public feed of 1X2 + totals —
- * the parser here is defensive enough to keep working as the field names shift.
+ * LEGACY — not the live path for Stanleybet.
+ *
+ * Stanleybet runs on the NSoft platform, and `config/scrapers.json` routes
+ * the `stanleybet` job to `nsoft.mjs` through `matchesNSoftConfig`, so nothing
+ * in a normal run instantiates this class. It shares Admiral's company UUID
+ * and its feed event-for-event, so the two are grouped in
+ * `src/scanner/feed-groups.mjs` and never paired with each other.
+ *
+ * The endpoint this class targets, `/feeds/events`, returns the SPA shell
+ * rather than JSON. The saved capture in data/endpoints-all/ already records
+ * NSoft URLs, which is the path that works.
  */
 export default class StanleybetScraper extends ProviderContract {
   id = 'stanleybet';

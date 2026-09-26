@@ -2,7 +2,18 @@ import ProviderContract from './provider-contract.mjs';
 import { normalizeTeamName, decimalOdds } from '../shared/text.mjs';
 
 /**
- * Unibet scraper (Kambi platform). Same shape considerations as Betano.
+ * LEGACY — Unibet is disabled in config/scrapers.json and nothing instantiates
+ * this class.
+ *
+ * Its endpoint, `/api/kambi/offer/v1/betoffer/list.json`, returns 404 while the
+ * site itself answers 200. Per `validationReason` in the config, prices moved
+ * to a realtime MQTT socket rather than a pollable REST feed, so re-enabling
+ * needs an MQTT client, not a URL change.
+ *
+ * Kept, and tested, because it is the reference for the Kambi offer shape —
+ * including the `odds: { decimal: n }` wrapper that this parser now reads
+ * through `decimalOdds`. Re-enabling it should not start from a parser that
+ * has silently been broken the whole time.
  */
 export default class UnibetScraper extends ProviderContract {
   id = 'unibet';

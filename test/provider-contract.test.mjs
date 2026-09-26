@@ -148,3 +148,49 @@ test('a synthesised event id is not turned into a deep link', () => {
   assert.match(out[0].id, /^a-b-/, 'the provider omitted an id, so one is synthesised');
   assert.equal(out[0].sourceUrl, null, 'a synthesised id must not become a browsable link');
 });
+
+/**
+ * The legacy classes are kept for a reason, and the reason has to stay true:
+ * if a configured job ever starts routing to one of them, it will be talking
+ * to a retired endpoint and will report an empty run. That is exactly how the
+ * winboss/las-vegas regression looked, and it is invisible in a unit suite.
+ */
+test('no enabled job routes to a legacy ProviderContract class', async () => {
+  const fs = await import('node:fs/promises');
+  const { instantiate } = await import('../src/scrapers/index.mjs');
+  const cfg = JSON.parse(await fs.readFile(new URL('../config/scrapers.json', import.meta.url), 'utf8'));
+
+  const legacy = new Set(['maxbet', 'admiral', 'stanleybet', 'unibet']);
+  for (const job of cfg.jobs) {
+    if (job.enabled === false) continue;
+    let scraper;
+    try {
+      scraper = instantiate(job.id, { jobConfig: job });
+    } catch {
+      continue; // a job with no implementation yet is not this test's concern
+    }
+    const cls = scraper?.constructor?.name;
+    assert.ok(
+      !['MaxBetScraper', 'AdmiralScraper', 'StanleybetScraper', 'UnibetScraper'].includes(cls),
+      `${job.id} instantiates ${cls}, a legacy class whose endpoint is retired`,
+    );
+    assert.ok(!(legacy.has(job.id) && cls && cls.endsWith('Scraper') && /MaxBet|Admiral|Stanley|Unibet/.test(cls)),
+      `${job.id} must not reach a legacy adapter`);
+  }
+});
+
+test('the NSoft tenants route to the NSoft adapter, not the legacy one', async () => {
+  const fs = await import('node:fs/promises');
+  const { instantiate } = await import('../src/scrapers/index.mjs');
+  const cfg = JSON.parse(await fs.readFile(new URL('../config/scrapers.json', import.meta.url), 'utf8'));
+  for (const id of ['maxbet', 'admiral', 'stanleybet']) {
+    const job = cfg.jobs.find((j) => j.id === id);
+    if (!job) continue;
+    const scraper = instantiate(id, { jobConfig: job });
+    assert.equal(
+      scraper.constructor.name,
+      'NSoftScraper',
+      `${id} runs on the NSoft platform; the ProviderContract class is not its path`,
+    );
+  }
+});

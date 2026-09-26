@@ -2,6 +2,21 @@ import ProviderContract from './provider-contract.mjs';
 import { normalizeTeamName } from '../shared/text.mjs';
 import { buildEventKey, flattenMarkets } from './_http-helpers.mjs';
 
+/**
+ * LEGACY — not the live path for Admiral.
+ *
+ * Admiral runs on the NSoft platform, and `config/scrapers.json` routes the
+ * `admiral` job to `nsoft.mjs` through `matchesNSoftConfig`, so nothing in a
+ * normal run instantiates this class. Admiral and Stanleybet share one
+ * company UUID and one feed — verified 2026-09-26 by comparing their live
+ * captures, which are event-for-event identical — so the two are one book
+ * under two names and are grouped in `src/scanner/feed-groups.mjs`.
+ *
+ * The endpoint this class targets, `/feeds/prematch.json`, 301s off
+ * `admiral.ro` to the `admiralbet.ro` domain, where it returns the SPA shell
+ * rather than JSON. The saved capture in data/endpoints-all/ records NSoft
+ * URLs under Admiral's name, which is the path that actually works.
+ */
 export default class AdmiralScraper extends ProviderContract {
   id = 'admiral';
   name = 'Admiral';

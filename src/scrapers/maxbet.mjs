@@ -2,6 +2,20 @@ import ProviderContract from './provider-contract.mjs';
 import { normalizeTeamName } from '../shared/text.mjs';
 import { buildEventKey, flattenMarkets } from './_http-helpers.mjs';
 
+/**
+ * LEGACY — not the live path for MaxBet.
+ *
+ * MaxBet runs on the NSoft platform, and `config/scrapers.json` routes the
+ * `maxbet` job to `nsoft.mjs` through `matchesNSoftConfig`, so nothing in a
+ * normal run instantiates this class. It is kept because the NSoft path would
+ * need somewhere to fall back to, and because `unibet.mjs` and
+ * `stanleybet.mjs` still use the same ProviderContract shape.
+ *
+ * The endpoint this class targets, `/api/sports`, was never MaxBet's feed: it
+ * returns 404, while the NSoft distribution endpoint answers for MaxBet's
+ * company UUID with a complete catalogue. The `/api/sports` path came from the
+ * class's original assumption, not from an observed request.
+ */
 export default class MaxBetScraper extends ProviderContract {
   id = 'maxbet';
   name = 'MaxBet';

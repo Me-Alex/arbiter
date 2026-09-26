@@ -36,14 +36,20 @@ const DIRECT = {
   superbet: Superbet,
   betano: Betano,
   fortuna: Fortuna,
+  // The four below are the legacy ProviderContract path. No configured job
+  // routes to them: maxbet, admiral and stanleybet are all NSoft books whose
+  // config entries point at nsoft.mjs, and unibet is disabled. They are kept
+  // as the reference for that shape (and for the Kambi offer format) and are
+  // reachable only by a direct `instantiate` without a job config. Their
+  // endpoints are retired — see the header in each file.
   unibet: Unibet,
   stanleybet: Stanleybet,
+  admiral: Admiral,
+  maxbet: MaxBet,
   'casa-pariurilor': CasaPariurilor,
   excelbet: ExcelBet,
   netbet: NetBet,
-  admiral: Admiral,
   winboss: WinBoss,
-  maxbet: MaxBet,
   magnumbet: MagnumBet,
   winner: Winner,
   getsbet: GetsBet,
