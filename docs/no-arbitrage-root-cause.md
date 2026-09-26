@@ -49,7 +49,29 @@ does. Measured across all 22 configured sources, only contibet does this
 ## Measured outcome
 
 Eleven independent live captures on 2026-09-26, between 14:48 and 19:18, on
-four to ten books each. `scripts/sample.mjs` re-runs the measurement.
+four to ten books each.
+
+Those eleven were taken ad hoc, one at a time, and only the summary was
+written down. `npm run measure` now does the same measurement and keeps the
+series, appending a row per round to `data/measurements.jsonl` (gitignored —
+it is a measurement, not a source file). A single capture is an anecdote; a
+series is what makes "always negative" a statement rather than a recollection.
+
+Rerun it with:
+
+```bash
+npm run measure                                  # default book set, one round
+npm run measure -- superbet,netbet,admiral --rounds 3 --gap 90000
+```
+
+The tool measures on the same footing the scanner does — same adapters, same
+normalisation, same engine, same shared-feed exclusion — so a scraper
+regression shows up as fewer cross-feed pairs rather than as a quietly
+different number. Its first recorded rounds, four books over two rounds:
+800 events, 8 cross-feed pairs, best −4.52% in both, no scraper errors.
+
+`scripts/sample.mjs` predates this and still reports per-round detail to
+stdout; `measure.mjs` is the one to run repeatedly.
 
 | Round | Time | Books | Events | Cross-feed buckets | Best ROI |
 |---|---|---|---|---|---|
