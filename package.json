@@ -22,7 +22,9 @@
     "cleanup:logs": "node scripts/cleanup.mjs --logs-only",
     "cleanup:backups": "node scripts/cleanup.mjs --backups-only",
     "test": "node --test test/*.test.mjs",
-    "lint": "eslint src electron public/js scripts test"
+    "lint": "eslint src electron public/js scripts test",
+    "ci:preflight": "node scripts/ci-preflight.mjs",
+    "ci:preflight:clean": "node scripts/ci-preflight.mjs --clean"
   },
   "dependencies": {
     "playwright": "^1.47.0",
