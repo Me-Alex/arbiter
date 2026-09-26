@@ -1,0 +1,88 @@
+name: test
+
+# Two gates in one workflow, because a single `on:` block is the only form
+# YAML allows here: a second `on:` would silently replace the first.
+#
+#   push / pull_request  the unit gate — lint plus the full suite, no network.
+#   schedule / manual    the live gate — the 22 public bookmaker endpoints.
+#
+# The live job is scheduled rather than per-push because it calls 22 public
+# endpoints, and a provider being briefly unreachable is not a defect in this
+# repository. Mondays and Thursdays at 06:10 UTC: after the European evening
+# slate has settled, before the weekend's early fixtures.
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+  schedule:
+    - cron: '10 6 * * 1,4'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: test-${{ github.ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  lint-and-test:
+    name: lint + unit tests
+    runs-on: ubuntu-latest
+    # A generous ceiling: the browser-backed UI test launches a real Chromium,
+    # and the full suite runs ~450 cases.
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      # Lint and tests are separate steps on purpose: a lint failure should not
+      # hide whether the tests pass, and neither should mask the other.
+      - name: Unit tests
+        run: npm test
+
+  live-smoke:
+    name: live smoke (public endpoints)
+    # Only on the schedule or a manual dispatch: this reaches the internet.
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      # The gate exits non-zero when an enabled job brings back no usable
+      # events, or does not complete cleanly. This is the check that would
+      # have caught a scraper silently collecting nothing, which is how four
+      # separate defects survived a green unit suite: a run that reports
+      # "status: ok, events: 0" looks exactly like a quiet market day.
+      - name: Smoke the enabled adapters
+        run: npm run smoke:live -- --timeout 55000
+
+      - name: Summarise
+        if: always()
+        run: |
+          {
+            echo '### Live smoke'
+            echo
+            echo 'A failure here means an enabled bookmaker job stopped returning'
+            echo 'usable events, or stopped completing. It is the signal that a feed'
+            echo 'moved, a parser drifted, or an endpoint was retired.'
+          } >> "$GITHUB_STEP_SUMMARY"
