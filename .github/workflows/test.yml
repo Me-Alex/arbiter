@@ -59,6 +59,14 @@ jobs:
       - name: Unit tests
         run: npm test
 
+      # The measured-outcome table is generated from the measurement journal,
+      # which is gitignored, so a clean runner has no journal to compare against.
+      # Skipping is the honest outcome here; the live-smoke job is where the
+      # journal actually grows, and the check below covers the shape of a row.
+      - name: Measurement table matches the journal
+        if: hashFiles('data/measurements.jsonl') != ''
+        run: npm run measure:sync
+
   live-smoke:
     name: live smoke (public endpoints)
     # Only on the schedule or a manual dispatch: this reaches the internet.
@@ -92,9 +100,25 @@ jobs:
       # and a machine-readable report. Keeping it `if: always()` means the
       # table is there to read precisely when the run failed, which is the only
       # time anyone opens it.
+      - name: Record a measurement round
+        run: npm run measure -- --rounds 1
+
       - name: Smoke the enabled adapters
         run: npm run smoke:live -- --timeout 55000
 
+      # A measurement per scheduled run, so the series behind
+      # docs/no-arbitrage-root-cause.md grows on its own instead of being
+      # re-derived by hand whenever someone wants to quote it. One round: a
+      # second opinion on every book, not a harvest, which is what the gate
+      # above is for.
+      - name: Archive the measurement journal
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: measurements
+          path: data/measurements.jsonl
+          if-no-files-found: ignore
+          retention-days: 365
       - name: Archive the smoke report
         if: always()
         uses: actions/upload-artifact@v4

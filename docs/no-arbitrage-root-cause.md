@@ -73,22 +73,35 @@ different number. Its first recorded rounds, four books over two rounds:
 `scripts/sample.mjs` predates this and still reports per-round detail to
 stdout; `measure.mjs` is the one to run repeatedly.
 
-| Round | Time | Books | Events | Cross-feed buckets | Best ROI |
+The table below is generated from the journal by
+`node scripts/sync-measurements.mjs --write`, so it cannot drift from the runs
+that produced it. The first eleven rounds predate the journal and were taken
+one at a time; they are kept, and marked, because they were real measurements
+and dropping them would be its own kind of dishonesty. Note the column is
+*cross-feed pairs* — a pairing is one event seen by two independent feeds —
+which is the unit `measure.mjs` actually reports; the earlier "buckets" in the
+previous revision of this document was the same idea, counted differently.
+
+<!-- measurements:begin -->
+| Round | Source | Books | Events | Cross-feed pairs | Best ROI |
 |---|---|---|---|---|---|
-| 1 | 14:51 | 6 | 600 | 50 | −1.94% |
-| 2 | 14:54 | 6 | 600 | 50 | −1.94% |
-| 3 | 14:57 | 6 | 600 | 50 | −1.94% |
-| 4 | 14:55 | 7 | 700 | 50 | −1.94% |
-| 5 | 14:59 | 7 | 700 | 49 | −2.12% |
-| 6 | 15:00 | 7 | 700 | 49 | −2.12% |
-| 7 | 14:48 | 10 | 1000 | 203 | −1.80% |
-| 8 | 18:57 | 3 | 300 | 31 | −3.64% |
-| 9 | 19:00 | 3 | 300 | 31 | −3.64% |
-| 10 | 19:17 | 4 | 300 | 12 | −3.64% |
-| 11 | 19:18 | 4 | 400 | 33 | −3.26% |
+| 1 | 14:51, before the journal | 6 | 600 | 50 | −1.94% |
+| 2 | 14:54, before the journal | 6 | 600 | 50 | −1.94% |
+| 3 | 14:57, before the journal | 6 | 600 | 50 | −1.94% |
+| 4 | 14:55, before the journal | 7 | 700 | 50 | −1.94% |
+| 5 | 14:59, before the journal | 7 | 700 | 49 | −2.12% |
+| 6 | 15:00, before the journal | 7 | 700 | 49 | −2.12% |
+| 7 | 14:48, before the journal | 10 | 1000 | 203 | −1.80% |
+| 8 | 18:57, before the journal | 3 | 300 | 31 | −3.64% |
+| 9 | 19:00, before the journal | 3 | 300 | 31 | −3.64% |
+| 10 | 19:17, before the journal | 4 | 300 | 12 | −3.64% |
+| 11 | 19:18, before the journal | 4 | 400 | 33 | −3.26% |
+| 12 | 20:38, from the journal | 4 | 800 | 8 | −4.52% |
+| 13 | 20:38, from the journal | 4 | 800 | 8 | −4.52% |
+<!-- measurements:end -->
 
 The best combination is consistently the same fixture — Slovakia vs Moldova,
-one leg from betano and one from netbet — landing between −1.8% and −2.1%. No
+one leg from betano and one leg from netbet — landing between −1.8% and −2.1%. No
 round produced a positive return.
 
 That stability is the finding. A single scrape would have been an anecdote;

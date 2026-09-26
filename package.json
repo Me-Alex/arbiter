@@ -25,7 +25,9 @@
     "lint": "eslint src electron public/js scripts test",
     "ci:preflight": "node scripts/ci-preflight.mjs",
     "ci:preflight:clean": "node scripts/ci-preflight.mjs --clean",
-    "measure": "node scripts/measure.mjs"
+    "measure": "node scripts/measure.mjs",
+    "measure:sync": "node scripts/sync-measurements.mjs",
+    "measure:sync:write": "node scripts/sync-measurements.mjs --write"
   },
   "dependencies": {
     "playwright": "^1.47.0",
