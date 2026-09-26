@@ -2,8 +2,44 @@ import ScraperBase from './base.mjs';
 import { normalizeTeamName } from '../shared/text.mjs';
 import { ValidationError, UpstreamError } from '../shared/errors.mjs';
 
-/** NSoft sportId → name. Verified IDs: 4=Football, 2=Basketball for MaxBet. Others from API responses. */
-const NSOFT_SPORTS = { 1: 'Football', 2: 'Basketball', 3: 'Ice Hockey', 4: 'Football', 5: 'Handball', 6: 'Volleyball', 7: 'Baseball', 8: 'American Football', 9: 'Futsal', 10: 'Snooker', 11: 'Darts', 12: 'Badminton', 13: 'Table Tennis', 14: 'Boxing', 15: 'MMA', 16: 'eFootball', 17: 'Cricket', 18: 'Water Polo', 19: 'Rugby', 20: 'Floorball', 21: 'Esports', 49: 'American Football', 52: 'E-Sports', 61: 'Simulated Reality' };
+/**
+ * The football sportId, per tenant.
+ *
+ * There is no global NSoft sport numbering: each tenant numbers its own
+ * catalogue. Measured on 2026-09-26, football is id 4 for the Admiral /
+ * Stanleybet tenant and id 2 for MaxBet's — the same feed, two tenants, two
+ * numberings. A single shared table therefore mislabels at least one of them,
+ * and a mislabel matters: the emitted `sport` is part of the event identity
+ * key, so a MaxBet event published as "Basketball" can never pair with another
+ * book's football event.
+ *
+ * The values come from correlating each tenant's own tournament labels with
+ * its sport ids on a live capture, not from a shared list.
+ */
+const TENANT_FOOTBALL_SPORT = Object.freeze({
+  admiral: 4,
+  stanleybet: 4,
+  maxbet: 2,
+});
+
+/**
+ * A label for any sport id, used only for the sport name on an event. The
+ * numbers are not comparable between tenants, so an unrecognised id is named
+ * after the id itself rather than guessed — a wrong sport label breaks event
+ * matching, while an opaque one only reads less nicely.
+ *
+ * @param {string|number} id
+ * @returns {string}
+ */
+function nsoftSportLabel(id) {
+  const key = String(id);
+  // Only the football ids are known per tenant; anything else is named after
+  // the id rather than guessed.
+  for (const footballId of Object.values(TENANT_FOOTBALL_SPORT)) {
+    if (String(footballId) === key) return 'Football';
+  }
+  return `Sport ${key}`;
+}
 
 // Public tenant identifiers recorded in historical snapshots/config; no credentials.
 const TENANTS = {
@@ -125,8 +161,13 @@ export default class NSoftScraper extends ScraperBase {
       const away = e.competitors.filter((c) => c.type === 2);
       if (home.length !== 1 || away.length !== 1 || !home[0].name || !away[0].name) continue;
       // Only publish contracts established by tenant-specific response fixtures.
+      // Both the sport id and the result market id differ per tenant, so they
+      // are read from the same measured table rather than one hardcoded
+      // branch: a tenant added later would otherwise be wired to the wrong
+      // catalogue and silently publish nothing.
       const maxbet = this.id === 'maxbet';
-      const isFootball = e.sportId === (maxbet ? 2 : 4);
+      const footballSportId = TENANT_FOOTBALL_SPORT[this.id];
+      const isFootball = e.sportId === footballSportId;
       let markets;
       if (isFootball) {
         const candidates = e.markets.filter((m) => m.marketId === (maxbet ? 2 : 1));
@@ -161,7 +202,7 @@ export default class NSoftScraper extends ScraperBase {
       if (!league) continue;
       const teams = [home[0].name, away[0].name];
       seen.add(e.id);
-      const sportName = NSOFT_SPORTS[e.sportId] || `Sport ${e.sportId}`;
+      const sportName = nsoftSportLabel(e.sportId);
       const sportKey = sportName.toLowerCase().replace(/\s+/g, '-');
       out.push({ id: String(e.id), sourceId: this.id, sourceUrl: this.sourceUrl,
         transport: 'nsoft-public-sports-json', runId: this.runId, observedAt: this.observedAt,

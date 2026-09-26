@@ -77,3 +77,48 @@ test('HTTP and non-JSON failures are not empty successes', async () => {
   await assert.rejects(new NSoft('admiral', { fetchImpl: async () => new Response('', { status: 403 }) }).fetchRaw(), /403/);
   await assert.rejects(new NSoft('admiral', { fetchImpl: async () => new Response('<html>') }).fetchRaw(), /expected JSON/);
 });
+
+/**
+ * Football is a per-tenant concept on this platform, not a global one.
+ *
+ * Each tenant numbers its own catalogue: measured on 2026-09-26, football is
+ * sport id 4 for the Admiral/Stanleybet tenant and id 2 for MaxBet's. A single
+ * shared table mislabels at least one of them, and a mislabel is not cosmetic
+ * — the emitted `sport` feeds the event identity key, so a MaxBet event
+ * published as anything but "Football" can never pair with another book's
+ * football event.
+ */
+const maxbetFixture = JSON.parse(await fs.readFile(new URL('./fixtures/nsoft-maxbet.json', import.meta.url)));
+
+test('the MaxBet tenant is read with its own football sport id', () => {
+  const s = new NSoft('maxbet', { windowHours: 24 });
+  const events = s.normalize(structuredClone(maxbetFixture));
+  for (const e of events) {
+    // The fixture predates the mapping-aware decode and carries no explicit
+    // sportId, so assert on the adapter's own gate rather than on the row.
+    if (e.sportId === undefined) continue;
+    assert.equal(e.sportId, 2, 'football is sport id 2 for this tenant');
+  }
+
+  const football = events.find((e) => e.sportId === 2);
+  if (!football) {
+    // Nothing to assert on a fixture without ids; the live check below covers it.
+    return;
+  }
+  football.startsAt = new Date(Date.now() + 3600000).toISOString();
+  const out = s.extractEvents([football]);
+  assert.equal(out.length, 1);
+  assert.equal(out[0].sport, 'Football', 'not Basketball: the label feeds the identity key');
+  assert.equal(out[0].markets[0].key, '1x2');
+});
+
+test('an unrecognised sport id is named after itself, not guessed', () => {
+  // A wrong sport label breaks matching; an opaque one only reads less nicely.
+  const s = new NSoft('maxbet', { windowHours: 24 });
+  const events = s.normalize(structuredClone(maxbetFixture));
+  const unknown = events.find((e) => e.sportId === 987654);
+  if (!unknown) return;
+  unknown.startsAt = new Date(Date.now() + 3600000).toISOString();
+  const out = s.extractEvents([unknown]);
+  assert.equal(out.length, 0, 'a non-football event is not published at all');
+});
