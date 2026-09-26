@@ -36,14 +36,22 @@ test('row click follows link while native and modified links remain untouched', 
   const row = { querySelector: () => ({ click: () => clicked++ }) };
   const context = { window: { getSelection: () => '' } };
   vm.createContext(context);
+  // Extract just the handler: from its definition to the event subscription
+  // that follows it (the subscription line itself needs a real document).
   const start = source.indexOf('function handleOppListClick(');
-  const end = source.indexOf('  // Market chip click', start);
-  vm.runInContext(source.slice(start, end) + '}', context);
+  const end = source.indexOf("document.getElementById('opp-list')", start);
+  vm.runInContext(source.slice(start, end), context);
   context.handleOppListClick({ target: { closest: selector => selector === '.opportunity-row' ? row : null } });
   assert.equal(clicked, 1);
-  context.handleOppListClick({ target: { closest: () => row } });
+  // A click that already landed on a link is the link's business, not ours.
+  context.handleOppListClick({ target: { closest: (s) => (s === '.opportunity-row' ? row : { tagName: 'A' }) } });
+  assert.equal(clicked, 1, 'a click on the link itself is not re-dispatched');
   context.handleOppListClick({ ctrlKey: true, target: { closest: selector => selector === '.opportunity-row' ? row : null } });
-  assert.equal(clicked, 1);
+  assert.equal(clicked, 1, 'a modified click opens a new tab instead');
+  // A text selection means the user is copying, not clicking.
+  context.window.getSelection = () => 'FCSB';
+  context.handleOppListClick({ target: { closest: selector => selector === '.opportunity-row' ? row : null } });
+  assert.equal(clicked, 1, 'a selection is not a click');
 });
 test('dedicated controller handles success, empty, error and invalid context', async () => {
   for (const mode of ['success', 'empty', 'error', 'invalid']) {

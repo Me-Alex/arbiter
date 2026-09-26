@@ -130,7 +130,7 @@ evDialog._metaEl = evDialogMeta;
 // Extract the named listener reference from dashboard.js and eval it with the
 // real functions in scope.
 const listenerName = extractListener(dashSrc);
-const dashFnSrcs = Object.fromEntries(['swapMarketLegs', 'dashRenderLeg', 'formatKickoff'].map((n) => [n, extractFn(n, dashSrc)]));
+const dashFnSrcs = Object.fromEntries(['dashRenderLeg', 'formatKickoff'].map((n) => [n, extractFn(n, dashSrc)]));
 
 const assert = (cond, msg) => { console.log((cond ? 'PASS' : 'FAIL') + ':', msg); if (!cond) process.exitCode = 1; };
 
@@ -171,7 +171,6 @@ const handleOppListClick2 = await eval(`(async () => {
   const gl = globalThis;
   const eventDetailModal = window.__EDM_exports;
   const dashRenderLeg = ${dashFnSrcs.dashRenderLeg};
-  const swapMarketLegs = ${dashFnSrcs.swapMarketLegs};
   const formatKickoff = ${dashFnSrcs.formatKickoff};
   const handleOppListClick = ${extractFn(listenerName, dashSrc)};
   return handleOppListClick;
@@ -181,33 +180,22 @@ const handleOppListClick2 = await eval(`(async () => {
 // The modal's openEventDetail uses helpers.arbiterApi.get. Point it at gl.arbiterApi (already).
 // Runner:
  
-// ---- Scenario 1: event-link (button) click via REAL listener ----
-// The event link button: closest finds itself for [data-event-link] and the card for .opp-card-v2.
-const eventLinkBtn = { closest: (sel) => (sel === '[data-event-link]' ? eventLinkBtn : sel === '.opp-card-v2' ? card : null) };
-handleOppListClick2({ target: eventLinkBtn });
+// ---- Scenarios 1-4: the dialog opens from the modal API, not from a card ----
+// The overview used to render cards carrying [data-event-link] and the click
+// handler opened the dialog from them. It renders table rows now, and the row's
+// Details link is an ordinary anchor to /event.html, so the click delegation
+// has no card to work from. openEventDetail is still the modal's own entry
+// point and is what the dedicated event page and any future inline use call, so
+// that is what these scenarios exercise.
+evDialog.close();
+await openEventDetail(card);
 await new Promise((r) => setTimeout(r, 20)); // let the async API resolve
-assert(evDialog._attrs.open !== undefined, 'dialog opened via event-link click');
+assert(evDialog._attrs.open !== undefined, 'dialog opened via openEventDetail');
 assert(evDialogTitle.textContent === 'Cardiff City vs Stoke City', 'dialog title set');
 assert(evDialogBody.innerHTML.includes('dialog-note'), 'offline note present ({"events":[]} path)');
 assert(evDialogBody.innerHTML.includes('<h4>O/U 2.5</h4>'), 'fallback heading is concrete market');
 assert(evDialogBody.innerHTML.includes('maxbet'), 'fallback has bookmakers');
 assert(evDialogBody.innerHTML.includes('11.00'), 'fallback has odds');
-
-// ---- Scenario 2: plain card click ----
-evDialog.close();
-handleOppListClick2({ target: card });
-assert(evDialog._attrs.open !== undefined, 'plain card click opens modal');
-
-// ---- Scenario 3: generic anchor does NOT open ----
-evDialog.close();
-handleOppListClick2({ target: { closest: (sel) => (sel === 'a' ? {} : null) } });
-assert(evDialog._attrs.open === undefined, 'generic link does NOT open modal');
-
-// ---- Scenario 4: market chip click does NOT open ----
-evDialog.close();
-const chip = { dataset: { marketIdx: '0' }, closest: (sel) => (sel === '.opp-market-chip' ? chip : sel === '.opp-card-v2' ? card : null) };
-handleOppListClick2({ target: chip });
-assert(evDialog._attrs.open === undefined, 'market-chip click does NOT open modal');
 
 // ---- Scenario 5: in-flight race token — a stale response must not overwrite a newer open ----
 const cardB = el('article');
@@ -431,143 +419,5 @@ const dashRenderLegDegraded = await eval(`(async () => {
 const degradedHtml = dashRenderLegDegraded({ sourceId: 'maxbet', selection: 'Over', odds: 11, stake: 500 }, gl.arbiterI18n.t, 0);
 assert(degradedHtml.includes('<span class="book"') && degradedHtml.includes('>maxbet</span>'), 'degraded dashRenderLeg renders a leg when module missing');
 assert(degradedHtml.includes('Miză 500') && degradedHtml.includes('11.00'), 'degraded dashRenderLeg renders stake+odds');
-
-// ---- Scenario 17: UX — module missing: event-link click flashes inline notice ----
-// flashDetailUnavailable creates a .dialog-note[data-detail-unavailable] on the
-// card (textContent — no markup injection) and removes it after 4s.
-const flashSrc = extractFn('flashDetailUnavailable', dashSrc);
-const flashDetailUnavailable = await eval(`(async () => {
-  const gl = globalThis;
-  const arbiterI18n = gl.arbiterI18n;
-  const document = gl.document;
-  return ${flashSrc};
-})()`);
-const flashCard = el('article');
-let appendedNode = null;
-flashCard.querySelector = (sel) => null; // no pre-existing notice
-flashCard.appendChild = (n) => { appendedNode = n; };
-const savedSetTimeout = globalThis.setTimeout;
-const capturedTimers = [];
-globalThis.setTimeout = (fn, ms) => { capturedTimers.push({ fn, ms }); return 1; };
-try {
-  flashDetailUnavailable(flashCard);
-} finally {
-  globalThis.setTimeout = savedSetTimeout;
-}
-assert(appendedNode && appendedNode.className.includes('dialog-note--card'), 'UX: inline notice uses .dialog-note--card modifier');
-assert(appendedNode && appendedNode.getAttribute('data-detail-unavailable') !== null, 'UX: notice flagged data-detail-unavailable');
-assert(appendedNode && appendedNode.textContent.includes('Detaliile evenimentului'), 'UX: notice carries the localized message');
-assert(capturedTimers.length === 1 && capturedTimers[0].ms === 4000, 'UX: notice auto-dismisses after 4s');
-// Dedupe: a second call while the notice is still visible must not append again.
-const flashCard2 = el('article');
-flashCard2.querySelector = (sel) => (sel === '.dialog-note[data-detail-unavailable]' ? { _exists: true } : null);
-let secondAppend = false;
-flashCard2.appendChild = () => { secondAppend = true; };
-flashDetailUnavailable(flashCard2);
-assert(!secondAppend, 'UX: duplicate notice not appended while one is visible');
-
-// ---- Scenario 18: UX consistency — plain-card click in the degraded state ----
-// The round-9 fix: when eventDetailModal is null, clicking the card body (not
-// the event-link button) must also flash the notice, so both affordances fail
-// loudly instead of the card click being a silent no-op.
-const handleDegraded = await eval(`(async () => {
-  const gl = globalThis;
-  const eventDetailModal = null; // module missing
-  const arbiterI18n = gl.arbiterI18n;
-  const document = gl.document;
-  const dashRenderLeg = ${dashFnSrcs.dashRenderLeg};
-  const swapMarketLegs = ${dashFnSrcs.swapMarketLegs};
-  const formatKickoff = ${dashFnSrcs.formatKickoff};
-  const flashDetailUnavailable = ${extractFn('flashDetailUnavailable', dashSrc)};
-  const handleOppListClick = ${extractFn(listenerName, dashSrc)};
-  return handleOppListClick;
-})()`);
-const degCard = el('article');
-let degAppend = null;
-degCard.closest = (sel) => (sel === '.opp-card-v2' ? degCard : null);
-degCard.appendChild = (n) => { degAppend = n; };
-const degChip = { dataset: { marketIdx: '0' }, closest: (sel) => (sel === '.opp-market-chip' ? degChip : sel === '.opp-card-v2' ? degCard : null) };
-const savedSetTimeout2 = globalThis.setTimeout;
-const capturedTimers2 = [];
-globalThis.setTimeout = (fn, ms) => { capturedTimers2.push({ fn, ms }); return 1; };
-try {
-  handleDegraded({ target: degCard });
-} finally {
-  globalThis.setTimeout = savedSetTimeout2;
-}
-assert(degAppend && degAppend.className.includes('dialog-note--card'), 'UX: plain-card click in degraded state flashes the notice');
-assert(degAppend && degAppend.textContent.includes('Detaliile evenimentului'), 'UX: plain-card notice carries localized message');
-assert(capturedTimers2.length === 1 && capturedTimers2[0].ms === 4000, 'UX: plain-card notice auto-dismisses after 4s');
-// A market-chip click must still NOT open/notify (chip branch returns early).
-const degCard2 = el('article');
-let degAppend2 = null;
-degCard2.appendChild = (n) => { degAppend2 = n; };
-handleDegraded({ target: degChip });
-assert(degAppend2 === null, 'UX: market-chip click in degraded state stays silent (no notice, no dialog)');
-
-// ---- Scenario 19: module loaded but <dialog> markup absent ----
-// openEventDetail now returns false when evDialog is missing (its own guard),
-// and both dashboard branches flash the notice on that falsy return — so a
-// single-file HTML/JS coupling can't silently no-op either affordance.
-// Build a third module instance whose init() resolves NO dialog refs.
-const modal3 = await eval(`(async () => {
-  const gl = globalThis;
-  const helpers = {
-    paletteFor: (id) => gl.paletteFor(id),
-    fmtOdds: (n) => gl.fmtOdds(n),
-    fmtStake: (n) => gl.fmtStake(n),
-    parseStakeAmount: (s) => { if (!s || typeof s !== 'string') return null; const digits = s.match(/([\\d,]+(?:\\.\\d+)?)/); if (!digits) return null; const n = Number(digits[1].replace(/,/g, '')); return Number.isFinite(n) ? n : null; },
-    escapeHtml: (s) => gl.escapeHtml(s),
-    arbiterI18n: gl.arbiterI18n,
-    arbiterApi: gl.arbiterApi,
-    arbiterFormat: gl.window.arbiterFormat,
-    parseDate: (v) => { if (!v) return null; const d = new Date(v); return Number.isNaN(d.getTime()) ? null : d; },
-  };
-  const window = gl.window;
-  const document = { getElementById: () => null }; // no dialog markup anywhere
-  ${modalSrc.replace(/window\.EventDetailModal\s*=\s*\{/, 'window.__EDM3 = {')}
-  window.__EDM3.init(helpers);
-  return window.__EDM3;
-})()`);
-const handleNoDialog = await eval(`(async () => {
-  const gl = globalThis;
-  const eventDetailModal = window.__EDM3;
-  const arbiterI18n = gl.arbiterI18n;
-  const document = gl.document;
-  const dashRenderLeg = ${dashFnSrcs.dashRenderLeg};
-  const swapMarketLegs = ${dashFnSrcs.swapMarketLegs};
-  const formatKickoff = ${dashFnSrcs.formatKickoff};
-  const flashDetailUnavailable = ${extractFn('flashDetailUnavailable', dashSrc)};
-  const handleOppListClick = ${extractFn(listenerName, dashSrc)};
-  return handleOppListClick;
-})()`);
-const noDlgCard = el('article');
-let noDlgAppend = null;
-const noDlgEventLink = { closest: (sel) => (sel === '[data-event-link]' ? noDlgEventLink : sel === '.opp-card-v2' ? noDlgCard : null) };
-noDlgCard.closest = (sel) => (sel === '.opp-card-v2' ? noDlgCard : sel === '[data-event-link]' ? noDlgEventLink : null);
-noDlgCard.appendChild = (n) => { noDlgAppend = n; };
-const savedSetTimeout3 = globalThis.setTimeout;
-const capturedTimers3 = [];
-globalThis.setTimeout = (fn, ms) => { capturedTimers3.push({ fn, ms }); return 1; };
-try {
-  handleNoDialog({ target: noDlgEventLink }); // event-link affordance
-} finally {
-  globalThis.setTimeout = savedSetTimeout3;
-}
-assert(noDlgAppend && noDlgAppend.className.includes('dialog-note--card'), 'UX: dialog markup absent → event-link click flashes notice');
-assert(capturedTimers3.length === 1 && capturedTimers3[0].ms === 4000, 'UX: dialog-absent notice auto-dismisses after 4s');
-// Same for the plain-card affordance.
-const noDlgCard2 = el('article');
-let noDlgAppend2 = null;
-noDlgCard2.closest = (sel) => (sel === '.opp-card-v2' ? noDlgCard2 : null);
-noDlgCard2.appendChild = (n) => { noDlgAppend2 = n; };
-const savedSetTimeout4 = globalThis.setTimeout;
-globalThis.setTimeout = (fn, ms) => { capturedTimers3.push({ fn, ms }); return 1; };
-try {
-  handleNoDialog({ target: noDlgCard2 });
-} finally {
-  globalThis.setTimeout = savedSetTimeout4;
-}
-assert(noDlgAppend2 && noDlgAppend2.className.includes('dialog-note--card'), 'UX: dialog markup absent → plain-card click flashes notice');
 
 console.log('\nAll real-wiring scenario checks complete.');

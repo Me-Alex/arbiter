@@ -181,3 +181,102 @@ test('the snapshot records provenance, so loadWorkspace keeps the events', () =>
   assert.ok(fallback.sourceUrl, 'provenance survives a payload without it');
   assert.ok(fallback.transport);
 });
+
+/**
+ * A match dump is flat, and several markets in it can share a bettingTypeId —
+ * a regulation-time result and a first-half result both present as "match
+ * result" to that field. Matching offers on the type alone let the last market
+ * parsed win, so the published price depended on the order the dealer happened
+ * to serialise them.
+ */
+
+/** The same dump, with every record tagged to a market id. */
+function scopedRecords(s, marketId, odds, displayName) {
+  const type = s.oneXTwoTypeId;
+  return [
+    { _type: 'MARKET', id: marketId, bettingTypeId: type, displayName },
+    { _type: 'OUTCOME', id: `${marketId}h`, typeName: 'Home', paramParticipantName1: 'FCSB', marketId },
+    { _type: 'OUTCOME', id: `${marketId}d`, typeName: 'Draw', marketId },
+    { _type: 'OUTCOME', id: `${marketId}a`, typeName: 'Away', paramParticipantName1: 'Dinamo', marketId },
+    { _type: 'BETTING_OFFER', id: `${marketId}1`, bettingTypeId: type, outcomeId: `${marketId}h`, odds: odds[0], isAvailable: true },
+    { _type: 'BETTING_OFFER', id: `${marketId}2`, bettingTypeId: type, outcomeId: `${marketId}d`, odds: odds[1], isAvailable: true },
+    { _type: 'BETTING_OFFER', id: `${marketId}3`, bettingTypeId: type, outcomeId: `${marketId}a`, odds: odds[2], isAvailable: true },
+  ];
+}
+
+test('the result market is chosen by name, not by position in the dump', () => {
+  const s = makeScraper();
+  const match = { id: 900001, startTime: FUTURE, homeParticipantName: 'FCSB', awayParticipantName: 'Dinamo', parentName: 'Liga 1' };
+  const fullTime = scopedRecords(s, 500, [2.10, 3.40, 3.50], 'Final - Timp regulamentar');
+  const firstHalf = scopedRecords(s, 900, [9.90, 9.90, 9.90], 'Repriza 1');
+
+  for (const [label, records] of [
+    ['full-time listed first', [...fullTime, ...firstHalf]],
+    ['first-half listed first', [...firstHalf, ...fullTime]],
+  ]) {
+    const got = s.extractOneXTwo(match, records);
+    assert.ok(got, `a result market is available when ${label}`);
+    assert.deepEqual(
+      got.offers,
+      { 1: 2.10, X: 3.40, 2: 3.50 },
+      `the full-time price is published when ${label}`,
+    );
+  }
+});
+
+test('a dump that names no market anywhere is still usable', () => {
+  // The scoping cannot exclude offers it cannot attribute; a dump with no
+  // market ids has nothing to confuse them with, so it must not be emptied.
+  const s = makeScraper();
+  const match = { id: 900001, startTime: FUTURE, homeParticipantName: 'FCSB', awayParticipantName: 'Dinamo', parentName: 'Liga 1' };
+  const got = s.extractOneXTwo(match, oneXTwoRecords(s));
+  assert.ok(got, 'an unattributable offer set is not thrown away');
+  assert.equal(got.offers['1'], 2.10);
+});
+
+test('a second offer for the same side does not overwrite the first', () => {
+  const s = makeScraper();
+  const match = { id: 900001, startTime: FUTURE, homeParticipantName: 'FCSB', awayParticipantName: 'Dinamo', parentName: 'Liga 1' };
+  const duplicate = {
+    _type: 'BETTING_OFFER', id: 'dup', bettingTypeId: s.oneXTwoTypeId, outcomeId: 11, odds: 99, isAvailable: true,
+  };
+  const got = s.extractOneXTwo(match, [...oneXTwoRecords(s), duplicate]);
+  assert.equal(got.offers['1'], 2.10, 'a contradictory duplicate is ignored, not taken');
+});
+
+test('cancelling a dump tears the socket down instead of waiting out the deadline', async () => {
+  const s = makeScraper();
+  const controller = new AbortController();
+  let onclose = null;
+  s._openSocket = async () => ({
+    send() {},
+    close() { if (onclose) setTimeout(onclose, 0); },
+    set onclose(fn) { onclose = fn; },
+    onmessage: null,
+    onerror: null,
+  });
+
+  const started = Date.now();
+  const dump = s.dumpTopic('/sports/x', { waitMs: 30_000, signal: controller.signal });
+  setTimeout(() => controller.abort(), 20);
+
+  await assert.rejects(dump, (err) => {
+    assert.equal(err.code, 'EABORTED', 'a cancelled dump is reported as an abort, not a dealer fault');
+    return true;
+  });
+  // The 30s deadline would have taken 30000ms; aborting must land far sooner.
+  assert.ok(Date.now() - started < 5_000, `aborted promptly, took ${Date.now() - started}ms`);
+});
+
+test('a dump aborted before it starts never opens a socket', async () => {
+  const s = makeScraper();
+  const controller = new AbortController();
+  controller.abort();
+  let opened = false;
+  s._openSocket = async () => { opened = true; throw new Error('should not be reached'); };
+  await assert.rejects(
+    s.dumpTopic('/sports/x', { waitMs: 1000, signal: controller.signal }),
+    (err) => err.code === 'EABORTED',
+  );
+  assert.equal(opened, false, 'no socket is opened for an already-cancelled run');
+});

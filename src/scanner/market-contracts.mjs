@@ -60,11 +60,12 @@ export function isOpaqueMatchResultKey(marketKey) {
 
 /**
  * Combined guard used by the engine: a market may be treated as the full-time
- * 1X2 contract when its period is full-time AND (its key is a known contract
- * OR it is an opaque key that really denotes the match result).
+ * 1X2 contract when it declares full-time settlement — and its own name does
+ * not contradict that — AND (its key is a known contract OR it is an opaque
+ * key that really denotes the match result).
  */
 export function isMatchResultMarket(m = {}) {
-  if (!isFullTimeMarket(m)) return false;
+  if (!isDeclaredFullTimeMarket(m)) return false;
   if (supportedContractForMarket(m.key)) return true;
   return isLiteral1x2SelectionSet(m.selections) && isOpaqueMatchResultKey(m.key);
 }
@@ -86,6 +87,46 @@ export function isFullTimeMarket(m = {}) {
   if (!period) return true; // absent period is the common emission; treat as full-time
   if (period === 'unknown' || period === 'unspecified' || period === 'n/a') return true;
   return period === 'fulltime' || period === 'full time';
+}
+
+/**
+ * Words in a market's own name that say it settles before the final whistle.
+ *
+ * This is a second, independent check on the declared `period`, and it exists
+ * because a declared period is only as good as the adapter that wrote it. Four
+ * adapters stamped `period: 'fulltime'` on every market they emitted — excelbet
+ * and its two siblings mapped the double-chance codes onto the same literal
+ * 1/X/2 outcome labels, and winner stamped every bet type — so a first-half or
+ * double-chance price carried a full-time label and passed every period check.
+ *
+ * The name is the provider's own text, so it is evidence the adapter never
+ * looked at. When the two disagree, the name wins: a market called "Repriza 1"
+ * is not a full-time result market, whatever the adapter labelled it.
+ */
+const SUB_SETTLEMENT_WORDS = [
+  /repriza\s*1/i, /repriza\s*2/i, /prima\s*repriza/i, /a\s*doua\s*repriza/i,
+  /\b1st\s*half\b/i, /\b2nd\s*half\b/i, /\bfirst\s*half\b/i, /\bsecond\s*half\b/i,
+  /\bhalf\s*time\s*or\s*full\b/i, /\bpauza\s*sau\s*final\b/i,
+  /\bhalf\s*time\b/i, /\bpauza\b/i,
+  /\bdouble\s*chance\b/i, /\bdubla\s*(?:sansa|sanșa|șansă|chance)\b/i,
+];
+
+/**
+ * True when a market declares full-time settlement *and* nothing in its own
+ * name contradicts that.
+ *
+ * Used where a wrong answer fabricates an arbitrage: a first-half or
+ * double-chance price accepted as a full-time result is paired against another
+ * book's full-time legs and reported as a profit that cannot exist.
+ *
+ * @param {{ key?: string, name?: string, period?: string }} m
+ * @returns {boolean}
+ */
+export function isDeclaredFullTimeMarket(m = {}) {
+  if (!isFullTimeMarket(m)) return false;
+  const name = String(m.name || '');
+  if (!name) return true;
+  return !SUB_SETTLEMENT_WORDS.some((re) => re.test(name));
 }
 
 function isLiteral1x2SelectionName(value) {

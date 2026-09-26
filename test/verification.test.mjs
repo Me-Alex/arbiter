@@ -1,70 +1,118 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { verifySignal, expireAutomaticConfirmations } from '../src/verification.mjs';
-import { buildSignalIndex } from '../src/scanner/engine.mjs';
+import { buildSelectionIndex, groupByEvent } from '../src/scanner/engine.mjs';
 
-function leg(sourceId, selection, odds) {
-  return { sourceId, selection, odds, marketKey: 'MATCH_ODDS', eventKey: 'k1' };
+/**
+ * verifySignal re-prices a target against a fresh index of the eligible
+ * selections the confirmation scrape produced. That index is built from
+ * *events*, not from the previous run's results — indexing the old signals
+ * would only ever confirm what was already known, which is the opposite of a
+ * second opinion.
+ */
+
+const KICKOFF = '2030-01-01T12:00:00Z';
+
+function event(sourceId, selections) {
+  return {
+    sourceId,
+    eventKey: 'k1',
+    kickoff: KICKOFF,
+    homeTeam: 'A',
+    awayTeam: 'B',
+    markets: [{
+      key: 'MATCH_ODDS',
+      period: 'fulltime',
+      selections: selections.map(([name, odds]) => ({ name, odds })),
+    }],
+  };
+}
+
+/** An index keyed the way verifySignal looks legs up. */
+function indexFor(events) {
+  const index = new Map();
+  for (const [key, instances] of groupByEvent(events)) {
+    for (const e of instances) {
+      for (const m of e.markets || []) {
+        for (const s of m.selections || []) {
+          const k = `${key}::${m.key}::${String(s.name).toLowerCase()}`;
+          const arr = index.get(k) || [];
+          arr.push({ sourceId: e.sourceId, odds: s.odds, handicap: s.handicap ?? null, kickoff: e.kickoff });
+          index.set(k, arr);
+        }
+      }
+    }
+  }
+  return index;
+}
+
+function leg(sourceId, selection, odds, eventKey) {
+  return { sourceId, selection, odds, marketKey: 'MATCH_ODDS', eventKey };
+}
+
+/** The canonical key the group builder produced, which legs must carry. */
+function canonicalKey(events) {
+  return [...groupByEvent(events).keys()][0];
 }
 
 test('verifySignal confirms when prices hold', () => {
+  const events = [event('a', [['H', 2.10], ['D', 4.50]]), event('b', [['A', 5.00]])];
+  const key = canonicalKey(events);
   const target = {
     type: 'arb',
-    eventKey: 'k1',
+    eventKey: key,
     marketKey: 'MATCH_ODDS',
-    legs: [leg('a', 'H', 2.10), leg('b', 'A', 5.00), leg('a', 'D', 4.50)],
+    legs: [leg('a', 'H', 2.10, key), leg('b', 'A', 5.00, key), leg('a', 'D', 4.50, key)],
     roiPercent: 5,
   };
-  const confirmationScan = {
-    opportunities: [
-      {
-        eventKey: 'k1', marketKey: 'MATCH_ODDS', inverseSum: 0.95,
-        legs: [leg('a', 'H', 2.10), leg('b', 'A', 5.00), leg('a', 'D', 4.50)],
-      },
-    ],
-  };
-  const index = buildSignalIndex(confirmationScan);
-  const v = verifySignal(target, confirmationScan, { index, tolerance: 0.05 });
+  const v = verifySignal(target, { options: { bankroll: 1000 }, opportunities: [] }, {
+    index: indexFor(events),
+    tolerance: 0.05,
+  });
   assert.equal(v.status, 'confirmed');
 });
 
 test('verifySignal rejects when odds drift beyond tolerance', () => {
+  const events = [event('a', [['H', 2.10]]), event('b', [['A', 3.00]])];
+  const key = canonicalKey(events);
   const target = {
     type: 'arb',
-    eventKey: 'k1', marketKey: 'MATCH_ODDS',
-    legs: [leg('a', 'H', 2.10), leg('b', 'A', 5.00)],
+    eventKey: key,
+    marketKey: 'MATCH_ODDS',
+    legs: [leg('a', 'H', 2.10, key), leg('b', 'A', 5.00, key)],
     roiPercent: 5,
   };
-  const confirmationScan = {
-    opportunities: [
-      {
-        eventKey: 'k1', marketKey: 'MATCH_ODDS', inverseSum: 0.95,
-        legs: [leg('a', 'H', 2.10), leg('b', 'A', 3.00)], // big drift
-      },
-    ],
-  };
-  const index = buildSignalIndex(confirmationScan);
-  const v = verifySignal(target, confirmationScan, { index, tolerance: 0.05 });
+  const v = verifySignal(target, { options: { bankroll: 1000 }, opportunities: [] }, {
+    index: indexFor(events),
+    tolerance: 0.05,
+  });
   assert.equal(v.status, 'rejected');
+  assert.match(v.reason, /drift/);
 });
 
 test('verifySignal rejects when a leg is missing', () => {
+  const events = [event('a', [['H', 2.10]])];
+  const key = canonicalKey(events);
   const target = {
     type: 'arb',
-    eventKey: 'k1', marketKey: 'MATCH_ODDS',
-    legs: [leg('a', 'H', 2.10), leg('b', 'A', 5.00)],
+    eventKey: key,
+    marketKey: 'MATCH_ODDS',
+    legs: [leg('a', 'H', 2.10, key), leg('b', 'A', 5.00, key)],
   };
-  const confirmationScan = {
-    opportunities: [
-      {
-        eventKey: 'k1', marketKey: 'MATCH_ODDS', inverseSum: 0.95,
-        legs: [leg('a', 'H', 2.10)],
-      },
-    ],
-  };
-  const index = buildSignalIndex(confirmationScan);
-  const v = verifySignal(target, confirmationScan, { index });
+  const v = verifySignal(target, { options: { bankroll: 1000 }, opportunities: [] }, {
+    index: indexFor(events),
+  });
   assert.equal(v.status, 'rejected');
+  assert.match(v.reason, /missing/);
+});
+
+test('buildSelectionIndex is the index verification consumes', () => {
+  // Guards the wiring, not the function: the two must produce the same keys,
+  // or every confirmation would report its own legs missing.
+  const events = [event('a', [['1', 2.10], ['X', 3.30]]), event('b', [['2', 4.60]])];
+  const built = buildSelectionIndex(events);
+  const manual = indexFor(events);
+  assert.deepEqual([...built.keys()].sort(), [...manual.keys()].sort());
 });
 
 test('expireAutomaticConfirmations demotes past kickoffs', () => {

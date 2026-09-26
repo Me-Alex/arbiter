@@ -1,19 +1,7 @@
 import ScraperBase from './base.mjs';
 import { combineAbortSignals } from '../shared/abort.mjs';
 import { ValidationError, UpstreamError } from '../shared/errors.mjs';
-
-/**
- * Hard cap on a tenant response body. The public adapters (nsoft, altenar)
- * bound their own reads; this helper has to as well, or a provider that streams
- * without a Content-Length can exhaust memory inside a single scrape.
- *
- * 16 MB, matching nsoft.mjs, and set from measurement rather than taste: the
- * largest live responses observed are superbet ~7.4 MB and favbet ~14.4 MB
- * (scripts/live-check.mjs). A 4 MB cap looked tidy and would have rejected
- * favbet outright, so the limit has to sit above the biggest real feed with
- * room for growth — while still bounding a hostile or runaway response.
- */
-const MAX_BODY_BYTES = 16_000_000;
+import { readBoundedJson } from '../shared/bounded-json.mjs';
 
 /**
  * ProviderContract — swappable parser for books that share an odds provider
@@ -83,29 +71,4 @@ export default class ProviderContract extends ScraperBase {
       clearTimeout(t);
     }
   }
-}
-
-/**
- * Read a JSON body, refusing anything over `MAX_BODY_BYTES`. Counting while
- * streaming means an oversized response is abandoned rather than buffered in
- * full first.
- */
-async function readBoundedJson(res, id, signal) {
-  const reader = res.body.getReader();
-  const chunks = [];
-  let size = 0;
-  try {
-    for (;;) {
-      signal?.throwIfAborted();
-      const { value, done } = await reader.read();
-      if (done) break;
-      size += value.byteLength;
-      if (size > MAX_BODY_BYTES) throw new ValidationError(`${id}: response exceeds ${MAX_BODY_BYTES / 1_000_000} MB`);
-      chunks.push(Buffer.from(value));
-    }
-  } finally {
-    await reader.cancel();
-  }
-  signal?.throwIfAborted();
-  return JSON.parse(Buffer.concat(chunks).toString('utf8'));
 }

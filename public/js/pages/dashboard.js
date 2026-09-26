@@ -299,11 +299,13 @@ async function refresh() {
       }).join('');
     }
 
-    // Flash effect on data update (skip first load)
+    // Flash effect on data update (skip first load). The overview renders
+    // rows, so the highlight applies to them; the source-health list is
+    // unchanged.
     if (!isFirstLoad) {
-      document.querySelectorAll('.opp-card-v2').forEach((card, i) => {
-        setTimeout(() => card.classList.add('flash'), i * 50);
-        setTimeout(() => card.classList.remove('flash'), 800 + i * 50);
+      document.querySelectorAll('#opp-list .opportunity-row').forEach((row, i) => {
+        setTimeout(() => row.classList.add('flash'), i * 50);
+        setTimeout(() => row.classList.remove('flash'), 800 + i * 50);
       });
       document.querySelectorAll('.source-row').forEach((row, i) => {
         setTimeout(() => row.classList.add('flash'), i * 30);
@@ -494,78 +496,70 @@ const dataAttrs = [
     </article>`;
 }
 
-/* ---------------- Keyboard navigation for opportunity cards ---------------- */
-let currentCardIndex = -1;
+/* ---------------- Keyboard navigation for the opportunity table ---------------- */
+let currentRowIndex = -1;
 
-function updateCardFocus() {
-  const cards = document.querySelectorAll('.opp-card-v2');
-  cards.forEach((card, i) => {
-    if (i === currentCardIndex) {
-      card.setAttribute('tabindex', '0');
-      card.focus();
-      card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    } else {
-      card.setAttribute('tabindex', '-1');
-    }
-  });
+/**
+ * Move focus between opportunity rows.
+ *
+ * The overview is a table, not a stack of cards: each row's Details link is a
+ * real anchor, so Tab already reaches it and Enter opens it. What the table
+ * does not give for free is arrow-key movement between rows, which is what the
+ * card layout provided. Rows are given a roving tabindex so exactly one is in
+ * the tab order and the arrow keys have something to move between.
+ */
+function focusRow(rows, index) {
+  if (index < 0 || index >= rows.length) return;
+  currentRowIndex = index;
+  rows.forEach((row, i) => row.setAttribute('tabindex', i === index ? '0' : '-1'));
+  const row = rows[index];
+  row.focus();
+  row.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function opportunityRows() {
+  return [...document.querySelectorAll('#opp-list .opportunity-row')];
 }
 
 document.addEventListener('keydown', (e) => {
   const oppList = document.getElementById('opp-list');
   if (!oppList || !oppList.contains(document.activeElement)) return;
 
-  const cards = document.querySelectorAll('.opp-card-v2');
-  if (cards.length === 0) return;
+  const rows = opportunityRows();
+  if (rows.length === 0) return;
+  const from = Math.max(0, currentRowIndex);
 
   switch (e.key) {
     case 'ArrowDown':
     case 'j':
       e.preventDefault();
-      currentCardIndex = Math.min(currentCardIndex + 1, cards.length - 1);
-      updateCardFocus();
+      focusRow(rows, Math.min(from + 1, rows.length - 1));
       break;
     case 'ArrowUp':
     case 'k':
       e.preventDefault();
-      currentCardIndex = Math.max(currentCardIndex - 1, 0);
-      updateCardFocus();
-      break;
-    case 'Enter':
-      // If focus is on a card's own interactive element (event link, market
-      // chip), let it handle the key — don't also toggle leg expansion.
-      if (e.target.closest && e.target.closest('.opp-card-v2 button')) return;
-      e.preventDefault();
-      if (currentCardIndex >= 0 && currentCardIndex < cards.length) {
-        const card = cards[currentCardIndex];
-        // Toggle card expansion
-        const legs = card.querySelector('.legs');
-        if (legs) {
-          const isExpanded = legs.style.display !== 'none';
-          legs.style.display = isExpanded ? 'none' : 'grid';
-          card.setAttribute('aria-expanded', !isExpanded);
-        }
-      }
+      focusRow(rows, Math.max(from - 1, 0));
       break;
     case 'Home':
       e.preventDefault();
-      currentCardIndex = 0;
-      updateCardFocus();
+      focusRow(rows, 0);
       break;
     case 'End':
       e.preventDefault();
-      currentCardIndex = cards.length - 1;
-      updateCardFocus();
+      focusRow(rows, rows.length - 1);
+      break;
+    default:
       break;
   }
 });
 
-// Initialize card tabindex when cards are rendered
+/** Give the rows a roving tabindex once they are rendered. */
 function initCardNavigation() {
-  const cards = document.querySelectorAll('.opp-card-v2');
-  cards.forEach((card, i) => {
-    card.setAttribute('tabindex', i === 0 ? '0' : '-1');
-    card.setAttribute('role', 'article');
-    card.setAttribute('aria-label', `Opportunity ${i + 1} of ${cards.length}`);
+  const rows = opportunityRows();
+  rows.forEach((row, i) => {
+    if (row.getAttribute('tabindex') === null) {
+      row.setAttribute('tabindex', i === 0 ? '0' : '-1');
+    }
   });
 }
 
@@ -613,86 +607,19 @@ function dashRenderLeg(l, t, roiPercent) {
     </div>`;
 }
 
-// Market-chip click — swap legs, don't open modal. Extracted to a named
-// function so it can be extracted/tested by the harness.
-function swapMarketLegs(card, chip) {
-  const idx = Number(chip.dataset.marketIdx);
-  let group;
-  try { group = JSON.parse(card.dataset.group || '[]'); } catch { return; }
-  const picked = group[idx];
-  if (!picked) return;
-  // Update active chip
-  card.querySelectorAll('.opp-market-chip').forEach((c, i) => c.classList.toggle('active', i === idx));
-  // Swap legs and market chip label in meta
-  const fakeOpp = { ...picked, homeTeam: card.dataset.home, awayTeam: card.dataset.away, sport: card.dataset.sport, kickoff: card.dataset.kickoff };
-  const t = arbiterI18n.t.bind(arbiterI18n);
-  const legsHtml = (fakeOpp.legs || []).map((l) => dashRenderLeg(l, t, fakeOpp.roiPercent)).join('');
-  const legsEl = card.querySelector('.legs');
-  if (legsEl) legsEl.innerHTML = legsHtml;
-  // Update the market chip in match-meta
-  const metaChip = card.querySelector('.chip-market');
-  if (metaChip) metaChip.textContent = fmtMarketKey(fakeOpp.marketKey);
-  // Update ROI
-  const roiEl = card.querySelector('.roi');
-  if (roiEl) roiEl.innerHTML = `+${(fakeOpp.roiPercent || 0).toFixed(2)}<span class="pct">%</span>`;
-}
-
-// When event-detail-modal.js failed to load, the event-link affordance cannot
-// open the dialog. Surface a brief inline notice on the card so the user sees
-// why nothing happened, instead of leaving the console as the only witness.
-function flashDetailUnavailable(card) {
-  const existing = card.querySelector('.dialog-note[data-detail-unavailable]');
-  if (existing) return; // already visible on this card
-  const note = document.createElement('div');
-  note.className = 'dialog-note dialog-note--card';
-  note.setAttribute('data-detail-unavailable', '');
-  note.textContent = arbiterI18n.t('detailUnavailable');
-  card.appendChild(note);
-  setTimeout(() => note.remove(), 4000);
-}
-
-// Delegated click handler for the opportunity list: market chips swap legs,
-// the event link (and the plain card) open the event detail dialog.
+// The overview renders one row per opportunity (see renderOppGroup), and the
+// row's Details link carries the event identity in its query string — there is
+// no per-card modal any more. A click on the row body is a convenience for the
+// mouse; the link itself stays the keyboard-reachable control.
 function handleOppListClick(e) {
   const row = e.target.closest('.opportunity-row');
-  if (row) {
-    if (!e.target.closest('a, button') && !e.ctrlKey && !e.metaKey && !e.shiftKey && !e.altKey && !window.getSelection()?.toString()) {
-      row.querySelector('.opportunity-details').click();
-    }
-    return;
-  }
-  // Market chip click — swap legs, don't open modal
-  const chip = e.target.closest('.opp-market-chip');
-  if (chip) {
-    const card = chip.closest('.opp-card-v2');
-    if (card) swapMarketLegs(card, chip);
-    return;
-  }
-  // Event link click — open modal for this card
-  const eventLink = e.target.closest('[data-event-link]');
-  if (eventLink) {
-    const card = eventLink.closest('.opp-card-v2');
-    if (!card) return;
-    if (eventDetailModal) {
-      // openEventDetail reports whether the dialog actually opened; when the
-      // <dialog> markup is absent it silently returns false and we surface the
-      // same inline notice as the module-missing path.
-      if (eventDetailModal.openEventDetail(card) === false) flashDetailUnavailable(card);
-    } else {
-      console.warn('[dashboard] event-detail-modal.js did not load; event link cannot open the dialog', card);
-      flashDetailUnavailable(card);
-    }
-    return;
-  }
-  if (e.target.closest('a')) return;
-  const card = e.target.closest('.opp-card-v2');
-  if (!card) return;
-  if (eventDetailModal) {
-    if (eventDetailModal.openEventDetail(card) === false) flashDetailUnavailable(card);
-  } else {
-    console.warn('[dashboard] event-detail-modal.js did not load; card click cannot open the dialog', card);
-    flashDetailUnavailable(card);
-  }
+  if (!row) return;
+  // A click on the link, a modified click, or a text selection belongs to the
+  // browser, not to us.
+  if (e.target.closest('a, button')) return;
+  if (e.ctrlKey || e.metaKey || e.shiftKey || e.altKey) return;
+  if (window.getSelection()?.toString()) return;
+  row.querySelector('.opportunity-details')?.click();
 }
 
 document.getElementById('opp-list').addEventListener('click', handleOppListClick);

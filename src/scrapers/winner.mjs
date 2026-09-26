@@ -15,6 +15,15 @@ function canonicalSportKey(label) {
  * comparison missed every capitalised variant.
  */
 function isLiveStatus(status) {
+  // `currentStatus` is a score object, not a label: {HomeTeamScore, LiveEventTime,
+  // LiveMatchShortStatus, …}. A running match is the one whose live clock has
+  // started, so that is the signal. The string form is still accepted for the
+  // case where the feed sends a plain label.
+  if (status && typeof status === 'object') {
+    const label = status.LiveMatchShortStatus?.['42'] || status.LiveMatchShortStatus?.['2'] || '';
+    if (/^live/i.test(String(label).trim())) return true;
+    return Number(status.LiveEventTime) > 0 || status.IsLiveStarted === true;
+  }
   return /^live$/i.test(String(status || '').trim());
 }
 
@@ -126,15 +135,18 @@ export default class WinnerScraper extends ScraperBase {
       const home = this._localize(e.team1Name);
       const away = this._localize(e.team2Name);
       if (!home || !away) continue;
-      // Validate before serialising: `new Date(x).toISOString()` throws on a
-      // malformed timestamp, which would abort the whole run instead of
-      // skipping the one bad row, and the guard below it was unreachable.
-      const startMs = Date.parse(e.matchDateTime);
+      // `matchDateTime` is an epoch in milliseconds, not an ISO string:
+      // `Date.parse(1790494200000)` is NaN, which silently emptied the whole
+      // feed. `Number()` reads the timestamp the dealer actually sends, and
+      // still accepts an ISO string if one ever appears.
+      const startMs = /^\d+$/.test(String(e.matchDateTime ?? ''))
+        ? Number(e.matchDateTime)
+        : Date.parse(e.matchDateTime);
       if (!Number.isFinite(startMs)) continue;
       // Prematch football only. The feed returns 30+ sports and live events in
       // one payload; without this filter they consumed the event cap and
       // reached the scan as if they were tradable pre-match football.
-      if (!this.includeLive && isLiveStatus(this._localize(e.currentStatus))) continue;
+      if (!this.includeLive && isLiveStatus(e.currentStatus)) continue;
       if (!this.includePast && startMs <= nowMs) continue;
       if (startMs > toMs) continue;
       const sport = this._localize(e.sportName, 'Unknown');
@@ -194,8 +206,8 @@ export default class WinnerScraper extends ScraperBase {
         awayTeam: away,
         // The scanner filters on `live`; `isLive` was never read, so a live
         // event passed the includeLive gate.
-        live: isLiveStatus(this._localize(e.currentStatus)),
-        isLive: isLiveStatus(this._localize(e.currentStatus)),
+        live: isLiveStatus(e.currentStatus),
+        isLive: isLiveStatus(e.currentStatus),
         eventKey,
         markets,
       });

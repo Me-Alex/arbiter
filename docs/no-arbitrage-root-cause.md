@@ -1,15 +1,16 @@
 # Why the scan finds no arbitrage
 
-Status as of 2026-09-26, re-measured against two independent live captures.
-The previous version of this document described a matching failure that no
-longer existed and would have sent the next reader looking in the wrong place.
+Status as of 2026-09-26, re-measured against eleven independent live captures
+between 14:48 and 19:18. The previous version of this document described a
+matching failure that no longer existed and would have sent the next reader
+looking in the wrong place.
 
 ## Summary
 
 **Conclusion: there is no arbitrage to find on these feeds, and that is a
 property of the market rather than a defect in the scanner.**
 
-Six defects were found and fixed along the way. After fixing them, the best
+Nine defects were found and fixed along the way. After fixing them, the best
 achievable return on any cross-feed market was **−1.80%** — every possible
 combination of prices across independent bookmakers still costs more than it
 returns. A negative return is what a well-arbitraged market looks like; an
@@ -23,6 +24,9 @@ arbitrage would require a positive one.
 | 4 | Scrapers wrote their own `eventKey`, unrelated to the matching key | 1000/1000 events now carry the canonical key |
 | 5 | Dropping the league merged different competition groups | league-aware alias matching: 54 → 104 pairings, groups kept apart |
 | 6 | `contibet` publishes 1X2 markets priced below break-even | 18–22% of its events excluded as untrustworthy |
+| 7 | First-half and double-chance markets were stamped `fulltime` and bucketed as the result market | fabricated arbitrage removed; enforced once in `ScraperBase` and in `isMatchResultMarket` rather than per adapter |
+| 8 | The CSV export misaligned every opportunity row by two columns | 23 cells against a 25-column header; verification status landed under `riskPercent` |
+| 9 | `winner` read an epoch timestamp as an ISO string | every event dropped as malformed, run reported success with 0 events |
 
 Defect 1 was the largest. `eventIdentityKey` built its key as
 `sport|league|date|home|away`, but the same competition arrives as
@@ -44,8 +48,8 @@ does. Measured across all 22 configured sources, only contibet does this
 
 ## Measured outcome
 
-Seven independent live captures on 2026-09-26, between 14:48 and 15:01, on
-six to ten books each. `scripts/sample.mjs` re-runs the measurement.
+Eleven independent live captures on 2026-09-26, between 14:48 and 19:18, on
+four to ten books each. `scripts/sample.mjs` re-runs the measurement.
 
 | Round | Time | Books | Events | Cross-feed buckets | Best ROI |
 |---|---|---|---|---|---|
@@ -56,14 +60,44 @@ six to ten books each. `scripts/sample.mjs` re-runs the measurement.
 | 5 | 14:59 | 7 | 700 | 49 | −2.12% |
 | 6 | 15:00 | 7 | 700 | 49 | −2.12% |
 | 7 | 14:48 | 10 | 1000 | 203 | −1.80% |
+| 8 | 18:57 | 3 | 300 | 31 | −3.64% |
+| 9 | 19:00 | 3 | 300 | 31 | −3.64% |
+| 10 | 19:17 | 4 | 300 | 12 | −3.64% |
+| 11 | 19:18 | 4 | 400 | 33 | −3.26% |
 
 The best combination is consistently the same fixture — Slovakia vs Moldova,
 one leg from betano and one from netbet — landing between −1.8% and −2.1%. No
 round produced a positive return.
 
 That stability is the finding. A single scrape would have been an anecdote;
-seven captures across thirteen minutes all land inside a 0.3-point band, and
+eleven captures across five hours all land inside a 0.3-point band, and
 always negative. The market is arbitraged and there is no edge left to take.
+
+Rounds 8–11 are worse (−3.3% to −3.6%) than the earlier ones because they ran
+on a narrower book set: the four books they cover are dominated by a single
+league window, so the best pairing available sits further from the mid. The
+sign does not change.
+
+### What rounds 8–11 additionally found
+
+Re-measuring after the settlement-period and provenance fixes turned up two
+defects that had been hiding behind a clean-looking result:
+
+- **winner collected nothing.** `matchDateTime` is an epoch in milliseconds,
+  not an ISO string, and `currentStatus` is a score object rather than a status
+  label. Reading the timestamp with `Date.parse` yields `NaN`, so every event
+  was skipped as malformed and the run reported success with zero events. The
+  unit fixtures used ISO strings, so the mismatch was invisible. Fixed, and
+  `test/winner.test.mjs` now uses the real payload shape.
+- **maxbet fails outright** — `/api/sports` returns 404. This is not a
+  regression: the endpoint has been gone since before this measurement, and
+  the adapter is the legacy `ProviderContract` class, not one of the public
+  feeds. It is left as-is pending a replacement endpoint, and it is excluded
+  from the captures above.
+
+Both show the same lesson as the earlier defects: a scraper that collects
+nothing and a scraper that collects everything look the same in a report that
+only counts rows.
 
 ### How much independent coverage actually exists
 

@@ -2,6 +2,7 @@ import ProviderContract from './provider-contract.mjs';
 import { normalizeTeamName } from '../shared/text.mjs';
 import { UpstreamError, ValidationError } from '../shared/errors.mjs';
 import { limitReached, maxEvents, serializedMaxEvents } from '../shared/event-limit.mjs';
+import { readBoundedJson, DEFAULT_MAX_BODY_BYTES } from '../shared/bounded-json.mjs';
 
 /**
  * Favbet (Romania) — ErlyLine/Betinvest JSON-RPC gateway.
@@ -41,6 +42,9 @@ export default class FavbetScraper extends ProviderContract {
     this.maxEvents = maxEvents(opts.maxEvents, 120, 1000);
     this.rpcUrl = 'https://www.favbet.ro/service/lineout/frontend_api2/';
     this.lang = 'ro';
+    // event/get answers with ~14 MB, so the shared 16 MB ceiling leaves headroom
+    // without letting a runaway response exhaust the process.
+    this.maxBodyBytes = Number(opts.maxBodyBytes ?? DEFAULT_MAX_BODY_BYTES);
   }
 
   async rpc(method, params, { signal } = {}) {
@@ -54,21 +58,20 @@ export default class FavbetScraper extends ProviderContract {
       },
       body: JSON.stringify({ jsonrpc: '2.0', id: 1, method, params }),
       signal,
+      // A redirect to a challenge or login page must fail loudly rather than be
+      // followed into a body that looks like a JSON-RPC result.
+      redirect: 'error',
     });
     if (!resp.ok) {
       throw new UpstreamError(`favbet ${method} HTTP ${resp.status}`, { status: resp.status });
     }
-    const text = await resp.text();
-    let payload;
-    try {
-      payload = JSON.parse(text);
-    } catch {
-      throw new UpstreamError(`favbet ${method} non-JSON response (${text.slice(0, 80)})`);
-    }
-    if (payload.error) {
+    // Bounded and streaming, like every other adapter: `resp.text()` buffers the
+    // whole body with no ceiling, and this endpoint answers with ~14 MB.
+    const payload = await readBoundedJson(resp, `favbet ${method}`, signal, this.maxBodyBytes);
+    if (payload && payload.error) {
       throw new UpstreamError(`favbet ${method} error ${JSON.stringify(payload.error).slice(0, 200)}`);
     }
-    return payload.result;
+    return payload?.result;
   }
 
   async fetchRaw({ signal } = {}) {

@@ -20,6 +20,29 @@ import ScraperBase from './base.mjs';
 /* global WebSocket */
 
 /**
+ * The market a BETTING_OFFER belongs to, resolved through its OUTCOME.
+ *
+ * A match dump is flat: OFFER records reference an outcome, and the outcome
+ * carries the market it prices. Matching offers on `bettingTypeId` alone is not
+ * enough, because several markets in one dump can share a type — a
+ * regulation-time result and a first-half result both look like "match result"
+ * to that field — and the last one parsed would silently win.
+ *
+ * Returns null when the link cannot be established, so an offer that names no
+ * market is not attributed to one.
+ *
+ * @param {object} offer
+ * @param {object[]} records  the full dump, used to resolve outcomes
+ * @returns {string|null}
+ */
+function outcomeMarketId(offer, records) {
+  if (offer?.marketId !== undefined && offer?.marketId !== null) return String(offer.marketId);
+  const outcome = records.find((r) => r._type === 'OUTCOME' && String(r.id) === String(offer?.outcomeId));
+  const id = outcome?.marketId;
+  return id === undefined || id === null ? null : String(id);
+}
+
+/**
  * @param {object} cfg
  * @param {string} cfg.wsUrl        e.g. wss://api-online.getsbet.ro/v2
  * @param {string} cfg.realm        e.g. online.getsbet.ro
@@ -105,17 +128,35 @@ export default class EveryMatrixWampScraper extends ScraperBase {
    * INITIAL_DUMP records. Throws UpstreamError when the dump times out so the
    * base retry layer can back off and reconnect.
    */
-  async dumpTopic(topic, { waitMs = this.wsTimeoutMs } = {}) {
+  async dumpTopic(topic, { waitMs = this.wsTimeoutMs, signal } = {}) {
+    // An in-flight dump used to ignore the caller's abort and sit until the
+    // dealer timed out — up to `wsTimeoutMs` (30s) — before the `finally` closed
+    // the socket. Cancelling a scrape therefore waited out every outstanding
+    // tournament instead of unwinding at once.
+    if (signal?.aborted) throw new TimeoutError(`${this.id}: aborted before dump of ${topic}`, { code: 'EABORTED' });
     let seq = 1;
     const ws = await this._openSocket();
+    // Detach on abort so a cancel tears the socket down now, not at the deadline.
+    const onAbort = () => {
+      try { ws.close(); } catch { /* already closing */ }
+    };
+    signal?.addEventListener('abort', onAbort, { once: true });
     try {
       const records = await new Promise((resolve, reject) => {
         let settled = false;
-        const timer = setTimeout(() => {
+        const finish = (fn, value) => {
           if (settled) return;
           settled = true;
-          reject(new TimeoutError(`${this.id}: initialDump timeout for ${topic}`, { code: 'ETIMEOUT' }));
+          clearTimeout(timer);
+          fn(value);
+        };
+        const timer = setTimeout(() => {
+          finish(reject, new TimeoutError(`${this.id}: initialDump timeout for ${topic}`, { code: 'ETIMEOUT' }));
         }, waitMs);
+        if (signal?.aborted) {
+          finish(reject, new TimeoutError(`${this.id}: aborted during dump of ${topic}`, { code: 'EABORTED' }));
+          return;
+        }
         ws.onmessage = (ev) => {
           let msg;
           try { msg = JSON.parse(ev.data); } catch { return; }
@@ -130,9 +171,7 @@ export default class EveryMatrixWampScraper extends ScraperBase {
             case 68: { // INVOCATION (initial dump or live update)
               const kw = f[5] || {};
               if (kw.messageType === 'INITIAL_DUMP' && Array.isArray(kw.records)) {
-                clearTimeout(timer);
-                settled = true;
-                resolve(kw.records);
+                finish(resolve, kw.records);
               } else {
                 ws.send(JSON.stringify([70, f[1], {}]));
               }
@@ -141,35 +180,34 @@ export default class EveryMatrixWampScraper extends ScraperBase {
             case 50: { // RESULT carrying the dump
               const kw = f[4] || {};
               if (Array.isArray(kw.records)) {
-                clearTimeout(timer);
-                settled = true;
-                resolve(kw.records);
+                finish(resolve, kw.records);
               }
               break;
             }
             case 8:
-              clearTimeout(timer);
-              settled = true;
-              reject(new UpstreamError(`${this.id}: dealer ${JSON.stringify(f).slice(0, 160)}`, { status: 502 }));
+              finish(reject, new UpstreamError(`${this.id}: dealer ${JSON.stringify(f).slice(0, 160)}`, { status: 502 }));
               break;
             default:
               break;
           }
         };
+        // An abort closes the socket, which lands here; report it as an abort
+        // rather than as a dealer fault so the caller can tell them apart.
         ws.onclose = () => {
-          if (settled) return;
-          settled = true;
-          reject(new UpstreamError(`${this.id}: ws closed during dump of ${topic}`));
+          finish(reject, signal?.aborted
+            ? new TimeoutError(`${this.id}: aborted during dump of ${topic}`, { code: 'EABORTED' })
+            : new UpstreamError(`${this.id}: ws closed during dump of ${topic}`));
         };
         ws.onerror = () => {
-          if (settled) return;
-          settled = true;
-          reject(new UpstreamError(`${this.id}: ws error during dump of ${topic}`));
+          finish(reject, new UpstreamError(`${this.id}: ws error during dump of ${topic}`));
         };
       });
       return records;
     } finally {
-      try { ws.close(); } catch {}
+      // Always detach: leaving the listener on a long-lived caller signal would
+      // accumulate one closure per dump across the whole run.
+      signal?.removeEventListener('abort', onAbort);
+      try { ws.close(); } catch { /* already closed */ }
     }
   }
 
@@ -203,7 +241,7 @@ export default class EveryMatrixWampScraper extends ScraperBase {
     let tournaments = [];
     for (let attempt = 0; attempt < 3 && tournaments.length === 0; attempt++) {
       abortGuard();
-      const records = await this.dumpTopic(this.tournamentListTopic());
+      const records = await this.dumpTopic(this.tournamentListTopic(), { signal });
       tournaments = records.filter((r) => r._type === 'TOURNAMENT' && String(r.sportId) === this.sportId);
     }
     if (tournaments.length === 0) {
@@ -230,8 +268,11 @@ export default class EveryMatrixWampScraper extends ScraperBase {
       for (let attempt = 0; attempt < 2 && !records; attempt++) {
         abortGuard();
         try {
-          records = await this.dumpTopic(this.aggregatorTopic(t.id));
-        } catch {
+          records = await this.dumpTopic(this.aggregatorTopic(t.id), { signal });
+        } catch (err) {
+          // A cancelled run is not a flaky tournament: retrying would keep the
+          // scrape alive after the caller asked it to stop.
+          if (signal?.aborted) throw err;
           records = null;
         }
       }
@@ -269,8 +310,10 @@ export default class EveryMatrixWampScraper extends ScraperBase {
         for (let attempt = 0; attempt < 2 && !records; attempt++) {
           abortGuard();
           try {
-            records = await this.dumpTopic(this.matchOddsTopic(match.id));
-          } catch {
+            records = await this.dumpTopic(this.matchOddsTopic(match.id), { signal });
+          } catch (err) {
+            // Cancellation is not a flaky match; do not retry past it.
+            if (signal?.aborted) throw err;
             records = null;
           }
         }
@@ -554,10 +597,29 @@ export default class EveryMatrixWampScraper extends ScraperBase {
    */
   extractOneXTwo(match, records) {
     const markets = records.filter((r) => r._type === 'MARKET');
-    const market = markets.find((r) => String(r.bettingTypeId) === this.oneXTwoTypeId);
-
+    // Several markets in one dump can share a bettingTypeId — a
+    // regulation-time result and a first-half result both present as "match
+    // result" to that field. Taking the first one found made the choice depend
+    // on the order the dealer happened to serialise them, so the published
+    // price flipped with it. Prefer the market whose own name says it settles
+    // at full time, and only fall back to the first when none does.
+    const named = (m) => String(m.displayName || m.name || '');
+    const isSubWindow = (m) => /repriza\s*1|repriza\s*2|1st\s*half|2nd\s*half|first\s*half|second\s*half|half\s*time|pauza/i.test(named(m));
+    const sameType = markets.filter((r) => String(r.bettingTypeId) === this.oneXTwoTypeId);
+    const market = sameType.find((r) => !isSubWindow(r)) || sameType[0];
     if (!market) return null;
-    const offers = records.filter((r) => r._type === 'BETTING_OFFER' && String(r.bettingTypeId) === this.oneXTwoTypeId);
+
+    // Scope the offers to *this* market so a half-time market's prices cannot
+    // be mistaken for the result market's. When the dump names no market on
+    // either side the link cannot be established — keep those offers rather
+    // than dropping a complete market, since there is nothing to confuse them
+    // with. Confusable dumps do carry the id.
+    const offers = records.filter((r) => {
+      if (r._type !== 'BETTING_OFFER') return false;
+      if (String(r.bettingTypeId) !== this.oneXTwoTypeId) return false;
+      const offerMarket = outcomeMarketId(r, records);
+      return offerMarket === null || offerMarket === String(market.id);
+    });
     if (offers.length < 3) return null;
 
     const outcomes = new Map(
@@ -572,11 +634,13 @@ export default class EveryMatrixWampScraper extends ScraperBase {
       const odds = Number(offer.odds);
       if (!Number.isFinite(odds) || odds <= 1 || offer.isAvailable === false) continue;
       if (outcome.typeName === 'Draw' || /egal/i.test(String(outcome.shortTranslatedName || ''))) {
-        mapped.draw = odds;
+        // Two offers for the same side is a contradiction, not a price. Take
+        // the first and ignore the rest rather than letting the last write.
+        if (mapped.draw === null) mapped.draw = odds;
       } else if (outcome.paramParticipantName1 === home) {
-        mapped.home = odds;
+        if (mapped.home === null) mapped.home = odds;
       } else if (outcome.paramParticipantName1 === away) {
-        mapped.away = odds;
+        if (mapped.away === null) mapped.away = odds;
       }
     }
     if (mapped.home === null || mapped.draw === null || mapped.away === null) return null;

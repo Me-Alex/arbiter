@@ -3,6 +3,7 @@ import { dirname, join } from 'node:path';
 import { writeJsonAtomicSync } from '../shared/atomic-write.mjs';
 import { ValidationError, UpstreamError, TimeoutError, isRetryable, backoffMs } from '../shared/errors.mjs';
 import { eventIdentityKey } from '../shared/text.mjs';
+import { isDeclaredFullTimeMarket, isLiteral1x2SelectionSet } from '../scanner/market-contracts.mjs';
 
 /**
  * ScraperBase — every bookmaker scraper inherits from this.
@@ -145,6 +146,10 @@ export default class ScraperBase {
             { field: err.field || null, cause: err },
           );
         }
+        // Applied before validate() so the odds check and the settlement check
+        // both see the same set of markets, and before anything is written, so
+        // a non-full-time lookalike never reaches the workspace.
+        this._dropNonFullTimeLookalikes(events);
         const validated = this.validate(events);
         const rawSize = this._measure(raw);
         const ts = startedAt.replace(/[:.]/g, '-');
@@ -264,6 +269,44 @@ export default class ScraperBase {
       if (priced) out.push(e);
     }
     return out;
+  }
+
+  /**
+   * Drop markets that *look* like a result market but do not settle at full
+   * time.
+   *
+   * The engine recognises a three-way market as the match-result contract when
+   * its selections are literally {1, X, 2}, regardless of the provider's opaque
+   * market key. That is what lets superbet's `547`, betano's `MRES` or the FEG
+   * family's `ufo:mtyp:00-00` be compared across books — and it is exactly how
+   * a first-half result, a half-time-or-full-time window or a double chance
+   * market got paired against another book's full-time leg and reported as a
+   * fabricated arbitrage.
+   *
+   * Enforcing this here rather than in each adapter is the point: a per-book
+   * check is one forgotten `period` away from the bug returning, and the
+   * adapter has no way to know the engine's inference rule. The predicate is
+   * the engine's own (`isMatchResultMarket`), so the two can never disagree
+   * about what may be compared.
+   *
+   * A market that does not settle at full time is dropped, never rejected, so
+   * a feed that mixes both still contributes the sound half.
+   *
+   * @param {object[]} events
+   * @returns {object[]} the same events, with non-full-time lookalikes removed
+   */
+  _dropNonFullTimeLookalikes(events) {
+    for (const e of events) {
+      if (!Array.isArray(e?.markets)) continue;
+      e.markets = e.markets.filter((m) => {
+        if (!m) return false;
+        if (isDeclaredFullTimeMarket(m)) return true;
+        // Only the result-market shape is at risk. A totals or handicap market
+        // that settles at half time is still a real market of its own.
+        return !isLiteral1x2SelectionSet(m.selections);
+      });
+    }
+    return events;
   }
   _shapeError(err) {
     if (!err) return null;

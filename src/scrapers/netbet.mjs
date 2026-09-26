@@ -123,25 +123,43 @@ export default class NetBetScraper extends ScraperBase {
       return JSON.parse(Buffer.concat(chunks).toString('utf8'));
     };
 
-    /** Fetch a single sport (pagination not supported by Sportify). */
+    /**
+     * Fetch a single sport. A failure is recorded, not swallowed: this used to
+     * return an empty tree, so a football request that 500'd while snooker
+     * answered produced `status: 'ok'` with no football in it — the run looked
+     * complete and simply had no football.
+     */
     const fetchSport = async (sport) => {
       try {
         const data = await fetchPage(sport, 1);
         return { sport, tree: data?.tree || [] };
-      } catch { return { sport, tree: [] }; }
+      } catch (err) {
+        return { sport, tree: [], error: err?.message || String(err) };
+      }
     };
 
     this.sourceUrl = `${SPORTIFY_URL}?sport=ALL&bookmaker=${BOOKMAKER}`;
     this.observedAt = new Date().toISOString();
 
-    /** Fetch all sports in parallel. */
+    /** Fetch every configured sport in parallel. */
     const results = await Promise.allSettled(this.sports.map(fetchSport));
     const merged = [];
+    const failedSports = [];
     for (const r of results) {
-      if (r.status === 'fulfilled' && r.value?.tree) merged.push(...r.value.tree);
+      if (r.status !== 'fulfilled' || !r.value) continue;
+      if (r.value.error) failedSports.push(`${r.value.sport} (${r.value.error})`);
+      if (r.value.tree) merged.push(...r.value.tree);
     }
-    if (merged.length === 0) throw new UpstreamError('NetBet: all sport fetches returned 0 events');
-    return { tree: merged };
+    if (merged.length === 0) {
+      throw new UpstreamError(`NetBet: every sport fetch failed — ${failedSports.join('; ')}`);
+    }
+    // A partial failure is still a partial result, and it must say so. The
+    // shortfall travels with the payload so the run report shows which sport
+    // was missing rather than presenting a short run as a complete one.
+    if (failedSports.length > 0) {
+      this.logger('warn', `NetBet: ${failedSports.length}/${this.sports.length} sport fetches failed: ${failedSports.join('; ')}`);
+    }
+    return { tree: merged, requestFailures: { attempted: this.sports.length, failed: failedSports.length, sports: failedSports } };
   }
 
   normalize(raw) {

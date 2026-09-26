@@ -50,7 +50,7 @@ below.
 | [x] | getsbet | everymatrix-odds-wamp | enabled | grouped with contibet as one upstream feed |
 | [x] | contibet | everymatrix-odds-wamp | enabled | grouped with getsbet as one upstream feed |
 | [x] | favbet | erlyline | enabled | 1H markets carry `period`; a total market/get outage fails the run |
-| [x] | winner | digitain | enabled | football pre-match only; settlement period read per market |
+| [x] | winner | digitain | enabled | football pre-match only; settlement period read per market; `matchDateTime` is an epoch and `currentStatus` a score object — both verified against the live payload in `test/winner.test.mjs` |
 | [ ] | unibet | public-sports-api-v2 | disabled | no repeatable live validation |
 
 Removed from the config in this pass: `mozzartbet` and the five

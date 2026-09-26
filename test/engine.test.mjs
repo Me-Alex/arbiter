@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { groupByEvent, findArbitrage, findMiddles, findPositiveEV, findLowHold, buildSignalIndex } from '../src/scanner/engine.mjs';
+import { groupByEvent, findArbitrage, findMiddles, findPositiveEV, findLowHold, buildSelectionIndex } from '../src/scanner/engine.mjs';
 
 function makeEvent(sourceId, eventKey, marketKey, selections) {
   return {
@@ -244,8 +244,11 @@ test('findLowHold skips markets with a missing or malformed odds value', () => {
   assert.equal(findLowHold(grouped, { maxHoldPercent: 4 }).length, 0);
 });
 
-test('buildSignalIndex maps (event,market,selection) → legs', () => {
-  const grouped = groupByEvent([
+test('buildSelectionIndex maps (event,market,selection) → every book that quotes it', () => {
+  // This is the index verification re-prices against, so it must carry one
+  // entry per source rather than only the legs of a signal that already
+  // existed — a second opinion built from the first opinion confirms nothing.
+  const events = [
     makeEvent('a', 'k1', 'MATCH_ODDS', [
       { name: 'Home', odds: 3.0 },
       { name: 'Draw', odds: 4.0 },
@@ -256,9 +259,13 @@ test('buildSignalIndex maps (event,market,selection) → legs', () => {
       { name: 'Draw', odds: 5.0 },
       { name: 'Away', odds: 6.0 },
     ]),
-  ]);
-  const arbs = findArbitrage(grouped, { minRoiPercent: 0 });
-  const scan = { opportunities: arbs };
-  const idx = buildSignalIndex(scan);
-  assert.ok(idx.size >= 3);
+  ];
+  const idx = buildSelectionIndex(events);
+  assert.ok(idx.size >= 3, 'one key per selection per event');
+
+  const homeKey = [...idx.keys()].find((k) => k.endsWith('::home'));
+  assert.ok(homeKey, 'the home selection is indexed');
+  const sources = idx.get(homeKey).map((c) => c.sourceId).sort();
+  assert.deepEqual(sources, ['a', 'b'], 'both books quoting that selection are present');
+  assert.equal(idx.get(homeKey).find((c) => c.sourceId === 'b').odds, 2.5);
 });

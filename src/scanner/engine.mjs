@@ -459,23 +459,3 @@ function buildLegCombinations(optionGroups) {
   return optionGroups.reduce((combinations, options) =>
     combinations.flatMap((combination) => options.map((option) => [...combination, option])), [[]]);
 }
-
-export function buildSignalIndex(scan) {
-  // Map (eventKey, marketKey, selection) → array of { sourceId, odds } legs
-  // for verification lookups.
-  const index = new Map();
-  const consider = (opp) => {
-    for (const leg of opp.legs || []) {
-      const k = `${leg.eventKey || opp.eventKey}::${leg.marketKey || opp.marketKey}::${String(leg.selection || '').toLowerCase()}`;
-      let arr = index.get(k);
-      if (!arr) {
-        arr = [];
-        index.set(k, arr);
-      }
-      arr.push({ sourceId: leg.sourceId, odds: leg.odds });
-    }
-  };
-  for (const o of scan.opportunities || []) for (const l of o.legs || []) consider({ ...o, legs: [l] });
-  for (const m of scan.middles || []) for (const l of m.legs || []) consider({ ...m, legs: [l] });
-  return index;
-}
