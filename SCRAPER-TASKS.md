@@ -1,10 +1,14 @@
 # Bookmaker repair checklist
 
 Updated 2026-09-26 by a live smoke across every enabled job
-(`node scripts/live-check.mjs`). This records what the adapters do *today*,
-measured against the real upstreams — not a claim that a historical `validated`
-label proves current implementation. Counts are from the run recorded under
-"Live smoke", capped at 100 events per job.
+(`npm run smoke:live`, 22/22 passing). This records what the adapters do
+*today*, measured against the real upstreams — not a claim that a historical
+`validated` label proves current implementation. Counts are from the run
+recorded under "Live smoke", capped at 100 events per job.
+
+`scripts/live-check.mjs` reports per-adapter detail (bytes, timings, which
+guard rejected a response) but never fails. `scripts/smoke-live.mjs` is the
+gate: it exits non-zero when an enabled job brings back no usable events.
 
 The previous revision of this file predated the implementations it described
 as missing: Exalogic, NetBet, Fortuna, Casa, Favbet, Winner and Get's Bet are
@@ -33,9 +37,9 @@ below.
 | [x] | betano | top-events-v2-json | enabled | top-events-v2 via Playwright; no verified public event page, so no deep link |
 | [x] | fortuna | fortuna-bff-rest | enabled | catalogue traversal, multi-sport; a run where every request failed now raises instead of reporting an empty success |
 | [x] | casa-pariurilor | fortuna-bff-rest | enabled | same family, own host, same failure accounting |
-| [x] | stanleybet | nsoft-public-json | enabled | shares Admiral's companyUuid — not independent pricing |
-| [x] | admiral | nsoft-public-json | enabled | football 1X2 only; non-football events are no longer published |
-| [x] | maxbet | nsoft | enabled | own company UUID and own catalogue; deliberately not grouped with Admiral |
+| [x] | stanleybet | nsoft-public-json | enabled | same company UUID as Admiral — one feed under two names, never paired; football is sport id 4 |
+| [x] | admiral | nsoft-public-json | enabled | football 1X2 only; non-football events are no longer published; football is sport id 4 |
+| [x] | maxbet | nsoft | enabled | same platform as Admiral under a different tenant; prices differ on 28 of 36 shared fixtures, so it is a genuinely independent book; football is sport id **2** |
 | [x] | excelbet | exalogic-xsport | enabled | cs=3 FINAL only; double-chance codes dropped, 1X2 completeness enforced |
 | [x] | winboss | exalogic-xsport | enabled | same Exalogic family |
 | [x] | las-vegas | exalogic-xsport | enabled | same Exalogic family |
@@ -91,8 +95,65 @@ Declared in `src/scanner/feed-groups.mjs` and enforced in `findArbitrage` and
 and the Fortuna / NSoft pairs are one feed under several names, so a price gap
 between them is a capture artifact rather than an arbitrage.
 
-`maxbet` is deliberately excluded from the NSoft group: same platform,
-different company UUID, different catalogue.
+`maxbet` is deliberately excluded from the NSoft group, on measurement rather
+than on the tenant id. It sits on the same platform under a different company
+UUID, but a different tenant does not imply a different price — it implies the
+tenant prices independently. Measured live on 2026-09-26 over the 36 fixtures
+the two tenants share, 8 carried byte-identical 1X2 prices and 28 differed
+(Mallorca v Almeria 2.10/3.30/3.45 at admiral against 2.11/3.35/3.50 at
+maxbet). Since they genuinely disagree, pairing them can be real arbitrage.
+
+Two consequences of that measurement are wired into the adapter:
+
+- Football is a **per-tenant** concept on this platform, not a global one. It
+  is sport id 4 for Admiral/Stanleybet and id 2 for MaxBet. A single shared
+  table labelled MaxBet's football "Basketball", and the emitted sport feeds
+  the event identity key — so every MaxBet event was published under a sport no
+  other book uses and none of them could pair.
+- The three tenants are three tenants of one platform, not three feeds. The
+  company UUIDs in `src/scrapers/nsoft.mjs` are **public identifiers read from
+  the front end, not credentials**: the endpoint answers without
+  authentication, which is what the project's "no credentials" rule depends
+  on. Anyone treating them as secrets would be misled, and anyone rotating them
+  as such would break the app for no reason.
+
+## Reverse engineering, 2026-09-26
+
+Asked whether the three `ProviderContract` classes (`maxbet.mjs`,
+`admiral.mjs`, `stanleybet.mjs`) had feeds of their own. They do not, and the
+answer changed what is worth building next.
+
+**What was checked, and what it showed**
+
+- `maxbet`: the front end's bundle names `nsoftsportsbook`, and the company
+  UUID in config answers on NSoft's public distribution endpoint with 1394
+  events. So `/api/sports` — which 404s on every variant tried — was never
+  MaxBet's feed. It was an assumption in an unused legacy class, not a
+  retired endpoint. The 404 is a dead end, not a trail.
+- `admiral` and `stanleybet`: byte-identical Angular build (shared chunk
+  hashes, main bundles 302.641 vs 302.754 KB), 352 KB of chunks scanned with
+  zero network references, same company UUID, and a live feed that is
+  event-for-event identical. One company, one feed, two brands. There is
+  nothing separate to find, and looking would waste the time.
+- Neither site exposes a feed path in any advertised bundle, because the
+  betting client is lazy-loaded; a deeper crawl would need a browser. It was
+  not pursued, since the platform feed already answers completely.
+
+**What it found that mattered**
+
+The scan surfaced a live defect: the NSoft adapter labelled MaxBet's football
+"Basketball" (see above). That bug was invisible for a while because the only
+tests around it fed hand-written ISO strings and a plain `"Live"` string,
+while the real payload carries an epoch in milliseconds and a score object.
+`test/winner.test.mjs` is the model to follow: fixtures shaped like the live
+response, not like what the parser would prefer to receive.
+
+**The lesson it repeats**
+
+A scraper that collects nothing reports exactly like one that collected a
+quiet day. Four separate defects survived a green unit suite for that reason
+alone. `npm run smoke:live` is now the gate that fails on it, and CI runs it
+twice a week.
 
 ## Known gaps
 
