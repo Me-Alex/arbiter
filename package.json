@@ -15,6 +15,8 @@
     "tinyfish:diagnose": "node scripts/diagnose-tinyfish-books.mjs",
     "tinyfish:discover": "node scripts/discover-smoke.mjs",
     "tinyfish:smoke": "node scripts/tinyfish-smoke.mjs",
+    "smoke:live": "node scripts/smoke-live.mjs",
+    "live-check": "node scripts/live-check.mjs",
     "cleanup": "node scripts/cleanup.mjs",
     "cleanup:staging": "node scripts/cleanup.mjs --staging-only",
     "cleanup:logs": "node scripts/cleanup.mjs --logs-only",

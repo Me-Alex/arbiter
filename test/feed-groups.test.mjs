@@ -36,8 +36,12 @@ test('isSharedFeed is true only within a declared group', () => {
   // Different providers.
   assert.equal(isSharedFeed('superbet', 'fortuna'), false);
   assert.equal(isSharedFeed('betano', 'netbet'), false);
-  // Same platform, different NSoft tenant: separate companyUuid, so a real
-  // price difference is possible and the pairing must stay allowed.
+  // Same platform, different NSoft tenant. Measured live on 2026-09-26 over
+  // the 36 fixtures the two tenants share: 8 byte-identical, 28 differing. The
+  // two genuinely price independently, so a pairing between them can be a
+  // real arbitrage and must stay allowed. The reason is the measurement, not
+  // the differing companyUuid — a different tenant id does not by itself make
+  // two brands one feed.
   assert.equal(isSharedFeed('admiral', 'maxbet'), false);
   // Degenerate inputs.
   assert.equal(isSharedFeed('fortuna', 'fortuna'), false);

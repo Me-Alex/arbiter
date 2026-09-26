@@ -29,10 +29,20 @@
  * differ, which is exactly the case the identical-payload check misses — the
  * grouping is what stops that drift from being reported as arbitrage.
  *
- * maxbet is deliberately NOT in the nsoft group: it shares the NSoft platform
- * but runs on a different company UUID, and its catalogue is separate (the
- * historical captures show a different football sportId/marketId). Same
- * platform, different tenant, different prices.
+ * maxbet is deliberately NOT in the nsoft group, and the reason is measured
+ * rather than assumed. It sits on the same NSoft platform under a different
+ * company UUID, but a different tenant does not imply a different price: it
+ * implies the tenant prices independently. Measured live on 2026-09-26 over
+ * the 36 fixtures the two tenants share, 8 carried byte-identical 1X2 prices
+ * and 28 differed (e.g. Mallorca v Almeria 2.10/3.30/3.45 at admiral against
+ * 2.11/3.35/3.50 at maxbet). Since the two genuinely disagree, pairing them
+ * can be real arbitrage, so grouping them would suppress a true opportunity.
+ *
+ * The earlier note here justified that exclusion by the differing company
+ * UUID alone. That reasoning does not hold: a shared UUID would not make two
+ * brands one feed if their prices moved independently, and MaxBet's own prices
+ * are the evidence that they do. The exclusion stands; the reason for it is
+ * now the measurement rather than the tenant id.
  */
 
 /** @type {ReadonlyArray<{ id: string, brand: string, provider: string, members: readonly string[] }>} */

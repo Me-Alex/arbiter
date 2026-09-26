@@ -17,6 +17,17 @@ export default class WinBossScraper extends ScraperBase {
 
   constructor(opts = {}) {
     super(opts);
+    // Both were read by fetchRaw but never assigned here, so the request went
+    // out to `undefined/getPalinsestoDelGiorno?systemCode=undefined` and every day
+    // fetch returned nothing.
+    this.apiBase = opts.apiBase || BASE;
+    this.systemCode = opts.systemCode || SYSTEM_CODE;
+    const days = Number(opts.days ?? 7);
+    if (!Number.isInteger(days) || days < 1 || days > 31) {
+      throw new ValidationError('winboss: invalid days (1-31)');
+    }
+    this.days = days;
+    this.timeoutMs = opts.timeoutMs ?? 25_000;
     this.maxEvents = opts.maxEvents === 'all' ? 5000 : Math.min(Number(opts.maxEvents ?? 100), 5000);
     if (!Number.isInteger(this.maxEvents) || this.maxEvents < 0 || this.maxEvents > 5000) {
       throw new ValidationError('WinBoss: invalid maxEvents');
@@ -40,7 +51,11 @@ export default class WinBossScraper extends ScraperBase {
       const timeout = AbortSignal.timeout(this.timeoutMs);
       const bounded = signal ? AbortSignal.any([signal, timeout]) : timeout;
       const response = await fetch(url.href, { signal: bounded, headers });
-      if (!response.ok) return [];
+      // A non-2xx response is not an empty day. Returning [] here made a 500 on
+      // today plus an empty 200 tomorrow look like a successful, complete run.
+      if (!response.ok) {
+        throw new UpstreamError(`WinBoss: HTTP ${response.status} for ${ds}`);
+      }
       const ct = response.headers.get('content-type') || '';
       if (!ct.includes('json') && !ct.includes('text/plain')) {
         throw new ValidationError(`ExcelBet: expected JSON for ${ds}, received ${ct || 'no content-type'}`);
