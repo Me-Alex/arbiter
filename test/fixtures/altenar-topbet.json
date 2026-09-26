@@ -1,0 +1,557 @@
+{
+  "topSports": [
+    {
+      "id": 66,
+      "name": "Fotbal",
+      "iconName": "soccer",
+      "hasStream": false,
+      "count": 623
+    },
+    {
+      "id": 68,
+      "name": "Tenis",
+      "iconName": "tennis",
+      "hasStream": false,
+      "count": 383
+    },
+    {
+      "id": 67,
+      "name": "Baschet",
+      "iconName": "basketball",
+      "hasStream": false,
+      "count": 108
+    },
+    {
+      "id": 73,
+      "name": "Handbal",
+      "iconName": "handball",
+      "hasStream": false,
+      "count": 46
+    },
+    {
+      "id": 145,
+      "name": "E-sports",
+      "iconName": "e-sports-+",
+      "hasStream": false,
+      "count": 142
+    },
+    {
+      "id": 75,
+      "name": "Fotbal American",
+      "iconName": "american-football",
+      "hasStream": false,
+      "count": 78
+    },
+    {
+      "id": 76,
+      "name": "Baseball",
+      "iconName": "baseball",
+      "hasStream": false,
+      "count": 36
+    },
+    {
+      "id": 70,
+      "name": "Hochei pe gheaţă",
+      "iconName": "ice-hockey",
+      "hasStream": false,
+      "count": 126
+    },
+    {
+      "id": 77,
+      "name": "Tenis de masă",
+      "iconName": "table-tennis",
+      "hasStream": false,
+      "count": 319
+    },
+    {
+      "id": 69,
+      "name": "Volei",
+      "iconName": "volleyball",
+      "hasStream": false,
+      "count": 11
+    },
+    {
+      "id": -1,
+      "name": "Other",
+      "iconName": "Other",
+      "hasStream": false,
+      "count": 128
+    }
+  ],
+  "headers": [
+    {
+      "typeId": 1,
+      "name": "1x2",
+      "mst": 0,
+      "odds": [
+        {
+          "id": 1,
+          "name": "1"
+        },
+        {
+          "id": 2,
+          "name": "X"
+        },
+        {
+          "id": 3,
+          "name": "2"
+        }
+      ]
+    },
+    {
+      "typeId": 18,
+      "name": "Total",
+      "mst": 0,
+      "odds": [
+        {
+          "id": 12,
+          "name": "peste"
+        },
+        {
+          "id": 13,
+          "name": "sub"
+        }
+      ]
+    },
+    {
+      "typeId": 29,
+      "name": "Ambele echipe să înscrie",
+      "mst": 0,
+      "odds": [
+        {
+          "id": 74,
+          "name": "da"
+        },
+        {
+          "id": 76,
+          "name": "nu"
+        }
+      ]
+    }
+  ],
+  "pageCount": 6,
+  "page": 1,
+  "markets": [
+    {
+      "oddIds": [
+        4535975026,
+        4535975027,
+        4535975028
+      ],
+      "typeId": 1,
+      "sportMarketId": 70472,
+      "id": 1743400914,
+      "name": "1x2"
+    },
+    {
+      "oddIds": [
+        4535975069,
+        4535975071,
+        4535975070
+      ],
+      "variant": 9,
+      "lines": [],
+      "typeId": 8,
+      "sportMarketId": 70491,
+      "sv": "1",
+      "sn": "Primul",
+      "id": 1743400928,
+      "name": "Golul 1"
+    },
+    {
+      "oddIds": [
+        4535974859,
+        4535974860
+      ],
+      "typeId": 18,
+      "sportMarketId": 70520,
+      "sv": "1.5",
+      "sn": "1.5",
+      "id": 1743400862,
+      "name": "Total goluri"
+    },
+    {
+      "oddIds": [
+        4535974921,
+        4535974922
+      ],
+      "typeId": 29,
+      "sportMarketId": 70545,
+      "id": 1743400893,
+      "name": "Ambele echipe să înscrie"
+    },
+    {
+      "oddIds": [
+        4533191578,
+        4533191579,
+        4533191580
+      ],
+      "typeId": 1,
+      "sportMarketId": 70472,
+      "id": 1742343743,
+      "name": "1x2"
+    },
+    {
+      "oddIds": [
+        4533191634,
+        4533191636,
+        4533191635
+      ],
+      "variant": 9,
+      "lines": [],
+      "typeId": 8,
+      "sportMarketId": 70491,
+      "sv": "1",
+      "sn": "Primul",
+      "id": 1742343763,
+      "name": "Golul 1"
+    },
+    {
+      "oddIds": [
+        4533191328,
+        4533191329
+      ],
+      "typeId": 18,
+      "sportMarketId": 70520,
+      "sv": "1.5",
+      "sn": "1.5",
+      "id": 1742343671,
+      "name": "Total goluri"
+    }
+  ],
+  "odds": [
+    {
+      "typeId": 1,
+      "price": 2.1667,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 154026,
+      "isDBB": true,
+      "id": 4535975026,
+      "name": "Club Dr Benjamin Aceval"
+    },
+    {
+      "typeId": 2,
+      "price": 3.6667,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4535975027,
+      "name": "X"
+    },
+    {
+      "typeId": 3,
+      "price": 2.6667,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 146152,
+      "isDBB": true,
+      "id": 4535975028,
+      "name": "Tembetary"
+    },
+    {
+      "typeId": 1,
+      "price": 1.7778,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 154026,
+      "isDBB": true,
+      "id": 4535975069,
+      "name": "Club Dr Benjamin Aceval"
+    },
+    {
+      "typeId": 7,
+      "price": 13,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4535975071,
+      "name": "Niciunul"
+    },
+    {
+      "typeId": 3,
+      "price": 2,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 146152,
+      "isDBB": true,
+      "id": 4535975070,
+      "name": "Tembetary"
+    },
+    {
+      "typeId": 12,
+      "price": 1.25,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4535974859,
+      "name": "Peste 1.5"
+    },
+    {
+      "typeId": 13,
+      "price": 3.6,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4535974860,
+      "name": "Sub 1.5"
+    },
+    {
+      "typeId": 74,
+      "price": 1.7,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4535974921,
+      "name": "Da"
+    },
+    {
+      "typeId": 76,
+      "price": 2.05,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4535974922,
+      "name": "Nu"
+    },
+    {
+      "typeId": 1,
+      "price": 1.6471,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 59802,
+      "isDBB": true,
+      "id": 4533191578,
+      "name": "Bogotá FC"
+    },
+    {
+      "typeId": 2,
+      "price": 3.6667,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4533191579,
+      "name": "X"
+    },
+    {
+      "typeId": 3,
+      "price": 4.75,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 59807,
+      "isDBB": true,
+      "id": 4533191580,
+      "name": "Barranquilla"
+    },
+    {
+      "typeId": 1,
+      "price": 1.48,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 59802,
+      "isDBB": true,
+      "id": 4533191634,
+      "name": "Bogotá FC"
+    },
+    {
+      "typeId": 7,
+      "price": 10,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4533191636,
+      "name": "Niciunul"
+    },
+    {
+      "typeId": 3,
+      "price": 2.6667,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 59807,
+      "isDBB": true,
+      "id": 4533191635,
+      "name": "Barranquilla"
+    },
+    {
+      "typeId": 12,
+      "price": 1.2858,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4533191328,
+      "name": "Peste 1.5"
+    },
+    {
+      "typeId": 13,
+      "price": 3.1,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4533191329,
+      "name": "Sub 1.5"
+    }
+  ],
+  "events": [
+    {
+      "marketIds": [
+        1743400914,
+        1743400928,
+        1743400862,
+        1743400863,
+        1743400864,
+        1743400893
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "code": 672,
+      "hasStream": false,
+      "extId": "fp32_ar:match:660989",
+      "sc": 1374,
+      "mc": 131,
+      "rc": false,
+      "pId": 32,
+      "et": 0,
+      "hasStats": true,
+      "competitorIds": [
+        154026,
+        146152
+      ],
+      "sportId": 66,
+      "catId": 729,
+      "champId": 9914,
+      "status": 0,
+      "startDate": "2026-09-21T19:30:00Z",
+      "id": 17702230,
+      "name": "Club Dr Benjamin Aceval vs. Tembetary"
+    },
+    {
+      "marketIds": [
+        1742343743,
+        1742343763,
+        1742343671,
+        1742343672,
+        1742343673
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "code": 982,
+      "hasStream": false,
+      "extId": "fp32_ar:match:661361",
+      "sc": 1709,
+      "mc": 199,
+      "rc": false,
+      "pId": 32,
+      "et": 0,
+      "hasStats": false,
+      "competitorIds": [
+        59802,
+        59807
+      ],
+      "sportId": 66,
+      "catId": 797,
+      "champId": 4009,
+      "status": 0,
+      "startDate": "2026-09-21T20:30:00Z",
+      "id": 17723611,
+      "name": "Bogotá FC vs. Barranquilla"
+    }
+  ],
+  "sports": [
+    {
+      "catIds": [
+        1728,
+        1571,
+        1595,
+        729,
+        797,
+        808,
+        759,
+        560,
+        518,
+        574,
+        681,
+        593,
+        826
+      ],
+      "typeId": 318,
+      "iconName": "soccer",
+      "hasLiveEvents": false,
+      "id": 66,
+      "name": "Fotbal"
+    }
+  ],
+  "categories": [
+    {
+      "champIds": [
+        9914
+      ],
+      "iso": "PRY",
+      "hasLiveEvents": false,
+      "id": 729,
+      "name": "Paraguay"
+    },
+    {
+      "champIds": [
+        4009
+      ],
+      "iso": "COL",
+      "hasLiveEvents": false,
+      "id": 797,
+      "name": "Columbia"
+    }
+  ],
+  "champs": [
+    {
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "hasLiveEvents": false,
+      "id": 9914,
+      "name": "Divizia Secunda"
+    },
+    {
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "hasLiveEvents": false,
+      "id": 4009,
+      "name": "Turneul Postobon"
+    }
+  ],
+  "competitors": [
+    {
+      "abbreviation": "CLU",
+      "id": 154026,
+      "name": "Club Dr Benjamin Aceval"
+    },
+    {
+      "abbreviation": "TEM",
+      "id": 146152,
+      "name": "Tembetary"
+    },
+    {
+      "abbreviation": "BOG",
+      "id": 59802,
+      "name": "Bogotá FC"
+    },
+    {
+      "abbreviation": "BAR",
+      "id": 59807,
+      "name": "Barranquilla"
+    }
+  ]
+}

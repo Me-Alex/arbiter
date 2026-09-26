@@ -50,21 +50,3 @@ export function flattenMarkets(groups, { defaultGroupName = 'Main', normalizeOdd
   }
   return markets;
 }
-
-/**
- * For 3-way markets where the JSON only gives home/draw/away under separate
- * keys (common on older books like Stanleybet), merge them into one market.
- */
-export function mergeThreeWay(rawEvents, _homeKey = 'home', _drawKey = 'draw', _awayKey = 'away', _marketKey = 'MATCH_ODDS') {
-  const byEvent = new Map();
-  for (const e of rawEvents) {
-    const base = { ...e };
-    base.selections = base.selections || [];
-    byEvent.set(e.id, base);
-  }
-  return Array.from(byEvent.values());
-}
-
-export function findMarketByKey(markets, key) {
-  return markets.find((m) => m.key === key);
-}

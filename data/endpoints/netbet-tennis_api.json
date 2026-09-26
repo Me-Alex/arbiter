@@ -1,0 +1,8 @@
+{
+  "book": "netbet-tennis",
+  "platform": "sportify-public-json",
+  "feedStatus": "verified",
+  "keyEndpoints": [
+    "https://api.sportify.bet/api/content/inventory-events?sport=tennis"
+  ]
+}

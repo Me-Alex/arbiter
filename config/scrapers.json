@@ -4,6 +4,9 @@
       "id": "superbet",
       "name": "Superbet (public offer v3)",
       "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
       "engine": "public-offer-v3",
       "transport": "bookmaker-public-json",
       "script": "superbet.mjs",
@@ -17,6 +20,9 @@
       "id": "betano",
       "name": "Betano",
       "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
       "engine": "top-events-v2-json",
       "transport": "betano-top-events-json",
       "script": "betano.mjs",
@@ -30,8 +36,11 @@
       "id": "fortuna",
       "name": "Fortuna",
       "enabled": true,
-      "engine": "fortuna-bff-graphql",
-      "transport": "bookmaker-public-graphql",
+      "supportedSports": [
+        "football"
+      ],
+      "engine": "fortuna-bff-rest",
+      "transport": "fortuna-bff-rest-json",
       "script": "fortuna.mjs",
       "sourceIds": [
         "fortuna"
@@ -50,12 +59,15 @@
         "unibet"
       ],
       "validationStatus": "validated",
-      "validationReason": "One bounded smoke passed on 2026-09-01, but repeated validation timed out three times; source remains disabled until the public feed is reliably repeatable."
+      "validationReason": "Endpoint retired. The adapter targets /api/kambi/offer/v1/betoffer/list.json, which now returns 404 while the site returns 200. Observed 2026-09-26 via scripts/discover-unibet.mjs: prices moved to wss://sportsbff-ams.kindredext.net/betting-mqtt-sports/, a realtime feed, not a pollable REST endpoint. The public REST siblings (odds-ladder, az-menu, configured-landing-page) answer without cookies but carry no events. Re-enabling needs an MQTT client and a live reconnect test, not a URL change."
     },
     {
       "id": "stanleybet",
       "name": "Stanleybet",
       "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
       "engine": "nsoft-public-json",
       "transport": "nsoft-public-sports-json",
       "script": "stanleybet.mjs",
@@ -69,8 +81,11 @@
       "id": "casa-pariurilor",
       "name": "Casa Pariurilor",
       "enabled": true,
-      "engine": "fortuna-bff-graphql",
-      "transport": "bookmaker-public-graphql",
+      "supportedSports": [
+        "football"
+      ],
+      "engine": "fortuna-bff-rest",
+      "transport": "fortuna-bff-rest-json",
       "script": "casa-pariurilor.mjs",
       "sourceIds": [
         "casa-pariurilor"
@@ -82,6 +97,9 @@
       "id": "excelbet",
       "name": "ExcelBet",
       "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
       "engine": "exalogic-xsport",
       "transport": "exalogic-xsport-public-json",
       "script": "excelbet.mjs",
@@ -95,6 +113,9 @@
       "id": "netbet",
       "name": "NetBet (Sportify public JSON)",
       "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
       "engine": "sportify-public-json",
       "transport": "bookmaker-public-json",
       "script": "netbet.mjs",
@@ -108,6 +129,9 @@
       "id": "admiral",
       "name": "Admiral (NSoft public JSON)",
       "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
       "engine": "nsoft-public-json",
       "transport": "bookmaker-public-json",
       "script": "nsoft.mjs",
@@ -121,6 +145,9 @@
       "id": "winboss",
       "name": "WinBoss",
       "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
       "engine": "exalogic-xsport",
       "transport": "exalogic-xsport-public-json",
       "script": "winboss.mjs",
@@ -134,6 +161,9 @@
       "id": "maxbet",
       "name": "MaxBet",
       "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
       "engine": "nsoft",
       "transport": "nsoft-public-sports-json",
       "script": "maxbet.mjs",
@@ -147,6 +177,9 @@
       "id": "las-vegas",
       "name": "Las Vegas",
       "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
       "engine": "exalogic-xsport",
       "transport": "exalogic-xsport-public-json",
       "script": "las-vegas.mjs",
@@ -160,6 +193,9 @@
       "id": "don",
       "name": "Don",
       "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
       "engine": "altenar-tenancy",
       "transport": "altenar-sb2-widget-json",
       "script": "altenar-sites.mjs",
@@ -173,6 +209,9 @@
       "id": "topbet",
       "name": "TopBet",
       "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
       "engine": "altenar-tenancy",
       "transport": "altenar-sb2-widget-json",
       "script": "altenar-sites.mjs",
@@ -186,6 +225,9 @@
       "id": "million",
       "name": "Million",
       "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
       "engine": "altenar-tenancy",
       "transport": "altenar-sb2-widget-json",
       "script": "altenar-sites.mjs",
@@ -199,6 +241,9 @@
       "id": "baumbet",
       "name": "Baumbet",
       "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
       "engine": "altenar-tenancy",
       "transport": "altenar-sb2-widget-json",
       "script": "altenar-sites.mjs",
@@ -212,9 +257,12 @@
       "id": "powerbet",
       "name": "Powerbet",
       "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
       "engine": "altenar-tenancy",
       "transport": "altenar-sb2-widget-json",
-      "script": "powerbet.mjs",
+      "script": "altenar-sites.mjs",
       "sourceIds": [
         "powerbet"
       ],
@@ -225,6 +273,9 @@
       "id": "winbet",
       "name": "Winbet",
       "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
       "engine": "altenar-tenancy",
       "transport": "altenar-sb2-widget-json",
       "script": "altenar-sites.mjs",
@@ -235,22 +286,12 @@
       "validationReason": "Altenar sb2 widget feed (sb2frontend-altenar2.biahosted.com GetUpcoming, integration=winbet) smoke-validated on 2026-09-02 with future prematch events and complete 1X2 markets."
     },
     {
-      "id": "mozzartbet",
-      "name": "Mozzartbet",
-      "enabled": false,
-      "engine": "mozzart-native",
-      "transport": "host-down",
-      "script": "mozzartbet.mjs",
-      "sourceIds": [
-        "mozzartbet"
-      ],
-      "validationStatus": "validated",
-      "validationReason": "Mozzart native public API discovered (POST /betOffer2, POST /getBettingOdds, historical public client). Current host returns Cloudflare 521; validation blocked by upstream outage."
-    },
-    {
       "id": "getsbet",
       "name": "Get's Bet",
       "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
       "engine": "everymatrix-odds-wamp",
       "transport": "everymatrix-odds-wamp",
       "script": "getsbet.mjs",
@@ -264,6 +305,9 @@
       "id": "favbet",
       "name": "Favbet",
       "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
       "engine": "erlyline",
       "transport": "favbet-erlyline-jsonrpc",
       "script": "favbet.mjs",
@@ -277,6 +321,9 @@
       "id": "winner",
       "name": "Winner",
       "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
       "engine": "digitain",
       "transport": "winner-digitain-public-json",
       "script": "winner.mjs",
@@ -290,6 +337,9 @@
       "id": "magnumbet",
       "name": "MagnumBet",
       "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
       "engine": "exalogic-xsport",
       "transport": "exalogic-xsport-public-json",
       "script": "magnumbet.mjs",
@@ -303,6 +353,9 @@
       "id": "contibet",
       "name": "Conti Bet",
       "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
       "engine": "everymatrix-odds-wamp",
       "transport": "everymatrix-odds-wamp",
       "script": "contibet.mjs",
@@ -311,76 +364,6 @@
       ],
       "validationStatus": "validated",
       "validationReason": "EveryMatrix ODDS RealtimeDealer WAMP v2 feed (wss://api.conticazino.ro/v2, realm www.conticazino.ro, operator 2349) smoke-validated on 2026-09-02: same WAMP flow as getsbet. 33 complete 1X2 events, fresh."
-    },
-    {
-      "id": "tennis",
-      "name": "Tennis (generic sport scraper)",
-      "enabled": false,
-      "engine": "sport-generic",
-      "transport": "sport-tennis-generic",
-      "script": "tennis.mjs",
-      "sourceIds": [
-        "tennis"
-      ],
-      "supportedSports": ["tennis"],
-      "validationStatus": "validated",
-      "validationReason": "Generic multi-sport scraper configured for tennis. Requires offerUrl to be set via env ARBITER_TENNIS_URL or config override."
-    },
-    {
-      "id": "basketball",
-      "name": "Basketball (generic sport scraper)",
-      "enabled": false,
-      "engine": "sport-generic",
-      "transport": "sport-basketball-generic",
-      "script": "basketball.mjs",
-      "sourceIds": [
-        "basketball"
-      ],
-      "supportedSports": ["basketball"],
-      "validationStatus": "validated",
-      "validationReason": "Generic multi-sport scraper configured for basketball. Requires offerUrl to be set via env ARBITER_BASKETBALL_URL or config override."
-    },
-    {
-      "id": "ice-hockey",
-      "name": "Ice Hockey (generic sport scraper)",
-      "enabled": false,
-      "engine": "sport-generic",
-      "transport": "sport-ice-hockey-generic",
-      "script": "ice-hockey.mjs",
-      "sourceIds": [
-        "ice-hockey"
-      ],
-      "supportedSports": ["ice-hockey"],
-      "validationStatus": "validated",
-      "validationReason": "Generic multi-sport scraper configured for ice hockey. Requires offerUrl to be set via env ARBITER_HOCKEY_URL or config override."
-    },
-    {
-      "id": "volleyball",
-      "name": "Volleyball (generic sport scraper)",
-      "enabled": false,
-      "engine": "sport-generic",
-      "transport": "sport-volleyball-generic",
-      "script": "volleyball.mjs",
-      "sourceIds": [
-        "volleyball"
-      ],
-      "supportedSports": ["volleyball"],
-      "validationStatus": "validated",
-      "validationReason": "Generic multi-sport scraper configured for volleyball. Requires offerUrl to be set via env ARBITER_VOLLEYBALL_URL or config override."
-    },
-    {
-      "id": "handball",
-      "name": "Handball (generic sport scraper)",
-      "enabled": false,
-      "engine": "sport-generic",
-      "transport": "sport-handball-generic",
-      "script": "handball.mjs",
-      "sourceIds": [
-        "handball"
-      ],
-      "supportedSports": ["handball"],
-      "validationStatus": "validated",
-      "validationReason": "Generic multi-sport scraper configured for handball. Requires offerUrl to be set via env ARBITER_HANDBALL_URL or config override."
     }
   ]
 }

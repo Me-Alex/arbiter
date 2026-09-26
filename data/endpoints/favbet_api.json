@@ -1,0 +1,60 @@
+{
+  "book": "favbet",
+  "timestamp": "2026-09-01T18:45:23.749Z",
+  "pagesVisited": 1,
+  "minPagesRequired": 50,
+  "pagesTargetReached": false,
+  "endpoints": [
+    {
+      "method": "GET",
+      "url": "https://www.favbet.ro/service/session_mng/session/create",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.favbet.ro/ro/casino/",
+      "capturedAt": "2026-09-01T18:45:09.837Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://www.favbet.ro/service/plex/v1/desktop/en/siteSettings",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://www.favbet.ro/ro/casino/",
+      "capturedAt": "2026-09-01T18:45:13.087Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://www.favbet.ro/bets/timezone/set/",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.favbet.ro/ro/casino/",
+      "capturedAt": "2026-09-01T18:45:13.836Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://www.favbet.ro/service/plex/v1/desktop/ro/translations",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://www.favbet.ro/ro/casino/",
+      "capturedAt": "2026-09-01T18:45:13.836Z"
+    }
+  ],
+  "keyEndpoints": [
+    {
+      "method": "POST",
+      "url": "https://www.favbet.ro/service/lineout/frontend_api2/",
+      "evidence": "ErlyLine/Betinvest JSON-RPC 2.0 gateway; frontend/event/get returns prematch football events, frontend/market/get returns 1X2 markets (template 1). Smoke-validated 2026-09-02: 100 complete 1X2 events, fresh.",
+      "verified": true
+    },
+    {
+      "method": "GET",
+      "url": "https://www.favbet.ro/service/session_mng/session/create"
+    },
+    {
+      "method": "GET",
+      "url": "https://www.favbet.ro/service/plex/v1/desktop/en/siteSettings"
+    }
+  ],
+  "platform": "erlyline",
+  "feedStatus": "verified",
+  "verifiedAt": "2026-09-01"
+}

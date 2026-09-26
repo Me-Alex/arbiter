@@ -1,0 +1,248 @@
+{
+  "request": {
+    "url": "https://production-superbet-offer-ro.freetls.fastly.net/v3/ro-RO/events?index=active-prematch&sports=5&startDate=2026-09-21T18%3A00%3A00.000Z&endDate=2026-09-22T18%3A00%3A00.000Z",
+    "status": 200
+  },
+  "events": [
+    {
+      "event_id": 13718742,
+      "increment_id": 1000415,
+      "fixture": {
+        "uuid": "a4711132-f3f9-57b9-89fb-f7d0598b9dbf",
+        "betradar_id": "68823298",
+        "away_team_id": "6014",
+        "category_id": 74,
+        "home_team_id": "6952",
+        "event_code": 8166,
+        "event_date": "2026-09-21 22:30:00",
+        "event_name": "Criciuma·Operario PR",
+        "event_tags": "v2,price_boost,manual",
+        "sport_id": 5,
+        "tournament_id": 1697,
+        "utc_date": "2026-09-21T22:30:00Z",
+        "event_promoted_in_play_order": 10000,
+        "tournament_promoted_in_play_order": 10000,
+        "streams": {
+          "9": "SPBINFSWOSC44-21223"
+        },
+        "offer_state_status": {
+          "1": 1
+        },
+        "unix_date_millis": 1790029800000
+      },
+      "inplay_stats_metadata": {
+        "status": "NOT_STARTED",
+        "counts": {
+          "markets": {
+            "1": 209,
+            "2": 0
+          },
+          "odds": {
+            "1": 2575,
+            "2": 0
+          }
+        },
+        "market_count": 209
+      },
+      "markets": [
+        {
+          "name": "Final",
+          "id": 547,
+          "metadata": {
+            "tags": "preselected",
+            "market_group_order": 5144
+          },
+          "odds": [
+            {
+              "uuid": "5ad4c2f6-2017-57b3-af79-0b467b2ae592",
+              "price": 1.97,
+              "status": 1,
+              "display": true,
+              "metadata": {
+                "outcome_id": 1470,
+                "info": "Criciuma câştigă",
+                "name": "1",
+                "code": "11",
+                "market_line_uuid": "53ec9f10-2bc5-56e4-8a35-98310b1407a5",
+                "is_preselected": true,
+                "extra": {
+                  "generosity_prob_away": "0.242296",
+                  "generosity_prob_home": "0.492979"
+                },
+                "offer_state_id": 1,
+                "tags": "BPWM,Combinable,Match Betting,Pre-selected market,pm_boostable_market,v2"
+              }
+            },
+            {
+              "uuid": "e5d960fc-2257-5afd-8f01-c430a0e0efbe",
+              "price": 3.15,
+              "status": 1,
+              "display": true,
+              "metadata": {
+                "outcome_id": 1471,
+                "info": "Egalitate",
+                "name": "X",
+                "code": "10",
+                "market_line_uuid": "53ec9f10-2bc5-56e4-8a35-98310b1407a5",
+                "is_preselected": true,
+                "extra": {
+                  "generosity_prob_away": "0.242296",
+                  "generosity_prob_home": "0.492979"
+                },
+                "offer_state_id": 1,
+                "tags": "BPWM,Combinable,Match Betting,Pre-selected market,pm_boostable_market,v2"
+              }
+            },
+            {
+              "uuid": "d524acf2-9796-5868-9537-2b99b5c38c6d",
+              "price": 3.9,
+              "status": 1,
+              "display": true,
+              "metadata": {
+                "outcome_id": 1472,
+                "info": "Operario PR câştigă",
+                "name": "2",
+                "code": "12",
+                "market_line_uuid": "53ec9f10-2bc5-56e4-8a35-98310b1407a5",
+                "is_preselected": true,
+                "extra": {
+                  "generosity_prob_away": "0.242296",
+                  "generosity_prob_home": "0.492979"
+                },
+                "offer_state_id": 1,
+                "tags": "BPWM,Combinable,Match Betting,Pre-selected market,pm_boostable_market,v2"
+              }
+            }
+          ]
+        }
+      ],
+      "is_full_market_update": true
+    },
+    {
+      "event_id": 13718744,
+      "increment_id": 1000380,
+      "fixture": {
+        "uuid": "b5888ce9-72b2-5ad2-ac2a-38a151e5bfcf",
+        "betradar_id": "68823302",
+        "away_team_id": "2737",
+        "category_id": 74,
+        "home_team_id": "31680",
+        "event_code": 9652,
+        "event_date": "2026-09-22 00:30:00",
+        "event_name": "Cuiaba·Nautico PE",
+        "event_tags": "v2,price_boost,manual",
+        "sport_id": 5,
+        "tournament_id": 1697,
+        "utc_date": "2026-09-22T00:30:00Z",
+        "event_promoted_in_play_order": 10000,
+        "tournament_promoted_in_play_order": 10000,
+        "offer_state_status": {
+          "1": 1
+        },
+        "unix_date_millis": 1790037000000
+      },
+      "inplay_stats_metadata": {
+        "status": "NOT_STARTED",
+        "counts": {
+          "markets": {
+            "1": 209,
+            "2": 0
+          },
+          "odds": {
+            "1": 2466,
+            "2": 0
+          }
+        },
+        "market_count": 209
+      },
+      "markets": [
+        {
+          "name": "Final",
+          "id": 547,
+          "metadata": {
+            "tags": "preselected",
+            "market_group_order": 5144
+          },
+          "odds": [
+            {
+              "uuid": "e8ba47b0-ef9d-51c1-a0de-e031ac4cf361",
+              "price": 2.05,
+              "status": 1,
+              "display": true,
+              "metadata": {
+                "outcome_id": 1470,
+                "info": "Cuiaba câştigă",
+                "name": "1",
+                "code": "11",
+                "market_line_uuid": "ddcfd3c8-5868-5752-aa7d-b554dec07642",
+                "is_preselected": true,
+                "extra": {
+                  "generosity_prob_away": "0.263286",
+                  "generosity_prob_home": "0.472544"
+                },
+                "offer_state_id": 1,
+                "tags": "BPWM,Combinable,Match Betting,Pre-selected market,pm_boostable_market,v2"
+              }
+            },
+            {
+              "uuid": "c6b43526-d232-5a75-a521-0887adf93afb",
+              "price": 3.15,
+              "status": 1,
+              "display": true,
+              "metadata": {
+                "outcome_id": 1471,
+                "info": "Egalitate",
+                "name": "X",
+                "code": "10",
+                "market_line_uuid": "ddcfd3c8-5868-5752-aa7d-b554dec07642",
+                "is_preselected": true,
+                "extra": {
+                  "generosity_prob_away": "0.263286",
+                  "generosity_prob_home": "0.472544"
+                },
+                "offer_state_id": 1,
+                "tags": "BPWM,Combinable,Match Betting,Pre-selected market,pm_boostable_market,v2"
+              }
+            },
+            {
+              "uuid": "cb4bfce5-7562-5c1b-83a4-8d584daba67d",
+              "price": 3.6,
+              "status": 1,
+              "display": true,
+              "metadata": {
+                "outcome_id": 1472,
+                "info": "Nautico PE câştigă",
+                "name": "2",
+                "code": "12",
+                "market_line_uuid": "ddcfd3c8-5868-5752-aa7d-b554dec07642",
+                "is_preselected": true,
+                "extra": {
+                  "generosity_prob_away": "0.263286",
+                  "generosity_prob_home": "0.472544"
+                },
+                "offer_state_id": 1,
+                "tags": "BPWM,Combinable,Match Betting,Pre-selected market,pm_boostable_market,v2"
+              }
+            }
+          ]
+        }
+      ],
+      "is_full_market_update": true
+    }
+  ],
+  "structure": {
+    "data": {
+      "tournaments": [
+        {
+          "id": "1697",
+          "localNames": {
+            "ro-RO": "Brazilia - Brasileiro - Serie B"
+          },
+          "order": 876,
+          "orderPromoted": 9223372036854776000,
+          "footer": ""
+        }
+      ]
+    }
+  }
+}

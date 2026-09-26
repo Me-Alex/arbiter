@@ -1,0 +1,177 @@
+{
+  "book": "winner",
+  "timestamp": "2026-09-01T18:46:05.800Z",
+  "pagesVisited": 2,
+  "minPagesRequired": 50,
+  "pagesTargetReached": false,
+  "endpoints": [
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/config-api/templatization-config/list?tenantId=2&siteId=1002&preload=true&path=%2Fsport%2Ffotbal_1",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://www.winner.ro/sport/fotbal_1",
+      "capturedAt": "2026-09-01T18:45:09.428Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/api/multilang/v1/translate/table/4/ro?tenant_id=2",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.winner.ro/sport/fotbal_1",
+      "capturedAt": "2026-09-01T18:45:13.629Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-t.b-cdn.net/fonts/main/font-icons.json?_=1788288311517",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.winner.ro/sport/fotbal_1",
+      "capturedAt": "2026-09-01T18:45:13.630Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/config-api/multi-bet/list?tenantId=2&siteId=1002",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://www.winner.ro/sport/fotbal_1",
+      "capturedAt": "2026-09-01T18:45:14.388Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/config-api/maintenance/list?tenantId=2&siteId=1002",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://www.winner.ro/sport/fotbal_1",
+      "capturedAt": "2026-09-01T18:45:14.388Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/config-api/bonus-rules/list?tenantId=2&siteId=1002&category=lotto",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://www.winner.ro/sport/fotbal_1",
+      "capturedAt": "2026-09-01T18:45:14.390Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/api/v1/jackpot/events/2",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.winner.ro/sport/fotbal_1",
+      "capturedAt": "2026-09-01T18:45:14.407Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/casinoapi/config/winner-fun/history/2",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://www.winner.ro/sport/fotbal_1",
+      "capturedAt": "2026-09-01T18:45:14.413Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/config-api/meta/list?tenantId=2&siteId=1002&path=%2Fsport%2Ffotbal_1",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://www.winner.ro/sport/fotbal_1",
+      "capturedAt": "2026-09-01T18:45:14.413Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Deko.footer.texts.winner&tid=2&sid=1002",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.winner.ro/sport/fotbal_1",
+      "capturedAt": "2026-09-01T18:45:14.659Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/elements?q=$ids@%3D_site",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.winner.ro/sport/fotbal_1",
+      "capturedAt": "2026-09-01T18:45:14.844Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Dall_promotions_api&tid=2&sid=1002",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.winner.ro/sport/fotbal_1",
+      "capturedAt": "2026-09-01T18:45:14.844Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Dbet-builder-banner-info%26%3Dtournaments-list%26%3Deko.footer.texts.winner&tid=2&sid=1002",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.winner.ro/sport/fotbal_1",
+      "capturedAt": "2026-09-01T18:45:15.070Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Dplayer_all_slot_games_api",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.winner.ro/sport/fotbal_1",
+      "capturedAt": "2026-09-01T18:45:15.072Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/elements?q=$ids@%3Dbanner.sample.side-menu-promo-1",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.winner.ro/sport/fotbal_1",
+      "capturedAt": "2026-09-01T18:45:15.072Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Dall_jackpots_api&tid=2&sid=1002",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.winner.ro/sport/fotbal_1",
+      "capturedAt": "2026-09-01T18:45:15.072Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://lotobt.winner.ro/api/v1/report/public-systems",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.winner.ro/sport/fotbal_1",
+      "capturedAt": "2026-09-01T18:45:15.073Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://cdn.segment.com/v1/projects/gDhdtUV3B0Tjf234QT5LFZ09bL2EZVe4/settings",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://www.winner.ro/sport/fotbal_1",
+      "capturedAt": "2026-09-01T18:45:15.384Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Dbets-recommendations",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.winner.ro/sport/fotbal_1",
+      "capturedAt": "2026-09-01T18:45:15.389Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Dall_slot_games_api&tid=2&sid=1002",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.winner.ro/sport/fotbal_1",
+      "capturedAt": "2026-09-01T18:45:15.449Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/missions/tournaments/list?tenant_id=2",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://www.winner.ro/sport/fotbal_1",
+      "capturedAt": "2026-09-01T18:45:15.488Z"
+    }
+  ]
+}

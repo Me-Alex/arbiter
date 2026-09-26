@@ -47,13 +47,16 @@ test('reports remaining tokens', () => {
 });
 
 test('refills tokens over time', async () => {
-  const limiter = new RateLimiter({ capacity: 2, refillPerSec: 1000 }); // 1 token per ms
+  // 1 token every 10ms. The wait is comfortably longer than one token's worth
+  // so a loaded runner cannot starve the assertion — but it stays short enough
+  // to be fast. This test used to refill 1 token/ms and wait 50ms, which was
+  // tight enough to flake intermittently when a sibling test file had
+  // replaced globalThis.setTimeout.
+  const limiter = new RateLimiter({ capacity: 2, refillPerSec: 100 });
   limiter.take('/api/scrape', 'peer-a');
   limiter.take('/api/scrape', 'peer-a');
   assert.equal(limiter.take('/api/scrape', 'peer-a').ok, false);
-  // Wait comfortably past the 1ms/token refill so a slow/fork-loaded CI runner
-  // can't starve the assertion (parity with the P1 micro-benchmark budget).
-  await new Promise((r) => setTimeout(r, 50));
+  await new Promise((r) => setTimeout(r, 120));
   const after = limiter.take('/api/scrape', 'peer-a');
   assert.equal(after.ok, true);
 });
@@ -93,9 +96,12 @@ test('peerKey ignores x-forwarded-for from loopback, honors it from proxies', ()
 
 test('prune evicts idle buckets and caps total memory', () => {
   const limiter = new RateLimiter({ capacity: 1, refillPerSec: 0, maxBuckets: 5 });
-  const now = Date.now();
   for (let i = 0; i < 10; i++) limiter.take('/api/scrape', `peer-${i}`);
   assert.ok(limiter.buckets.size > 0);
+  // Capture the clock AFTER the takes: each bucket stamps `updated` at its own
+  // call time, so a timestamp captured earlier would leave the newest buckets a
+  // few ms short of the idle window and the assertion would be timing-dependent.
+  const now = Date.now();
   limiter.prune(now + 10 * 60 * 1000); // everything is idle now
   assert.equal(limiter.buckets.size, 0);
   // refilling past maxBuckets forces eviction of the oldest half

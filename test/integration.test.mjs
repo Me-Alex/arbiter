@@ -52,8 +52,21 @@ test('integration: end-to-end scan with stubbed HTTP + workspace', async () => {
     }],
   };
   const capturedAt = new Date().toISOString();
-  await writeFile(join(dir, 'workspace', 'a_events.json'), JSON.stringify({ schemaVersion: 2, sourceId: 'a', capturedAt, dataStatus: 'fresh', events: [e1] }));
-  await writeFile(join(dir, 'workspace', 'b_events.json'), JSON.stringify({ schemaVersion: 2, sourceId: 'b', capturedAt, dataStatus: 'fresh', events: [e2] }));
+  // loadWorkspace only feeds the engine snapshots that are FRESH *and* carry
+  // full provenance (runId + sourceUrl + transport) — see scanner.mjs. Seed
+  // all three so these events actually reach the arbitrage scan.
+  const snapshot = (sourceId, events) => ({
+    schemaVersion: 2,
+    sourceId,
+    runId: 'offline-integration',
+    sourceUrl: `https://example.test/${sourceId}`,
+    transport: 'test-fixture-json',
+    capturedAt,
+    dataStatus: 'fresh',
+    events,
+  });
+  await writeFile(join(dir, 'workspace', 'a_events.json'), JSON.stringify(snapshot('a', [e1])));
+  await writeFile(join(dir, 'workspace', 'b_events.json'), JSON.stringify(snapshot('b', [e2])));
 
   const scan = await scanWorkspace({ dataDir: dir, bankroll: 1000 });
   assert.equal(scan.opportunities.length, 1, 'expected one arb');

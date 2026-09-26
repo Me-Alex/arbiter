@@ -1,0 +1,149 @@
+{
+  "generatedAt": "2026-09-01T18:52:34.790Z",
+  "bookmakers": [
+    {
+      "book": "admiral",
+      "pages": 50,
+      "target": true,
+      "endpoints": 56
+    },
+    {
+      "book": "baumbet",
+      "pages": 0,
+      "target": false,
+      "endpoints": 0
+    },
+    {
+      "book": "betano",
+      "pages": 1,
+      "target": false,
+      "endpoints": 0
+    },
+    {
+      "book": "casa-pariurilor",
+      "pages": 50,
+      "target": true,
+      "endpoints": 598
+    },
+    {
+      "book": "contibet",
+      "pages": 50,
+      "target": true,
+      "endpoints": 139
+    },
+    {
+      "book": "don",
+      "pages": 18,
+      "target": false,
+      "endpoints": 31
+    },
+    {
+      "book": "excelbet",
+      "pages": 50,
+      "target": true,
+      "endpoints": 23
+    },
+    {
+      "book": "favbet",
+      "pages": 1,
+      "target": false,
+      "endpoints": 4
+    },
+    {
+      "book": "fortuna",
+      "pages": 50,
+      "target": true,
+      "endpoints": 755
+    },
+    {
+      "book": "getsbet",
+      "pages": 0,
+      "target": false,
+      "endpoints": 0
+    },
+    {
+      "book": "las-vegas",
+      "pages": 50,
+      "target": true,
+      "endpoints": 17
+    },
+    {
+      "book": "magnumbet",
+      "pages": 0,
+      "target": false,
+      "endpoints": 1
+    },
+    {
+      "book": "maxbet",
+      "pages": 0,
+      "target": false,
+      "endpoints": 0
+    },
+    {
+      "book": "million",
+      "pages": 1,
+      "target": false,
+      "endpoints": 1
+    },
+    {
+      "book": "mozzartbet",
+      "pages": 1,
+      "target": false,
+      "endpoints": 0
+    },
+    {
+      "book": "netbet",
+      "pages": 50,
+      "target": true,
+      "endpoints": 456
+    },
+    {
+      "book": "powerbet",
+      "pages": 50,
+      "target": true,
+      "endpoints": 69
+    },
+    {
+      "book": "stanleybet",
+      "pages": 50,
+      "target": true,
+      "endpoints": 149
+    },
+    {
+      "book": "superbet",
+      "pages": 5,
+      "target": false,
+      "endpoints": 15
+    },
+    {
+      "book": "topbet",
+      "pages": 50,
+      "target": true,
+      "endpoints": 157
+    },
+    {
+      "book": "unibet",
+      "pages": 1,
+      "target": false,
+      "endpoints": 0
+    },
+    {
+      "book": "winbet",
+      "pages": 0,
+      "target": false,
+      "endpoints": 0
+    },
+    {
+      "book": "winboss",
+      "pages": 50,
+      "target": true,
+      "endpoints": 61
+    },
+    {
+      "book": "winner",
+      "pages": 2,
+      "target": false,
+      "endpoints": 21
+    }
+  ]
+}

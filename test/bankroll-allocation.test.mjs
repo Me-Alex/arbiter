@@ -1,54 +1,75 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { allocateBankroll } from '../src/scanner/bankroll-allocation.mjs';
+import { roundedArbitrageAllocation } from '../src/scanner/market-contracts.mjs';
 
-test('allocateBankroll on arb splits inversely to odds', () => {
-  const opp = {
-    type: 'arb',
-    legs: [
-      { sourceId: 'a', selection: 'H', odds: 2.0 },
-      { sourceId: 'b', selection: 'A', odds: 2.5 },
-    ],
-  };
-  const out = allocateBankroll(opp, 1000);
-  // totalStake should be 1000 (full bankroll deployed).
-  assert.equal(out.totalStake, 1000);
+/**
+ * These cover the bankroll maths the scanner actually uses.
+ *
+ * A second implementation used to live in src/scanner/bankroll-allocation.mjs
+ * with no production caller. It disagreed on two things that matter: it set
+ * `profit` per leg as `payout - totalBankroll` (profit is a portfolio quantity,
+ * and the bankroll is not the leg's stake), and it skipped the rounding
+ * correction, so the leg stakes did not sum back to the bankroll. It was
+ * removed; these tests keep that coverage on the surviving implementation.
+ */
+
+test('roundedArbitrageAllocation splits inversely to odds', () => {
+  const out = roundedArbitrageAllocation([
+    { sourceId: 'a', selection: 'H', odds: 2.0 },
+    { sourceId: 'b', selection: 'A', odds: 2.5 },
+  ], 1000);
   // inv = 1/2 + 1/2.5 = 0.9; stake_a = 1000 * 0.5 / 0.9 = 555.56
   assert.equal(out.legs[0].stake, 555.56);
   // stake_b = 1000 * 0.4 / 0.9 = 444.44
   assert.equal(out.legs[1].stake, 444.44);
-  // payout equal on every leg
-  assert.equal(out.legs[0].payout, out.legs[1].payout);
-  // guaranteed profit ≈ 1000/0.9 - 1000 = 111.11
-  assert.equal(out.guaranteedProfit, 111.11);
-});
-
-test('allocateBankroll on middle splits 50/50', () => {
-  const opp = {
-    type: 'middle',
-    legs: [
-      { sourceId: 'a', selection: 'H -2.5', odds: 1.95 },
-      { sourceId: 'b', selection: 'H +3.0', odds: 1.91 },
-    ],
-  };
-  const out = allocateBankroll(opp, 1000);
   assert.equal(out.totalStake, 1000);
-  assert.equal(out.legs[0].stake, 500);
-  assert.equal(out.legs[1].stake, 500);
+  // The theoretical profit is 1000/0.9 - 1000 = 111.11, but the reported
+  // figure is the realised worst case, which rounding costs 0.01 of.
+  assert.equal(out.legs[0].payout, 1111.12);
+  assert.equal(out.legs[1].payout, 1111.1);
+  assert.equal(out.worstCasePayout, 1111.1);
+  assert.equal(out.guaranteedProfit, 111.1);
+  // The theoretical ROI is still reported at full precision.
+  assert.equal(out.roiPercent, 11.11);
 });
 
-test('allocateBankroll on positive EV uses capped kelly', () => {
-  const opp = {
-    type: 'positive_ev',
-    odds: 2.5,
-    evPercent: 20,
-  };
-  const out = allocateBankroll(opp, 1000);
-  // ev = 0.20, (odds-1) = 1.5, kelly = 0.133. Capped at 0.05.
-  assert.equal(out.legs[0].stake, 50); // 1000 * 0.05
+test('roundedArbitrageAllocation gives every leg the same profit', () => {
+  const out = roundedArbitrageAllocation([{ odds: 2.0 }, { odds: 2.5 }], 1000);
+  // Every leg pays out the same on an arb, so guaranteed profit is a
+  // portfolio-level figure, not a per-leg one. The two payouts here differ by
+  // a cent because each is its own stake rounded; the profit is the worst one.
+  const profits = out.legs.map((l) => l.profit);
+  assert.equal(new Set(profits).size, 1);
+  assert.equal(profits[0], out.guaranteedProfit);
+  assert.equal(Math.round((out.worstCasePayout - out.totalStake) * 100) / 100, out.guaranteedProfit);
 });
 
-test('allocateBankroll on unknown type returns zero stake', () => {
-  const out = allocateBankroll({ type: 'foo' }, 1000);
-  assert.equal(out.totalStake, 0);
+test('roundedArbitrageAllocation makes the leg stakes sum to the bankroll', () => {
+  // Three legs at awkward odds: the raw allocation does not sum to the bankroll
+  // once rounded, so the residual is folded back into the first leg.
+  const out = roundedArbitrageAllocation([
+    { sourceId: 'a', odds: 2.1 },
+    { sourceId: 'b', odds: 4.3 },
+    { sourceId: 'c', odds: 4.6 },
+  ], 1000);
+  const sum = out.legs.reduce((acc, l) => acc + l.stake, 0);
+  assert.equal(Math.round(sum * 100) / 100, 1000);
+});
+
+test('roundedArbitrageAllocation rejects a market that is not an arb', () => {
+  // inverseSum >= 1 means the "arb" costs more than it returns, so there is
+  // nothing to allocate.
+  assert.equal(roundedArbitrageAllocation([{ odds: 2.0 }, { odds: 2.0 }], 1000), null);
+  assert.equal(roundedArbitrageAllocation([{ odds: 2.0 }], 1000), null);
+  assert.equal(roundedArbitrageAllocation([{ odds: 2.0 }, { odds: 2.5 }], 0), null);
+  assert.equal(roundedArbitrageAllocation(null, 1000), null);
+});
+
+test('roundedArbitrageAllocation exposes the worst case and the rounding risk', () => {
+  const out = roundedArbitrageAllocation([{ odds: 2.0 }, { odds: 2.5 }], 1000);
+  assert.equal(out.worstCasePayout, Math.min(...out.legs.map((l) => l.payout)));
+  assert.equal(out.guaranteedProfit, Math.round((out.worstCasePayout - 1000) * 100) / 100);
+  // The theoretical ROI survives even when rounding eats into it.
+  assert.ok(out.roundingRisk >= 0);
+  assert.ok(out.roiPercent > 0);
 });

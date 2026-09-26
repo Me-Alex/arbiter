@@ -18,6 +18,13 @@ const log = (line, level = 'info', tag = null) => {
   el.innerHTML = `<span class="time">${t}</span>${tagEl}<span class="log-line-flex">${escapeHtml(line)}</span>`;
   const panel = $('log-panel');
   panel.appendChild(el);
+  // Only a problem is worth pulling the user into the log for. The old `|| !tag`
+  // clause also fired on ordinary informational lines that happened to be
+  // untagged, so the panel popped open during a healthy run.
+  if (level === 'error' || level === 'warn') {
+    const details = panel.closest('details');
+    if (details) details.open = true;
+  }
   panel.scrollTop = panel.scrollHeight;
   while (panel.childNodes.length > MAX_LOG_LINES) panel.removeChild(panel.firstChild);
 };
@@ -28,6 +35,18 @@ let profiles = [];
 let validatedIds = new Set();
 let selectedIds = new Set();
 let jobById = new Map();
+let launchPending = false;
+
+function isFailedJob(job) {
+  return !['pending', 'running', 'skipped', 'cancelled'].includes(job.status)
+    && (job.valid === false || ['failed', 'timeout', 'locked', 'unknown'].includes(job.status));
+}
+
+function updateRunControls() {
+  const busy = ['running', 'cancelling'].includes(lastState?.status);
+  $('run-btn').disabled = launchPending || busy || !selectedIds.size;
+  $('cancel-btn').disabled = lastState?.status !== 'running';
+}
 
 function reducedMotion() {
   return window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -110,10 +129,10 @@ function renderBookmakerChips() {
       <div class="chip-group-head">
         <button type="button" class="chip-group-toggle" aria-expanded="${open}" aria-controls="group-${groupKey}">
           <svg class="chev" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
-          <span class="group-title">${title}</span> <span class="tabnum group-count">${items.length}</span>
+          <span class="group-title">${escapeHtml(title)}</span> <span class="tabnum group-count">${items.length}</span>
         </button>
         <label class="group-select${stateCls}" title="Toggle group">
-          <input type="checkbox" data-group-check="${groupKey}" ${allChecked ? 'checked' : ''}>
+          <input type="checkbox" aria-label="${escapeHtml(title)}" data-group-check="${groupKey}" ${allChecked ? 'checked' : ''}>
           <span class="group-selected-count"></span>
         </label>
       </div>
@@ -167,7 +186,7 @@ function renderBookmakerChips() {
   // Wire live filter box
   const filterInput = $('bm-filter');
   if (filterInput) {
-    filterInput.addEventListener('input', () => {
+    filterInput.oninput = () => {
       const q = filterInput.value.trim().toLowerCase();
       document.querySelectorAll('#bookmaker-list .chip-group').forEach((grp) => {
         let anyVisible = false;
@@ -177,13 +196,19 @@ function renderBookmakerChips() {
           el.hidden = !match;
           if (match) anyVisible = true;
         });
-        // If filtering, hide the whole group when no chip matches. The filter
-        // only hides non-matching chips — it never expands a collapsed group,
-        // because collapse state is owned by the toggle button (aria-expanded).
-        const isEmptyGroup = !anyVisible;
-        grp.style.display = isEmptyGroup ? 'none' : '';
+        const body = grp.querySelector('.chip-row-wrap');
+        const toggle = grp.querySelector('.chip-group-toggle');
+        if (q && !body.dataset.beforeSearch) body.dataset.beforeSearch = toggle.getAttribute('aria-expanded');
+        if (q && anyVisible) { body.hidden = false; toggle.setAttribute('aria-expanded', 'true'); }
+        if (!q && body.dataset.beforeSearch) {
+          body.hidden = body.dataset.beforeSearch !== 'true';
+          toggle.setAttribute('aria-expanded', body.dataset.beforeSearch);
+          delete body.dataset.beforeSearch;
+        }
+        grp.hidden = !anyVisible;
       });
-    });
+    };
+    filterInput.oninput();
   }
 
   updateSelectionCounts();
@@ -200,6 +225,7 @@ function updateGroupSelectState() {
     const checked = [...chips].filter((c) => c.checked).length;
     const allChecked = checked === chips.length;
     groupCheck.checked = allChecked;
+    groupCheck.indeterminate = checked > 0 && !allChecked;
     const label = groupCheck.closest('.group-select');
     label.className = `group-select ${allChecked ? 'all-checked' : checked === 0 ? 'none-checked' : 'some-checked'}`;
     const count = label.querySelector('.group-selected-count');
@@ -212,6 +238,7 @@ function updateSelectionCounts() {
   $('bm-total').textContent = scrapers.length;
   refreshJobRows();
   updateGroupSelectState();
+  updateRunControls();
 }
 
 function updateChipStatus(jobs) {
@@ -267,14 +294,14 @@ async function init() {
   renderBookmakerChips();
   const list = $('bookmaker-list');
   list.addEventListener('change', () => {
-    selectedIds = new Set([...list.querySelectorAll('input[type=checkbox]:checked')].map((c) => c.value));
+    selectedIds = new Set([...list.querySelectorAll('input[data-source]:checked')].map((c) => c.value));
     updateSelectionCounts();
   });
 
   const btnAll = $('btn-select-all');
   if (btnAll) {
     btnAll.addEventListener('click', () => {
-      list.querySelectorAll('input[type=checkbox]').forEach((cb) => {
+      list.querySelectorAll('input[data-source]').forEach((cb) => {
         selectedIds.add(cb.value);
         cb.checked = true;
       });
@@ -284,7 +311,7 @@ async function init() {
   const btnVal = $('btn-select-validated');
   if (btnVal) {
     btnVal.addEventListener('click', () => {
-      list.querySelectorAll('input[type=checkbox]').forEach((cb) => {
+      list.querySelectorAll('input[data-source]').forEach((cb) => {
         cb.checked = validatedIds.has(cb.value);
         if (cb.checked) selectedIds.add(cb.value);
         else selectedIds.delete(cb.value);
@@ -295,7 +322,7 @@ async function init() {
   const btnNone = $('btn-select-none');
   if (btnNone) {
     btnNone.addEventListener('click', () => {
-      list.querySelectorAll('input[type=checkbox]').forEach((cb) => { cb.checked = false; });
+      list.querySelectorAll('input[data-source]').forEach((cb) => { cb.checked = false; });
       selectedIds.clear();
       updateSelectionCounts();
     });
@@ -339,19 +366,24 @@ function refreshJobRows() {
   const state = lastState || {};
   const jobs = state.jobs || [];
   const rows = $('job-rows');
-  const fromState = new Map(jobs.map((j) => [j.id, j]));
-  rows.innerHTML = selectedIds.size ? [...selectedIds].map((id) => {
-    const j = fromState.get(id) || { id, status: 'pending', events: 0, durationMs: 0 };
+  rows.innerHTML = jobs.length ? jobs.map((j) => {
+    const id = j.id;
     const evs = j.events || 0;
     const ms = j.durationMs || 0;
-    return `<div class="row job-row-item">
-      <span class="mono strong">${id}</span>
-      <span class="status ${j.status}">${j.status}</span>
+    // `error` arrives as an object from the batch envelope but as a plain
+    // string from some state payloads; `j.error.message` on a string renders
+    // nothing at all, so the failure reason silently disappeared.
+    const errorText = !j.error
+      ? ''
+      : typeof j.error === 'string' ? j.error : (j.error.message || j.error.code || '');
+    return `<div class="row job-row-item" role="listitem">
+      <span class="mono strong">${escapeHtml(id)}</span>
+      <span class="status ${escapeHtml(j.status)}">${escapeHtml(j.status)}</span>${errorText ? `<span class="job-error">${escapeHtml(errorText)}</span>` : ''}
       <span class="spacer"></span>
       <span class="muted mono">${evs} ev</span>
       <span class="muted mono job-row-duration">${fmtDuration(ms) || ms + 'ms'}</span>
     </div>`;
-  }).join('') : `<div class="empty">${escapeHtml(t('noBookmakersSelected'))}</div>`;
+  }).join('') : `<div class="empty">${escapeHtml(t('noRunYet'))}</div>`;
 }
 
 /**
@@ -376,7 +408,7 @@ function updateKpiCard(state, t, statusLabel) {
   countUp($('act-events'), summary.events || 0, true);
   $('m-started').textContent = state.startedAt ? new Date(state.startedAt).toLocaleString() : t('awaitingTrigger');
   $('m-finished').textContent = state.finishedAt ? t('finished') + ' ' + new Date(state.finishedAt).toLocaleTimeString() : '';
-  const failedJobs = (state.jobs || []).filter((j) => !j.valid && j.status !== 'skipped');
+  const failedJobs = (state.jobs || []).filter((j) => isFailedJob(j));
   const shownFailed = failedJobs.slice(0, 3).map((j) => j.id).join(', ');
   const moreFailed = failedJobs.length - 3;
   $('m-failed-detail').textContent = failedJobs.length
@@ -392,7 +424,7 @@ function updateKpiCard(state, t, statusLabel) {
  */
 function updateProgressCard(state, _t) {
   const status = state.status || 'idle';
-  const running = status === 'running';
+  const running = ['running', 'cancelling'].includes(status);
   $('progress-card').classList.toggle('hidden', !running);
   const jobs = state.jobs || [];
   const total = jobs.length || 1;
@@ -423,17 +455,17 @@ function updateProgressCard(state, _t) {
  */
 function updateStepper(state, t) {
   const status = state.status || 'idle';
-  const running = status === 'running';
+  const running = ['running', 'cancelling'].includes(status);
   const idx = state.currentStep?.index;
   const terminal = !running && (status === 'completed' || status === 'completed-with-errors');
   document.querySelectorAll('.stepper .step').forEach((el, i) => {
     const wasDone = el.classList.contains('done');
     el.classList.remove('active', 'done', 'error');
     if (running && i === idx) el.classList.add('active');
-    else if (running && i < idx) el.classList.add('done');
-    else if (terminal && i < 4) el.classList.add('done');
-    else if (terminal && i === 4) el.classList.add(status === 'completed' ? 'done' : 'error');
-    else if (!running && status === 'failed' && i === 4) el.classList.add('error');
+    // No stage history is supplied: prior stages may have been skipped or failed.
+    else if (terminal && idx === 4 && i === 4) el.classList.add(status === 'completed' ? 'done' : 'error');
+    else if (!running && state.error && i === idx) el.classList.add('error');
+    el.setAttribute('aria-current', running && i === idx ? 'step' : 'false');
     // Step-done pop: brief scale when a step transitions to done
     if (!wasDone && el.classList.contains('done') && !reducedMotion()) {
       el.classList.remove('step-pop');
@@ -459,7 +491,7 @@ function updateStepper(state, t) {
 function updateActivityLine(state, t) {
   const status = state.status || 'idle';
   const summary = state.summary || {};
-  const running = status === 'running';
+  const running = ['running', 'cancelling'].includes(status);
   const jobs = state.jobs || [];
 
   // Human-readable activity line instead of the raw status string.
@@ -478,7 +510,7 @@ function updateActivityLine(state, t) {
   $('act-qf').textContent = `${done} / ${total}`;
 
   const ok = jobs.filter((j) => j.status === 'ok').length;
-  const failedCount = jobs.filter((j) => !j.valid && j.status !== 'skipped').length;
+  const failedCount = jobs.filter((j) => isFailedJob(j)).length;
   const res = $('act-result');
   if (running) {
     res.innerHTML = `<span class="chip ${ok > 0 ? 'green' : ''}">${ok} ${t('okShort')}</span> <span class="chip ${failedCount > 0 ? 'red' : ''}">${failedCount} ${t('failedShort')}</span>`;
@@ -488,9 +520,8 @@ function updateActivityLine(state, t) {
     res.textContent = '—';
   }
 
-  $('act-profile').innerHTML = state.options?.minRoiPercent !== undefined
-    ? `<span class="chip ${Number(state.options.minRoiPercent) > 0 ? 'yellow' : 'green'}">${Number(state.options.minRoiPercent) > 0 ? t('review') : t('trusted')}</span>`
-    : '—';
+  // Resolved options do not identify the profile that launched the run.
+  $('act-profile').textContent = '—';
   $('act-runid').textContent = state.runId ? state.runId.slice(0, 19) : '—';
   const dur = $('act-duration');
   if (dur) {
@@ -507,13 +538,18 @@ function updateActivityLine(state, t) {
  */
 function updateErrorBox(state, t) {
   const status = state.status || 'idle';
-  const running = status === 'running';
+  const running = ['running', 'cancelling'].includes(status);
   const errBox = $('error-box');
   if (!running && state.error) {
     errBox.className = 'alert error-visible';
-    errBox.innerHTML = `${escapeHtml(state.error.name)}: ${escapeHtml(state.error.message)}`;
+    // `state.error` is an object from the orchestrator but a string from some
+    // payloads; reading `.name` off a string yields "undefined: undefined".
+    const err = typeof state.error === 'string'
+      ? { name: 'Error', message: state.error }
+      : state.error;
+    errBox.innerHTML = `${escapeHtml(err.name || 'Error')}: ${escapeHtml(err.message || '')}`;
   } else if (!running && status === 'completed-with-errors') {
-    const failedCount = (state.jobs || []).filter((j) => !j.valid).length;
+    const failedCount = (state.jobs || []).filter((j) => isFailedJob(j)).length;
     errBox.className = 'alert warn error-visible';
     errBox.innerHTML =
       `${escapeHtml(`${t('scrapeErrorsPrefix')} ${failedCount} ${t('jobsFailed')}`)} `
@@ -546,6 +582,7 @@ function renderState(state) {
     if (live) live.textContent = statusLabel;
   }
 
+  updateRunControls();
   updateKpiCard(state, t, statusLabel);
   updateProgressCard(state, t);
   updateStepper(state, t);
@@ -575,14 +612,19 @@ async function refreshLastRun() {
       tbody.innerHTML = `<tr><td colspan="4" class="muted">${escapeHtml(t('noRunYet'))}</td></tr>`;
       return;
     }
-    tbody.innerHTML = run.jobs.map((j) => `
+    tbody.innerHTML = run.jobs.map((j) => {
+      // Same shape question as refreshJobRows: the error may be a string.
+      const errCode = !j.error
+        ? ''
+        : typeof j.error === 'string' ? j.error : (j.error.code || j.error.message || '');
+      return `
       <tr>
-        <td class="mono">${j.id}</td>
+        <td class="mono">${escapeHtml(j.id)}</td>
         <td class="num tabnum">${(j.events || 0).toLocaleString()}</td>
-        <td class="num tabnum">${fmtDuration(j.durationMs || 0) || '—'}</td>
-        <td><span class="status ${j.status}">${j.status}</span>${j.error ? ` <span class="muted mono">${j.error.code || ''}</span>` : ''}</td>
-      </tr>
-    `).join('');
+        <td class="num tabnum">${escapeHtml(fmtDuration(j.durationMs || 0) || '—')}</td>
+        <td><span class="status ${escapeHtml(j.status)}">${escapeHtml(j.status)}</span>${errCode ? ` <span class="muted mono">${escapeHtml(errCode)}</span>` : ''}</td>
+      </tr>`;
+    }).join('');
     const opps = run.opportunitiesCount || 0;
     $('m-arb-summary').textContent = `${t('opps')}: ${opps}`;
   } catch (_err) { /* ignore */ }
@@ -602,10 +644,14 @@ async function refreshScheduler() {
 }
 
 $('run-btn').addEventListener('click', async () => {
-  const bookIds = [...document.querySelectorAll('#bookmaker-list input:checked')].map((c) => c.value);
+  const bookIds = [...selectedIds];
+  if (!bookIds.length || launchPending || ['running', 'cancelling'].includes(lastState?.status)) return;
+  launchPending = true;
+  updateRunControls();
   const scanOptions = {
     bankroll: Number($('bankroll').value),
     minRoiPercent: Number($('min-roi').value),
+    minEvPercent: Number($('min-ev').value),
     maxMiddleRiskPercent: Number($('mid-risk').value),
     minMiddleRoiPercent: Number($('mid-roi').value),
     includeLive: $('inc-live').checked,
@@ -615,18 +661,23 @@ $('run-btn').addEventListener('click', async () => {
   };
   try {
     log(`starting scrape: ${bookIds.length} books, max events=${scanOptions.maxEvents}${scanOptions.sport ? `, sport=${scanOptions.sport}` : ''}`, 'info', 'orchestrator');
-    await arbiterApi.post('/api/scrape', { bookIds, scanOptions });
+    const result = await arbiterApi.post('/api/scrape', { bookIds, scanOptions });
+    if (result.state) renderState(result.state);
     const t = window.arbiterI18n.t.bind(window.arbiterI18n);
     if (typeof window.showToast === 'function') window.showToast(t('toastScrapeStarted'), 'success');
   } catch (err) {
     log(`failed to launch: ${err.message}`, 'error', 'orchestrator');
     const t = window.arbiterI18n.t.bind(window.arbiterI18n);
     if (typeof window.showToast === 'function') window.showToast(t('failedShort'), 'error');
+  } finally {
+    launchPending = false;
+    updateRunControls();
   }
 });
 $('cancel-btn').addEventListener('click', async () => {
   try {
     const result = await arbiterApi.post('/api/scrape/cancel', {});
+    if (result.state) renderState(result.state);
     const t = window.arbiterI18n.t.bind(window.arbiterI18n);
     if (result.cancelled) {
       log('cancellation requested', 'warn', 'orchestrator');
@@ -642,11 +693,13 @@ $('cancel-btn').addEventListener('click', async () => {
 $('save-btn').addEventListener('click', () => log(window.arbiterI18n.t('profileDefaultsNote'), 'info'));
 $('sched-save').addEventListener('click', async () => {
   const enabled = $('sched-enabled').checked;
+  if (enabled && !selectedIds.size) { log(window.arbiterI18n.t('noBookmakersSelected'), 'warn'); return; }
   const intervalMinutes = Number($('sched-interval').value);
-  const bookIds = [...document.querySelectorAll('#bookmaker-list input:checked')].map((checkbox) => checkbox.value);
+  const bookIds = [...document.querySelectorAll('#bookmaker-list input[data-source]:checked')].map((checkbox) => checkbox.value);
   const scanOptions = {
     bankroll: Number($('bankroll').value),
     minRoiPercent: Number($('min-roi').value),
+    minEvPercent: Number($('min-ev').value),
     maxMiddleRiskPercent: Number($('mid-risk').value),
     minMiddleRoiPercent: Number($('mid-roi').value),
     includeLive: $('inc-live').checked,
@@ -686,4 +739,14 @@ window.addEventListener('beforeunload', () => {
 });
 
 window.arbiterApp.mount('scrape');
-init();
+init().catch((err) => {
+  console.error('Scrape initialization failed', err);
+  const message = arbiterI18n.lang === 'ro'
+    ? 'Configurarea nu a putut fi încărcată. Reîncarcă pagina pentru a încerca din nou.'
+    : 'Unable to load configuration. Reload the page to try again.';
+  const list = $('bookmaker-list');
+  if (list) {
+    list.setAttribute('role', 'alert');
+    list.textContent = `${message} ${err.message || ''}`;
+  }
+});

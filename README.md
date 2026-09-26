@@ -13,15 +13,13 @@ Binds to `127.0.0.1` and stores all application state locally. Bookmaker discove
 
 ## Architecture
 
-**Dual server entrypoints** -- both serve the same frontend and API:
-
-- `src/server.mjs` (`npm start`) -- legacy monolith. Self-contained; inlines
-  cross-cutting helpers (sanitize, CSRF, security). Single file that "just works."
-- `src/server-modular.mjs` (`npm run start:modular`) -- modular re-export. Same
-  functionality; splits services into `router.mjs`, `scrape-orchestrator.mjs`,
-  `scan-service.mjs`, `scheduler-service.mjs`, `tracker-service.mjs`, and
-  `state-broadcaster.mjs`. Each module is independently testable. Neither is
-  deprecated.
+**One server entrypoint** -- `src/server.mjs` (`npm start`) constructs the
+services and hands every request to `router.mjs`, which owns the route table.
+The services it wires (`scrape-orchestrator.mjs`, `scan-service.mjs`,
+`scheduler-service.mjs`, `tracker-service.mjs`, `state-broadcaster.mjs`) are
+each independently testable. There used to be a second entrypoint,
+`server-modular.mjs`, carrying a duplicate route table that drifted from the
+router's; it was removed so a fix cannot land in one copy and miss the other.
 
 **Frontend design tokens** -- all visual values (colors, spacing, radii, motion,
 shadows) are CSS custom properties in `public/css/design-tokens.css`, imported
@@ -46,8 +44,6 @@ npm run desktop          # Electron shell (production-like)
 npm run desktop:dev      # Electron with DevTools open
 npm test                 # node --test test/*.test.mjs
 npm run lint
-npm run bookmaker:smoke -- superbet 5 # bounded live-source smoke for a direct/public adapter
-npm run bookmaker:smoke -- unibet 5   # validates provenance before enabling the source
 ```
 
 ## Environment variables
@@ -70,8 +66,7 @@ npm run bookmaker:smoke -- unibet 5   # validates provenance before enabling the
 ```
 arbiter/
 ├── src/
-│   ├── server.mjs                # legacy monolith (the standalone entrypoint)
-│   ├── server-modular.mjs        # modular re-export of the same server
+│   ├── server.mjs                # entrypoint: builds services, delegates to the router
 │   ├── router.mjs                # HTTP routing + body parsing
 │   ├── scrape-orchestrator.mjs   # scrape + verify lifecycle
 │   ├── scan-service.mjs          # workspace scan persistence
@@ -90,9 +85,8 @@ arbiter/
 │   │   ├── ...                   # one file per remaining bookmaker
 │   └── scanner/
 │       ├── scanner.mjs           # scanWorkspace() entry point
-│       ├── engine.mjs            # matching + arb/middle math
-│       ├── bookmaker-signals.mjs # positive EV + low hold
-│       ├── bankroll-allocation.mjs
+│       ├── engine.mjs            # matching + arb/middle/EV/low-hold math
+│       ├── market-contracts.mjs  # canonical market contracts + stake allocation
 │       └── market-catalog.mjs
 ├── public/
 │   ├── index.html                # visitor dashboard
@@ -165,37 +159,58 @@ The registry is the source of truth, but validation is a required promotion gate
 
 ## Multi-sport architecture
 
-Arbiter supports multiple sports through a central **sport registry** (`src/sports/registry.mjs`) that defines each sport's market contracts, draw behavior, and provider IDs.
+Arbiter has a central **sport registry** (`src/sports/registry.mjs`) that the
+router and the scrape orchestrator both read, so the UI never offers a filter
+that cannot be served.
 
 ### Supported sports
 
 | Sport | Draw outcome | Scraper status | Key markets |
 |---|---|---|---|
 | Football | draw | Active (bookmaker-specific scrapers) | MATCH_ODDS, OVER_UNDER, DOUBLE_CHANCE, BTTS, HANDICAP |
-| Tennis | none | Registry + generic scraper (disabled, needs `offerUrl`) | MATCH_WINNER, SET_SPREAD, GAME_SPREAD, GAME_TOTALS |
-| Basketball | none | Registry + generic scraper (disabled, needs `offerUrl`) | MONEYLINE, POINT_SPREAD, TOTAL_POINTS, QUARTER_* |
-| Ice Hockey | draw | Registry + generic scraper (disabled, needs `offerUrl`) | MONEYLINE (3-way), PUCK_LINE, GOAL_TOTALS, PERIOD_* |
-| Volleyball | none | Registry + generic scraper (disabled, needs `offerUrl`) | MATCH_WINNER, SET_SPREAD, SET_TOTALS |
-| Handball | draw | Registry + generic scraper (disabled, needs `offerUrl`) | MATCH_ODDS, DRAW_NO_BET, OVER_UNDER, HANDICAP |
+
+Football is the only registered sport. Every feed in `config/scrapers.json`
+currently returns prematch football, and each active job declares
+`"supportedSports": ["football"]` — that array is what the orchestrator's sport
+filter matches on.
+
+Tennis, basketball, ice hockey, volleyball and handball are deliberately not
+served. Registering them made the dropdown offer options that always failed:
+those jobs are `sport-generic` stubs with no adapter file, so selecting one
+returned `no enabled bookmaker jobs selected` (HTTP 400). They remain in the
+config, disabled, as the placeholders for when real adapters land.
 
 ### How it works
 
-1. **Sport registry** (`src/sports/registry.mjs`) — each sport declares its market definitions and name patterns for mapping provider market names to canonical keys.
+1. **Sport registry** (`src/sports/registry.mjs`) — a plain table of
+   `{ id, name, hasDraw, markets }`. `getSport(id)` validates a filter and
+   `sportOptions()` feeds the dropdown; the same table therefore drives both
+   validation and what the UI shows.
 
-2. **Generic sport scraper** (`src/scrapers/sport-scraper.mjs`) — a base adapter configurable for any sport via the `sport` constructor option. Sport-specific subclasses (`tennis.mjs`, `basketball.mjs`, `ice-hockey.mjs`, `volleyball.mjs`, `handball.mjs`) set defaults.
+2. **Job capability** (`config/scrapers.json`) — a job opts into a sport with
+   `supportedSports`. A job with no such array cannot vouch for any sport and
+   is excluded whenever a filter is active.
 
-3. **Market contracts** (`src/scanner/market-contracts.mjs`) — when a sport is provided, delegates to the registry for contract resolution. When no sport is provided, uses legacy hardcoded football patterns for backward compatibility.
+3. **Sport filter** (`src/scrape-orchestrator.mjs`) — one predicate
+   (`jobMatchesSport`) decides which jobs are runnable. The id set and the
+   default selection both use it, so they cannot disagree and leave the
+   selection empty.
 
-4. **Engine** (`src/scanner/engine.mjs`) — passes `ev.sport` to contract resolution, so tennis MONEYLINE resolves as 2-way (no draw) while hockey MONEYLINE resolves as 3-way (with draw).
-
-5. **Sport filter** — the scrape page UI has a sport dropdown. When a sport is selected, only scrapers with matching `supportedSports` in their config are launched.
+4. **Market contracts** (`src/scanner/market-contracts.mjs`) — market keys are
+   canonicalised to a contract (`MATCH_ODDS`, `OVER_UNDER_*`, …) before the
+   engine pairs legs, which is what stops a 2-way market being arbitraged
+   against a 3-way one.
 
 ### Adding a new sport
 
-1. Register it in `src/sports/registry.mjs` with `register({ id, name, markets, namePatterns, ... })`
-2. Create a scraper adapter extending `SportScraper` (see `tennis.mjs` for the pattern)
-3. Add the scraper to `src/scrapers/index.mjs` and add an entry to `config/scrapers.json` with `"supportedSports": ["your-sport"]` — this array controls which scrapers are eligible when a sport filter is active
-4. The engine, scanner, and UI automatically handle the new sport
+1. Write the per-sport adapter under `src/scrapers/`.
+2. Add a job in `config/scrapers.json` with `"supportedSports": ["your-sport"]`,
+   pointing `script` at that adapter, and set `enabled: true`.
+3. Register the sport in `src/sports/registry.mjs` — only once step 2 works,
+   so the dropdown and the orchestrator stay in agreement.
+4. If the sport's result market settles without a draw (tennis, volleyball),
+   its market keys need their own contract; `hasDraw` in the registry records
+   the intent but the contract table is what the engine actually consults.
 
 ## Two scan profiles
 
@@ -211,11 +226,11 @@ All routes are loopback-only; mutations require the `x-arbiter-token` CSRF heade
 
 - `GET /api/health` — liveness + uptime.
 - `GET /api/scan` — latest published scan (opportunities, middles, positiveEv, lowHold, sources, dataHealth). `dataHealth.status` is worst-per-source: `fresh` if any source is fresh, else `stale` > `partial` > `failed` > `empty`; `dataHealth.actionableSourceCount` is the number of fresh sources.
-- `POST /api/scan` — run a scan now with `{ bankroll, minRoiPercent, maxMiddleRiskPercent, minMiddleRoiPercent, includeLive, includePast, sport }` (not published). Optional `sport` (e.g. `"tennis"`) filters events and scrapers to the selected sport.
+- `POST /api/scan` — run a scan now with `{ bankroll, minRoiPercent, minEvPercent, maxMiddleRiskPercent, minMiddleRoiPercent, includeLive, includePast, sport }` (not published). `minRoiPercent` (default 0) gates arbitrage; `minEvPercent` (default 2) gates positive-EV signals and is separate, because a leg priced exactly at the consensus is not an edge. Optional `sport` (currently only `"football"`) filters events and scrapers.
 - `GET /api/sports` — list registered sports with id and display name.
 - `GET /api/scan/export.csv` — download scan findings as CSV; optional `?type=opportunities,middles,positiveEv,lowHold` filter.
 - `GET /api/scrape/state` · `POST /api/scrape` · `POST /api/scrape/cancel` — scrape pipeline control.
-- `GET /api/scrapers` · `GET /api/scrapers/health` — bookmaker registry + circuit-breaker state.
+- `GET /api/scrapers` — bookmaker registry (jobs, enabled, validated).
 - `GET /api/scheduler` · `POST /api/scheduler` — recurring cycle config.
 - `GET /api/tracker` · `POST /api/tracker` · `PUT/DELETE /api/tracker/:id` — bet tracker; `GET /api/tracker/export.csv` and `POST /api/tracker/import` for CSV round-trips.
 - `GET /api/alerts` · `POST /api/alerts` — alert preferences.
@@ -245,6 +260,15 @@ A source is **actionable** only when all of these hold for its most recent snaps
 - The snapshot records a `runId`, `sourceUrl`, and `transport` (provenance).
 - The market is a complete, supported contract (see `src/scanner/market-contracts.mjs`) with a full 1X2 or equivalent selection set.
 - Legs come from at least **two different bookmakers** — a single-book "arb" is always rejected.
+- Legs also come from **two different upstream feeds**: brands resold from one provider are listed in `src/scanner/feed-groups.mjs` and are never paired, because their prices are one feed counted twice.
 
-Status as of this writing: Superbet's public feed was bounded-smoke validated on 2026-09-01. Unibet and Betano remain disabled because repeatable real-source validation did not pass; therefore the scanner truthfully emits no actionable cross-book arbitrage until another source is validated. The live validation harness is `npm run bookmaker:smoke -- <book> <iterations>`, and live adapter tests run under `ARBITER_LIVE_SMOKE=1 npm test -- test/native-endpoints.test.mjs`.
+Why a scan may legitimately come back empty is measured, not assumed: see
+`docs/no-arbitrage-root-cause.md`, which re-measures seven live captures and
+finds the best available cross-feed return to be negative — the market is
+arbitraged, not mis-scanned.
+
+Status as of this writing: 22 of the 29 configured jobs are enabled and
+implemented against verified public endpoints; `unibet`, `mozzartbet` and the
+five `sport-generic` stubs stay disabled because repeatable real-source
+validation did not pass for them. `SCRAPER-TASKS.md` tracks per-book status.
 

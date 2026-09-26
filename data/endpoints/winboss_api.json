@@ -1,0 +1,524 @@
+{
+  "book": "winboss",
+  "timestamp": "2026-09-01T18:52:34.534Z",
+  "pagesVisited": 50,
+  "minPagesRequired": 50,
+  "pagesTargetReached": true,
+  "endpoints": [
+    {
+      "method": "GET",
+      "url": "https://widget.trustpilot.com/trustbox-data/56278e9abfbbba0bdcd568bc?businessUnitId=68e381a35bbef0b49f81d174&locale=ro&includeReviews=false&random=Ur8eHjFcaPC0TtmN4meD",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://winboss.ro/sport/fotbal_1",
+      "capturedAt": "2026-09-01T18:45:16.614Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://d3dubbodzd2q05.cloudfront.net/visitorGame/209c72f6-2a7b-4b89-8506-9045df6a2042-3/1eac6804/ro/700",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://winboss.ro/sport/fotbal_1",
+      "capturedAt": "2026-09-01T18:45:18.135Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://site-api.winboss.ro/v1/site/games/vendors",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://winboss.ro/sport/fotbal_1",
+      "capturedAt": "2026-09-01T18:45:18.140Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://site-api.winboss.ro/v1/social-provider",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://winboss.ro/sport/fotbal_1",
+      "capturedAt": "2026-09-01T18:45:18.145Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://d3dubbodzd2q05.cloudfront.net/visitorGame/209c72f6-2a7b-4b89-8506-9045df6a2042-3/1eac6804/ro/3/is_visitor_mode/true",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://winboss.ro/sport/fotbal_1",
+      "capturedAt": "2026-09-01T18:45:18.365Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://site-api.winboss.ro/v1/site/games?isMobileApp=false",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://winboss.ro/sport/fotbal_1",
+      "capturedAt": "2026-09-01T18:45:18.450Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://site-api.winboss.ro/v1/site/games/providers/names",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://winboss.ro/sport/fotbal_1",
+      "capturedAt": "2026-09-01T18:45:19.496Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://ekr.zdassets.com/compose/ac3a07ca-aab6-440f-9bc4-746542a8cac9",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://winboss.ro/sport/fotbal_1",
+      "capturedAt": "2026-09-01T18:45:27.408Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://widget.trustpilot.com/trustbox-data/56278e9abfbbba0bdcd568bc?businessUnitId=68e381a35bbef0b49f81d174&locale=ro&includeReviews=false&random=EuRBRaZdVhMOOU8BvhSz",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://winboss.ro/info/privacy-policy",
+      "capturedAt": "2026-09-01T18:45:34.944Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://widget.trustpilot.com/trustbox-data/56278e9abfbbba0bdcd568bc?businessUnitId=68e381a35bbef0b49f81d174&locale=ro&includeReviews=false&random=1mtCHiMOxPaSWvPdJmH5",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://winboss.ro/info/privacy-policy",
+      "capturedAt": "2026-09-01T18:45:40.540Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://winboss.zendesk.com/embeddable/config",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://winboss.ro/info/privacy-policy",
+      "capturedAt": "2026-09-01T18:45:41.377Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://widget.trustpilot.com/trustbox-data/56278e9abfbbba0bdcd568bc?businessUnitId=68e381a35bbef0b49f81d174&locale=ro&includeReviews=false&random=4kc8rONOwgVIjYVc6S9k",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://winboss.ro/",
+      "capturedAt": "2026-09-01T18:45:47.894Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://widget.trustpilot.com/trustbox-data/56278e9abfbbba0bdcd568bc?businessUnitId=68e381a35bbef0b49f81d174&locale=ro&includeReviews=false&random=72QN6mi9571O7oVdNpRS",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://winboss.ro/",
+      "capturedAt": "2026-09-01T18:45:54.963Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://widget.trustpilot.com/trustbox-data/56278e9abfbbba0bdcd568bc?businessUnitId=68e381a35bbef0b49f81d174&locale=ro&includeReviews=false&random=7vwpIn31jyG3dSKw4Kip",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://winboss.ro/live-casino",
+      "capturedAt": "2026-09-01T18:46:06.373Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://widget.trustpilot.com/trustbox-data/56278e9abfbbba0bdcd568bc?businessUnitId=68e381a35bbef0b49f81d174&locale=ro&includeReviews=false&random=cwfrg4n5pwfqOCgUcatb",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://winboss.ro/sport",
+      "capturedAt": "2026-09-01T18:46:19.895Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://t.contentsquare.net/settings/961336.json?r=1986987",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://winboss.ro/sport",
+      "capturedAt": "2026-09-01T18:46:22.431Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://widget.trustpilot.com/trustbox-data/56278e9abfbbba0bdcd568bc?businessUnitId=68e381a35bbef0b49f81d174&locale=ro&includeReviews=false&random=PA5bQkH0OLAvuPk6159o",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://winboss.ro/live",
+      "capturedAt": "2026-09-01T18:46:30.422Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://widget.trustpilot.com/trustbox-data/56278e9abfbbba0bdcd568bc?businessUnitId=68e381a35bbef0b49f81d174&locale=ro&includeReviews=false&random=awdnOt42Tt1P4fv6ZGZu",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://winboss.ro/loto",
+      "capturedAt": "2026-09-01T18:46:40.103Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://widget.trustpilot.com/trustbox-data/56278e9abfbbba0bdcd568bc?businessUnitId=68e381a35bbef0b49f81d174&locale=ro&includeReviews=false&random=xWGed2yADU7dAVWgiR3E",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://winboss.ro/virtuale",
+      "capturedAt": "2026-09-01T18:46:47.875Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://widget.trustpilot.com/trustbox-data/56278e9abfbbba0bdcd568bc?businessUnitId=68e381a35bbef0b49f81d174&locale=ro&includeReviews=false&random=GajJhF6MUb8XOwJAOh3F",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://winboss.ro/live-rtp",
+      "capturedAt": "2026-09-01T18:46:57.934Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://widget.trustpilot.com/trustbox-data/56278e9abfbbba0bdcd568bc?businessUnitId=68e381a35bbef0b49f81d174&locale=ro&includeReviews=false&random=vNDmoP6LpiKCXQnlRoBM",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://winboss.ro/jocuri-cu-jackpot",
+      "capturedAt": "2026-09-01T18:47:08.321Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://widget.trustpilot.com/trustbox-data/56278e9abfbbba0bdcd568bc?businessUnitId=68e381a35bbef0b49f81d174&locale=ro&includeReviews=false&random=g2SA7S5UXCFoRvJLeeQs",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://winboss.ro/vip-program",
+      "capturedAt": "2026-09-01T18:47:18.341Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://widget.trustpilot.com/trustbox-data/56278e9abfbbba0bdcd568bc?businessUnitId=68e381a35bbef0b49f81d174&locale=ro&includeReviews=false&random=lWILl2m2hIKni5m2gevX",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://winboss.ro/promotions",
+      "capturedAt": "2026-09-01T18:47:28.617Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://widget.trustpilot.com/trustbox-data/56278e9abfbbba0bdcd568bc?businessUnitId=68e381a35bbef0b49f81d174&locale=ro&includeReviews=false&random=OFc6IBAiOjvbsVAGRmDW",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://winboss.ro/info/support",
+      "capturedAt": "2026-09-01T18:47:39.066Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://widget.trustpilot.com/trustbox-data/56278e9abfbbba0bdcd568bc?businessUnitId=68e381a35bbef0b49f81d174&locale=ro&includeReviews=false&random=kGH6Pp2HResuMHIJbNxj",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://winboss.ro/info/pariuri-pe-numere",
+      "capturedAt": "2026-09-01T18:47:48.113Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://widget.trustpilot.com/trustbox-data/56278e9abfbbba0bdcd568bc?businessUnitId=68e381a35bbef0b49f81d174&locale=ro&includeReviews=false&random=vG627fd0k5OEr7kAhd4K",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://winboss.ro/info/jocuri-virtuale",
+      "capturedAt": "2026-09-01T18:47:58.116Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://widget.trustpilot.com/trustbox-data/56278e9abfbbba0bdcd568bc?businessUnitId=68e381a35bbef0b49f81d174&locale=ro&includeReviews=false&random=kxOfWpLjqzeS0sASsrTE",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://winboss.ro/blog",
+      "capturedAt": "2026-09-01T18:48:08.916Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://widget.trustpilot.com/trustbox-data/56278e9abfbbba0bdcd568bc?businessUnitId=68e381a35bbef0b49f81d174&locale=ro&includeReviews=false&random=BUvn7mVI9ZVmMoRZigRf",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://winboss.ro/info/banking",
+      "capturedAt": "2026-09-01T18:48:16.406Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://widget.trustpilot.com/trustbox-data/56278e9abfbbba0bdcd568bc?businessUnitId=68e381a35bbef0b49f81d174&locale=ro&includeReviews=false&random=MsUHH2UK7UM2hi6P7KgO",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://winboss.ro/bonus-fara-depunere",
+      "capturedAt": "2026-09-01T18:48:23.018Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://widget.trustpilot.com/trustbox-data/56278e9abfbbba0bdcd568bc?businessUnitId=68e381a35bbef0b49f81d174&locale=ro&includeReviews=false&random=MLBdEgYTxkiGphQ4lfG1",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://winboss.ro/info/responsible-gambling",
+      "capturedAt": "2026-09-01T18:48:30.008Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://widget.trustpilot.com/trustbox-data/56278e9abfbbba0bdcd568bc?businessUnitId=68e381a35bbef0b49f81d174&locale=ro&includeReviews=false&random=rY2X8UoZSk4OBGtdg1vr",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://winboss.ro/info/optiuni-pariuri-sportive",
+      "capturedAt": "2026-09-01T18:48:46.800Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://widget.trustpilot.com/trustbox-data/56278e9abfbbba0bdcd568bc?businessUnitId=68e381a35bbef0b49f81d174&locale=ro&includeReviews=false&random=3LTEoqw5EL4SBoR9Nglo",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://winboss.ro/info/regulament-general-pariuri",
+      "capturedAt": "2026-09-01T18:48:54.322Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://widget.trustpilot.com/trustbox-data/56278e9abfbbba0bdcd568bc?businessUnitId=68e381a35bbef0b49f81d174&locale=ro&includeReviews=false&random=J18W0Quk2GLyf8qaF6Ns",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://winboss.ro/info/about-us",
+      "capturedAt": "2026-09-01T18:48:59.082Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://widget.trustpilot.com/trustbox-data/56278e9abfbbba0bdcd568bc?businessUnitId=68e381a35bbef0b49f81d174&locale=ro&includeReviews=false&random=LffDFYCnUHMZOzyQpHii",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://winboss.ro/info/privacy-policy",
+      "capturedAt": "2026-09-01T18:49:10.168Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://widget.trustpilot.com/trustbox-data/56278e9abfbbba0bdcd568bc?businessUnitId=68e381a35bbef0b49f81d174&locale=ro&includeReviews=false&random=Eorgdh6R91TI3cUw9G2t",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://winboss.ro/info/terms-conditions",
+      "capturedAt": "2026-09-01T18:49:18.546Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://widget.trustpilot.com/trustbox-data/56278e9abfbbba0bdcd568bc?businessUnitId=68e381a35bbef0b49f81d174&locale=ro&includeReviews=false&random=G6k4YuLsWluIic7oEDmE",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://winboss.ro/top-winners",
+      "capturedAt": "2026-09-01T18:49:27.567Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://widget.trustpilot.com/trustbox-data/56278e9abfbbba0bdcd568bc?businessUnitId=68e381a35bbef0b49f81d174&locale=ro&includeReviews=false&random=WmhSAt54BLxaPHNrymZ4",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://winboss.ro/info/bonus-terms",
+      "capturedAt": "2026-09-01T18:49:34.317Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://widget.trustpilot.com/trustbox-data/56278e9abfbbba0bdcd568bc?businessUnitId=68e381a35bbef0b49f81d174&locale=ro&includeReviews=false&random=P3EVdjztwG9T5Kk3boIl",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://winboss.ro/info/faq",
+      "capturedAt": "2026-09-01T18:49:43.346Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://widget.trustpilot.com/trustbox-data/56278e9abfbbba0bdcd568bc?businessUnitId=68e381a35bbef0b49f81d174&locale=ro&includeReviews=false&random=BtSmJC9HzqTEHeMMxDFl",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://winboss.ro/categories/hot",
+      "capturedAt": "2026-09-01T18:49:57.636Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://widget.trustpilot.com/trustbox-data/56278e9abfbbba0bdcd568bc?businessUnitId=68e381a35bbef0b49f81d174&locale=ro&includeReviews=false&random=TFlSFvVNZyPbuaFMvaep",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://winboss.ro/categories/new-games",
+      "capturedAt": "2026-09-01T18:50:08.340Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://widget.trustpilot.com/trustbox-data/56278e9abfbbba0bdcd568bc?businessUnitId=68e381a35bbef0b49f81d174&locale=ro&includeReviews=false&random=2A8M08fxHXmkQW5hd0tm",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://winboss.ro/categories/popular",
+      "capturedAt": "2026-09-01T18:50:13.875Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://widget.trustpilot.com/trustbox-data/56278e9abfbbba0bdcd568bc?businessUnitId=68e381a35bbef0b49f81d174&locale=ro&includeReviews=false&random=AQqCk2M4jjGpNcVDZTnm",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://winboss.ro/categories/megaways",
+      "capturedAt": "2026-09-01T18:50:21.723Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://widget.trustpilot.com/trustbox-data/56278e9abfbbba0bdcd568bc?businessUnitId=68e381a35bbef0b49f81d174&locale=ro&includeReviews=false&random=b0ixugkvaA7PVFkNeEJS",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://winboss.ro/categories/cumpara-speciale",
+      "capturedAt": "2026-09-01T18:50:26.374Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://widget.trustpilot.com/trustbox-data/56278e9abfbbba0bdcd568bc?businessUnitId=68e381a35bbef0b49f81d174&locale=ro&includeReviews=false&random=PbCavxz7nOJE9nfcPI0z",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://winboss.ro/categories/trending",
+      "capturedAt": "2026-09-01T18:50:35.441Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://widget.trustpilot.com/trustbox-data/56278e9abfbbba0bdcd568bc?businessUnitId=68e381a35bbef0b49f81d174&locale=ro&includeReviews=false&random=KHEO788V56K7J16zxbiP",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://winboss.ro/categories/recommended",
+      "capturedAt": "2026-09-01T18:50:40.459Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://widget.trustpilot.com/trustbox-data/56278e9abfbbba0bdcd568bc?businessUnitId=68e381a35bbef0b49f81d174&locale=ro&includeReviews=false&random=cv19Xxf65nkTGmqyuscV",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://winboss.ro/categories/bell-link",
+      "capturedAt": "2026-09-01T18:50:47.593Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://widget.trustpilot.com/trustbox-data/56278e9abfbbba0bdcd568bc?businessUnitId=68e381a35bbef0b49f81d174&locale=ro&includeReviews=false&random=teEgDYFgoqmNGyFkTLYH",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://winboss.ro/categories/clover-chance",
+      "capturedAt": "2026-09-01T18:50:54.286Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://widget.trustpilot.com/trustbox-data/56278e9abfbbba0bdcd568bc?businessUnitId=68e381a35bbef0b49f81d174&locale=ro&includeReviews=false&random=8B7jpnfXF0tIIllX6vUA",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://winboss.ro/categories/pacanele-cu-fructe",
+      "capturedAt": "2026-09-01T18:51:00.286Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://widget.trustpilot.com/trustbox-data/56278e9abfbbba0bdcd568bc?businessUnitId=68e381a35bbef0b49f81d174&locale=ro&includeReviews=false&random=Z4WnedghjzBRFCZsVrQn",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://winboss.ro/categories/sali-de-joc-winboss",
+      "capturedAt": "2026-09-01T18:51:06.096Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://widget.trustpilot.com/trustbox-data/56278e9abfbbba0bdcd568bc?businessUnitId=68e381a35bbef0b49f81d174&locale=ro&includeReviews=false&random=th37sajocfYAqVz1YIVQ",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://winboss.ro/categories/pragmaticplay/jackpotplay",
+      "capturedAt": "2026-09-01T18:51:12.167Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://widget.trustpilot.com/trustbox-data/56278e9abfbbba0bdcd568bc?businessUnitId=68e381a35bbef0b49f81d174&locale=ro&includeReviews=false&random=2VrDaillVk5SqeIAClsb",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://winboss.ro/categories/furnizori",
+      "capturedAt": "2026-09-01T18:51:17.630Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://widget.trustpilot.com/trustbox-data/56278e9abfbbba0bdcd568bc?businessUnitId=68e381a35bbef0b49f81d174&locale=ro&includeReviews=false&random=lTGrpX78sa6q50tgCwXf",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://winboss.ro/categories/selectia-winboss",
+      "capturedAt": "2026-09-01T18:51:24.815Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://widget.trustpilot.com/trustbox-data/56278e9abfbbba0bdcd568bc?businessUnitId=68e381a35bbef0b49f81d174&locale=ro&includeReviews=false&random=T2XKpLI41YueLW3RfAwq",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://winboss.ro/categories/jackpot-cards",
+      "capturedAt": "2026-09-01T18:51:31.694Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://widget.trustpilot.com/trustbox-data/56278e9abfbbba0bdcd568bc?businessUnitId=68e381a35bbef0b49f81d174&locale=ro&includeReviews=false&random=M5ir3K7lfF9XXCuz3ehr",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://winboss.ro/categories/jocurile-saptamanii",
+      "capturedAt": "2026-09-01T18:51:40.203Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://widget.trustpilot.com/trustbox-data/56278e9abfbbba0bdcd568bc?businessUnitId=68e381a35bbef0b49f81d174&locale=ro&includeReviews=false&random=B7Dzp3cCBGYUsWcaAWz7",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://winboss.ro/jackpots",
+      "capturedAt": "2026-09-01T18:51:47.313Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://widget.trustpilot.com/trustbox-data/56278e9abfbbba0bdcd568bc?businessUnitId=68e381a35bbef0b49f81d174&locale=ro&includeReviews=false&random=a5O6dMgTy7D1c2ZSy231",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://winboss.ro/categories/vip",
+      "capturedAt": "2026-09-01T18:51:54.820Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://widget.trustpilot.com/trustbox-data/56278e9abfbbba0bdcd568bc?businessUnitId=68e381a35bbef0b49f81d174&locale=ro&includeReviews=false&random=wCSwU9pzVnafC3iJ1IV9",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://winboss.ro/categories/jocuri-cu-septari",
+      "capturedAt": "2026-09-01T18:52:01.295Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://widget.trustpilot.com/trustbox-data/56278e9abfbbba0bdcd568bc?businessUnitId=68e381a35bbef0b49f81d174&locale=ro&includeReviews=false&random=L6hyBmG4Za9bbsXX9jNB",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://winboss.ro/categories/playson",
+      "capturedAt": "2026-09-01T18:52:08.432Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://widget.trustpilot.com/trustbox-data/56278e9abfbbba0bdcd568bc?businessUnitId=68e381a35bbef0b49f81d174&locale=ro&includeReviews=false&random=YioFQMCgzVl4qGGoR5Aj",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://winboss.ro/categories/egt-digital",
+      "capturedAt": "2026-09-01T18:52:17.739Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://widget.trustpilot.com/trustbox-data/56278e9abfbbba0bdcd568bc?businessUnitId=68e381a35bbef0b49f81d174&locale=ro&includeReviews=false&random=1S6HKoQwS5Ay1YZi9yeF",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://winboss.ro/providers/playngo",
+      "capturedAt": "2026-09-01T18:52:24.294Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://widget.trustpilot.com/trustbox-data/56278e9abfbbba0bdcd568bc?businessUnitId=68e381a35bbef0b49f81d174&locale=ro&includeReviews=false&random=Z74mhA5ot8yBkpKzlnU7",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://winboss.ro/categories/drops-and-wins",
+      "capturedAt": "2026-09-01T18:52:31.520Z"
+    }
+  ],
+  "keyEndpoints": [
+    {
+      "method": "GET",
+      "url": "https://exalogic.winboss.ro/XSportDatastore/getMenuPrematch?systemCode=WINBOSS&lingua=RO&hash=",
+      "verified": true
+    },
+    {
+      "method": "GET",
+      "url": "https://exalogic.winboss.ro/XSportDatastore/getPalinsestoDelGiorno?systemCode=WINBOSS&lingua=RO&hash=&idSport=1&idAggregata=1&timezone=3",
+      "verified": true
+    },
+    {
+      "method": "GET",
+      "url": "https://site-api.winboss.ro/v1/site/games/vendors"
+    },
+    {
+      "method": "GET",
+      "url": "https://site-api.winboss.ro/v1/social-provider"
+    },
+    {
+      "method": "GET",
+      "url": "https://site-api.winboss.ro/v1/site/games/providers/names"
+    }
+  ],
+  "platform": "exalogic-xsport",
+  "feedStatus": "verified",
+  "verifiedAt": "2026-09-01"
+}

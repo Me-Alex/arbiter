@@ -25,6 +25,68 @@
     <!-- Screen-reader summary of lifecycle changes (announced politely) -->
     <div id="live-summary" role="status" aria-live="polite" class="visually-hidden"></div>
 
+    <!-- Configuration + Bookmakers -->
+    <div class="grid cols-2 scrape-workspace mb-5">
+      <div class="card config-card" aria-label="Scrape configuration">
+        <h3><span data-i18n="configuration">Configuration</span></h3>
+        <div class="field">
+          <label for="profile" data-i18n="profile">Profile</label>
+          <select id="profile"></select>
+        </div>
+        <div class="field">
+          <label for="sport-filter" data-i18n="sport">Sport</label>
+          <select id="sport-filter">
+            <option value="" data-i18n="allSports">All sports</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="max-events" data-i18n="eventCollection">Event collection</label>
+          <select id="max-events" data-i18n-title="eventCollectionHint" title="All = every qualifying event available from each provider's public feed/window">
+            <option value="all" selected data-i18n="allEvents">All available events</option>
+            <option value="40">40 events</option>
+            <option value="100">100 events</option>
+            <option value="500">500 events</option>
+            <option value="1000">1,000 events</option>
+          </select>
+          <div class="muted text-xs" data-i18n="eventCollectionHint">All = every qualifying event available from each provider's public feed/window.</div>
+        </div>
+        <div class="grid cols-2">
+          <div class="field"><label for="bankroll" data-i18n="bankroll">Bankroll</label><input type="number" id="bankroll" value="1000" min="10" step="10"></div>
+          <div class="field"><label for="min-roi" data-i18n="minRoi">Min ROI %</label><input type="number" id="min-roi" value="0" step="0.1"></div>
+          <div class="field"><label for="min-ev" data-i18n="minEv">Min +EV %</label><input type="number" id="min-ev" value="2" step="0.1"></div>
+          <div class="field"><label for="mid-risk" data-i18n="maxMiddleRisk">Max middle risk %</label><input type="number" id="mid-risk" value="15" step="0.5"></div>
+          <div class="field"><label for="mid-roi" data-i18n="minMiddleRoi">Min middle ROI %</label><input type="number" id="mid-roi" value="20" step="0.5"></div>
+        </div>
+        <div class="row mt-1">
+          <label class="checkbox"><input type="checkbox" id="inc-live"> <span data-i18n="includeLive">include live</span></label>
+          <label class="checkbox"><input type="checkbox" id="inc-past"> <span data-i18n="includePast">include past</span></label>
+        </div>
+        <div class="row mt-3">
+          <button class="primary" id="run-btn" data-i18n="runScrape">Run scrape</button>
+          <button class="ghost" id="cancel-btn" disabled data-i18n="cancel">Cancel</button>
+          <button class="ghost" id="save-btn" data-i18n="profileHelp">Profile help</button>
+        </div>
+      </div>
+
+      <div class="card bookmakers-card">
+        <h3>
+          <span data-i18n="bookmakers">Bookmakers</span>
+          <span class="h3-meta"><span id="bm-selected">0</span> / <span id="bm-total">0</span> <span data-i18n="sourcesSelected">sources selected</span></span>
+        </h3>
+        <div class="row bookmaker-actions gap-2 mb-2">
+          <button type="button" class="ghost text-xs btn-sm" id="btn-select-all" data-i18n="selectAll">Toate</button>
+          <button type="button" class="ghost text-xs btn-sm" id="btn-select-validated" data-i18n="selectValidated">Doar validate</button>
+          <button type="button" class="ghost text-xs btn-sm" id="btn-select-none" data-i18n="selectNone">Niciuna</button>
+        </div>
+        <div class="bm-search mb-2">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="search" id="bm-filter" placeholder="Filter sources…" data-i18n-placeholder="filterSources" aria-label="Filter bookmakers">
+        </div>
+        <div id="bookmaker-list" class="row gap-2 flex-wrap mb-3"></div>
+
+      </div>
+    </div>
+
     <!-- KPI strip -->
     <div class="grid cols-4 scrape-kpis mb-5">
       <div class="card kpi-card">
@@ -50,7 +112,7 @@
       </div>
       <div class="card kpi-card">
         <div class="kpi">
-          <div class="label" data-i18n="lastScan">Last Scan</div>
+          <div class="label" data-i18n="events">Events</div>
           <div class="value tabnum accent" id="m-events">—</div>
           <div class="delta"><span id="m-arb-summary"></span></div>
         </div>
@@ -79,7 +141,7 @@
             <div class="bar right-0" id="progress-bar"></div>
           </div>
         </div>
-        <button class="ghost" id="cancel-btn" data-i18n="cancel">Cancel</button>
+
       </div>
     </div>
 
@@ -132,74 +194,15 @@
 
     <div id="error-box" class="alert hidden" role="alert" aria-live="assertive"></div>
 
-    <!-- Configuration + Bookmakers -->
-    <div class="grid cols-2 scrape-workspace mb-5">
-      <div class="card config-card" aria-label="Scrape configuration">
-        <h3><span data-i18n="configuration">Configuration</span></h3>
-        <div class="field">
-          <label for="profile" data-i18n="profile">Profile</label>
-          <select id="profile"></select>
-        </div>
-        <div class="field">
-          <label for="sport-filter" data-i18n="sport">Sport</label>
-          <select id="sport-filter">
-            <option value="" data-i18n="allSports">All sports</option>
-          </select>
-        </div>
-        <div class="field">
-          <label for="max-events" data-i18n="eventCollection">Event collection</label>
-          <select id="max-events" data-i18n-title="eventCollectionHint" title="All = every qualifying event available from each provider's public feed/window">
-            <option value="all" selected data-i18n="allEvents">All available events</option>
-            <option value="40">40 events</option>
-            <option value="100">100 events</option>
-            <option value="500">500 events</option>
-            <option value="1000">1,000 events</option>
-          </select>
-          <div class="muted text-xs" data-i18n="eventCollectionHint">All = every qualifying event available from each provider's public feed/window.</div>
-        </div>
-        <div class="grid cols-2">
-          <div class="field"><label for="bankroll" data-i18n="bankroll">Bankroll</label><input type="number" id="bankroll" value="1000" min="10" step="10"></div>
-          <div class="field"><label for="min-roi" data-i18n="minRoi">Min ROI %</label><input type="number" id="min-roi" value="0" step="0.1"></div>
-          <div class="field"><label for="mid-risk" data-i18n="maxMiddleRisk">Max middle risk %</label><input type="number" id="mid-risk" value="15" step="0.5"></div>
-          <div class="field"><label for="mid-roi" data-i18n="minMiddleRoi">Min middle ROI %</label><input type="number" id="mid-roi" value="20" step="0.5"></div>
-        </div>
-        <div class="row mt-1">
-          <label class="checkbox"><input type="checkbox" id="inc-live"> <span data-i18n="includeLive">include live</span></label>
-          <label class="checkbox"><input type="checkbox" id="inc-past"> <span data-i18n="includePast">include past</span></label>
-        </div>
-        <div class="row mt-3">
-          <button class="primary" id="run-btn" data-i18n="runScrape">Run scrape</button>
-          <button class="ghost" id="save-btn" data-i18n="profileHelp">Profile help</button>
-        </div>
-      </div>
-
-      <div class="card bookmakers-card">
-        <h3>
-          <span data-i18n="bookmakers">Bookmakers</span>
-          <span class="h3-meta"><span id="bm-selected">0</span> / <span id="bm-total">0</span> <span data-i18n="sourcesSelected">sources selected</span></span>
-        </h3>
-        <div class="row bookmaker-actions gap-2 mb-2">
-          <button type="button" class="ghost text-xs btn-sm" id="btn-select-all" data-i18n="selectAll">Toate</button>
-          <button type="button" class="ghost text-xs btn-sm" id="btn-select-validated" data-i18n="selectValidated">Doar validate</button>
-          <button type="button" class="ghost text-xs btn-sm" id="btn-select-none" data-i18n="selectNone">Niciuna</button>
-        </div>
-        <div class="bm-search mb-2">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          <input type="search" id="bm-filter" placeholder="Filter sources…" data-i18n-placeholder="filterSources" aria-label="Filter bookmakers">
-        </div>
-        <div id="bookmaker-list" class="row gap-2 flex-wrap mb-3"></div>
-        <div id="job-rows" role="list" aria-label="Scrape job results"></div>
-      </div>
-    </div>
-
+    <section class="card mb-5"><h3 data-i18n="jobResult">Job result</h3><div id="job-rows" role="list" tabindex="-1" aria-label="Scrape job results"></div></section>
     <!-- Live log -->
-    <div class="card log-card mb-5">
+    <details class="card log-card mb-5"><summary data-i18n="liveLog">Live log</summary>
       <h3>
         <span><span class="dot live pulse mr-2 valign-mid"></span><span data-i18n="liveLog">Live log</span></span>
         <span class="h3-meta" data-i18n="streamingFrom">Streaming from orchestrator</span>
       </h3>
       <div class="log" id="log-panel" role="log" aria-live="polite" aria-label="Live scrape log"></div>
-    </div>
+    </details>
 
     <!-- Last run + scheduler -->
     <div class="grid cols-2 history-grid">

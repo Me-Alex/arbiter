@@ -1,0 +1,303 @@
+{
+  "book": "don",
+  "timestamp": "2026-09-01T18:47:43.573Z",
+  "pagesVisited": 18,
+  "minPagesRequired": 50,
+  "pagesTargetReached": false,
+  "endpoints": [
+    {
+      "method": "GET",
+      "url": "https://don.ro/ro/api/v3/project/info?fields=payment",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://don.ro/ro/",
+      "capturedAt": "2026-09-01T18:45:09.590Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://don.ro/ro/api/v3/system/info",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://don.ro/ro/",
+      "capturedAt": "2026-09-01T18:45:10.129Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://don.ro/ro/api/v3/project/info?fields=languages",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://don.ro/ro/",
+      "capturedAt": "2026-09-01T18:45:10.130Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://don.ro/ro/api/v3/project/info?fields=brandOnboarding,gamificationWithdrawal,shorts,spinRally,jackpot,chat,multiLevelVipProgram,rebates,gamificationWidgetLoader,feedSettings,quests",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://don.ro/ro/",
+      "capturedAt": "2026-09-01T18:45:10.443Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://don.ro/ro/api/v3/project/info?fields=displayIgocseBanners",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://don.ro/ro/",
+      "capturedAt": "2026-09-01T18:45:10.451Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://don.ro/ro/api/v3/project/info?fields=client,sportsbook,registration,login,defaultCurrency,payment",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://don.ro/ro/",
+      "capturedAt": "2026-09-01T18:45:10.452Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://don.ro/ro/api/v3/project/info?fields=recommendedPopup,liveThumbnails,actionTriggers,pickGameOnBonusActivation,checkWageringRestriction,transaction,xDefaultLanguage",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://don.ro/ro/",
+      "capturedAt": "2026-09-01T18:45:10.557Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://don.ro/ro/api/v3/casino/collection",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://don.ro/ro/",
+      "capturedAt": "2026-09-01T18:45:10.998Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://don.ro/ro/api/v3/project/info?fields=cdnSettings",
+      "status": 200,
+      "contentType": "application/json;charset=utf-8",
+      "pageUrl": "https://don.ro/ro/",
+      "capturedAt": "2026-09-01T18:45:11.010Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://don.ro/ro/api/v3/seo/item?page=home",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://don.ro/ro/",
+      "capturedAt": "2026-09-01T18:45:11.011Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://don.ro/ro/api/v3/project/info?fields=captcha",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://don.ro/ro/",
+      "capturedAt": "2026-09-01T18:45:11.065Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://don.ro/browser-logs",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://don.ro/ro/",
+      "capturedAt": "2026-09-01T18:45:11.529Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://don.ro/ro/api/v3/lang/translation",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://don.ro/ro/",
+      "capturedAt": "2026-09-01T18:45:11.530Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://65407ac9ef89d286d05969523c0078c9.seondnsresolve.com/",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://don.ro/ro/",
+      "capturedAt": "2026-09-01T18:45:15.766Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://eb6a7d55b667d9b6e52e2ebe363274d7b395eb78.seondnsresolve.com/",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://don.ro/ro/",
+      "capturedAt": "2026-09-01T18:45:15.770Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://291ed3259271a1029cd69339285407f0.seondnsresolve.com/",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://don.ro/ro/",
+      "capturedAt": "2026-09-01T18:45:26.008Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://88bd5a26738b5efaf5089946ce71c811.seondnsresolve.com/",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://don.ro/ro/promotions",
+      "capturedAt": "2026-09-01T18:45:35.171Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://91e97a66d6e0dcc29175acfa8a5ee78f.seondnsresolve.com/",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://don.ro/ro/game/mega-round",
+      "capturedAt": "2026-09-01T18:45:47.133Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://bc50694c4bbab14d2d0e18fc108238b5.seondnsresolve.com/",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://don.ro/ro/games",
+      "capturedAt": "2026-09-01T18:45:56.976Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://57e10520ff55a6ce622de240b3739418.seondnsresolve.com/",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://don.ro/ro/live-casino",
+      "capturedAt": "2026-09-01T18:46:07.999Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://57b9b9146b9ccbc19ff9ff0a532cac95.seondnsresolve.com/",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://don.ro/ro/sport",
+      "capturedAt": "2026-09-01T18:46:13.089Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://48d78023594816e23197b8b4ab79674a.seondnsresolve.com/",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://don.ro/ro/live-betting",
+      "capturedAt": "2026-09-01T18:46:21.194Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://773057766a3f6a818e4c4660561b0207.seondnsresolve.com/",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://don.ro/ro/virtual-sports",
+      "capturedAt": "2026-09-01T18:46:32.713Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://08630b83d44a6f344f6b0597fbb97a04.seondnsresolve.com/",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://don.ro/ro/tournaments",
+      "capturedAt": "2026-09-01T18:46:37.277Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://48cc9056788fea93484b337186d9ac09.seondnsresolve.com/",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://don.ro/ro/special/mega-shoot-v1",
+      "capturedAt": "2026-09-01T18:46:45.658Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://2c0edce403c0da823868628ac201c2af.seondnsresolve.com/",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://don.ro/ro/shop",
+      "capturedAt": "2026-09-01T18:46:51.712Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://c1c3b3085d78e8bd4e786fde4170889f.seondnsresolve.com/",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://don.ro/ro/vip",
+      "capturedAt": "2026-09-01T18:46:57.307Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://c54dc63e5818ae1200ef90876c7299b8.seondnsresolve.com/",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://don.ro/ro/mobile-app",
+      "capturedAt": "2026-09-01T18:47:05.901Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://6f3587af3886b86c890e7e00d0e52e6b.seondnsresolve.com/",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://don.ro/ro/help-centre",
+      "capturedAt": "2026-09-01T18:47:12.238Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://38f20a157cafd522551848ca6f0e9e01.seondnsresolve.com/",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://don.ro/ro/payments",
+      "capturedAt": "2026-09-01T18:47:16.881Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://2e1d4af3cfdbc4b2f2b08731f3b31322.seondnsresolve.com/",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://don.ro/ro/cookies-policy",
+      "capturedAt": "2026-09-01T18:47:28.112Z"
+    }
+  ],
+  "keyEndpoints": [
+    {
+      "method": "GET",
+      "url": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetUpcoming?integration=don&sportId=66",
+      "verified": true
+    },
+    {
+      "method": "GET",
+      "url": "https://don.ro/ro/api/v3/project/info?fields=payment"
+    },
+    {
+      "method": "GET",
+      "url": "https://don.ro/ro/api/v3/system/info"
+    },
+    {
+      "method": "GET",
+      "url": "https://don.ro/ro/api/v3/project/info?fields=languages"
+    },
+    {
+      "method": "GET",
+      "url": "https://don.ro/ro/api/v3/project/info?fields=displayIgocseBanners"
+    },
+    {
+      "method": "GET",
+      "url": "https://don.ro/ro/api/v3/project/info?fields=client,sportsbook,registration,login,defaultCurrency,payment"
+    },
+    {
+      "method": "GET",
+      "url": "https://don.ro/ro/api/v3/project/info?fields=recommendedPopup,liveThumbnails,actionTriggers,pickGameOnBonusActivation,checkWageringRestriction,transaction,xDefaultLanguage"
+    },
+    {
+      "method": "GET",
+      "url": "https://don.ro/ro/api/v3/casino/collection"
+    },
+    {
+      "method": "GET",
+      "url": "https://don.ro/ro/api/v3/project/info?fields=cdnSettings"
+    },
+    {
+      "method": "GET",
+      "url": "https://don.ro/ro/api/v3/project/info?fields=captcha"
+    }
+  ],
+  "platform": "altenar-sb2",
+  "feedStatus": "verified",
+  "verifiedAt": "2026-09-01"
+}

@@ -15,6 +15,17 @@ import { sanitizeReport, sanitizeResult } from './shared/sanitize.mjs';
 
 const DEFAULT_PARALLEL = 12;
 
+/**
+ * Normalize a parallel value from env or config to a safe integer.
+ * @param {string|number} value
+ * @returns {number}
+ */
+export function normalizeScrapeParallel(value) {
+  const n = Number(value);
+  if (!Number.isFinite(n) || n < 1) return DEFAULT_PARALLEL;
+  return Math.min(Math.max(1, Math.round(n)), 24);
+}
+
 export async function loadScraperJobs(configPath) {
   const cfg = await readJson(configPath, { jobs: [] });
   return Array.isArray(cfg.jobs) ? cfg.jobs : [];
@@ -36,9 +47,14 @@ export async function runScraperBatch({
   books,
   parallel = DEFAULT_PARALLEL,
   dataDir = join(process.cwd(), 'data'),
-  configPath: _configPath,
+  configPath = join(process.cwd(), 'config', 'scrapers.json'),
   runId = new Date().toISOString(),
   signal,
+  maxEvents,
+  sport,
+  includePast = false,
+  includeLive = false,
+  timeoutMs,
   onEvent = () => {},
   logger = () => {},
 } = {}) {
@@ -47,6 +63,15 @@ export async function runScraperBatch({
     err.code = 'EBADINPUT';
     throw err;
   }
+  // Strict read: a missing/malformed config must not select a legacy scraper.
+  const config = JSON.parse(await fs.readFile(configPath, 'utf8'));
+  if (!Array.isArray(config?.jobs) || config.jobs.some((job) => !job || typeof job.id !== 'string')
+      || new Set(config.jobs.map((job) => job.id)).size !== config.jobs.length) {
+    const err = new Error('scraper configuration must contain jobs with unique string ids');
+    err.code = 'ESCRAPERCONFIG';
+    throw err;
+  }
+  const configuredJobs = new Map(config.jobs.map((job) => [job.id, job]));
   const lockPath = join(dataDir, 'scrape.lock');
   const lock = new ScrapeLock(lockPath);
   let release;
@@ -72,7 +97,7 @@ export async function runScraperBatch({
   emit({ type: 'batch-start', runId, total: jobs.length, parallel, books });
 
   const queue = books.slice();
-  const results = [];
+  const results = new Map();
   let next = 0;
   const worker = async () => {
     while (true) {
@@ -84,7 +109,7 @@ export async function runScraperBatch({
       emit({ type: 'job-start', runId, jobId, job });
       let result;
       try {
-        const scraper = instantiate(jobId, { dataDir, logger, runId });
+        const scraper = instantiate(jobId, { dataDir, logger, runId, maxEvents, sport, includePast, includeLive, timeoutMs, jobConfig: configuredJobs.get(jobId) });
         if (!scraper) {
           result = envelopeForUnknown(jobId);
         } else {
@@ -100,7 +125,7 @@ export async function runScraperBatch({
       job.error = result.error;
       job.startedAt = result.startedAt;
       job.finishedAt = result.finishedAt;
-      results.push(result);
+      results.set(jobId, result);
       emit({ type: 'job-complete', runId, jobId, result });
     }
   };
@@ -110,8 +135,8 @@ export async function runScraperBatch({
 
   try {
     const finishedAt = new Date().toISOString();
-    const failed = results.filter((result) => !result.valid).length;
-    const completed = results.length - failed;
+    const failed = [...results.values()].filter((result) => !result.valid).length;
+    const completed = results.size - failed;
     const report = {
       runId,
       startedAt,
@@ -119,7 +144,7 @@ export async function runScraperBatch({
       status: signal?.aborted ? 'cancelled' : failed === 0 ? 'ok' : completed === 0 ? 'failed' : 'partial',
       parallel: parallelCount,
       books,
-      jobs: jobs.map((job, index) => ({ ...job, ...results[index] })),
+      jobs: jobs.map((job) => ({ ...job, ...results.get(job.id) })),
     };
 
     emit({ type: 'batch-end', runId, report });
@@ -129,7 +154,7 @@ export async function runScraperBatch({
   }
 }
 
-function toProgressJob(id) {
+export function toProgressJob(id) {
   return {
     id,
     name: id,

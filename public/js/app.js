@@ -18,6 +18,31 @@
     chevron:   '<svg class="nav-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>',
   };
 
+  // Layout copy lives here so shared RO/EN dictionaries remain untouched.
+  const WORKSPACE_COPY = {
+    ro: {
+      eyebrow: 'Spațiu de analiză', heading: 'O perspectivă clară.',
+      description: 'Verifică sursele, compară oportunitățile și pregătește următorul pas.',
+      sourcesAction: 'Gestionează sursele', scannerAction: 'Deschide scannerul',
+      guideTitle: 'Înainte de analiză',
+      guideBody: 'Verifică momentul ultimei colectări și starea surselor înainte de a compara cotele.',
+      guideLink: 'Verifică sursele →', skip: 'Sari la conținut', navigation: 'Navigare în spațiul de lucru',
+      toggle: 'Comută navigarea', language: 'Selectează limba', theme: 'Temă luminoasă', summary: 'Rezumatul analizei'
+    },
+    en: {
+      eyebrow: 'Analyst workspace', heading: 'A clearer perspective.',
+      description: 'Check your sources, compare opportunities, and prepare your next move.',
+      sourcesAction: 'Manage sources', scannerAction: 'Open scanner',
+      guideTitle: 'Before you compare',
+      guideBody: 'Review the latest collection time and source health before comparing odds.',
+      guideLink: 'Review sources →', skip: 'Skip to content', navigation: 'Workspace navigation',
+      toggle: 'Toggle navigation', language: 'Select language', theme: 'Light theme', summary: 'Analysis summary'
+    }
+  };
+  function workspaceCopy() {
+    return WORKSPACE_COPY[window.arbiterI18n.lang] || WORKSPACE_COPY.ro;
+  }
+
   function buildSidebar(active) {
     const t = window.arbiterI18n.t.bind(window.arbiterI18n);
     const curLang = window.arbiterI18n.lang || 'ro';
@@ -70,21 +95,10 @@
           <nav aria-labelledby="nav-workspace" role="navigation">${nav}</nav>
         </div>
 
-        <div class="sidebar-status-card">
-          <div class="status-card-head">
-            <div class="status-pulse-group">
-              <span class="status-pulse-dot"></span>
-              <span class="status-title" data-i18n="systemHealth">${t('systemHealth')}</span>
-            </div>
-            <span class="status-chip-live">LIVE</span>
-          </div>
-          <div class="status-card-body">
-            <div class="status-metric">
-              <span class="status-metric-label" data-i18n="engineActive">${t('engineActive')}</span>
-              <span class="status-metric-val">15s</span>
-            </div>
-            <div class="status-bar" aria-hidden="true"><div class="status-bar-fill"></div></div>
-          </div>
+        <div class="sidebar-status-card workspace-guide">
+          <h2 data-workspace-copy="guideTitle">${workspaceCopy().guideTitle}</h2>
+          <p data-workspace-copy="guideBody">${workspaceCopy().guideBody}</p>
+          <a href="/admin/scrape.html" data-workspace-copy="guideLink">${workspaceCopy().guideLink}</a>
         </div>
 
         <div class="sidebar-footer" role="contentinfo">
@@ -124,6 +138,25 @@
     document.body.insertBefore(app, document.body.firstChild);
     app.appendChild(main);
     document.body.classList.add('has-sidebar');
+    const copy = workspaceCopy();
+    document.documentElement.lang = window.arbiterI18n.lang || 'ro';
+    main.tabIndex = -1;
+    document.querySelectorAll('[data-workspace-copy]').forEach((node) => {
+      const text = copy[node.dataset.workspaceCopy];
+      if (text) node.textContent = text;
+    });
+    app.querySelector('.visually-hidden-focusable').textContent = copy.skip;
+    app.querySelector('.sidebar').setAttribute('aria-label', copy.navigation);
+    app.querySelector('.sidebar').id = 'workspace-sidebar';
+    app.querySelector('.sidebar-toggle').setAttribute('aria-label', copy.toggle);
+    app.querySelector('.sidebar-toggle').setAttribute('aria-controls', 'workspace-sidebar');
+    app.querySelector('.lang-switch').setAttribute('aria-label', copy.language);
+    app.querySelector('[data-theme-toggle]').setAttribute('aria-label', copy.theme);
+    const summary = main.querySelector('.dash-quickbar');
+    if (summary) summary.setAttribute('aria-label', copy.summary);
+    app.querySelectorAll('[data-lang-set]').forEach((button) => {
+      button.setAttribute('aria-pressed', String(button.dataset.langSet === document.documentElement.lang));
+    });
 
     // Wire up segmented language switchers
     document.querySelectorAll('[data-lang-set]').forEach((btn) => {
@@ -163,12 +196,16 @@
         overlay.classList.remove('open');
         toggle.setAttribute('aria-expanded', 'false');
         document.body.style.overflow = '';
+        main.inert = false;
+        toggle.focus();
       }
       function openSidebar() {
         sidebar.classList.add('open');
         overlay.classList.add('open');
         toggle.setAttribute('aria-expanded', 'true');
         document.body.style.overflow = 'hidden';
+        main.inert = true;
+        sidebar.querySelector('a[aria-current="page"], a').focus();
       }
 
       toggle.addEventListener('click', () => {
@@ -177,7 +214,25 @@
       });
       overlay.addEventListener('click', closeSidebar);
       document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && sidebar.classList.contains('open')) closeSidebar();
+        if (!sidebar.classList.contains('open')) return;
+        if (e.key === 'Escape') closeSidebar();
+        if (e.key === 'Tab') {
+          const controls = [toggle, ...sidebar.querySelectorAll('a[href], button:not(:disabled)')];
+          const first = controls[0];
+          const last = controls[controls.length - 1];
+          if (e.shiftKey && document.activeElement === first) {
+            e.preventDefault(); last.focus();
+          } else if (!e.shiftKey && document.activeElement === last) {
+            e.preventDefault(); first.focus();
+          }
+        }
+      });
+      const mobile = window.matchMedia('(max-width: 980px)');
+      mobile.addEventListener('change', () => {
+        if (!mobile.matches && sidebar.classList.contains('open')) {
+          closeSidebar();
+          sidebar.querySelector('a[aria-current="page"], a').focus();
+        }
       });
     }
   }

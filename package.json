@@ -10,7 +10,6 @@
   "main": "electron/main.mjs",
   "scripts": {
     "start": "node src/server.mjs",
-    "start:modular": "node src/server-modular.mjs",
     "desktop": "electron .",
     "desktop:dev": "cross-env ARBITER_DEV=1 electron .",
     "tinyfish:diagnose": "node scripts/diagnose-tinyfish-books.mjs",
@@ -24,7 +23,10 @@
     "lint": "eslint src electron public/js scripts test"
   },
   "dependencies": {
-    "playwright": "^1.47.0"
+    "playwright": "^1.47.0",
+    "playwright-extra": "^4.3.6",
+    "puppeteer-extra": "^3.3.6",
+    "puppeteer-extra-plugin-stealth": "^2.11.2"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.5",

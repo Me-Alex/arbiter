@@ -1,0 +1,8 @@
+{
+  "book": "winbet-ice-hockey",
+  "platform": "altenar-sb2",
+  "feedStatus": "experimental",
+  "keyEndpoints": [
+    "https://sb2frontend-altenar2.biahosted.com/api/widget/GetUpcoming?integration=winbet"
+  ]
+}

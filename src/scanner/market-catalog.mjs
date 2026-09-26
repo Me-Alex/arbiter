@@ -64,11 +64,10 @@ export async function buildMarketCatalog(dataDir, scan) {
         entry.selectionCount += (m.selections || []).length;
         if (eventKey) {
           const ev = eventMap.get(eventKey);
-          if (ev) ev.marketKeys.add(m.key);
-        }
-        if (eventKey) {
-          const ev = eventMap.get(eventKey);
-          if (ev) ev.selectionCount += (m.selections || []).length;
+          if (ev) {
+            ev.marketKeys.add(m.key);
+            ev.selectionCount += (m.selections || []).length;
+          }
         }
       }
     }

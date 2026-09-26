@@ -1,0 +1,740 @@
+{
+  "topSports": [
+    {
+      "id": 66,
+      "name": "Soccer",
+      "iconName": "soccer",
+      "hasStream": false,
+      "count": 503
+    },
+    {
+      "id": 67,
+      "name": "Basketball",
+      "iconName": "basketball",
+      "hasStream": false,
+      "count": 92
+    },
+    {
+      "id": 68,
+      "name": "Tennis",
+      "iconName": "tennis",
+      "hasStream": false,
+      "count": 384
+    },
+    {
+      "id": 70,
+      "name": "Ice Hockey",
+      "iconName": "ice-hockey",
+      "hasStream": false,
+      "count": 122
+    },
+    {
+      "id": 77,
+      "name": "Table Tennis",
+      "iconName": "table-tennis",
+      "hasStream": false,
+      "count": 320
+    },
+    {
+      "id": 69,
+      "name": "Volleyball",
+      "iconName": "volleyball",
+      "hasStream": false,
+      "count": 18
+    },
+    {
+      "id": 75,
+      "name": "American Football",
+      "iconName": "american-football",
+      "hasStream": false,
+      "count": 78
+    },
+    {
+      "id": 76,
+      "name": "Baseball",
+      "iconName": "baseball",
+      "hasStream": false,
+      "count": 36
+    },
+    {
+      "id": -1,
+      "name": "Other",
+      "iconName": "Other",
+      "hasStream": false,
+      "count": 491
+    }
+  ],
+  "headers": [
+    {
+      "typeId": 1,
+      "name": "1x2",
+      "mst": 0,
+      "odds": [
+        {
+          "id": 1,
+          "name": "1"
+        },
+        {
+          "id": 2,
+          "name": "X"
+        },
+        {
+          "id": 3,
+          "name": "2"
+        }
+      ]
+    },
+    {
+      "typeId": 18,
+      "name": "Total",
+      "mst": 0,
+      "odds": [
+        {
+          "id": 12,
+          "name": "peste"
+        },
+        {
+          "id": 13,
+          "name": "sub"
+        }
+      ],
+      "specialOdd": {
+        "typeId": 1,
+        "name": "Goluri"
+      }
+    },
+    {
+      "typeId": 29,
+      "name": "Ambele echipe să înscrie",
+      "mst": 0,
+      "odds": [
+        {
+          "id": 74,
+          "name": "da"
+        },
+        {
+          "id": 76,
+          "name": "nu"
+        }
+      ]
+    },
+    {
+      "typeId": 10,
+      "name": "Șansă dublă",
+      "mst": 0,
+      "odds": [
+        {
+          "id": 9,
+          "name": "1X\t"
+        },
+        {
+          "id": 10,
+          "name": "12"
+        },
+        {
+          "id": 11,
+          "name": "X2"
+        }
+      ]
+    },
+    {
+      "typeId": 11,
+      "name": "Egal pariu nul",
+      "mst": 0,
+      "odds": [
+        {
+          "id": 1,
+          "name": "1"
+        },
+        {
+          "id": 3,
+          "name": "2"
+        }
+      ]
+    }
+  ],
+  "pageCount": 5,
+  "page": 1,
+  "markets": [
+    {
+      "oddIds": [
+        4535975026,
+        4535975027,
+        4535975028
+      ],
+      "typeId": 1,
+      "sportMarketId": 70472,
+      "id": 1743400914,
+      "name": "1x2"
+    },
+    {
+      "oddIds": [
+        4535975069,
+        4535975071,
+        4535975070
+      ],
+      "variant": 9,
+      "lines": [],
+      "typeId": 8,
+      "sportMarketId": 70491,
+      "sv": "1",
+      "sn": "Primul",
+      "id": 1743400928,
+      "name": "Golul primul"
+    },
+    {
+      "oddIds": [
+        4535974957,
+        4535974955,
+        4535974956
+      ],
+      "typeId": 10,
+      "sportMarketId": 70495,
+      "id": 1743400896,
+      "name": "Șansă dublă"
+    },
+    {
+      "oddIds": [
+        4535974970,
+        4535974971
+      ],
+      "typeId": 11,
+      "sportMarketId": 70500,
+      "id": 1743400900,
+      "name": "Egal pariu nul"
+    },
+    {
+      "oddIds": [
+        4535974861,
+        4535974862
+      ],
+      "typeId": 18,
+      "sportMarketId": 70520,
+      "sv": "2.5",
+      "sn": "2.5",
+      "id": 1743400863,
+      "name": "Total"
+    },
+    {
+      "oddIds": [
+        4535974921,
+        4535974922
+      ],
+      "typeId": 29,
+      "sportMarketId": 70545,
+      "id": 1743400893,
+      "name": "Ambele echipe să înscrie"
+    },
+    {
+      "oddIds": [
+        4533191578,
+        4533191579,
+        4533191580
+      ],
+      "typeId": 1,
+      "sportMarketId": 70472,
+      "id": 1742343743,
+      "name": "1x2"
+    },
+    {
+      "oddIds": [
+        4533191634,
+        4533191636,
+        4533191635
+      ],
+      "variant": 9,
+      "lines": [],
+      "typeId": 8,
+      "sportMarketId": 70491,
+      "sv": "1",
+      "sn": "Primul",
+      "id": 1742343763,
+      "name": "Golul primul"
+    },
+    {
+      "oddIds": [
+        4533191422,
+        4533191420,
+        4533191421
+      ],
+      "typeId": 10,
+      "sportMarketId": 70495,
+      "id": 1742343706,
+      "name": "Șansă dublă"
+    },
+    {
+      "oddIds": [
+        4533191463,
+        4533191464
+      ],
+      "typeId": 11,
+      "sportMarketId": 70500,
+      "id": 1742343715,
+      "name": "Egal pariu nul"
+    },
+    {
+      "oddIds": [
+        4533191330,
+        4533191331
+      ],
+      "typeId": 18,
+      "sportMarketId": 70520,
+      "sv": "2.5",
+      "sn": "2.5",
+      "id": 1742343672,
+      "name": "Total"
+    }
+  ],
+  "odds": [
+    {
+      "typeId": 1,
+      "price": 2.1667,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 154026,
+      "isDBB": true,
+      "id": 4535975026,
+      "name": "1"
+    },
+    {
+      "typeId": 2,
+      "price": 3.6667,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4535975027,
+      "name": "Egal"
+    },
+    {
+      "typeId": 3,
+      "price": 2.6667,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 146152,
+      "isDBB": true,
+      "id": 4535975028,
+      "name": "2"
+    },
+    {
+      "typeId": 1,
+      "price": 1.7778,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 154026,
+      "isDBB": true,
+      "id": 4535975069,
+      "name": "1"
+    },
+    {
+      "typeId": 7,
+      "price": 13,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4535975071,
+      "name": "Niciunul"
+    },
+    {
+      "typeId": 3,
+      "price": 2,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 146152,
+      "isDBB": true,
+      "id": 4535975070,
+      "name": "2"
+    },
+    {
+      "typeId": 9,
+      "price": 1.3637,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 154026,
+      "isDBB": true,
+      "id": 4535974957,
+      "name": "1 sau egal"
+    },
+    {
+      "typeId": 10,
+      "price": 1.2308,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4535974955,
+      "name": "1 sau 2"
+    },
+    {
+      "typeId": 11,
+      "price": 1.5295,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 146152,
+      "isDBB": true,
+      "id": 4535974956,
+      "name": "Egal sau 2"
+    },
+    {
+      "typeId": 1,
+      "price": 1.6667,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 154026,
+      "id": 4535974970,
+      "name": "1"
+    },
+    {
+      "typeId": 3,
+      "price": 2.1,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 146152,
+      "id": 4535974971,
+      "name": "2"
+    },
+    {
+      "typeId": 12,
+      "price": 1.8,
+      "isMB": true,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4535974861,
+      "name": "Peste 2.5"
+    },
+    {
+      "typeId": 13,
+      "price": 1.9,
+      "isMB": true,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4535974862,
+      "name": "Sub 2.5"
+    },
+    {
+      "typeId": 74,
+      "price": 1.7,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4535974921,
+      "name": "Da"
+    },
+    {
+      "typeId": 76,
+      "price": 2.05,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4535974922,
+      "name": "Nu"
+    },
+    {
+      "typeId": 1,
+      "price": 1.6471,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 59802,
+      "isDBB": true,
+      "id": 4533191578,
+      "name": "1"
+    },
+    {
+      "typeId": 2,
+      "price": 3.6667,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4533191579,
+      "name": "Egal"
+    },
+    {
+      "typeId": 3,
+      "price": 4.75,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 59807,
+      "isDBB": true,
+      "id": 4533191580,
+      "name": "2"
+    },
+    {
+      "typeId": 1,
+      "price": 1.48,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 59802,
+      "isDBB": true,
+      "id": 4533191634,
+      "name": "1"
+    },
+    {
+      "typeId": 7,
+      "price": 10,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4533191636,
+      "name": "Niciunul"
+    },
+    {
+      "typeId": 3,
+      "price": 2.6667,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 59807,
+      "isDBB": true,
+      "id": 4533191635,
+      "name": "2"
+    },
+    {
+      "typeId": 9,
+      "price": 1.1667,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 59802,
+      "isDBB": true,
+      "id": 4533191422,
+      "name": "1 sau egal"
+    },
+    {
+      "typeId": 10,
+      "price": 1.2223,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4533191420,
+      "name": "1 sau 2"
+    },
+    {
+      "typeId": 11,
+      "price": 1.9091,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 59807,
+      "isDBB": true,
+      "id": 4533191421,
+      "name": "Egal sau 2"
+    },
+    {
+      "typeId": 1,
+      "price": 1.2728,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 59802,
+      "id": 4533191463,
+      "name": "1"
+    },
+    {
+      "typeId": 3,
+      "price": 3.4,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 59807,
+      "id": 4533191464,
+      "name": "2"
+    },
+    {
+      "typeId": 12,
+      "price": 1.85,
+      "isMB": true,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4533191330,
+      "name": "Peste 2.5"
+    },
+    {
+      "typeId": 13,
+      "price": 1.8,
+      "isMB": true,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4533191331,
+      "name": "Sub 2.5"
+    }
+  ],
+  "events": [
+    {
+      "marketIds": [
+        1743400914,
+        1743400928,
+        1743400896,
+        1743400900,
+        1743400863,
+        1743400893
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "code": 672,
+      "hasStream": false,
+      "extId": "fp32_ar:match:660989",
+      "sc": 1374,
+      "mc": 131,
+      "rc": false,
+      "pId": 32,
+      "et": 0,
+      "hasStats": true,
+      "competitorIds": [
+        154026,
+        146152
+      ],
+      "sportId": 66,
+      "catId": 729,
+      "champId": 9914,
+      "status": 0,
+      "startDate": "2026-09-21T19:30:00Z",
+      "id": 17702230,
+      "name": "Club Dr Benjamin Aceval vs. Tembetary"
+    },
+    {
+      "marketIds": [
+        1742343743,
+        1742343763,
+        1742343706,
+        1742343715,
+        1742343672
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "code": 982,
+      "hasStream": false,
+      "extId": "fp32_ar:match:661361",
+      "sc": 1709,
+      "mc": 199,
+      "rc": false,
+      "pId": 32,
+      "et": 0,
+      "hasStats": false,
+      "competitorIds": [
+        59802,
+        59807
+      ],
+      "sportId": 66,
+      "catId": 797,
+      "champId": 4009,
+      "status": 0,
+      "startDate": "2026-09-21T20:30:00Z",
+      "id": 17723611,
+      "name": "Bogotá FC vs. Barranquilla"
+    }
+  ],
+  "sports": [
+    {
+      "catIds": [
+        729,
+        797,
+        759,
+        808,
+        560,
+        574,
+        518,
+        681,
+        826,
+        593,
+        727,
+        1131,
+        567,
+        1155,
+        767,
+        812,
+        738,
+        1132,
+        582,
+        840,
+        497,
+        697,
+        516,
+        883,
+        517,
+        495,
+        606,
+        810,
+        588,
+        882,
+        716,
+        1133,
+        544,
+        601,
+        585
+      ],
+      "typeId": 1,
+      "iconName": "soccer",
+      "hasLiveEvents": false,
+      "id": 66,
+      "name": "Soccer"
+    }
+  ],
+  "categories": [
+    {
+      "champIds": [
+        9914
+      ],
+      "iso": "PRY",
+      "hasLiveEvents": false,
+      "id": 729,
+      "name": "Paraguay"
+    },
+    {
+      "champIds": [
+        4009,
+        8642
+      ],
+      "iso": "COL",
+      "hasLiveEvents": false,
+      "id": 797,
+      "name": "Colombia"
+    }
+  ],
+  "champs": [
+    {
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "hasLiveEvents": false,
+      "id": 9914,
+      "name": "Paraguay Segunda Division"
+    },
+    {
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "hasLiveEvents": false,
+      "id": 4009,
+      "name": "Primera B"
+    }
+  ],
+  "competitors": [
+    {
+      "abbreviation": "CLU",
+      "id": 154026,
+      "name": "Club Dr Benjamin Aceval"
+    },
+    {
+      "abbreviation": "TEM",
+      "id": 146152,
+      "name": "Tembetary"
+    },
+    {
+      "abbreviation": "BOG",
+      "id": 59802,
+      "name": "Bogotá FC"
+    },
+    {
+      "abbreviation": "BAR",
+      "id": 59807,
+      "name": "Barranquilla"
+    }
+  ]
+}

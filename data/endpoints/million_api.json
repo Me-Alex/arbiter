@@ -1,0 +1,27 @@
+{
+  "book": "million",
+  "timestamp": "2026-09-01T18:45:58.996Z",
+  "pagesVisited": 1,
+  "minPagesRequired": 50,
+  "pagesTargetReached": false,
+  "endpoints": [
+    {
+      "method": "GET",
+      "url": "https://million.ro/_i18n/e71f4e52/ro/messages.json",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://million.ro/sport",
+      "capturedAt": "2026-09-01T18:45:18.493Z"
+    }
+  ],
+  "keyEndpoints": [
+    {
+      "method": "GET",
+      "url": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetUpcoming?integration=million&sportId=66",
+      "verified": true
+    }
+  ],
+  "platform": "altenar-sb2",
+  "feedStatus": "verified",
+  "verifiedAt": "2026-09-01"
+}

@@ -1,8 +1,9 @@
 import { join } from 'node:path';
 import { promises as fs } from 'node:fs';
-import { groupByEvent, findArbitrage, findMiddles, findPositiveEV, findLowHold } from './engine.mjs';
+import { groupByEvent, findArbitrage, findMiddles, findPositiveEV, findLowHold, buildSelectionIndex } from './engine.mjs';
 import { roundedArbitrageAllocation } from './market-contracts.mjs';
 import { DATA_STATUS, isActionableKickoff, snapshotQuality, sourceHealthSummary } from '../shared/data-quality.mjs';
+import { feedGroupOf, sharedFeedPeers } from './feed-groups.mjs';
 import { round2 } from '../shared/math.mjs';
 import { tryReadJson, writeJsonAtomic } from '../shared/atomic-write.mjs';
 
@@ -43,6 +44,7 @@ export async function loadWorkspace(dataDir, qualityOptions = {}) {
 
   const events = [];
   const sources = [];
+  const altenarOffers = new Map();
   for (const { file, blob } of snapshots) {
     if (!blob || !Array.isArray(blob.events)) continue;
     const quality = snapshotQuality(blob, snapshotOptions);
@@ -61,6 +63,14 @@ export async function loadWorkspace(dataDir, qualityOptions = {}) {
       ageMs: quality.ageMs,
     };
     sources.push(source);
+    // Record the declared shared-feed group up front: an arbitrage needs legs
+    // from feeds that can disagree, and a brand resold from one provider cannot
+    // provide that. See feed-groups.mjs for the measured evidence.
+    const groupId = feedGroupOf(source.sourceId);
+    if (groupId) {
+      source.feedGroup = groupId;
+      source.sharedFeedWith = [...new Set([...(source.sharedFeedWith || []), ...sharedFeedPeers(source.sourceId)])];
+    }
     if (source.dataStatus !== DATA_STATUS.FRESH || !source.runId || !source.sourceUrl || !source.transport) {
       if (source.dataStatus === DATA_STATUS.FRESH) {
         source.dataStatus = DATA_STATUS.PARTIAL;
@@ -68,11 +78,115 @@ export async function loadWorkspace(dataDir, qualityOptions = {}) {
       }
       continue;
     }
-    for (const event of blob.events) {
+    // A book that prices a market below its own break-even is not publishing a
+    // real market: the inverse-odds sum of a three-way result market must
+    // exceed 1, since that sum is the book's margin. Measured across the
+    // capture, only contibet does this, at 9–22% depending on when it is read.
+    //
+    // The rate is reported for diagnosis, but it does not gate the events. A
+    // source-level threshold is the wrong unit: at 9% the corrupt market is
+    // let through and pairs with another book to fabricate a 6.6% opportunity,
+    // while at 22% it would throw away the 78% of the feed that is sound. So the
+    // individual markets are dropped instead, which keeps the good prices and
+    // removes the fabricated ones.
+    const margin = implausibleMarginRate(blob.events);
+    if (margin.rate > 0) {
+      source.implausibleMarginRate = margin.rate;
+      source.implausibleMarginCount = margin.count;
+      source.dataReason = `${margin.count} of ${margin.checked} 1X2 markets are priced below break-even (${(margin.rate * 100).toFixed(0)}%)`;
+    }
+    for (const rawEvent of blob.events) {
+      // Drop only the market that is priced below its own break-even, keeping
+      // the sound ones on the same event: one corrupt 1X2 inside an otherwise
+      // good feed is enough to fabricate an opportunity, but discarding the
+      // whole event throws away prices that are fine. The event is skipped only
+      // when nothing usable is left.
+      let event = rawEvent;
+      if (hasImplausibleMarket(event)) {
+        if (source.implausibleMarketCount === undefined) source.implausibleMarketCount = 0;
+        source.implausibleMarketCount += 1;
+        event = { ...rawEvent, markets: (rawEvent.markets || []).filter((m) => !isImplausible1x2(m)) };
+        if (event.markets.length === 0) continue;
+      }
+      if (blob.transport === 'altenar-sb2-widget-json' && event.providerEventId) {
+        // Identical provider event/outcome IDs and prices are shared-feed evidence,
+        // not independently verified bookmaker offers. Keep provenance on sources.
+        const fingerprint = JSON.stringify([event.providerEventId, event.kickoff,
+          event.markets.map((m) => [m.id, m.key, m.period,
+            m.selections.map((s) => [s.id, s.name, s.odds]).sort()]).sort()]);
+        const original = altenarOffers.get(fingerprint);
+        if (original && original !== source.sourceId) {
+          source.duplicateFeedEvents = (source.duplicateFeedEvents || 0) + 1;
+          source.sharedFeedWith = [...new Set([...(source.sharedFeedWith || []), original])];
+          continue;
+        }
+        altenarOffers.set(fingerprint, source.sourceId);
+      }
       events.push({ ...event, sourceId: event.sourceId || blob.sourceId, observedAt: source.observedAt, runId: source.runId });
     }
   }
   return { events, sources };
+}
+
+/**
+ * Share of a source's complete 1X2 markets that are priced below break-even.
+ *
+ * The inverse-odds sum of a three-way result market must exceed 1: that is the
+ * book's margin. A market under 1 pays out more than it takes in, which no real
+ * book does. Used to flag a corrupt feed rather than to trust it — a small
+ * share is noise, a large one means the prices cannot be arbitraged against.
+ *
+ * @param {Array} events
+ * @returns {{ checked: number, count: number, rate: number }}
+ */
+export function implausibleMarginRate(events) {
+  let checked = 0;
+  let count = 0;
+  for (const event of events || []) {
+    for (const market of event?.markets || []) {
+      if (!isComplete1x2(market)) continue;
+      checked += 1;
+      if (inverseSum(market) < 1) count += 1;
+      break;
+    }
+  }
+  return { checked, count, rate: checked === 0 ? 0 : count / checked };
+}
+
+/**
+ * True when this event carries a three-way result market priced below its own
+ * break-even, which no real book publishes.
+ *
+ * Checked per market rather than per source: one corrupt market inside an
+ * otherwise sound feed is enough to fabricate an opportunity when it pairs with
+ * another book, while the surrounding markets are still worth using.
+ *
+ * @param {object} event
+ * @returns {boolean}
+ */
+export function hasImplausibleMarket(event) {
+  return (event?.markets || []).some(isImplausible1x2);
+}
+
+/** True when this one market is a complete 1X2 priced below its own break-even. */
+export function isImplausible1x2(market) {
+  return isComplete1x2(market) && inverseSum(market) < 1;
+}
+
+function isComplete1x2(market) {
+  const names = (market?.selections || []).map((s) => String(s.name || '').trim().toLowerCase());
+  if (!(names.includes('1') && names.includes('x') && names.includes('2'))) return false;
+  return (market.selections || []).filter((s) => {
+    const o = Number(s.odds);
+    return Number.isFinite(o) && o > 1;
+  }).length >= 3;
+}
+
+function inverseSum(market) {
+  return (market.selections || []).reduce((sum, s) => {
+    const o = Number(s.odds);
+    return Number.isFinite(o) && o > 1 ? sum + 1 / o : sum;
+  }, 0);
 }
 
 /**
@@ -99,6 +213,7 @@ export async function scanWorkspace(args) {
     capturedAt = new Date().toISOString(),
     bankroll = 1000,
     minRoiPercent = 0,
+    minEvPercent = 2,
     maxMiddleRiskPercent = 15,
     minMiddleRoiPercent = 20,
     includeLive = false,
@@ -111,6 +226,11 @@ export async function scanWorkspace(args) {
 
   const qualityOptions = { prematchMaxAgeMs, liveMaxAgeMs, expectedRunId: scrapeRunId };
   const { events, sources } = await loadWorkspace(dataDir, qualityOptions);
+  // Markets priced below break-even were already dropped, per market, in
+  // loadWorkspace. A source-level exclusion is deliberately NOT applied here:
+  // contibet measures 9% on the current capture and 22% on an older one, so any
+  // threshold either lets a corrupt market through or discards a mostly sound
+  // feed depending on when the scrape happened.
   const filtered = events.filter((event) => {
     if (sourceIds && sourceIds.length && !sourceIds.includes(event.sourceId)) return false;
     if (sport && event.sport && event.sport.toLowerCase() !== sport.toLowerCase()) return false;
@@ -131,7 +251,7 @@ export async function scanWorkspace(args) {
   // Middling and positive-EV calculations remain informational until each market
   // contract has a complete payoff model and a fresh verification pass.
   const middles = findMiddles(grouped, { maxMiddleRiskPercent, minMiddleRoiPercent }).map((opportunity) => withBankroll(opportunity, bankroll));
-  const positiveEv = findPositiveEV(grouped, { minRoiPercent }).map((opportunity) => withBankroll(opportunity, bankroll));
+  const positiveEv = findPositiveEV(grouped, { minEvPercent }).map((opportunity) => withBankroll(opportunity, bankroll));
   const lowHold = findLowHold(grouped);
   const quality = sourceHealthSummary(sources);
 
@@ -168,11 +288,15 @@ export async function scanWorkspace(args) {
     options: {
       bankroll,
       minRoiPercent,
+      minEvPercent,
       maxMiddleRiskPercent,
       minMiddleRoiPercent,
       includeLive,
       includePast,
       sourceIds: sourceIds || null,
+      sport,
+      prematchMaxAgeMs,
+      liveMaxAgeMs,
     },
     sources,
     eventCount: filtered.length,
@@ -183,6 +307,8 @@ export async function scanWorkspace(args) {
     verificationSummary: { confirmed: 0, rejected: 0, expired: 0 },
   };
 
+  // Verification consumes the very same eligible observations, never signal winners.
+  if (args.onEligibleSelections) args.onEligibleSelections(buildSelectionIndex(actionableEvents));
   if (publish) await writeJsonAtomic(join(dataDir, 'latest-scan.json'), scan);
   return scan;
 }

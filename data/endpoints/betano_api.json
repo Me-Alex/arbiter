@@ -1,0 +1,19 @@
+{
+  "book": "betano",
+  "timestamp": "2026-09-01T18:46:02.029Z",
+  "pagesVisited": 1,
+  "minPagesRequired": 50,
+  "pagesTargetReached": false,
+  "endpoints": [],
+  "keyEndpoints": [
+    {
+      "method": "GET",
+      "url": "https://ro.betano.com/api/home/top-events-v2/",
+      "evidence": "Kaizen prematch JSON board (eventIdList/events/markets/selections). Cloudflare-challenges bare fetch (403) but returns 200 in a real Chromium navigation. 1X2 = type MRES/typeId 1, odds in selection price. Smoke-validated 2026-09-02: 16 fresh complete 1X2 events.",
+      "verified": true
+    }
+  ],
+  "platform": "kaizen-betano",
+  "feedStatus": "verified",
+  "verifiedAt": "2026-09-01"
+}

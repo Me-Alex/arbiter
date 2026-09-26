@@ -1,0 +1,27 @@
+{
+  "enabled": false,
+  "intervalMinutes": 20,
+  "bookIds": [
+    "superbet",
+    "netbet",
+    "betano",
+    "winner",
+    "fortuna",
+    "maxbet"
+  ],
+  "scanOptions": {
+    "bankroll": 1000,
+    "minRoiPercent": 0,
+    "minEvPercent": 2,
+    "maxMiddleRiskPercent": 15,
+    "minMiddleRoiPercent": 20,
+    "includeLive": false,
+    "includePast": false
+  },
+  "lastRun": {
+    "at": "2026-09-26T17:35:32.664Z",
+    "ok": true,
+    "launched": true
+  },
+  "lastError": null
+}

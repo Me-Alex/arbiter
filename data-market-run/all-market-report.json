@@ -1,0 +1,1512 @@
+{
+  "startedAt": "2026-09-05T08:21:19.049Z",
+  "maxEvents": "all",
+  "jobs": [
+    {
+      "id": "superbet",
+      "enabled": true,
+      "validationStatus": "validated",
+      "status": "ok",
+      "events": 2111,
+      "provenance": {
+        "sourceId": "superbet",
+        "sourceUrl": "https://production-superbet-offer-ro.freetls.fastly.net/v3/ro-RO/events?startDate=2026-09-05T08%3A00%3A00.000Z&endDate=2026-10-05T08%3A00%3A00.000Z&index=active-prematch&sports=5",
+        "transport": "superbet-public-offer-v3",
+        "runId": "markets-1788596479049-superbet",
+        "observedAt": "2026-09-05T08:21:19.580Z",
+        "capturedAt": "2026-09-05T08:21:19.666Z",
+        "dataStatus": "fresh"
+      },
+      "marketKeys": [
+        "MATCH_ODDS"
+      ],
+      "non1X2Verified": false,
+      "diagnostic": {
+        "reason": "only-match-odds-verified",
+        "detail": "The normalized public snapshot contains no complete non-1X2 market.",
+        "totalMarkets": 2111,
+        "completeMarkets": 2111,
+        "incompleteMarkets": 0,
+        "rejectionReasons": {}
+      },
+      "marketDiagnostics": {
+        "totalMarkets": 2111,
+        "completeMarkets": 2111,
+        "incompleteMarkets": 0,
+        "markets": [
+          {
+            "marketKey": "MATCH_ODDS",
+            "marketName": "Final",
+            "eventCount": 2111,
+            "selectionCount": 6333,
+            "completeCount": 2111,
+            "incompleteCount": 0
+          }
+        ],
+        "rejectionReasons": {}
+      },
+      "markets": [
+        {
+          "key": "MATCH_ODDS",
+          "events": 2111,
+          "selections": [
+            "1",
+            "X",
+            "2"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "betano",
+      "enabled": true,
+      "validationStatus": "validated",
+      "status": "ok",
+      "events": 9,
+      "provenance": {
+        "sourceId": "betano",
+        "sourceUrl": "https://ro.betano.com/api/home/top-events-v2/",
+        "transport": "betano-top-events-json",
+        "runId": "markets-1788596479049-betano",
+        "observedAt": "2026-09-05T08:21:21.065Z",
+        "capturedAt": "2026-09-05T08:21:21.126Z",
+        "dataStatus": "fresh"
+      },
+      "marketKeys": [
+        "BOTH_TEAMS_SCORE",
+        "DOUBLE_CHANCE",
+        "MATCH_ODDS",
+        "OVER_UNDER_0_5_1H",
+        "OVER_UNDER_1_5_1H",
+        "OVER_UNDER_2_5",
+        "OVER_UNDER_3_5"
+      ],
+      "non1X2Verified": true,
+      "diagnostic": null,
+      "marketDiagnostics": {
+        "totalMarkets": 45,
+        "completeMarkets": 45,
+        "incompleteMarkets": 0,
+        "markets": [
+          {
+            "marketKey": "BOTH_TEAMS_SCORE",
+            "marketName": "Ambele echipe înscriu",
+            "eventCount": 9,
+            "selectionCount": 18,
+            "completeCount": 9,
+            "incompleteCount": 0
+          },
+          {
+            "marketKey": "DOUBLE_CHANCE",
+            "marketName": "Șansă dublă",
+            "eventCount": 9,
+            "selectionCount": 27,
+            "completeCount": 9,
+            "incompleteCount": 0
+          },
+          {
+            "marketKey": "MATCH_ODDS",
+            "marketName": "Rezultat final",
+            "eventCount": 9,
+            "selectionCount": 27,
+            "completeCount": 9,
+            "incompleteCount": 0
+          },
+          {
+            "marketKey": "OVER_UNDER_0_5_1H",
+            "marketName": "Goluri prima repriză Peste/Sub",
+            "eventCount": 2,
+            "selectionCount": 4,
+            "completeCount": 2,
+            "incompleteCount": 0
+          },
+          {
+            "marketKey": "OVER_UNDER_1_5_1H",
+            "marketName": "Goluri prima repriză Peste/Sub",
+            "eventCount": 7,
+            "selectionCount": 14,
+            "completeCount": 7,
+            "incompleteCount": 0
+          },
+          {
+            "marketKey": "OVER_UNDER_2_5",
+            "marketName": "Total goluri Peste/Sub",
+            "eventCount": 3,
+            "selectionCount": 6,
+            "completeCount": 3,
+            "incompleteCount": 0
+          },
+          {
+            "marketKey": "OVER_UNDER_3_5",
+            "marketName": "Total goluri Peste/Sub",
+            "eventCount": 6,
+            "selectionCount": 12,
+            "completeCount": 6,
+            "incompleteCount": 0
+          }
+        ],
+        "rejectionReasons": {}
+      },
+      "markets": [
+        {
+          "key": "MATCH_ODDS",
+          "events": 9,
+          "selections": [
+            "1",
+            "X",
+            "2"
+          ]
+        },
+        {
+          "key": "OVER_UNDER_2_5",
+          "events": 3,
+          "selections": [
+            "Over",
+            "Under"
+          ]
+        },
+        {
+          "key": "OVER_UNDER_0_5_1H",
+          "events": 2,
+          "selections": [
+            "Over",
+            "Under"
+          ]
+        },
+        {
+          "key": "DOUBLE_CHANCE",
+          "events": 9,
+          "selections": [
+            "1X",
+            "X2",
+            "12"
+          ]
+        },
+        {
+          "key": "BOTH_TEAMS_SCORE",
+          "events": 9,
+          "selections": [
+            "Yes",
+            "No"
+          ]
+        },
+        {
+          "key": "OVER_UNDER_3_5",
+          "events": 6,
+          "selections": [
+            "Over",
+            "Under"
+          ]
+        },
+        {
+          "key": "OVER_UNDER_1_5_1H",
+          "events": 7,
+          "selections": [
+            "Over",
+            "Under"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "fortuna",
+      "enabled": true,
+      "validationStatus": "experimental",
+      "status": "ok",
+      "events": 1193,
+      "provenance": {
+        "sourceId": "fortuna",
+        "sourceUrl": "https://api.efortuna.ro/offer/structure/api/v1_0/sport/ufo:sprt:00/tournaments?categories=true&timeFilter=all",
+        "transport": "fortuna-bff-probe",
+        "runId": "markets-1788596479049-fortuna",
+        "observedAt": "2026-09-05T08:21:27.985Z",
+        "capturedAt": "2026-09-05T08:21:28.017Z",
+        "dataStatus": "fresh"
+      },
+      "marketKeys": [
+        "DOUBLE_CHANCE",
+        "MATCH_ODDS"
+      ],
+      "non1X2Verified": true,
+      "diagnostic": null,
+      "marketDiagnostics": {
+        "totalMarkets": 2331,
+        "completeMarkets": 2331,
+        "incompleteMarkets": 0,
+        "markets": [
+          {
+            "marketKey": "DOUBLE_CHANCE",
+            "marketName": "Meci - sansa dubla",
+            "eventCount": 1138,
+            "selectionCount": 3414,
+            "completeCount": 1138,
+            "incompleteCount": 0
+          },
+          {
+            "marketKey": "MATCH_ODDS",
+            "marketName": "Meci",
+            "eventCount": 1193,
+            "selectionCount": 3579,
+            "completeCount": 1193,
+            "incompleteCount": 0
+          }
+        ],
+        "rejectionReasons": {}
+      },
+      "markets": [
+        {
+          "key": "MATCH_ODDS",
+          "events": 1193,
+          "selections": [
+            "1",
+            "X",
+            "2"
+          ]
+        },
+        {
+          "key": "DOUBLE_CHANCE",
+          "events": 1138,
+          "selections": [
+            "1X",
+            "X2",
+            "12"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "unibet",
+      "enabled": false,
+      "status": "skipped",
+      "events": 0,
+      "markets": []
+    },
+    {
+      "id": "stanleybet",
+      "enabled": true,
+      "validationStatus": "validated",
+      "status": "ok",
+      "events": 314,
+      "provenance": {
+        "sourceId": "stanleybet",
+        "sourceUrl": "https://sportsbook-sm-distribution-api.nsoft.com/api/v1/events?companyUuid=682e6a38-b5ad-4c58-a743-3b06c79e55cd&filter%5Bfrom%5D=2026-09-05T08%3A21%3A28&timezone=Europe%2FBucharest&language=%7B%22default%22%3A%22ro%22%2C%22tournament%22%3A%22ro%22%2C%22category%22%3A%22ro%22%2C%22sport%22%3A%22ro%22%7D&filter%5Bto%5D=2026-10-05T08%3A21%3A28&shortProps=1&offerTemplate=WEB_OVERVIEW&dataFormat=%7B%22default%22%3A%22array%22%2C%22events%22%3A%22object%22%2C%22outcomes%22%3A%22array%22%7D",
+        "transport": "nsoft-public-sports-json",
+        "runId": "markets-1788596479049-stanleybet",
+        "observedAt": "2026-09-05T08:21:30.307Z",
+        "capturedAt": "2026-09-05T08:21:30.368Z",
+        "dataStatus": "fresh"
+      },
+      "marketKeys": [
+        "MATCH_ODDS"
+      ],
+      "non1X2Verified": false,
+      "diagnostic": {
+        "reason": "only-match-odds-verified",
+        "detail": "The normalized public snapshot contains no complete non-1X2 market.",
+        "totalMarkets": 314,
+        "completeMarkets": 314,
+        "incompleteMarkets": 0,
+        "rejectionReasons": {}
+      },
+      "marketDiagnostics": {
+        "totalMarkets": 314,
+        "completeMarkets": 314,
+        "incompleteMarkets": 0,
+        "markets": [
+          {
+            "marketKey": "MATCH_ODDS",
+            "marketName": "Final",
+            "eventCount": 314,
+            "selectionCount": 942,
+            "completeCount": 314,
+            "incompleteCount": 0
+          }
+        ],
+        "rejectionReasons": {}
+      },
+      "markets": [
+        {
+          "key": "MATCH_ODDS",
+          "events": 314,
+          "selections": [
+            "1",
+            "X",
+            "2"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "casa-pariurilor",
+      "enabled": true,
+      "validationStatus": "experimental",
+      "status": "ok",
+      "events": 1193,
+      "provenance": {
+        "sourceId": "casa-pariurilor",
+        "sourceUrl": "https://api.casapariurilor.ro/offer/structure/api/v1_0/sport/ufo:sprt:00/tournaments?categories=true&timeFilter=all",
+        "transport": "fortuna-bff-probe",
+        "runId": "markets-1788596479049-casa-pariurilor",
+        "observedAt": "2026-09-05T08:21:37.195Z",
+        "capturedAt": "2026-09-05T08:21:37.234Z",
+        "dataStatus": "fresh"
+      },
+      "marketKeys": [
+        "DOUBLE_CHANCE",
+        "MATCH_ODDS"
+      ],
+      "non1X2Verified": true,
+      "diagnostic": null,
+      "marketDiagnostics": {
+        "totalMarkets": 2331,
+        "completeMarkets": 2331,
+        "incompleteMarkets": 0,
+        "markets": [
+          {
+            "marketKey": "DOUBLE_CHANCE",
+            "marketName": "Meci - sansa dubla",
+            "eventCount": 1138,
+            "selectionCount": 3414,
+            "completeCount": 1138,
+            "incompleteCount": 0
+          },
+          {
+            "marketKey": "MATCH_ODDS",
+            "marketName": "Meci",
+            "eventCount": 1193,
+            "selectionCount": 3579,
+            "completeCount": 1193,
+            "incompleteCount": 0
+          }
+        ],
+        "rejectionReasons": {}
+      },
+      "markets": [
+        {
+          "key": "MATCH_ODDS",
+          "events": 1193,
+          "selections": [
+            "1",
+            "X",
+            "2"
+          ]
+        },
+        {
+          "key": "DOUBLE_CHANCE",
+          "events": 1138,
+          "selections": [
+            "1X",
+            "X2",
+            "12"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "excelbet",
+      "enabled": true,
+      "validationStatus": "validated",
+      "status": "ok",
+      "events": 1638,
+      "provenance": {
+        "sourceId": "excelbet",
+        "sourceUrl": "https://exalogic.excelbet.ro/XSportDatastore/getPalinsestoDelGiorno?systemCode=EXCELBET&lingua=RO&hash=&data=20260905&idSport=1&idAggregata=1&timezone=3",
+        "transport": "exalogic-xsport-public-json",
+        "runId": "markets-1788596479049-excelbet",
+        "observedAt": "2026-09-05T08:21:37.809Z",
+        "capturedAt": "2026-09-05T08:21:38.701Z",
+        "dataStatus": "fresh"
+      },
+      "marketKeys": [
+        "MATCH_ODDS"
+      ],
+      "non1X2Verified": false,
+      "diagnostic": {
+        "reason": "only-match-odds-verified",
+        "detail": "The normalized public snapshot contains no complete non-1X2 market.",
+        "totalMarkets": 1638,
+        "completeMarkets": 1638,
+        "incompleteMarkets": 0,
+        "rejectionReasons": {}
+      },
+      "marketDiagnostics": {
+        "totalMarkets": 1638,
+        "completeMarkets": 1638,
+        "incompleteMarkets": 0,
+        "markets": [
+          {
+            "marketKey": "MATCH_ODDS",
+            "marketName": "FINAL",
+            "eventCount": 1638,
+            "selectionCount": 4914,
+            "completeCount": 1638,
+            "incompleteCount": 0
+          }
+        ],
+        "rejectionReasons": {}
+      },
+      "markets": [
+        {
+          "key": "MATCH_ODDS",
+          "events": 1638,
+          "selections": [
+            "1",
+            "X",
+            "2"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "netbet",
+      "enabled": true,
+      "validationStatus": "validated",
+      "status": "ok",
+      "events": 492,
+      "provenance": {
+        "sourceId": "netbet",
+        "sourceUrl": "https://api.sportify.bet/api/content/inventory-events?sport=fotbal&key=market_type&lang=ro&bookmaker=netbetro",
+        "transport": "netbet-sportify-public-json",
+        "runId": "markets-1788596479049-netbet",
+        "observedAt": "2026-09-05T08:21:56.027Z",
+        "capturedAt": "2026-09-05T08:21:56.051Z",
+        "dataStatus": "fresh"
+      },
+      "marketKeys": [
+        "MATCH_ODDS"
+      ],
+      "non1X2Verified": false,
+      "diagnostic": {
+        "reason": "only-match-odds-verified",
+        "detail": "The normalized public snapshot contains no complete non-1X2 market.",
+        "totalMarkets": 492,
+        "completeMarkets": 492,
+        "incompleteMarkets": 0,
+        "rejectionReasons": {}
+      },
+      "marketDiagnostics": {
+        "totalMarkets": 492,
+        "completeMarkets": 492,
+        "incompleteMarkets": 0,
+        "markets": [
+          {
+            "marketKey": "MATCH_ODDS",
+            "marketName": "Rezultat Final",
+            "eventCount": 492,
+            "selectionCount": 1476,
+            "completeCount": 492,
+            "incompleteCount": 0
+          }
+        ],
+        "rejectionReasons": {}
+      },
+      "markets": [
+        {
+          "key": "MATCH_ODDS",
+          "events": 492,
+          "selections": [
+            "1",
+            "X",
+            "2"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "admiral",
+      "enabled": true,
+      "validationStatus": "validated",
+      "status": "ok",
+      "events": 314,
+      "provenance": {
+        "sourceId": "admiral",
+        "sourceUrl": "https://sportsbook-sm-distribution-api.nsoft.com/api/v1/events?companyUuid=682e6a38-b5ad-4c58-a743-3b06c79e55cd&filter%5Bfrom%5D=2026-09-05T08%3A21%3A56&timezone=Europe%2FBucharest&language=%7B%22default%22%3A%22ro%22%2C%22tournament%22%3A%22ro%22%2C%22category%22%3A%22ro%22%2C%22sport%22%3A%22ro%22%7D&filter%5Bto%5D=2026-10-05T08%3A21%3A56&shortProps=1&offerTemplate=WEB_OVERVIEW&dataFormat=%7B%22default%22%3A%22array%22%2C%22events%22%3A%22object%22%2C%22outcomes%22%3A%22array%22%7D",
+        "transport": "nsoft-public-sports-json",
+        "runId": "markets-1788596479049-admiral",
+        "observedAt": "2026-09-05T08:21:57.133Z",
+        "capturedAt": "2026-09-05T08:21:57.194Z",
+        "dataStatus": "fresh"
+      },
+      "marketKeys": [
+        "MATCH_ODDS"
+      ],
+      "non1X2Verified": false,
+      "diagnostic": {
+        "reason": "only-match-odds-verified",
+        "detail": "The normalized public snapshot contains no complete non-1X2 market.",
+        "totalMarkets": 314,
+        "completeMarkets": 314,
+        "incompleteMarkets": 0,
+        "rejectionReasons": {}
+      },
+      "marketDiagnostics": {
+        "totalMarkets": 314,
+        "completeMarkets": 314,
+        "incompleteMarkets": 0,
+        "markets": [
+          {
+            "marketKey": "MATCH_ODDS",
+            "marketName": "Final",
+            "eventCount": 314,
+            "selectionCount": 942,
+            "completeCount": 314,
+            "incompleteCount": 0
+          }
+        ],
+        "rejectionReasons": {}
+      },
+      "markets": [
+        {
+          "key": "MATCH_ODDS",
+          "events": 314,
+          "selections": [
+            "1",
+            "X",
+            "2"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "winboss",
+      "enabled": true,
+      "validationStatus": "validated",
+      "status": "ok",
+      "events": 1638,
+      "provenance": {
+        "sourceId": "winboss",
+        "sourceUrl": "https://exalogic.winboss.ro/XSportDatastore/getPalinsestoDelGiorno?systemCode=WINBOSS&lingua=RO&hash=&data=20260905&idSport=1&idAggregata=1&timezone=3",
+        "transport": "exalogic-xsport-public-json",
+        "runId": "markets-1788596479049-winboss",
+        "observedAt": "2026-09-05T08:21:57.230Z",
+        "capturedAt": "2026-09-05T08:22:00.395Z",
+        "dataStatus": "fresh"
+      },
+      "marketKeys": [
+        "MATCH_ODDS"
+      ],
+      "non1X2Verified": false,
+      "diagnostic": {
+        "reason": "only-match-odds-verified",
+        "detail": "The normalized public snapshot contains no complete non-1X2 market.",
+        "totalMarkets": 1638,
+        "completeMarkets": 1638,
+        "incompleteMarkets": 0,
+        "rejectionReasons": {}
+      },
+      "marketDiagnostics": {
+        "totalMarkets": 1638,
+        "completeMarkets": 1638,
+        "incompleteMarkets": 0,
+        "markets": [
+          {
+            "marketKey": "MATCH_ODDS",
+            "marketName": "FINAL",
+            "eventCount": 1638,
+            "selectionCount": 4914,
+            "completeCount": 1638,
+            "incompleteCount": 0
+          }
+        ],
+        "rejectionReasons": {}
+      },
+      "markets": [
+        {
+          "key": "MATCH_ODDS",
+          "events": 1638,
+          "selections": [
+            "1",
+            "X",
+            "2"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "maxbet",
+      "enabled": true,
+      "validationStatus": "validated",
+      "status": "ok",
+      "events": 2125,
+      "provenance": {
+        "sourceId": "maxbet",
+        "sourceUrl": "https://sports-sm-distribution-api.de-2.nsoftcdn.com/api/v1/events?companyUuid=2191e3d6-b0e1-4f06-8b6a-4683203fb2fe&filter%5Bfrom%5D=2026-09-05T08%3A22%3A00&timezone=Europe%2FChisinau&language=%7B%22default%22%3A%22ro%22%2C%22tournament%22%3A%22ro%22%2C%22category%22%3A%22ro%22%2C%22sport%22%3A%22ro%22%7D&filter%5Bto%5D=2026-10-05T08%3A22%3A00&shortProps=1&offerTemplate=WEB_OVERVIEW&dataFormat=%7B%22default%22%3A%22array%22%2C%22events%22%3A%22object%22%2C%22outcomes%22%3A%22array%22%7D",
+        "transport": "nsoft-public-sports-json",
+        "runId": "markets-1788596479049-maxbet",
+        "observedAt": "2026-09-05T08:22:03.848Z",
+        "capturedAt": "2026-09-05T08:22:03.976Z",
+        "dataStatus": "fresh"
+      },
+      "marketKeys": [
+        "MATCH_ODDS"
+      ],
+      "non1X2Verified": false,
+      "diagnostic": {
+        "reason": "only-match-odds-verified",
+        "detail": "The normalized public snapshot contains no complete non-1X2 market.",
+        "totalMarkets": 2125,
+        "completeMarkets": 2125,
+        "incompleteMarkets": 0,
+        "rejectionReasons": {}
+      },
+      "marketDiagnostics": {
+        "totalMarkets": 2125,
+        "completeMarkets": 2125,
+        "incompleteMarkets": 0,
+        "markets": [
+          {
+            "marketKey": "MATCH_ODDS",
+            "marketName": "Final",
+            "eventCount": 2125,
+            "selectionCount": 6375,
+            "completeCount": 2125,
+            "incompleteCount": 0
+          }
+        ],
+        "rejectionReasons": {}
+      },
+      "markets": [
+        {
+          "key": "MATCH_ODDS",
+          "events": 2125,
+          "selections": [
+            "1",
+            "X",
+            "2"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "las-vegas",
+      "enabled": true,
+      "validationStatus": "validated",
+      "status": "ok",
+      "events": 1638,
+      "provenance": {
+        "sourceId": "las-vegas",
+        "sourceUrl": "https://exalogic.lasvegas.ro/XSportDatastore/getPalinsestoDelGiorno?systemCode=LASVEGAS&lingua=RO&hash=&data=20260905&idSport=1&idAggregata=1&timezone=3",
+        "transport": "exalogic-xsport-public-json",
+        "runId": "markets-1788596479049-las-vegas",
+        "observedAt": "2026-09-05T08:22:04.906Z",
+        "capturedAt": "2026-09-05T08:22:05.862Z",
+        "dataStatus": "fresh"
+      },
+      "marketKeys": [
+        "MATCH_ODDS"
+      ],
+      "non1X2Verified": false,
+      "diagnostic": {
+        "reason": "only-match-odds-verified",
+        "detail": "The normalized public snapshot contains no complete non-1X2 market.",
+        "totalMarkets": 1638,
+        "completeMarkets": 1638,
+        "incompleteMarkets": 0,
+        "rejectionReasons": {}
+      },
+      "marketDiagnostics": {
+        "totalMarkets": 1638,
+        "completeMarkets": 1638,
+        "incompleteMarkets": 0,
+        "markets": [
+          {
+            "marketKey": "MATCH_ODDS",
+            "marketName": "FINAL",
+            "eventCount": 1638,
+            "selectionCount": 4914,
+            "completeCount": 1638,
+            "incompleteCount": 0
+          }
+        ],
+        "rejectionReasons": {}
+      },
+      "markets": [
+        {
+          "key": "MATCH_ODDS",
+          "events": 1638,
+          "selections": [
+            "1",
+            "X",
+            "2"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "don",
+      "enabled": true,
+      "validationStatus": "validated",
+      "status": "ok",
+      "events": 1226,
+      "provenance": {
+        "sourceId": "don",
+        "sourceUrl": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetUpcoming?culture=ro-RO&timezoneOffset=-180&deviceType=1&numFormat=en-GB&countryCode=RO&sportId=66&eventCount=100&page=1&integration=don",
+        "transport": "altenar-sb2-widget-json",
+        "runId": "markets-1788596479049-don",
+        "observedAt": "2026-09-05T08:22:38.139Z",
+        "capturedAt": "2026-09-05T08:22:38.191Z",
+        "dataStatus": "fresh"
+      },
+      "marketKeys": [
+        "MATCH_ODDS"
+      ],
+      "non1X2Verified": false,
+      "diagnostic": {
+        "reason": "only-match-odds-verified",
+        "detail": "The normalized public snapshot contains no complete non-1X2 market.",
+        "totalMarkets": 0,
+        "completeMarkets": 0,
+        "incompleteMarkets": 0,
+        "rejectionReasons": {}
+      },
+      "marketDiagnostics": {},
+      "markets": [
+        {
+          "key": "MATCH_ODDS",
+          "events": 1226,
+          "selections": [
+            "1",
+            "X",
+            "2"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "topbet",
+      "enabled": true,
+      "validationStatus": "validated",
+      "status": "ok",
+      "events": 1200,
+      "provenance": {
+        "sourceId": "topbet",
+        "sourceUrl": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetUpcoming?culture=ro-RO&timezoneOffset=-180&deviceType=1&numFormat=en-GB&countryCode=RO&sportId=66&eventCount=100&page=1&integration=topbet",
+        "transport": "altenar-sb2-widget-json",
+        "runId": "markets-1788596479049-topbet",
+        "observedAt": "2026-09-05T08:23:08.289Z",
+        "capturedAt": "2026-09-05T08:23:08.338Z",
+        "dataStatus": "fresh"
+      },
+      "marketKeys": [
+        "MATCH_ODDS"
+      ],
+      "non1X2Verified": false,
+      "diagnostic": {
+        "reason": "only-match-odds-verified",
+        "detail": "The normalized public snapshot contains no complete non-1X2 market.",
+        "totalMarkets": 0,
+        "completeMarkets": 0,
+        "incompleteMarkets": 0,
+        "rejectionReasons": {}
+      },
+      "marketDiagnostics": {},
+      "markets": [
+        {
+          "key": "MATCH_ODDS",
+          "events": 1200,
+          "selections": [
+            "1",
+            "X",
+            "2"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "million",
+      "enabled": true,
+      "validationStatus": "validated",
+      "status": "ok",
+      "events": 1211,
+      "provenance": {
+        "sourceId": "million",
+        "sourceUrl": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetUpcoming?culture=ro-RO&timezoneOffset=-180&deviceType=1&numFormat=en-GB&countryCode=RO&sportId=66&eventCount=100&page=1&integration=million",
+        "transport": "altenar-sb2-widget-json",
+        "runId": "markets-1788596479049-million",
+        "observedAt": "2026-09-05T08:23:35.128Z",
+        "capturedAt": "2026-09-05T08:23:35.175Z",
+        "dataStatus": "fresh"
+      },
+      "marketKeys": [
+        "MATCH_ODDS"
+      ],
+      "non1X2Verified": false,
+      "diagnostic": {
+        "reason": "only-match-odds-verified",
+        "detail": "The normalized public snapshot contains no complete non-1X2 market.",
+        "totalMarkets": 0,
+        "completeMarkets": 0,
+        "incompleteMarkets": 0,
+        "rejectionReasons": {}
+      },
+      "marketDiagnostics": {},
+      "markets": [
+        {
+          "key": "MATCH_ODDS",
+          "events": 1211,
+          "selections": [
+            "1",
+            "X",
+            "2"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "baumbet",
+      "enabled": true,
+      "validationStatus": "validated",
+      "status": "ok",
+      "events": 1197,
+      "provenance": {
+        "sourceId": "baumbet",
+        "sourceUrl": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetUpcoming?culture=ro-RO&timezoneOffset=-180&deviceType=1&numFormat=en-GB&countryCode=RO&sportId=66&eventCount=100&page=1&integration=baumbet",
+        "transport": "altenar-sb2-widget-json",
+        "runId": "markets-1788596479049-baumbet",
+        "observedAt": "2026-09-05T08:24:02.169Z",
+        "capturedAt": "2026-09-05T08:24:02.219Z",
+        "dataStatus": "fresh"
+      },
+      "marketKeys": [
+        "MATCH_ODDS"
+      ],
+      "non1X2Verified": false,
+      "diagnostic": {
+        "reason": "only-match-odds-verified",
+        "detail": "The normalized public snapshot contains no complete non-1X2 market.",
+        "totalMarkets": 0,
+        "completeMarkets": 0,
+        "incompleteMarkets": 0,
+        "rejectionReasons": {}
+      },
+      "marketDiagnostics": {},
+      "markets": [
+        {
+          "key": "MATCH_ODDS",
+          "events": 1197,
+          "selections": [
+            "1",
+            "X",
+            "2"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "powerbet",
+      "enabled": true,
+      "validationStatus": "validated",
+      "status": "ok",
+      "events": 1234,
+      "provenance": {
+        "sourceId": "powerbet",
+        "sourceUrl": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetUpcoming?culture=ro-RO&timezoneOffset=-180&deviceType=1&numFormat=en-GB&countryCode=RO&sportId=66&eventCount=100&page=1&integration=powerbet",
+        "transport": "altenar-sb2-widget-json",
+        "runId": "markets-1788596479049-powerbet",
+        "observedAt": "2026-09-05T08:24:32.917Z",
+        "capturedAt": "2026-09-05T08:24:32.965Z",
+        "dataStatus": "fresh"
+      },
+      "marketKeys": [
+        "MATCH_ODDS"
+      ],
+      "non1X2Verified": false,
+      "diagnostic": {
+        "reason": "only-match-odds-verified",
+        "detail": "The normalized public snapshot contains no complete non-1X2 market.",
+        "totalMarkets": 0,
+        "completeMarkets": 0,
+        "incompleteMarkets": 0,
+        "rejectionReasons": {}
+      },
+      "marketDiagnostics": {},
+      "markets": [
+        {
+          "key": "MATCH_ODDS",
+          "events": 1234,
+          "selections": [
+            "1",
+            "X",
+            "2"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "winbet",
+      "enabled": true,
+      "validationStatus": "validated",
+      "status": "ok",
+      "events": 1247,
+      "provenance": {
+        "sourceId": "winbet",
+        "sourceUrl": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetUpcoming?culture=ro-RO&timezoneOffset=-180&deviceType=1&numFormat=en-GB&countryCode=RO&sportId=66&eventCount=100&page=1&integration=winbet",
+        "transport": "altenar-sb2-widget-json",
+        "runId": "markets-1788596479049-winbet",
+        "observedAt": "2026-09-05T08:25:02.279Z",
+        "capturedAt": "2026-09-05T08:25:02.329Z",
+        "dataStatus": "fresh"
+      },
+      "marketKeys": [
+        "MATCH_ODDS"
+      ],
+      "non1X2Verified": false,
+      "diagnostic": {
+        "reason": "only-match-odds-verified",
+        "detail": "The normalized public snapshot contains no complete non-1X2 market.",
+        "totalMarkets": 0,
+        "completeMarkets": 0,
+        "incompleteMarkets": 0,
+        "rejectionReasons": {}
+      },
+      "marketDiagnostics": {},
+      "markets": [
+        {
+          "key": "MATCH_ODDS",
+          "events": 1247,
+          "selections": [
+            "1",
+            "X",
+            "2"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "mozzartbet",
+      "enabled": false,
+      "status": "skipped",
+      "events": 0,
+      "markets": []
+    },
+    {
+      "id": "getsbet",
+      "enabled": true,
+      "validationStatus": "validated",
+      "status": "ok",
+      "events": 23,
+      "provenance": {
+        "sourceId": "getsbet",
+        "sourceUrl": "wss://api-online.getsbet.ro/v2",
+        "transport": "everymatrix-odds-wamp",
+        "runId": "markets-1788596479049-getsbet",
+        "observedAt": "2026-09-05T08:25:45.904Z",
+        "capturedAt": "2026-09-05T08:25:45.960Z",
+        "dataStatus": "fresh"
+      },
+      "marketKeys": [
+        "MATCH_ODDS",
+        "OVER_UNDER_0_5",
+        "OVER_UNDER_1_5",
+        "OVER_UNDER_2_5",
+        "OVER_UNDER_3_5",
+        "OVER_UNDER_4_5",
+        "OVER_UNDER_5_5",
+        "OVER_UNDER_6_5"
+      ],
+      "non1X2Verified": true,
+      "diagnostic": null,
+      "marketDiagnostics": {
+        "totalMarkets": 266,
+        "completeMarkets": 266,
+        "incompleteMarkets": 0,
+        "markets": [
+          {
+            "marketKey": "MATCH_ODDS",
+            "marketName": "Final - Timp regulamentar.",
+            "eventCount": 23,
+            "selectionCount": 69,
+            "completeCount": 23,
+            "incompleteCount": 0
+          },
+          {
+            "marketKey": "OVER_UNDER_0_5",
+            "marketName": "Total Peste/Sub Timp regulamentar.",
+            "eventCount": 41,
+            "selectionCount": 82,
+            "completeCount": 41,
+            "incompleteCount": 0
+          },
+          {
+            "marketKey": "OVER_UNDER_1_5",
+            "marketName": "Total Peste/Sub Timp regulamentar.",
+            "eventCount": 41,
+            "selectionCount": 82,
+            "completeCount": 41,
+            "incompleteCount": 0
+          },
+          {
+            "marketKey": "OVER_UNDER_2_5",
+            "marketName": "Total Peste/Sub Timp regulamentar.",
+            "eventCount": 42,
+            "selectionCount": 84,
+            "completeCount": 42,
+            "incompleteCount": 0
+          },
+          {
+            "marketKey": "OVER_UNDER_3_5",
+            "marketName": "Total Peste/Sub Timp regulamentar.",
+            "eventCount": 42,
+            "selectionCount": 84,
+            "completeCount": 42,
+            "incompleteCount": 0
+          },
+          {
+            "marketKey": "OVER_UNDER_4_5",
+            "marketName": "Total Peste/Sub Timp regulamentar.",
+            "eventCount": 41,
+            "selectionCount": 82,
+            "completeCount": 41,
+            "incompleteCount": 0
+          },
+          {
+            "marketKey": "OVER_UNDER_5_5",
+            "marketName": "Total Peste/Sub Timp regulamentar.",
+            "eventCount": 18,
+            "selectionCount": 36,
+            "completeCount": 18,
+            "incompleteCount": 0
+          },
+          {
+            "marketKey": "OVER_UNDER_6_5",
+            "marketName": "Total Peste/Sub Timp regulamentar.",
+            "eventCount": 18,
+            "selectionCount": 36,
+            "completeCount": 18,
+            "incompleteCount": 0
+          }
+        ],
+        "rejectionReasons": {}
+      },
+      "markets": [
+        {
+          "key": "MATCH_ODDS",
+          "events": 23,
+          "selections": [
+            "1",
+            "X",
+            "2"
+          ]
+        },
+        {
+          "key": "OVER_UNDER_0_5",
+          "events": 41,
+          "selections": [
+            "Over",
+            "Under"
+          ]
+        },
+        {
+          "key": "OVER_UNDER_1_5",
+          "events": 41,
+          "selections": [
+            "Over",
+            "Under"
+          ]
+        },
+        {
+          "key": "OVER_UNDER_2_5",
+          "events": 42,
+          "selections": [
+            "Over",
+            "Under"
+          ]
+        },
+        {
+          "key": "OVER_UNDER_3_5",
+          "events": 42,
+          "selections": [
+            "Over",
+            "Under"
+          ]
+        },
+        {
+          "key": "OVER_UNDER_4_5",
+          "events": 41,
+          "selections": [
+            "Over",
+            "Under"
+          ]
+        },
+        {
+          "key": "OVER_UNDER_5_5",
+          "events": 18,
+          "selections": [
+            "Over",
+            "Under"
+          ]
+        },
+        {
+          "key": "OVER_UNDER_6_5",
+          "events": 18,
+          "selections": [
+            "Over",
+            "Under"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "favbet",
+      "enabled": true,
+      "validationStatus": "validated",
+      "status": "ok",
+      "events": 955,
+      "provenance": {
+        "sourceId": "favbet",
+        "sourceUrl": "https://www.favbet.ro/service/lineout/frontend_api2/",
+        "transport": "favbet-erlyline-jsonrpc",
+        "runId": "markets-1788596479049-favbet",
+        "observedAt": "2026-09-05T08:26:17.034Z",
+        "capturedAt": "2026-09-05T08:26:17.750Z",
+        "dataStatus": "fresh"
+      },
+      "marketKeys": [
+        "BOTH_TEAMS_SCORE",
+        "DOUBLE_CHANCE",
+        "MATCH_ODDS"
+      ],
+      "non1X2Verified": true,
+      "diagnostic": null,
+      "marketDiagnostics": {
+        "totalMarkets": 5255,
+        "completeMarkets": 5255,
+        "incompleteMarkets": 0,
+        "markets": [
+          {
+            "marketKey": "BOTH_TEAMS_SCORE",
+            "marketName": "Ambele echipe marchează mai mult de 1.5 goluri",
+            "eventCount": 1668,
+            "selectionCount": 3336,
+            "completeCount": 1668,
+            "incompleteCount": 0
+          },
+          {
+            "marketKey": "DOUBLE_CHANCE",
+            "marketName": "Șansă dublă",
+            "eventCount": 2632,
+            "selectionCount": 7896,
+            "completeCount": 2632,
+            "incompleteCount": 0
+          },
+          {
+            "marketKey": "MATCH_ODDS",
+            "marketName": "1 X 2",
+            "eventCount": 955,
+            "selectionCount": 2865,
+            "completeCount": 955,
+            "incompleteCount": 0
+          }
+        ],
+        "rejectionReasons": {}
+      },
+      "markets": [
+        {
+          "key": "MATCH_ODDS",
+          "events": 955,
+          "selections": [
+            "1",
+            "X",
+            "2"
+          ]
+        },
+        {
+          "key": "DOUBLE_CHANCE",
+          "events": 2632,
+          "selections": [
+            "1X",
+            "12",
+            "X2"
+          ]
+        },
+        {
+          "key": "BOTH_TEAMS_SCORE",
+          "events": 1668,
+          "selections": [
+            "Yes",
+            "No"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "winner",
+      "enabled": true,
+      "validationStatus": "validated",
+      "status": "ok",
+      "events": 2209,
+      "provenance": {
+        "sourceId": "winner",
+        "sourceUrl": "https://micros-prod1-sb.gambling-solutions.ro/api/digitain-fetcher/v2/public/events",
+        "transport": "winner-digitain-public-json",
+        "runId": "markets-1788596479049-winner",
+        "observedAt": "2026-09-05T08:26:18.508Z",
+        "capturedAt": "2026-09-05T08:26:18.626Z",
+        "dataStatus": "fresh"
+      },
+      "marketKeys": [
+        "MATCH_ODDS"
+      ],
+      "non1X2Verified": false,
+      "diagnostic": {
+        "reason": "only-match-odds-verified",
+        "detail": "The normalized public snapshot contains no complete non-1X2 market.",
+        "totalMarkets": 2209,
+        "completeMarkets": 2209,
+        "incompleteMarkets": 0,
+        "rejectionReasons": {}
+      },
+      "marketDiagnostics": {
+        "totalMarkets": 2209,
+        "completeMarkets": 2209,
+        "incompleteMarkets": 0,
+        "markets": [
+          {
+            "marketKey": "MATCH_ODDS",
+            "marketName": "Final",
+            "eventCount": 2209,
+            "selectionCount": 6627,
+            "completeCount": 2209,
+            "incompleteCount": 0
+          }
+        ],
+        "rejectionReasons": {}
+      },
+      "markets": [
+        {
+          "key": "MATCH_ODDS",
+          "events": 2209,
+          "selections": [
+            "1",
+            "X",
+            "2"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "magnumbet",
+      "enabled": true,
+      "validationStatus": "validated",
+      "status": "ok",
+      "events": 1639,
+      "provenance": {
+        "sourceId": "magnumbet",
+        "sourceUrl": "https://sport.magnumbet.ro/XSportDatastore/getPalinsestoDelGiorno?systemCode=MAGNUMBET&lingua=RO&hash=&data=20260905&idSport=1&idAggregata=1&timezone=3",
+        "transport": "exalogic-xsport-public-json",
+        "runId": "markets-1788596479049-magnumbet",
+        "observedAt": "2026-09-05T08:26:18.767Z",
+        "capturedAt": "2026-09-05T08:26:19.664Z",
+        "dataStatus": "fresh"
+      },
+      "marketKeys": [
+        "MATCH_ODDS"
+      ],
+      "non1X2Verified": false,
+      "diagnostic": {
+        "reason": "only-match-odds-verified",
+        "detail": "The normalized public snapshot contains no complete non-1X2 market.",
+        "totalMarkets": 1639,
+        "completeMarkets": 1639,
+        "incompleteMarkets": 0,
+        "rejectionReasons": {}
+      },
+      "marketDiagnostics": {
+        "totalMarkets": 1639,
+        "completeMarkets": 1639,
+        "incompleteMarkets": 0,
+        "markets": [
+          {
+            "marketKey": "MATCH_ODDS",
+            "marketName": "FINAL",
+            "eventCount": 1639,
+            "selectionCount": 4917,
+            "completeCount": 1639,
+            "incompleteCount": 0
+          }
+        ],
+        "rejectionReasons": {}
+      },
+      "markets": [
+        {
+          "key": "MATCH_ODDS",
+          "events": 1639,
+          "selections": [
+            "1",
+            "X",
+            "2"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "contibet",
+      "enabled": true,
+      "validationStatus": "validated",
+      "status": "ok",
+      "events": 23,
+      "provenance": {
+        "sourceId": "contibet",
+        "sourceUrl": "wss://api.conticazino.ro/v2",
+        "transport": "everymatrix-odds-wamp",
+        "runId": "markets-1788596479049-contibet",
+        "observedAt": "2026-09-05T08:27:04.851Z",
+        "capturedAt": "2026-09-05T08:27:04.906Z",
+        "dataStatus": "fresh"
+      },
+      "marketKeys": [
+        "MATCH_ODDS",
+        "OVER_UNDER_0_5",
+        "OVER_UNDER_1_5",
+        "OVER_UNDER_2_5",
+        "OVER_UNDER_3_5",
+        "OVER_UNDER_4_5",
+        "OVER_UNDER_5_5",
+        "OVER_UNDER_6_5"
+      ],
+      "non1X2Verified": true,
+      "diagnostic": null,
+      "marketDiagnostics": {
+        "totalMarkets": 266,
+        "completeMarkets": 266,
+        "incompleteMarkets": 0,
+        "markets": [
+          {
+            "marketKey": "MATCH_ODDS",
+            "marketName": "1X2, Timp regulamentar",
+            "eventCount": 23,
+            "selectionCount": 69,
+            "completeCount": 23,
+            "incompleteCount": 0
+          },
+          {
+            "marketKey": "OVER_UNDER_0_5",
+            "marketName": "Goluri Peste / Sub, Timp regulamentar",
+            "eventCount": 41,
+            "selectionCount": 82,
+            "completeCount": 41,
+            "incompleteCount": 0
+          },
+          {
+            "marketKey": "OVER_UNDER_1_5",
+            "marketName": "Goluri Peste / Sub, Timp regulamentar",
+            "eventCount": 41,
+            "selectionCount": 82,
+            "completeCount": 41,
+            "incompleteCount": 0
+          },
+          {
+            "marketKey": "OVER_UNDER_2_5",
+            "marketName": "Goluri Peste / Sub, Timp regulamentar",
+            "eventCount": 42,
+            "selectionCount": 84,
+            "completeCount": 42,
+            "incompleteCount": 0
+          },
+          {
+            "marketKey": "OVER_UNDER_3_5",
+            "marketName": "Goluri Peste / Sub, Timp regulamentar",
+            "eventCount": 42,
+            "selectionCount": 84,
+            "completeCount": 42,
+            "incompleteCount": 0
+          },
+          {
+            "marketKey": "OVER_UNDER_4_5",
+            "marketName": "Goluri Peste / Sub, Timp regulamentar",
+            "eventCount": 41,
+            "selectionCount": 82,
+            "completeCount": 41,
+            "incompleteCount": 0
+          },
+          {
+            "marketKey": "OVER_UNDER_5_5",
+            "marketName": "Goluri Peste / Sub, Timp regulamentar",
+            "eventCount": 18,
+            "selectionCount": 36,
+            "completeCount": 18,
+            "incompleteCount": 0
+          },
+          {
+            "marketKey": "OVER_UNDER_6_5",
+            "marketName": "Goluri Peste / Sub, Timp regulamentar",
+            "eventCount": 18,
+            "selectionCount": 36,
+            "completeCount": 18,
+            "incompleteCount": 0
+          }
+        ],
+        "rejectionReasons": {}
+      },
+      "markets": [
+        {
+          "key": "MATCH_ODDS",
+          "events": 23,
+          "selections": [
+            "1",
+            "X",
+            "2"
+          ]
+        },
+        {
+          "key": "OVER_UNDER_0_5",
+          "events": 41,
+          "selections": [
+            "Over",
+            "Under"
+          ]
+        },
+        {
+          "key": "OVER_UNDER_1_5",
+          "events": 41,
+          "selections": [
+            "Over",
+            "Under"
+          ]
+        },
+        {
+          "key": "OVER_UNDER_2_5",
+          "events": 42,
+          "selections": [
+            "Over",
+            "Under"
+          ]
+        },
+        {
+          "key": "OVER_UNDER_3_5",
+          "events": 42,
+          "selections": [
+            "Over",
+            "Under"
+          ]
+        },
+        {
+          "key": "OVER_UNDER_4_5",
+          "events": 41,
+          "selections": [
+            "Over",
+            "Under"
+          ]
+        },
+        {
+          "key": "OVER_UNDER_5_5",
+          "events": 18,
+          "selections": [
+            "Over",
+            "Under"
+          ]
+        },
+        {
+          "key": "OVER_UNDER_6_5",
+          "events": 18,
+          "selections": [
+            "Over",
+            "Under"
+          ]
+        }
+      ]
+    }
+  ],
+  "finishedAt": "2026-09-05T08:27:04.966Z",
+  "status": "ok"
+}

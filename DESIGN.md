@@ -197,12 +197,13 @@ Mobile sidebar uses overlay pattern with backdrop blur.
 
 | Entrypoint | Command | Description |
 |-----------|---------|-------------|
-| `src/server.mjs` | `npm start` | Legacy monolith. Self-contained; inlines cross-cutting helpers. |
-| `src/server-modular.mjs` | `npm run start:modular` | Modular re-export; splits services into independently testable modules. |
+| `src/server.mjs` | `npm start` | Constructs the services, then delegates every request to `router.mjs`. |
 
-Both bind to `127.0.0.1:PORT`, serve the same `public/` static files, and
-enforce the same CSP / CSRF / loopback-only security model. Neither is
-deprecated.
+It binds to `127.0.0.1:PORT`, serves the `public/` static files, and enforces
+the CSP / CSRF / loopback-only security model. The routing itself lives in
+`router.mjs`; the services it wires are independently testable. A second
+entrypoint (`server-modular.mjs`) once duplicated the route table and drifted
+from it, so it was removed rather than kept in sync.
 
 ## Critic Loop
 

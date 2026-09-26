@@ -1,0 +1,1161 @@
+{
+  "schemaVersion": 2,
+  "runId": "markets-1788596479049-betano",
+  "sourceId": "betano",
+  "sourceUrl": "https://ro.betano.com/api/home/top-events-v2/",
+  "transport": "betano-top-events-json",
+  "capturedAt": "2026-09-05T08:21:21.126Z",
+  "observedAt": "2026-09-05T08:21:21.065Z",
+  "dataStatus": "fresh",
+  "discovery": null,
+  "extraction": null,
+  "marketDiagnostics": {
+    "totalMarkets": 45,
+    "completeMarkets": 45,
+    "incompleteMarkets": 0,
+    "markets": [
+      {
+        "marketKey": "BOTH_TEAMS_SCORE",
+        "marketName": "Ambele echipe înscriu",
+        "eventCount": 9,
+        "selectionCount": 18,
+        "completeCount": 9,
+        "incompleteCount": 0
+      },
+      {
+        "marketKey": "DOUBLE_CHANCE",
+        "marketName": "Șansă dublă",
+        "eventCount": 9,
+        "selectionCount": 27,
+        "completeCount": 9,
+        "incompleteCount": 0
+      },
+      {
+        "marketKey": "MATCH_ODDS",
+        "marketName": "Rezultat final",
+        "eventCount": 9,
+        "selectionCount": 27,
+        "completeCount": 9,
+        "incompleteCount": 0
+      },
+      {
+        "marketKey": "OVER_UNDER_0_5_1H",
+        "marketName": "Goluri prima repriză Peste/Sub",
+        "eventCount": 2,
+        "selectionCount": 4,
+        "completeCount": 2,
+        "incompleteCount": 0
+      },
+      {
+        "marketKey": "OVER_UNDER_1_5_1H",
+        "marketName": "Goluri prima repriză Peste/Sub",
+        "eventCount": 7,
+        "selectionCount": 14,
+        "completeCount": 7,
+        "incompleteCount": 0
+      },
+      {
+        "marketKey": "OVER_UNDER_2_5",
+        "marketName": "Total goluri Peste/Sub",
+        "eventCount": 3,
+        "selectionCount": 6,
+        "completeCount": 3,
+        "incompleteCount": 0
+      },
+      {
+        "marketKey": "OVER_UNDER_3_5",
+        "marketName": "Total goluri Peste/Sub",
+        "eventCount": 6,
+        "selectionCount": 12,
+        "completeCount": 6,
+        "incompleteCount": 0
+      }
+    ],
+    "rejectionReasons": {}
+  },
+  "events": [
+    {
+      "id": "88312154",
+      "sourceId": "betano",
+      "sourceUrl": "https://ro.betano.com/api/home/top-events-v2/",
+      "observedAt": "2026-09-05T08:21:21.065Z",
+      "sport": "Football",
+      "league": "LaLiga",
+      "kickoff": "2026-09-05T14:15:00.000Z",
+      "homeTeam": "Athletic Bilbao",
+      "awayTeam": "Atletico Madrid",
+      "eventKey": "football|laliga|2026-09-05T14:15:00.000Z|athletic bilbao|atletico madrid",
+      "markets": [
+        {
+          "key": "MATCH_ODDS",
+          "name": "Rezultat final",
+          "selections": [
+            {
+              "id": "9910840128",
+              "name": "1",
+              "odds": 3.05,
+              "group": "Main"
+            },
+            {
+              "id": "9910840129",
+              "name": "X",
+              "odds": 3.3,
+              "group": "Main"
+            },
+            {
+              "id": "9910840130",
+              "name": "2",
+              "odds": 2.4,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_2_5",
+          "name": "Total goluri Peste/Sub",
+          "selections": [
+            {
+              "id": "10307849129",
+              "name": "Over",
+              "odds": 1.91,
+              "handicap": 2.5,
+              "group": "Main"
+            },
+            {
+              "id": "10307849131",
+              "name": "Under",
+              "odds": 1.9,
+              "handicap": 2.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_0_5_1H",
+          "name": "Goluri prima repriză Peste/Sub",
+          "selections": [
+            {
+              "id": "10307849010",
+              "name": "Over",
+              "odds": 1.44,
+              "handicap": 0.5,
+              "group": "Main"
+            },
+            {
+              "id": "10307849011",
+              "name": "Under",
+              "odds": 2.75,
+              "handicap": 0.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "DOUBLE_CHANCE",
+          "name": "Șansă dublă",
+          "selections": [
+            {
+              "id": "9910840144",
+              "name": "1X",
+              "odds": 1.6,
+              "group": "Main"
+            },
+            {
+              "id": "9910840145",
+              "name": "X2",
+              "odds": 1.4,
+              "group": "Main"
+            },
+            {
+              "id": "9910840146",
+              "name": "12",
+              "odds": 1.32,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "BOTH_TEAMS_SCORE",
+          "name": "Ambele echipe înscriu",
+          "selections": [
+            {
+              "id": "9910840155",
+              "name": "Yes",
+              "odds": 1.67,
+              "group": "Main"
+            },
+            {
+              "id": "9910840156",
+              "name": "No",
+              "odds": 2.12,
+              "group": "Main"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "89703442",
+      "sourceId": "betano",
+      "sourceUrl": "https://ro.betano.com/api/home/top-events-v2/",
+      "observedAt": "2026-09-05T08:21:21.065Z",
+      "sport": "Football",
+      "league": "Bundesliga",
+      "kickoff": "2026-09-05T13:30:00.000Z",
+      "homeTeam": "TSG 1899 Hoffenheim",
+      "awayTeam": "Borussia Dortmund",
+      "eventKey": "football|bundesliga|2026-09-05T13:30:00.000Z|tsg 1899 hoffenheim|borussia dortmund",
+      "markets": [
+        {
+          "key": "MATCH_ODDS",
+          "name": "Rezultat final",
+          "selections": [
+            {
+              "id": "10267847119",
+              "name": "1",
+              "odds": 2.62,
+              "group": "Main"
+            },
+            {
+              "id": "10267847120",
+              "name": "X",
+              "odds": 3.8,
+              "group": "Main"
+            },
+            {
+              "id": "10267847121",
+              "name": "2",
+              "odds": 2.47,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_3_5",
+          "name": "Total goluri Peste/Sub",
+          "selections": [
+            {
+              "id": "10260817026",
+              "name": "Over",
+              "odds": 2.15,
+              "handicap": 3.5,
+              "group": "Main"
+            },
+            {
+              "id": "10260817027",
+              "name": "Under",
+              "odds": 1.72,
+              "handicap": 3.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_1_5_1H",
+          "name": "Goluri prima repriză Peste/Sub",
+          "selections": [
+            {
+              "id": "10260816948",
+              "name": "Over",
+              "odds": 2.18,
+              "handicap": 1.5,
+              "group": "Main"
+            },
+            {
+              "id": "10260816949",
+              "name": "Under",
+              "odds": 1.67,
+              "handicap": 1.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "DOUBLE_CHANCE",
+          "name": "Șansă dublă",
+          "selections": [
+            {
+              "id": "10267847157",
+              "name": "1X",
+              "odds": 1.57,
+              "group": "Main"
+            },
+            {
+              "id": "10267847158",
+              "name": "X2",
+              "odds": 1.52,
+              "group": "Main"
+            },
+            {
+              "id": "10267847159",
+              "name": "12",
+              "odds": 1.26,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "BOTH_TEAMS_SCORE",
+          "name": "Ambele echipe înscriu",
+          "selections": [
+            {
+              "id": "10267847160",
+              "name": "Yes",
+              "odds": 1.4,
+              "group": "Main"
+            },
+            {
+              "id": "10267847161",
+              "name": "No",
+              "odds": 2.8,
+              "group": "Main"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "89709250",
+      "sourceId": "betano",
+      "sourceUrl": "https://ro.betano.com/api/home/top-events-v2/",
+      "observedAt": "2026-09-05T08:21:21.065Z",
+      "sport": "Football",
+      "league": "Eredivisie",
+      "kickoff": "2026-09-05T18:00:00.000Z",
+      "homeTeam": "AFC Ajax",
+      "awayTeam": "PSV Eindhoven",
+      "eventKey": "football|eredivisie|2026-09-05T18:00:00.000Z|afc ajax|psv eindhoven",
+      "markets": [
+        {
+          "key": "MATCH_ODDS",
+          "name": "Rezultat final",
+          "selections": [
+            {
+              "id": "10074593255",
+              "name": "1",
+              "odds": 2.57,
+              "group": "Main"
+            },
+            {
+              "id": "10074593256",
+              "name": "X",
+              "odds": 3.9,
+              "group": "Main"
+            },
+            {
+              "id": "10074593257",
+              "name": "2",
+              "odds": 2.47,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_3_5",
+          "name": "Total goluri Peste/Sub",
+          "selections": [
+            {
+              "id": "10309973065",
+              "name": "Over",
+              "odds": 1.82,
+              "handicap": 3.5,
+              "group": "Main"
+            },
+            {
+              "id": "10309973066",
+              "name": "Under",
+              "odds": 2,
+              "handicap": 3.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_1_5_1H",
+          "name": "Goluri prima repriză Peste/Sub",
+          "selections": [
+            {
+              "id": "10309972990",
+              "name": "Over",
+              "odds": 1.95,
+              "handicap": 1.5,
+              "group": "Main"
+            },
+            {
+              "id": "10309972991",
+              "name": "Under",
+              "odds": 1.83,
+              "handicap": 1.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "DOUBLE_CHANCE",
+          "name": "Șansă dublă",
+          "selections": [
+            {
+              "id": "10074593271",
+              "name": "1X",
+              "odds": 1.57,
+              "group": "Main"
+            },
+            {
+              "id": "10074593272",
+              "name": "X2",
+              "odds": 1.53,
+              "group": "Main"
+            },
+            {
+              "id": "10074593273",
+              "name": "12",
+              "odds": 1.25,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "BOTH_TEAMS_SCORE",
+          "name": "Ambele echipe înscriu",
+          "selections": [
+            {
+              "id": "10074593282",
+              "name": "Yes",
+              "odds": 1.3,
+              "group": "Main"
+            },
+            {
+              "id": "10074593283",
+              "name": "No",
+              "odds": 3.3,
+              "group": "Main"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "89709253",
+      "sourceId": "betano",
+      "sourceUrl": "https://ro.betano.com/api/home/top-events-v2/",
+      "observedAt": "2026-09-05T08:21:21.065Z",
+      "sport": "Football",
+      "league": "Eredivisie",
+      "kickoff": "2026-09-05T14:30:00.000Z",
+      "homeTeam": "NEC Nijmegen",
+      "awayTeam": "Feyenoord Rotterdam",
+      "eventKey": "football|eredivisie|2026-09-05T14:30:00.000Z|nec nijmegen|feyenoord rotterdam",
+      "markets": [
+        {
+          "key": "MATCH_ODDS",
+          "name": "Rezultat final",
+          "selections": [
+            {
+              "id": "10074595634",
+              "name": "1",
+              "odds": 2.8,
+              "group": "Main"
+            },
+            {
+              "id": "10074595635",
+              "name": "X",
+              "odds": 3.95,
+              "group": "Main"
+            },
+            {
+              "id": "10074595636",
+              "name": "2",
+              "odds": 2.27,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_3_5",
+          "name": "Total goluri Peste/Sub",
+          "selections": [
+            {
+              "id": "10309829686",
+              "name": "Over",
+              "odds": 2.02,
+              "handicap": 3.5,
+              "group": "Main"
+            },
+            {
+              "id": "10309829687",
+              "name": "Under",
+              "odds": 1.8,
+              "handicap": 3.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_1_5_1H",
+          "name": "Goluri prima repriză Peste/Sub",
+          "selections": [
+            {
+              "id": "10309829611",
+              "name": "Over",
+              "odds": 2.1,
+              "handicap": 1.5,
+              "group": "Main"
+            },
+            {
+              "id": "10309829612",
+              "name": "Under",
+              "odds": 1.72,
+              "handicap": 1.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "DOUBLE_CHANCE",
+          "name": "Șansă dublă",
+          "selections": [
+            {
+              "id": "10074595650",
+              "name": "1X",
+              "odds": 1.67,
+              "group": "Main"
+            },
+            {
+              "id": "10074595651",
+              "name": "X2",
+              "odds": 1.47,
+              "group": "Main"
+            },
+            {
+              "id": "10074595652",
+              "name": "12",
+              "odds": 1.25,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "BOTH_TEAMS_SCORE",
+          "name": "Ambele echipe înscriu",
+          "selections": [
+            {
+              "id": "10074595661",
+              "name": "Yes",
+              "odds": 1.38,
+              "group": "Main"
+            },
+            {
+              "id": "10074595662",
+              "name": "No",
+              "odds": 2.9,
+              "group": "Main"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "89709516",
+      "sourceId": "betano",
+      "sourceUrl": "https://ro.betano.com/api/home/top-events-v2/",
+      "observedAt": "2026-09-05T08:21:21.065Z",
+      "sport": "Football",
+      "league": "Super League",
+      "kickoff": "2026-09-05T16:00:00.000Z",
+      "homeTeam": "BSC Young Boys",
+      "awayTeam": "FC Luzern",
+      "eventKey": "football|super league|2026-09-05T16:00:00.000Z|bsc young boys|fc luzern",
+      "markets": [
+        {
+          "key": "MATCH_ODDS",
+          "name": "Rezultat final",
+          "selections": [
+            {
+              "id": "10074631854",
+              "name": "1",
+              "odds": 1.47,
+              "group": "Main"
+            },
+            {
+              "id": "10074631855",
+              "name": "X",
+              "odds": 4.8,
+              "group": "Main"
+            },
+            {
+              "id": "10074631856",
+              "name": "2",
+              "odds": 5.4,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_3_5",
+          "name": "Total goluri Peste/Sub",
+          "selections": [
+            {
+              "id": "10317888349",
+              "name": "Over",
+              "odds": 1.62,
+              "handicap": 3.5,
+              "group": "Main"
+            },
+            {
+              "id": "10317888350",
+              "name": "Under",
+              "odds": 2.2,
+              "handicap": 3.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_1_5_1H",
+          "name": "Goluri prima repriză Peste/Sub",
+          "selections": [
+            {
+              "id": "10317888286",
+              "name": "Over",
+              "odds": 1.8,
+              "handicap": 1.5,
+              "group": "Main"
+            },
+            {
+              "id": "10317888287",
+              "name": "Under",
+              "odds": 1.93,
+              "handicap": 1.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "DOUBLE_CHANCE",
+          "name": "Șansă dublă",
+          "selections": [
+            {
+              "id": "10074631868",
+              "name": "1X",
+              "odds": 1.17,
+              "group": "Main"
+            },
+            {
+              "id": "10074631869",
+              "name": "X2",
+              "odds": 2.72,
+              "group": "Main"
+            },
+            {
+              "id": "10074631870",
+              "name": "12",
+              "odds": 1.18,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "BOTH_TEAMS_SCORE",
+          "name": "Ambele echipe înscriu",
+          "selections": [
+            {
+              "id": "10074631879",
+              "name": "Yes",
+              "odds": 1.35,
+              "group": "Main"
+            },
+            {
+              "id": "10074631880",
+              "name": "No",
+              "odds": 2.95,
+              "group": "Main"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "89709568",
+      "sourceId": "betano",
+      "sourceUrl": "https://ro.betano.com/api/home/top-events-v2/",
+      "observedAt": "2026-09-05T08:21:21.065Z",
+      "sport": "Football",
+      "league": "1. liga",
+      "kickoff": "2026-09-05T13:00:00.000Z",
+      "homeTeam": "SK Slavia Praga",
+      "awayTeam": "FC Zbrojovka Brno",
+      "eventKey": "football|1 liga|2026-09-05T13:00:00.000Z|sk slavia praga|fc zbrojovka brno",
+      "markets": [
+        {
+          "key": "MATCH_ODDS",
+          "name": "Rezultat final",
+          "selections": [
+            {
+              "id": "10074647743",
+              "name": "1",
+              "odds": 1.33,
+              "group": "Main"
+            },
+            {
+              "id": "10074647744",
+              "name": "X",
+              "odds": 5.1,
+              "group": "Main"
+            },
+            {
+              "id": "10074647745",
+              "name": "2",
+              "odds": 7.6,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_3_5",
+          "name": "Total goluri Peste/Sub",
+          "selections": [
+            {
+              "id": "10321316453",
+              "name": "Over",
+              "odds": 2.35,
+              "handicap": 3.5,
+              "group": "Main"
+            },
+            {
+              "id": "10321316454",
+              "name": "Under",
+              "odds": 1.6,
+              "handicap": 3.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_1_5_1H",
+          "name": "Goluri prima repriză Peste/Sub",
+          "selections": [
+            {
+              "id": "10321316380",
+              "name": "Over",
+              "odds": 2.3,
+              "handicap": 1.5,
+              "group": "Main"
+            },
+            {
+              "id": "10321316381",
+              "name": "Under",
+              "odds": 1.6,
+              "handicap": 1.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "DOUBLE_CHANCE",
+          "name": "Șansă dublă",
+          "selections": [
+            {
+              "id": "10074647759",
+              "name": "1X",
+              "odds": 1.1,
+              "group": "Main"
+            },
+            {
+              "id": "10074647760",
+              "name": "X2",
+              "odds": 3.35,
+              "group": "Main"
+            },
+            {
+              "id": "10074647761",
+              "name": "12",
+              "odds": 1.15,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "BOTH_TEAMS_SCORE",
+          "name": "Ambele echipe înscriu",
+          "selections": [
+            {
+              "id": "10074647770",
+              "name": "Yes",
+              "odds": 1.87,
+              "group": "Main"
+            },
+            {
+              "id": "10074647771",
+              "name": "No",
+              "odds": 1.87,
+              "group": "Main"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "91253440",
+      "sourceId": "betano",
+      "sourceUrl": "https://ro.betano.com/api/home/top-events-v2/",
+      "observedAt": "2026-09-05T08:21:21.065Z",
+      "sport": "Football",
+      "league": "Liga 1",
+      "kickoff": "2026-09-05T12:00:00.000Z",
+      "homeTeam": "FC Botoșani",
+      "awayTeam": "ACS Sepsi",
+      "eventKey": "football|liga 1|2026-09-05T12:00:00.000Z|fc botosani|acs sepsi",
+      "markets": [
+        {
+          "key": "MATCH_ODDS",
+          "name": "Rezultat final",
+          "selections": [
+            {
+              "id": "10260029307",
+              "name": "1",
+              "odds": 2.32,
+              "group": "Main"
+            },
+            {
+              "id": "10260029308",
+              "name": "X",
+              "odds": 3.3,
+              "group": "Main"
+            },
+            {
+              "id": "10260029309",
+              "name": "2",
+              "odds": 3.25,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_2_5",
+          "name": "Total goluri Peste/Sub",
+          "selections": [
+            {
+              "id": "10260043435",
+              "name": "Over",
+              "odds": 2.05,
+              "handicap": 2.5,
+              "group": "Main"
+            },
+            {
+              "id": "10260043436",
+              "name": "Under",
+              "odds": 1.78,
+              "handicap": 2.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_0_5_1H",
+          "name": "Goluri prima repriză Peste/Sub",
+          "selections": [
+            {
+              "id": "10260043362",
+              "name": "Over",
+              "odds": 1.47,
+              "handicap": 0.5,
+              "group": "Main"
+            },
+            {
+              "id": "10260043363",
+              "name": "Under",
+              "odds": 2.62,
+              "handicap": 0.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "DOUBLE_CHANCE",
+          "name": "Șansă dublă",
+          "selections": [
+            {
+              "id": "10260029323",
+              "name": "1X",
+              "odds": 1.37,
+              "group": "Main"
+            },
+            {
+              "id": "10260029324",
+              "name": "X2",
+              "odds": 1.65,
+              "group": "Main"
+            },
+            {
+              "id": "10260029325",
+              "name": "12",
+              "odds": 1.32,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "BOTH_TEAMS_SCORE",
+          "name": "Ambele echipe înscriu",
+          "selections": [
+            {
+              "id": "10260029334",
+              "name": "Yes",
+              "odds": 1.78,
+              "group": "Main"
+            },
+            {
+              "id": "10260029335",
+              "name": "No",
+              "odds": 1.98,
+              "group": "Main"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "91266290",
+      "sourceId": "betano",
+      "sourceUrl": "https://ro.betano.com/api/home/top-events-v2/",
+      "observedAt": "2026-09-05T08:21:21.065Z",
+      "sport": "Football",
+      "league": "Premier League",
+      "kickoff": "2026-09-05T11:30:00.000Z",
+      "homeTeam": "Newcastle United",
+      "awayTeam": "AFC Bournemouth",
+      "eventKey": "football|premier league|2026-09-05T11:30:00.000Z|newcastle united|afc bournemouth",
+      "markets": [
+        {
+          "key": "MATCH_ODDS",
+          "name": "Rezultat final",
+          "selections": [
+            {
+              "id": "10261683990",
+              "name": "1",
+              "odds": 2.12,
+              "group": "Main"
+            },
+            {
+              "id": "10261683991",
+              "name": "X",
+              "odds": 3.7,
+              "group": "Main"
+            },
+            {
+              "id": "10261683992",
+              "name": "2",
+              "odds": 3.25,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_3_5",
+          "name": "Total goluri Peste/Sub",
+          "selections": [
+            {
+              "id": "10261684851",
+              "name": "Over",
+              "odds": 2.35,
+              "handicap": 3.5,
+              "group": "Main"
+            },
+            {
+              "id": "10261684852",
+              "name": "Under",
+              "odds": 1.6,
+              "handicap": 3.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_1_5_1H",
+          "name": "Goluri prima repriză Peste/Sub",
+          "selections": [
+            {
+              "id": "10261684774",
+              "name": "Over",
+              "odds": 2.32,
+              "handicap": 1.5,
+              "group": "Main"
+            },
+            {
+              "id": "10261684775",
+              "name": "Under",
+              "odds": 1.6,
+              "handicap": 1.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "DOUBLE_CHANCE",
+          "name": "Șansă dublă",
+          "selections": [
+            {
+              "id": "10261684006",
+              "name": "1X",
+              "odds": 1.36,
+              "group": "Main"
+            },
+            {
+              "id": "10261684007",
+              "name": "X2",
+              "odds": 1.75,
+              "group": "Main"
+            },
+            {
+              "id": "10261684008",
+              "name": "12",
+              "odds": 1.27,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "BOTH_TEAMS_SCORE",
+          "name": "Ambele echipe înscriu",
+          "selections": [
+            {
+              "id": "10261684017",
+              "name": "Yes",
+              "odds": 1.47,
+              "group": "Main"
+            },
+            {
+              "id": "10261684018",
+              "name": "No",
+              "odds": 2.57,
+              "group": "Main"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "91266537",
+      "sourceId": "betano",
+      "sourceUrl": "https://ro.betano.com/api/home/top-events-v2/",
+      "observedAt": "2026-09-05T08:21:21.065Z",
+      "sport": "Football",
+      "league": "Premier League",
+      "kickoff": "2026-09-05T14:00:00.000Z",
+      "homeTeam": "Nottingham Forest",
+      "awayTeam": "Tottenham Hotspur",
+      "eventKey": "football|premier league|2026-09-05T14:00:00.000Z|nottingham forest|tottenham hotspur",
+      "markets": [
+        {
+          "key": "MATCH_ODDS",
+          "name": "Rezultat final",
+          "selections": [
+            {
+              "id": "10261702582",
+              "name": "1",
+              "odds": 2.45,
+              "group": "Main"
+            },
+            {
+              "id": "10261702583",
+              "name": "X",
+              "odds": 3.35,
+              "group": "Main"
+            },
+            {
+              "id": "10261702584",
+              "name": "2",
+              "odds": 2.92,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_2_5",
+          "name": "Total goluri Peste/Sub",
+          "selections": [
+            {
+              "id": "10261703435",
+              "name": "Over",
+              "odds": 1.82,
+              "handicap": 2.5,
+              "group": "Main"
+            },
+            {
+              "id": "10261703436",
+              "name": "Under",
+              "odds": 2,
+              "handicap": 2.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_1_5_1H",
+          "name": "Goluri prima repriză Peste/Sub",
+          "selections": [
+            {
+              "id": "10261703362",
+              "name": "Over",
+              "odds": 2.7,
+              "handicap": 1.5,
+              "group": "Main"
+            },
+            {
+              "id": "10261703363",
+              "name": "Under",
+              "odds": 1.45,
+              "handicap": 1.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "DOUBLE_CHANCE",
+          "name": "Șansă dublă",
+          "selections": [
+            {
+              "id": "10261702598",
+              "name": "1X",
+              "odds": 1.42,
+              "group": "Main"
+            },
+            {
+              "id": "10261702599",
+              "name": "X2",
+              "odds": 1.57,
+              "group": "Main"
+            },
+            {
+              "id": "10261702600",
+              "name": "12",
+              "odds": 1.31,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "BOTH_TEAMS_SCORE",
+          "name": "Ambele echipe înscriu",
+          "selections": [
+            {
+              "id": "10261702609",
+              "name": "Yes",
+              "odds": 1.62,
+              "group": "Main"
+            },
+            {
+              "id": "10261702610",
+              "name": "No",
+              "odds": 2.22,
+              "group": "Main"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "scrapeLimits": {
+    "maxEvents": "all"
+  }
+}

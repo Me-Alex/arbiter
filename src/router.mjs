@@ -3,7 +3,7 @@ import { promises as fs } from 'node:fs';
 import { rotateCsrf, assertLocalApiRequest, assertCsrf } from './shared/security.mjs';
 import { sanitizeLogLine } from './shared/sanitize.mjs';
 import { RateLimiter, rateLimitMiddleware } from './shared/rate-limit.mjs';
-import { tryReadJson, readJson } from './shared/atomic-write.mjs';
+import { tryReadJson, readJson, writeJsonAtomic } from './shared/atomic-write.mjs';
 import { resolveScanRequest } from './scrape-orchestrator.mjs';
 import { sportOptions, getSport } from './sports/registry.mjs';
 
@@ -38,6 +38,17 @@ export function buildRouter(ctx) {
   } = ctx;
 
   const limitCheck = rateLimitMiddleware(rateLimiter);
+
+  // `prune()` drops buckets that have been idle past their refill horizon. It
+  // was written and unit-tested but never scheduled, so the Map only ever grew
+  // to `maxBuckets` via the overflow evictor and the idle entries stayed
+  // resident for the life of the process. The interval is unref'd so it never
+  // holds the event loop open on its own.
+  const pruneTimer = setInterval(() => {
+    const removed = rateLimiter.prune();
+    if (removed > 0) logger('info', `rate limiter: pruned ${removed} idle bucket(s)`);
+  }, 60_000);
+  pruneTimer.unref?.();
 
   const handlers = {
     'GET /api/health': () => sendJson(null, 200, {
@@ -86,6 +97,7 @@ export function buildRouter(ctx) {
         sourceIds: Array.isArray(body.sourceIds) ? body.sourceIds : null,
         bankroll: options.bankroll,
         minRoiPercent: options.minRoiPercent,
+        minEvPercent: options.minEvPercent,
         maxMiddleRiskPercent: options.maxMiddleRiskPercent,
         minMiddleRoiPercent: options.minMiddleRoiPercent,
         includeLive: options.includeLive,
@@ -103,11 +115,36 @@ export function buildRouter(ctx) {
       const csv = buildScanCsv(scan, types);
       res.setHeader('Content-Type', 'text/csv; charset=utf-8');
       res.setHeader('Content-Disposition', 'attachment; filename="scan-findings.csv"');
+      res.setHeader('Cache-Control', 'no-store');
       res.statusCode = 200;
       res.end(csv);
       return null;
     },
     'GET /api/catalog': async () => sendJson(null, 200, await scanService.readLatestCatalog(dataDir) || {}),
+    'POST /api/verify': async (req) => {
+      const { runVerificationPass, expireAutomaticConfirmations } = await import('./verification.mjs');
+      const body = await parseBody(req);
+      const baseScan = await readJson(join(dataDir, 'latest-scan.json'), null);
+      if (!baseScan) {
+        return sendJson(null, 400, { error: { name: 'BadRequest', code: 'ENOSCAN', message: 'no latest-scan.json' } });
+      }
+      const targets = Array.isArray(body.targets) ? body.targets : [...(baseScan.opportunities || [])];
+      const result = await runVerificationPass(targets, baseScan, {
+        dataDir,
+        // Without this the batch re-reads config/scrapers.json from process.cwd(),
+        // which is not the project root when the server is started elsewhere —
+        // the read then threw a bare ENOENT and the route answered 500.
+        configPath,
+        parallel: 12,
+        minEvPercent: baseScan.options?.minEvPercent,
+        logger,
+      });
+      // Retire confirmations whose event has settled, then persist the
+      // verification verdicts back into the published scan.
+      expireAutomaticConfirmations(baseScan);
+      await writeJsonAtomic(join(dataDir, 'latest-scan.json'), baseScan);
+      return sendJson(null, 200, result);
+    },
     'GET /api/scrapers': async () => {
       const cfg = await tryReadJson(configPath, { jobs: [] });
       const jobs = Array.isArray(cfg.jobs) ? cfg.jobs : [];
@@ -115,11 +152,6 @@ export function buildRouter(ctx) {
       const validatedJobs = jobs.filter((job) => job.validationStatus === 'validated');
       const experimentalJobs = jobs.filter((job) => job.validationStatus !== 'validated');
       return sendJson(null, 200, { jobs, enabledJobs, validatedJobs, experimentalJobs });
-    },
-    'GET /api/scrapers/health': async () => {
-      const { ScraperBase } = await import('./scrapers/base.mjs');
-      const circuits = await ScraperBase.getCircuitBreakerState(dataDir);
-      return sendJson(null, 200, { circuits, timestamp: new Date().toISOString() });
     },
     'GET /api/sports': () => {
       return sendJson(null, 200, { sports: sportOptions() });
@@ -227,7 +259,7 @@ export function buildRouter(ctx) {
       }
       return await serveStatic(req, res, parsedUrl, { publicDir });
     } catch (err) {
-      const status = err.statusCode || 500;
+      const status = statusForError(err);
       logger('error', `route ${req.method} ${parsedUrl.pathname}: ${err.message}`);
       if (res.headersSent) {
         // Response already streaming (SSE, CSV export) — the error body can no
@@ -244,6 +276,24 @@ export function buildRouter(ctx) {
       });
     }
   };
+}
+
+/**
+ * Map an error to an HTTP status.
+ *
+ * Services signal rejected input with `code = 'EBADINPUT'` (the tracker needs a
+ * selection, the scheduler needs a book, a scrape needs jobs). Those are the
+ * caller's fault, so they answer 400 rather than 500 — a validation failure
+ * reported as a server error hides the real problem behind an alert.
+ */
+function statusForError(err) {
+  if (Number.isInteger(err.statusCode)) return err.statusCode;
+  if (err.code === 'EBADINPUT' || err.code === 'EBADJSON' || err.code === 'EBADQUERY' || err.code === 'EDEPTH') return 400;
+  if (err.code === 'ENOSCAN') return 400;
+  if (err.code === 'ENOTFOUND') return 404;
+  if (err.code === 'ESCRAPERCONFIG') return 422;
+  if (err.code === 'EBUSY' || err.code === 'ELOCKED') return 409;
+  return 500;
 }
 
 async function readSnapshotRoute(res, parsedUrl, dataDir) {
@@ -327,7 +377,7 @@ async function loadEventDetailSnapshots(dataDir) {
   return snapshots;
 }
 
-async function readEventDetailRoute(res, parsedUrl, dataDir) {
+export async function readEventDetailRoute(res, parsedUrl, dataDir) {
   const { normalizeClubIdentity, normalizeTeamName } = await import('./shared/text.mjs');
 
   const params = parsedUrl.searchParams;

@@ -1,0 +1,8 @@
+{
+  "book": "casa-pariurilor-tennis",
+  "platform": "fortuna-bff-graphql",
+  "feedStatus": "verified",
+  "keyEndpoints": [
+    "https://api.casapariurilor.ro/offer/bff/graphql"
+  ]
+}

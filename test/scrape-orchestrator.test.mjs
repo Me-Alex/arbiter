@@ -55,6 +55,10 @@ test('orchestrator allows enabled experimental bookmaker jobs', async () => {
   const state = await orchestrator.launch({ bookIds: ['superbet'] });
   assert.equal(state.status, 'running');
   await orchestrator.cancel();
+  // cancel() aborts the run but returns before the pipeline has unwound, and
+  // the unwinding still writes state files. Removing the directory here races
+  // those writes (ENOTEMPTY on Windows). Await the pipeline instead.
+  await orchestrator._pipeline?.catch(() => {});
   await rm(dataDir, { recursive: true });
 });
 
@@ -91,24 +95,26 @@ test('resolveScanRequest normalizes maxEvents for the full/all and numeric modes
   assert.equal(fixed.includeLive, true);
 });
 
-test('orchestrator sport filter excludes legacy scrapers without supportedSports', async () => {
+test('orchestrator sport filter keeps undeclared jobs but honours explicit ones', async () => {
   const dataDir = await mkdtemp(join(tmpdir(), 'arbiter-orchestrator-sport-'));
   const configPath = join(dataDir, 'scrapers.json');
-  // Mix of legacy football scraper (no supportedSports) and tennis scraper (with supportedSports)
+  // Three shapes of job under a football filter:
+  //   football-a  declares football          → included
+  //   no-sports   declares nothing           → included (no claim, no exclusion)
+  //   tennis-only declares tennis            → excluded (an explicit mismatch)
+  // The old rule excluded anything without a `supportedSports` array, so
+  // `resolveScanRequest` — which always supplies a sport — dropped every
+  // undeclared job and a single missing array emptied the whole selection.
   await writeFile(configPath, JSON.stringify({
     jobs: [
-      { id: 'football-book', enabled: true, sourceIds: ['football-book'] },
-      { id: 'tennis', enabled: true, sourceIds: ['tennis'], supportedSports: ['tennis'] },
+      { id: 'football-a', enabled: true, sourceIds: ['football-a'], supportedSports: ['football'] },
+      { id: 'no-sports', enabled: true, sourceIds: ['no-sports'] },
+      { id: 'tennis-only', enabled: true, sourceIds: ['tennis-only'], supportedSports: ['tennis'] },
     ],
   }));
   const b = broadcaster();
   const orchestrator = new ScrapeOrchestrator({ dataDir, configPath, broadcaster: b });
 
-  // Launch with sport filter = 'tennis'; football-book has no supportedSports
-  const state = await orchestrator.launch({ bookIds: ['football-book', 'tennis'], scanOptions: { sport: 'tennis' } });
-  assert.equal(state.status, 'running');
-
-  // Intercept the pipeline call to capture which books were selected
   const batches = [];
   let pipelineDone = null;
   const runPipeline = orchestrator._runPipeline.bind(orchestrator);
@@ -118,17 +124,32 @@ test('orchestrator sport filter excludes legacy scrapers without supportedSports
     return pipelineDone;
   };
 
-  // The launch already started; re-launch to test the filter
-  await orchestrator.cancel();
-  await new Promise((r) => setTimeout(r, 100));
-
-  const state2 = await orchestrator.launch({ bookIds: ['football-book', 'tennis'], scanOptions: { sport: 'tennis' } });
+  await orchestrator.launch({ bookIds: [], scanOptions: { sport: 'football' } });
   await pipelineDone.catch(() => {});
 
-  // Only tennis should have been selected
   assert.equal(batches.length, 1);
-  assert.deepEqual(batches[0].books, ['tennis']);
-  assert.equal(batches[0].scanOptions.sport, 'tennis');
+  assert.deepEqual(batches[0].books.sort(), ['football-a', 'no-sports']);
+  assert.equal(batches[0].scanOptions.sport, 'football');
+
+  await rm(dataDir, { recursive: true });
+});
+
+test('orchestrator never scrapes when a sport filter selects nothing', async () => {
+  // Regression: the id set and the default selection used different predicates,
+  // so an active filter could build a non-empty `requested` list against an
+  // empty `enabledIds` and fail late with "no enabled bookmaker jobs selected".
+  const dataDir = await mkdtemp(join(tmpdir(), 'arbiter-orchestrator-sport-'));
+  const configPath = join(dataDir, 'scrapers.json');
+  await writeFile(configPath, JSON.stringify({
+    jobs: [{ id: 'football-a', enabled: true, sourceIds: ['football-a'], supportedSports: ['football'] }],
+  }));
+  const orchestrator = new ScrapeOrchestrator({ dataDir, configPath, broadcaster: broadcaster() });
+
+  // Unknown sport: rejected by the registry.
+  await assert.rejects(
+    () => orchestrator.launch({ bookIds: [], scanOptions: { sport: 'chess' } }),
+    (err) => err.code === 'EBADINPUT' && /unknown sport/.test(err.message),
+  );
 
   await rm(dataDir, { recursive: true });
 });
@@ -143,8 +164,8 @@ test('orchestrator forwards the resolved maxEvents to the scraper batch stage', 
   for (const { input, expected } of cases) {
     const dataDir = await mkdtemp(join(tmpdir(), 'arbiter-orchestrator-'));
     const configPath = join(dataDir, 'scrapers.json');
-    // 'probe-book' has no registered scraper, so the real runScraperBatch runs
-    // fully offline: instantiate() returns null and emits an 'unknown' envelope.
+    // 'probe-book' has no configured adapter, so the real batch fails
+    // configuration validation offline without browser fallback.
     await writeFile(configPath, JSON.stringify({
       jobs: [{ id: 'probe-book', enabled: true, validationStatus: 'validated', sourceIds: [] }],
     }));
@@ -176,11 +197,12 @@ test('orchestrator forwards the resolved maxEvents to the scraper batch stage', 
     assert.equal(persistedState.options.maxEvents, expected);
     assert.equal(persistedState.status, 'completed-with-errors');
 
-    // The real batch ran: the unknown probe job produced an 'unknown' envelope.
+    // The real batch ran and reported the unsupported configuration.
     const report = JSON.parse(await readFile(join(dataDir, 'latest-scrape-run.json'), 'utf8'));
     assert.equal(report.jobs.length, 1);
     assert.equal(report.jobs[0].id, 'probe-book');
-    assert.equal(report.jobs[0].status, 'unknown');
+    assert.equal(report.jobs[0].status, 'failed');
+    assert.equal(report.jobs[0].error.name, 'ScraperConfigurationError');
 
     await rm(dataDir, { recursive: true });
   }

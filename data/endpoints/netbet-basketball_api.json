@@ -1,0 +1,8 @@
+{
+  "book": "netbet-basketball",
+  "platform": "sportify-public-json",
+  "feedStatus": "verified",
+  "keyEndpoints": [
+    "https://api.sportify.bet/api/content/inventory-events?sport=basketball"
+  ]
+}

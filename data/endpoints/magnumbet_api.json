@@ -1,0 +1,32 @@
+{
+  "book": "magnumbet",
+  "timestamp": "2026-09-01T18:46:11.717Z",
+  "pagesVisited": 0,
+  "minPagesRequired": 50,
+  "pagesTargetReached": false,
+  "endpoints": [
+    {
+      "method": "GET",
+      "url": "https://maps.googleapis.com/maps/api/mapsjs/gen_204?csp_test=true",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "pageUrl": "https://magnumbet.ro/sport/fotbal_1",
+      "capturedAt": "2026-09-01T18:45:26.816Z"
+    }
+  ],
+  "keyEndpoints": [
+    {
+      "method": "GET",
+      "url": "https://sport.magnumbet.ro/XSportDatastore/getMenuPrematch?systemCode=MAGNUMBET&lingua=RO&hash=",
+      "verified": true
+    },
+    {
+      "method": "GET",
+      "url": "https://sport.magnumbet.ro/XSportDatastore/getPalinsestoDelGiorno?systemCode=MAGNUMBET&lingua=RO&hash=&idSport=1&idAggregata=1&timezone=3",
+      "verified": true
+    }
+  ],
+  "platform": "exalogic-xsport",
+  "feedStatus": "verified",
+  "verifiedAt": "2026-09-01"
+}

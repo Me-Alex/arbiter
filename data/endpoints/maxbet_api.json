@@ -1,0 +1,28 @@
+{
+  "book": "maxbet",
+  "timestamp": "2026-09-01T18:46:11.773Z",
+  "pagesVisited": 0,
+  "minPagesRequired": 50,
+  "pagesTargetReached": false,
+  "endpoints": [],
+  "keyEndpoints": [
+    {
+      "method": "GET",
+      "url": "https://sports-sm-distribution-api.de-2.nsoftcdn.com/api/v1/events?companyUuid=2191e3d6-b0e1-4f06-8b6a-4683203fb2fe",
+      "verified": true
+    },
+    {
+      "method": "GET",
+      "url": "https://sports-sm-distribution-api.de-2.nsoftcdn.com/api/v1/meta?companyUuid=2191e3d6-b0e1-4f06-8b6a-4683203fb2fe",
+      "verified": true
+    },
+    {
+      "method": "GET",
+      "url": "https://sports-sm-distribution-api.de-2.nsoftcdn.com/api/v1/topOffer?companyUuid=2191e3d6-b0e1-4f06-8b6a-4683203fb2fe",
+      "verified": true
+    }
+  ],
+  "platform": "nsoft",
+  "feedStatus": "verified",
+  "verifiedAt": "2026-09-01"
+}

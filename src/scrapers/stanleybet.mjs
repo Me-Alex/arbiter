@@ -69,6 +69,10 @@ export default class StanleybetScraper extends ProviderContract {
       out.push({
         id: r.id,
         sourceId: 'stanleybet',
+        // Deep link to the event page, never /feeds/events. Guarded on a
+        // provider-issued id so a synthesised fallback key can't produce a
+        // URL that looks browseable but 404s.
+        sourceUrl: (this.baseUrl && /^\d+$/.test(r.id)) ? `${this.baseUrl}/eveniment/${r.id}` : null,
         sport: r.sport,
         league: r.league,
         kickoff: r.kickoff,

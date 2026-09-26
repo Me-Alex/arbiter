@@ -1,0 +1,1121 @@
+{
+  "book": "contibet",
+  "timestamp": "2026-09-01T18:49:22.392Z",
+  "pagesVisited": 50,
+  "minPagesRequired": 50,
+  "pagesTargetReached": true,
+  "endpoints": [
+    {
+      "method": "GET",
+      "url": "https://conticazino.ro/api/maintenance-bar",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://conticazino.ro/sport",
+      "capturedAt": "2026-09-01T18:45:13.053Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://conticazino.ro/api/maintenance",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://conticazino.ro/sport",
+      "capturedAt": "2026-09-01T18:45:13.071Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://conticazino.ro/api/cmsRecentWinners",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://conticazino.ro/sport",
+      "capturedAt": "2026-09-01T18:45:13.072Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://conticazino.ro/api/handshake",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://conticazino.ro/sport",
+      "capturedAt": "2026-09-01T18:45:13.129Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://conticazino.ro/_next/data/LbTp7bROpVdMB_HDDXwjH/casino.json",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://conticazino.ro/sport",
+      "capturedAt": "2026-09-01T18:45:13.700Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://conticazino.ro/_next/data/LbTp7bROpVdMB_HDDXwjH/promotions.json",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://conticazino.ro/sport",
+      "capturedAt": "2026-09-01T18:45:13.724Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://conticazino.ro/_next/data/LbTp7bROpVdMB_HDDXwjH/casino/live.json",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://conticazino.ro/sport",
+      "capturedAt": "2026-09-01T18:45:13.724Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://conticazino.ro/api/search-recommended-game",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://conticazino.ro/sport",
+      "capturedAt": "2026-09-01T18:45:13.724Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://conticazino.ro/api/vendor-order-list",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://conticazino.ro/sport",
+      "capturedAt": "2026-09-01T18:45:13.725Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://conticazino-ro.nwacdn.com/v1/casino/vendors?datasource=New+Front&fields=id%2CdisplayName%2Cimage%2Cname%2CgameCount&platform=PC",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://conticazino.ro/sport",
+      "capturedAt": "2026-09-01T18:45:14.830Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://conticazino-ro.nwacdn.com/v1/casino/groups/New%20Front?expand=games%28vendor%29&platform=PC&fields=id%2Cname%2Cgames%28href%2Cid%2Cname%2ClaunchUrl%2CbackgroundImageUrl%2Cpopularity%2CisNew%2Cwidth%2Cheight%2ChasFunMode%2ChasAnonymousFunMode%2Cthumbnail%2CdefaultThumbnail%2Ctype%2Clogo%2Cslug%2CisVIPTable%2Cvendor%29",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://conticazino.ro/sport",
+      "capturedAt": "2026-09-01T18:45:16.581Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://ekr.zdassets.com/compose/ce88a184-e29d-43fb-91b7-2ea3f6944a2f",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://conticazino.ro/sport",
+      "capturedAt": "2026-09-01T18:45:16.584Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://conticazino-ro.nwacdn.com/v1/casino/groups/casino-recommend?expand=games%28vendor%29&platform=PC&fields=id%2Cname%2Cgames%28href%2Cid%2Cname%2ClaunchUrl%2CbackgroundImageUrl%2Cpopularity%2CisNew%2Cwidth%2Cheight%2ChasFunMode%2ChasAnonymousFunMode%2Cthumbnail%2CdefaultThumbnail%2Ctype%2Clogo%2Cslug%2CisVIPTable%2Cvendor%29",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://conticazino.ro/sport",
+      "capturedAt": "2026-09-01T18:45:16.584Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://conticazino-ro.nwacdn.com/v1/casino/groups/conticazino-livecasino?expand=games%28vendor%29&platform=PC&fields=id%2Cname%2Cgames%28href%2Cid%2Cname%2ClaunchUrl%2CbackgroundImageUrl%2Cpopularity%2CisNew%2Cwidth%2Cheight%2ChasFunMode%2ChasAnonymousFunMode%2Cthumbnail%2CdefaultThumbnail%2Ctype%2Clogo%2Cslug%2CisVIPTable%2Cvendor%29",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://conticazino.ro/sport",
+      "capturedAt": "2026-09-01T18:45:18.290Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://conticazino.ro/api/nav/casino",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://conticazino.ro/casino",
+      "capturedAt": "2026-09-01T18:45:22.638Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://conticazino.ro/api/egtJackpot",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://conticazino.ro/casino",
+      "capturedAt": "2026-09-01T18:45:22.642Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://conticazino.ro/api/faziJackpot",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://conticazino.ro/casino",
+      "capturedAt": "2026-09-01T18:45:22.689Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://conticazino.ro/api/synotJackpot",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://conticazino.ro/casino",
+      "capturedAt": "2026-09-01T18:45:22.690Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://conticazino.ro/api/gbLiveRTPDaily",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://conticazino.ro/casino",
+      "capturedAt": "2026-09-01T18:45:23.518Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://conticazino.ro/api/jackpots",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://conticazino.ro/casino",
+      "capturedAt": "2026-09-01T18:45:23.544Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://conticazino.ro/api/tournaments/promotedTournaments",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://conticazino.ro/casino",
+      "capturedAt": "2026-09-01T18:45:23.740Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://conticazino.ro/api/pateplayJackpot",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://conticazino.ro/casino",
+      "capturedAt": "2026-09-01T18:45:24.261Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://conticazino.ro/api/jsonlJackpots",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://conticazino.ro/casino",
+      "capturedAt": "2026-09-01T18:45:24.513Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://conticazino.ro/_next/data/LbTp7bROpVdMB_HDDXwjH/casino/egt-digital.json?group=egt-digital",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://conticazino.ro/casino",
+      "capturedAt": "2026-09-01T18:45:25.348Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://conticazino.ro/_next/data/LbTp7bROpVdMB_HDDXwjH/casino/summer.json?group=summer",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://conticazino.ro/casino",
+      "capturedAt": "2026-09-01T18:45:25.348Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://conticazino.ro/_next/data/LbTp7bROpVdMB_HDDXwjH/casino/amusnet-buy-bonus.json?group=amusnet-buy-bonus",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://conticazino.ro/casino",
+      "capturedAt": "2026-09-01T18:45:25.371Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://conticazino.ro/_next/data/LbTp7bROpVdMB_HDDXwjH/casino.json?megaspin=true",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://conticazino.ro/casino",
+      "capturedAt": "2026-09-01T18:45:25.372Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://conticazino.ro/_next/data/LbTp7bROpVdMB_HDDXwjH/casino/jocuri-noi.json?group=jocuri-noi",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://conticazino.ro/casino",
+      "capturedAt": "2026-09-01T18:45:25.832Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://conticazino.ro/_next/data/LbTp7bROpVdMB_HDDXwjH/casino/buy-bonus.json?group=buy-bonus",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://conticazino.ro/casino",
+      "capturedAt": "2026-09-01T18:45:25.860Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://conticazino.ro/_next/data/LbTp7bROpVdMB_HDDXwjH/casino/golden-coins-link.json?group=golden-coins-link",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://conticazino.ro/casino",
+      "capturedAt": "2026-09-01T18:45:25.861Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://conticazino.ro/_next/data/LbTp7bROpVdMB_HDDXwjH/casino/megaways.json?group=megaways",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://conticazino.ro/casino",
+      "capturedAt": "2026-09-01T18:45:25.863Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://conticazino.ro/_next/data/LbTp7bROpVdMB_HDDXwjH/casino/selectie-conti.json?group=selectie-conti",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://conticazino.ro/casino",
+      "capturedAt": "2026-09-01T18:45:25.864Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://conticazino.ro/_next/data/LbTp7bROpVdMB_HDDXwjH/casino/drops-%26-wins.json?group=drops-%26-wins",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://conticazino.ro/casino",
+      "capturedAt": "2026-09-01T18:45:25.865Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://conticazino.ro/_next/data/LbTp7bROpVdMB_HDDXwjH/casino/fructe.json?group=fructe",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://conticazino.ro/casino",
+      "capturedAt": "2026-09-01T18:45:26.296Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://conticazino.ro/api/gameOfTheWeek",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://conticazino.ro/casino/live",
+      "capturedAt": "2026-09-01T18:45:27.634Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://conticazino.ro/_next/data/LbTp7bROpVdMB_HDDXwjH/promotion/contilive.json?promotion=contilive",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://conticazino.ro/casino/live",
+      "capturedAt": "2026-09-01T18:45:28.637Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://conticazino.ro/_next/data/LbTp7bROpVdMB_HDDXwjH/casino/live/ezugi.json?group=ezugi",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://conticazino.ro/casino/live",
+      "capturedAt": "2026-09-01T18:45:28.637Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://conticazino.ro/_next/data/LbTp7bROpVdMB_HDDXwjH/casino/live/pragmatic-play.json?group=pragmatic-play",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://conticazino.ro/casino/live",
+      "capturedAt": "2026-09-01T18:45:28.670Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://conticazino.ro/_next/data/LbTp7bROpVdMB_HDDXwjH/casino/live/ruleta.json?group=ruleta",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://conticazino.ro/casino/live",
+      "capturedAt": "2026-09-01T18:45:31.033Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://conticazino.ro/_next/data/LbTp7bROpVdMB_HDDXwjH/casino/live/evolution.json?group=evolution",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://conticazino.ro/casino/live",
+      "capturedAt": "2026-09-01T18:45:31.034Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://conticazino.ro/_next/data/LbTp7bROpVdMB_HDDXwjH/casino/live/baccarat.json?group=baccarat",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://conticazino.ro/casino/live",
+      "capturedAt": "2026-09-01T18:45:31.034Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://conticazino.ro/api/nav/sports",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://conticazino.ro/sports",
+      "capturedAt": "2026-09-01T18:45:31.875Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://conticazino.ro/_next/data/LbTp7bROpVdMB_HDDXwjH/promotions/cazino.json?category=cazino",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://conticazino.ro/sports",
+      "capturedAt": "2026-09-01T18:45:32.821Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://conticazino.ro/_next/data/LbTp7bROpVdMB_HDDXwjH/promotion/rotiri-gratuite-fara-depunere.json?promotion=rotiri-gratuite-fara-depunere",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://conticazino.ro/sports",
+      "capturedAt": "2026-09-01T18:45:33.084Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://conticazino.ro/_next/data/LbTp7bROpVdMB_HDDXwjH/wiki/metode-de-depunere.json",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://conticazino.ro/sports",
+      "capturedAt": "2026-09-01T18:45:33.087Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://conticazino.ro/_next/data/LbTp7bROpVdMB_HDDXwjH/promotions/sport.json?category=sport",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://conticazino.ro/sports",
+      "capturedAt": "2026-09-01T18:45:33.090Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://conticazino.ro/_next/data/LbTp7bROpVdMB_HDDXwjH/promotions/bun-venit.json?category=bun-venit",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://conticazino.ro/sports",
+      "capturedAt": "2026-09-01T18:45:33.091Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://conticazino.ro/_next/data/LbTp7bROpVdMB_HDDXwjH/wiki/reguli-bonus.json?slug=reguli-bonus",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://conticazino.ro/sports",
+      "capturedAt": "2026-09-01T18:45:33.095Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://conticazino.ro/_next/data/LbTp7bROpVdMB_HDDXwjH/wiki/intrebari-frecvente.json",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://conticazino.ro/sports",
+      "capturedAt": "2026-09-01T18:45:33.118Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://conticazino.ro/_next/data/LbTp7bROpVdMB_HDDXwjH/wiki/termeni-si-conditii.json",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://conticazino.ro/sports",
+      "capturedAt": "2026-09-01T18:45:33.349Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://conticazino.ro/_next/data/LbTp7bROpVdMB_HDDXwjH/wiki/metode-de-retragere.json",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://conticazino.ro/sports",
+      "capturedAt": "2026-09-01T18:45:33.386Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://conticazino.ro/_next/data/LbTp7bROpVdMB_HDDXwjH/wiki/joaca-responsabil.json?slug=joaca-responsabil",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://conticazino.ro/sports",
+      "capturedAt": "2026-09-01T18:45:33.395Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://conticazino.ro/_next/data/LbTp7bROpVdMB_HDDXwjH/wiki/regulament-loto.json",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://conticazino.ro/sports",
+      "capturedAt": "2026-09-01T18:45:33.397Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://conticazino.ro/_next/data/LbTp7bROpVdMB_HDDXwjH/wiki/politica-de-confidentialitate.json?slug=politica-de-confidentialitate",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://conticazino.ro/sports",
+      "capturedAt": "2026-09-01T18:45:33.398Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://consentcdn.cookiebot.com/consentconfig/2c3f7eaa-cfbd-4634-aeb0-bbcc6d6dec50/settings.json",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://conticazino.ro/sports",
+      "capturedAt": "2026-09-01T18:45:37.915Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://conticazinohelp.zendesk.com/embeddable/config",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://conticazino.ro/sports/sporturi-live/fotbal/1/toate/0",
+      "capturedAt": "2026-09-01T18:45:39.785Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://api.trafficguard.ai/tg-g-022762-002/api/v4/client-side/validate/event",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://conticazino.ro/sports/sporturi-live/fotbal/1/toate/0",
+      "capturedAt": "2026-09-01T18:45:41.235Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://conticazino-ro.nwacdn.com/v1/casino/games?fields=id%2Cname%2ClaunchUrl%2CbackgroundImageUrl%2CisNew%2Cwidth%2Cheight%2ChasFunMode%2ChasAnonymousFunMode%2Cthumbnail%2Ctype%2Cslug%2Cvendor&filter=slug%3Dlottery_betinvest",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://conticazino.ro/loto",
+      "capturedAt": "2026-09-01T18:45:46.944Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://conticazino.ro/_next/data/LbTp7bROpVdMB_HDDXwjH/wiki/politica-cookie.json?slug=politica-cookie",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://conticazino.ro/loto",
+      "capturedAt": "2026-09-01T18:45:47.018Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://conticazino.ro/_next/data/LbTp7bROpVdMB_HDDXwjH/promotion/conti-gold-drop.json?promotion=conti-gold-drop",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://conticazino.ro/promotions",
+      "capturedAt": "2026-09-01T18:45:58.260Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://conticazino.ro/_next/data/LbTp7bROpVdMB_HDDXwjH/promotion/welcome-casino.json?promotion=welcome-casino",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://conticazino.ro/promotions",
+      "capturedAt": "2026-09-01T18:45:58.266Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://conticazino.ro/_next/data/LbTp7bROpVdMB_HDDXwjH/promotion/live40.json?promotion=live40",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://conticazino.ro/promotions",
+      "capturedAt": "2026-09-01T18:45:58.313Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://conticazino.ro/_next/data/LbTp7bROpVdMB_HDDXwjH/promotion/bonusretragere.json?promotion=bonusretragere",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://conticazino.ro/promotions",
+      "capturedAt": "2026-09-01T18:45:58.314Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://conticazino.ro/_next/data/LbTp7bROpVdMB_HDDXwjH/promotion/loto.json?promotion=loto",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://conticazino.ro/promotions",
+      "capturedAt": "2026-09-01T18:45:58.315Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://conticazino.ro/_next/data/LbTp7bROpVdMB_HDDXwjH/promotion/birthday.json?promotion=birthday",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://conticazino.ro/promotions",
+      "capturedAt": "2026-09-01T18:45:58.316Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://conticazino.ro/_next/data/LbTp7bROpVdMB_HDDXwjH/promotion/megaspin.json?promotion=megaspin",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://conticazino.ro/promotions",
+      "capturedAt": "2026-09-01T18:45:58.321Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://conticazino.ro/_next/data/LbTp7bROpVdMB_HDDXwjH/casino/egipt.json?group=egipt",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://conticazino.ro/casino/amusnet-buy-bonus",
+      "capturedAt": "2026-09-01T18:46:08.324Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://conticazino.ro/_next/data/LbTp7bROpVdMB_HDDXwjH/casino/jocuri-din-sali.json?group=jocuri-din-sali",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://conticazino.ro/casino/amusnet-buy-bonus",
+      "capturedAt": "2026-09-01T18:46:08.330Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://conticazino.ro/_next/data/LbTp7bROpVdMB_HDDXwjH/casino/toate.json?group=toate",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://conticazino.ro/casino/amusnet-buy-bonus",
+      "capturedAt": "2026-09-01T18:46:08.336Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://conticazino-ro.nwacdn.com/v1/casino/games?fields=id%2Cname%2ClaunchUrl%2CbackgroundImageUrl%2CisNew%2Cwidth%2Cheight%2ChasFunMode%2ChasAnonymousFunMode%2Cthumbnail%2Ctype%2Cslug%2Cvendor&filter=slug%3D100_extra_crown_buy_bonus_egt",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://conticazino.ro/casino/game/100_extra_crown_buy_bonus_egt",
+      "capturedAt": "2026-09-01T18:47:10.018Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://bam.nr-data.net/1/NRJS-9c9f0d4c8493f95c34b?a=586436206&v=1.320.1&to=ZQRaYkJUWkdXARAPWVxOX1ddUGdAVxAQSXpdAFxTQhpRU0JNVlUCCw%3D%3D&rst=2939&ck=0&s=90056aaa872dcb5d&ref=https://gamelaunch.everymatrix.com/Loader/Start/2349/100_extra_crown_buy_bonus_egt&ptid=c8a23e6eb4938e2f&af=err,spa,xhr,stn,ins&ap=155&be=772&fe=1452&dc=219&fsh=1&perf=%7B%22timing%22:%7B%22of%22:1788288430095,%22n%22:0,%22f%22:2,%22dn%22:2,%22dne%22:2,%22c%22:2,%22s%22:2,%22ce%22:2,%22rq%22:18,%22rp%22:772,%22rpe%22:778,%22di%22:988,%22ds%22:988,%22de%22:992,%22dc%22:2202,%22l%22:2202,%22le%22:2225%7D,%22navigation%22:%7B%7D%7D&fp=876",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://conticazino.ro/casino/game/100_extra_crown_buy_bonus_egt",
+      "capturedAt": "2026-09-01T18:47:13.429Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://prod.cdn.amusnet.io/lib/games.config.json?1788288433074",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://conticazino.ro/casino/game/100_extra_crown_buy_bonus_egt",
+      "capturedAt": "2026-09-01T18:47:13.431Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://conticazino-ro.nwacdn.com/v1/casino/games?fields=id%2Cname%2ClaunchUrl%2CbackgroundImageUrl%2CisNew%2Cwidth%2Cheight%2ChasFunMode%2ChasAnonymousFunMode%2Cthumbnail%2Ctype%2Cslug%2Cvendor&filter=slug%3Dshiningcrowncashheat_egt_digital",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://conticazino.ro/casino/game/shiningcrowncashheat_egt_digital",
+      "capturedAt": "2026-09-01T18:47:14.523Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://conticazino-ro.nwacdn.com/v1/casino/games?fields=id%2Cname%2ClaunchUrl%2CbackgroundImageUrl%2CisNew%2Cwidth%2Cheight%2ChasFunMode%2ChasAnonymousFunMode%2Cthumbnail%2Ctype%2Cslug%2Cvendor&filter=slug%3Dcrowncoins_endorphina",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://conticazino.ro/casino/game/crowncoins_endorphina",
+      "capturedAt": "2026-09-01T18:47:21.169Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://bam.nr-data.net/1/NRJS-9c9f0d4c8493f95c34b?a=586436206&v=1.320.1&to=ZQRaYkJUWkdXARAPWVxOX1ddUGdAVxAQSXpdAFxTQhpRWlINFhZeWw9ZGQIGAA0%3D&rst=721&ck=0&s=90056aaa872dcb5d&ref=https://gamelaunch.everymatrix.com/Loader/Start/2349/crowncoins_endorphina&ptid=e2249687d8f77a83&af=err,spa,xhr,stn,ins&qt=1&ap=165&be=336&fe=276&dc=272&fsh=0&perf=%7B%22timing%22:%7B%22of%22:1788288441355,%22n%22:0,%22f%22:2,%22dn%22:2,%22dne%22:2,%22c%22:2,%22s%22:2,%22ce%22:2,%22rq%22:40,%22rp%22:337,%22rpe%22:340,%22di%22:608,%22ds%22:608,%22de%22:608,%22dc%22:608,%22l%22:608,%22le%22:612%7D,%22navigation%22:%7B%7D%7D&timestamp=1788288379956",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://conticazino.ro/casino/game/crowncoins_endorphina",
+      "capturedAt": "2026-09-01T18:47:22.894Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://conticazino-ro.nwacdn.com/v1/casino/games?fields=id%2Cname%2ClaunchUrl%2CbackgroundImageUrl%2CisNew%2Cwidth%2Cheight%2ChasFunMode%2ChasAnonymousFunMode%2Cthumbnail%2Ctype%2Cslug%2Cvendor&filter=slug%3D40-shining-jewels-ct",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://conticazino.ro/casino/game/40-shining-jewels-ct",
+      "capturedAt": "2026-09-01T18:47:25.816Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://cdn2.ctrgs.com/bmm-html-2020-stable/rgs/versions.json?v=1788288447941",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://conticazino.ro/casino/game/40-shining-jewels-ct",
+      "capturedAt": "2026-09-01T18:47:28.059Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://rgs1.ctrgs.com//rgsm?request=%5B%7B%22command%22%3A%22create_session%22%2C%22secure_token%22%3A%22demo%3Adaff13433ddf9c252afbf02a9caa5db1%22%2C%22icasino%22%3A%22everymatrix%2F528165fc5b2a9616f98531d199c4a732%22%2C%22account_id%22%3A%22demo92.84.12.119%22%2C%22session_key%22%3A%22100.93226183847835%22%2C%22app_data%22%3A%22%22%2C%22app_id%22%3A%22%22%2C%22seamless_credit%22%3A1%2C%22placeholder%22%3A%22any%22%2C%22sequence_number%22%3A11%2C%22game_id%22%3A%229c60213bc2f852237450864bfca32a45%22%7D%5D&api_key=1&checksum=1",
+      "status": 200,
+      "contentType": "application/json; charset=utf8",
+      "pageUrl": "https://conticazino.ro/casino/game/40-shining-jewels-ct",
+      "capturedAt": "2026-09-01T18:47:28.341Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://bam.nr-data.net/1/NRJS-9c9f0d4c8493f95c34b?a=586436206&v=1.320.1&to=ZQRaYkJUWkdXARAPWVxOX1ddUGdAVxAQSXpdAFxTQhpXQGkFBQtfXAYXBAMBDQ%3D%3D&rst=2285&ck=0&s=90056aaa872dcb5d&ref=https://gamelaunch.everymatrix.com/Loader/Start/2349/40-shining-jewels-ct&ptid=d68088e8c3eca9ed&af=err,spa,xhr,stn,ins&ap=8&be=153&fe=2112&dc=245&fsh=0&perf=%7B%22timing%22:%7B%22of%22:1788288445856,%22n%22:0,%22f%22:2,%22dn%22:2,%22dne%22:2,%22c%22:2,%22s%22:2,%22ce%22:2,%22rq%22:21,%22rp%22:153,%22rpe%22:154,%22di%22:391,%22ds%22:391,%22de%22:398,%22dc%22:2261,%22l%22:2261,%22le%22:2265%7D,%22navigation%22:%7B%7D%7D&fp=404&timestamp=1788288386021",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://conticazino.ro/casino/game/40-shining-jewels-ct",
+      "capturedAt": "2026-09-01T18:47:28.438Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://rgs1.ctrgs.com//rgsm?request=%5B%7B%22command%22%3A%22init_game%22%2C%22game_seamless_credit%22%3A1%2C%22game_version%22%3A%221.53%22%2C%22sequence_number%22%3A12%2C%22session_id%22%3A%22aefc802e84575feb3a34d7ffafd741da%22%2C%22game_id%22%3A%229c60213bc2f852237450864bfca32a45%22%7D%5D&api_key=1&checksum=1",
+      "status": 200,
+      "contentType": "application/json; charset=utf8",
+      "pageUrl": "https://conticazino.ro/casino/game/40-shining-jewels-ct",
+      "capturedAt": "2026-09-01T18:47:28.796Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://cdn2.ctrgs.com/html-interface-stable/PIXI/attrPIXI_Asset.json?nnn=1",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://conticazino.ro/casino/game/40-shining-jewels-ct",
+      "capturedAt": "2026-09-01T18:47:28.923Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://cdn2.ctrgs.com/html-interface-stable/1024/interface13.json?nnn=2",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://conticazino.ro/casino/game/40-shining-jewels-ct",
+      "capturedAt": "2026-09-01T18:47:28.925Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://cdn2.ctrgs.com/html-interface-stable/VideoAPI/videoAssets6.json?nnn=1",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://conticazino.ro/casino/game/40-shining-jewels-ct",
+      "capturedAt": "2026-09-01T18:47:28.961Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://conticazino-ro.nwacdn.com/v1/casino/games?fields=id%2Cname%2ClaunchUrl%2CbackgroundImageUrl%2CisNew%2Cwidth%2Cheight%2ChasFunMode%2ChasAnonymousFunMode%2Cthumbnail%2Ctype%2Cslug%2Cvendor&filter=slug%3Dgatesofolympussuperscatter_pragmaticplay",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://conticazino.ro/casino/game/gatesofolympussuperscatter_pragmaticplay",
+      "capturedAt": "2026-09-01T18:47:29.987Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://demogamesfree.gfocgrfotg.net/gs2c/stats.do?mgckey=stylename@em_conticazino~SESSION@7cf66284-247b-4f32-9069-02ed1406140c&channel=desktop",
+      "status": 200,
+      "contentType": "application/json;charset=UTF-8",
+      "pageUrl": "https://conticazino.ro/casino/game/gatesofolympussuperscatter_pragmaticplay",
+      "capturedAt": "2026-09-01T18:47:32.882Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://demogamesfree.gfocgrfotg.net/gs2c/common/v3/games-html5/games/vs/vs20olympgold/desktop/packages/ro_desktop.json?key=8803f",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://conticazino.ro/casino/game/gatesofolympussuperscatter_pragmaticplay",
+      "capturedAt": "2026-09-01T18:47:33.227Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://demogamesfree.gfocgrfotg.net/gs2c/common/v3/games-html5/games/vs/vs20olympgold/desktop/packages/ro_GUI_desktop.json?key=8803f",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://conticazino.ro/casino/game/gatesofolympussuperscatter_pragmaticplay",
+      "capturedAt": "2026-09-01T18:47:33.238Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://bam.nr-data.net/1/NRJS-9c9f0d4c8493f95c34b?a=586436206&v=1.320.1&to=ZQRaYkJUWkdXARAPWVxOX1ddUGdAVxAQSXpdAFxTQhpERlcFCQdCWwJIWlFMGwYFVl0%3D&rst=2719&ck=0&s=90056aaa872dcb5d&ref=https://gamelaunch.everymatrix.com/Loader/Start/2349/gatesofolympussuperscatter_pragmaticplay&ptid=90643fda2c25dc2e&af=err,spa,xhr,stn,ins&ap=898&be=1227&fe=1376&dc=358&fsh=0&perf=%7B%22timing%22:%7B%22of%22:1788288449999,%22n%22:0,%22f%22:3,%22dn%22:3,%22dne%22:3,%22c%22:3,%22s%22:3,%22ce%22:3,%22rq%22:83,%22rp%22:1227,%22rpe%22:1232,%22di%22:1582,%22ds%22:1582,%22de%22:1584,%22dc%22:2550,%22l%22:2550,%22le%22:2603%7D,%22navigation%22:%7B%7D%7D&fp=1476&timestamp=1788288390598",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://conticazino.ro/casino/game/gatesofolympussuperscatter_pragmaticplay",
+      "capturedAt": "2026-09-01T18:47:33.302Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://demogamesfree.gfocgrfotg.net/gs2c/common/v3/games-html5/games/vs/vs20olympgold/desktop/client/resources.json?key=29f7fe610047c4b016b5edf4ace2794e",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://conticazino.ro/casino/game/gatesofolympussuperscatter_pragmaticplay",
+      "capturedAt": "2026-09-01T18:47:33.899Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://demogamesfree.gfocgrfotg.net/gs2c/common/v3/games-html5/games/vs/vs20olympgold/desktop/client/game.json?key=70c817752ddf1d0b1a552cbc8b1f406a",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://conticazino.ro/casino/game/gatesofolympussuperscatter_pragmaticplay",
+      "capturedAt": "2026-09-01T18:47:34.074Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://conticazino-ro.nwacdn.com/v1/casino/games?fields=id%2Cname%2ClaunchUrl%2CbackgroundImageUrl%2CisNew%2Cwidth%2Cheight%2ChasFunMode%2ChasAnonymousFunMode%2Cthumbnail%2Ctype%2Cslug%2Cvendor&filter=slug%3D40_super_hot_bell_link_egt_digital",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://conticazino.ro/casino/game/40_super_hot_bell_link_egt_digital",
+      "capturedAt": "2026-09-01T18:47:34.584Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://conticazinoro-gs-demo-prod-bgsp.egt-ong.com/game-websocket/info?sessionToken=12f33168-5ead-419a-aa72-b552dfdaf841&casinoId=EGTBG&playerId=1101&tempToken=&gameKey=FSHBLSlot&currencyCode=RON&demo=true&channel=desktop&version=1.62.5&browser=Chrome%20Headless%20151%20Windows&t=1788288457347",
+      "status": 200,
+      "contentType": "application/json;charset=UTF-8",
+      "pageUrl": "https://conticazino.ro/casino/game/40_super_hot_bell_link_egt_digital",
+      "capturedAt": "2026-09-01T18:47:37.784Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://conticazino-ro.nwacdn.com/v1/casino/games?fields=id%2Cname%2ClaunchUrl%2CbackgroundImageUrl%2CisNew%2Cwidth%2Cheight%2ChasFunMode%2ChasAnonymousFunMode%2Cthumbnail%2Ctype%2Cslug%2Cvendor&filter=slug%3D40_lucky_wilds_hot_egt",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://conticazino.ro/casino/game/40_lucky_wilds_hot_egt",
+      "capturedAt": "2026-09-01T18:47:39.929Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://bam.nr-data.net/1/NRJS-9c9f0d4c8493f95c34b?a=586436206&v=1.320.1&to=ZQRaYkJUWkdXARAPWVxOX1ddUGdAVxAQSXpdAFxTQhpRU0JNVlUCCw%3D%3D&rst=1281&ck=0&s=90056aaa872dcb5d&ref=https://gamelaunch.everymatrix.com/Loader/Start/2349/40_lucky_wilds_hot_egt&ptid=a1ac03230f89d529&af=err,spa,xhr,stn,ins&ap=167&be=258&fe=988&dc=359&fsh=0&perf=%7B%22timing%22:%7B%22of%22:1788288460347,%22n%22:0,%22f%22:3,%22dn%22:3,%22dne%22:3,%22c%22:3,%22s%22:3,%22ce%22:3,%22rq%22:10,%22rp%22:258,%22rpe%22:260,%22di%22:615,%22ds%22:615,%22de%22:617,%22dc%22:1243,%22l%22:1243,%22le%22:1246%7D,%22navigation%22:%7B%7D%7D&fp=564&timestamp=1788288399508",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://conticazino.ro/casino/game/40_lucky_wilds_hot_egt",
+      "capturedAt": "2026-09-01T18:47:41.866Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://prod.cdn.amusnet.io/lib/games.config.json?1788288461881",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://conticazino.ro/casino/game/40_lucky_wilds_hot_egt",
+      "capturedAt": "2026-09-01T18:47:42.353Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://conticazino-ro.nwacdn.com/v1/casino/games?fields=id%2Cname%2ClaunchUrl%2CbackgroundImageUrl%2CisNew%2Cwidth%2Cheight%2ChasFunMode%2ChasAnonymousFunMode%2Cthumbnail%2Ctype%2Cslug%2Cvendor&filter=slug%3Dduck_of_luck_buybonus_ct_gaming",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://conticazino.ro/casino/game/duck_of_luck_buybonus_ct_gaming",
+      "capturedAt": "2026-09-01T18:47:46.072Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://cdn2.ctrgs.com/bmm-html-2020-stable/rgs/versions.json?v=1788288467054",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://conticazino.ro/casino/game/duck_of_luck_buybonus_ct_gaming",
+      "capturedAt": "2026-09-01T18:47:47.411Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://rgs1.ctrgs.com//rgsm?request=%5B%7B%22command%22%3A%22create_session%22%2C%22secure_token%22%3A%22demo%3A54ba1073415c4f8df1ace6cd7733ec9a%22%2C%22icasino%22%3A%22everymatrix%2F528165fc5b2a9616f98531d199c4a732%22%2C%22account_id%22%3A%22demo92.84.12.119%22%2C%22session_key%22%3A%22100.89348827192254%22%2C%22app_data%22%3A%22%22%2C%22app_id%22%3A%22%22%2C%22seamless_credit%22%3A1%2C%22placeholder%22%3A%22any%22%2C%22sequence_number%22%3A11%2C%22game_id%22%3A%22e0880f27f1bc14c6cba3065f703b0269%22%7D%5D&api_key=1&checksum=1",
+      "status": 200,
+      "contentType": "application/json; charset=utf8",
+      "pageUrl": "https://conticazino.ro/casino/game/duck_of_luck_buybonus_ct_gaming",
+      "capturedAt": "2026-09-01T18:47:47.633Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://bam.nr-data.net/1/NRJS-9c9f0d4c8493f95c34b?a=586436206&v=1.320.1&to=ZQRaYkJUWkdXARAPWVxOX1ddUGdAVxAQSXpdAFxTQhpXQGkFBQtfXAYXBAMBDQ%3D%3D&rst=882&ck=0&s=90056aaa872dcb5d&ref=https://gamelaunch.everymatrix.com/Loader/Start/2349/duck_of_luck_buybonus_ct_gaming&ptid=5b11f8754f0f0dd8&af=err,spa,xhr,stn,ins&ap=11&be=177&fe=676&dc=175&fsh=0&perf=%7B%22timing%22:%7B%22of%22:1788288466133,%22n%22:0,%22f%22:2,%22dn%22:2,%22dne%22:2,%22c%22:2,%22s%22:2,%22ce%22:2,%22rq%22:29,%22rp%22:177,%22rpe%22:178,%22di%22:350,%22ds%22:350,%22de%22:352,%22dc%22:845,%22l%22:845,%22le%22:853%7D,%22navigation%22:%7B%7D%7D&fp=372&timestamp=1788288404895",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://conticazino.ro/casino/game/duck_of_luck_buybonus_ct_gaming",
+      "capturedAt": "2026-09-01T18:47:47.638Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://rgs1.ctrgs.com//rgsm?request=%5B%7B%22command%22%3A%22init_game%22%2C%22game_seamless_credit%22%3A1%2C%22game_version%22%3A%221.53%22%2C%22sequence_number%22%3A12%2C%22session_id%22%3A%22a564e61b3706d964c7fbffec3e6f3305%22%2C%22game_id%22%3A%22e0880f27f1bc14c6cba3065f703b0269%22%7D%5D&api_key=1&checksum=1",
+      "status": 200,
+      "contentType": "application/json; charset=utf8",
+      "pageUrl": "https://conticazino.ro/casino/game/duck_of_luck_buybonus_ct_gaming",
+      "capturedAt": "2026-09-01T18:47:47.879Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://conticazino-ro.nwacdn.com/v1/casino/games?fields=id%2Cname%2ClaunchUrl%2CbackgroundImageUrl%2CisNew%2Cwidth%2Cheight%2ChasFunMode%2ChasAnonymousFunMode%2Cthumbnail%2Ctype%2Cslug%2Cvendor&filter=slug%3Dluckystreak1000_endorphina",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://conticazino.ro/casino/game/luckystreak1000_endorphina",
+      "capturedAt": "2026-09-01T18:47:48.600Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://bam.nr-data.net/1/NRJS-9c9f0d4c8493f95c34b?a=586436206&v=1.320.1&to=ZQRaYkJUWkdXARAPWVxOX1ddUGdAVxAQSXpdAFxTQhpRWlINFhZeWw9ZGQIGAA0%3D&rst=1137&ck=0&s=90056aaa872dcb5d&ref=https://gamelaunch.everymatrix.com/Loader/Start/2349/luckystreak1000_endorphina&ptid=04a63d88981c8313&af=err,spa,xhr,stn,ins&ap=150&be=537&fe=546&dc=534&fsh=0&perf=%7B%22timing%22:%7B%22of%22:1788288468658,%22n%22:0,%22f%22:2,%22dn%22:2,%22dne%22:2,%22c%22:2,%22s%22:2,%22ce%22:2,%22rq%22:40,%22rp%22:538,%22rpe%22:552,%22di%22:1071,%22ds%22:1071,%22de%22:1071,%22dc%22:1072,%22l%22:1072,%22le%22:1084%7D,%22navigation%22:%7B%7D%7D&timestamp=1788288407675",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://conticazino.ro/casino/game/luckystreak1000_endorphina",
+      "capturedAt": "2026-09-01T18:47:50.206Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://conticazino-ro.nwacdn.com/v1/casino/games?fields=id%2Cname%2ClaunchUrl%2CbackgroundImageUrl%2CisNew%2Cwidth%2Cheight%2ChasFunMode%2ChasAnonymousFunMode%2Cthumbnail%2Ctype%2Cslug%2Cvendor&filter=slug%3Dmoneytrain4_relaxgaming",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://conticazino.ro/casino/game/moneytrain4_relaxgaming",
+      "capturedAt": "2026-09-01T18:47:53.027Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://d1k6j4zyghhevb.cloudfront.net/casino/apiconfig.json",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://conticazino.ro/casino/game/moneytrain4_relaxgaming",
+      "capturedAt": "2026-09-01T18:47:55.836Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://bam.nr-data.net/1/NRJS-9c9f0d4c8493f95c34b?a=586436206&v=1.320.1&to=ZQRaYkJUWkdXARAPWVxOX1ddUGdAVxAQSXpdAFxTQhpGUVoDHAFXXwhWUR8HBwAP&rst=1957&ck=0&s=90056aaa872dcb5d&ref=https://gamelaunch.everymatrix.com/Loader/Start/2349/moneytrain4_relaxgaming&ptid=33f8c0dc9ce6a2d1&af=err,spa,xhr,stn,ins&qt=2&ap=19&be=140&fe=1749&dc=320&fsh=0&perf=%7B%22timing%22:%7B%22of%22:1788288473072,%22n%22:0,%22f%22:2,%22dn%22:2,%22dne%22:2,%22c%22:2,%22s%22:2,%22ce%22:2,%22rq%22:20,%22rp%22:140,%22rpe%22:142,%22di%22:454,%22ds%22:454,%22de%22:460,%22dc%22:1873,%22l%22:1873,%22le%22:1889%7D,%22navigation%22:%7B%7D%7D&fp=428&timestamp=1788288412909",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://conticazino.ro/casino/game/moneytrain4_relaxgaming",
+      "capturedAt": "2026-09-01T18:47:55.845Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://mcasino.api.relaxg.com/capi/2.0/casino/games/getlauncherconfig?gameref=moneytrain4",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://conticazino.ro/casino/game/moneytrain4_relaxgaming",
+      "capturedAt": "2026-09-01T18:47:56.283Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://conticazino-ro.nwacdn.com/v1/casino/games?fields=id%2Cname%2ClaunchUrl%2CbackgroundImageUrl%2CisNew%2Cwidth%2Cheight%2ChasFunMode%2ChasAnonymousFunMode%2Cthumbnail%2Ctype%2Cslug%2Cvendor&filter=slug%3Dbookofradeluxe",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://conticazino.ro/casino/game/bookofradeluxe",
+      "capturedAt": "2026-09-01T18:47:58.372Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://conticazino-ro.nwacdn.com/v1/casino/games?fields=id%2Cname%2ClaunchUrl%2CbackgroundImageUrl%2CisNew%2Cwidth%2Cheight%2ChasFunMode%2ChasAnonymousFunMode%2Cthumbnail%2Ctype%2Cslug%2Cvendor&filter=slug%3Dlucky-clover-ct",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://conticazino.ro/casino/game/lucky-clover-ct",
+      "capturedAt": "2026-09-01T18:48:02.081Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://cdn2.ctrgs.com/bmm-html-2020-stable/rgs/versions.json?v=1788288482995",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://conticazino.ro/casino/game/lucky-clover-ct",
+      "capturedAt": "2026-09-01T18:48:03.226Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://rgs1.ctrgs.com//rgsm?request=%5B%7B%22command%22%3A%22create_session%22%2C%22secure_token%22%3A%22demo%3A581903fdc21086f442632b2f2248f802%22%2C%22icasino%22%3A%22everymatrix%2F528165fc5b2a9616f98531d199c4a732%22%2C%22account_id%22%3A%22demo92.84.12.119%22%2C%22session_key%22%3A%22100.1093903333549%22%2C%22app_data%22%3A%22%22%2C%22app_id%22%3A%22%22%2C%22seamless_credit%22%3A1%2C%22placeholder%22%3A%22any%22%2C%22sequence_number%22%3A11%2C%22game_id%22%3A%222dd02f6471e256e7a1a5c54a92aed461%22%7D%5D&api_key=1&checksum=1",
+      "status": 200,
+      "contentType": "application/json; charset=utf8",
+      "pageUrl": "https://conticazino.ro/casino/game/lucky-clover-ct",
+      "capturedAt": "2026-09-01T18:48:03.995Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://bam.nr-data.net/1/NRJS-9c9f0d4c8493f95c34b?a=586436206&v=1.320.1&to=ZQRaYkJUWkdXARAPWVxOX1ddUGdAVxAQSXpdAFxTQhpXQGkFBQtfXAYXBAMBDQ%3D%3D&rst=1095&ck=0&s=90056aaa872dcb5d&ref=https://gamelaunch.everymatrix.com/Loader/Start/2349/lucky-clover-ct&ptid=b736b3e553b565dd&af=err,spa,xhr,stn,ins&ap=9&be=222&fe=686&dc=254&fsh=0&perf=%7B%22timing%22:%7B%22of%22:1788288482119,%22n%22:0,%22f%22:2,%22dn%22:2,%22dne%22:2,%22c%22:2,%22s%22:2,%22ce%22:2,%22rq%22:45,%22rp%22:223,%22rpe%22:225,%22di%22:475,%22ds%22:475,%22de%22:477,%22dc%22:906,%22l%22:906,%22le%22:908%7D,%22navigation%22:%7B%7D%7D&fp=424&timestamp=1788288421094",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://conticazino.ro/casino/game/lucky-clover-ct",
+      "capturedAt": "2026-09-01T18:48:03.997Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://rgs1.ctrgs.com//rgsm?request=%5B%7B%22command%22%3A%22init_game%22%2C%22game_seamless_credit%22%3A1%2C%22game_version%22%3A%221.53%22%2C%22sequence_number%22%3A12%2C%22session_id%22%3A%2270fa02e0d37ee3913be7ecb8b014b734%22%2C%22game_id%22%3A%222dd02f6471e256e7a1a5c54a92aed461%22%7D%5D&api_key=1&checksum=1",
+      "status": 200,
+      "contentType": "application/json; charset=utf8",
+      "pageUrl": "https://conticazino.ro/casino/game/lucky-clover-ct",
+      "capturedAt": "2026-09-01T18:48:04.145Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://conticazino-ro.nwacdn.com/v1/casino/games?fields=id%2Cname%2ClaunchUrl%2CbackgroundImageUrl%2CisNew%2Cwidth%2Cheight%2ChasFunMode%2ChasAnonymousFunMode%2Cthumbnail%2Ctype%2Cslug%2Cvendor&filter=slug%3Dshiningcrownbuybonus_egt",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://conticazino.ro/casino/game/shiningcrownbuybonus_egt",
+      "capturedAt": "2026-09-01T18:48:06.807Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://bam.nr-data.net/1/NRJS-9c9f0d4c8493f95c34b?a=586436206&v=1.320.1&to=ZQRaYkJUWkdXARAPWVxOX1ddUGdAVxAQSXpdAFxTQhpRU0JNVlUCCw%3D%3D&rst=1115&ck=0&s=90056aaa872dcb5d&ref=https://gamelaunch.everymatrix.com/Loader/Start/2349/shiningcrownbuybonus_egt&ptid=780c12b7a601eb61&af=err,spa,xhr,stn,ins&ap=95&be=332&fe=765&dc=303&fsh=0&perf=%7B%22timing%22:%7B%22of%22:1788288486963,%22n%22:0,%22f%22:3,%22dn%22:3,%22dne%22:3,%22c%22:3,%22s%22:3,%22ce%22:3,%22rq%22:40,%22rp%22:332,%22rpe%22:333,%22di%22:632,%22ds%22:632,%22de%22:635,%22dc%22:1094,%22l%22:1094,%22le%22:1097%7D,%22navigation%22:%7B%7D%7D&fp=608&timestamp=1788288425958",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://conticazino.ro/casino/game/shiningcrownbuybonus_egt",
+      "capturedAt": "2026-09-01T18:48:08.439Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://prod.cdn.amusnet.io/lib/games.config.json?1788288488631",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://conticazino.ro/casino/game/shiningcrownbuybonus_egt",
+      "capturedAt": "2026-09-01T18:48:08.868Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://prod.cdn.amusnet.io/translations/common/en.json?v=1.15.0-1787650095824",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://conticazino.ro/casino/game/shiningcrownbuybonus_egt",
+      "capturedAt": "2026-09-01T18:48:10.520Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://prod.cdn.amusnet.io/translations/gameui/en.json?v=1.15.0-1787650095824",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://conticazino.ro/casino/game/shiningcrownbuybonus_egt",
+      "capturedAt": "2026-09-01T18:48:10.524Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://conticazino-ro.nwacdn.com/v1/casino/games?fields=id%2Cname%2ClaunchUrl%2CbackgroundImageUrl%2CisNew%2Cwidth%2Cheight%2ChasFunMode%2ChasAnonymousFunMode%2Cthumbnail%2Ctype%2Cslug%2Cvendor&filter=slug%3D100_bulky_fruits_buy_bonus_egt",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://conticazino.ro/casino/game/100_bulky_fruits_buy_bonus_egt",
+      "capturedAt": "2026-09-01T18:48:11.468Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://bam.nr-data.net/1/NRJS-9c9f0d4c8493f95c34b?a=586436206&v=1.320.1&to=ZQRaYkJUWkdXARAPWVxOX1ddUGdAVxAQSXpdAFxTQhpRU0JNVlUCCw%3D%3D&rst=968&ck=0&s=90056aaa872dcb5d&ref=https://gamelaunch.everymatrix.com/Loader/Start/2349/100_bulky_fruits_buy_bonus_egt&ptid=48545707afafc287&af=err,spa,xhr,stn,ins&qt=2&ap=86&be=230&fe=706&dc=377&fsh=0&perf=%7B%22timing%22:%7B%22of%22:1788288491500,%22n%22:0,%22f%22:11,%22dn%22:11,%22dne%22:11,%22c%22:11,%22s%22:11,%22ce%22:11,%22rq%22:56,%22rp%22:231,%22rpe%22:235,%22di%22:606,%22ds%22:606,%22de%22:608,%22dc%22:933,%22l%22:933,%22le%22:937%7D,%22navigation%22:%7B%7D%7D&fp=520&timestamp=1788288430348",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://conticazino.ro/casino/game/100_bulky_fruits_buy_bonus_egt",
+      "capturedAt": "2026-09-01T18:48:12.695Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://prod.cdn.amusnet.io/lib/games.config.json?1788288492795",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://conticazino.ro/casino/game/100_bulky_fruits_buy_bonus_egt",
+      "capturedAt": "2026-09-01T18:48:12.926Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://conticazino-ro.nwacdn.com/v1/casino/games?fields=id%2Cname%2ClaunchUrl%2CbackgroundImageUrl%2CisNew%2Cwidth%2Cheight%2ChasFunMode%2ChasAnonymousFunMode%2Cthumbnail%2Ctype%2Cslug%2Cvendor&filter=slug%3D20bulkyfruitsbuybonus_egt",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://conticazino.ro/casino/game/20bulkyfruitsbuybonus_egt",
+      "capturedAt": "2026-09-01T18:48:15.981Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://bam.nr-data.net/1/NRJS-9c9f0d4c8493f95c34b?a=586436206&v=1.320.1&to=ZQRaYkJUWkdXARAPWVxOX1ddUGdAVxAQSXpdAFxTQhpRU0JNVlUCCw%3D%3D&rst=1104&ck=0&s=90056aaa872dcb5d&ref=https://gamelaunch.everymatrix.com/Loader/Start/2349/20bulkyfruitsbuybonus_egt&ptid=26c1deaafac3a782&af=err,spa,xhr,stn,ins&ap=164&be=311&fe=760&dc=154&fsh=0&perf=%7B%22timing%22:%7B%22of%22:1788288496053,%22n%22:0,%22f%22:2,%22dn%22:2,%22dne%22:2,%22c%22:2,%22s%22:2,%22ce%22:2,%22rq%22:13,%22rp%22:311,%22rpe%22:312,%22di%22:463,%22ds%22:463,%22de%22:465,%22dc%22:1064,%22l%22:1064,%22le%22:1071%7D,%22navigation%22:%7B%7D%7D&fp=432&timestamp=1788288435037",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://conticazino.ro/casino/game/20bulkyfruitsbuybonus_egt",
+      "capturedAt": "2026-09-01T18:48:17.516Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://prod.cdn.amusnet.io/lib/games.config.json?1788288497513",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://conticazino.ro/casino/game/20bulkyfruitsbuybonus_egt",
+      "capturedAt": "2026-09-01T18:48:17.660Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://conticazino-ro.nwacdn.com/v1/casino/games?fields=id%2Cname%2ClaunchUrl%2CbackgroundImageUrl%2CisNew%2Cwidth%2Cheight%2ChasFunMode%2ChasAnonymousFunMode%2Cthumbnail%2Ctype%2Cslug%2Cvendor&filter=slug%3D20extracrownbuybonus_egt",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://conticazino.ro/casino/game/20extracrownbuybonus_egt",
+      "capturedAt": "2026-09-01T18:48:21.708Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://bam.nr-data.net/1/NRJS-9c9f0d4c8493f95c34b?a=586436206&v=1.320.1&to=ZQRaYkJUWkdXARAPWVxOX1ddUGdAVxAQSXpdAFxTQhpRU0JNVlUCCw%3D%3D&rst=1242&ck=0&s=90056aaa872dcb5d&ref=https://gamelaunch.everymatrix.com/Loader/Start/2349/20extracrownbuybonus_egt&ptid=fb1c09d9279f14b7&af=err,spa,xhr,stn,ins&ap=274&be=369&fe=808&dc=245&fsh=0&perf=%7B%22timing%22:%7B%22of%22:1788288501977,%22n%22:0,%22f%22:2,%22dn%22:2,%22dne%22:2,%22c%22:2,%22s%22:2,%22ce%22:2,%22rq%22:4,%22rp%22:369,%22rpe%22:371,%22di%22:612,%22ds%22:612,%22de%22:614,%22dc%22:1168,%22l%22:1168,%22le%22:1178%7D,%22navigation%22:%7B%7D%7D&fp=584&timestamp=1788288441099",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://conticazino.ro/casino/game/20extracrownbuybonus_egt",
+      "capturedAt": "2026-09-01T18:48:23.466Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://conticazino-ro.nwacdn.com/v1/casino/games?fields=id%2Cname%2ClaunchUrl%2CbackgroundImageUrl%2CisNew%2Cwidth%2Cheight%2ChasFunMode%2ChasAnonymousFunMode%2Cthumbnail%2Ctype%2Cslug%2Cvendor&filter=slug%3D40bulky_fruits_buy_bonus_egt",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://conticazino.ro/casino/game/40bulky_fruits_buy_bonus_egt",
+      "capturedAt": "2026-09-01T18:48:26.086Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://bam.nr-data.net/1/NRJS-9c9f0d4c8493f95c34b?a=586436206&v=1.320.1&to=ZQRaYkJUWkdXARAPWVxOX1ddUGdAVxAQSXpdAFxTQhpRU0JNVlUCCw%3D%3D&rst=1211&ck=0&s=90056aaa872dcb5d&ref=https://gamelaunch.everymatrix.com/Loader/Start/2349/40bulky_fruits_buy_bonus_egt&ptid=00d13c5758345264&af=err,spa,xhr,stn,ins&ap=162&be=347&fe=840&dc=253&fsh=0&perf=%7B%22timing%22:%7B%22of%22:1788288506095,%22n%22:0,%22f%22:2,%22dn%22:2,%22dne%22:2,%22c%22:2,%22s%22:2,%22ce%22:2,%22rq%22:17,%22rp%22:346,%22rpe%22:347,%22di%22:596,%22ds%22:596,%22de%22:600,%22dc%22:1172,%22l%22:1172,%22le%22:1186%7D,%22navigation%22:%7B%7D%7D&fp=552&timestamp=1788288445186",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://conticazino.ro/casino/game/40bulky_fruits_buy_bonus_egt",
+      "capturedAt": "2026-09-01T18:48:27.570Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://prod.cdn.amusnet.io/lib/games.config.json?1788288507711",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://conticazino.ro/casino/game/40bulky_fruits_buy_bonus_egt",
+      "capturedAt": "2026-09-01T18:48:27.780Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://conticazino-ro.nwacdn.com/v1/casino/games?fields=id%2Cname%2ClaunchUrl%2CbackgroundImageUrl%2CisNew%2Cwidth%2Cheight%2ChasFunMode%2ChasAnonymousFunMode%2Cthumbnail%2Ctype%2Cslug%2Cvendor&filter=slug%3D40extracrownbuybonus_egt",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://conticazino.ro/casino/game/40extracrownbuybonus_egt",
+      "capturedAt": "2026-09-01T18:48:30.732Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://bam.nr-data.net/1/NRJS-9c9f0d4c8493f95c34b?a=586436206&v=1.320.1&to=ZQRaYkJUWkdXARAPWVxOX1ddUGdAVxAQSXpdAFxTQhpRU0JNVlUCCw%3D%3D&rst=1327&ck=0&s=90056aaa872dcb5d&ref=https://gamelaunch.everymatrix.com/Loader/Start/2349/40extracrownbuybonus_egt&ptid=7b69b01039cb9a16&af=err,spa,xhr,stn,ins&ap=172&be=605&fe=557&dc=378&fsh=0&perf=%7B%22timing%22:%7B%22of%22:1788288510776,%22n%22:0,%22f%22:2,%22dn%22:2,%22dne%22:2,%22c%22:2,%22s%22:2,%22ce%22:2,%22rq%22:18,%22rp%22:606,%22rpe%22:608,%22di%22:982,%22ds%22:982,%22de%22:984,%22dc%22:1155,%22l%22:1156,%22le%22:1163%7D,%22navigation%22:%7B%7D%7D&fp=876&timestamp=1788288449982",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://conticazino.ro/casino/game/40extracrownbuybonus_egt",
+      "capturedAt": "2026-09-01T18:48:32.318Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://prod.cdn.amusnet.io/lib/games.config.json?1788288512413",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://conticazino.ro/casino/game/40extracrownbuybonus_egt",
+      "capturedAt": "2026-09-01T18:48:32.811Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://conticazino-ro.nwacdn.com/v1/casino/games?fields=id%2Cname%2ClaunchUrl%2CbackgroundImageUrl%2CisNew%2Cwidth%2Cheight%2ChasFunMode%2ChasAnonymousFunMode%2Cthumbnail%2Ctype%2Cslug%2Cvendor&filter=slug%3Dbulky_fruits_buy_bonus_egt",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://conticazino.ro/casino/game/bulky_fruits_buy_bonus_egt",
+      "capturedAt": "2026-09-01T18:48:35.457Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://bam.nr-data.net/1/NRJS-9c9f0d4c8493f95c34b?a=586436206&v=1.320.1&to=ZQRaYkJUWkdXARAPWVxOX1ddUGdAVxAQSXpdAFxTQhpRU0JNVlUCCw%3D%3D&rst=1656&ck=0&s=90056aaa872dcb5d&ref=https://gamelaunch.everymatrix.com/Loader/Start/2349/bulky_fruits_buy_bonus_egt&ptid=dff800da540a9546&af=err,spa,xhr,stn,ins&qt=9&ap=316&be=574&fe=1023&dc=431&fsh=0&perf=%7B%22timing%22:%7B%22of%22:1788288515488,%22n%22:0,%22f%22:2,%22dn%22:2,%22dne%22:2,%22c%22:2,%22s%22:2,%22ce%22:2,%22rq%22:10,%22rp%22:574,%22rpe%22:576,%22di%22:1003,%22ds%22:1003,%22de%22:1005,%22dc%22:1590,%22l%22:1593,%22le%22:1597%7D,%22navigation%22:%7B%7D%7D&fp=964&timestamp=1788288455023",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://conticazino.ro/casino/game/bulky_fruits_buy_bonus_egt",
+      "capturedAt": "2026-09-01T18:48:38.096Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://prod.cdn.amusnet.io/lib/games.config.json?1788288518072",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://conticazino.ro/casino/game/bulky_fruits_buy_bonus_egt",
+      "capturedAt": "2026-09-01T18:48:38.481Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://conticazino-ro.nwacdn.com/v1/casino/games?fields=id%2Cname%2ClaunchUrl%2CbackgroundImageUrl%2CisNew%2Cwidth%2Cheight%2ChasFunMode%2ChasAnonymousFunMode%2Cthumbnail%2Ctype%2Cslug%2Cvendor&filter=slug%3Dcocktail_rush_buy_bonus_egt",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://conticazino.ro/casino/game/cocktail_rush_buy_bonus_egt",
+      "capturedAt": "2026-09-01T18:48:42.393Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://conticazino-ro.nwacdn.com/v1/casino/games?fields=id%2Cname%2ClaunchUrl%2CbackgroundImageUrl%2CisNew%2Cwidth%2Cheight%2ChasFunMode%2ChasAnonymousFunMode%2Cthumbnail%2Ctype%2Cslug%2Cvendor&filter=slug%3Dextra_crown_classic_buy_bonus_egt",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://conticazino.ro/casino/game/extra_crown_classic_buy_bonus_egt",
+      "capturedAt": "2026-09-01T18:48:44.734Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://bam.nr-data.net/1/NRJS-9c9f0d4c8493f95c34b?a=586436206&v=1.320.1&to=ZQRaYkJUWkdXARAPWVxOX1ddUGdAVxAQSXpdAFxTQhpRU0JNVlUCCw%3D%3D&rst=1347&ck=0&s=90056aaa872dcb5d&ref=https://gamelaunch.everymatrix.com/Loader/Start/2349/extra_crown_classic_buy_bonus_egt&ptid=45f5d0ea4d7e59f0&af=err,spa,xhr,stn,ins&ap=193&be=641&fe=684&dc=166&fsh=0&perf=%7B%22timing%22:%7B%22of%22:1788288524750,%22n%22:0,%22f%22:2,%22dn%22:2,%22dne%22:2,%22c%22:2,%22s%22:2,%22ce%22:2,%22rq%22:81,%22rp%22:641,%22rpe%22:643,%22di%22:805,%22ds%22:805,%22de%22:807,%22dc%22:1322,%22l%22:1322,%22le%22:1325%7D,%22navigation%22:%7B%7D%7D&fp=816&timestamp=1788288463977",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://conticazino.ro/casino/game/extra_crown_classic_buy_bonus_egt",
+      "capturedAt": "2026-09-01T18:48:46.458Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://prod.cdn.amusnet.io/lib/games.config.json?1788288526801",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://conticazino.ro/casino/game/extra_crown_classic_buy_bonus_egt",
+      "capturedAt": "2026-09-01T18:48:47.218Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://conticazino-ro.nwacdn.com/v1/casino/groups/casino-jackpots?expand=games%28vendor%29&platform=PC&fields=id%2Cname%2Cgames%28href%2Cid%2Cname%2ClaunchUrl%2CbackgroundImageUrl%2Cpopularity%2CisNew%2Cwidth%2Cheight%2ChasFunMode%2ChasAnonymousFunMode%2Cthumbnail%2CdefaultThumbnail%2Ctype%2Clogo%2Cslug%2CisVIPTable%2Cvendor%29",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://conticazino.ro/casino/jackpot/egt",
+      "capturedAt": "2026-09-01T18:48:49.470Z"
+    }
+  ]
+}

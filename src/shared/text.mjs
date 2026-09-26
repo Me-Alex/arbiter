@@ -37,6 +37,102 @@ export function tokens(input) {
   return normalizeTeamName(input).split(' ').filter(Boolean);
 }
 
+/**
+ * Club identity for cross-source event matching.
+ *
+ * Providers disagree on legal suffixes, gender prefixes and sponsorship
+ * naming ("FC Dinamo Bucuresti", "Dinamo B.", "ACS FC Dinamo"), so a plain
+ * diacritic-stripped comparison is too brittle. This drops the noise tokens
+ * that never distinguish one club from another and collapses the rest into a
+ * space-separated string, so equivalent spellings normalize to the same key.
+ *
+ * @param {string} input
+ * @returns {string}
+ */
+const CLUB_NOISE_TOKENS = new Set([
+  'fc', 'sc', 'cf', 'ac', 'acs', 'afc', 'as', 'ss', 'ssc', 'us', 'ud', 'cd', 'ce', 'rc', 'rcd',
+  'sv', 'vfl', 'vfb', 'tsv', 'bsc', 'fsv', 'sg', 'spvgg', 'fs', 'acfc', 'fk', 'bk',
+  'sport', 'sports', 'club', 'fotbal', 'football', 'calcio', 'the',
+]);
+
+export function normalizeClubIdentity(input) {
+  const words = normalizeTeamName(input).split(' ').filter(Boolean);
+  const kept = words.filter((w) => !CLUB_NOISE_TOKENS.has(w));
+  // Fall back to the full token list rather than returning '' for a name that
+  // is entirely made of noise tokens (e.g. "FC" alone).
+  return (kept.length > 0 ? kept : words).join(' ');
+}
+
+/**
+ * Canonical sport label.
+ *
+ * Providers mix English, Romanian and platform-specific names for the same
+ * sport: maxbet sends "Basketball" where winner sends "Baschet", and admiral
+ * sends "Baseball" where others send "Baseball". Since the sport is part of the
+ * identity key, an untranslated label means the same fixture is treated as two
+ * different events.
+ */
+const SPORT_CANON = new Map(Object.entries({
+  // football
+  football: 'football', fotbal: 'football', soccer: 'football',
+  'american football': 'american-football', 'fotbal american': 'american-football',
+  // basketball
+  basketball: 'basketball', baschet: 'basketball',
+  // racket sports
+  tennis: 'tennis', tenis: 'tennis', 'tenis de masa': 'table-tennis', 'table tennis': 'table-tennis',
+  // winter
+  'ice hockey': 'ice-hockey', hochei: 'ice-hockey', hockey: 'ice-hockey',
+  // other
+  baseball: 'baseball', handball: 'handball', handbal: 'handball',
+  volleyball: 'volleyball', volei: 'volleyball', volley: 'volleyball',
+  cricket: 'cricket', rugby: 'rugby', 'rugby union': 'rugby', futsal: 'futsal',
+  badminton: 'badminton', floorball: 'floorball', polo: 'polo', boxing: 'boxing', box: 'boxing',
+  'mma': 'mma', 'arte martiale': 'mma', 'martial arts': 'mma',
+  // normalizeTeamName turns '-' into a space, so these are the spellings the
+  // lookup actually sees.
+  'e football': 'esports', 'e sports': 'esports', esports: 'esports', efootball: 'esports',
+}));
+
+export function canonicalSport(input) {
+  const key = normalizeTeamName(input);
+  if (!key) return '';
+  return SPORT_CANON.get(key) || key.replace(/ /g, '-');
+}
+
+/**
+ * Build a canonical identity key for an event across books.
+ * Used for cross-book event matching.
+ *
+ * The league is deliberately NOT part of the key. Books name the same
+ * competition differently — netbet says "Nations League" where admiral says
+ * "UEFA Liga Natiunilor" — so including it meant identical fixtures never
+ * matched and cross-book arbitrage could not be detected at all. Measured on a
+ * live capture, 0 independent source pairs matched with the league included
+ * and ~54 do without it.
+ *
+ * The trade-off: two fixtures with the same teams, same kickoff and same sport
+ * but different competition group (e.g. England's Nations League group A and
+ * group C) collapse into one group. A false arbitrage from that would still
+ * require both books to quote a complete 1X2, which is a much stronger
+ * constraint than the naming mismatch it replaces.
+ */
+export function eventIdentityKey(e) {
+  if (!e) return '';
+  // `new Date(...).toISOString()` throws a RangeError on a malformed timestamp,
+  // and this runs once per event inside groupByEvent — so one corrupt snapshot
+  // failed the whole scan. An unusable kickoff becomes an explicit `unknown`
+  // bucket, which keeps the event visible instead of crashing the pipeline.
+  const ms = Date.parse(e.kickoff || e.startDate || '');
+  const day = Number.isFinite(ms) ? new Date(ms).toISOString().slice(0, 10) : 'unknown';
+  const parts = [
+    canonicalSport(e.sport || ''),
+    day,
+    normalizeClubIdentity(e.homeTeam || e.home || ''),
+    normalizeClubIdentity(e.awayTeam || e.away || ''),
+  ];
+  return parts.join('|');
+}
+
 /** Levenshtein distance (small inputs only, not used for huge strings). */
 export function levenshtein(a, b) {
   if (a === b) return 0;

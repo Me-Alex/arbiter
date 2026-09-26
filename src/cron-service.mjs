@@ -17,11 +17,51 @@ const CRON_CONFIG = {
 };
 
 /**
+ * Adapt any injected logger to a `{ info, warn, error }` object.
+ *
+ * The app injects `logger(level, msg)` — a plain function — from both
+ * server.mjs, while this service (and console) is
+ * used method-style as `logger.info(...)`. Callers may also pass a bare
+ * function with no level argument, which we treat as `info`. Normalising
+ * once here keeps every call site below free of defensive `typeof` checks.
+ */
+function normalizeLogger(candidate) {
+  // Already a method-style logger — keep it as-is so a caller that compares by
+  // reference (or keeps its own state) sees exactly the object it injected.
+  // `warn` is required too: start()/stop() call it unguarded, so passing
+  // through an object with only .info/.error threw a TypeError on the first
+  // duplicate-start call.
+  if (candidate && typeof candidate === 'object'
+      && typeof candidate.info === 'function'
+      && typeof candidate.warn === 'function'
+      && typeof candidate.error === 'function') {
+    return candidate;
+  }
+  const emit = typeof candidate === 'function'
+    ? (level, msg) => candidate(level, msg)
+    : null;
+  const sink = candidate && typeof candidate === 'object' ? candidate : console;
+  const call = (level, args) => {
+    const text = args
+      .map((a) => (a instanceof Error ? a.message : typeof a === 'string' ? a : JSON.stringify(a)))
+      .join(' ');
+    if (emit) return emit(level, text);
+    const fn = typeof sink[level] === 'function' ? sink[level] : sink.log;
+    if (typeof fn === 'function') fn.call(sink, text);
+  };
+  return {
+    info: (...args) => call('info', args),
+    warn: (...args) => call('warn', args),
+    error: (...args) => call('error', args),
+  };
+}
+
+/**
  * Cron Service - Manages scheduled cleanup tasks
  */
 export class CronService {
   constructor(options = {}) {
-    this.logger = options.logger || console;
+    this.logger = normalizeLogger(options.logger);
     this.running = false;
     this.timers = new Map();
     this.config = { ...CRON_CONFIG, ...options.config };
@@ -33,22 +73,16 @@ export class CronService {
    */
   start() {
     if (this.running) {
-      if (this.logger && typeof this.logger.warn === 'function') {
-        this.logger.warn('Cron service already running');
-      }
+      this.logger.warn('Cron service already running');
       return;
     }
 
     this.running = true;
-    if (this.logger && typeof this.logger.info === 'function') {
-      this.logger.info('Starting cron service...');
-    }
+    this.logger.info('Starting cron service...');
 
     // Don't start actual timers in test mode
     if (this.testMode) {
-      if (this.logger && typeof this.logger.info === 'function') {
-        this.logger.info('Cron service in test mode, skipping actual timers');
-      }
+      this.logger.info('Cron service in test mode, skipping actual timers');
       return;
     }
 
@@ -61,9 +95,7 @@ export class CronService {
     // Start log rotation (every hour)
     this.startLogRotation();
 
-    if (this.logger && typeof this.logger.info === 'function') {
-      this.logger.info('Cron service started');
-    }
+    this.logger.info('Cron service started');
   }
 
   /**
@@ -71,15 +103,11 @@ export class CronService {
    */
   stop() {
     if (!this.running) {
-      if (this.logger && typeof this.logger.warn === 'function') {
-        this.logger.warn('Cron service not running');
-      }
+      this.logger.warn('Cron service not running');
       return;
     }
 
-    if (this.logger && typeof this.logger.info === 'function') {
-      this.logger.info('Stopping cron service...');
-    }
+    this.logger.info('Stopping cron service...');
     
     // Clear all timers
     for (const [name, timer] of this.timers) {
@@ -130,9 +158,7 @@ export class CronService {
     }, intervalMs);
 
     this.timers.set('regular-cleanup', timer);
-    if (this.logger && typeof this.logger.info === 'function') {
-      this.logger.info(`Next regular cleanup scheduled in ${this.config.cleanupIntervalHours} hours`);
-    }
+    this.logger.info(`Next regular cleanup scheduled in ${this.config.cleanupIntervalHours} hours`);
   }
 
   /**
@@ -170,9 +196,7 @@ export class CronService {
 
     const delayMs = nextRun - now;
     
-    if (this.logger && typeof this.logger.info === 'function') {
-      this.logger.info(`Next full cleanup scheduled for ${nextRun.toISOString()}`);
-    }
+    this.logger.info(`Next full cleanup scheduled for ${nextRun.toISOString()}`);
     
     const timer = setTimeout(() => {
       this.timers.delete('full-cleanup');
@@ -198,9 +222,7 @@ export class CronService {
     }, delayMs);
 
     this.timers.set('full-cleanup', timer);
-    if (this.logger && typeof this.logger.info === 'function') {
-      this.logger.info(`Next full cleanup scheduled for ${nextRun.toISOString()}`);
-    }
+    this.logger.info(`Next full cleanup scheduled for ${nextRun.toISOString()}`);
   }
 
   /**
@@ -242,18 +264,14 @@ export class CronService {
     }, intervalMs);
 
     this.timers.set('log-rotation', timer);
-    if (this.logger && typeof this.logger.info === 'function') {
-      this.logger.info(`Next log rotation scheduled in ${this.config.logRotationIntervalHours} hours`);
-    }
+    this.logger.info(`Next log rotation scheduled in ${this.config.logRotationIntervalHours} hours`);
   }
 
   /**
    * Run cleanup immediately
    */
   async runCleanupNow(options = {}) {
-    if (this.logger && typeof this.logger.info === 'function') {
-      this.logger.info('Running cleanup on demand...');
-    }
+    this.logger.info('Running cleanup on demand...');
     return await runCleanup({ ...options, verbose: true });
   }
 

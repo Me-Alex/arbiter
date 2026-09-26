@@ -2,6 +2,7 @@ import { promises as fs } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { writeJsonAtomicSync } from '../shared/atomic-write.mjs';
 import { ValidationError, UpstreamError, TimeoutError, isRetryable, backoffMs } from '../shared/errors.mjs';
+import { eventIdentityKey } from '../shared/text.mjs';
 
 /**
  * ScraperBase — every bookmaker scraper inherits from this.
@@ -176,13 +177,20 @@ export default class ScraperBase {
       }
     }
 
+    // The per-attempt deadline aborts the controller, which surfaces as
+    // EABORTED (see _withAbort) or as the fetch implementation's own AbortError
+    // — never as ETIMEOUT, which nothing in this file throws. So the old
+    // `code === 'ETIMEOUT'` test never matched and every expired run was
+    // reported as `failed`, losing the distinction the UI and the run report
+    // draw between a timeout and a hard error.
+    const timedOut = Boolean(lastErr) && isTimeoutError(lastErr);
     return this.envelope(startedAt, started, {
       valid: false,
-      status: lastErr && lastErr.code === 'ETIMEOUT' ? 'timeout' : 'failed',
+      status: timedOut ? 'timeout' : 'failed',
       events: 0,
       outputs: [],
       error: this._shapeError(lastErr),
-      reason: lastErr && lastErr.code === 'ETIMEOUT' ? 'timeout' : 'error',
+      reason: timedOut ? 'timeout' : 'error',
     });
   }
 
@@ -221,6 +229,21 @@ export default class ScraperBase {
       if (!e.eventKey || typeof e.eventKey !== 'string') {
         throw new ValidationError(`${this.id}: event missing eventKey`, { field: 'eventKey' });
       }
+      // Normalise the identity to the single canonical form used by
+      // eventIdentityKey, which is what the scanner, the catalog and
+      // /api/odds all group by. Every adapter previously built its own key
+      // string, and those included the league — which books name differently
+      // ("Nations League" vs "UEFA Liga Natiunilor"), so two brands of one feed
+      // never matched and a cross-book lookup by key returned nothing.
+      //
+      // The adapter's own key is kept as `providerEventKey` for provenance: it
+      // is the only record of how the provider labelled the competition, and
+      // it is what a human needs when reconciling against a screenshot.
+      const canonical = eventIdentityKey(e);
+      if (canonical) {
+        e.providerEventKey = e.eventKey;
+        e.eventKey = canonical;
+      }
       if (!Array.isArray(e.markets) || e.markets.length === 0) continue;
       let priced = false;
       for (const m of e.markets) {
@@ -242,7 +265,6 @@ export default class ScraperBase {
     }
     return out;
   }
-
   _shapeError(err) {
     if (!err) return null;
     return {
@@ -309,6 +331,49 @@ export default class ScraperBase {
       }),
     ]);
   }
+
+  /**
+   * Raw fetch wrapper shared by ProviderContract and JSON-RPC scrapers.
+   * Surfaces HTTP 429 as a rate-limit error; otherwise returns the Response.
+   */
+  async _httpFetch(url, opts = {}) {
+    const resp = await fetch(url, opts);
+    if (resp.status === 429) {
+      const retryAfter = resp.headers.get('retry-after');
+      let retryAfterMs = null;
+      if (retryAfter) {
+        const seconds = Number(retryAfter);
+        if (Number.isFinite(seconds) && seconds > 0) {
+          retryAfterMs = seconds * 1000;
+        } else {
+          const date = Date.parse(retryAfter);
+          if (!Number.isNaN(date)) retryAfterMs = Math.max(0, date - Date.now());
+        }
+      }
+      const err = new UpstreamError(`${this.id}: rate limited (429)`, { status: 429 });
+      err.retryAfterMs = retryAfterMs ?? null;
+      throw err;
+    }
+    return resp;
+  }
+}
+
+/**
+ * True when an error means the per-attempt deadline expired, rather than a
+ * genuine failure of the adapter.
+ *
+ * The deadline is enforced by aborting the attempt's AbortController, so what
+ * propagates is either this file's `TimeoutError` with code EABORTED or the
+ * fetch implementation's own AbortError. Older ETIMEOUT values from a
+ * pre-controller implementation are still accepted.
+ *
+ * @param {unknown} err
+ * @returns {boolean}
+ */
+function isTimeoutError(err) {
+  if (!err) return false;
+  if (err.code === 'ETIMEOUT' || err.code === 'EABORTED') return true;
+  return err.name === 'AbortError' || err.name === 'TimeoutError';
 }
 
 function combineAbortSignals(...signals) {

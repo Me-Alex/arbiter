@@ -93,8 +93,7 @@ This runs ESLint on the source code to check for coding standard violations.
 ```
 arbiter/
 ├── src/                          # Main source code
-│   ├── server.mjs                # Legacy monolith server (standalone entrypoint)
-│   ├── server-modular.mjs        # New modular server entrypoint
+│   ├── server.mjs                # Entrypoint: builds services, delegates to the router
 │   ├── router.mjs                # HTTP routing + body parsing
 │   ├── scrape-orchestrator.mjs   # Scrape + verify lifecycle
 │   ├── scan-service.mjs          # Workspace scan persistence
@@ -106,9 +105,8 @@ arbiter/
 │   ├── cron-service.mjs         # Scheduled cleanup tasks
 │   ├── scanner/                  # Scanning and arbitrage detection
 │   │   ├── scanner.mjs           # Main scanner entry point
-│   │   ├── engine.mjs            # Matching + arb/middle math
-│   │   ├── bookmaker-signals.mjs # Positive EV + low hold detection
-│   │   ├── bankroll-allocation.mjs
+│   │   ├── engine.mjs            # Matching + arb/middle/EV/low-hold math
+│   │   ├── market-contracts.mjs  # Canonical market contracts + stake allocation
 │   │   └── market-catalog.mjs    # Market definitions
 │   ├── scrapers/                 # One file per bookmaker
 │   │   ├── base.mjs              # ScraperBase contract

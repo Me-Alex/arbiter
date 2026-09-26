@@ -2689,6 +2689,70 @@ table th.num, table td.num { min-width: 5rem; }
 }
 
 /* ============================================================
+   Analyst workspace — shared surfaces and navigation
+   ============================================================ */
+body.has-sidebar::before { display: none; }
+.sidebar, [data-theme="light"] .sidebar {
+  background: var(--bg-1);
+  box-shadow: none;
+  backdrop-filter: none;
+  height: 100dvh;
+  overflow-y: auto;
+  padding: 32px 16px 20px;
+}
+.sidebar-brand { margin-bottom: 40px; }
+.sidebar-brand .name { font-size: 21px; font-weight: 650; letter-spacing: -0.045em; }
+.sidebar-brand .logo, [data-theme="light"] .sidebar-brand .logo { box-shadow: none; }
+.sidebar-brand .logo::after { display: none; }
+.sidebar-brand .badge { background: var(--accent-soft); border-color: var(--accent-line); }
+.sidebar-brand .subtitle { font-family: var(--font-sans); letter-spacing: 0.025em; font-size: 11px; }
+.sidebar nav { gap: 6px; }
+.sidebar nav a { min-height: 46px; font-size: 14px; }
+.sidebar nav a:hover { transform: none; background: var(--bg-2); border-color: var(--border); }
+.sidebar nav a.active, [data-theme="light"] .sidebar nav a.active {
+  background: var(--accent-soft);
+  border-color: var(--accent-line);
+  border-left: 3px solid var(--accent);
+  color: var(--accent);
+  box-shadow: none;
+}
+.sidebar nav a.active .nav-icon svg { filter: none; }
+.sidebar-status-card.workspace-guide, [data-theme="light"] .sidebar-status-card.workspace-guide {
+  padding: 16px;
+  margin: 24px 0 16px;
+  background: var(--bg-0);
+  box-shadow: none;
+  backdrop-filter: none;
+}
+.workspace-guide h2 { margin: 0 0 8px; font-size: 13px; font-weight: 650; color: var(--text-strong); }
+.workspace-guide p { margin: 0 0 12px; color: var(--text-muted); font-size: 12px; line-height: 1.7; }
+.workspace-guide a { display: inline-flex; align-items: center; min-height: 32px; font-size: 12px; font-weight: 650; }
+.sidebar-footer, [data-theme="light"] .sidebar-footer { background: transparent; }
+.sidebar-footer .footer-row { flex-wrap: wrap; gap: 12px; }
+.sidebar-footer .theme-toggle, .sidebar-footer .lang-btn { min-height: 36px; min-width: 36px; }
+.sidebar-toggle { width: 44px; height: 44px; }
+.card, [data-theme="light"] .card { background: var(--bg-1); box-shadow: var(--shadow-xs); }
+button.primary:hover:not(:disabled), [data-theme="light"] button.primary:hover:not(:disabled) {
+  background: var(--accent-strong); box-shadow: none;
+}
+:where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: 3px solid var(--accent); outline-offset: 4px;
+}
+@media (max-width: 980px) {
+  .sidebar { visibility: hidden; padding-top: 80px; }
+  .sidebar.open { visibility: visible; }
+  .sidebar-overlay.open { display: block; }
+  body.has-sidebar main { padding: 84px 24px 40px; }
+}
+@media (max-width: 600px) {
+  body.has-sidebar main { padding: 80px 16px 32px; }
+  .sidebar-footer .theme-toggle, .sidebar-footer .lang-btn { min-height: 44px; min-width: 44px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sidebar nav a:hover, .card-hover:focus-visible { transform: none; }
+}
+
+/* ============================================================
    High contrast mode
    ============================================================ */
 

@@ -1,0 +1,12 @@
+{
+  "book": "superbet-handball",
+  "platform": "superbet-offer",
+  "feedStatus": "verified",
+  "keyEndpoints": [
+    {
+      "url": "https://production-superbet-offer-ro.freetls.fastly.net/v3/ro-RO/events?sports=11",
+      "method": "GET",
+      "contentType": "application/json"
+    }
+  ]
+}

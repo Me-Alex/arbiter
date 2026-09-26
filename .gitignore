@@ -8,7 +8,25 @@ data/scrape-run-*.json
 data/latest-*.json
 data/bet-tracker.json
 data/alert-preferences.json
-data-smoke/
+
+# Per-run evidence directories. Live smoke runs write these next to the
+# project; keeping them out of git stops `git status` drowning in throwaway
+# snapshots. data-market-run/ is deliberately not listed: it is the one
+# directory holding a full multi-book capture kept for comparison.
+data-smoke*/
+data-verify*/
+
+# Scratch space for live probes, ad-hoc scrapers and debug scripts. Everything
+# in here is disposable by construction and is regenerated on demand.
+scratch/
+
+# Images produced by tooling rather than authored for the repo.
+generated-images/
+
+# Windows reserves `nul`; a stray redirect can create a real file with that
+# name, which is untracked and unreadable by tooling.
+nul
+
 .DS_Store
 *.log
 .vscode/

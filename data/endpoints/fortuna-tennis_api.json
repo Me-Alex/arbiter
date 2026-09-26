@@ -1,0 +1,8 @@
+{
+  "book": "fortuna-tennis",
+  "platform": "fortuna-bff-graphql",
+  "feedStatus": "verified",
+  "keyEndpoints": [
+    "https://api.efortuna.ro/offer/bff/graphql"
+  ]
+}

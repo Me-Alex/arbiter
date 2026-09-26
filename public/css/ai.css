@@ -1,0 +1,47 @@
+/**
+ * ai.css — page-specific layout for /admin/ai.html
+ *
+ * The insight page renders two cards plus a health card. Shared components
+ * (cards, chips, grids, dots) come from theme.css; this file only arranges the
+ * insight overview and gives the health card a little more presence.
+ *
+ * Spacing and type sizes are literal px, matching dashboard.css and
+ * scrape.css — design-tokens.css only defines colour, surface and font-family
+ * tokens, so there is no spacing scale to reference.
+ */
+
+.ai-overview {
+  align-items: start;
+}
+
+.ai-overview > .card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ai-health-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  border-left: 3px solid var(--accent);
+}
+
+.ai-health-card .h3-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 0;
+}
+
+/* Insight rows are plain text; keep long market keys from breaking the card. */
+.ai-overview .meta {
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 900px) {
+  .ai-overview {
+    grid-template-columns: 1fr;
+  }
+}

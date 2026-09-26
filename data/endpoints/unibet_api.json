@@ -1,0 +1,23 @@
+{
+  "book": "unibet",
+  "timestamp": "2026-09-01T18:45:55.951Z",
+  "pagesVisited": 1,
+  "minPagesRequired": 50,
+  "pagesTargetReached": false,
+  "endpoints": [],
+  "keyEndpoints": [
+    {
+      "method": "GET",
+      "url": "https://www.unibet.ro/sports-api/api/v2/views/lobby?locale=ro_ro",
+      "verified": true
+    },
+    {
+      "method": "GET",
+      "url": "https://bettingbff-mga.unibet.ro/betting-api/api/v1/betting/rewards/featured",
+      "verified": true
+    }
+  ],
+  "platform": "kindred-xns",
+  "feedStatus": "browser-only",
+  "verifiedAt": null
+}

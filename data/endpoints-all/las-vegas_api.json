@@ -1,0 +1,145 @@
+{
+  "book": "las-vegas",
+  "timestamp": "2026-09-01T18:49:47.328Z",
+  "pagesVisited": 50,
+  "minPagesRequired": 50,
+  "pagesTargetReached": true,
+  "endpoints": [
+    {
+      "method": "GET",
+      "url": "https://www.lasvegas.ro/api/games-with-info-page",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://www.lasvegas.ro/sport/fotbal_1",
+      "capturedAt": "2026-09-01T18:45:11.518Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://site-api.lasvegas.ro/v1/site/games?isMobileApp=false",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://www.lasvegas.ro/sport/fotbal_1",
+      "capturedAt": "2026-09-01T18:45:12.165Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://firebase.googleapis.com/v1alpha/projects/-/apps/1:573728031578:web:97b215985279acb5c46963/webConfig",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "pageUrl": "https://www.lasvegas.ro/sport/fotbal_1",
+      "capturedAt": "2026-09-01T18:45:12.185Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://dvm0p9vsezqr2.cloudfront.net/visitorGame/8f8044ae-775a-4730-8736-ef32b0280a8b-4/81edd1fb/ro/700",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.lasvegas.ro/sport/fotbal_1",
+      "capturedAt": "2026-09-01T18:45:12.271Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://dvm0p9vsezqr2.cloudfront.net/visitorGame/8f8044ae-775a-4730-8736-ef32b0280a8b-4/81edd1fb/ro/3/is_visitor_mode/true",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.lasvegas.ro/sport/fotbal_1",
+      "capturedAt": "2026-09-01T18:45:12.384Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://firebaseinstallations.googleapis.com/v1/projects/lasvegasro-71a6a/installations",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "pageUrl": "https://www.lasvegas.ro/sport/fotbal_1",
+      "capturedAt": "2026-09-01T18:45:12.504Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://site-api.lasvegas.ro/v1/site/games/vendors",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://www.lasvegas.ro/sport/fotbal_1",
+      "capturedAt": "2026-09-01T18:45:13.173Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://ekr.zdassets.com/compose/f9def14f-156b-4598-a9d1-c618164fbf27",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://www.lasvegas.ro/sport/fotbal_1",
+      "capturedAt": "2026-09-01T18:45:13.903Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://site-api.lasvegas.ro/v1/site/games/providers/names",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://www.lasvegas.ro/sport/fotbal_1",
+      "capturedAt": "2026-09-01T18:45:14.282Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://cdn.skywind360.com/RO/LasVegasCasino/FE/Thumbnails_format/svg_thumbnails.json",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.lasvegas.ro/sport/fotbal_1",
+      "capturedAt": "2026-09-01T18:45:14.883Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://dvm0p9vsezqr2.cloudfront.net/visitorGame/8f8044ae-775a-4730-8736-ef32b0280a8b-4/81edd1fb/ro/902",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.lasvegas.ro/lp/castiga-rolls",
+      "capturedAt": "2026-09-01T18:45:27.127Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://site-api.lasvegas.ro/v1/site/promotions/neveu-campaign/count",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://www.lasvegas.ro/lp/neveu",
+      "capturedAt": "2026-09-01T18:45:31.630Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://lasvegascasinoro.zendesk.com/embeddable/config",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://www.lasvegas.ro/lp/neveu",
+      "capturedAt": "2026-09-01T18:45:32.221Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://site-api.lasvegas.ro/v1/site/jackpot-statistics?siteId=65e11b86-481c-4dff-a9ee-ad25bf5eb718",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://www.lasvegas.ro/",
+      "capturedAt": "2026-09-01T18:45:37.865Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://site-api.lasvegas.ro/v1/site/demo/00000008-0000-5000-9000-000000000104",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://www.lasvegas.ro/loto",
+      "capturedAt": "2026-09-01T18:46:02.271Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://www.lasvegas.ro/_next/data/MWojkiaYtCtLC_LgpBG2x/login.json?redirect=%2Froata-norocului",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.lasvegas.ro/roata-norocului",
+      "capturedAt": "2026-09-01T18:46:16.881Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://site-api.lasvegas.ro/notification/v1/push/settings?siteId=65e11b86-481c-4dff-a9ee-ad25bf5eb718",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://www.lasvegas.ro/trending",
+      "capturedAt": "2026-09-01T18:49:08.755Z"
+    }
+  ]
+}

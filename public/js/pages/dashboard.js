@@ -4,23 +4,8 @@ arbiterApp.mount('dashboard');
 const oppList = document.getElementById('opp-list');
 const sourceHealthList = document.getElementById('source-health');
 
-// Card-shaped skeleton for opportunities
-const oppSkeleton = `<div class="dash-loading" aria-label="Loading opportunities">
-  ${Array(3).fill('').map((_, i) => `
-    <div class="skeleton-card" style="animation-delay:${i * 80}ms">
-      <div class="skel-head">
-        <div class="skel-match">
-          <div class="skel-bar w-60"></div>
-          <div class="skel-bar w-40"></div>
-        </div>
-        <div class="skel-roi"></div>
-      </div>
-      <div class="skel-legs">
-        <div class="skel-leg"><div class="skel-bar w-40"></div><div class="skel-bar w-80"></div><div class="skel-bar w-20"></div></div>
-        <div class="skel-leg"><div class="skel-bar w-40"></div><div class="skel-bar w-80"></div><div class="skel-bar w-20"></div></div>
-      </div>
-    </div>`).join('')}
-</div>`;
+// Compact loading state; avoid the former full-card layout shift.
+const oppSkeleton = `<p role="status">${arbiterI18n.lang === 'en' ? 'Loading opportunities…' : 'Se încarcă oportunitățile…'}</p>`;
 
 // Source-shaped skeleton for source health
 const sourceSkeleton = `<div class="dash-loading" aria-label="Loading sources">
@@ -158,8 +143,10 @@ async function refresh() {
     }
 
     // Total events and sources
-    const totalEvents = ev.length + totalOpps;
-    if (qbEvents) qbEvents.textContent = totalEvents.toLocaleString();
+    const totalEvents = scan.eventCount;
+    if (qbEvents) qbEvents.textContent = Number.isFinite(totalEvents) && totalEvents >= 0
+      ? totalEvents.toLocaleString()
+      : '—';
     if (qbSources) {
       const sourceCount = (scan.sources || []).length;
       const freshCount = (scan.sources || []).filter(s => s.dataStatus === 'fresh').length;
@@ -250,7 +237,7 @@ async function refresh() {
       // Group by match identity: home|away|kickoff
       const groups = new Map();
       for (const o of all) {
-        const key = `${o.homeTeam}|${o.awayTeam}|${o.kickoff}`;
+        const key = JSON.stringify([o.sport || '', o.homeTeam || o.eventKey || '', o.awayTeam || '', o.kickoff || '']);
         if (!groups.has(key)) groups.set(key, []);
         groups.get(key).push(o);
       }
@@ -260,7 +247,10 @@ async function refresh() {
       const initialCards = groupValues.slice(0, MAX_CARDS);
       const remainingCards = groupValues.slice(MAX_CARDS);
 
-      list.innerHTML = initialCards.map(renderOppGroup).join('');
+      const headings = arbiterI18n.lang === 'en'
+        ? ['Event / sport', 'Best market', 'Type / verification', 'Markets', 'ROI', 'Details']
+        : ['Eveniment / sport', 'Cea mai bună piață', 'Tip / verificare', 'Piețe', 'ROI', 'Detalii'];
+      list.innerHTML = `<div class="opportunity-table-wrap" tabindex="0" role="region" aria-label="${escapeHtml(t('topOpportunities'))}"><table class="opportunity-table"><thead><tr>${headings.map(h => `<th scope="col">${escapeHtml(h)}</th>`).join('')}</tr></thead><tbody>${initialCards.map(renderOppGroup).join('')}</tbody></table></div>`;
 
       // Add "Show more" button if there are more cards
       if (remainingCards.length > 0) {
@@ -273,7 +263,7 @@ async function refresh() {
           showMoreBtn.remove();
           // Append remaining cards
           const remainingHtml = remainingCards.map(renderOppGroup).join('');
-          list.insertAdjacentHTML('beforeend', remainingHtml);
+          list.querySelector('tbody').insertAdjacentHTML('beforeend', remainingHtml);
           // Reinitialize navigation
           initCardNavigation();
           // Update count
@@ -367,7 +357,20 @@ function fmtMarketKey(key) {
 function renderOppGroup(opps) {
   if (!opps || !opps.length) return '';
   const best = opps[0]; // already sorted by ROI desc
-  return renderOppV2(best, opps);
+  const t = arbiterI18n.t.bind(arbiterI18n);
+  const params = new URLSearchParams({ sport: best.sport || '', home: best.homeTeam || '', away: best.awayTeam || '', kickoff: best.kickoff || '' });
+  const href = escapeHtml(`/event.html?${params}`);
+  const event = `${best.homeTeam || '—'} ${t('vs')} ${best.awayTeam || '—'}`;
+  const marketCount = new Set(opps.map(o => o.marketKey || o.market || '').filter(Boolean)).size;
+  const roi = Number(best.roiPercent || 0);
+  const kind = best.kind === 'middle' ? (arbiterI18n.lang === 'en' ? 'Middle' : 'Mijloc') : (arbiterI18n.lang === 'en' ? 'Arbitrage' : 'Arbitraj');
+  return `<tr class="opportunity-row">
+    <th scope="row"><span class="strong">${escapeHtml(event)}</span><small>${escapeHtml([best.sport, best.league, formatKickoff(best.kickoff)].filter(Boolean).join(' · '))}</small></th>
+    <td>${escapeHtml(fmtMarketKey(best.marketKey || best.market || ''))}</td>
+    <td>${escapeHtml(kind)}<small>${escapeHtml(best.verification?.status ? t(best.verification.status) : t('unverified'))}</small></td>
+    <td class="num">${marketCount}</td><td class="num tabnum mono">${roi >= 0 ? '+' : ''}${roi.toFixed(2)}%</td>
+    <td><a class="opportunity-details" href="${href}" aria-label="${escapeHtml(`${t('viewDetails')}: ${event}`)}">${escapeHtml(t('viewDetails'))}</a></td>
+  </tr>`;
 }
 
 // Badge age thresholds (ms) for the card's "detected ago" time badge.
@@ -392,6 +395,8 @@ function parseDate(value) {
   return Number.isNaN(d.getTime()) ? null : d;
 }
 
+// Retained for the existing card-renderer regression harness; overview uses rows.
+// eslint-disable-next-line no-unused-vars
 function renderOppV2(o, allMarkets) {
   const t = arbiterI18n.t.bind(arbiterI18n);
   const legs = (o.legs || []).map((l) => dashRenderLeg(l, t, o.roiPercent)).join('');
@@ -649,6 +654,13 @@ function flashDetailUnavailable(card) {
 // Delegated click handler for the opportunity list: market chips swap legs,
 // the event link (and the plain card) open the event detail dialog.
 function handleOppListClick(e) {
+  const row = e.target.closest('.opportunity-row');
+  if (row) {
+    if (!e.target.closest('a, button') && !e.ctrlKey && !e.metaKey && !e.shiftKey && !e.altKey && !window.getSelection()?.toString()) {
+      row.querySelector('.opportunity-details').click();
+    }
+    return;
+  }
   // Market chip click — swap legs, don't open modal
   const chip = e.target.closest('.opp-market-chip');
   if (chip) {

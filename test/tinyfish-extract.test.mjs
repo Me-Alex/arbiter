@@ -116,7 +116,20 @@ test('two books on the same event cross-match in the engine', async () => {
         { name: 'Inter', odds: odds.away },
       ] }],
     };
-    await writeFile(join(dataDir, 'workspace', `${sourceId}_events.json`), JSON.stringify({ schemaVersion: 2, sourceId, capturedAt: new Date().toISOString(), dataStatus: 'fresh', events: [ev] }));
+    // loadWorkspace drops any snapshot that is not FRESH *and* carries full
+    // provenance (runId + sourceUrl + transport) — see scanner.mjs. Without
+    // those fields the events never reach the engine, so the fixture must
+    // declare them to exercise the cross-book matching path.
+    await writeFile(join(dataDir, 'workspace', `${sourceId}_events.json`), JSON.stringify({
+      schemaVersion: 2,
+      sourceId,
+      runId: 'offline-tf',
+      sourceUrl: `https://example.test/${sourceId}`,
+      transport: 'test-fixture-json',
+      capturedAt: new Date().toISOString(),
+      dataStatus: 'fresh',
+      events: [ev],
+    }));
   };
   await writeWorkspace('a', { home: 2.50, draw: 4.20, away: 4.60 });
   await writeWorkspace('b', { home: 2.10, draw: 4.50, away: 5.00 });

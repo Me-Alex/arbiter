@@ -90,30 +90,34 @@ export class ScrapeOrchestrator {
         throw err;
       }
     }
+    // A job participates when it is enabled and, if a sport filter is active,
+    // declares support for that sport.
+    //
+    // A job with no `supportedSports` is not excluded: absence means the job
+    // never stated a capability, which is not the same as declaring it cannot
+    // serve the sport. The old rule dropped every undeclared job the moment any
+    // filter was active, and `resolveScanRequest` always supplies a sport, so a
+    // single mislabelled entry could empty the whole selection. An explicit
+    // declaration is still honoured: a job that lists sports but not this one
+    // is excluded, which is what makes the filter meaningful.
+    //
+    // This is the single predicate both the id set and the default selection
+    // use, so the two can no longer disagree.
+    const jobMatchesSport = (job) => {
+      if (!sportFilter) return true;
+      if (!Array.isArray(job.supportedSports) || job.supportedSports.length === 0) return true;
+      return job.supportedSports.includes(sportFilter);
+    };
+    const runnable = jobs.filter((job) => job.enabled !== false && jobMatchesSport(job));
+
     const enabledIds = new Set();
-    for (const job of jobs) {
-      if (job.enabled !== false) {
-        // If a sport filter is active, only include scrapers that explicitly support that sport
-        if (sportFilter) {
-          if (Array.isArray(job.supportedSports) && job.supportedSports.includes(sportFilter)) {
-            // matches filter — include
-          } else {
-            continue; // no supportedSports or doesn't match — exclude
-          }
-        }
-        enabledIds.add(job.id);
-        if (Array.isArray(job.sourceIds)) job.sourceIds.forEach((sourceId) => enabledIds.add(sourceId));
-      }
+    for (const job of runnable) {
+      enabledIds.add(job.id);
+      if (Array.isArray(job.sourceIds)) job.sourceIds.forEach((sourceId) => enabledIds.add(sourceId));
     }
     const requested = Array.isArray(bookIds) && bookIds.length > 0
       ? bookIds
-      : jobs.filter((job) => {
-          if (job.enabled === false) return false;
-          if (sportFilter && Array.isArray(job.supportedSports) && job.supportedSports.length > 0) {
-            return job.supportedSports.includes(sportFilter);
-          }
-          return true;
-        }).map((job) => job.id);
+      : runnable.map((job) => job.id);
     const selected = [...new Set(requested)].filter((id) => enabledIds.has(id));
     if (selected.length === 0) {
       const err = new Error('no enabled bookmaker jobs selected');
@@ -199,12 +203,15 @@ export class ScrapeOrchestrator {
         books,
         parallel: normalizeScrapeParallel(process.env.ARBITER_SCRAPE_PARALLEL || 4),
         dataDir: this.dataDir,
+        configPath: this.configPath,
         runId,
         signal,
         onEvent,
         logger: this.logger,
         maxEvents: scanOptions.maxEvents,
         sport: scanOptions.sport,
+        includePast: scanOptions.includePast,
+        includeLive: scanOptions.includeLive,
       });
     } catch (err) {
       if (signal?.aborted || err?.code === 'ECANCELLED') {
@@ -246,6 +253,7 @@ export class ScrapeOrchestrator {
         capturedAt: new Date().toISOString(),
         bankroll: scanOptions.bankroll ?? 1000,
         minRoiPercent: scanOptions.minRoiPercent ?? 0,
+        minEvPercent: scanOptions.minEvPercent ?? 2,
         maxMiddleRiskPercent: scanOptions.maxMiddleRiskPercent ?? 15,
         minMiddleRoiPercent: scanOptions.minMiddleRoiPercent ?? 20,
         includeLive: scanOptions.includeLive ?? false,
@@ -275,7 +283,10 @@ export class ScrapeOrchestrator {
           scan,
           {
             dataDir: this.dataDir,
+            configPath: this.configPath,
             parallel: 12,
+            maxEvents: scanOptions.maxEvents,
+            sport: scanOptions.sport,
             runId,
             signal,
             onEvent: (event) => onEvent({ ...event, phase: 'verification' }),
@@ -412,6 +423,7 @@ export function resolveScanRequest(input) {
   const {
     bankroll = 1000,
     minRoiPercent = 0,
+    minEvPercent = 2,
     maxMiddleRiskPercent = 15,
     minMiddleRoiPercent = 20,
     includeLive = false,
@@ -422,6 +434,7 @@ export function resolveScanRequest(input) {
   return {
     bankroll: clampNumber(bankroll, 10, 1000000, 1000),
     minRoiPercent: clampNumber(minRoiPercent, -50, 100, 0),
+    minEvPercent: clampNumber(minEvPercent, 0, 100, 2),
     maxMiddleRiskPercent: clampNumber(maxMiddleRiskPercent, 0, 100, 15),
     minMiddleRoiPercent: clampNumber(minMiddleRoiPercent, 0, 100, 20),
     includeLive: Boolean(includeLive),

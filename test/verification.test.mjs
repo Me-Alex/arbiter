@@ -79,3 +79,52 @@ test('expireAutomaticConfirmations demotes past kickoffs', () => {
   expireAutomaticConfirmations(scan, { now: Date.now() });
   assert.equal(scan.opportunities[0].verification.status, 'expired');
 });
+
+test('expireAutomaticConfirmations also expires confirmed middles', () => {
+  // runVerificationPass writes confirmations onto middles too, so expiring
+  // only opportunities left confirmed middles in the persisted scan forever.
+  const scan = {
+    opportunities: [],
+    middles: [
+      { kickoff: '2000-01-01T00:00:00Z', verification: { status: 'confirmed' } },
+    ],
+  };
+  expireAutomaticConfirmations(scan, { now: Date.now() });
+  assert.equal(scan.middles[0].verification.status, 'expired');
+  assert.equal(scan.middles[0].verification.reason, 'event past');
+});
+
+test('expireAutomaticConfirmations expires a confirmation with no usable kickoff', () => {
+  // A missing kickoff used to yield new Date(0) -> 0, which read as falsy and
+  // skipped the expiry, so the confirmation could never be retired.
+  for (const kickoff of [undefined, null, '', 'not a date']) {
+    const scan = { opportunities: [{ kickoff, verification: { status: 'confirmed' } }] };
+    expireAutomaticConfirmations(scan, { now: Date.now() });
+    assert.equal(scan.opportunities[0].verification.status, 'expired', `kickoff: ${JSON.stringify(kickoff)}`);
+    assert.equal(scan.opportunities[0].verification.reason, 'event kickoff unknown');
+  }
+});
+
+test('expireAutomaticConfirmations keeps a confirmation inside the settlement grace', () => {
+  // An event that kicked off an hour ago has not necessarily been re-priced by
+  // every feed yet; expiring it immediately would drop a still-live signal.
+  const now = Date.parse('2030-01-01T12:00:00Z');
+  const scan = {
+    opportunities: [
+      { kickoff: '2030-01-01T11:00:00Z', verification: { status: 'confirmed' } },
+      { kickoff: '2030-01-01T05:00:00Z', verification: { status: 'confirmed' } },
+    ],
+  };
+  expireAutomaticConfirmations(scan, { now });
+  assert.equal(scan.opportunities[0].verification.status, 'confirmed', '1h after kickoff is inside the grace');
+  assert.equal(scan.opportunities[1].verification.status, 'expired', '7h after kickoff is settled');
+});
+
+test('expireAutomaticConfirmations leaves other statuses and odd shapes alone', () => {
+  const scan = { opportunities: [{ kickoff: '2000-01-01T00:00:00Z', verification: { status: 'rejected' } }] };
+  expireAutomaticConfirmations(scan, { now: Date.now() });
+  assert.equal(scan.opportunities[0].verification.status, 'rejected');
+  assert.equal(expireAutomaticConfirmations(null), null);
+  assert.doesNotThrow(() => expireAutomaticConfirmations({}));
+  assert.doesNotThrow(() => expireAutomaticConfirmations({ opportunities: 'nope' }));
+});

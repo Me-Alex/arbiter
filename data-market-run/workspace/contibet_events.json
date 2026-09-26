@@ -1,0 +1,5820 @@
+{
+  "schemaVersion": 2,
+  "runId": "markets-1788596479049-contibet",
+  "sourceId": "contibet",
+  "sourceUrl": "wss://api.conticazino.ro/v2",
+  "transport": "everymatrix-odds-wamp",
+  "capturedAt": "2026-09-05T08:27:04.906Z",
+  "observedAt": "2026-09-05T08:27:04.851Z",
+  "dataStatus": "fresh",
+  "discovery": null,
+  "extraction": null,
+  "marketDiagnostics": {
+    "totalMarkets": 266,
+    "completeMarkets": 266,
+    "incompleteMarkets": 0,
+    "markets": [
+      {
+        "marketKey": "MATCH_ODDS",
+        "marketName": "1X2, Timp regulamentar",
+        "eventCount": 23,
+        "selectionCount": 69,
+        "completeCount": 23,
+        "incompleteCount": 0
+      },
+      {
+        "marketKey": "OVER_UNDER_0_5",
+        "marketName": "Goluri Peste / Sub, Timp regulamentar",
+        "eventCount": 41,
+        "selectionCount": 82,
+        "completeCount": 41,
+        "incompleteCount": 0
+      },
+      {
+        "marketKey": "OVER_UNDER_1_5",
+        "marketName": "Goluri Peste / Sub, Timp regulamentar",
+        "eventCount": 41,
+        "selectionCount": 82,
+        "completeCount": 41,
+        "incompleteCount": 0
+      },
+      {
+        "marketKey": "OVER_UNDER_2_5",
+        "marketName": "Goluri Peste / Sub, Timp regulamentar",
+        "eventCount": 42,
+        "selectionCount": 84,
+        "completeCount": 42,
+        "incompleteCount": 0
+      },
+      {
+        "marketKey": "OVER_UNDER_3_5",
+        "marketName": "Goluri Peste / Sub, Timp regulamentar",
+        "eventCount": 42,
+        "selectionCount": 84,
+        "completeCount": 42,
+        "incompleteCount": 0
+      },
+      {
+        "marketKey": "OVER_UNDER_4_5",
+        "marketName": "Goluri Peste / Sub, Timp regulamentar",
+        "eventCount": 41,
+        "selectionCount": 82,
+        "completeCount": 41,
+        "incompleteCount": 0
+      },
+      {
+        "marketKey": "OVER_UNDER_5_5",
+        "marketName": "Goluri Peste / Sub, Timp regulamentar",
+        "eventCount": 18,
+        "selectionCount": 36,
+        "completeCount": 18,
+        "incompleteCount": 0
+      },
+      {
+        "marketKey": "OVER_UNDER_6_5",
+        "marketName": "Goluri Peste / Sub, Timp regulamentar",
+        "eventCount": 18,
+        "selectionCount": 36,
+        "completeCount": 18,
+        "incompleteCount": 0
+      }
+    ],
+    "rejectionReasons": {}
+  },
+  "events": [
+    {
+      "id": "313515807137755136",
+      "sourceId": "contibet",
+      "sourceUrl": "https://conticazino.ro/sport#/event/313515807137755136",
+      "observedAt": "2026-09-05T08:27:04.851Z",
+      "sport": "Football",
+      "league": "Superliga (F) 2026/2027",
+      "kickoff": "2026-09-05T10:00:00.000Z",
+      "homeTeam": "CFF Olimpia Cluj (F)",
+      "awayTeam": "FK Csikszereda M. Ciuc (F)",
+      "eventKey": "football|superliga f 2026 2027|2026-09-05T10:00:00.000Z|cff olimpia cluj f|fk csikszereda m ciuc f",
+      "markets": [
+        {
+          "key": "MATCH_ODDS",
+          "name": "1X2, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313515807137755136:1",
+              "name": "1",
+              "odds": 2.63,
+              "group": "Main"
+            },
+            {
+              "id": "313515807137755136:X",
+              "name": "X",
+              "odds": 2.25,
+              "group": "Main"
+            },
+            {
+              "id": "313515807137755136:2",
+              "name": "2",
+              "odds": 2.12,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_0_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313546101065713152",
+              "name": "Over",
+              "odds": 13.25,
+              "handicap": 0.5,
+              "group": "Main"
+            },
+            {
+              "id": "313546101065712640",
+              "name": "Under",
+              "odds": 1.04,
+              "handicap": 0.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_1_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313546101065713152",
+              "name": "Over",
+              "odds": 13.25,
+              "handicap": 1.5,
+              "group": "Main"
+            },
+            {
+              "id": "313546101065712640",
+              "name": "Under",
+              "odds": 1.04,
+              "handicap": 1.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_2_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313546101065713152",
+              "name": "Over",
+              "odds": 13.25,
+              "handicap": 2.5,
+              "group": "Main"
+            },
+            {
+              "id": "313546101065712640",
+              "name": "Under",
+              "odds": 1.04,
+              "handicap": 2.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_3_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313546101065713152",
+              "name": "Over",
+              "odds": 13.25,
+              "handicap": 3.5,
+              "group": "Main"
+            },
+            {
+              "id": "313546101065712640",
+              "name": "Under",
+              "odds": 1.04,
+              "handicap": 3.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_4_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313546101065713152",
+              "name": "Over",
+              "odds": 13.25,
+              "handicap": 4.5,
+              "group": "Main"
+            },
+            {
+              "id": "313546101065712640",
+              "name": "Under",
+              "odds": 1.04,
+              "handicap": 4.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_0_5",
+          "name": "Goluri Peste / Sub, Repriza 1",
+          "selections": [
+            {
+              "id": "313546101065713152",
+              "name": "Over",
+              "odds": 13.25,
+              "handicap": 0.5,
+              "group": "Main"
+            },
+            {
+              "id": "313546101065712640",
+              "name": "Under",
+              "odds": 1.04,
+              "handicap": 0.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_1_5",
+          "name": "Goluri Peste / Sub, Repriza 1",
+          "selections": [
+            {
+              "id": "313546101065713152",
+              "name": "Over",
+              "odds": 13.25,
+              "handicap": 1.5,
+              "group": "Main"
+            },
+            {
+              "id": "313546101065712640",
+              "name": "Under",
+              "odds": 1.04,
+              "handicap": 1.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_2_5",
+          "name": "Goluri Peste / Sub, Repriza 1",
+          "selections": [
+            {
+              "id": "313546101065713152",
+              "name": "Over",
+              "odds": 13.25,
+              "handicap": 2.5,
+              "group": "Main"
+            },
+            {
+              "id": "313546101065712640",
+              "name": "Under",
+              "odds": 1.04,
+              "handicap": 2.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_3_5",
+          "name": "Goluri Peste / Sub, Repriza 1",
+          "selections": [
+            {
+              "id": "313546101065713152",
+              "name": "Over",
+              "odds": 13.25,
+              "handicap": 3.5,
+              "group": "Main"
+            },
+            {
+              "id": "313546101065712640",
+              "name": "Under",
+              "odds": 1.04,
+              "handicap": 3.5,
+              "group": "Main"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "312959797782278144",
+      "sourceId": "contibet",
+      "sourceUrl": "https://conticazino.ro/sport#/event/312959797782278144",
+      "observedAt": "2026-09-05T08:27:04.851Z",
+      "sport": "Football",
+      "league": "Liga II 2026/2027",
+      "kickoff": "2026-09-05T09:30:00.000Z",
+      "homeTeam": "Popesti Leordeni",
+      "awayTeam": "FC Bihor",
+      "eventKey": "football|liga ii 2026 2027|2026-09-05T09:30:00.000Z|popesti leordeni|fc bihor",
+      "markets": [
+        {
+          "key": "MATCH_ODDS",
+          "name": "1X2, Timp regulamentar",
+          "selections": [
+            {
+              "id": "312959797782278144:1",
+              "name": "1",
+              "odds": 3.2,
+              "group": "Main"
+            },
+            {
+              "id": "312959797782278144:X",
+              "name": "X",
+              "odds": 3.2,
+              "group": "Main"
+            },
+            {
+              "id": "312959797782278144:2",
+              "name": "2",
+              "odds": 2.63,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_0_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "312960612150229760",
+              "name": "Over",
+              "odds": 1.06,
+              "handicap": 0.5,
+              "group": "Main"
+            },
+            {
+              "id": "312960612150230784",
+              "name": "Under",
+              "odds": 1.09,
+              "handicap": 0.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_1_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "312960612150229760",
+              "name": "Over",
+              "odds": 1.06,
+              "handicap": 1.5,
+              "group": "Main"
+            },
+            {
+              "id": "312960612150230784",
+              "name": "Under",
+              "odds": 1.09,
+              "handicap": 1.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_2_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "312960612150229760",
+              "name": "Over",
+              "odds": 1.06,
+              "handicap": 2.5,
+              "group": "Main"
+            },
+            {
+              "id": "312960612150230784",
+              "name": "Under",
+              "odds": 1.09,
+              "handicap": 2.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_3_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "312960612150229760",
+              "name": "Over",
+              "odds": 1.06,
+              "handicap": 3.5,
+              "group": "Main"
+            },
+            {
+              "id": "312960612150230784",
+              "name": "Under",
+              "odds": 1.09,
+              "handicap": 3.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_4_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "312960612150229760",
+              "name": "Over",
+              "odds": 1.06,
+              "handicap": 4.5,
+              "group": "Main"
+            },
+            {
+              "id": "312960612150230784",
+              "name": "Under",
+              "odds": 1.09,
+              "handicap": 4.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_5_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "312960612150229760",
+              "name": "Over",
+              "odds": 1.06,
+              "handicap": 5.5,
+              "group": "Main"
+            },
+            {
+              "id": "312960612150230784",
+              "name": "Under",
+              "odds": 1.09,
+              "handicap": 5.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_6_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "312960612150229760",
+              "name": "Over",
+              "odds": 1.06,
+              "handicap": 6.5,
+              "group": "Main"
+            },
+            {
+              "id": "312960612150230784",
+              "name": "Under",
+              "odds": 1.09,
+              "handicap": 6.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_0_5",
+          "name": "Goluri Peste / Sub, Repriza 1",
+          "selections": [
+            {
+              "id": "312960612150229760",
+              "name": "Over",
+              "odds": 1.06,
+              "handicap": 0.5,
+              "group": "Main"
+            },
+            {
+              "id": "312960612150230784",
+              "name": "Under",
+              "odds": 1.09,
+              "handicap": 0.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_1_5",
+          "name": "Goluri Peste / Sub, Repriza 1",
+          "selections": [
+            {
+              "id": "312960612150229760",
+              "name": "Over",
+              "odds": 1.06,
+              "handicap": 1.5,
+              "group": "Main"
+            },
+            {
+              "id": "312960612150230784",
+              "name": "Under",
+              "odds": 1.09,
+              "handicap": 1.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_2_5",
+          "name": "Goluri Peste / Sub, Repriza 1",
+          "selections": [
+            {
+              "id": "312960612150229760",
+              "name": "Over",
+              "odds": 1.06,
+              "handicap": 2.5,
+              "group": "Main"
+            },
+            {
+              "id": "312960612150230784",
+              "name": "Under",
+              "odds": 1.09,
+              "handicap": 2.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_3_5",
+          "name": "Goluri Peste / Sub, Repriza 1",
+          "selections": [
+            {
+              "id": "312960612150229760",
+              "name": "Over",
+              "odds": 1.06,
+              "handicap": 3.5,
+              "group": "Main"
+            },
+            {
+              "id": "312960612150230784",
+              "name": "Under",
+              "odds": 1.09,
+              "handicap": 3.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_4_5",
+          "name": "Goluri Peste / Sub, Repriza 1",
+          "selections": [
+            {
+              "id": "312960612150229760",
+              "name": "Over",
+              "odds": 1.06,
+              "handicap": 4.5,
+              "group": "Main"
+            },
+            {
+              "id": "312960612150230784",
+              "name": "Under",
+              "odds": 1.09,
+              "handicap": 4.5,
+              "group": "Main"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "312410083960713216",
+      "sourceId": "contibet",
+      "sourceUrl": "https://conticazino.ro/sport#/event/312410083960713216",
+      "observedAt": "2026-09-05T08:27:04.851Z",
+      "sport": "Football",
+      "league": "Liga I 2026/2027",
+      "kickoff": "2026-09-05T12:00:00.000Z",
+      "homeTeam": "FC Botoșani",
+      "awayTeam": "Sepsi Sf. Gheorghe",
+      "eventKey": "football|liga i 2026 2027|2026-09-05T12:00:00.000Z|fc botosani|sepsi sf gheorghe",
+      "markets": [
+        {
+          "key": "MATCH_ODDS",
+          "name": "1X2, Timp regulamentar",
+          "selections": [
+            {
+              "id": "312410083960713216:1",
+              "name": "1",
+              "odds": 2.33,
+              "group": "Main"
+            },
+            {
+              "id": "312410083960713216:X",
+              "name": "X",
+              "odds": 2.1,
+              "group": "Main"
+            },
+            {
+              "id": "312410083960713216:2",
+              "name": "2",
+              "odds": 3.6,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_0_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313148954643203584",
+              "name": "Over",
+              "odds": 1.56,
+              "handicap": 0.5,
+              "group": "Main"
+            },
+            {
+              "id": "312410163742704384",
+              "name": "Under",
+              "odds": 1.09,
+              "handicap": 0.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_1_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313148954643203584",
+              "name": "Over",
+              "odds": 1.56,
+              "handicap": 1.5,
+              "group": "Main"
+            },
+            {
+              "id": "312410163742704384",
+              "name": "Under",
+              "odds": 1.09,
+              "handicap": 1.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_2_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313148954643203584",
+              "name": "Over",
+              "odds": 1.56,
+              "handicap": 2.5,
+              "group": "Main"
+            },
+            {
+              "id": "312410163742704384",
+              "name": "Under",
+              "odds": 1.09,
+              "handicap": 2.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_3_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313148954643203584",
+              "name": "Over",
+              "odds": 1.56,
+              "handicap": 3.5,
+              "group": "Main"
+            },
+            {
+              "id": "312410163742704384",
+              "name": "Under",
+              "odds": 1.09,
+              "handicap": 3.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_4_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313148954643203584",
+              "name": "Over",
+              "odds": 1.56,
+              "handicap": 4.5,
+              "group": "Main"
+            },
+            {
+              "id": "312410163742704384",
+              "name": "Under",
+              "odds": 1.09,
+              "handicap": 4.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_5_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313148954643203584",
+              "name": "Over",
+              "odds": 1.56,
+              "handicap": 5.5,
+              "group": "Main"
+            },
+            {
+              "id": "312410163742704384",
+              "name": "Under",
+              "odds": 1.09,
+              "handicap": 5.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_6_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313148954643203584",
+              "name": "Over",
+              "odds": 1.56,
+              "handicap": 6.5,
+              "group": "Main"
+            },
+            {
+              "id": "312410163742704384",
+              "name": "Under",
+              "odds": 1.09,
+              "handicap": 6.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_0_5",
+          "name": "Goluri Peste / Sub, Repriza 1",
+          "selections": [
+            {
+              "id": "313148954643203584",
+              "name": "Over",
+              "odds": 1.56,
+              "handicap": 0.5,
+              "group": "Main"
+            },
+            {
+              "id": "312410163742704384",
+              "name": "Under",
+              "odds": 1.09,
+              "handicap": 0.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_1_5",
+          "name": "Goluri Peste / Sub, Repriza 1",
+          "selections": [
+            {
+              "id": "313148954643203584",
+              "name": "Over",
+              "odds": 1.56,
+              "handicap": 1.5,
+              "group": "Main"
+            },
+            {
+              "id": "312410163742704384",
+              "name": "Under",
+              "odds": 1.09,
+              "handicap": 1.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_2_5",
+          "name": "Goluri Peste / Sub, Repriza 1",
+          "selections": [
+            {
+              "id": "313148954643203584",
+              "name": "Over",
+              "odds": 1.56,
+              "handicap": 2.5,
+              "group": "Main"
+            },
+            {
+              "id": "312410163742704384",
+              "name": "Under",
+              "odds": 1.09,
+              "handicap": 2.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_3_5",
+          "name": "Goluri Peste / Sub, Repriza 1",
+          "selections": [
+            {
+              "id": "313148954643203584",
+              "name": "Over",
+              "odds": 1.56,
+              "handicap": 3.5,
+              "group": "Main"
+            },
+            {
+              "id": "312410163742704384",
+              "name": "Under",
+              "odds": 1.09,
+              "handicap": 3.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_4_5",
+          "name": "Goluri Peste / Sub, Repriza 1",
+          "selections": [
+            {
+              "id": "313148954643203584",
+              "name": "Over",
+              "odds": 1.56,
+              "handicap": 4.5,
+              "group": "Main"
+            },
+            {
+              "id": "312410163742704384",
+              "name": "Under",
+              "odds": 1.09,
+              "handicap": 4.5,
+              "group": "Main"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "313505796768559104",
+      "sourceId": "contibet",
+      "sourceUrl": "https://conticazino.ro/sport#/event/313505796768559104",
+      "observedAt": "2026-09-05T08:27:04.851Z",
+      "sport": "Football",
+      "league": "Liga III, Seria 2 2026/2027",
+      "kickoff": "2026-09-05T14:00:00.000Z",
+      "homeTeam": "Baicoi",
+      "awayTeam": "Kids Tampa Brasov",
+      "eventKey": "football|liga iii seria 2 2026 2027|2026-09-05T14:00:00.000Z|baicoi|kids tampa brasov",
+      "markets": [
+        {
+          "key": "MATCH_ODDS",
+          "name": "1X2, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313505796768559104:1",
+              "name": "1",
+              "odds": 1.86,
+              "group": "Main"
+            },
+            {
+              "id": "313505796768559104:X",
+              "name": "X",
+              "odds": 3.5,
+              "group": "Main"
+            },
+            {
+              "id": "313505796768559104:2",
+              "name": "2",
+              "odds": 3.4,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_0_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313548642746437632",
+              "name": "Over",
+              "odds": 1.1,
+              "handicap": 0.5,
+              "group": "Main"
+            },
+            {
+              "id": "313548642746438400",
+              "name": "Under",
+              "odds": 9,
+              "handicap": 0.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_1_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313548642746437632",
+              "name": "Over",
+              "odds": 1.1,
+              "handicap": 1.5,
+              "group": "Main"
+            },
+            {
+              "id": "313548642746438400",
+              "name": "Under",
+              "odds": 9,
+              "handicap": 1.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_2_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313548642746437632",
+              "name": "Over",
+              "odds": 1.1,
+              "handicap": 2.5,
+              "group": "Main"
+            },
+            {
+              "id": "313548642746438400",
+              "name": "Under",
+              "odds": 9,
+              "handicap": 2.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_3_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313548642746437632",
+              "name": "Over",
+              "odds": 1.1,
+              "handicap": 3.5,
+              "group": "Main"
+            },
+            {
+              "id": "313548642746438400",
+              "name": "Under",
+              "odds": 9,
+              "handicap": 3.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_4_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313548642746437632",
+              "name": "Over",
+              "odds": 1.1,
+              "handicap": 4.5,
+              "group": "Main"
+            },
+            {
+              "id": "313548642746438400",
+              "name": "Under",
+              "odds": 9,
+              "handicap": 4.5,
+              "group": "Main"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "313506182185250816",
+      "sourceId": "contibet",
+      "sourceUrl": "https://conticazino.ro/sport#/event/313506182185250816",
+      "observedAt": "2026-09-05T08:27:04.851Z",
+      "sport": "Football",
+      "league": "Liga III, Seria 7 2026/2027",
+      "kickoff": "2026-09-05T14:00:00.000Z",
+      "homeTeam": "Blaj",
+      "awayTeam": "Unirea Alba Iulia",
+      "eventKey": "football|liga iii seria 7 2026 2027|2026-09-05T14:00:00.000Z|blaj|unirea alba iulia",
+      "markets": [
+        {
+          "key": "MATCH_ODDS",
+          "name": "1X2, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313506182185250816:1",
+              "name": "1",
+              "odds": 5.5,
+              "group": "Main"
+            },
+            {
+              "id": "313506182185250816:X",
+              "name": "X",
+              "odds": 4.5,
+              "group": "Main"
+            },
+            {
+              "id": "313506182185250816:2",
+              "name": "2",
+              "odds": 1.38,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_2_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313586322368696832",
+              "name": "Over",
+              "odds": 1.38,
+              "handicap": 2.5,
+              "group": "Main"
+            },
+            {
+              "id": "313586322368697088",
+              "name": "Under",
+              "odds": 1.24,
+              "handicap": 2.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_3_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313586322368696832",
+              "name": "Over",
+              "odds": 1.38,
+              "handicap": 3.5,
+              "group": "Main"
+            },
+            {
+              "id": "313586322368697088",
+              "name": "Under",
+              "odds": 1.24,
+              "handicap": 3.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_4_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313586322368696832",
+              "name": "Over",
+              "odds": 1.38,
+              "handicap": 4.5,
+              "group": "Main"
+            },
+            {
+              "id": "313586322368697088",
+              "name": "Under",
+              "odds": 1.24,
+              "handicap": 4.5,
+              "group": "Main"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "313507783840002048",
+      "sourceId": "contibet",
+      "sourceUrl": "https://conticazino.ro/sport#/event/313507783840002048",
+      "observedAt": "2026-09-05T08:27:04.851Z",
+      "sport": "Football",
+      "league": "Liga III, Seria 3 2026/2027",
+      "kickoff": "2026-09-05T14:00:00.000Z",
+      "homeTeam": "Tunari",
+      "awayTeam": "CSO Plopeni",
+      "eventKey": "football|liga iii seria 3 2026 2027|2026-09-05T14:00:00.000Z|tunari|cso plopeni",
+      "markets": [
+        {
+          "key": "MATCH_ODDS",
+          "name": "1X2, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313507783840002048:1",
+              "name": "1",
+              "odds": 1.23,
+              "group": "Main"
+            },
+            {
+              "id": "313507783840002048:X",
+              "name": "X",
+              "odds": 5,
+              "group": "Main"
+            },
+            {
+              "id": "313507783840002048:2",
+              "name": "2",
+              "odds": 8.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_0_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313586322930736384",
+              "name": "Over",
+              "odds": 1.59,
+              "handicap": 0.5,
+              "group": "Main"
+            },
+            {
+              "id": "313586322930736128",
+              "name": "Under",
+              "odds": 1.65,
+              "handicap": 0.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_1_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313586322930736384",
+              "name": "Over",
+              "odds": 1.59,
+              "handicap": 1.5,
+              "group": "Main"
+            },
+            {
+              "id": "313586322930736128",
+              "name": "Under",
+              "odds": 1.65,
+              "handicap": 1.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_2_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313586322930736384",
+              "name": "Over",
+              "odds": 1.59,
+              "handicap": 2.5,
+              "group": "Main"
+            },
+            {
+              "id": "313586322930736128",
+              "name": "Under",
+              "odds": 1.65,
+              "handicap": 2.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_3_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313586322930736384",
+              "name": "Over",
+              "odds": 1.59,
+              "handicap": 3.5,
+              "group": "Main"
+            },
+            {
+              "id": "313586322930736128",
+              "name": "Under",
+              "odds": 1.65,
+              "handicap": 3.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_4_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313586322930736384",
+              "name": "Over",
+              "odds": 1.59,
+              "handicap": 4.5,
+              "group": "Main"
+            },
+            {
+              "id": "313586322930736128",
+              "name": "Under",
+              "odds": 1.65,
+              "handicap": 4.5,
+              "group": "Main"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "312410096938938368",
+      "sourceId": "contibet",
+      "sourceUrl": "https://conticazino.ro/sport#/event/312410096938938368",
+      "observedAt": "2026-09-05T08:27:04.851Z",
+      "sport": "Football",
+      "league": "Liga I 2026/2027",
+      "kickoff": "2026-09-05T14:30:00.000Z",
+      "homeTeam": "UTA Arad",
+      "awayTeam": "Csikszereda M. Ciuc",
+      "eventKey": "football|liga i 2026 2027|2026-09-05T14:30:00.000Z|uta arad|csikszereda m ciuc",
+      "markets": [
+        {
+          "key": "MATCH_ODDS",
+          "name": "1X2, Timp regulamentar",
+          "selections": [
+            {
+              "id": "312410096938938368:1",
+              "name": "1",
+              "odds": 1.99,
+              "group": "Main"
+            },
+            {
+              "id": "312410096938938368:X",
+              "name": "X",
+              "odds": 3.8,
+              "group": "Main"
+            },
+            {
+              "id": "312410096938938368:2",
+              "name": "2",
+              "odds": 5.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_0_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313158412546016768",
+              "name": "Over",
+              "odds": 1.5,
+              "handicap": 0.5,
+              "group": "Main"
+            },
+            {
+              "id": "312410249817163776",
+              "name": "Under",
+              "odds": 2.9,
+              "handicap": 0.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_1_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313158412546016768",
+              "name": "Over",
+              "odds": 1.5,
+              "handicap": 1.5,
+              "group": "Main"
+            },
+            {
+              "id": "312410249817163776",
+              "name": "Under",
+              "odds": 2.9,
+              "handicap": 1.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_2_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313158412546016768",
+              "name": "Over",
+              "odds": 1.5,
+              "handicap": 2.5,
+              "group": "Main"
+            },
+            {
+              "id": "312410249817163776",
+              "name": "Under",
+              "odds": 2.9,
+              "handicap": 2.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_3_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313158412546016768",
+              "name": "Over",
+              "odds": 1.5,
+              "handicap": 3.5,
+              "group": "Main"
+            },
+            {
+              "id": "312410249817163776",
+              "name": "Under",
+              "odds": 2.9,
+              "handicap": 3.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_4_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313158412546016768",
+              "name": "Over",
+              "odds": 1.5,
+              "handicap": 4.5,
+              "group": "Main"
+            },
+            {
+              "id": "312410249817163776",
+              "name": "Under",
+              "odds": 2.9,
+              "handicap": 4.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_5_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313158412546016768",
+              "name": "Over",
+              "odds": 1.5,
+              "handicap": 5.5,
+              "group": "Main"
+            },
+            {
+              "id": "312410249817163776",
+              "name": "Under",
+              "odds": 2.9,
+              "handicap": 5.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_6_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313158412546016768",
+              "name": "Over",
+              "odds": 1.5,
+              "handicap": 6.5,
+              "group": "Main"
+            },
+            {
+              "id": "312410249817163776",
+              "name": "Under",
+              "odds": 2.9,
+              "handicap": 6.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_0_5",
+          "name": "Goluri Peste / Sub, Repriza 1",
+          "selections": [
+            {
+              "id": "313158412546016768",
+              "name": "Over",
+              "odds": 1.5,
+              "handicap": 0.5,
+              "group": "Main"
+            },
+            {
+              "id": "312410249817163776",
+              "name": "Under",
+              "odds": 2.9,
+              "handicap": 0.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_1_5",
+          "name": "Goluri Peste / Sub, Repriza 1",
+          "selections": [
+            {
+              "id": "313158412546016768",
+              "name": "Over",
+              "odds": 1.5,
+              "handicap": 1.5,
+              "group": "Main"
+            },
+            {
+              "id": "312410249817163776",
+              "name": "Under",
+              "odds": 2.9,
+              "handicap": 1.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_2_5",
+          "name": "Goluri Peste / Sub, Repriza 1",
+          "selections": [
+            {
+              "id": "313158412546016768",
+              "name": "Over",
+              "odds": 1.5,
+              "handicap": 2.5,
+              "group": "Main"
+            },
+            {
+              "id": "312410249817163776",
+              "name": "Under",
+              "odds": 2.9,
+              "handicap": 2.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_3_5",
+          "name": "Goluri Peste / Sub, Repriza 1",
+          "selections": [
+            {
+              "id": "313158412546016768",
+              "name": "Over",
+              "odds": 1.5,
+              "handicap": 3.5,
+              "group": "Main"
+            },
+            {
+              "id": "312410249817163776",
+              "name": "Under",
+              "odds": 2.9,
+              "handicap": 3.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_4_5",
+          "name": "Goluri Peste / Sub, Repriza 1",
+          "selections": [
+            {
+              "id": "313158412546016768",
+              "name": "Over",
+              "odds": 1.5,
+              "handicap": 4.5,
+              "group": "Main"
+            },
+            {
+              "id": "312410249817163776",
+              "name": "Under",
+              "odds": 2.9,
+              "handicap": 4.5,
+              "group": "Main"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "313507784279355392",
+      "sourceId": "contibet",
+      "sourceUrl": "https://conticazino.ro/sport#/event/313507784279355392",
+      "observedAt": "2026-09-05T08:27:04.851Z",
+      "sport": "Football",
+      "league": "Liga III, Seria 3 2026/2027",
+      "kickoff": "2026-09-05T14:00:00.000Z",
+      "homeTeam": "ACS Viitorul Corbeanca",
+      "awayTeam": "CSM Ramnicu Sarat",
+      "eventKey": "football|liga iii seria 3 2026 2027|2026-09-05T14:00:00.000Z|acs viitorul corbeanca|csm ramnicu sarat",
+      "markets": [
+        {
+          "key": "MATCH_ODDS",
+          "name": "1X2, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313507784279355392:1",
+              "name": "1",
+              "odds": 1.6,
+              "group": "Main"
+            },
+            {
+              "id": "313507784279355392:X",
+              "name": "X",
+              "odds": 4,
+              "group": "Main"
+            },
+            {
+              "id": "313507784279355392:2",
+              "name": "2",
+              "odds": 4.15,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_0_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313586321856994560",
+              "name": "Over",
+              "odds": 1.79,
+              "handicap": 0.5,
+              "group": "Main"
+            },
+            {
+              "id": "313586321856995072",
+              "name": "Under",
+              "odds": 2.34,
+              "handicap": 0.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_1_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313586321856994560",
+              "name": "Over",
+              "odds": 1.79,
+              "handicap": 1.5,
+              "group": "Main"
+            },
+            {
+              "id": "313586321856995072",
+              "name": "Under",
+              "odds": 2.34,
+              "handicap": 1.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_2_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313586321856994560",
+              "name": "Over",
+              "odds": 1.79,
+              "handicap": 2.5,
+              "group": "Main"
+            },
+            {
+              "id": "313586321856995072",
+              "name": "Under",
+              "odds": 2.34,
+              "handicap": 2.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_3_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313586321856994560",
+              "name": "Over",
+              "odds": 1.79,
+              "handicap": 3.5,
+              "group": "Main"
+            },
+            {
+              "id": "313586321856995072",
+              "name": "Under",
+              "odds": 2.34,
+              "handicap": 3.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_4_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313586321856994560",
+              "name": "Over",
+              "odds": 1.79,
+              "handicap": 4.5,
+              "group": "Main"
+            },
+            {
+              "id": "313586321856995072",
+              "name": "Under",
+              "odds": 2.34,
+              "handicap": 4.5,
+              "group": "Main"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "312410255358849024",
+      "sourceId": "contibet",
+      "sourceUrl": "https://conticazino.ro/sport#/event/312410255358849024",
+      "observedAt": "2026-09-05T08:27:04.851Z",
+      "sport": "Football",
+      "league": "Liga I 2026/2027",
+      "kickoff": "2026-09-05T17:30:00.000Z",
+      "homeTeam": "Dinamo București",
+      "awayTeam": "FCSB",
+      "eventKey": "football|liga i 2026 2027|2026-09-05T17:30:00.000Z|dinamo bucuresti|fcsb",
+      "markets": [
+        {
+          "key": "MATCH_ODDS",
+          "name": "1X2, Timp regulamentar",
+          "selections": [
+            {
+              "id": "312410255358849024:1",
+              "name": "1",
+              "odds": 2.8,
+              "group": "Main"
+            },
+            {
+              "id": "312410255358849024:X",
+              "name": "X",
+              "odds": 3.5,
+              "group": "Main"
+            },
+            {
+              "id": "312410255358849024:2",
+              "name": "2",
+              "odds": 3.3,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_0_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313169771824350720",
+              "name": "Over",
+              "odds": 1.5,
+              "handicap": 0.5,
+              "group": "Main"
+            },
+            {
+              "id": "312519200793651456",
+              "name": "Under",
+              "odds": 2.18,
+              "handicap": 0.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_1_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313169771824350720",
+              "name": "Over",
+              "odds": 1.5,
+              "handicap": 1.5,
+              "group": "Main"
+            },
+            {
+              "id": "312519200793651456",
+              "name": "Under",
+              "odds": 2.18,
+              "handicap": 1.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_2_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313169771824350720",
+              "name": "Over",
+              "odds": 1.5,
+              "handicap": 2.5,
+              "group": "Main"
+            },
+            {
+              "id": "312519200793651456",
+              "name": "Under",
+              "odds": 2.18,
+              "handicap": 2.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_3_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313169771824350720",
+              "name": "Over",
+              "odds": 1.5,
+              "handicap": 3.5,
+              "group": "Main"
+            },
+            {
+              "id": "312519200793651456",
+              "name": "Under",
+              "odds": 2.18,
+              "handicap": 3.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_4_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313169771824350720",
+              "name": "Over",
+              "odds": 1.5,
+              "handicap": 4.5,
+              "group": "Main"
+            },
+            {
+              "id": "312519200793651456",
+              "name": "Under",
+              "odds": 2.18,
+              "handicap": 4.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_5_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313169771824350720",
+              "name": "Over",
+              "odds": 1.5,
+              "handicap": 5.5,
+              "group": "Main"
+            },
+            {
+              "id": "312519200793651456",
+              "name": "Under",
+              "odds": 2.18,
+              "handicap": 5.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_6_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313169771824350720",
+              "name": "Over",
+              "odds": 1.5,
+              "handicap": 6.5,
+              "group": "Main"
+            },
+            {
+              "id": "312519200793651456",
+              "name": "Under",
+              "odds": 2.18,
+              "handicap": 6.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_0_5",
+          "name": "Goluri Peste / Sub, Repriza 1",
+          "selections": [
+            {
+              "id": "313169771824350720",
+              "name": "Over",
+              "odds": 1.5,
+              "handicap": 0.5,
+              "group": "Main"
+            },
+            {
+              "id": "312519200793651456",
+              "name": "Under",
+              "odds": 2.18,
+              "handicap": 0.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_1_5",
+          "name": "Goluri Peste / Sub, Repriza 1",
+          "selections": [
+            {
+              "id": "313169771824350720",
+              "name": "Over",
+              "odds": 1.5,
+              "handicap": 1.5,
+              "group": "Main"
+            },
+            {
+              "id": "312519200793651456",
+              "name": "Under",
+              "odds": 2.18,
+              "handicap": 1.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_2_5",
+          "name": "Goluri Peste / Sub, Repriza 1",
+          "selections": [
+            {
+              "id": "313169771824350720",
+              "name": "Over",
+              "odds": 1.5,
+              "handicap": 2.5,
+              "group": "Main"
+            },
+            {
+              "id": "312519200793651456",
+              "name": "Under",
+              "odds": 2.18,
+              "handicap": 2.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_3_5",
+          "name": "Goluri Peste / Sub, Repriza 1",
+          "selections": [
+            {
+              "id": "313169771824350720",
+              "name": "Over",
+              "odds": 1.5,
+              "handicap": 3.5,
+              "group": "Main"
+            },
+            {
+              "id": "312519200793651456",
+              "name": "Under",
+              "odds": 2.18,
+              "handicap": 3.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_4_5",
+          "name": "Goluri Peste / Sub, Repriza 1",
+          "selections": [
+            {
+              "id": "313169771824350720",
+              "name": "Over",
+              "odds": 1.5,
+              "handicap": 4.5,
+              "group": "Main"
+            },
+            {
+              "id": "312519200793651456",
+              "name": "Under",
+              "odds": 2.18,
+              "handicap": 4.5,
+              "group": "Main"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "312959783189245952",
+      "sourceId": "contibet",
+      "sourceUrl": "https://conticazino.ro/sport#/event/312959783189245952",
+      "observedAt": "2026-09-05T08:27:04.851Z",
+      "sport": "Football",
+      "league": "Liga II 2026/2027",
+      "kickoff": "2026-09-06T08:00:00.000Z",
+      "homeTeam": "FC Bacau",
+      "awayTeam": "CSC Dumbrăvița",
+      "eventKey": "football|liga ii 2026 2027|2026-09-06T08:00:00.000Z|fc bacau|csc dumbravita",
+      "markets": [
+        {
+          "key": "MATCH_ODDS",
+          "name": "1X2, Timp regulamentar",
+          "selections": [
+            {
+              "id": "312959783189245952:1",
+              "name": "1",
+              "odds": 2.25,
+              "group": "Main"
+            },
+            {
+              "id": "312959783189245952:X",
+              "name": "X",
+              "odds": 3.5,
+              "group": "Main"
+            },
+            {
+              "id": "312959783189245952:2",
+              "name": "2",
+              "odds": 4.75,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_0_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313496015883153408",
+              "name": "Over",
+              "odds": 1.86,
+              "handicap": 0.5,
+              "group": "Main"
+            },
+            {
+              "id": "313496015883153920",
+              "name": "Under",
+              "odds": 1.8,
+              "handicap": 0.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_1_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313496015883153408",
+              "name": "Over",
+              "odds": 1.86,
+              "handicap": 1.5,
+              "group": "Main"
+            },
+            {
+              "id": "313496015883153920",
+              "name": "Under",
+              "odds": 1.8,
+              "handicap": 1.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_2_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313496015883153408",
+              "name": "Over",
+              "odds": 1.86,
+              "handicap": 2.5,
+              "group": "Main"
+            },
+            {
+              "id": "313496015883153920",
+              "name": "Under",
+              "odds": 1.8,
+              "handicap": 2.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_3_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313496015883153408",
+              "name": "Over",
+              "odds": 1.86,
+              "handicap": 3.5,
+              "group": "Main"
+            },
+            {
+              "id": "313496015883153920",
+              "name": "Under",
+              "odds": 1.8,
+              "handicap": 3.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_4_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313496015883153408",
+              "name": "Over",
+              "odds": 1.86,
+              "handicap": 4.5,
+              "group": "Main"
+            },
+            {
+              "id": "313496015883153920",
+              "name": "Under",
+              "odds": 1.8,
+              "handicap": 4.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_5_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313496015883153408",
+              "name": "Over",
+              "odds": 1.86,
+              "handicap": 5.5,
+              "group": "Main"
+            },
+            {
+              "id": "313496015883153920",
+              "name": "Under",
+              "odds": 1.8,
+              "handicap": 5.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_6_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313496015883153408",
+              "name": "Over",
+              "odds": 1.86,
+              "handicap": 6.5,
+              "group": "Main"
+            },
+            {
+              "id": "313496015883153920",
+              "name": "Under",
+              "odds": 1.8,
+              "handicap": 6.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_0_5",
+          "name": "Goluri Peste / Sub, Repriza 1",
+          "selections": [
+            {
+              "id": "313496015883153408",
+              "name": "Over",
+              "odds": 1.86,
+              "handicap": 0.5,
+              "group": "Main"
+            },
+            {
+              "id": "313496015883153920",
+              "name": "Under",
+              "odds": 1.8,
+              "handicap": 0.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_1_5",
+          "name": "Goluri Peste / Sub, Repriza 1",
+          "selections": [
+            {
+              "id": "313496015883153408",
+              "name": "Over",
+              "odds": 1.86,
+              "handicap": 1.5,
+              "group": "Main"
+            },
+            {
+              "id": "313496015883153920",
+              "name": "Under",
+              "odds": 1.8,
+              "handicap": 1.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_2_5",
+          "name": "Goluri Peste / Sub, Repriza 1",
+          "selections": [
+            {
+              "id": "313496015883153408",
+              "name": "Over",
+              "odds": 1.86,
+              "handicap": 2.5,
+              "group": "Main"
+            },
+            {
+              "id": "313496015883153920",
+              "name": "Under",
+              "odds": 1.8,
+              "handicap": 2.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_3_5",
+          "name": "Goluri Peste / Sub, Repriza 1",
+          "selections": [
+            {
+              "id": "313496015883153408",
+              "name": "Over",
+              "odds": 1.86,
+              "handicap": 3.5,
+              "group": "Main"
+            },
+            {
+              "id": "313496015883153920",
+              "name": "Under",
+              "odds": 1.8,
+              "handicap": 3.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_4_5",
+          "name": "Goluri Peste / Sub, Repriza 1",
+          "selections": [
+            {
+              "id": "313496015883153408",
+              "name": "Over",
+              "odds": 1.86,
+              "handicap": 4.5,
+              "group": "Main"
+            },
+            {
+              "id": "313496015883153920",
+              "name": "Under",
+              "odds": 1.8,
+              "handicap": 4.5,
+              "group": "Main"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "312959804496310272",
+      "sourceId": "contibet",
+      "sourceUrl": "https://conticazino.ro/sport#/event/312959804496310272",
+      "observedAt": "2026-09-05T08:27:04.851Z",
+      "sport": "Football",
+      "league": "Liga II 2026/2027",
+      "kickoff": "2026-09-06T09:30:00.000Z",
+      "homeTeam": "CSM Olimpia Satu Mare",
+      "awayTeam": "Politehnica Timișoara",
+      "eventKey": "football|liga ii 2026 2027|2026-09-06T09:30:00.000Z|csm olimpia satu mare|politehnica timisoara",
+      "markets": [
+        {
+          "key": "MATCH_ODDS",
+          "name": "1X2, Timp regulamentar",
+          "selections": [
+            {
+              "id": "312959804496310272:1",
+              "name": "1",
+              "odds": 5.5,
+              "group": "Main"
+            },
+            {
+              "id": "312959804496310272:X",
+              "name": "X",
+              "odds": 4.15,
+              "group": "Main"
+            },
+            {
+              "id": "312959804496310272:2",
+              "name": "2",
+              "odds": 1.48,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_0_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313501693369595136",
+              "name": "Over",
+              "odds": 1.6,
+              "handicap": 0.5,
+              "group": "Main"
+            },
+            {
+              "id": "313501693369594624",
+              "name": "Under",
+              "odds": 2.1,
+              "handicap": 0.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_1_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313501693369595136",
+              "name": "Over",
+              "odds": 1.6,
+              "handicap": 1.5,
+              "group": "Main"
+            },
+            {
+              "id": "313501693369594624",
+              "name": "Under",
+              "odds": 2.1,
+              "handicap": 1.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_2_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313501693369595136",
+              "name": "Over",
+              "odds": 1.6,
+              "handicap": 2.5,
+              "group": "Main"
+            },
+            {
+              "id": "313501693369594624",
+              "name": "Under",
+              "odds": 2.1,
+              "handicap": 2.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_3_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313501693369595136",
+              "name": "Over",
+              "odds": 1.6,
+              "handicap": 3.5,
+              "group": "Main"
+            },
+            {
+              "id": "313501693369594624",
+              "name": "Under",
+              "odds": 2.1,
+              "handicap": 3.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_4_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313501693369595136",
+              "name": "Over",
+              "odds": 1.6,
+              "handicap": 4.5,
+              "group": "Main"
+            },
+            {
+              "id": "313501693369594624",
+              "name": "Under",
+              "odds": 2.1,
+              "handicap": 4.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_5_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313501693369595136",
+              "name": "Over",
+              "odds": 1.6,
+              "handicap": 5.5,
+              "group": "Main"
+            },
+            {
+              "id": "313501693369594624",
+              "name": "Under",
+              "odds": 2.1,
+              "handicap": 5.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_6_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313501693369595136",
+              "name": "Over",
+              "odds": 1.6,
+              "handicap": 6.5,
+              "group": "Main"
+            },
+            {
+              "id": "313501693369594624",
+              "name": "Under",
+              "odds": 2.1,
+              "handicap": 6.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_0_5",
+          "name": "Goluri Peste / Sub, Repriza 1",
+          "selections": [
+            {
+              "id": "313501693369595136",
+              "name": "Over",
+              "odds": 1.6,
+              "handicap": 0.5,
+              "group": "Main"
+            },
+            {
+              "id": "313501693369594624",
+              "name": "Under",
+              "odds": 2.1,
+              "handicap": 0.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_1_5",
+          "name": "Goluri Peste / Sub, Repriza 1",
+          "selections": [
+            {
+              "id": "313501693369595136",
+              "name": "Over",
+              "odds": 1.6,
+              "handicap": 1.5,
+              "group": "Main"
+            },
+            {
+              "id": "313501693369594624",
+              "name": "Under",
+              "odds": 2.1,
+              "handicap": 1.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_2_5",
+          "name": "Goluri Peste / Sub, Repriza 1",
+          "selections": [
+            {
+              "id": "313501693369595136",
+              "name": "Over",
+              "odds": 1.6,
+              "handicap": 2.5,
+              "group": "Main"
+            },
+            {
+              "id": "313501693369594624",
+              "name": "Under",
+              "odds": 2.1,
+              "handicap": 2.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_3_5",
+          "name": "Goluri Peste / Sub, Repriza 1",
+          "selections": [
+            {
+              "id": "313501693369595136",
+              "name": "Over",
+              "odds": 1.6,
+              "handicap": 3.5,
+              "group": "Main"
+            },
+            {
+              "id": "313501693369594624",
+              "name": "Under",
+              "odds": 2.1,
+              "handicap": 3.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_4_5",
+          "name": "Goluri Peste / Sub, Repriza 1",
+          "selections": [
+            {
+              "id": "313501693369595136",
+              "name": "Over",
+              "odds": 1.6,
+              "handicap": 4.5,
+              "group": "Main"
+            },
+            {
+              "id": "313501693369594624",
+              "name": "Under",
+              "odds": 2.1,
+              "handicap": 4.5,
+              "group": "Main"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "312410357844570112",
+      "sourceId": "contibet",
+      "sourceUrl": "https://conticazino.ro/sport#/event/312410357844570112",
+      "observedAt": "2026-09-05T08:27:04.851Z",
+      "sport": "Football",
+      "league": "Liga I 2026/2027",
+      "kickoff": "2026-09-06T12:00:00.000Z",
+      "homeTeam": "Petrolul Ploiești",
+      "awayTeam": "Corvinul",
+      "eventKey": "football|liga i 2026 2027|2026-09-06T12:00:00.000Z|petrolul ploiesti|corvinul",
+      "markets": [
+        {
+          "key": "MATCH_ODDS",
+          "name": "1X2, Timp regulamentar",
+          "selections": [
+            {
+              "id": "312410357844570112:1",
+              "name": "1",
+              "odds": 2.73,
+              "group": "Main"
+            },
+            {
+              "id": "312410357844570112:X",
+              "name": "X",
+              "odds": 2,
+              "group": "Main"
+            },
+            {
+              "id": "312410357844570112:2",
+              "name": "2",
+              "odds": 2.63,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_0_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "312519303074899712",
+              "name": "Over",
+              "odds": 66,
+              "handicap": 0.5,
+              "group": "Main"
+            },
+            {
+              "id": "313239255563042816",
+              "name": "Under",
+              "odds": 1.45,
+              "handicap": 0.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_1_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "312519303074899712",
+              "name": "Over",
+              "odds": 66,
+              "handicap": 1.5,
+              "group": "Main"
+            },
+            {
+              "id": "313239255563042816",
+              "name": "Under",
+              "odds": 1.45,
+              "handicap": 1.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_2_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "312519303074899712",
+              "name": "Over",
+              "odds": 66,
+              "handicap": 2.5,
+              "group": "Main"
+            },
+            {
+              "id": "313239255563042816",
+              "name": "Under",
+              "odds": 1.45,
+              "handicap": 2.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_3_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "312519303074899712",
+              "name": "Over",
+              "odds": 66,
+              "handicap": 3.5,
+              "group": "Main"
+            },
+            {
+              "id": "313239255563042816",
+              "name": "Under",
+              "odds": 1.45,
+              "handicap": 3.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_4_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "312519303074899712",
+              "name": "Over",
+              "odds": 66,
+              "handicap": 4.5,
+              "group": "Main"
+            },
+            {
+              "id": "313239255563042816",
+              "name": "Under",
+              "odds": 1.45,
+              "handicap": 4.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_5_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "312519303074899712",
+              "name": "Over",
+              "odds": 66,
+              "handicap": 5.5,
+              "group": "Main"
+            },
+            {
+              "id": "313239255563042816",
+              "name": "Under",
+              "odds": 1.45,
+              "handicap": 5.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_6_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "312519303074899712",
+              "name": "Over",
+              "odds": 66,
+              "handicap": 6.5,
+              "group": "Main"
+            },
+            {
+              "id": "313239255563042816",
+              "name": "Under",
+              "odds": 1.45,
+              "handicap": 6.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_0_5",
+          "name": "Goluri Peste / Sub, Repriza 1",
+          "selections": [
+            {
+              "id": "312519303074899712",
+              "name": "Over",
+              "odds": 66,
+              "handicap": 0.5,
+              "group": "Main"
+            },
+            {
+              "id": "313239255563042816",
+              "name": "Under",
+              "odds": 1.45,
+              "handicap": 0.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_1_5",
+          "name": "Goluri Peste / Sub, Repriza 1",
+          "selections": [
+            {
+              "id": "312519303074899712",
+              "name": "Over",
+              "odds": 66,
+              "handicap": 1.5,
+              "group": "Main"
+            },
+            {
+              "id": "313239255563042816",
+              "name": "Under",
+              "odds": 1.45,
+              "handicap": 1.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_2_5",
+          "name": "Goluri Peste / Sub, Repriza 1",
+          "selections": [
+            {
+              "id": "312519303074899712",
+              "name": "Over",
+              "odds": 66,
+              "handicap": 2.5,
+              "group": "Main"
+            },
+            {
+              "id": "313239255563042816",
+              "name": "Under",
+              "odds": 1.45,
+              "handicap": 2.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_3_5",
+          "name": "Goluri Peste / Sub, Repriza 1",
+          "selections": [
+            {
+              "id": "312519303074899712",
+              "name": "Over",
+              "odds": 66,
+              "handicap": 3.5,
+              "group": "Main"
+            },
+            {
+              "id": "313239255563042816",
+              "name": "Under",
+              "odds": 1.45,
+              "handicap": 3.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_4_5",
+          "name": "Goluri Peste / Sub, Repriza 1",
+          "selections": [
+            {
+              "id": "312519303074899712",
+              "name": "Over",
+              "odds": 66,
+              "handicap": 4.5,
+              "group": "Main"
+            },
+            {
+              "id": "313239255563042816",
+              "name": "Under",
+              "odds": 1.45,
+              "handicap": 4.5,
+              "group": "Main"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "312410418140835840",
+      "sourceId": "contibet",
+      "sourceUrl": "https://conticazino.ro/sport#/event/312410418140835840",
+      "observedAt": "2026-09-05T08:27:04.851Z",
+      "sport": "Football",
+      "league": "Liga I 2026/2027",
+      "kickoff": "2026-09-06T17:30:00.000Z",
+      "homeTeam": "Oţelul Galaţi",
+      "awayTeam": "Rapid București",
+      "eventKey": "football|liga i 2026 2027|2026-09-06T17:30:00.000Z|otelul galati|rapid bucuresti",
+      "markets": [
+        {
+          "key": "MATCH_ODDS",
+          "name": "1X2, Timp regulamentar",
+          "selections": [
+            {
+              "id": "312410418140835840:1",
+              "name": "1",
+              "odds": 3.4,
+              "group": "Main"
+            },
+            {
+              "id": "312410418140835840:X",
+              "name": "X",
+              "odds": 3.3,
+              "group": "Main"
+            },
+            {
+              "id": "312410418140835840:2",
+              "name": "2",
+              "odds": 2.9,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_0_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313260113981539584",
+              "name": "Over",
+              "odds": 1.59,
+              "handicap": 0.5,
+              "group": "Main"
+            },
+            {
+              "id": "313003281842112512",
+              "name": "Under",
+              "odds": 1.07,
+              "handicap": 0.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_1_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313260113981539584",
+              "name": "Over",
+              "odds": 1.59,
+              "handicap": 1.5,
+              "group": "Main"
+            },
+            {
+              "id": "313003281842112512",
+              "name": "Under",
+              "odds": 1.07,
+              "handicap": 1.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_2_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313260113981539584",
+              "name": "Over",
+              "odds": 1.59,
+              "handicap": 2.5,
+              "group": "Main"
+            },
+            {
+              "id": "313003281842112512",
+              "name": "Under",
+              "odds": 1.07,
+              "handicap": 2.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_3_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313260113981539584",
+              "name": "Over",
+              "odds": 1.59,
+              "handicap": 3.5,
+              "group": "Main"
+            },
+            {
+              "id": "313003281842112512",
+              "name": "Under",
+              "odds": 1.07,
+              "handicap": 3.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_4_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313260113981539584",
+              "name": "Over",
+              "odds": 1.59,
+              "handicap": 4.5,
+              "group": "Main"
+            },
+            {
+              "id": "313003281842112512",
+              "name": "Under",
+              "odds": 1.07,
+              "handicap": 4.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_5_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313260113981539584",
+              "name": "Over",
+              "odds": 1.59,
+              "handicap": 5.5,
+              "group": "Main"
+            },
+            {
+              "id": "313003281842112512",
+              "name": "Under",
+              "odds": 1.07,
+              "handicap": 5.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_6_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313260113981539584",
+              "name": "Over",
+              "odds": 1.59,
+              "handicap": 6.5,
+              "group": "Main"
+            },
+            {
+              "id": "313003281842112512",
+              "name": "Under",
+              "odds": 1.07,
+              "handicap": 6.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_0_5",
+          "name": "Goluri Peste / Sub, Repriza 1",
+          "selections": [
+            {
+              "id": "313260113981539584",
+              "name": "Over",
+              "odds": 1.59,
+              "handicap": 0.5,
+              "group": "Main"
+            },
+            {
+              "id": "313003281842112512",
+              "name": "Under",
+              "odds": 1.07,
+              "handicap": 0.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_1_5",
+          "name": "Goluri Peste / Sub, Repriza 1",
+          "selections": [
+            {
+              "id": "313260113981539584",
+              "name": "Over",
+              "odds": 1.59,
+              "handicap": 1.5,
+              "group": "Main"
+            },
+            {
+              "id": "313003281842112512",
+              "name": "Under",
+              "odds": 1.07,
+              "handicap": 1.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_2_5",
+          "name": "Goluri Peste / Sub, Repriza 1",
+          "selections": [
+            {
+              "id": "313260113981539584",
+              "name": "Over",
+              "odds": 1.59,
+              "handicap": 2.5,
+              "group": "Main"
+            },
+            {
+              "id": "313003281842112512",
+              "name": "Under",
+              "odds": 1.07,
+              "handicap": 2.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_3_5",
+          "name": "Goluri Peste / Sub, Repriza 1",
+          "selections": [
+            {
+              "id": "313260113981539584",
+              "name": "Over",
+              "odds": 1.59,
+              "handicap": 3.5,
+              "group": "Main"
+            },
+            {
+              "id": "313003281842112512",
+              "name": "Under",
+              "odds": 1.07,
+              "handicap": 3.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_4_5",
+          "name": "Goluri Peste / Sub, Repriza 1",
+          "selections": [
+            {
+              "id": "313260113981539584",
+              "name": "Over",
+              "odds": 1.59,
+              "handicap": 4.5,
+              "group": "Main"
+            },
+            {
+              "id": "313003281842112512",
+              "name": "Under",
+              "odds": 1.07,
+              "handicap": 4.5,
+              "group": "Main"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "312410446707191808",
+      "sourceId": "contibet",
+      "sourceUrl": "https://conticazino.ro/sport#/event/312410446707191808",
+      "observedAt": "2026-09-05T08:27:04.851Z",
+      "sport": "Football",
+      "league": "Liga I 2026/2027",
+      "kickoff": "2026-09-07T14:30:00.000Z",
+      "homeTeam": "FC Voluntari",
+      "awayTeam": "FC Argeș",
+      "eventKey": "football|liga i 2026 2027|2026-09-07T14:30:00.000Z|fc voluntari|fc arges",
+      "markets": [
+        {
+          "key": "MATCH_ODDS",
+          "name": "1X2, Timp regulamentar",
+          "selections": [
+            {
+              "id": "312410446707191808:1",
+              "name": "1",
+              "odds": 2.9,
+              "group": "Main"
+            },
+            {
+              "id": "312410446707191808:X",
+              "name": "X",
+              "odds": 3.15,
+              "group": "Main"
+            },
+            {
+              "id": "312410446707191808:2",
+              "name": "2",
+              "odds": 2.55,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_0_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313096476214100480",
+              "name": "Over",
+              "odds": 8,
+              "handicap": 0.5,
+              "group": "Main"
+            },
+            {
+              "id": "312410529048760064",
+              "name": "Under",
+              "odds": 2.6,
+              "handicap": 0.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_1_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313096476214100480",
+              "name": "Over",
+              "odds": 8,
+              "handicap": 1.5,
+              "group": "Main"
+            },
+            {
+              "id": "312410529048760064",
+              "name": "Under",
+              "odds": 2.6,
+              "handicap": 1.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_2_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313096476214100480",
+              "name": "Over",
+              "odds": 8,
+              "handicap": 2.5,
+              "group": "Main"
+            },
+            {
+              "id": "312410529048760064",
+              "name": "Under",
+              "odds": 2.6,
+              "handicap": 2.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_3_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313096476214100480",
+              "name": "Over",
+              "odds": 8,
+              "handicap": 3.5,
+              "group": "Main"
+            },
+            {
+              "id": "312410529048760064",
+              "name": "Under",
+              "odds": 2.6,
+              "handicap": 3.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_4_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313096476214100480",
+              "name": "Over",
+              "odds": 8,
+              "handicap": 4.5,
+              "group": "Main"
+            },
+            {
+              "id": "312410529048760064",
+              "name": "Under",
+              "odds": 2.6,
+              "handicap": 4.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_5_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313096476214100480",
+              "name": "Over",
+              "odds": 8,
+              "handicap": 5.5,
+              "group": "Main"
+            },
+            {
+              "id": "312410529048760064",
+              "name": "Under",
+              "odds": 2.6,
+              "handicap": 5.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_6_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313096476214100480",
+              "name": "Over",
+              "odds": 8,
+              "handicap": 6.5,
+              "group": "Main"
+            },
+            {
+              "id": "312410529048760064",
+              "name": "Under",
+              "odds": 2.6,
+              "handicap": 6.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_0_5",
+          "name": "Goluri Peste / Sub, Repriza 1",
+          "selections": [
+            {
+              "id": "313096476214100480",
+              "name": "Over",
+              "odds": 8,
+              "handicap": 0.5,
+              "group": "Main"
+            },
+            {
+              "id": "312410529048760064",
+              "name": "Under",
+              "odds": 2.6,
+              "handicap": 0.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_1_5",
+          "name": "Goluri Peste / Sub, Repriza 1",
+          "selections": [
+            {
+              "id": "313096476214100480",
+              "name": "Over",
+              "odds": 8,
+              "handicap": 1.5,
+              "group": "Main"
+            },
+            {
+              "id": "312410529048760064",
+              "name": "Under",
+              "odds": 2.6,
+              "handicap": 1.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_2_5",
+          "name": "Goluri Peste / Sub, Repriza 1",
+          "selections": [
+            {
+              "id": "313096476214100480",
+              "name": "Over",
+              "odds": 8,
+              "handicap": 2.5,
+              "group": "Main"
+            },
+            {
+              "id": "312410529048760064",
+              "name": "Under",
+              "odds": 2.6,
+              "handicap": 2.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_3_5",
+          "name": "Goluri Peste / Sub, Repriza 1",
+          "selections": [
+            {
+              "id": "313096476214100480",
+              "name": "Over",
+              "odds": 8,
+              "handicap": 3.5,
+              "group": "Main"
+            },
+            {
+              "id": "312410529048760064",
+              "name": "Under",
+              "odds": 2.6,
+              "handicap": 3.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_4_5",
+          "name": "Goluri Peste / Sub, Repriza 1",
+          "selections": [
+            {
+              "id": "313096476214100480",
+              "name": "Over",
+              "odds": 8,
+              "handicap": 4.5,
+              "group": "Main"
+            },
+            {
+              "id": "312410529048760064",
+              "name": "Under",
+              "odds": 2.6,
+              "handicap": 4.5,
+              "group": "Main"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "313315233800810496",
+      "sourceId": "contibet",
+      "sourceUrl": "https://conticazino.ro/sport#/event/313315233800810496",
+      "observedAt": "2026-09-05T08:27:04.851Z",
+      "sport": "Football",
+      "league": "Liga I 2026/2027",
+      "kickoff": "2026-09-11T15:00:00.000Z",
+      "homeTeam": "Farul Constanța",
+      "awayTeam": "UTA Arad",
+      "eventKey": "football|liga i 2026 2027|2026-09-11T15:00:00.000Z|farul constanta|uta arad",
+      "markets": [
+        {
+          "key": "MATCH_ODDS",
+          "name": "1X2, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313315233800810496:1",
+              "name": "1",
+              "odds": 2.73,
+              "group": "Main"
+            },
+            {
+              "id": "313315233800810496:X",
+              "name": "X",
+              "odds": 2.08,
+              "group": "Main"
+            },
+            {
+              "id": "313315233800810496:2",
+              "name": "2",
+              "odds": 4,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_0_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313315235893807616",
+              "name": "Over",
+              "odds": 1.06,
+              "handicap": 0.5,
+              "group": "Main"
+            },
+            {
+              "id": "313456343981427968",
+              "name": "Under",
+              "odds": 1.78,
+              "handicap": 0.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_1_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313315235893807616",
+              "name": "Over",
+              "odds": 1.06,
+              "handicap": 1.5,
+              "group": "Main"
+            },
+            {
+              "id": "313456343981427968",
+              "name": "Under",
+              "odds": 1.78,
+              "handicap": 1.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_2_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313315235893807616",
+              "name": "Over",
+              "odds": 1.06,
+              "handicap": 2.5,
+              "group": "Main"
+            },
+            {
+              "id": "313456343981427968",
+              "name": "Under",
+              "odds": 1.78,
+              "handicap": 2.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_3_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313315235893807616",
+              "name": "Over",
+              "odds": 1.06,
+              "handicap": 3.5,
+              "group": "Main"
+            },
+            {
+              "id": "313456343981427968",
+              "name": "Under",
+              "odds": 1.78,
+              "handicap": 3.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_4_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313315235893807616",
+              "name": "Over",
+              "odds": 1.06,
+              "handicap": 4.5,
+              "group": "Main"
+            },
+            {
+              "id": "313456343981427968",
+              "name": "Under",
+              "odds": 1.78,
+              "handicap": 4.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_5_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313315235893807616",
+              "name": "Over",
+              "odds": 1.06,
+              "handicap": 5.5,
+              "group": "Main"
+            },
+            {
+              "id": "313456343981427968",
+              "name": "Under",
+              "odds": 1.78,
+              "handicap": 5.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_6_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313315235893807616",
+              "name": "Over",
+              "odds": 1.06,
+              "handicap": 6.5,
+              "group": "Main"
+            },
+            {
+              "id": "313456343981427968",
+              "name": "Under",
+              "odds": 1.78,
+              "handicap": 6.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_0_5",
+          "name": "Goluri Peste / Sub, Repriza 1",
+          "selections": [
+            {
+              "id": "313315235893807616",
+              "name": "Over",
+              "odds": 1.06,
+              "handicap": 0.5,
+              "group": "Main"
+            },
+            {
+              "id": "313456343981427968",
+              "name": "Under",
+              "odds": 1.78,
+              "handicap": 0.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_1_5",
+          "name": "Goluri Peste / Sub, Repriza 1",
+          "selections": [
+            {
+              "id": "313315235893807616",
+              "name": "Over",
+              "odds": 1.06,
+              "handicap": 1.5,
+              "group": "Main"
+            },
+            {
+              "id": "313456343981427968",
+              "name": "Under",
+              "odds": 1.78,
+              "handicap": 1.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_2_5",
+          "name": "Goluri Peste / Sub, Repriza 1",
+          "selections": [
+            {
+              "id": "313315235893807616",
+              "name": "Over",
+              "odds": 1.06,
+              "handicap": 2.5,
+              "group": "Main"
+            },
+            {
+              "id": "313456343981427968",
+              "name": "Under",
+              "odds": 1.78,
+              "handicap": 2.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_3_5",
+          "name": "Goluri Peste / Sub, Repriza 1",
+          "selections": [
+            {
+              "id": "313315235893807616",
+              "name": "Over",
+              "odds": 1.06,
+              "handicap": 3.5,
+              "group": "Main"
+            },
+            {
+              "id": "313456343981427968",
+              "name": "Under",
+              "odds": 1.78,
+              "handicap": 3.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_4_5",
+          "name": "Goluri Peste / Sub, Repriza 1",
+          "selections": [
+            {
+              "id": "313315235893807616",
+              "name": "Over",
+              "odds": 1.06,
+              "handicap": 4.5,
+              "group": "Main"
+            },
+            {
+              "id": "313456343981427968",
+              "name": "Under",
+              "odds": 1.78,
+              "handicap": 4.5,
+              "group": "Main"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "312410557211373568",
+      "sourceId": "contibet",
+      "sourceUrl": "https://conticazino.ro/sport#/event/312410557211373568",
+      "observedAt": "2026-09-05T08:27:04.851Z",
+      "sport": "Football",
+      "league": "Liga I 2026/2027",
+      "kickoff": "2026-09-07T17:30:00.000Z",
+      "homeTeam": "Univ. Craiova",
+      "awayTeam": "U Cluj",
+      "eventKey": "football|liga i 2026 2027|2026-09-07T17:30:00.000Z|univ craiova|u cluj",
+      "markets": [
+        {
+          "key": "MATCH_ODDS",
+          "name": "1X2, Timp regulamentar",
+          "selections": [
+            {
+              "id": "312410557211373568:1",
+              "name": "1",
+              "odds": 2.1,
+              "group": "Main"
+            },
+            {
+              "id": "312410557211373568:X",
+              "name": "X",
+              "odds": 4,
+              "group": "Main"
+            },
+            {
+              "id": "312410557211373568:2",
+              "name": "2",
+              "odds": 4.75,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_0_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "312519384588051712",
+              "name": "Over",
+              "odds": 1.23,
+              "handicap": 0.5,
+              "group": "Main"
+            },
+            {
+              "id": "313096476210955008",
+              "name": "Under",
+              "odds": 1.14,
+              "handicap": 0.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_1_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "312519384588051712",
+              "name": "Over",
+              "odds": 1.23,
+              "handicap": 1.5,
+              "group": "Main"
+            },
+            {
+              "id": "313096476210955008",
+              "name": "Under",
+              "odds": 1.14,
+              "handicap": 1.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_2_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "312519384588051712",
+              "name": "Over",
+              "odds": 1.23,
+              "handicap": 2.5,
+              "group": "Main"
+            },
+            {
+              "id": "313096476210955008",
+              "name": "Under",
+              "odds": 1.14,
+              "handicap": 2.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_3_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "312519384588051712",
+              "name": "Over",
+              "odds": 1.23,
+              "handicap": 3.5,
+              "group": "Main"
+            },
+            {
+              "id": "313096476210955008",
+              "name": "Under",
+              "odds": 1.14,
+              "handicap": 3.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_4_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "312519384588051712",
+              "name": "Over",
+              "odds": 1.23,
+              "handicap": 4.5,
+              "group": "Main"
+            },
+            {
+              "id": "313096476210955008",
+              "name": "Under",
+              "odds": 1.14,
+              "handicap": 4.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_5_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "312519384588051712",
+              "name": "Over",
+              "odds": 1.23,
+              "handicap": 5.5,
+              "group": "Main"
+            },
+            {
+              "id": "313096476210955008",
+              "name": "Under",
+              "odds": 1.14,
+              "handicap": 5.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_6_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "312519384588051712",
+              "name": "Over",
+              "odds": 1.23,
+              "handicap": 6.5,
+              "group": "Main"
+            },
+            {
+              "id": "313096476210955008",
+              "name": "Under",
+              "odds": 1.14,
+              "handicap": 6.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_0_5",
+          "name": "Goluri Peste / Sub, Repriza 1",
+          "selections": [
+            {
+              "id": "312519384588051712",
+              "name": "Over",
+              "odds": 1.23,
+              "handicap": 0.5,
+              "group": "Main"
+            },
+            {
+              "id": "313096476210955008",
+              "name": "Under",
+              "odds": 1.14,
+              "handicap": 0.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_1_5",
+          "name": "Goluri Peste / Sub, Repriza 1",
+          "selections": [
+            {
+              "id": "312519384588051712",
+              "name": "Over",
+              "odds": 1.23,
+              "handicap": 1.5,
+              "group": "Main"
+            },
+            {
+              "id": "313096476210955008",
+              "name": "Under",
+              "odds": 1.14,
+              "handicap": 1.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_2_5",
+          "name": "Goluri Peste / Sub, Repriza 1",
+          "selections": [
+            {
+              "id": "312519384588051712",
+              "name": "Over",
+              "odds": 1.23,
+              "handicap": 2.5,
+              "group": "Main"
+            },
+            {
+              "id": "313096476210955008",
+              "name": "Under",
+              "odds": 1.14,
+              "handicap": 2.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_3_5",
+          "name": "Goluri Peste / Sub, Repriza 1",
+          "selections": [
+            {
+              "id": "312519384588051712",
+              "name": "Over",
+              "odds": 1.23,
+              "handicap": 3.5,
+              "group": "Main"
+            },
+            {
+              "id": "313096476210955008",
+              "name": "Under",
+              "odds": 1.14,
+              "handicap": 3.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_4_5",
+          "name": "Goluri Peste / Sub, Repriza 1",
+          "selections": [
+            {
+              "id": "312519384588051712",
+              "name": "Over",
+              "odds": 1.23,
+              "handicap": 4.5,
+              "group": "Main"
+            },
+            {
+              "id": "313096476210955008",
+              "name": "Under",
+              "odds": 1.14,
+              "handicap": 4.5,
+              "group": "Main"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "312785583893803008",
+      "sourceId": "contibet",
+      "sourceUrl": "https://conticazino.ro/sport#/event/312785583893803008",
+      "observedAt": "2026-09-05T08:27:04.851Z",
+      "sport": "Football",
+      "league": "Liga I 2026/2027",
+      "kickoff": "2026-09-12T15:30:00.000Z",
+      "homeTeam": "Sepsi Sf. Gheorghe",
+      "awayTeam": "CFR Cluj",
+      "eventKey": "football|liga i 2026 2027|2026-09-12T15:30:00.000Z|sepsi sf gheorghe|cfr cluj",
+      "markets": [
+        {
+          "key": "MATCH_ODDS",
+          "name": "1X2, Timp regulamentar",
+          "selections": [
+            {
+              "id": "312785583893803008:1",
+              "name": "1",
+              "odds": 4,
+              "group": "Main"
+            },
+            {
+              "id": "312785583893803008:X",
+              "name": "X",
+              "odds": 2.03,
+              "group": "Main"
+            },
+            {
+              "id": "312785583893803008:2",
+              "name": "2",
+              "odds": 2.8,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_0_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313034217646392064",
+              "name": "Over",
+              "odds": 3.4,
+              "handicap": 0.5,
+              "group": "Main"
+            },
+            {
+              "id": "313034217646392576",
+              "name": "Under",
+              "odds": 2.22,
+              "handicap": 0.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_1_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313034217646392064",
+              "name": "Over",
+              "odds": 3.4,
+              "handicap": 1.5,
+              "group": "Main"
+            },
+            {
+              "id": "313034217646392576",
+              "name": "Under",
+              "odds": 2.22,
+              "handicap": 1.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_2_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313034217646392064",
+              "name": "Over",
+              "odds": 3.4,
+              "handicap": 2.5,
+              "group": "Main"
+            },
+            {
+              "id": "313034217646392576",
+              "name": "Under",
+              "odds": 2.22,
+              "handicap": 2.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_3_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313034217646392064",
+              "name": "Over",
+              "odds": 3.4,
+              "handicap": 3.5,
+              "group": "Main"
+            },
+            {
+              "id": "313034217646392576",
+              "name": "Under",
+              "odds": 2.22,
+              "handicap": 3.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_4_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313034217646392064",
+              "name": "Over",
+              "odds": 3.4,
+              "handicap": 4.5,
+              "group": "Main"
+            },
+            {
+              "id": "313034217646392576",
+              "name": "Under",
+              "odds": 2.22,
+              "handicap": 4.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_5_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313034217646392064",
+              "name": "Over",
+              "odds": 3.4,
+              "handicap": 5.5,
+              "group": "Main"
+            },
+            {
+              "id": "313034217646392576",
+              "name": "Under",
+              "odds": 2.22,
+              "handicap": 5.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_6_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313034217646392064",
+              "name": "Over",
+              "odds": 3.4,
+              "handicap": 6.5,
+              "group": "Main"
+            },
+            {
+              "id": "313034217646392576",
+              "name": "Under",
+              "odds": 2.22,
+              "handicap": 6.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_0_5",
+          "name": "Goluri Peste / Sub, Repriza 1",
+          "selections": [
+            {
+              "id": "313034217646392064",
+              "name": "Over",
+              "odds": 3.4,
+              "handicap": 0.5,
+              "group": "Main"
+            },
+            {
+              "id": "313034217646392576",
+              "name": "Under",
+              "odds": 2.22,
+              "handicap": 0.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_1_5",
+          "name": "Goluri Peste / Sub, Repriza 1",
+          "selections": [
+            {
+              "id": "313034217646392064",
+              "name": "Over",
+              "odds": 3.4,
+              "handicap": 1.5,
+              "group": "Main"
+            },
+            {
+              "id": "313034217646392576",
+              "name": "Under",
+              "odds": 2.22,
+              "handicap": 1.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_2_5",
+          "name": "Goluri Peste / Sub, Repriza 1",
+          "selections": [
+            {
+              "id": "313034217646392064",
+              "name": "Over",
+              "odds": 3.4,
+              "handicap": 2.5,
+              "group": "Main"
+            },
+            {
+              "id": "313034217646392576",
+              "name": "Under",
+              "odds": 2.22,
+              "handicap": 2.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_3_5",
+          "name": "Goluri Peste / Sub, Repriza 1",
+          "selections": [
+            {
+              "id": "313034217646392064",
+              "name": "Over",
+              "odds": 3.4,
+              "handicap": 3.5,
+              "group": "Main"
+            },
+            {
+              "id": "313034217646392576",
+              "name": "Under",
+              "odds": 2.22,
+              "handicap": 3.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_4_5",
+          "name": "Goluri Peste / Sub, Repriza 1",
+          "selections": [
+            {
+              "id": "313034217646392064",
+              "name": "Over",
+              "odds": 3.4,
+              "handicap": 4.5,
+              "group": "Main"
+            },
+            {
+              "id": "313034217646392576",
+              "name": "Under",
+              "odds": 2.22,
+              "handicap": 4.5,
+              "group": "Main"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "313309980269375488",
+      "sourceId": "contibet",
+      "sourceUrl": "https://conticazino.ro/sport#/event/313309980269375488",
+      "observedAt": "2026-09-05T08:27:04.851Z",
+      "sport": "Football",
+      "league": "Liga I 2026/2027",
+      "kickoff": "2026-09-11T18:00:00.000Z",
+      "homeTeam": "Csikszereda M. Ciuc",
+      "awayTeam": "Dinamo București",
+      "eventKey": "football|liga i 2026 2027|2026-09-11T18:00:00.000Z|csikszereda m ciuc|dinamo bucuresti",
+      "markets": [
+        {
+          "key": "MATCH_ODDS",
+          "name": "1X2, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313309980269375488:1",
+              "name": "1",
+              "odds": 4.15,
+              "group": "Main"
+            },
+            {
+              "id": "313309980269375488:X",
+              "name": "X",
+              "odds": 2.08,
+              "group": "Main"
+            },
+            {
+              "id": "313309980269375488:2",
+              "name": "2",
+              "odds": 2.45,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_0_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313309982352934400",
+              "name": "Over",
+              "odds": 13.25,
+              "handicap": 0.5,
+              "group": "Main"
+            },
+            {
+              "id": "313414579186765312",
+              "name": "Under",
+              "odds": 1.02,
+              "handicap": 0.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_1_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313309982352934400",
+              "name": "Over",
+              "odds": 13.25,
+              "handicap": 1.5,
+              "group": "Main"
+            },
+            {
+              "id": "313414579186765312",
+              "name": "Under",
+              "odds": 1.02,
+              "handicap": 1.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_2_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313309982352934400",
+              "name": "Over",
+              "odds": 13.25,
+              "handicap": 2.5,
+              "group": "Main"
+            },
+            {
+              "id": "313414579186765312",
+              "name": "Under",
+              "odds": 1.02,
+              "handicap": 2.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_3_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313309982352934400",
+              "name": "Over",
+              "odds": 13.25,
+              "handicap": 3.5,
+              "group": "Main"
+            },
+            {
+              "id": "313414579186765312",
+              "name": "Under",
+              "odds": 1.02,
+              "handicap": 3.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_4_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313309982352934400",
+              "name": "Over",
+              "odds": 13.25,
+              "handicap": 4.5,
+              "group": "Main"
+            },
+            {
+              "id": "313414579186765312",
+              "name": "Under",
+              "odds": 1.02,
+              "handicap": 4.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_5_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313309982352934400",
+              "name": "Over",
+              "odds": 13.25,
+              "handicap": 5.5,
+              "group": "Main"
+            },
+            {
+              "id": "313414579186765312",
+              "name": "Under",
+              "odds": 1.02,
+              "handicap": 5.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_6_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313309982352934400",
+              "name": "Over",
+              "odds": 13.25,
+              "handicap": 6.5,
+              "group": "Main"
+            },
+            {
+              "id": "313414579186765312",
+              "name": "Under",
+              "odds": 1.02,
+              "handicap": 6.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_0_5",
+          "name": "Goluri Peste / Sub, Repriza 1",
+          "selections": [
+            {
+              "id": "313309982352934400",
+              "name": "Over",
+              "odds": 13.25,
+              "handicap": 0.5,
+              "group": "Main"
+            },
+            {
+              "id": "313414579186765312",
+              "name": "Under",
+              "odds": 1.02,
+              "handicap": 0.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_1_5",
+          "name": "Goluri Peste / Sub, Repriza 1",
+          "selections": [
+            {
+              "id": "313309982352934400",
+              "name": "Over",
+              "odds": 13.25,
+              "handicap": 1.5,
+              "group": "Main"
+            },
+            {
+              "id": "313414579186765312",
+              "name": "Under",
+              "odds": 1.02,
+              "handicap": 1.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_2_5",
+          "name": "Goluri Peste / Sub, Repriza 1",
+          "selections": [
+            {
+              "id": "313309982352934400",
+              "name": "Over",
+              "odds": 13.25,
+              "handicap": 2.5,
+              "group": "Main"
+            },
+            {
+              "id": "313414579186765312",
+              "name": "Under",
+              "odds": 1.02,
+              "handicap": 2.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_3_5",
+          "name": "Goluri Peste / Sub, Repriza 1",
+          "selections": [
+            {
+              "id": "313309982352934400",
+              "name": "Over",
+              "odds": 13.25,
+              "handicap": 3.5,
+              "group": "Main"
+            },
+            {
+              "id": "313414579186765312",
+              "name": "Under",
+              "odds": 1.02,
+              "handicap": 3.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_4_5",
+          "name": "Goluri Peste / Sub, Repriza 1",
+          "selections": [
+            {
+              "id": "313309982352934400",
+              "name": "Over",
+              "odds": 13.25,
+              "handicap": 4.5,
+              "group": "Main"
+            },
+            {
+              "id": "313414579186765312",
+              "name": "Under",
+              "odds": 1.02,
+              "handicap": 4.5,
+              "group": "Main"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "312785607952330752",
+      "sourceId": "contibet",
+      "sourceUrl": "https://conticazino.ro/sport#/event/312785607952330752",
+      "observedAt": "2026-09-05T08:27:04.851Z",
+      "sport": "Football",
+      "league": "Liga I 2026/2027",
+      "kickoff": "2026-09-12T18:30:00.000Z",
+      "homeTeam": "Rapid București",
+      "awayTeam": "FC Voluntari",
+      "eventKey": "football|liga i 2026 2027|2026-09-12T18:30:00.000Z|rapid bucuresti|fc voluntari",
+      "markets": [
+        {
+          "key": "MATCH_ODDS",
+          "name": "1X2, Timp regulamentar",
+          "selections": [
+            {
+              "id": "312785607952330752:1",
+              "name": "1",
+              "odds": 1.45,
+              "group": "Main"
+            },
+            {
+              "id": "312785607952330752:X",
+              "name": "X",
+              "odds": 4.15,
+              "group": "Main"
+            },
+            {
+              "id": "312785607952330752:2",
+              "name": "2",
+              "odds": 6.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_0_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313034251534270976",
+              "name": "Over",
+              "odds": 1.38,
+              "handicap": 0.5,
+              "group": "Main"
+            },
+            {
+              "id": "313034251534270464",
+              "name": "Under",
+              "odds": 1.74,
+              "handicap": 0.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_1_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313034251534270976",
+              "name": "Over",
+              "odds": 1.38,
+              "handicap": 1.5,
+              "group": "Main"
+            },
+            {
+              "id": "313034251534270464",
+              "name": "Under",
+              "odds": 1.74,
+              "handicap": 1.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_2_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313034251534270976",
+              "name": "Over",
+              "odds": 1.38,
+              "handicap": 2.5,
+              "group": "Main"
+            },
+            {
+              "id": "313034251534270464",
+              "name": "Under",
+              "odds": 1.74,
+              "handicap": 2.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_3_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313034251534270976",
+              "name": "Over",
+              "odds": 1.38,
+              "handicap": 3.5,
+              "group": "Main"
+            },
+            {
+              "id": "313034251534270464",
+              "name": "Under",
+              "odds": 1.74,
+              "handicap": 3.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_4_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313034251534270976",
+              "name": "Over",
+              "odds": 1.38,
+              "handicap": 4.5,
+              "group": "Main"
+            },
+            {
+              "id": "313034251534270464",
+              "name": "Under",
+              "odds": 1.74,
+              "handicap": 4.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_5_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313034251534270976",
+              "name": "Over",
+              "odds": 1.38,
+              "handicap": 5.5,
+              "group": "Main"
+            },
+            {
+              "id": "313034251534270464",
+              "name": "Under",
+              "odds": 1.74,
+              "handicap": 5.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_6_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313034251534270976",
+              "name": "Over",
+              "odds": 1.38,
+              "handicap": 6.5,
+              "group": "Main"
+            },
+            {
+              "id": "313034251534270464",
+              "name": "Under",
+              "odds": 1.74,
+              "handicap": 6.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_0_5",
+          "name": "Goluri Peste / Sub, Repriza 1",
+          "selections": [
+            {
+              "id": "313034251534270976",
+              "name": "Over",
+              "odds": 1.38,
+              "handicap": 0.5,
+              "group": "Main"
+            },
+            {
+              "id": "313034251534270464",
+              "name": "Under",
+              "odds": 1.74,
+              "handicap": 0.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_1_5",
+          "name": "Goluri Peste / Sub, Repriza 1",
+          "selections": [
+            {
+              "id": "313034251534270976",
+              "name": "Over",
+              "odds": 1.38,
+              "handicap": 1.5,
+              "group": "Main"
+            },
+            {
+              "id": "313034251534270464",
+              "name": "Under",
+              "odds": 1.74,
+              "handicap": 1.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_2_5",
+          "name": "Goluri Peste / Sub, Repriza 1",
+          "selections": [
+            {
+              "id": "313034251534270976",
+              "name": "Over",
+              "odds": 1.38,
+              "handicap": 2.5,
+              "group": "Main"
+            },
+            {
+              "id": "313034251534270464",
+              "name": "Under",
+              "odds": 1.74,
+              "handicap": 2.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_3_5",
+          "name": "Goluri Peste / Sub, Repriza 1",
+          "selections": [
+            {
+              "id": "313034251534270976",
+              "name": "Over",
+              "odds": 1.38,
+              "handicap": 3.5,
+              "group": "Main"
+            },
+            {
+              "id": "313034251534270464",
+              "name": "Under",
+              "odds": 1.74,
+              "handicap": 3.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_4_5",
+          "name": "Goluri Peste / Sub, Repriza 1",
+          "selections": [
+            {
+              "id": "313034251534270976",
+              "name": "Over",
+              "odds": 1.38,
+              "handicap": 4.5,
+              "group": "Main"
+            },
+            {
+              "id": "313034251534270464",
+              "name": "Under",
+              "odds": 1.74,
+              "handicap": 4.5,
+              "group": "Main"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "313247111397928960",
+      "sourceId": "contibet",
+      "sourceUrl": "https://conticazino.ro/sport#/event/313247111397928960",
+      "observedAt": "2026-09-05T08:27:04.851Z",
+      "sport": "Football",
+      "league": "Liga I 2026/2027",
+      "kickoff": "2026-09-13T12:00:00.000Z",
+      "homeTeam": "FC Argeș",
+      "awayTeam": "FC Botoșani",
+      "eventKey": "football|liga i 2026 2027|2026-09-13T12:00:00.000Z|fc arges|fc botosani",
+      "markets": [
+        {
+          "key": "MATCH_ODDS",
+          "name": "1X2, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313247111397928960:1",
+              "name": "1",
+              "odds": 2.12,
+              "group": "Main"
+            },
+            {
+              "id": "313247111397928960:X",
+              "name": "X",
+              "odds": 1.99,
+              "group": "Main"
+            },
+            {
+              "id": "313247111397928960:2",
+              "name": "2",
+              "odds": 3.3,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_0_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313247113054717952",
+              "name": "Over",
+              "odds": 2.27,
+              "handicap": 0.5,
+              "group": "Main"
+            },
+            {
+              "id": "313247113054719488",
+              "name": "Under",
+              "odds": 1.02,
+              "handicap": 0.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_1_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313247113054717952",
+              "name": "Over",
+              "odds": 2.27,
+              "handicap": 1.5,
+              "group": "Main"
+            },
+            {
+              "id": "313247113054719488",
+              "name": "Under",
+              "odds": 1.02,
+              "handicap": 1.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_2_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313247113054717952",
+              "name": "Over",
+              "odds": 2.27,
+              "handicap": 2.5,
+              "group": "Main"
+            },
+            {
+              "id": "313247113054719488",
+              "name": "Under",
+              "odds": 1.02,
+              "handicap": 2.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_3_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313247113054717952",
+              "name": "Over",
+              "odds": 2.27,
+              "handicap": 3.5,
+              "group": "Main"
+            },
+            {
+              "id": "313247113054719488",
+              "name": "Under",
+              "odds": 1.02,
+              "handicap": 3.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_4_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313247113054717952",
+              "name": "Over",
+              "odds": 2.27,
+              "handicap": 4.5,
+              "group": "Main"
+            },
+            {
+              "id": "313247113054719488",
+              "name": "Under",
+              "odds": 1.02,
+              "handicap": 4.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_5_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313247113054717952",
+              "name": "Over",
+              "odds": 2.27,
+              "handicap": 5.5,
+              "group": "Main"
+            },
+            {
+              "id": "313247113054719488",
+              "name": "Under",
+              "odds": 1.02,
+              "handicap": 5.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_6_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313247113054717952",
+              "name": "Over",
+              "odds": 2.27,
+              "handicap": 6.5,
+              "group": "Main"
+            },
+            {
+              "id": "313247113054719488",
+              "name": "Under",
+              "odds": 1.02,
+              "handicap": 6.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_0_5",
+          "name": "Goluri Peste / Sub, Repriza 1",
+          "selections": [
+            {
+              "id": "313247113054717952",
+              "name": "Over",
+              "odds": 2.27,
+              "handicap": 0.5,
+              "group": "Main"
+            },
+            {
+              "id": "313247113054719488",
+              "name": "Under",
+              "odds": 1.02,
+              "handicap": 0.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_1_5",
+          "name": "Goluri Peste / Sub, Repriza 1",
+          "selections": [
+            {
+              "id": "313247113054717952",
+              "name": "Over",
+              "odds": 2.27,
+              "handicap": 1.5,
+              "group": "Main"
+            },
+            {
+              "id": "313247113054719488",
+              "name": "Under",
+              "odds": 1.02,
+              "handicap": 1.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_2_5",
+          "name": "Goluri Peste / Sub, Repriza 1",
+          "selections": [
+            {
+              "id": "313247113054717952",
+              "name": "Over",
+              "odds": 2.27,
+              "handicap": 2.5,
+              "group": "Main"
+            },
+            {
+              "id": "313247113054719488",
+              "name": "Under",
+              "odds": 1.02,
+              "handicap": 2.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_3_5",
+          "name": "Goluri Peste / Sub, Repriza 1",
+          "selections": [
+            {
+              "id": "313247113054717952",
+              "name": "Over",
+              "odds": 2.27,
+              "handicap": 3.5,
+              "group": "Main"
+            },
+            {
+              "id": "313247113054719488",
+              "name": "Under",
+              "odds": 1.02,
+              "handicap": 3.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_4_5",
+          "name": "Goluri Peste / Sub, Repriza 1",
+          "selections": [
+            {
+              "id": "313247113054717952",
+              "name": "Over",
+              "odds": 2.27,
+              "handicap": 4.5,
+              "group": "Main"
+            },
+            {
+              "id": "313247113054719488",
+              "name": "Under",
+              "odds": 1.02,
+              "handicap": 4.5,
+              "group": "Main"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "313330326258216960",
+      "sourceId": "contibet",
+      "sourceUrl": "https://conticazino.ro/sport#/event/313330326258216960",
+      "observedAt": "2026-09-05T08:27:04.851Z",
+      "sport": "Football",
+      "league": "Liga I 2026/2027",
+      "kickoff": "2026-09-14T15:00:00.000Z",
+      "homeTeam": "U Cluj",
+      "awayTeam": "Oţelul Galaţi",
+      "eventKey": "football|liga i 2026 2027|2026-09-14T15:00:00.000Z|u cluj|otelul galati",
+      "markets": [
+        {
+          "key": "MATCH_ODDS",
+          "name": "1X2, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313330326258216960:1",
+              "name": "1",
+              "odds": 1.85,
+              "group": "Main"
+            },
+            {
+              "id": "313330326258216960:X",
+              "name": "X",
+              "odds": 2.03,
+              "group": "Main"
+            },
+            {
+              "id": "313330326258216960:2",
+              "name": "2",
+              "odds": 4.33,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_0_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313330327827973888",
+              "name": "Over",
+              "odds": 34,
+              "handicap": 0.5,
+              "group": "Main"
+            },
+            {
+              "id": "313330327827973376",
+              "name": "Under",
+              "odds": 1.6,
+              "handicap": 0.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_1_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313330327827973888",
+              "name": "Over",
+              "odds": 34,
+              "handicap": 1.5,
+              "group": "Main"
+            },
+            {
+              "id": "313330327827973376",
+              "name": "Under",
+              "odds": 1.6,
+              "handicap": 1.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_2_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313330327827973888",
+              "name": "Over",
+              "odds": 34,
+              "handicap": 2.5,
+              "group": "Main"
+            },
+            {
+              "id": "313330327827973376",
+              "name": "Under",
+              "odds": 1.6,
+              "handicap": 2.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_3_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313330327827973888",
+              "name": "Over",
+              "odds": 34,
+              "handicap": 3.5,
+              "group": "Main"
+            },
+            {
+              "id": "313330327827973376",
+              "name": "Under",
+              "odds": 1.6,
+              "handicap": 3.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_4_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313330327827973888",
+              "name": "Over",
+              "odds": 34,
+              "handicap": 4.5,
+              "group": "Main"
+            },
+            {
+              "id": "313330327827973376",
+              "name": "Under",
+              "odds": 1.6,
+              "handicap": 4.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_5_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313330327827973888",
+              "name": "Over",
+              "odds": 34,
+              "handicap": 5.5,
+              "group": "Main"
+            },
+            {
+              "id": "313330327827973376",
+              "name": "Under",
+              "odds": 1.6,
+              "handicap": 5.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_6_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313330327827973888",
+              "name": "Over",
+              "odds": 34,
+              "handicap": 6.5,
+              "group": "Main"
+            },
+            {
+              "id": "313330327827973376",
+              "name": "Under",
+              "odds": 1.6,
+              "handicap": 6.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_0_5",
+          "name": "Goluri Peste / Sub, Repriza 1",
+          "selections": [
+            {
+              "id": "313330327827973888",
+              "name": "Over",
+              "odds": 34,
+              "handicap": 0.5,
+              "group": "Main"
+            },
+            {
+              "id": "313330327827973376",
+              "name": "Under",
+              "odds": 1.6,
+              "handicap": 0.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_1_5",
+          "name": "Goluri Peste / Sub, Repriza 1",
+          "selections": [
+            {
+              "id": "313330327827973888",
+              "name": "Over",
+              "odds": 34,
+              "handicap": 1.5,
+              "group": "Main"
+            },
+            {
+              "id": "313330327827973376",
+              "name": "Under",
+              "odds": 1.6,
+              "handicap": 1.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_2_5",
+          "name": "Goluri Peste / Sub, Repriza 1",
+          "selections": [
+            {
+              "id": "313330327827973888",
+              "name": "Over",
+              "odds": 34,
+              "handicap": 2.5,
+              "group": "Main"
+            },
+            {
+              "id": "313330327827973376",
+              "name": "Under",
+              "odds": 1.6,
+              "handicap": 2.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_3_5",
+          "name": "Goluri Peste / Sub, Repriza 1",
+          "selections": [
+            {
+              "id": "313330327827973888",
+              "name": "Over",
+              "odds": 34,
+              "handicap": 3.5,
+              "group": "Main"
+            },
+            {
+              "id": "313330327827973376",
+              "name": "Under",
+              "odds": 1.6,
+              "handicap": 3.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_4_5",
+          "name": "Goluri Peste / Sub, Repriza 1",
+          "selections": [
+            {
+              "id": "313330327827973888",
+              "name": "Over",
+              "odds": 34,
+              "handicap": 4.5,
+              "group": "Main"
+            },
+            {
+              "id": "313330327827973376",
+              "name": "Under",
+              "odds": 1.6,
+              "handicap": 4.5,
+              "group": "Main"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "312785608054042624",
+      "sourceId": "contibet",
+      "sourceUrl": "https://conticazino.ro/sport#/event/312785608054042624",
+      "observedAt": "2026-09-05T08:27:04.851Z",
+      "sport": "Football",
+      "league": "Liga I 2026/2027",
+      "kickoff": "2026-09-13T17:30:00.000Z",
+      "homeTeam": "Corvinul",
+      "awayTeam": "Univ. Craiova",
+      "eventKey": "football|liga i 2026 2027|2026-09-13T17:30:00.000Z|corvinul|univ craiova",
+      "markets": [
+        {
+          "key": "MATCH_ODDS",
+          "name": "1X2, Timp regulamentar",
+          "selections": [
+            {
+              "id": "312785608054042624:1",
+              "name": "1",
+              "odds": 3.6,
+              "group": "Main"
+            },
+            {
+              "id": "312785608054042624:X",
+              "name": "X",
+              "odds": 2.15,
+              "group": "Main"
+            },
+            {
+              "id": "312785608054042624:2",
+              "name": "2",
+              "odds": 2.55,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_0_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313034217628566528",
+              "name": "Over",
+              "odds": 1.45,
+              "handicap": 0.5,
+              "group": "Main"
+            },
+            {
+              "id": "313034217627517952",
+              "name": "Under",
+              "odds": 2.9,
+              "handicap": 0.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_1_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313034217628566528",
+              "name": "Over",
+              "odds": 1.45,
+              "handicap": 1.5,
+              "group": "Main"
+            },
+            {
+              "id": "313034217627517952",
+              "name": "Under",
+              "odds": 2.9,
+              "handicap": 1.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_2_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313034217628566528",
+              "name": "Over",
+              "odds": 1.45,
+              "handicap": 2.5,
+              "group": "Main"
+            },
+            {
+              "id": "313034217627517952",
+              "name": "Under",
+              "odds": 2.9,
+              "handicap": 2.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_3_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313034217628566528",
+              "name": "Over",
+              "odds": 1.45,
+              "handicap": 3.5,
+              "group": "Main"
+            },
+            {
+              "id": "313034217627517952",
+              "name": "Under",
+              "odds": 2.9,
+              "handicap": 3.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_4_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313034217628566528",
+              "name": "Over",
+              "odds": 1.45,
+              "handicap": 4.5,
+              "group": "Main"
+            },
+            {
+              "id": "313034217627517952",
+              "name": "Under",
+              "odds": 2.9,
+              "handicap": 4.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_5_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313034217628566528",
+              "name": "Over",
+              "odds": 1.45,
+              "handicap": 5.5,
+              "group": "Main"
+            },
+            {
+              "id": "313034217627517952",
+              "name": "Under",
+              "odds": 2.9,
+              "handicap": 5.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_6_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313034217628566528",
+              "name": "Over",
+              "odds": 1.45,
+              "handicap": 6.5,
+              "group": "Main"
+            },
+            {
+              "id": "313034217627517952",
+              "name": "Under",
+              "odds": 2.9,
+              "handicap": 6.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_0_5",
+          "name": "Goluri Peste / Sub, Repriza 1",
+          "selections": [
+            {
+              "id": "313034217628566528",
+              "name": "Over",
+              "odds": 1.45,
+              "handicap": 0.5,
+              "group": "Main"
+            },
+            {
+              "id": "313034217627517952",
+              "name": "Under",
+              "odds": 2.9,
+              "handicap": 0.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_1_5",
+          "name": "Goluri Peste / Sub, Repriza 1",
+          "selections": [
+            {
+              "id": "313034217628566528",
+              "name": "Over",
+              "odds": 1.45,
+              "handicap": 1.5,
+              "group": "Main"
+            },
+            {
+              "id": "313034217627517952",
+              "name": "Under",
+              "odds": 2.9,
+              "handicap": 1.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_2_5",
+          "name": "Goluri Peste / Sub, Repriza 1",
+          "selections": [
+            {
+              "id": "313034217628566528",
+              "name": "Over",
+              "odds": 1.45,
+              "handicap": 2.5,
+              "group": "Main"
+            },
+            {
+              "id": "313034217627517952",
+              "name": "Under",
+              "odds": 2.9,
+              "handicap": 2.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_3_5",
+          "name": "Goluri Peste / Sub, Repriza 1",
+          "selections": [
+            {
+              "id": "313034217628566528",
+              "name": "Over",
+              "odds": 1.45,
+              "handicap": 3.5,
+              "group": "Main"
+            },
+            {
+              "id": "313034217627517952",
+              "name": "Under",
+              "odds": 2.9,
+              "handicap": 3.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_4_5",
+          "name": "Goluri Peste / Sub, Repriza 1",
+          "selections": [
+            {
+              "id": "313034217628566528",
+              "name": "Over",
+              "odds": 1.45,
+              "handicap": 4.5,
+              "group": "Main"
+            },
+            {
+              "id": "313034217627517952",
+              "name": "Under",
+              "odds": 2.9,
+              "handicap": 4.5,
+              "group": "Main"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "313315234104897536",
+      "sourceId": "contibet",
+      "sourceUrl": "https://conticazino.ro/sport#/event/313315234104897536",
+      "observedAt": "2026-09-05T08:27:04.851Z",
+      "sport": "Football",
+      "league": "Liga I 2026/2027",
+      "kickoff": "2026-09-14T18:00:00.000Z",
+      "homeTeam": "FCSB",
+      "awayTeam": "Petrolul Ploiești",
+      "eventKey": "football|liga i 2026 2027|2026-09-14T18:00:00.000Z|fcsb|petrolul ploiesti",
+      "markets": [
+        {
+          "key": "MATCH_ODDS",
+          "name": "1X2, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313315234104897536:1",
+              "name": "1",
+              "odds": 2.02,
+              "group": "Main"
+            },
+            {
+              "id": "313315234104897536:X",
+              "name": "X",
+              "odds": 2.27,
+              "group": "Main"
+            },
+            {
+              "id": "313315234104897536:2",
+              "name": "2",
+              "odds": 5.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_0_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313315235933651712",
+              "name": "Over",
+              "odds": 4.75,
+              "handicap": 0.5,
+              "group": "Main"
+            },
+            {
+              "id": "313315235930508032",
+              "name": "Under",
+              "odds": 1.42,
+              "handicap": 0.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_1_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313315235933651712",
+              "name": "Over",
+              "odds": 4.75,
+              "handicap": 1.5,
+              "group": "Main"
+            },
+            {
+              "id": "313315235930508032",
+              "name": "Under",
+              "odds": 1.42,
+              "handicap": 1.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_2_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313315235933651712",
+              "name": "Over",
+              "odds": 4.75,
+              "handicap": 2.5,
+              "group": "Main"
+            },
+            {
+              "id": "313315235930508032",
+              "name": "Under",
+              "odds": 1.42,
+              "handicap": 2.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_3_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313315235933651712",
+              "name": "Over",
+              "odds": 4.75,
+              "handicap": 3.5,
+              "group": "Main"
+            },
+            {
+              "id": "313315235930508032",
+              "name": "Under",
+              "odds": 1.42,
+              "handicap": 3.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_4_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313315235933651712",
+              "name": "Over",
+              "odds": 4.75,
+              "handicap": 4.5,
+              "group": "Main"
+            },
+            {
+              "id": "313315235930508032",
+              "name": "Under",
+              "odds": 1.42,
+              "handicap": 4.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_5_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313315235933651712",
+              "name": "Over",
+              "odds": 4.75,
+              "handicap": 5.5,
+              "group": "Main"
+            },
+            {
+              "id": "313315235930508032",
+              "name": "Under",
+              "odds": 1.42,
+              "handicap": 5.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_6_5",
+          "name": "Goluri Peste / Sub, Timp regulamentar",
+          "selections": [
+            {
+              "id": "313315235933651712",
+              "name": "Over",
+              "odds": 4.75,
+              "handicap": 6.5,
+              "group": "Main"
+            },
+            {
+              "id": "313315235930508032",
+              "name": "Under",
+              "odds": 1.42,
+              "handicap": 6.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_0_5",
+          "name": "Goluri Peste / Sub, Repriza 1",
+          "selections": [
+            {
+              "id": "313315235933651712",
+              "name": "Over",
+              "odds": 4.75,
+              "handicap": 0.5,
+              "group": "Main"
+            },
+            {
+              "id": "313315235930508032",
+              "name": "Under",
+              "odds": 1.42,
+              "handicap": 0.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_1_5",
+          "name": "Goluri Peste / Sub, Repriza 1",
+          "selections": [
+            {
+              "id": "313315235933651712",
+              "name": "Over",
+              "odds": 4.75,
+              "handicap": 1.5,
+              "group": "Main"
+            },
+            {
+              "id": "313315235930508032",
+              "name": "Under",
+              "odds": 1.42,
+              "handicap": 1.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_2_5",
+          "name": "Goluri Peste / Sub, Repriza 1",
+          "selections": [
+            {
+              "id": "313315235933651712",
+              "name": "Over",
+              "odds": 4.75,
+              "handicap": 2.5,
+              "group": "Main"
+            },
+            {
+              "id": "313315235930508032",
+              "name": "Under",
+              "odds": 1.42,
+              "handicap": 2.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_3_5",
+          "name": "Goluri Peste / Sub, Repriza 1",
+          "selections": [
+            {
+              "id": "313315235933651712",
+              "name": "Over",
+              "odds": 4.75,
+              "handicap": 3.5,
+              "group": "Main"
+            },
+            {
+              "id": "313315235930508032",
+              "name": "Under",
+              "odds": 1.42,
+              "handicap": 3.5,
+              "group": "Main"
+            }
+          ]
+        },
+        {
+          "key": "OVER_UNDER_4_5",
+          "name": "Goluri Peste / Sub, Repriza 1",
+          "selections": [
+            {
+              "id": "313315235933651712",
+              "name": "Over",
+              "odds": 4.75,
+              "handicap": 4.5,
+              "group": "Main"
+            },
+            {
+              "id": "313315235930508032",
+              "name": "Under",
+              "odds": 1.42,
+              "handicap": 4.5,
+              "group": "Main"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -19,6 +19,11 @@
  * @param {string}  [config.placeholder] - Placeholder option text.
  * @returns {HTMLSelectElement|null} The populated select, or null if not found.
  */
+window.escapeHtml = function (value) {
+  const entities = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
+  return String(value ?? '').replace(/[&<>"']/g, character => entities[character]);
+};
+
 window.createDropdown = function (id, options, config = {}) {
   const sel = document.getElementById(id);
   if (!sel) return null;
@@ -143,8 +148,18 @@ window.applyDesignTokens = function (theme) {
  *
  * All financial/betting values should use these formatters instead of
  * ad-hoc toFixed() or toLocaleString() calls.
+ *
+ * This *extends* the object defined in /js/format.js rather than replacing it.
+ * Both files are loaded on the dashboard and event pages, and a plain
+ * assignment here would silently drop paletteFor/fmtStake/parseDate/
+ * formatKickoff, which event-detail.js calls unguarded. The admin pages do not
+ * load format.js, so every key this file owns is also defined standalone below
+ * and the base object only contributes on the pages that have it.
+ *
+ * Keys deliberately not redefined here: fmtOdds, fmtStake and timeAgo are
+ * already provided by format.js with identical bodies.
  */
-window.arbiterFormat = {
+window.arbiterFormat = Object.assign(Object.create(null), window.arbiterFormat || {}, {
   /**
    * Format odds value (e.g. 2.35 → "2.35").
    * @param {number} n - The odds value.
@@ -205,10 +220,12 @@ window.arbiterFormat = {
 
   /**
    * Get a human-readable time ago string (e.g. "2m ago", "1h ago").
+   * Only used as a fallback: when format.js is loaded (dashboard, event pages)
+   * its identical implementation is kept instead.
    * @param {number} ms - Milliseconds elapsed.
    * @returns {string} Human-readable time string.
    */
-  timeAgo(ms) {
+  timeAgo: (window.arbiterFormat || {}).timeAgo || function timeAgoFallback(ms) {
     if (!ms) return '—';
     const s = Math.max(0, Math.round(ms / 1000));
     if (s < 60) return s + 's ago';
@@ -217,4 +234,4 @@ window.arbiterFormat = {
     const h = Math.round(m / 60);
     return h + 'h ago';
   },
-};
+});

@@ -1,4 +1,4 @@
-import { AltenarTenant } from './altenar-provider.mjs';
+import AltenarPublic from './altenar-public.mjs';
 
 /**
  * The single Altenar job in config/scrapers.json fans out to one
@@ -17,7 +17,7 @@ export const TENANTS = [
     locale: 'ro-RO',
     timezone: 'Europe/Bucharest',
     currency: 'RON',
-    path: '/api/altenar/events',
+    path: '/api/widget/GetUpcoming',
   },
   {
     id: 'topbet',
@@ -26,7 +26,7 @@ export const TENANTS = [
     locale: 'ro-RO',
     timezone: 'Europe/Bucharest',
     currency: 'RON',
-    path: '/api/altenar/events',
+    path: '/api/widget/GetUpcoming',
   },
   {
     id: 'million',
@@ -35,7 +35,7 @@ export const TENANTS = [
     locale: 'ro-RO',
     timezone: 'Europe/Bucharest',
     currency: 'RON',
-    path: '/api/altenar/events',
+    path: '/api/widget/GetUpcoming',
   },
   {
     id: 'baumbet',
@@ -44,7 +44,7 @@ export const TENANTS = [
     locale: 'ro-RO',
     timezone: 'Europe/Bucharest',
     currency: 'RON',
-    path: '/api/altenar/events',
+    path: '/api/widget/GetUpcoming',
   },
   {
     id: 'winbet',
@@ -53,7 +53,16 @@ export const TENANTS = [
     locale: 'ro-RO',
     timezone: 'Europe/Bucharest',
     currency: 'RON',
-    path: '/api/altenar/events',
+    path: '/api/widget/GetUpcoming',
+  },
+  {
+    id: 'powerbet',
+    name: 'Powerbet',
+    baseUrl: 'https://powerbet.ro',
+    locale: 'ro-RO',
+    timezone: 'Europe/Bucharest',
+    currency: 'RON',
+    path: '/api/widget/GetUpcoming',
   },
 ];
 
@@ -62,10 +71,10 @@ export const TENANTS = [
  * Altenar books, return an AltenarTenant instance configured with the shared
  * data dir + logger.
  */
-export function createAltenarTenant(jobId, { dataDir, logger, runId } = {}) {
+export function createAltenarTenant(jobId, opts = {}) {
   const cfg = TENANTS.find((t) => t.id === jobId);
   if (!cfg) return null;
-  return new AltenarTenant({ ...cfg, dataDir, logger, runId });
+  return new AltenarPublic(jobId, opts);
 }
 
 export const ALTENAR_JOB_ID = 'altenar-sites';

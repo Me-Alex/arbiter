@@ -1,0 +1,595 @@
+{
+  "book": "powerbet",
+  "timestamp": "2026-09-01T18:50:18.697Z",
+  "pagesVisited": 50,
+  "minPagesRequired": 50,
+  "pagesTargetReached": true,
+  "endpoints": [
+    {
+      "method": "GET",
+      "url": "https://online.powerbet.ro/api/games-with-info-page",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://online.powerbet.ro/sport/fotbal_1",
+      "capturedAt": "2026-09-01T18:45:10.902Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://cdn.skywind360.com/t1/games_exclusion/bingo-games.json",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://online.powerbet.ro/sport/fotbal_1",
+      "capturedAt": "2026-09-01T18:45:11.865Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://site-api.powerbet.ro/v1/site/games/vendors",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://online.powerbet.ro/sport/fotbal_1",
+      "capturedAt": "2026-09-01T18:45:12.149Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://site-api.powerbet.ro/v1/site/games?isMobileApp=false",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://online.powerbet.ro/sport/fotbal_1",
+      "capturedAt": "2026-09-01T18:45:12.149Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://dvm0p9vsezqr2.cloudfront.net/visitorGame/bebe5dfb-d6a0-48b8-84ce-3c87305f51ff-4/c13666b6/ro/3/is_visitor_mode/true",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://online.powerbet.ro/sport/fotbal_1",
+      "capturedAt": "2026-09-01T18:45:12.572Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://dvm0p9vsezqr2.cloudfront.net/visitorGame/bebe5dfb-d6a0-48b8-84ce-3c87305f51ff-4/c13666b6/ro/700",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://online.powerbet.ro/sport/fotbal_1",
+      "capturedAt": "2026-09-01T18:45:12.576Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://site-api.powerbet.ro/v1/site/games/providers/names",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://online.powerbet.ro/sport/fotbal_1",
+      "capturedAt": "2026-09-01T18:45:14.088Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://ekr.zdassets.com/compose/e071c804-8237-4f4a-8bfc-b50018ed8894",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://online.powerbet.ro/info/privacy-policy",
+      "capturedAt": "2026-09-01T18:45:21.663Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://site-api.powerbet.ro/v2/site/category?isMobileApp=false&categories=14dc27ec-6152-4610-b378-bf719238310a",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://online.powerbet.ro/casino",
+      "capturedAt": "2026-09-01T18:45:42.897Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://powerbetro.zendesk.com/embeddable/config",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://online.powerbet.ro/casino/virtual-games",
+      "capturedAt": "2026-09-01T18:46:04.536Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://lgames.ibetplatform.com/terminalapi/api/shops/online",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://online.powerbet.ro/agentii",
+      "capturedAt": "2026-09-01T18:47:04.996Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://site-api.powerbet.ro/v1/site/games?isMobileApp=true",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://online.powerbet.ro/info/-",
+      "capturedAt": "2026-09-01T18:47:42.218Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://site-api.powerbet.ro/v1/site/demo/c9f1d45e-2261-4f71-b9c3-1af14477b9a9",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://online.powerbet.ro/games/demo/amusnet/40-extra-crown-buy-bonus",
+      "capturedAt": "2026-09-01T18:50:00.520Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://prod.cdn.amusnet.io/lib/games.config.json?1788288601346",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://online.powerbet.ro/games/demo/amusnet/40-extra-crown-buy-bonus",
+      "capturedAt": "2026-09-01T18:50:01.621Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://site-api.powerbet.ro/v1/site/demo/8f42a08a-62bc-461f-b6b3-de6f20149086",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://online.powerbet.ro/games/demo/egt-digital/super-power-bell-link-boost",
+      "capturedAt": "2026-09-01T18:50:05.612Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://powerbetro-gs-demo-prod-bgsp.egt-ong.com/game-websocket/info?sessionToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTc4ODI4ODU0MzM1ODQxLCJleHAiOjE3ODgyODg2NjN9.1yJtw5_rJ4WgJv6osxhtDQZmm2zgt8cwd3uDa1Tkiss&casinoId=113_RO_POWERBET&playerId=undefined&tempToken=&playerName=undefined&gameKey=SPBLBSlot&currencyCode=RON&demo=true&channel=desktop&version=1.62.5&browser=Chrome%20Headless%20151%20Windows&t=1788288606972",
+      "status": 200,
+      "contentType": "application/json;charset=UTF-8",
+      "pageUrl": "https://online.powerbet.ro/games/demo/egt-digital/super-power-bell-link-boost",
+      "capturedAt": "2026-09-01T18:50:07.143Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://powerbetro-api-prod-bgsp.egt-ong.com/api/history/statistics/top-games",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://online.powerbet.ro/games/demo/egt-digital/super-power-bell-link-boost",
+      "capturedAt": "2026-09-01T18:50:08.225Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://lobby-prod-cdn.egt-ong.com/2.11.0/assets/stats.json?timestamp=1788288607930",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://online.powerbet.ro/games/demo/egt-digital/super-power-bell-link-boost",
+      "capturedAt": "2026-09-01T18:50:08.225Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://site-api.powerbet.ro/v1/site/demo/7f96af62-22b3-46ed-899f-ba6d7cdb9478",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://online.powerbet.ro/games/demo/pragmatic-play/steamin-reels",
+      "capturedAt": "2026-09-01T18:50:11.917Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://demogamesfree.gfocgrfotg.net/gs2c/stats.do?mgckey=stylename@sw360_powerbetro~SESSION@8c6aeefd-a537-4f6a-af21-7507728653a6&channel=desktop",
+      "status": 200,
+      "contentType": "application/json;charset=UTF-8",
+      "pageUrl": "https://online.powerbet.ro/games/demo/pragmatic-play/steamin-reels",
+      "capturedAt": "2026-09-01T18:50:12.590Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://demogamesfree.gfocgrfotg.net/gs2c/common/v3/games-html5/games/vs/vs10stmreels/desktop/packages/ro_GUI_desktop.json?key=8b8b0",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://online.powerbet.ro/games/demo/pragmatic-play/steamin-reels",
+      "capturedAt": "2026-09-01T18:50:12.704Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://demogamesfree.gfocgrfotg.net/gs2c/common/v3/games-html5/games/vs/vs10stmreels/desktop/packages/ro_desktop.json?key=8b8b0",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://online.powerbet.ro/games/demo/pragmatic-play/steamin-reels",
+      "capturedAt": "2026-09-01T18:50:12.707Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://demogamesfree.gfocgrfotg.net/gs2c/common/v3/games-html5/games/vs/vs10stmreels/desktop/client/resources.json?key=4c5758229f7bf28ba59b15f929ce4254",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://online.powerbet.ro/games/demo/pragmatic-play/steamin-reels",
+      "capturedAt": "2026-09-01T18:50:12.886Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://demogamesfree.gfocgrfotg.net/gs2c/common/v3/games-html5/games/vs/vs10stmreels/desktop/client/game.json?key=994713608766e938fc2291e317e694f4",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://online.powerbet.ro/games/demo/pragmatic-play/steamin-reels",
+      "capturedAt": "2026-09-01T18:50:12.995Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://demogamesfree.gfocgrfotg.net/gs2c/common/v3/games-html5/games/vs/vs10stmreels/desktop/game/GUI001.json?key=c836036e7c7c0b14257bf6dcd2446ffe",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://online.powerbet.ro/games/demo/pragmatic-play/steamin-reels",
+      "capturedAt": "2026-09-01T18:50:13.032Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://demogamesfree.gfocgrfotg.net/gs2c/common/v3/games-html5/games/vs/vs10stmreels/desktop/game/GUI002.json?key=778ca536bd7470980d19f20255d12f20",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://online.powerbet.ro/games/demo/pragmatic-play/steamin-reels",
+      "capturedAt": "2026-09-01T18:50:13.041Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://demogamesfree.gfocgrfotg.net/gs2c/common/v3/games-html5/games/vs/vs10stmreels/desktop/game/GUI000.json?key=27fd3762ff9d4c737fb4c9c213649637",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://online.powerbet.ro/games/demo/pragmatic-play/steamin-reels",
+      "capturedAt": "2026-09-01T18:50:13.053Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://demogamesfree.gfocgrfotg.net/gs2c/common/v3/games-html5/games/vs/vs10stmreels/desktop/game/GUI003.json?key=e8e0496ca744cfbb885db8e380ece5f5",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://online.powerbet.ro/games/demo/pragmatic-play/steamin-reels",
+      "capturedAt": "2026-09-01T18:50:13.058Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://demogamesfree.gfocgrfotg.net/gs2c/common/v3/games-html5/games/vs/vs10stmreels/desktop/game/GUI006.json?key=ecb874517128908d1b1fab010becd4c4",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://online.powerbet.ro/games/demo/pragmatic-play/steamin-reels",
+      "capturedAt": "2026-09-01T18:50:13.064Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://demogamesfree.gfocgrfotg.net/gs2c/common/v3/games-html5/games/vs/vs10stmreels/desktop/game/GUI005.json?key=8dc2bb8a8acb3661c45f222d65c97c01",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://online.powerbet.ro/games/demo/pragmatic-play/steamin-reels",
+      "capturedAt": "2026-09-01T18:50:13.068Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://demogamesfree.gfocgrfotg.net/gs2c/common/v3/games-html5/games/vs/vs10stmreels/desktop/game/GUI004.json?key=30afbb6e3d91ffd83e75aefafd17c5d6",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://online.powerbet.ro/games/demo/pragmatic-play/steamin-reels",
+      "capturedAt": "2026-09-01T18:50:13.073Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://demogamesfree.gfocgrfotg.net/gs2c/common/v3/games-html5/games/vs/vs10stmreels/desktop/game/GUI_resources000.json?key=45645647478304f510035673eb2679c8",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://online.powerbet.ro/games/demo/pragmatic-play/steamin-reels",
+      "capturedAt": "2026-09-01T18:50:13.252Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://demogamesfree.gfocgrfotg.net/gs2c/common/v3/games-html5/games/vs/vs10stmreels/desktop/game/GUI_resources001.json?key=6da1fdb5e41c1f7059a5beae25e6fa97",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://online.powerbet.ro/games/demo/pragmatic-play/steamin-reels",
+      "capturedAt": "2026-09-01T18:50:13.255Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://demogamesfree.gfocgrfotg.net/gs2c/common/v3/games-html5/games/vs/vs10stmreels/desktop/game/game002.json?key=5c32f50e4ea317088d5a48044c78c3e5",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://online.powerbet.ro/games/demo/pragmatic-play/steamin-reels",
+      "capturedAt": "2026-09-01T18:50:13.297Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://demogamesfree.gfocgrfotg.net/gs2c/common/v3/games-html5/games/vs/vs10stmreels/desktop/game/game000.json?key=436c97fd4d06bc2f1a652c8c1d172f43",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://online.powerbet.ro/games/demo/pragmatic-play/steamin-reels",
+      "capturedAt": "2026-09-01T18:50:13.300Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://demogamesfree.gfocgrfotg.net/gs2c/common/v3/games-html5/games/vs/vs10stmreels/desktop/game/game001.json?key=934190a5d051f0e67beb57e9607d8a6c",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://online.powerbet.ro/games/demo/pragmatic-play/steamin-reels",
+      "capturedAt": "2026-09-01T18:50:13.303Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://demogamesfree.gfocgrfotg.net/gs2c/common/v3/games-html5/games/vs/vs10stmreels/desktop/game/main_resources001.json?key=cc17099c541d1aaae03ca3243a0e7d87",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://online.powerbet.ro/games/demo/pragmatic-play/steamin-reels",
+      "capturedAt": "2026-09-01T18:50:13.432Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://demogamesfree.gfocgrfotg.net/gs2c/common/v3/games-html5/games/vs/vs10stmreels/desktop/game/main_resources003.json?key=96711d491b2b0d3c21b01d9848ab93d0",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://online.powerbet.ro/games/demo/pragmatic-play/steamin-reels",
+      "capturedAt": "2026-09-01T18:50:13.434Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://demogamesfree.gfocgrfotg.net/gs2c/common/v3/games-html5/games/vs/vs10stmreels/desktop/game/main_resources002.json?key=fc9cc2e2acac89ac1c5049a1f97b5064",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://online.powerbet.ro/games/demo/pragmatic-play/steamin-reels",
+      "capturedAt": "2026-09-01T18:50:13.436Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://demogamesfree.gfocgrfotg.net/gs2c/common/v3/games-html5/games/vs/vs10stmreels/desktop/game/main_resources000.json?key=037318f71cb062069e1b211a1e4d93e6",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://online.powerbet.ro/games/demo/pragmatic-play/steamin-reels",
+      "capturedAt": "2026-09-01T18:50:13.437Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://demogamesfree.gfocgrfotg.net/gs2c/common/v3/games-html5/games/vs/vs10stmreels/desktop/game/main_resources005.json?key=cfa16a6bd611aa0d4f3abad84366d0c1",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://online.powerbet.ro/games/demo/pragmatic-play/steamin-reels",
+      "capturedAt": "2026-09-01T18:50:13.438Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://demogamesfree.gfocgrfotg.net/gs2c/common/v3/games-html5/games/vs/vs10stmreels/desktop/game/main_resources006.json?key=1f794d8079236671dc91c336277f32a1",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://online.powerbet.ro/games/demo/pragmatic-play/steamin-reels",
+      "capturedAt": "2026-09-01T18:50:13.439Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://demogamesfree.gfocgrfotg.net/gs2c/common/v3/games-html5/games/vs/vs10stmreels/desktop/game/main_resources004.json?key=fac06a9fe6d7cff71f9c6680583c05a2",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://online.powerbet.ro/games/demo/pragmatic-play/steamin-reels",
+      "capturedAt": "2026-09-01T18:50:13.439Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://demogamesfree.gfocgrfotg.net/gs2c/common/v3/games-html5/games/vs/vs10stmreels/desktop/game/main_resources007.json?key=a0d5c3ac56b80abeabba0c29f273188e",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://online.powerbet.ro/games/demo/pragmatic-play/steamin-reels",
+      "capturedAt": "2026-09-01T18:50:13.440Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://demogamesfree.gfocgrfotg.net/gs2c/common/v3/games-html5/games/vs/vs10stmreels/desktop/game/main_resources009.json?key=dd54adff202b50482e8fc31989ec8abf",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://online.powerbet.ro/games/demo/pragmatic-play/steamin-reels",
+      "capturedAt": "2026-09-01T18:50:13.500Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://demogamesfree.gfocgrfotg.net/gs2c/common/v3/games-html5/games/vs/vs10stmreels/desktop/game/main_resources008.json?key=3ee0bdfda61e7b26d3d8ea4333b28e1d",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://online.powerbet.ro/games/demo/pragmatic-play/steamin-reels",
+      "capturedAt": "2026-09-01T18:50:13.501Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://demogamesfree.gfocgrfotg.net/gs2c/common/v3/games-html5/games/vs/vs10stmreels/desktop/game/main_resources011.json?key=e91a78691ff002791d2a639b01031a89",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://online.powerbet.ro/games/demo/pragmatic-play/steamin-reels",
+      "capturedAt": "2026-09-01T18:50:13.502Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://demogamesfree.gfocgrfotg.net/gs2c/common/v3/games-html5/games/vs/vs10stmreels/desktop/game/main_resources016.json?key=501c59b263a098065342487475d9dc73",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://online.powerbet.ro/games/demo/pragmatic-play/steamin-reels",
+      "capturedAt": "2026-09-01T18:50:13.503Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://demogamesfree.gfocgrfotg.net/gs2c/common/v3/games-html5/games/vs/vs10stmreels/desktop/game/main_resources010.json?key=c8d6f6bc1a53454a21aa21d5d5a04a5e",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://online.powerbet.ro/games/demo/pragmatic-play/steamin-reels",
+      "capturedAt": "2026-09-01T18:50:13.504Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://demogamesfree.gfocgrfotg.net/gs2c/common/v3/games-html5/games/vs/vs10stmreels/desktop/game/main_resources012.json?key=2fc0e80c4c512d3bf95eb63dfc2ccc67",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://online.powerbet.ro/games/demo/pragmatic-play/steamin-reels",
+      "capturedAt": "2026-09-01T18:50:13.504Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://demogamesfree.gfocgrfotg.net/gs2c/common/v3/games-html5/games/vs/vs10stmreels/desktop/game/main_resources015.json?key=24db2c4b223f95a2dec531258f1a64fc",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://online.powerbet.ro/games/demo/pragmatic-play/steamin-reels",
+      "capturedAt": "2026-09-01T18:50:13.504Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://demogamesfree.gfocgrfotg.net/gs2c/common/v3/games-html5/games/vs/vs10stmreels/desktop/game/main_resources017.json?key=7cc0b39a55939d3a3f3b3d9e3d6298b5",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://online.powerbet.ro/games/demo/pragmatic-play/steamin-reels",
+      "capturedAt": "2026-09-01T18:50:13.504Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://demogamesfree.gfocgrfotg.net/gs2c/common/v3/games-html5/games/vs/vs10stmreels/desktop/game/main_resources018.json?key=3a449137fa4bf8bcb5002c9c81717477",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://online.powerbet.ro/games/demo/pragmatic-play/steamin-reels",
+      "capturedAt": "2026-09-01T18:50:13.504Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://demogamesfree.gfocgrfotg.net/gs2c/common/v3/games-html5/games/vs/vs10stmreels/desktop/game/main_resources020.json?key=f8a59c58bc2bf5375a2983c27196e8ac",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://online.powerbet.ro/games/demo/pragmatic-play/steamin-reels",
+      "capturedAt": "2026-09-01T18:50:13.505Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://demogamesfree.gfocgrfotg.net/gs2c/common/v3/games-html5/games/vs/vs10stmreels/desktop/game/main_resources014.json?key=f61dd241dacd386bc5f4a49af1ee8cb5",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://online.powerbet.ro/games/demo/pragmatic-play/steamin-reels",
+      "capturedAt": "2026-09-01T18:50:13.506Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://demogamesfree.gfocgrfotg.net/gs2c/common/v3/games-html5/games/vs/vs10stmreels/desktop/game/main_resources019.json?key=b6f14d564ab6377d2055d2507310f501",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://online.powerbet.ro/games/demo/pragmatic-play/steamin-reels",
+      "capturedAt": "2026-09-01T18:50:13.507Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://demogamesfree.gfocgrfotg.net/gs2c/common/v3/games-html5/games/vs/vs10stmreels/desktop/game/main_resources013.json?key=f5b08d51b75e9b462a9d6c3097f1aed9",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://online.powerbet.ro/games/demo/pragmatic-play/steamin-reels",
+      "capturedAt": "2026-09-01T18:50:13.507Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://demogamesfree.gfocgrfotg.net/gs2c/common/v3/games-html5/games/vs/vs10stmreels/desktop/game/main_resources022.json?key=ffd93c3c8f100009883ceda82a68d8ad",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://online.powerbet.ro/games/demo/pragmatic-play/steamin-reels",
+      "capturedAt": "2026-09-01T18:50:13.507Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://demogamesfree.gfocgrfotg.net/gs2c/common/v3/games-html5/games/vs/vs10stmreels/desktop/game/main_resources024.json?key=4e2e683aaec4b53257d41f9a5b09bbae",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://online.powerbet.ro/games/demo/pragmatic-play/steamin-reels",
+      "capturedAt": "2026-09-01T18:50:13.508Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://demogamesfree.gfocgrfotg.net/gs2c/common/v3/games-html5/games/vs/vs10stmreels/desktop/game/main_resources021.json?key=675559f26c18fda0247ed8359e65e85b",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://online.powerbet.ro/games/demo/pragmatic-play/steamin-reels",
+      "capturedAt": "2026-09-01T18:50:13.509Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://demogamesfree.gfocgrfotg.net/gs2c/common/v3/games-html5/games/vs/vs10stmreels/desktop/game/main_resources023.json?key=8a9ca3011edde472f4e2e961352870a2",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://online.powerbet.ro/games/demo/pragmatic-play/steamin-reels",
+      "capturedAt": "2026-09-01T18:50:13.512Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://site-api.powerbet.ro/v1/site/demo/56adf970-d8ab-4f5e-a3c3-cbe2c49430ff",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://online.powerbet.ro/games/demo/pragmatic-play/high-flyer",
+      "capturedAt": "2026-09-01T18:50:17.028Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://prelive0-static.pragmaticplaylive.net/apps/theme-manager/1.0.0/themes/pp_highflyer_default/theme.json",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://online.powerbet.ro/games/demo/pragmatic-play/high-flyer",
+      "capturedAt": "2026-09-01T18:50:17.635Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://prelive0-static.pragmaticplaylive.net/apps/feature-flags/1.0.0/highflyer.manifest.json",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://online.powerbet.ro/games/demo/pragmatic-play/high-flyer",
+      "capturedAt": "2026-09-01T18:50:17.637Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://prelive0-static.pragmaticplaylive.net/apps/feature-flags/1.0.0/promotions.manifest.json",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://online.powerbet.ro/games/demo/pragmatic-play/high-flyer",
+      "capturedAt": "2026-09-01T18:50:17.637Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://prelive0-static.pragmaticplaylive.net/apps/translations-ui/latest/ro/promo.json",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://online.powerbet.ro/games/demo/pragmatic-play/high-flyer",
+      "capturedAt": "2026-09-01T18:50:18.282Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://prelive0-static.pragmaticplaylive.net/apps/translations-ui/latest/ro/highflyer.json",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://online.powerbet.ro/games/demo/pragmatic-play/high-flyer",
+      "capturedAt": "2026-09-01T18:50:18.283Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://prelive0-static.pragmaticplaylive.net/apps/translations-ui/latest/ro/table_name.json",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://online.powerbet.ro/games/demo/pragmatic-play/high-flyer",
+      "capturedAt": "2026-09-01T18:50:18.284Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://prelive0-static.pragmaticplaylive.net/apps/translations-ui/latest/ro/core.json",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://online.powerbet.ro/games/demo/pragmatic-play/high-flyer",
+      "capturedAt": "2026-09-01T18:50:18.284Z"
+    }
+  ],
+  "keyEndpoints": [
+    {
+      "method": "GET",
+      "url": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetUpcoming?integration=powerbet&sportId=66",
+      "verified": true
+    },
+    {
+      "method": "GET",
+      "url": "https://online.powerbet.ro/api/games-with-info-page"
+    },
+    {
+      "method": "GET",
+      "url": "https://site-api.powerbet.ro/v1/site/games/vendors"
+    },
+    {
+      "method": "GET",
+      "url": "https://site-api.powerbet.ro/v1/site/games/providers/names"
+    },
+    {
+      "method": "GET",
+      "url": "https://site-api.powerbet.ro/v2/site/category?isMobileApp=false&categories=14dc27ec-6152-4610-b378-bf719238310a"
+    },
+    {
+      "method": "GET",
+      "url": "https://lgames.ibetplatform.com/terminalapi/api/shops/online"
+    },
+    {
+      "method": "GET",
+      "url": "https://powerbetro-api-prod-bgsp.egt-ong.com/api/history/statistics/top-games"
+    }
+  ],
+  "platform": "altenar-sb2",
+  "feedStatus": "verified",
+  "verifiedAt": "2026-09-01"
+}

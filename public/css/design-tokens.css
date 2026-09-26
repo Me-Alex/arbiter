@@ -1,37 +1,37 @@
 /* Design Tokens - extracted from theme.css */
 :root {
   /* Surface scale */
-  --bg-0: #05080d;
-  --bg-1: #0a0e16;
-  --bg-2: #121823;
-  --bg-3: #1a2231;
-  --bg-4: #232f41;
-  --bg-5: #2c3a4d;
+  --bg-0: #171b1c;
+  --bg-1: #202526;
+  --bg-2: #272d2e;
+  --bg-3: #303839;
+  --bg-4: #414c4d;
+  --bg-5: #586667;
   --surface-highlight: rgba(255, 255, 255, 0.035);
   --surface-overlay: rgba(10, 14, 22, 0.82);
 
   /* Borders */
-  --border: #1c2532;
-  --border-strong: #2a3647;
-  --border-bright: #3a4a60;
+  --border: #364041;
+  --border-strong: #495657;
+  --border-bright: #637171;
   --border-glass: rgba(255, 255, 255, 0.06);
 
   /* Text */
-  --text: #e6edf5;
-  --text-strong: #ffffff;
-  --text-muted: #94a3b8;
-  --text-dim: #64748b;
-  --text-faint: #475569;
+  --text: #dce3e0;
+  --text-strong: #f5f5ef;
+  --text-muted: #b0bfba;
+  --text-dim: #a1b0ab;
+  --text-faint: #98a8a2;
 
-  /* Accent (sky) */
-  --accent: #5cc6ff;
-  --accent-2: #38bdf8;
-  --accent-strong: #0ea5e9;
-  --accent-glow: rgba(56, 189, 248, 0.55);
-  --accent-soft: rgba(56, 189, 248, 0.10);
-  --accent-line: rgba(56, 189, 248, 0.30);
-  --accent-grad: linear-gradient(135deg, #6dd5fa 0%, #38bdf8 50%, #818cf8 100%);
-  --accent-grad-soft: linear-gradient(135deg, rgba(56,189,248,.18) 0%, rgba(129,140,248,.12) 100%);
+  /* Restrained teal */
+  --accent: #80cfc0;
+  --accent-2: #9bdbce;
+  --accent-strong: #b2e5da;
+  --accent-glow: rgba(128, 207, 192, 0.12);
+  --accent-soft: rgba(128, 207, 192, 0.09);
+  --accent-line: rgba(128, 207, 192, 0.30);
+  --accent-grad: linear-gradient(135deg, #80cfc0, #9bdbce);
+  --accent-grad-soft: linear-gradient(135deg, rgba(128,207,192,.10), transparent);
 
   /* Premium accent (lime) */
   --lime: #a3e635;
@@ -191,37 +191,37 @@
    ============================================================ */
 [data-theme="light"] {
   /* Surface scale */
-  --bg-0: #f8fafc;
-  --bg-1: #ffffff;
-  --bg-2: #f1f5f9;
-  --bg-3: #e2e8f0;
-  --bg-4: #cbd5e1;
-  --bg-5: #94a3b8;
+  --bg-0: #f3f1eb;
+  --bg-1: #fffefb;
+  --bg-2: #eeeee7;
+  --bg-3: #e4e6de;
+  --bg-4: #ced5ca;
+  --bg-5: #98a69e;
   --surface-highlight: rgba(0, 0, 0, 0.02);
   --surface-overlay: rgba(255, 255, 255, 0.85);
 
   /* Borders */
-  --border: #e2e8f0;
-  --border-strong: #cbd5e1;
-  --border-bright: #94a3b8;
+  --border: #dadfd5;
+  --border-strong: #bdc8bd;
+  --border-bright: #83958b;
   --border-glass: rgba(0, 0, 0, 0.06);
 
   /* Text */
-  --text: #1e293b;
-  --text-strong: #0f172a;
-  --text-muted: #64748b;
-  --text-dim: #94a3b8;
-  --text-faint: #cbd5e1;
+  --text: #303c38;
+  --text-strong: #1e2e28;
+  --text-muted: #58665e;
+  --text-dim: #5f6d65;
+  --text-faint: #667269;
 
-  /* Accent (sky — slightly darker for contrast) */
-  --accent: #0284c7;
-  --accent-2: #0369a1;
-  --accent-strong: #075985;
-  --accent-glow: rgba(2, 132, 199, 0.30);
-  --accent-soft: rgba(2, 132, 199, 0.08);
-  --accent-line: rgba(2, 132, 199, 0.25);
-  --accent-grad: linear-gradient(135deg, #0ea5e9 0%, #0284c7 50%, #7c3aed 100%);
-  --accent-grad-soft: linear-gradient(135deg, rgba(2,132,199,.12) 0%, rgba(124,58,237,.08) 100%);
+  /* Teal — darkened for light-surface contrast */
+  --accent: #216b5d;
+  --accent-2: #185a4d;
+  --accent-strong: #144c42;
+  --accent-glow: rgba(33, 107, 93, 0.10);
+  --accent-soft: rgba(33, 107, 93, 0.07);
+  --accent-line: rgba(33, 107, 93, 0.25);
+  --accent-grad: linear-gradient(135deg, #216b5d, #185a4d);
+  --accent-grad-soft: linear-gradient(135deg, rgba(33,107,93,.08), transparent);
 
   /* Lime */
   --lime: #65a30d;

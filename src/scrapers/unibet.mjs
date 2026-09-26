@@ -70,6 +70,12 @@ export default class UnibetScraper extends ProviderContract {
       out.push({
         id: r.id,
         sourceId: 'unibet',
+        // Deep link to the event page, never the JSON offer feed. Kambi
+        // events are addressable by their own id under /sportsbook/#/event.
+        // Guarded on a numeric id: `parse()` above synthesises a
+        // `${home}-${away}-${kickoff}` fallback when the provider omits one,
+        // and a truthy check alone would emit that as a link that 404s.
+        sourceUrl: (this.baseUrl && /^\d+$/.test(r.id)) ? `${this.baseUrl}/sportsbook/#/event/${r.id}` : null,
         sport: r.sport,
         league: r.league,
         kickoff: r.kickoff,

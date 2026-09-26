@@ -29,8 +29,8 @@ const CLEANUP_CONFIG = {
 /**
  * Clean up old staging files
  */
-async function cleanupStagingFiles() {
-  const stagingDir = join(DATA_DIR, 'staging');
+async function cleanupStagingFiles(dataDir = DATA_DIR) {
+  const stagingDir = join(dataDir, 'staging');
   
   try {
     const files = await readdir(stagingDir);
@@ -198,8 +198,8 @@ async function cleanupTempFiles() {
 /**
  * Clean up old workspace files (except latest ones)
  */
-async function cleanupWorkspace() {
-  const workspaceDir = join(DATA_DIR, 'workspace');
+async function cleanupWorkspace(dataDir = DATA_DIR) {
+  const workspaceDir = join(dataDir, 'workspace');
   
   try {
     const files = await readdir(workspaceDir);
@@ -253,30 +253,31 @@ export async function runCleanup(options = {}) {
     backups = true,
     temp = true,
     workspace = true,
+    dataDir = DATA_DIR,
   } = options;
-  
+
   console.log('Starting Arbiter cleanup...');
-  
+
   const results = {};
-  
+
   if (staging) {
-    results.staging = await cleanupStagingFiles();
+    results.staging = await cleanupStagingFiles(dataDir);
   }
-  
+
   if (logs) {
     results.logs = await cleanupLogs();
   }
-  
+
   if (backups) {
     results.backups = await cleanupBackups();
   }
-  
+
   if (temp) {
     results.temp = await cleanupTempFiles();
   }
-  
+
   if (workspace) {
-    results.workspace = await cleanupWorkspace();
+    results.workspace = await cleanupWorkspace(dataDir);
   }
   
   const totalCleaned = Object.values(results).reduce((sum, count) => sum + (count || 0), 0);

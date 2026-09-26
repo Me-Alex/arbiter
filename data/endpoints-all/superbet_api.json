@@ -1,0 +1,129 @@
+{
+  "book": "superbet",
+  "timestamp": "2026-09-01T18:46:02.175Z",
+  "pagesVisited": 5,
+  "minPagesRequired": 50,
+  "pagesTargetReached": false,
+  "endpoints": [
+    {
+      "method": "GET",
+      "url": "https://superbet-content.freetls.fastly.net/cached-superbet/app-translations?locale=ro-RO&platform=web&format=json&location=social&brand=superbet&placeholder_format=printf",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://superbet.ro/introducere",
+      "capturedAt": "2026-09-01T18:45:16.428Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://o139620.ingest.us.sentry.io/api/4511727726493696/envelope/?sentry_version=7&sentry_key=024325c539fda67d79d1b35668e3c18a&sentry_client=sentry.javascript.vue%2F10.70.0",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://superbet.ro/introducere",
+      "capturedAt": "2026-09-01T18:45:16.552Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://superbet-content.freetls.fastly.net/cached-superbet/app-translations?platform=web&project=sport&format=json&placeholder_format=printf&locale=ro-RO",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://superbet.ro/introducere",
+      "capturedAt": "2026-09-01T18:45:16.553Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://superbet-content.freetls.fastly.net/cached-superbet/sports-offer/sports/ro-RO",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://superbet.ro/introducere",
+      "capturedAt": "2026-09-01T18:45:16.964Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://superbet-content.freetls.fastly.net/cached-superbet/payment-providers?target=ro",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://superbet.ro/introducere",
+      "capturedAt": "2026-09-01T18:45:17.020Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://superbet-content.freetls.fastly.net/cached-superbet/seo-manager/get-seo-metadata?uri=https:%2F%2Fsuperbet.ro%2Fintroducere&clientSourceType=Desktop_new&locale=ro-RO",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://superbet.ro/introducere",
+      "capturedAt": "2026-09-01T18:45:17.021Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://superbet-content.freetls.fastly.net/cached-superbet/raw-html-pages/ro/intro",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://superbet.ro/introducere",
+      "capturedAt": "2026-09-01T18:45:17.021Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://app.launchdarkly.com/sdk/evalx/626fbd0997a47e14e4b8b908/contexts/eyJhbm9ueW1vdXMiOnRydWUsImtpbmQiOiJ1c2VyIiwia2V5IjoiQU5PTllNT1VTX1VTRVItMzkxIiwicGxhdGZvcm0iOiJ3ZWIifQ",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://superbet.ro/introducere",
+      "capturedAt": "2026-09-01T18:45:17.021Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://app.launchdarkly.com/sdk/evalx/614c50b096336326bb7d24ed/contexts/eyJhbm9ueW1vdXMiOnRydWUsImtpbmQiOiJ1c2VyIiwia2V5IjoiQU5PTllNT1VTX1VTRVItMzkxIiwicGxhdGZvcm0iOiJ3ZWIifQ",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://superbet.ro/introducere",
+      "capturedAt": "2026-09-01T18:45:17.022Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://app.launchdarkly.com/sdk/evalx/60f56646b046d624df8c3ad9/contexts/eyJhbm9ueW1vdXMiOnRydWUsImtpbmQiOiJ1c2VyIiwia2V5IjoiQU5PTllNT1VTX1VTRVItMzkxIiwicGxhdGZvcm0iOiJ3ZWIifQ",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://superbet.ro/introducere",
+      "capturedAt": "2026-09-01T18:45:17.160Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://production-superbet-offer-ro.freetls.fastly.net/v2/ro-RO/struct",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://superbet.ro/introducere",
+      "capturedAt": "2026-09-01T18:45:17.161Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://api.web.production.betler.superbet.ro/api/o11y/v3/metrics",
+      "status": 202,
+      "contentType": "application/json",
+      "pageUrl": "https://superbet.ro/introducere",
+      "capturedAt": "2026-09-01T18:45:18.483Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://app.launchdarkly.com/sdk/evalx/60f56646b046d624df8c3ad9/contexts/eyJraW5kIjoibXVsdGkiLCJkZXZpY2UiOnsia2luZCI6ImRldmljZSIsImtleSI6IkFOT05ZTU9VU19VU0VSLTM5MSIsImRldmljZUlkIjoiN2U2ODk0ZTAtNDZjZC00NjdjLWE4MDktM2JhZDQ4ZjAxN2QyIiwiaG9zdG5hbWUiOiJzdXBlcmJldC5ybyJ9LCJ1c2VyIjp7ImFub255bW91cyI6dHJ1ZSwia2luZCI6InVzZXIiLCJrZXkiOiJBTk9OWU1PVVNfVVNFUi0zOTEiLCJwbGF0Zm9ybSI6IndlYiJ9fQ",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://superbet.ro/introducere",
+      "capturedAt": "2026-09-01T18:45:19.268Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://scorealarm-stats.freetls.fastly.net/media/tvguide/rosuperbetsport/ro",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://superbet.ro/inregistrare",
+      "capturedAt": "2026-09-01T18:45:26.172Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://superbet-content.freetls.fastly.net/cached-superbet/hot-tournaments/offer/ro/2026-09-01",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://superbet.ro/inregistrare",
+      "capturedAt": "2026-09-01T18:45:27.225Z"
+    }
+  ]
+}

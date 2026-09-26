@@ -1,0 +1,3912 @@
+{
+  "book": "netbet",
+  "timestamp": "2026-09-01T18:49:23.512Z",
+  "pagesVisited": 50,
+  "minPagesRequired": 50,
+  "pagesTargetReached": true,
+  "endpoints": [
+    {
+      "method": "GET",
+      "url": "https://sdkuaservice.optimove.net/",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/fotbal/",
+      "capturedAt": "2026-09-01T18:45:09.190Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://stream-1459.optimove.net/",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://sport.netbet.ro/fotbal/",
+      "capturedAt": "2026-09-01T18:45:09.361Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://realtime-1459.optimove.net/reportEvent",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/fotbal/",
+      "capturedAt": "2026-09-01T18:45:09.361Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://push-eu-central-2.kumulos.com/v3/web/config?tenantId=1459&installId=2728224a-2494-4cdf-b3ce-3ae2ee3eaf62",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/fotbal/",
+      "capturedAt": "2026-09-01T18:45:09.545Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/translations?lang=ro&bookmaker=netbetro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/fotbal/",
+      "capturedAt": "2026-09-01T18:45:11.972Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/seo?path=%2Ffotbal%2F&params=sport%3Dfotbal&lang=ro&bookmaker=netbetro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/fotbal/",
+      "capturedAt": "2026-09-01T18:45:13.770Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/inventory-sports?lang=ro&bookmaker=netbetro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/fotbal/",
+      "capturedAt": "2026-09-01T18:45:13.997Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/inventory-competitions?bookmaker=netbetro&lang=ro&sport=fotbal&mode=competitions&eager=[region,sport]&orderBy=region.slug",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/fotbal/",
+      "capturedAt": "2026-09-01T18:45:14.034Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/ip/details",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/fotbal/",
+      "capturedAt": "2026-09-01T18:45:14.679Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/breadcrumbs?sport=fotbal&lang=ro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/fotbal/",
+      "capturedAt": "2026-09-01T18:45:14.680Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/bets_stats?lang=ro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/fotbal/",
+      "capturedAt": "2026-09-01T18:45:14.683Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/strapi/navigation?bookmaker=netbetro&lang=ro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/fotbal/",
+      "capturedAt": "2026-09-01T18:45:14.685Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/global?lang=ro&bookmaker=netbetro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/fotbal/",
+      "capturedAt": "2026-09-01T18:45:14.802Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/config?bookmaker=netbetro&lang=ro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/fotbal/",
+      "capturedAt": "2026-09-01T18:45:14.975Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/betbuilder/precanned/featured?lang=ro&bookmaker=netbetro&mode=sport",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/fotbal/",
+      "capturedAt": "2026-09-01T18:45:14.978Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/tips/fixtures?bookmaker=netbetro&lang=ro&sport_slug=fotbal&time=1788288312777",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/fotbal/",
+      "capturedAt": "2026-09-01T18:45:15.026Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://sportapi-sb.netbet.ro/authbg/getGameConfigs?lang=ro&username=",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/fotbal/",
+      "capturedAt": "2026-09-01T18:45:15.415Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://edge.fullstory.com/s/settings/o-1HBVFY-na1/v1/web",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/fotbal/",
+      "capturedAt": "2026-09-01T18:45:16.334Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/inventory-events/home-sections?lang=ro&bookmaker=netbetro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/",
+      "capturedAt": "2026-09-01T18:45:23.505Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/seo?path=%2F&params=&lang=ro&bookmaker=netbetro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/",
+      "capturedAt": "2026-09-01T18:45:23.802Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/boosted-odds?lang=ro&bookmaker=netbetro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/",
+      "capturedAt": "2026-09-01T18:45:23.872Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/core/client/getClient?lang=ro&website=sport&device=desktop&app=default&version=1788288327143",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "pageUrl": "https://sport.netbet.ro/cautare/",
+      "capturedAt": "2026-09-01T18:45:27.626Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://global.netbet.ro/api/redirection?version=1788288327144",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://sport.netbet.ro/cautare/",
+      "capturedAt": "2026-09-01T18:45:27.859Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/seo?path=%2Fcautare%2F&params=&lang=ro&bookmaker=netbetro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/cautare/",
+      "capturedAt": "2026-09-01T18:45:28.270Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/game/config/getSportGamesByCatID?app=react&device=desktop&lang=ro&website=sport&cat_id=sports-plinko",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/cautare/",
+      "capturedAt": "2026-09-01T18:45:28.512Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/semantic-search/trending?bookmaker=netbetro&lang=ro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/cautare/",
+      "capturedAt": "2026-09-01T18:45:28.521Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/game/config/getSportGamesByCatID?app=react&device=desktop&lang=ro&website=sport&cat_id=sport-most-popular-roulette",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "pageUrl": "https://sport.netbet.ro/cautare/",
+      "capturedAt": "2026-09-01T18:45:28.533Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/game/config/getSportGamesByCatID?app=react&device=desktop&lang=ro&website=sport&cat_id=sport-most-popular-blackjack",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "pageUrl": "https://sport.netbet.ro/cautare/",
+      "capturedAt": "2026-09-01T18:45:28.536Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/game/config/getSportGamesByCatID?app=react&device=desktop&lang=ro&website=sport&cat_id=sport-aviator",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "pageUrl": "https://sport.netbet.ro/cautare/",
+      "capturedAt": "2026-09-01T18:45:28.537Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/game/config/getSportGamesByCatID?app=react&device=desktop&lang=ro&website=sport&cat_id=sport-3-most-popular-slots",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "pageUrl": "https://sport.netbet.ro/cautare/",
+      "capturedAt": "2026-09-01T18:45:28.538Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/game/config/getSportGamesByCatID?app=react&device=desktop&lang=ro&website=sport&cat_id=sports-mines",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/cautare/",
+      "capturedAt": "2026-09-01T18:45:28.566Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://global.netbet.ro/preloaded-state/200-7fb0b052b9dcfa5f99f84cfecabe40d77b15264a",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://sport.netbet.ro/cautare/",
+      "capturedAt": "2026-09-01T18:45:28.580Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/core/client/getClient?lang=ro&website=sport&device=desktop&app=default&version=1788288328071",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "pageUrl": "https://sport.netbet.ro/cautare/",
+      "capturedAt": "2026-09-01T18:45:28.700Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://global.netbet.ro/api/redirection?version=1788288328072",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://sport.netbet.ro/cautare/",
+      "capturedAt": "2026-09-01T18:45:28.710Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://global.netbet.ro/api/redirection?version=1788288331476",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://sport.netbet.ro/casino/",
+      "capturedAt": "2026-09-01T18:45:31.963Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/core/client/getClient?lang=ro&website=sport&device=desktop&app=default&version=1788288331475",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "pageUrl": "https://sport.netbet.ro/casino/",
+      "capturedAt": "2026-09-01T18:45:31.970Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/seo?path=%2Fcasino%2F&params=&lang=ro&bookmaker=netbetro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/casino/",
+      "capturedAt": "2026-09-01T18:45:32.880Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://widget.trustpilot.com/trustbox-data/53aa8807dec7e10d38f59f32?businessUnitId=582ecd580000ff000597b212&locale=en",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://sport.netbet.ro/casino/",
+      "capturedAt": "2026-09-01T18:45:33.664Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/tips/fixtures?bookmaker=netbetro&lang=ro&time=1788288331635",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/casino/",
+      "capturedAt": "2026-09-01T18:45:33.674Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/core/client/getClient?lang=ro&website=sport&device=desktop&app=default&version=1788288332738",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "pageUrl": "https://sport.netbet.ro/casino/",
+      "capturedAt": "2026-09-01T18:45:33.674Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://global.netbet.ro/api/redirection?version=1788288332738",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://sport.netbet.ro/casino/",
+      "capturedAt": "2026-09-01T18:45:33.678Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://sec-gw.lsports.eu/tips/api/v1/tips",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://sport.netbet.ro/casino/",
+      "capturedAt": "2026-09-01T18:45:34.294Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/core/config/getMainDynamicConfig?app=default&cache_version=134377&device=desktop&is_global_project=1&lang=ro&website=sport",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "pageUrl": "https://sport.netbet.ro/casino/",
+      "capturedAt": "2026-09-01T18:45:34.303Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/marketing/trust-pilot/getTrustpilotReview?app=default&cache_version=134377&device=desktop&is_global_project=1&lang=ro&website=sport",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "pageUrl": "https://sport.netbet.ro/casino/",
+      "capturedAt": "2026-09-01T18:45:35.444Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://api.sportify.bet/v1/tips/process",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/casino/",
+      "capturedAt": "2026-09-01T18:45:35.446Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/prematch/markets?event_id=1-30705861&bookmaker=netbetro&lang=ro&group=none",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/fotbal/romania-cupa/fc-arges-vs-fcsb-30705861/",
+      "capturedAt": "2026-09-01T18:45:39.095Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/tips/fixtures?bookmaker=netbetro&lang=ro&event_id=1-30705861&competition_slug=romania-cupa&sport_slug=fotbal&time=1788288338067",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/fotbal/romania-cupa/fc-arges-vs-fcsb-30705861/",
+      "capturedAt": "2026-09-01T18:45:39.197Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://api.xtremepush.com/push/api/deviceCreate",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "pageUrl": "https://sport.netbet.ro/fotbal/romania-cupa/fc-arges-vs-fcsb-30705861/",
+      "capturedAt": "2026-09-01T18:45:39.209Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/seo?path=%2Ffotbal%2Fromania-cupa%2Ffc-arges-vs-fcsb-30705861%2F&params=competition%3Dromania-cupa%26slug%3Dfc-arges-vs-fcsb-30705861%26sport%3Dfotbal&lang=ro&bookmaker=netbetro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/fotbal/romania-cupa/fc-arges-vs-fcsb-30705861/",
+      "capturedAt": "2026-09-01T18:45:39.214Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/core/client/getClient?lang=ro&website=sport&device=desktop&app=default&version=1788288338869",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "pageUrl": "https://sport.netbet.ro/fotbal/romania-cupa/fc-arges-vs-fcsb-30705861/",
+      "capturedAt": "2026-09-01T18:45:39.757Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/tips/fixtures?bookmaker=netbetro&lang=ro&event_id=1-30705861&competition_slug=romania-cupa&sport_slug=fotbal&time=1788288338068",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/fotbal/romania-cupa/fc-arges-vs-fcsb-30705861/",
+      "capturedAt": "2026-09-01T18:45:39.757Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://api.xtremepush.com/push/api/inboxMessageCount",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "pageUrl": "https://sport.netbet.ro/fotbal/romania-cupa/fc-arges-vs-fcsb-30705861/",
+      "capturedAt": "2026-09-01T18:45:39.758Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://api.xtremepush.com/push/api/inboxMessageList",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "pageUrl": "https://sport.netbet.ro/fotbal/romania-cupa/fc-arges-vs-fcsb-30705861/",
+      "capturedAt": "2026-09-01T18:45:39.758Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://api.xtremepush.com/push/api/deviceUpdate",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/fotbal/romania-cupa/fc-arges-vs-fcsb-30705861/",
+      "capturedAt": "2026-09-01T18:45:39.758Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://global.netbet.ro/api/redirection?version=1788288338870",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://sport.netbet.ro/fotbal/romania-cupa/fc-arges-vs-fcsb-30705861/",
+      "capturedAt": "2026-09-01T18:45:39.806Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/echo/v1/markets?event_id=1-30705861&group=popular&bookmaker=netbetro&lang=ro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/fotbal/romania-cupa/fc-arges-vs-fcsb-30705861/",
+      "capturedAt": "2026-09-01T18:45:39.819Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/tips/fixtures?bookmaker=netbetro&lang=ro&event_id=1-30616732&competition_slug=italia-cupa&sport_slug=fotbal&time=1788288343252",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/fotbal/italia-cupa/udinese-vs-venezia-30616732/",
+      "capturedAt": "2026-09-01T18:45:44.113Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/tips/fixtures?bookmaker=netbetro&lang=ro&event_id=1-30616732&competition_slug=italia-cupa&sport_slug=fotbal&time=1788288343251",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/fotbal/italia-cupa/udinese-vs-venezia-30616732/",
+      "capturedAt": "2026-09-01T18:45:44.127Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/prematch/markets?event_id=1-30616732&bookmaker=netbetro&lang=ro&group=none",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/fotbal/italia-cupa/udinese-vs-venezia-30616732/",
+      "capturedAt": "2026-09-01T18:45:44.137Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/seo?path=%2Ffotbal%2Fitalia-cupa%2Fudinese-vs-venezia-30616732%2F&params=competition%3Ditalia-cupa%26slug%3Dudinese-vs-venezia-30616732%26sport%3Dfotbal&lang=ro&bookmaker=netbetro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/fotbal/italia-cupa/udinese-vs-venezia-30616732/",
+      "capturedAt": "2026-09-01T18:45:44.199Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/echo/v1/markets?event_id=1-30616732&group=popular&bookmaker=netbetro&lang=ro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/fotbal/italia-cupa/udinese-vs-venezia-30616732/",
+      "capturedAt": "2026-09-01T18:45:44.641Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/core/client/getClient?lang=ro&website=sport&device=desktop&app=default&version=1788288344308",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "pageUrl": "https://sport.netbet.ro/fotbal/italia-cupa/udinese-vs-venezia-30616732/",
+      "capturedAt": "2026-09-01T18:45:45.424Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://global.netbet.ro/api/redirection?version=1788288344309",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://sport.netbet.ro/fotbal/italia-cupa/udinese-vs-venezia-30616732/",
+      "capturedAt": "2026-09-01T18:45:46.017Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/tips/fixtures?bookmaker=netbetro&lang=ro&event_id=1-30753042&competition_slug=usa-us-open-men&sport_slug=tenis&time=1788288348330",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/tenis/usa-us-open-men/m-berrettini-vs-m-navone-30753042/",
+      "capturedAt": "2026-09-01T18:45:48.832Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/tips/fixtures?bookmaker=netbetro&lang=ro&event_id=1-30753042&competition_slug=usa-us-open-men&sport_slug=tenis&time=1788288348327",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/tenis/usa-us-open-men/m-berrettini-vs-m-navone-30753042/",
+      "capturedAt": "2026-09-01T18:45:48.851Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/prematch/markets?event_id=1-30753042&bookmaker=netbetro&lang=ro&group=none",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/tenis/usa-us-open-men/m-berrettini-vs-m-navone-30753042/",
+      "capturedAt": "2026-09-01T18:45:48.953Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/seo?path=%2Ftenis%2Fusa-us-open-men%2Fm-berrettini-vs-m-navone-30753042%2F&params=competition%3Dusa-us-open-men%26slug%3Dm-berrettini-vs-m-navone-30753042%26sport%3Dtenis&lang=ro&bookmaker=netbetro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/tenis/usa-us-open-men/m-berrettini-vs-m-navone-30753042/",
+      "capturedAt": "2026-09-01T18:45:49.060Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/echo/v1/markets?event_id=1-30753042&group=popular&bookmaker=netbetro&lang=ro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/tenis/usa-us-open-men/m-berrettini-vs-m-navone-30753042/",
+      "capturedAt": "2026-09-01T18:45:49.248Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/core/client/getClient?lang=ro&website=sport&device=desktop&app=default&version=1788288349138",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "pageUrl": "https://sport.netbet.ro/tenis/usa-us-open-men/m-berrettini-vs-m-navone-30753042/",
+      "capturedAt": "2026-09-01T18:45:50.301Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://global.netbet.ro/api/redirection?version=1788288349138",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://sport.netbet.ro/tenis/usa-us-open-men/m-berrettini-vs-m-navone-30753042/",
+      "capturedAt": "2026-09-01T18:45:50.881Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/tips/fixtures?bookmaker=netbetro&lang=ro&event_id=1-30753025&competition_slug=usa-us-open-women&sport_slug=tenis&time=1788288353646",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/tenis/usa-us-open-women/d-parry-vs-s-cirstea-30753025/",
+      "capturedAt": "2026-09-01T18:45:54.380Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/tips/fixtures?bookmaker=netbetro&lang=ro&event_id=1-30753025&competition_slug=usa-us-open-women&sport_slug=tenis&time=1788288353642",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/tenis/usa-us-open-women/d-parry-vs-s-cirstea-30753025/",
+      "capturedAt": "2026-09-01T18:45:54.382Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/prematch/markets?event_id=1-30753025&bookmaker=netbetro&lang=ro&group=none",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/tenis/usa-us-open-women/d-parry-vs-s-cirstea-30753025/",
+      "capturedAt": "2026-09-01T18:45:54.534Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/seo?path=%2Ftenis%2Fusa-us-open-women%2Fd-parry-vs-s-cirstea-30753025%2F&params=competition%3Dusa-us-open-women%26slug%3Dd-parry-vs-s-cirstea-30753025%26sport%3Dtenis&lang=ro&bookmaker=netbetro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/tenis/usa-us-open-women/d-parry-vs-s-cirstea-30753025/",
+      "capturedAt": "2026-09-01T18:45:54.719Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/core/client/getClient?lang=ro&website=sport&device=desktop&app=default&version=1788288354802",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "pageUrl": "https://sport.netbet.ro/tenis/usa-us-open-women/d-parry-vs-s-cirstea-30753025/",
+      "capturedAt": "2026-09-01T18:45:55.711Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/echo/v1/markets?event_id=1-30753025&group=popular&bookmaker=netbetro&lang=ro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/tenis/usa-us-open-women/d-parry-vs-s-cirstea-30753025/",
+      "capturedAt": "2026-09-01T18:45:55.718Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://global.netbet.ro/api/redirection?version=1788288354802",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://sport.netbet.ro/tenis/usa-us-open-women/d-parry-vs-s-cirstea-30753025/",
+      "capturedAt": "2026-09-01T18:45:55.917Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://sportapi-sb.netbet.ro/authbg/trackWidgetImpression",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/tenis/usa-us-open-women/d-parry-vs-s-cirstea-30753025/",
+      "capturedAt": "2026-09-01T18:45:56.864Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/core/client/getClient?lang=ro&website=sport&device=desktop&app=default&version=1788288359909",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "pageUrl": "https://sport.netbet.ro/fotbal/romania-liga-1/",
+      "capturedAt": "2026-09-01T18:46:00.475Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://global.netbet.ro/api/redirection?version=1788288359910",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://sport.netbet.ro/fotbal/romania-liga-1/",
+      "capturedAt": "2026-09-01T18:46:00.502Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/info/outright?sport=fotbal&competition=romania-liga-1&lang=ro&bookmaker=netbetro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/fotbal/romania-liga-1/",
+      "capturedAt": "2026-09-01T18:46:00.642Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/seo?path=%2Ffotbal%2Fromania-liga-1%2F&params=competition%3Dromania-liga-1%26sport%3Dfotbal&lang=ro&bookmaker=netbetro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/fotbal/romania-liga-1/",
+      "capturedAt": "2026-09-01T18:46:00.659Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/breadcrumbs?sport=fotbal&competition=romania-liga-1&lang=ro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/fotbal/romania-liga-1/",
+      "capturedAt": "2026-09-01T18:46:00.682Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/tips/fixtures?bookmaker=netbetro&lang=ro&competition_slug=romania-liga-1&sport_slug=fotbal&time=1788288359141",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/fotbal/romania-liga-1/",
+      "capturedAt": "2026-09-01T18:46:00.719Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/inventory-events?sport=fotbal&competition=romania-liga-1&_cached=true&key=market_type&t=1788288358814&lang=ro&bookmaker=netbetro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/fotbal/romania-liga-1/",
+      "capturedAt": "2026-09-01T18:46:00.766Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/rpc/v1/outrights?sport=fotbal&limit=3&lang=ro&competition=romania-liga-1-outright&bookmaker=netbetro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/fotbal/romania-liga-1/",
+      "capturedAt": "2026-09-01T18:46:01.378Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/inventory-events?sport=fotbal&competition=romania-liga-1&key=market_type&t=1788288360819&lang=ro&bookmaker=netbetro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/fotbal/romania-liga-1/",
+      "capturedAt": "2026-09-01T18:46:01.880Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/rpc/v1/events/selections?events=&lang=ro&sport=fotbal&bookmaker=netbetro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/fotbal/romania-liga-1/",
+      "capturedAt": "2026-09-01T18:46:02.061Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/core/client/getClient?lang=ro&website=sport&device=desktop&app=default&version=1788288364244",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "pageUrl": "https://sport.netbet.ro/tenis/usa-us-open-men/",
+      "capturedAt": "2026-09-01T18:46:04.911Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/seo?path=%2Ftenis%2Fusa-us-open-men%2F&params=competition%3Dusa-us-open-men%26sport%3Dtenis&lang=ro&bookmaker=netbetro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/tenis/usa-us-open-men/",
+      "capturedAt": "2026-09-01T18:46:05.231Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/info/outright?sport=tenis&competition=usa-us-open-men&lang=ro&bookmaker=netbetro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/tenis/usa-us-open-men/",
+      "capturedAt": "2026-09-01T18:46:05.240Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/breadcrumbs?sport=tenis&competition=usa-us-open-men&lang=ro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/tenis/usa-us-open-men/",
+      "capturedAt": "2026-09-01T18:46:05.565Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/tips/fixtures?bookmaker=netbetro&lang=ro&competition_slug=usa-us-open-men&sport_slug=tenis&time=1788288364486",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/tenis/usa-us-open-men/",
+      "capturedAt": "2026-09-01T18:46:05.587Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/inventory-events?sport=tenis&competition=usa-us-open-men&_cached=true&key=market_type&t=1788288364101&lang=ro&bookmaker=netbetro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/tenis/usa-us-open-men/",
+      "capturedAt": "2026-09-01T18:46:05.644Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/rpc/v1/outrights?sport=tenis&limit=3&lang=ro&competition=usa-us-open-men-outright&bookmaker=netbetro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/tenis/usa-us-open-men/",
+      "capturedAt": "2026-09-01T18:46:06.777Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/inventory-events?sport=tenis&competition=usa-us-open-men&key=market_type&t=1788288365642&lang=ro&bookmaker=netbetro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/tenis/usa-us-open-men/",
+      "capturedAt": "2026-09-01T18:46:06.962Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/rpc/v1/events/selections?events=&lang=ro&sport=tenis&bookmaker=netbetro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/tenis/usa-us-open-men/",
+      "capturedAt": "2026-09-01T18:46:06.976Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/core/client/getClient?lang=ro&website=sport&device=desktop&app=default&version=1788288366470",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "pageUrl": "https://sport.netbet.ro/tenis/usa-us-open-men/",
+      "capturedAt": "2026-09-01T18:46:07.816Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://global.netbet.ro/api/redirection?version=1788288366470",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://sport.netbet.ro/tenis/usa-us-open-men/",
+      "capturedAt": "2026-09-01T18:46:08.083Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/info/outright?sport=tenis&competition=usa-us-open-women&lang=ro&bookmaker=netbetro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/tenis/usa-us-open-women/",
+      "capturedAt": "2026-09-01T18:46:09.629Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/seo?path=%2Ftenis%2Fusa-us-open-women%2F&params=competition%3Dusa-us-open-women%26sport%3Dtenis&lang=ro&bookmaker=netbetro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/tenis/usa-us-open-women/",
+      "capturedAt": "2026-09-01T18:46:09.655Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/breadcrumbs?sport=tenis&competition=usa-us-open-women&lang=ro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/tenis/usa-us-open-women/",
+      "capturedAt": "2026-09-01T18:46:09.682Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/core/client/getClient?lang=ro&website=sport&device=desktop&app=default&version=1788288369135",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "pageUrl": "https://sport.netbet.ro/tenis/usa-us-open-women/",
+      "capturedAt": "2026-09-01T18:46:09.847Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/tips/fixtures?bookmaker=netbetro&lang=ro&competition_slug=usa-us-open-women&sport_slug=tenis&time=1788288369380",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/tenis/usa-us-open-women/",
+      "capturedAt": "2026-09-01T18:46:10.333Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/rpc/v1/outrights?sport=tenis&limit=3&lang=ro&competition=usa-us-open-women-outright&bookmaker=netbetro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/tenis/usa-us-open-women/",
+      "capturedAt": "2026-09-01T18:46:10.429Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/inventory-events?sport=tenis&competition=usa-us-open-women&_cached=true&key=market_type&t=1788288369018&lang=ro&bookmaker=netbetro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/tenis/usa-us-open-women/",
+      "capturedAt": "2026-09-01T18:46:10.552Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/core/client/getClient?lang=ro&website=sport&device=desktop&app=default&version=1788288370163",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "pageUrl": "https://sport.netbet.ro/tenis/usa-us-open-women/",
+      "capturedAt": "2026-09-01T18:46:11.563Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://global.netbet.ro/api/redirection?version=1788288370164",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://sport.netbet.ro/tenis/usa-us-open-women/",
+      "capturedAt": "2026-09-01T18:46:11.567Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/inventory-events?sport=tenis&competition=usa-us-open-women&key=market_type&t=1788288370622&lang=ro&bookmaker=netbetro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/tenis/usa-us-open-women/",
+      "capturedAt": "2026-09-01T18:46:13.047Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/breadcrumbs?sport=tenis&lang=ro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/tenis/",
+      "capturedAt": "2026-09-01T18:46:15.598Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/inventory-competitions?bookmaker=netbetro&lang=ro&sport=tenis&mode=competitions&eager=[region,sport]&orderBy=region.slug",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/tenis/",
+      "capturedAt": "2026-09-01T18:46:15.630Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/seo?path=%2Ftenis%2F&params=sport%3Dtenis&lang=ro&bookmaker=netbetro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/tenis/",
+      "capturedAt": "2026-09-01T18:46:16.101Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/tips/fixtures?bookmaker=netbetro&lang=ro&sport_slug=tenis&time=1788288374967",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/tenis/",
+      "capturedAt": "2026-09-01T18:46:16.101Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/betbuilder/precanned/featured?lang=ro&bookmaker=netbetro&mode=sport&sport=tennis",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/tenis/",
+      "capturedAt": "2026-09-01T18:46:17.472Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://global.netbet.ro/preloaded-state/200-c2c8ca3a354f8b4e9ebb3c7c4c208c35c6a2e37c",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://sport.netbet.ro/tenis/",
+      "capturedAt": "2026-09-01T18:46:17.851Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/core/client/getClient?lang=ro&website=sport&device=desktop&app=default&version=1788288377491",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "pageUrl": "https://sport.netbet.ro/tenis/",
+      "capturedAt": "2026-09-01T18:46:17.925Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://global.netbet.ro/api/redirection?version=1788288377492",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://sport.netbet.ro/tenis/",
+      "capturedAt": "2026-09-01T18:46:18.249Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/core/client/getClient?lang=ro&website=sport&device=desktop&app=default&version=1788288379767",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "pageUrl": "https://sport.netbet.ro/baschet/",
+      "capturedAt": "2026-09-01T18:46:20.286Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://global.netbet.ro/api/redirection?version=1788288379768",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://sport.netbet.ro/baschet/",
+      "capturedAt": "2026-09-01T18:46:20.359Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/tips/fixtures?bookmaker=netbetro&lang=ro&sport_slug=baschet&time=1788288379852",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/baschet/",
+      "capturedAt": "2026-09-01T18:46:20.851Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/breadcrumbs?sport=baschet&lang=ro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/baschet/",
+      "capturedAt": "2026-09-01T18:46:20.952Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/seo?path=%2Fbaschet%2F&params=sport%3Dbaschet&lang=ro&bookmaker=netbetro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/baschet/",
+      "capturedAt": "2026-09-01T18:46:20.955Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/inventory-competitions?bookmaker=netbetro&lang=ro&sport=baschet&mode=competitions&eager=[region,sport]&orderBy=region.slug",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/baschet/",
+      "capturedAt": "2026-09-01T18:46:21.057Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/core/client/getClient?lang=ro&website=sport&device=desktop&app=default&version=1788288380650",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "pageUrl": "https://sport.netbet.ro/baschet/",
+      "capturedAt": "2026-09-01T18:46:21.059Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://global.netbet.ro/api/redirection?version=1788288380651",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://sport.netbet.ro/baschet/",
+      "capturedAt": "2026-09-01T18:46:21.185Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/betbuilder/precanned/featured?lang=ro&bookmaker=netbetro&mode=sport&sport=basketball",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/baschet/",
+      "capturedAt": "2026-09-01T18:46:21.696Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://global.netbet.ro/api/redirection?version=1788288383920",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://sport.netbet.ro/tenis-de-masa/",
+      "capturedAt": "2026-09-01T18:46:24.285Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/core/client/getClient?lang=ro&website=sport&device=desktop&app=default&version=1788288383918",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "pageUrl": "https://sport.netbet.ro/tenis-de-masa/",
+      "capturedAt": "2026-09-01T18:46:24.394Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/seo?path=%2Ftenis-de-masa%2F&params=sport%3Dtenis-de-masa&lang=ro&bookmaker=netbetro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/tenis-de-masa/",
+      "capturedAt": "2026-09-01T18:46:24.458Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/breadcrumbs?sport=tenis-de-masa&lang=ro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/tenis-de-masa/",
+      "capturedAt": "2026-09-01T18:46:24.678Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/tips/fixtures?bookmaker=netbetro&lang=ro&sport_slug=tenis-de-masa&time=1788288384139",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/tenis-de-masa/",
+      "capturedAt": "2026-09-01T18:46:24.921Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/inventory-competitions?bookmaker=netbetro&lang=ro&sport=tenis-de-masa&mode=competitions&eager=[region,sport]&orderBy=region.slug",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/tenis-de-masa/",
+      "capturedAt": "2026-09-01T18:46:24.950Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/betbuilder/precanned/featured?lang=ro&bookmaker=netbetro&mode=sport&sport=table-tennis",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/tenis-de-masa/",
+      "capturedAt": "2026-09-01T18:46:26.006Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/core/client/getClient?lang=ro&website=sport&device=desktop&app=default&version=1788288385244",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "pageUrl": "https://sport.netbet.ro/tenis-de-masa/",
+      "capturedAt": "2026-09-01T18:46:26.007Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://global.netbet.ro/api/redirection?version=1788288385245",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://sport.netbet.ro/tenis-de-masa/",
+      "capturedAt": "2026-09-01T18:46:26.007Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/seo?path=%2Fhochei-pe-gheata%2F&params=sport%3Dhochei-pe-gheata&lang=ro&bookmaker=netbetro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/hochei-pe-gheata/",
+      "capturedAt": "2026-09-01T18:46:30.254Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/breadcrumbs?sport=hochei-pe-gheata&lang=ro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/hochei-pe-gheata/",
+      "capturedAt": "2026-09-01T18:46:30.263Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/inventory-competitions?bookmaker=netbetro&lang=ro&sport=hochei-pe-gheata&mode=competitions&eager=[region,sport]&orderBy=region.slug",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/hochei-pe-gheata/",
+      "capturedAt": "2026-09-01T18:46:30.265Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/core/client/getClient?lang=ro&website=sport&device=desktop&app=default&version=1788288390019",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "pageUrl": "https://sport.netbet.ro/hochei-pe-gheata/",
+      "capturedAt": "2026-09-01T18:46:31.801Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/tips/fixtures?bookmaker=netbetro&lang=ro&sport_slug=hochei-pe-gheata&time=1788288390097",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/hochei-pe-gheata/",
+      "capturedAt": "2026-09-01T18:46:32.214Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/betbuilder/precanned/featured?lang=ro&bookmaker=netbetro&mode=sport&sport=ice-hockey",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/hochei-pe-gheata/",
+      "capturedAt": "2026-09-01T18:46:32.214Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://global.netbet.ro/api/redirection?version=1788288391228",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://sport.netbet.ro/hochei-pe-gheata/",
+      "capturedAt": "2026-09-01T18:46:32.216Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/core/client/getClient?lang=ro&website=sport&device=desktop&app=default&version=1788288391225",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "pageUrl": "https://sport.netbet.ro/hochei-pe-gheata/",
+      "capturedAt": "2026-09-01T18:46:32.217Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/core/client/getClient?lang=ro&website=sport&device=desktop&app=default&version=1788288394319",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "pageUrl": "https://sport.netbet.ro/handbal/",
+      "capturedAt": "2026-09-01T18:46:34.680Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://global.netbet.ro/api/redirection?version=1788288394320",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://sport.netbet.ro/handbal/",
+      "capturedAt": "2026-09-01T18:46:34.710Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/breadcrumbs?sport=handbal&lang=ro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/handbal/",
+      "capturedAt": "2026-09-01T18:46:35.020Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/seo?path=%2Fhandbal%2F&params=sport%3Dhandbal&lang=ro&bookmaker=netbetro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/handbal/",
+      "capturedAt": "2026-09-01T18:46:35.026Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/inventory-competitions?bookmaker=netbetro&lang=ro&sport=handbal&mode=competitions&eager=[region,sport]&orderBy=region.slug",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/handbal/",
+      "capturedAt": "2026-09-01T18:46:35.032Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/tips/fixtures?bookmaker=netbetro&lang=ro&sport_slug=handbal&time=1788288394649",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/handbal/",
+      "capturedAt": "2026-09-01T18:46:35.436Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/betbuilder/precanned/featured?lang=ro&bookmaker=netbetro&mode=sport&sport=handball",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/handbal/",
+      "capturedAt": "2026-09-01T18:46:35.557Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/core/client/getClient?lang=ro&website=sport&device=desktop&app=default&version=1788288395497",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "pageUrl": "https://sport.netbet.ro/handbal/",
+      "capturedAt": "2026-09-01T18:46:35.813Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://global.netbet.ro/api/redirection?version=1788288395497",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://sport.netbet.ro/handbal/",
+      "capturedAt": "2026-09-01T18:46:35.963Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/core/client/getClient?lang=ro&website=sport&device=desktop&app=default&version=1788288399081",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "pageUrl": "https://sport.netbet.ro/mma/",
+      "capturedAt": "2026-09-01T18:46:39.555Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://global.netbet.ro/api/redirection?version=1788288399081",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://sport.netbet.ro/mma/",
+      "capturedAt": "2026-09-01T18:46:39.555Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/breadcrumbs?sport=mma&lang=ro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/mma/",
+      "capturedAt": "2026-09-01T18:46:40.012Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/inventory-competitions?bookmaker=netbetro&lang=ro&sport=mma&mode=competitions&eager=[region,sport]&orderBy=region.slug",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/mma/",
+      "capturedAt": "2026-09-01T18:46:40.012Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/seo?path=%2Fmma%2F&params=sport%3Dmma&lang=ro&bookmaker=netbetro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/mma/",
+      "capturedAt": "2026-09-01T18:46:40.023Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/tips/fixtures?bookmaker=netbetro&lang=ro&sport_slug=mma&time=1788288399283",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/mma/",
+      "capturedAt": "2026-09-01T18:46:40.311Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/core/client/getClient?lang=ro&website=sport&device=desktop&app=default&version=1788288400108",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "pageUrl": "https://sport.netbet.ro/mma/",
+      "capturedAt": "2026-09-01T18:46:40.391Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/betbuilder/precanned/featured?lang=ro&bookmaker=netbetro&mode=sport&sport=mma",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/mma/",
+      "capturedAt": "2026-09-01T18:46:40.473Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://global.netbet.ro/api/redirection?version=1788288400109",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://sport.netbet.ro/mma/",
+      "capturedAt": "2026-09-01T18:46:40.599Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/breadcrumbs?sport=rugby-league&lang=ro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/rugby-league/",
+      "capturedAt": "2026-09-01T18:46:44.537Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/seo?path=%2Frugby-league%2F&params=sport%3Drugby-league&lang=ro&bookmaker=netbetro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/rugby-league/",
+      "capturedAt": "2026-09-01T18:46:44.595Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/inventory-competitions?bookmaker=netbetro&lang=ro&sport=rugby-league&mode=competitions&eager=[region,sport]&orderBy=region.slug",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/rugby-league/",
+      "capturedAt": "2026-09-01T18:46:45.012Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/tips/fixtures?bookmaker=netbetro&lang=ro&sport_slug=rugby-league&time=1788288404258",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/rugby-league/",
+      "capturedAt": "2026-09-01T18:46:45.030Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/betbuilder/precanned/featured?lang=ro&bookmaker=netbetro&mode=sport&sport=rugby-league",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/rugby-league/",
+      "capturedAt": "2026-09-01T18:46:45.742Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/core/client/getClient?lang=ro&website=sport&device=desktop&app=default&version=1788288404936",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "pageUrl": "https://sport.netbet.ro/rugby-league/",
+      "capturedAt": "2026-09-01T18:46:46.512Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://global.netbet.ro/api/redirection?version=1788288404940",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://sport.netbet.ro/rugby-league/",
+      "capturedAt": "2026-09-01T18:46:47.148Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/seo?path=%2Fsporturi-virtuale%2F&params=&lang=ro&bookmaker=netbetro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/sporturi-virtuale/",
+      "capturedAt": "2026-09-01T18:46:49.750Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://global.netbet.ro/api/redirection?version=1788288408959",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://sport.netbet.ro/sporturi-virtuale/",
+      "capturedAt": "2026-09-01T18:46:49.776Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/core/client/getClient?lang=ro&website=sport&device=desktop&app=default&version=1788288408959",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "pageUrl": "https://sport.netbet.ro/sporturi-virtuale/the-penalty-kicks/",
+      "capturedAt": "2026-09-01T18:46:50.080Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/tips/fixtures?bookmaker=netbetro&lang=ro&time=1788288409216",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/sporturi-virtuale/the-penalty-kicks/",
+      "capturedAt": "2026-09-01T18:46:50.443Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/tips/fixtures?bookmaker=netbetro&lang=ro&event_id=1-kicks&time=1788288409992",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/sporturi-virtuale/the-penalty-kicks/",
+      "capturedAt": "2026-09-01T18:46:50.768Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/inventory-events-simple?sport=the-penalty-kicks&type=virtual&_cached=true&key=market_type&lang=ro&bookmaker=netbetro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/sporturi-virtuale/the-penalty-kicks/",
+      "capturedAt": "2026-09-01T18:46:50.853Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/seo?path=%2Fsporturi-virtuale%2Fthe-penalty-kicks%2F&params=slug%3Dthe-penalty-kicks&lang=ro&bookmaker=netbetro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/sporturi-virtuale/the-penalty-kicks/",
+      "capturedAt": "2026-09-01T18:46:50.880Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/core/client/getClient?lang=ro&website=sport&device=desktop&app=default&version=1788288410262",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "pageUrl": "https://sport.netbet.ro/sporturi-virtuale/the-penalty-kicks/",
+      "capturedAt": "2026-09-01T18:46:52.003Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://global.netbet.ro/api/redirection?version=1788288413159",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://sport.netbet.ro/e-fotbal/",
+      "capturedAt": "2026-09-01T18:46:53.546Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/core/client/getClient?lang=ro&website=sport&device=desktop&app=default&version=1788288413159",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "pageUrl": "https://sport.netbet.ro/e-fotbal/",
+      "capturedAt": "2026-09-01T18:46:53.661Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/seo?path=%2Fe-fotbal%2F&params=sport%3De-fotbal&lang=ro&bookmaker=netbetro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/e-fotbal/",
+      "capturedAt": "2026-09-01T18:46:53.896Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/inventory-competitions?bookmaker=netbetro&lang=ro&sport=e-fotbal&mode=competitions&eager=[region,sport]&orderBy=region.slug",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/e-fotbal/",
+      "capturedAt": "2026-09-01T18:46:53.932Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/breadcrumbs?sport=e-fotbal&lang=ro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/e-fotbal/",
+      "capturedAt": "2026-09-01T18:46:53.963Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/tips/fixtures?bookmaker=netbetro&lang=ro&sport_slug=e-fotbal&time=1788288413378",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/e-fotbal/",
+      "capturedAt": "2026-09-01T18:46:54.278Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/betbuilder/precanned/featured?lang=ro&bookmaker=netbetro&mode=sport&sport=e-football",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/e-fotbal/",
+      "capturedAt": "2026-09-01T18:46:54.519Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/core/client/getClient?lang=ro&website=sport&device=desktop&app=default&version=1788288414189",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "pageUrl": "https://sport.netbet.ro/e-fotbal/",
+      "capturedAt": "2026-09-01T18:46:54.549Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://global.netbet.ro/api/redirection?version=1788288414190",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://sport.netbet.ro/e-fotbal/",
+      "capturedAt": "2026-09-01T18:46:54.797Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/core/client/getClient?lang=ro&website=sport&device=desktop&app=default&version=1788288418230",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "pageUrl": "https://sport.netbet.ro/fotbal-american/",
+      "capturedAt": "2026-09-01T18:46:58.755Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/breadcrumbs?sport=fotbal-american&lang=ro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/fotbal-american/",
+      "capturedAt": "2026-09-01T18:46:58.755Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://global.netbet.ro/api/redirection?version=1788288418230",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://sport.netbet.ro/fotbal-american/",
+      "capturedAt": "2026-09-01T18:46:58.860Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/seo?path=%2Ffotbal-american%2F&params=sport%3Dfotbal-american&lang=ro&bookmaker=netbetro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/fotbal-american/",
+      "capturedAt": "2026-09-01T18:46:58.941Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/tips/fixtures?bookmaker=netbetro&lang=ro&sport_slug=fotbal-american&time=1788288418427",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/fotbal-american/",
+      "capturedAt": "2026-09-01T18:46:59.333Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/core/client/getClient?lang=ro&website=sport&device=desktop&app=default&version=1788288419215",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "pageUrl": "https://sport.netbet.ro/fotbal-american/",
+      "capturedAt": "2026-09-01T18:46:59.615Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://global.netbet.ro/api/redirection?version=1788288419215",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://sport.netbet.ro/fotbal-american/",
+      "capturedAt": "2026-09-01T18:46:59.728Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/inventory-competitions?bookmaker=netbetro&lang=ro&sport=fotbal-american&mode=competitions&eager=[region,sport]&orderBy=region.slug",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/fotbal-american/",
+      "capturedAt": "2026-09-01T18:46:59.867Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/betbuilder/precanned/featured?lang=ro&bookmaker=netbetro&mode=sport&sport=american-football",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/fotbal-american/",
+      "capturedAt": "2026-09-01T18:47:00.721Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/core/client/getClient?lang=ro&website=sport&device=desktop&app=default&version=1788288422947",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "pageUrl": "https://sport.netbet.ro/curse/",
+      "capturedAt": "2026-09-01T18:47:03.516Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://global.netbet.ro/api/redirection?version=1788288422948",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://sport.netbet.ro/curse/",
+      "capturedAt": "2026-09-01T18:47:03.757Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/tips/fixtures?bookmaker=netbetro&lang=ro&sport_slug=curse&time=1788288423115",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/curse/",
+      "capturedAt": "2026-09-01T18:47:03.775Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/seo?path=%2Fcurse%2F&params=sport%3Dcurse&lang=ro&bookmaker=netbetro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/curse/",
+      "capturedAt": "2026-09-01T18:47:03.966Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/breadcrumbs?sport=curse&lang=ro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/curse/",
+      "capturedAt": "2026-09-01T18:47:03.982Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/inventory-competitions?bookmaker=netbetro&lang=ro&sport=curse&mode=competitions&eager=[region,sport]&orderBy=region.slug",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/curse/",
+      "capturedAt": "2026-09-01T18:47:04.013Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/betbuilder/precanned/featured?lang=ro&bookmaker=netbetro&mode=sport&sport=auto-racing",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/curse/",
+      "capturedAt": "2026-09-01T18:47:04.626Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/inventory-competitions?bookmaker=netbetro&lang=ro&sport=curse&mode=outrights&eager=[region,sport]&orderBy=region.slug",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/curse/",
+      "capturedAt": "2026-09-01T18:47:04.664Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/core/client/getClient?lang=ro&website=sport&device=desktop&app=default&version=1788288424115",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "pageUrl": "https://sport.netbet.ro/curse/",
+      "capturedAt": "2026-09-01T18:47:04.883Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://global.netbet.ro/api/redirection?version=1788288424115",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://sport.netbet.ro/curse/",
+      "capturedAt": "2026-09-01T18:47:05.016Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/core/client/getClient?lang=ro&website=sport&device=desktop&app=default&version=1788288427420",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "pageUrl": "https://sport.netbet.ro/badminton/",
+      "capturedAt": "2026-09-01T18:47:08.314Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/breadcrumbs?sport=badminton&lang=ro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/badminton/",
+      "capturedAt": "2026-09-01T18:47:08.314Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/inventory-competitions?bookmaker=netbetro&lang=ro&sport=badminton&mode=competitions&eager=[region,sport]&orderBy=region.slug",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/badminton/",
+      "capturedAt": "2026-09-01T18:47:08.334Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/seo?path=%2Fbadminton%2F&params=sport%3Dbadminton&lang=ro&bookmaker=netbetro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/badminton/",
+      "capturedAt": "2026-09-01T18:47:08.346Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://global.netbet.ro/api/redirection?version=1788288427421",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://sport.netbet.ro/badminton/",
+      "capturedAt": "2026-09-01T18:47:08.366Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/tips/fixtures?bookmaker=netbetro&lang=ro&sport_slug=badminton&time=1788288427584",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/badminton/",
+      "capturedAt": "2026-09-01T18:47:08.455Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/core/client/getClient?lang=ro&website=sport&device=desktop&app=default&version=1788288428457",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "pageUrl": "https://sport.netbet.ro/badminton/",
+      "capturedAt": "2026-09-01T18:47:08.695Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://global.netbet.ro/api/redirection?version=1788288428457",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://sport.netbet.ro/badminton/",
+      "capturedAt": "2026-09-01T18:47:08.815Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/betbuilder/precanned/featured?lang=ro&bookmaker=netbetro&mode=sport&sport=badminton",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/badminton/",
+      "capturedAt": "2026-09-01T18:47:08.826Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/core/client/getClient?lang=ro&website=sport&device=desktop&app=default&version=1788288432129",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "pageUrl": "https://sport.netbet.ro/baseball/",
+      "capturedAt": "2026-09-01T18:47:13.056Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://global.netbet.ro/api/redirection?version=1788288432130",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://sport.netbet.ro/baseball/",
+      "capturedAt": "2026-09-01T18:47:13.057Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/seo?path=%2Fbaseball%2F&params=sport%3Dbaseball&lang=ro&bookmaker=netbetro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/baseball/",
+      "capturedAt": "2026-09-01T18:47:13.177Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/breadcrumbs?sport=baseball&lang=ro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/baseball/",
+      "capturedAt": "2026-09-01T18:47:13.189Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/inventory-competitions?bookmaker=netbetro&lang=ro&sport=baseball&mode=competitions&eager=[region,sport]&orderBy=region.slug",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/baseball/",
+      "capturedAt": "2026-09-01T18:47:13.297Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/tips/fixtures?bookmaker=netbetro&lang=ro&sport_slug=baseball&time=1788288432379",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/baseball/",
+      "capturedAt": "2026-09-01T18:47:13.444Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/core/client/getClient?lang=ro&website=sport&device=desktop&app=default&version=1788288433120",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "pageUrl": "https://sport.netbet.ro/baseball/",
+      "capturedAt": "2026-09-01T18:47:13.495Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://global.netbet.ro/api/redirection?version=1788288433120",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://sport.netbet.ro/baseball/",
+      "capturedAt": "2026-09-01T18:47:13.552Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/betbuilder/precanned/featured?lang=ro&bookmaker=netbetro&mode=sport&sport=baseball",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/baseball/",
+      "capturedAt": "2026-09-01T18:47:14.491Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/tips/fixtures?bookmaker=netbetro&lang=ro&sport_slug=biatlon&time=1788288437055",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/biatlon/",
+      "capturedAt": "2026-09-01T18:47:17.678Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/seo?path=%2Fbiatlon%2F&params=sport%3Dbiatlon&lang=ro&bookmaker=netbetro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/biatlon/",
+      "capturedAt": "2026-09-01T18:47:17.679Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/breadcrumbs?sport=biatlon&lang=ro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/biatlon/",
+      "capturedAt": "2026-09-01T18:47:17.753Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/inventory-competitions?bookmaker=netbetro&lang=ro&sport=biatlon&mode=competitions&eager=[region,sport]&orderBy=region.slug",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/biatlon/",
+      "capturedAt": "2026-09-01T18:47:17.965Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/betbuilder/precanned/featured?lang=ro&bookmaker=netbetro&mode=sport&sport=biathlon",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/biatlon/",
+      "capturedAt": "2026-09-01T18:47:18.705Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/inventory-competitions?bookmaker=netbetro&lang=ro&sport=biatlon&mode=outrights&eager=[region,sport]&orderBy=region.slug",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/biatlon/",
+      "capturedAt": "2026-09-01T18:47:18.767Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://global.netbet.ro/preloaded-state/200-ffd45ed9e5b50acc9e2077770d213bbfeab4eb58",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://sport.netbet.ro/biatlon/",
+      "capturedAt": "2026-09-01T18:47:19.576Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/core/client/getClient?lang=ro&website=sport&device=desktop&app=default&version=1788288439071",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "pageUrl": "https://sport.netbet.ro/biatlon/",
+      "capturedAt": "2026-09-01T18:47:19.765Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://global.netbet.ro/api/redirection?version=1788288439073",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://sport.netbet.ro/biatlon/",
+      "capturedAt": "2026-09-01T18:47:19.765Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/core/client/getClient?lang=ro&website=sport&device=desktop&app=default&version=1788288441428",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "pageUrl": "https://sport.netbet.ro/box/",
+      "capturedAt": "2026-09-01T18:47:21.856Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://global.netbet.ro/api/redirection?version=1788288441428",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://sport.netbet.ro/box/",
+      "capturedAt": "2026-09-01T18:47:21.856Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/inventory-competitions?bookmaker=netbetro&lang=ro&sport=box&mode=competitions&eager=[region,sport]&orderBy=region.slug",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/box/",
+      "capturedAt": "2026-09-01T18:47:22.240Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/breadcrumbs?sport=box&lang=ro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/box/",
+      "capturedAt": "2026-09-01T18:47:22.253Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/seo?path=%2Fbox%2F&params=sport%3Dbox&lang=ro&bookmaker=netbetro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/box/",
+      "capturedAt": "2026-09-01T18:47:22.256Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/core/client/getClient?lang=ro&website=sport&device=desktop&app=default&version=1788288442475",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "pageUrl": "https://sport.netbet.ro/box/",
+      "capturedAt": "2026-09-01T18:47:22.941Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/tips/fixtures?bookmaker=netbetro&lang=ro&sport_slug=box&time=1788288441673",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/box/",
+      "capturedAt": "2026-09-01T18:47:22.954Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://global.netbet.ro/api/redirection?version=1788288442476",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://sport.netbet.ro/box/",
+      "capturedAt": "2026-09-01T18:47:23.096Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/betbuilder/precanned/featured?lang=ro&bookmaker=netbetro&mode=sport&sport=boxing",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/box/",
+      "capturedAt": "2026-09-01T18:47:23.184Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/core/client/getClient?lang=ro&website=sport&device=desktop&app=default&version=1788288446179",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "pageUrl": "https://sport.netbet.ro/crichet/",
+      "capturedAt": "2026-09-01T18:47:27.036Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/breadcrumbs?sport=crichet&lang=ro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/crichet/",
+      "capturedAt": "2026-09-01T18:47:27.088Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://global.netbet.ro/api/redirection?version=1788288446179",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://sport.netbet.ro/crichet/",
+      "capturedAt": "2026-09-01T18:47:27.088Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/seo?path=%2Fcrichet%2F&params=sport%3Dcrichet&lang=ro&bookmaker=netbetro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/crichet/",
+      "capturedAt": "2026-09-01T18:47:27.114Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/inventory-competitions?bookmaker=netbetro&lang=ro&sport=crichet&mode=competitions&eager=[region,sport]&orderBy=region.slug",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/crichet/",
+      "capturedAt": "2026-09-01T18:47:27.124Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/tips/fixtures?bookmaker=netbetro&lang=ro&sport_slug=crichet&time=1788288446440",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/crichet/",
+      "capturedAt": "2026-09-01T18:47:27.325Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/core/client/getClient?lang=ro&website=sport&device=desktop&app=default&version=1788288447266",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "pageUrl": "https://sport.netbet.ro/crichet/",
+      "capturedAt": "2026-09-01T18:47:27.570Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/betbuilder/precanned/featured?lang=ro&bookmaker=netbetro&mode=sport&sport=cricket",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/crichet/",
+      "capturedAt": "2026-09-01T18:47:27.816Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://global.netbet.ro/api/redirection?version=1788288447266",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://sport.netbet.ro/crichet/",
+      "capturedAt": "2026-09-01T18:47:27.954Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/core/client/getClient?lang=ro&website=sport&device=desktop&app=default&version=1788288451481",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "pageUrl": "https://sport.netbet.ro/darts/",
+      "capturedAt": "2026-09-01T18:47:31.790Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://global.netbet.ro/api/redirection?version=1788288451482",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://sport.netbet.ro/darts/",
+      "capturedAt": "2026-09-01T18:47:31.962Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/breadcrumbs?sport=darts&lang=ro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/darts/",
+      "capturedAt": "2026-09-01T18:47:32.544Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/inventory-competitions?bookmaker=netbetro&lang=ro&sport=darts&mode=competitions&eager=[region,sport]&orderBy=region.slug",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/darts/",
+      "capturedAt": "2026-09-01T18:47:32.544Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/seo?path=%2Fdarts%2F&params=sport%3Ddarts&lang=ro&bookmaker=netbetro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/darts/",
+      "capturedAt": "2026-09-01T18:47:32.677Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/tips/fixtures?bookmaker=netbetro&lang=ro&sport_slug=darts&time=1788288451713",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/darts/",
+      "capturedAt": "2026-09-01T18:47:32.680Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/core/client/getClient?lang=ro&website=sport&device=desktop&app=default&version=1788288452668",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "pageUrl": "https://sport.netbet.ro/darts/",
+      "capturedAt": "2026-09-01T18:47:32.926Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/betbuilder/precanned/featured?lang=ro&bookmaker=netbetro&mode=sport&sport=darts",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/darts/",
+      "capturedAt": "2026-09-01T18:47:33.131Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://global.netbet.ro/api/redirection?version=1788288452668",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://sport.netbet.ro/darts/",
+      "capturedAt": "2026-09-01T18:47:33.155Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/core/client/getClient?lang=ro&website=sport&device=desktop&app=default&version=1788288456290",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "pageUrl": "https://sport.netbet.ro/e-sporturi/",
+      "capturedAt": "2026-09-01T18:47:36.804Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://global.netbet.ro/api/redirection?version=1788288456291",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://sport.netbet.ro/e-sporturi/",
+      "capturedAt": "2026-09-01T18:47:36.869Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/seo?path=%2Fe-sporturi%2F&params=&lang=ro&bookmaker=netbetro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/e-sporturi/",
+      "capturedAt": "2026-09-01T18:47:36.909Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/global/esport-banners?bookmaker=netbetro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/e-sporturi/",
+      "capturedAt": "2026-09-01T18:47:36.968Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/inventory-events-simple?type=esports&_cached=true&key=market_type&mode=upcoming&lang=ro&bookmaker=netbetro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/e-sporturi/",
+      "capturedAt": "2026-09-01T18:47:37.493Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/core/client/getClient?lang=ro&website=sport&device=desktop&app=default&version=1788288457207",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "pageUrl": "https://sport.netbet.ro/e-sporturi/",
+      "capturedAt": "2026-09-01T18:47:37.537Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/inventory-events-simple?type=esports&_cached=true&key=market_type&mode=live&lang=ro&bookmaker=netbetro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/e-sporturi/",
+      "capturedAt": "2026-09-01T18:47:37.630Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://global.netbet.ro/api/redirection?version=1788288457208",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://sport.netbet.ro/e-sporturi/",
+      "capturedAt": "2026-09-01T18:47:37.630Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/tips/fixtures?bookmaker=netbetro&lang=ro&time=1788288456483",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/e-sporturi/",
+      "capturedAt": "2026-09-01T18:47:38.009Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/inventory-events-simple?type=esports&key=market_type&mode=live&lang=ro&bookmaker=netbetro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/e-sporturi/",
+      "capturedAt": "2026-09-01T18:47:39.666Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/inventory-events-simple?type=esports&key=market_type&mode=upcoming&lang=ro&bookmaker=netbetro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/e-sporturi/",
+      "capturedAt": "2026-09-01T18:47:40.135Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/core/client/getClient?lang=ro&website=sport&device=desktop&app=default&version=1788288460998",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "pageUrl": "https://sport.netbet.ro/floorball/",
+      "capturedAt": "2026-09-01T18:47:41.353Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://global.netbet.ro/api/redirection?version=1788288460999",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://sport.netbet.ro/floorball/",
+      "capturedAt": "2026-09-01T18:47:41.378Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/inventory-competitions?bookmaker=netbetro&lang=ro&sport=floorball&mode=competitions&eager=[region,sport]&orderBy=region.slug",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/floorball/",
+      "capturedAt": "2026-09-01T18:47:41.807Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/breadcrumbs?sport=floorball&lang=ro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/floorball/",
+      "capturedAt": "2026-09-01T18:47:41.897Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/seo?path=%2Ffloorball%2F&params=sport%3Dfloorball&lang=ro&bookmaker=netbetro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/floorball/",
+      "capturedAt": "2026-09-01T18:47:42.003Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/tips/fixtures?bookmaker=netbetro&lang=ro&sport_slug=floorball&time=1788288461305",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/floorball/",
+      "capturedAt": "2026-09-01T18:47:42.006Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/core/client/getClient?lang=ro&website=sport&device=desktop&app=default&version=1788288462103",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "pageUrl": "https://sport.netbet.ro/floorball/",
+      "capturedAt": "2026-09-01T18:47:42.521Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/betbuilder/precanned/featured?lang=ro&bookmaker=netbetro&mode=sport&sport=floorball",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/floorball/",
+      "capturedAt": "2026-09-01T18:47:42.633Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://global.netbet.ro/api/redirection?version=1788288462103",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://sport.netbet.ro/floorball/",
+      "capturedAt": "2026-09-01T18:47:42.712Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/inventory-competitions?bookmaker=netbetro&lang=ro&sport=formula-1&mode=competitions&eager=[region,sport]&orderBy=region.slug",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/formula-1/",
+      "capturedAt": "2026-09-01T18:47:46.365Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/breadcrumbs?sport=formula-1&lang=ro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/formula-1/",
+      "capturedAt": "2026-09-01T18:47:46.374Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/seo?path=%2Fformula-1%2F&params=sport%3Dformula-1&lang=ro&bookmaker=netbetro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/formula-1/",
+      "capturedAt": "2026-09-01T18:47:46.440Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/tips/fixtures?bookmaker=netbetro&lang=ro&sport_slug=formula-1&time=1788288465987",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/formula-1/",
+      "capturedAt": "2026-09-01T18:47:46.793Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/betbuilder/precanned/featured?lang=ro&bookmaker=netbetro&mode=sport&sport=formula-1",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/formula-1/",
+      "capturedAt": "2026-09-01T18:47:46.935Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/inventory-competitions?bookmaker=netbetro&lang=ro&sport=formula-1&mode=outrights&eager=[region,sport]&orderBy=region.slug",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/formula-1/",
+      "capturedAt": "2026-09-01T18:47:47.068Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/core/client/getClient?lang=ro&website=sport&device=desktop&app=default&version=1788288466771",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "pageUrl": "https://sport.netbet.ro/formula-1/",
+      "capturedAt": "2026-09-01T18:47:48.000Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://global.netbet.ro/api/redirection?version=1788288466771",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://sport.netbet.ro/formula-1/",
+      "capturedAt": "2026-09-01T18:47:48.588Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/breadcrumbs?lang=ro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/golf/",
+      "capturedAt": "2026-09-01T18:47:51.083Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/seo?path=%2Fgolf%2F&params=&lang=ro&bookmaker=netbetro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/golf/",
+      "capturedAt": "2026-09-01T18:47:51.092Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/golf?bookmaker=netbetro&lang=ro&sport=golf&eager=[region,sport]&orderBy=starts_at",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/golf/",
+      "capturedAt": "2026-09-01T18:47:51.268Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/tips/fixtures?bookmaker=netbetro&lang=ro&time=1788288470647",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/golf/",
+      "capturedAt": "2026-09-01T18:47:51.328Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/core/client/getClient?lang=ro&website=sport&device=desktop&app=default&version=1788288471524",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "pageUrl": "https://sport.netbet.ro/golf/",
+      "capturedAt": "2026-09-01T18:47:52.792Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://global.netbet.ro/api/redirection?version=1788288471525",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://sport.netbet.ro/golf/",
+      "capturedAt": "2026-09-01T18:47:53.257Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/core/client/getClient?lang=ro&website=sport&device=desktop&app=default&version=1788288475157",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "pageUrl": "https://sport.netbet.ro/lacrosse/",
+      "capturedAt": "2026-09-01T18:47:55.744Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://global.netbet.ro/api/redirection?version=1788288475157",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://sport.netbet.ro/lacrosse/",
+      "capturedAt": "2026-09-01T18:47:55.901Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/seo?path=%2Flacrosse%2F&params=sport%3Dlacrosse&lang=ro&bookmaker=netbetro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/lacrosse/",
+      "capturedAt": "2026-09-01T18:47:55.903Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/inventory-competitions?bookmaker=netbetro&lang=ro&sport=lacrosse&mode=competitions&eager=[region,sport]&orderBy=region.slug",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/lacrosse/",
+      "capturedAt": "2026-09-01T18:47:55.920Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/breadcrumbs?sport=lacrosse&lang=ro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/lacrosse/",
+      "capturedAt": "2026-09-01T18:47:55.941Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/tips/fixtures?bookmaker=netbetro&lang=ro&sport_slug=lacrosse&time=1788288475333",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/lacrosse/",
+      "capturedAt": "2026-09-01T18:47:55.942Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/betbuilder/precanned/featured?lang=ro&bookmaker=netbetro&mode=sport&sport=lacrosse",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/lacrosse/",
+      "capturedAt": "2026-09-01T18:47:56.329Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/core/client/getClient?lang=ro&website=sport&device=desktop&app=default&version=1788288476206",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "pageUrl": "https://sport.netbet.ro/lacrosse/",
+      "capturedAt": "2026-09-01T18:47:56.472Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://global.netbet.ro/api/redirection?version=1788288476207",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://sport.netbet.ro/lacrosse/",
+      "capturedAt": "2026-09-01T18:47:56.473Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/core/client/getClient?lang=ro&website=sport&device=desktop&app=default&version=1788288479809",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "pageUrl": "https://sport.netbet.ro/politica/",
+      "capturedAt": "2026-09-01T18:48:00.137Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://global.netbet.ro/api/redirection?version=1788288479810",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://sport.netbet.ro/politica/",
+      "capturedAt": "2026-09-01T18:48:00.193Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/inventory-competitions?bookmaker=netbetro&lang=ro&sport=politica&mode=competitions&eager=[region,sport]&orderBy=region.slug",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/politica/",
+      "capturedAt": "2026-09-01T18:48:00.499Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/seo?path=%2Fpolitica%2F&params=sport%3Dpolitica&lang=ro&bookmaker=netbetro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/politica/",
+      "capturedAt": "2026-09-01T18:48:00.507Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/breadcrumbs?sport=politica&lang=ro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/politica/",
+      "capturedAt": "2026-09-01T18:48:00.569Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/tips/fixtures?bookmaker=netbetro&lang=ro&sport_slug=politica&time=1788288480059",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/politica/",
+      "capturedAt": "2026-09-01T18:48:00.575Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/betbuilder/precanned/featured?lang=ro&bookmaker=netbetro&mode=sport&sport=politics",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/politica/",
+      "capturedAt": "2026-09-01T18:48:01.149Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/core/client/getClient?lang=ro&website=sport&device=desktop&app=default&version=1788288480862",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "pageUrl": "https://sport.netbet.ro/politica/",
+      "capturedAt": "2026-09-01T18:48:01.175Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://global.netbet.ro/api/redirection?version=1788288480863",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://sport.netbet.ro/politica/",
+      "capturedAt": "2026-09-01T18:48:01.238Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/inventory-competitions?bookmaker=netbetro&lang=ro&sport=politica&mode=outrights&eager=[region,sport]&orderBy=region.slug",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/politica/",
+      "capturedAt": "2026-09-01T18:48:01.282Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/tips/fixtures?bookmaker=netbetro&lang=ro&sport_slug=rugby-union&time=1788288484818",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/rugby-union/",
+      "capturedAt": "2026-09-01T18:48:05.825Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/breadcrumbs?sport=rugby-union&lang=ro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/rugby-union/",
+      "capturedAt": "2026-09-01T18:48:05.827Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/seo?path=%2Frugby-union%2F&params=sport%3Drugby-union&lang=ro&bookmaker=netbetro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/rugby-union/",
+      "capturedAt": "2026-09-01T18:48:05.829Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/inventory-competitions?bookmaker=netbetro&lang=ro&sport=rugby-union&mode=competitions&eager=[region,sport]&orderBy=region.slug",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/rugby-union/",
+      "capturedAt": "2026-09-01T18:48:05.829Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/core/client/getClient?lang=ro&website=sport&device=desktop&app=default&version=1788288485558",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "pageUrl": "https://sport.netbet.ro/rugby-union/",
+      "capturedAt": "2026-09-01T18:48:06.130Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/betbuilder/precanned/featured?lang=ro&bookmaker=netbetro&mode=sport&sport=rugby-union",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/rugby-union/",
+      "capturedAt": "2026-09-01T18:48:06.365Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://global.netbet.ro/api/redirection?version=1788288485559",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://sport.netbet.ro/rugby-union/",
+      "capturedAt": "2026-09-01T18:48:06.402Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/core/client/getClient?lang=ro&website=sport&device=desktop&app=default&version=1788288489068",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "pageUrl": "https://sport.netbet.ro/snooker/",
+      "capturedAt": "2026-09-01T18:48:09.780Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/seo?path=%2Fsnooker%2F&params=sport%3Dsnooker&lang=ro&bookmaker=netbetro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/snooker/",
+      "capturedAt": "2026-09-01T18:48:09.986Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/breadcrumbs?sport=snooker&lang=ro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/snooker/",
+      "capturedAt": "2026-09-01T18:48:09.986Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://global.netbet.ro/api/redirection?version=1788288489068",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://sport.netbet.ro/snooker/",
+      "capturedAt": "2026-09-01T18:48:10.087Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/inventory-competitions?bookmaker=netbetro&lang=ro&sport=snooker&mode=competitions&eager=[region,sport]&orderBy=region.slug",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/snooker/",
+      "capturedAt": "2026-09-01T18:48:10.095Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/tips/fixtures?bookmaker=netbetro&lang=ro&sport_slug=snooker&time=1788288489350",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/snooker/",
+      "capturedAt": "2026-09-01T18:48:10.523Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/core/client/getClient?lang=ro&website=sport&device=desktop&app=default&version=1788288490224",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "pageUrl": "https://sport.netbet.ro/snooker/",
+      "capturedAt": "2026-09-01T18:48:10.910Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://global.netbet.ro/api/redirection?version=1788288490225",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://sport.netbet.ro/snooker/",
+      "capturedAt": "2026-09-01T18:48:10.911Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/betbuilder/precanned/featured?lang=ro&bookmaker=netbetro&mode=sport&sport=snooker",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/snooker/",
+      "capturedAt": "2026-09-01T18:48:10.911Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/core/client/getClient?lang=ro&website=sport&device=desktop&app=default&version=1788288494550",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "pageUrl": "https://sport.netbet.ro/volei/",
+      "capturedAt": "2026-09-01T18:48:14.919Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://global.netbet.ro/api/redirection?version=1788288494550",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://sport.netbet.ro/volei/",
+      "capturedAt": "2026-09-01T18:48:15.018Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/breadcrumbs?sport=volei&lang=ro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/volei/",
+      "capturedAt": "2026-09-01T18:48:15.209Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/seo?path=%2Fvolei%2F&params=sport%3Dvolei&lang=ro&bookmaker=netbetro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/volei/",
+      "capturedAt": "2026-09-01T18:48:15.276Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/tips/fixtures?bookmaker=netbetro&lang=ro&sport_slug=volei&time=1788288494664",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/volei/",
+      "capturedAt": "2026-09-01T18:48:15.442Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/inventory-competitions?bookmaker=netbetro&lang=ro&sport=volei&mode=competitions&eager=[region,sport]&orderBy=region.slug",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/volei/",
+      "capturedAt": "2026-09-01T18:48:15.458Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/core/client/getClient?lang=ro&website=sport&device=desktop&app=default&version=1788288495607",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "pageUrl": "https://sport.netbet.ro/volei/",
+      "capturedAt": "2026-09-01T18:48:15.930Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/betbuilder/precanned/featured?lang=ro&bookmaker=netbetro&mode=sport&sport=volleyball",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/volei/",
+      "capturedAt": "2026-09-01T18:48:15.977Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://global.netbet.ro/api/redirection?version=1788288495610",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://sport.netbet.ro/volei/",
+      "capturedAt": "2026-09-01T18:48:16.079Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/seo?path=%2F3x3-baschet%2F&params=sport%3D3x3-baschet&lang=ro&bookmaker=netbetro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/3x3-baschet/",
+      "capturedAt": "2026-09-01T18:48:19.959Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/breadcrumbs?sport=3x3-baschet&lang=ro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/3x3-baschet/",
+      "capturedAt": "2026-09-01T18:48:19.974Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/inventory-competitions?bookmaker=netbetro&lang=ro&sport=3x3-baschet&mode=competitions&eager=[region,sport]&orderBy=region.slug",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/3x3-baschet/",
+      "capturedAt": "2026-09-01T18:48:19.976Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/tips/fixtures?bookmaker=netbetro&lang=ro&sport_slug=3x3-baschet&time=1788288499420",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/3x3-baschet/",
+      "capturedAt": "2026-09-01T18:48:20.005Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/betbuilder/precanned/featured?lang=ro&bookmaker=netbetro&mode=sport&sport=3x3-basketball",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/3x3-baschet/",
+      "capturedAt": "2026-09-01T18:48:20.502Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://global.netbet.ro/preloaded-state/200-38dcfd5e3489e03c0ed5efa7c8340a8026fd2833",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://sport.netbet.ro/3x3-baschet/",
+      "capturedAt": "2026-09-01T18:48:21.336Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/core/client/getClient?lang=ro&website=sport&device=desktop&app=default&version=1788288501114",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "pageUrl": "https://sport.netbet.ro/3x3-baschet/",
+      "capturedAt": "2026-09-01T18:48:21.390Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://global.netbet.ro/api/redirection?version=1788288501116",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://sport.netbet.ro/3x3-baschet/",
+      "capturedAt": "2026-09-01T18:48:21.535Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/core/client/getClient?lang=ro&website=sport&device=desktop&app=default&version=1788288503684",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "pageUrl": "https://sport.netbet.ro/fotbal-australian/",
+      "capturedAt": "2026-09-01T18:48:24.398Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/breadcrumbs?sport=fotbal-australian&lang=ro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/fotbal-australian/",
+      "capturedAt": "2026-09-01T18:48:24.474Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/seo?path=%2Ffotbal-australian%2F&params=sport%3Dfotbal-australian&lang=ro&bookmaker=netbetro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/fotbal-australian/",
+      "capturedAt": "2026-09-01T18:48:24.482Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://global.netbet.ro/api/redirection?version=1788288503685",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://sport.netbet.ro/fotbal-australian/",
+      "capturedAt": "2026-09-01T18:48:24.502Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/inventory-competitions?bookmaker=netbetro&lang=ro&sport=fotbal-australian&mode=competitions&eager=[region,sport]&orderBy=region.slug",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/fotbal-australian/",
+      "capturedAt": "2026-09-01T18:48:24.585Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/tips/fixtures?bookmaker=netbetro&lang=ro&sport_slug=fotbal-australian&time=1788288504044",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/fotbal-australian/",
+      "capturedAt": "2026-09-01T18:48:24.748Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/core/client/getClient?lang=ro&website=sport&device=desktop&app=default&version=1788288504693",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "pageUrl": "https://sport.netbet.ro/fotbal-australian/",
+      "capturedAt": "2026-09-01T18:48:25.045Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://global.netbet.ro/api/redirection?version=1788288504693",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://sport.netbet.ro/fotbal-australian/",
+      "capturedAt": "2026-09-01T18:48:25.162Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/betbuilder/precanned/featured?lang=ro&bookmaker=netbetro&mode=sport&sport=aussie-rules",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/fotbal-australian/",
+      "capturedAt": "2026-09-01T18:48:25.473Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/core/client/getClient?lang=ro&website=sport&device=desktop&app=default&version=1788288508169",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "pageUrl": "https://sport.netbet.ro/fotbal-pe-plaja/",
+      "capturedAt": "2026-09-01T18:48:28.536Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://global.netbet.ro/api/redirection?version=1788288508170",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://sport.netbet.ro/fotbal-pe-plaja/",
+      "capturedAt": "2026-09-01T18:48:28.561Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/breadcrumbs?sport=fotbal-pe-plaja&lang=ro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/fotbal-pe-plaja/",
+      "capturedAt": "2026-09-01T18:48:28.757Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/seo?path=%2Ffotbal-pe-plaja%2F&params=sport%3Dfotbal-pe-plaja&lang=ro&bookmaker=netbetro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/fotbal-pe-plaja/",
+      "capturedAt": "2026-09-01T18:48:28.837Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/inventory-competitions?bookmaker=netbetro&lang=ro&sport=fotbal-pe-plaja&mode=competitions&eager=[region,sport]&orderBy=region.slug",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/fotbal-pe-plaja/",
+      "capturedAt": "2026-09-01T18:48:28.998Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/tips/fixtures?bookmaker=netbetro&lang=ro&sport_slug=fotbal-pe-plaja&time=1788288508411",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/fotbal-pe-plaja/",
+      "capturedAt": "2026-09-01T18:48:29.250Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/core/client/getClient?lang=ro&website=sport&device=desktop&app=default&version=1788288509357",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "pageUrl": "https://sport.netbet.ro/fotbal-pe-plaja/",
+      "capturedAt": "2026-09-01T18:48:29.673Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/betbuilder/precanned/featured?lang=ro&bookmaker=netbetro&mode=sport&sport=beach-football",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/fotbal-pe-plaja/",
+      "capturedAt": "2026-09-01T18:48:29.675Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://global.netbet.ro/api/redirection?version=1788288509357",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://sport.netbet.ro/fotbal-pe-plaja/",
+      "capturedAt": "2026-09-01T18:48:29.722Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/core/client/getClient?lang=ro&website=sport&device=desktop&app=default&version=1788288512813",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "pageUrl": "https://sport.netbet.ro/ciclism/",
+      "capturedAt": "2026-09-01T18:48:33.210Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://global.netbet.ro/api/redirection?version=1788288512814",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://sport.netbet.ro/ciclism/",
+      "capturedAt": "2026-09-01T18:48:33.210Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/breadcrumbs?sport=ciclism&lang=ro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/ciclism/",
+      "capturedAt": "2026-09-01T18:48:33.524Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/seo?path=%2Fciclism%2F&params=sport%3Dciclism&lang=ro&bookmaker=netbetro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/ciclism/",
+      "capturedAt": "2026-09-01T18:48:33.525Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/inventory-competitions?bookmaker=netbetro&lang=ro&sport=ciclism&mode=competitions&eager=[region,sport]&orderBy=region.slug",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/ciclism/",
+      "capturedAt": "2026-09-01T18:48:33.596Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/tips/fixtures?bookmaker=netbetro&lang=ro&sport_slug=ciclism&time=1788288513038",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/ciclism/",
+      "capturedAt": "2026-09-01T18:48:33.613Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/core/client/getClient?lang=ro&website=sport&device=desktop&app=default&version=1788288513854",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "pageUrl": "https://sport.netbet.ro/ciclism/",
+      "capturedAt": "2026-09-01T18:48:34.132Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://global.netbet.ro/api/redirection?version=1788288513855",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://sport.netbet.ro/ciclism/",
+      "capturedAt": "2026-09-01T18:48:34.273Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/betbuilder/precanned/featured?lang=ro&bookmaker=netbetro&mode=sport&sport=cycling",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/ciclism/",
+      "capturedAt": "2026-09-01T18:48:34.406Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/inventory-competitions?bookmaker=netbetro&lang=ro&sport=ciclism&mode=outrights&eager=[region,sport]&orderBy=region.slug",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/ciclism/",
+      "capturedAt": "2026-09-01T18:48:34.479Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/core/client/getClient?lang=ro&website=sport&device=desktop&app=default&version=1788288517694",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "pageUrl": "https://sport.netbet.ro/fotbal-galic/",
+      "capturedAt": "2026-09-01T18:48:38.076Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://global.netbet.ro/api/redirection?version=1788288517695",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://sport.netbet.ro/fotbal-galic/",
+      "capturedAt": "2026-09-01T18:48:38.302Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/tips/fixtures?bookmaker=netbetro&lang=ro&sport_slug=fotbal-galic&time=1788288517906",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/fotbal-galic/",
+      "capturedAt": "2026-09-01T18:48:38.854Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/breadcrumbs?sport=fotbal-galic&lang=ro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/fotbal-galic/",
+      "capturedAt": "2026-09-01T18:48:38.909Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/seo?path=%2Ffotbal-galic%2F&params=sport%3Dfotbal-galic&lang=ro&bookmaker=netbetro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/fotbal-galic/",
+      "capturedAt": "2026-09-01T18:48:38.921Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/inventory-competitions?bookmaker=netbetro&lang=ro&sport=fotbal-galic&mode=competitions&eager=[region,sport]&orderBy=region.slug",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/fotbal-galic/",
+      "capturedAt": "2026-09-01T18:48:38.930Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://global.netbet.ro/api/redirection?version=1788288519045",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://sport.netbet.ro/fotbal-galic/",
+      "capturedAt": "2026-09-01T18:48:39.308Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/core/client/getClient?lang=ro&website=sport&device=desktop&app=default&version=1788288519044",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "pageUrl": "https://sport.netbet.ro/fotbal-galic/",
+      "capturedAt": "2026-09-01T18:48:39.349Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/betbuilder/precanned/featured?lang=ro&bookmaker=netbetro&mode=sport&sport=gaelic-football",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/fotbal-galic/",
+      "capturedAt": "2026-09-01T18:48:39.451Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/inventory-competitions?bookmaker=netbetro&lang=ro&sport=fotbal-galic&mode=outrights&eager=[region,sport]&orderBy=region.slug",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/fotbal-galic/",
+      "capturedAt": "2026-09-01T18:48:39.556Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/core/client/getClient?lang=ro&website=sport&device=desktop&app=default&version=1788288522371",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "pageUrl": "https://sport.netbet.ro/hurling/",
+      "capturedAt": "2026-09-01T18:48:42.680Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://global.netbet.ro/api/redirection?version=1788288522371",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://sport.netbet.ro/hurling/",
+      "capturedAt": "2026-09-01T18:48:42.946Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/seo?path=%2Fhurling%2F&params=sport%3Dhurling&lang=ro&bookmaker=netbetro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/hurling/",
+      "capturedAt": "2026-09-01T18:48:43.047Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/breadcrumbs?sport=hurling&lang=ro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/hurling/",
+      "capturedAt": "2026-09-01T18:48:43.062Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/inventory-competitions?bookmaker=netbetro&lang=ro&sport=hurling&mode=competitions&eager=[region,sport]&orderBy=region.slug",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/hurling/",
+      "capturedAt": "2026-09-01T18:48:43.066Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/tips/fixtures?bookmaker=netbetro&lang=ro&sport_slug=hurling&time=1788288522619",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/hurling/",
+      "capturedAt": "2026-09-01T18:48:43.275Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/betbuilder/precanned/featured?lang=ro&bookmaker=netbetro&mode=sport&sport=hurling",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/hurling/",
+      "capturedAt": "2026-09-01T18:48:43.496Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/inventory-competitions?bookmaker=netbetro&lang=ro&sport=hurling&mode=outrights&eager=[region,sport]&orderBy=region.slug",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/hurling/",
+      "capturedAt": "2026-09-01T18:48:43.657Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/core/client/getClient?lang=ro&website=sport&device=desktop&app=default&version=1788288523422",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "pageUrl": "https://sport.netbet.ro/hurling/",
+      "capturedAt": "2026-09-01T18:48:44.487Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://global.netbet.ro/api/redirection?version=1788288523422",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://sport.netbet.ro/hurling/",
+      "capturedAt": "2026-09-01T18:48:45.124Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/seo?path=%2Fmotociclete%2F&params=sport%3Dmotociclete&lang=ro&bookmaker=netbetro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/motociclete/",
+      "capturedAt": "2026-09-01T18:48:47.890Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/breadcrumbs?sport=motociclete&lang=ro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/motociclete/",
+      "capturedAt": "2026-09-01T18:48:48.045Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/inventory-competitions?bookmaker=netbetro&lang=ro&sport=motociclete&mode=competitions&eager=[region,sport]&orderBy=region.slug",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/motociclete/",
+      "capturedAt": "2026-09-01T18:48:48.069Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/tips/fixtures?bookmaker=netbetro&lang=ro&sport_slug=motociclete&time=1788288527337",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/motociclete/",
+      "capturedAt": "2026-09-01T18:48:48.086Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/betbuilder/precanned/featured?lang=ro&bookmaker=netbetro&mode=sport&sport=motorbikes",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/motociclete/",
+      "capturedAt": "2026-09-01T18:48:48.536Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/inventory-competitions?bookmaker=netbetro&lang=ro&sport=motociclete&mode=outrights&eager=[region,sport]&orderBy=region.slug",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/motociclete/",
+      "capturedAt": "2026-09-01T18:48:48.897Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://global.netbet.ro/api/redirection?version=1788288528194",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://sport.netbet.ro/motociclete/",
+      "capturedAt": "2026-09-01T18:48:49.166Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/core/client/getClient?lang=ro&website=sport&device=desktop&app=default&version=1788288528194",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "pageUrl": "https://sport.netbet.ro/motociclete/",
+      "capturedAt": "2026-09-01T18:48:49.255Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/seo?path=%2Fsporturi-cu-motor%2F&params=sport%3Dsporturi-cu-motor&lang=ro&bookmaker=netbetro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/sporturi-cu-motor/",
+      "capturedAt": "2026-09-01T18:48:52.761Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/inventory-competitions?bookmaker=netbetro&lang=ro&sport=sporturi-cu-motor&mode=competitions&eager=[region,sport]&orderBy=region.slug",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/sporturi-cu-motor/",
+      "capturedAt": "2026-09-01T18:48:52.761Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/breadcrumbs?sport=sporturi-cu-motor&lang=ro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/sporturi-cu-motor/",
+      "capturedAt": "2026-09-01T18:48:52.761Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/tips/fixtures?bookmaker=netbetro&lang=ro&sport_slug=sporturi-cu-motor&time=1788288532037",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/sporturi-cu-motor/",
+      "capturedAt": "2026-09-01T18:48:52.897Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/betbuilder/precanned/featured?lang=ro&bookmaker=netbetro&mode=sport&sport=nascar",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/sporturi-cu-motor/",
+      "capturedAt": "2026-09-01T18:48:53.175Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/inventory-competitions?bookmaker=netbetro&lang=ro&sport=sporturi-cu-motor&mode=outrights&eager=[region,sport]&orderBy=region.slug",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/sporturi-cu-motor/",
+      "capturedAt": "2026-09-01T18:48:53.361Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/core/client/getClient?lang=ro&website=sport&device=desktop&app=default&version=1788288532833",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "pageUrl": "https://sport.netbet.ro/sporturi-cu-motor/",
+      "capturedAt": "2026-09-01T18:48:53.876Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://global.netbet.ro/api/redirection?version=1788288532834",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://sport.netbet.ro/sporturi-cu-motor/",
+      "capturedAt": "2026-09-01T18:48:54.121Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/core/client/getClient?lang=ro&website=sport&device=desktop&app=default&version=1788288536435",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "pageUrl": "https://sport.netbet.ro/navigatie/",
+      "capturedAt": "2026-09-01T18:48:56.992Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://global.netbet.ro/api/redirection?version=1788288536435",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://sport.netbet.ro/navigatie/",
+      "capturedAt": "2026-09-01T18:48:56.995Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/inventory-competitions?bookmaker=netbetro&lang=ro&sport=navigatie&mode=competitions&eager=[region,sport]&orderBy=region.slug",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/navigatie/",
+      "capturedAt": "2026-09-01T18:48:56.995Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/seo?path=%2Fnavigatie%2F&params=sport%3Dnavigatie&lang=ro&bookmaker=netbetro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/navigatie/",
+      "capturedAt": "2026-09-01T18:48:57.149Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/breadcrumbs?sport=navigatie&lang=ro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/navigatie/",
+      "capturedAt": "2026-09-01T18:48:57.214Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/tips/fixtures?bookmaker=netbetro&lang=ro&sport_slug=navigatie&time=1788288536670",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/navigatie/",
+      "capturedAt": "2026-09-01T18:48:57.305Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/betbuilder/precanned/featured?lang=ro&bookmaker=netbetro&mode=sport&sport=sailing",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/navigatie/",
+      "capturedAt": "2026-09-01T18:48:57.573Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/inventory-competitions?bookmaker=netbetro&lang=ro&sport=navigatie&mode=outrights&eager=[region,sport]&orderBy=region.slug",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/navigatie/",
+      "capturedAt": "2026-09-01T18:48:57.610Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/core/client/getClient?lang=ro&website=sport&device=desktop&app=default&version=1788288537482",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "pageUrl": "https://sport.netbet.ro/navigatie/",
+      "capturedAt": "2026-09-01T18:48:57.916Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://global.netbet.ro/api/redirection?version=1788288537483",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://sport.netbet.ro/navigatie/",
+      "capturedAt": "2026-09-01T18:48:57.920Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/core/client/getClient?lang=ro&website=sport&device=desktop&app=default&version=1788288541072",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "pageUrl": "https://sport.netbet.ro/speciale/",
+      "capturedAt": "2026-09-01T18:49:01.936Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://global.netbet.ro/api/redirection?version=1788288541072",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://sport.netbet.ro/speciale/",
+      "capturedAt": "2026-09-01T18:49:02.002Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/seo?path=%2Fspeciale%2F&params=sport%3Dspeciale&lang=ro&bookmaker=netbetro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/speciale/",
+      "capturedAt": "2026-09-01T18:49:02.456Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/tips/fixtures?bookmaker=netbetro&lang=ro&sport_slug=speciale&time=1788288541294",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/speciale/",
+      "capturedAt": "2026-09-01T18:49:02.586Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/inventory-competitions?bookmaker=netbetro&lang=ro&sport=speciale&mode=competitions&eager=[region,sport]&orderBy=region.slug",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/speciale/",
+      "capturedAt": "2026-09-01T18:49:02.586Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/breadcrumbs?sport=speciale&lang=ro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/speciale/",
+      "capturedAt": "2026-09-01T18:49:02.624Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/core/client/getClient?lang=ro&website=sport&device=desktop&app=default&version=1788288542602",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "pageUrl": "https://sport.netbet.ro/speciale/",
+      "capturedAt": "2026-09-01T18:49:03.258Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://global.netbet.ro/api/redirection?version=1788288542603",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://sport.netbet.ro/speciale/",
+      "capturedAt": "2026-09-01T18:49:03.260Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/betbuilder/precanned/featured?lang=ro&bookmaker=netbetro&mode=sport&sport=special-bets",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/speciale/",
+      "capturedAt": "2026-09-01T18:49:03.359Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/inventory-competitions?bookmaker=netbetro&lang=ro&sport=speciale&mode=outrights&eager=[region,sport]&orderBy=region.slug",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/speciale/",
+      "capturedAt": "2026-09-01T18:49:03.526Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/breadcrumbs?sport=speedway&lang=ro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/speedway/",
+      "capturedAt": "2026-09-01T18:49:06.448Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/seo?path=%2Fspeedway%2F&params=sport%3Dspeedway&lang=ro&bookmaker=netbetro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/speedway/",
+      "capturedAt": "2026-09-01T18:49:06.456Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/tips/fixtures?bookmaker=netbetro&lang=ro&sport_slug=speedway&time=1788288545964",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/speedway/",
+      "capturedAt": "2026-09-01T18:49:06.470Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/inventory-competitions?bookmaker=netbetro&lang=ro&sport=speedway&mode=competitions&eager=[region,sport]&orderBy=region.slug",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/speedway/",
+      "capturedAt": "2026-09-01T18:49:06.509Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/betbuilder/precanned/featured?lang=ro&bookmaker=netbetro&mode=sport&sport=speedway",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/speedway/",
+      "capturedAt": "2026-09-01T18:49:07.295Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/inventory-competitions?bookmaker=netbetro&lang=ro&sport=speedway&mode=outrights&eager=[region,sport]&orderBy=region.slug",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/speedway/",
+      "capturedAt": "2026-09-01T18:49:07.391Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/core/client/getClient?lang=ro&website=sport&device=desktop&app=default&version=1788288546720",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "pageUrl": "https://sport.netbet.ro/speedway/",
+      "capturedAt": "2026-09-01T18:49:07.720Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://global.netbet.ro/api/redirection?version=1788288546720",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://sport.netbet.ro/speedway/",
+      "capturedAt": "2026-09-01T18:49:08.143Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/core/client/getClient?lang=ro&website=sport&device=desktop&app=default&version=1788288550643",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "pageUrl": "https://sport.netbet.ro/emisiuni-tv-si-filme/",
+      "capturedAt": "2026-09-01T18:49:11.247Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://global.netbet.ro/api/redirection?version=1788288550643",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://sport.netbet.ro/emisiuni-tv-si-filme/",
+      "capturedAt": "2026-09-01T18:49:11.297Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/seo?path=%2Femisiuni-tv-si-filme%2F&params=sport%3Demisiuni-tv-si-filme&lang=ro&bookmaker=netbetro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/emisiuni-tv-si-filme/",
+      "capturedAt": "2026-09-01T18:49:11.643Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/inventory-competitions?bookmaker=netbetro&lang=ro&sport=emisiuni-tv-si-filme&mode=competitions&eager=[region,sport]&orderBy=region.slug",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/emisiuni-tv-si-filme/",
+      "capturedAt": "2026-09-01T18:49:11.705Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/breadcrumbs?sport=emisiuni-tv-si-filme&lang=ro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/emisiuni-tv-si-filme/",
+      "capturedAt": "2026-09-01T18:49:11.732Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/tips/fixtures?bookmaker=netbetro&lang=ro&sport_slug=emisiuni-tv-si-filme&time=1788288550776",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/emisiuni-tv-si-filme/",
+      "capturedAt": "2026-09-01T18:49:11.734Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/betbuilder/precanned/featured?lang=ro&bookmaker=netbetro&mode=sport&sport=tv-shows-and-movies",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/emisiuni-tv-si-filme/",
+      "capturedAt": "2026-09-01T18:49:12.128Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/core/client/getClient?lang=ro&website=sport&device=desktop&app=default&version=1788288551802",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "pageUrl": "https://sport.netbet.ro/emisiuni-tv-si-filme/",
+      "capturedAt": "2026-09-01T18:49:12.215Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://global.netbet.ro/api/redirection?version=1788288551803",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://sport.netbet.ro/emisiuni-tv-si-filme/",
+      "capturedAt": "2026-09-01T18:49:12.295Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/inventory-competitions?bookmaker=netbetro&lang=ro&sport=emisiuni-tv-si-filme&mode=outrights&eager=[region,sport]&orderBy=region.slug",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/emisiuni-tv-si-filme/",
+      "capturedAt": "2026-09-01T18:49:12.338Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/core/client/getClient?lang=ro&website=sport&device=desktop&app=default&version=1788288554969",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "pageUrl": "https://sport.netbet.ro/fotbal/romania-cupa/",
+      "capturedAt": "2026-09-01T18:49:15.855Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/inventory-events?sport=fotbal&competition=romania-cupa&_cached=true&key=market_type&t=1788288554879&lang=ro&bookmaker=netbetro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/fotbal/romania-cupa/",
+      "capturedAt": "2026-09-01T18:49:15.856Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://global.netbet.ro/api/redirection?version=1788288554970",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://sport.netbet.ro/fotbal/romania-cupa/",
+      "capturedAt": "2026-09-01T18:49:15.910Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/info/outright?sport=fotbal&competition=romania-cupa&lang=ro&bookmaker=netbetro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/fotbal/romania-cupa/",
+      "capturedAt": "2026-09-01T18:49:16.287Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/breadcrumbs?sport=fotbal&competition=romania-cupa&lang=ro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/fotbal/romania-cupa/",
+      "capturedAt": "2026-09-01T18:49:16.320Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/core/client/getClient?lang=ro&website=sport&device=desktop&app=default&version=1788288555997",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "pageUrl": "https://sport.netbet.ro/fotbal/romania-cupa/",
+      "capturedAt": "2026-09-01T18:49:16.326Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/seo?path=%2Ffotbal%2Fromania-cupa%2F&params=competition%3Dromania-cupa%26sport%3Dfotbal&lang=ro&bookmaker=netbetro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/fotbal/romania-cupa/",
+      "capturedAt": "2026-09-01T18:49:16.349Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/tips/fixtures?bookmaker=netbetro&lang=ro&competition_slug=romania-cupa&sport_slug=fotbal&time=1788288555269",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/fotbal/romania-cupa/",
+      "capturedAt": "2026-09-01T18:49:16.358Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://global.netbet.ro/api/redirection?version=1788288555997",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://sport.netbet.ro/fotbal/romania-cupa/",
+      "capturedAt": "2026-09-01T18:49:16.431Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/inventory-events?sport=fotbal&competition=romania-cupa&key=market_type&t=1788288555612&lang=ro&bookmaker=netbetro",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://sport.netbet.ro/fotbal/romania-cupa/",
+      "capturedAt": "2026-09-01T18:49:16.677Z"
+    }
+  ],
+  "keyEndpoints": [
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/inventory-events?sport=fotbal&key=market_type&lang=ro&bookmaker=netbetro",
+      "verified": true
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/inventory-competitions?bookmaker=netbetro&lang=ro&sport=fotbal&mode=competitions&eager=%5Bregion,sport%5D&orderBy=region.slug",
+      "verified": true
+    },
+    {
+      "method": "GET",
+      "url": "https://push-eu-central-2.kumulos.com/v3/web/config?tenantId=1459&installId=2728224a-2494-4cdf-b3ce-3ae2ee3eaf62"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/inventory-sports?lang=ro&bookmaker=netbetro"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/inventory-competitions?bookmaker=netbetro&lang=ro&sport=fotbal&mode=competitions&eager=[region,sport]&orderBy=region.slug"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/global?lang=ro&bookmaker=netbetro"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/config?bookmaker=netbetro&lang=ro"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/betbuilder/precanned/featured?lang=ro&bookmaker=netbetro&mode=sport"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/tips/fixtures?bookmaker=netbetro&lang=ro&sport_slug=fotbal&time=1788288312777"
+    },
+    {
+      "method": "GET",
+      "url": "https://sportapi-sb.netbet.ro/authbg/getGameConfigs?lang=ro&username="
+    },
+    {
+      "method": "GET",
+      "url": "https://edge.fullstory.com/s/settings/o-1HBVFY-na1/v1/web"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/inventory-events/home-sections?lang=ro&bookmaker=netbetro"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/boosted-odds?lang=ro&bookmaker=netbetro"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/core/client/getClient?lang=ro&website=sport&device=desktop&app=default&version=1788288327143"
+    },
+    {
+      "method": "GET",
+      "url": "https://global.netbet.ro/api/redirection?version=1788288327144"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/game/config/getSportGamesByCatID?app=react&device=desktop&lang=ro&website=sport&cat_id=sports-plinko"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/semantic-search/trending?bookmaker=netbetro&lang=ro"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/game/config/getSportGamesByCatID?app=react&device=desktop&lang=ro&website=sport&cat_id=sport-most-popular-roulette"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/game/config/getSportGamesByCatID?app=react&device=desktop&lang=ro&website=sport&cat_id=sport-most-popular-blackjack"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/game/config/getSportGamesByCatID?app=react&device=desktop&lang=ro&website=sport&cat_id=sport-aviator"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/game/config/getSportGamesByCatID?app=react&device=desktop&lang=ro&website=sport&cat_id=sport-3-most-popular-slots"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/game/config/getSportGamesByCatID?app=react&device=desktop&lang=ro&website=sport&cat_id=sports-mines"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/core/client/getClient?lang=ro&website=sport&device=desktop&app=default&version=1788288328071"
+    },
+    {
+      "method": "GET",
+      "url": "https://global.netbet.ro/api/redirection?version=1788288328072"
+    },
+    {
+      "method": "GET",
+      "url": "https://global.netbet.ro/api/redirection?version=1788288331476"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/core/client/getClient?lang=ro&website=sport&device=desktop&app=default&version=1788288331475"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/tips/fixtures?bookmaker=netbetro&lang=ro&time=1788288331635"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/core/client/getClient?lang=ro&website=sport&device=desktop&app=default&version=1788288332738"
+    },
+    {
+      "method": "GET",
+      "url": "https://global.netbet.ro/api/redirection?version=1788288332738"
+    },
+    {
+      "method": "POST",
+      "url": "https://sec-gw.lsports.eu/tips/api/v1/tips"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/core/config/getMainDynamicConfig?app=default&cache_version=134377&device=desktop&is_global_project=1&lang=ro&website=sport"
+    },
+    {
+      "method": "POST",
+      "url": "https://api.sportify.bet/v1/tips/process"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/prematch/markets?event_id=1-30705861&bookmaker=netbetro&lang=ro&group=none"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/tips/fixtures?bookmaker=netbetro&lang=ro&event_id=1-30705861&competition_slug=romania-cupa&sport_slug=fotbal&time=1788288338067"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/core/client/getClient?lang=ro&website=sport&device=desktop&app=default&version=1788288338869"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/tips/fixtures?bookmaker=netbetro&lang=ro&event_id=1-30705861&competition_slug=romania-cupa&sport_slug=fotbal&time=1788288338068"
+    },
+    {
+      "method": "GET",
+      "url": "https://global.netbet.ro/api/redirection?version=1788288338870"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/echo/v1/markets?event_id=1-30705861&group=popular&bookmaker=netbetro&lang=ro"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/tips/fixtures?bookmaker=netbetro&lang=ro&event_id=1-30616732&competition_slug=italia-cupa&sport_slug=fotbal&time=1788288343252"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/tips/fixtures?bookmaker=netbetro&lang=ro&event_id=1-30616732&competition_slug=italia-cupa&sport_slug=fotbal&time=1788288343251"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/prematch/markets?event_id=1-30616732&bookmaker=netbetro&lang=ro&group=none"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/echo/v1/markets?event_id=1-30616732&group=popular&bookmaker=netbetro&lang=ro"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/core/client/getClient?lang=ro&website=sport&device=desktop&app=default&version=1788288344308"
+    },
+    {
+      "method": "GET",
+      "url": "https://global.netbet.ro/api/redirection?version=1788288344309"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/tips/fixtures?bookmaker=netbetro&lang=ro&event_id=1-30753042&competition_slug=usa-us-open-men&sport_slug=tenis&time=1788288348330"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/tips/fixtures?bookmaker=netbetro&lang=ro&event_id=1-30753042&competition_slug=usa-us-open-men&sport_slug=tenis&time=1788288348327"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/prematch/markets?event_id=1-30753042&bookmaker=netbetro&lang=ro&group=none"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/echo/v1/markets?event_id=1-30753042&group=popular&bookmaker=netbetro&lang=ro"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/core/client/getClient?lang=ro&website=sport&device=desktop&app=default&version=1788288349138"
+    },
+    {
+      "method": "GET",
+      "url": "https://global.netbet.ro/api/redirection?version=1788288349138"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/tips/fixtures?bookmaker=netbetro&lang=ro&event_id=1-30753025&competition_slug=usa-us-open-women&sport_slug=tenis&time=1788288353646"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/tips/fixtures?bookmaker=netbetro&lang=ro&event_id=1-30753025&competition_slug=usa-us-open-women&sport_slug=tenis&time=1788288353642"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/prematch/markets?event_id=1-30753025&bookmaker=netbetro&lang=ro&group=none"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/core/client/getClient?lang=ro&website=sport&device=desktop&app=default&version=1788288354802"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/echo/v1/markets?event_id=1-30753025&group=popular&bookmaker=netbetro&lang=ro"
+    },
+    {
+      "method": "GET",
+      "url": "https://global.netbet.ro/api/redirection?version=1788288354802"
+    },
+    {
+      "method": "POST",
+      "url": "https://sportapi-sb.netbet.ro/authbg/trackWidgetImpression"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.netbet.ro/v2/core/client/getClient?lang=ro&website=sport&device=desktop&app=default&version=1788288359909"
+    },
+    {
+      "method": "GET",
+      "url": "https://global.netbet.ro/api/redirection?version=1788288359910"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/info/outright?sport=fotbal&competition=romania-liga-1&lang=ro&bookmaker=netbetro"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/v1/tips/fixtures?bookmaker=netbetro&lang=ro&competition_slug=romania-liga-1&sport_slug=fotbal&time=1788288359141"
+    },
+    {
+      "method": "GET",
+      "url": "https://api.sportify.bet/api/content/inventory-events?sport=fotbal&competition=romania-liga-1&_cached=true&key=market_type&t=1788288358814&lang=ro&bookmaker=netbetro"
+    }
+  ],
+  "platform": "sportify",
+  "feedStatus": "verified",
+  "verifiedAt": "2026-09-01"
+}

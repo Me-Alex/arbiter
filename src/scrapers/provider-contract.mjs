@@ -1,4 +1,19 @@
 import ScraperBase from './base.mjs';
+import { combineAbortSignals } from '../shared/abort.mjs';
+import { ValidationError, UpstreamError } from '../shared/errors.mjs';
+
+/**
+ * Hard cap on a tenant response body. The public adapters (nsoft, altenar)
+ * bound their own reads; this helper has to as well, or a provider that streams
+ * without a Content-Length can exhaust memory inside a single scrape.
+ *
+ * 16 MB, matching nsoft.mjs, and set from measurement rather than taste: the
+ * largest live responses observed are superbet ~7.4 MB and favbet ~14.4 MB
+ * (scripts/live-check.mjs). A 4 MB cap looked tidy and would have rejected
+ * favbet outright, so the limit has to sit above the biggest real feed with
+ * room for growth — while still bounding a hostile or runaway response.
+ */
+const MAX_BODY_BYTES = 16_000_000;
 
 /**
  * ProviderContract — swappable parser for books that share an odds provider
@@ -55,28 +70,42 @@ export default class ProviderContract extends ScraperBase {
           ...headers,
         },
         signal: combinedSignal,
+        // A redirect to a challenge or login page must fail loudly rather than
+        // be followed into an unrelated body.
+        redirect: 'error',
       });
-      if (!res.ok) {
-        const err = new Error(`${this.id}: HTTP ${res.status} on ${path}`);
-        err.code = 'EUPSTREAM';
-        err.status = res.status;
-        throw err;
+      if (!res.ok) throw new UpstreamError(`${this.id}: HTTP ${res.status} on ${path}`, { status: res.status });
+      if (!res.headers.get('content-type')?.includes('json')) {
+        throw new ValidationError(`${this.id}: expected JSON from ${path}`);
       }
-      return await res.json();
+      return await readBoundedJson(res, this.id, combinedSignal);
     } finally {
       clearTimeout(t);
     }
   }
 }
 
-function combineAbortSignals(...signals) {
-  const active = signals.filter(Boolean);
-  if (active.length === 0) return undefined;
-  if (active.length === 1) return active[0];
-  const controller = new AbortController();
-  for (const signal of active) {
-    if (signal.aborted) controller.abort();
-    else signal.addEventListener('abort', () => controller.abort(), { once: true });
+/**
+ * Read a JSON body, refusing anything over `MAX_BODY_BYTES`. Counting while
+ * streaming means an oversized response is abandoned rather than buffered in
+ * full first.
+ */
+async function readBoundedJson(res, id, signal) {
+  const reader = res.body.getReader();
+  const chunks = [];
+  let size = 0;
+  try {
+    for (;;) {
+      signal?.throwIfAborted();
+      const { value, done } = await reader.read();
+      if (done) break;
+      size += value.byteLength;
+      if (size > MAX_BODY_BYTES) throw new ValidationError(`${id}: response exceeds ${MAX_BODY_BYTES / 1_000_000} MB`);
+      chunks.push(Buffer.from(value));
+    }
+  } finally {
+    await reader.cancel();
   }
-  return controller.signal;
+  signal?.throwIfAborted();
+  return JSON.parse(Buffer.concat(chunks).toString('utf8'));
 }

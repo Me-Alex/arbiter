@@ -1,0 +1,37 @@
+{
+  "book": "getsbet",
+  "timestamp": "2026-09-01T18:45:47.478Z",
+  "pagesVisited": 0,
+  "minPagesRequired": 50,
+  "pagesTargetReached": false,
+  "endpoints": [],
+  "keyEndpoints": [
+    {
+      "method": "GET",
+      "url": "wss://api-online.getsbet.ro/v2",
+      "evidence": "EveryMatrix ODDS RealtimeDealer WAMP v2 feed (realm online.getsbet.ro, operator 2476). Reverse-engineered WAMP flow: HELLO→WELCOME→REGISTER→initialDump over /sports/2476/ro/...; match discovery via tournament-aggregator-groups-overview (groups 2794,2795) and 1X2 via match-odds/market-group/Populare (bettingTypeId 69). Smoke-validated 2026-09-02: 33 fresh complete 1X2 events.",
+      "verified": true
+    },
+    {
+      "method": "GET",
+      "url": "https://sports2.getsbet.ro/ro",
+      "evidence": "ODDS sportsbook (static.glastcoper.com/omfe-widgets web components); tournament pages render",
+      "verified": true
+    },
+    {
+      "method": "POST",
+      "url": "https://sports-api.everymatrix.com",
+      "evidence": "OM sports API base exposed in page config; returns HTTP 500 to all unauthenticated HTTP. Odds are WAMP/WebSocket-only, no REST mirror exists (bundle audit 2026-09-02).",
+      "verified": true
+    },
+    {
+      "method": "GET",
+      "url": "https://s5.sir.sportradar.com/getsbet",
+      "evidence": "Sportradar Sir overlay configured for getsbet",
+      "verified": true
+    }
+  ],
+  "platform": "everymatrix-odds",
+  "feedStatus": "verified",
+  "verifiedAt": "2026-09-01"
+}
