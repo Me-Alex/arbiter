@@ -23,6 +23,7 @@ scratch/
 # Output of `npm run smoke:live`: a per-book health snapshot written on every
 # run. It is a measurement, not a source file.
 data-health.json
+data-health-history/
 data/measurements.jsonl
 
 # Images produced by tooling rather than authored for the repo.

@@ -119,6 +119,30 @@ jobs:
           path: data/measurements.jsonl
           if-no-files-found: ignore
           retention-days: 365
+      # Keep the last few reports so the next scheduled run can compare against
+      # them. Without a history, a provider that starts returning nothing fails
+      # every run from then on and nothing connects those failures — each one
+      # reads as a bad day rather than as a feed that moved.
+      - name: Restore the previous reports
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          pattern: data-health-*
+          path: data-health-history
+          merge-multiple: true
+
+      - name: Flag a book that has been failing repeatedly
+        run: npm run smoke:trend -- --dir data-health-history
+
+      # Keep this run's report alongside the others, named by when it ran, so
+      # the next run can read it. The timestamp uses `-` for the time separators:
+      # a colon is not a legal filename character on every platform.
+      - name: Save this run's report into the history
+        if: always()
+        run: |
+          stamp="$(${D:-date} -u +%Y-%m-%dT%H-%M-%SZ)"
+          mkdir -p data-health-history
+          [ -f data-health.json ] && cp data-health.json "data-health-history/$stamp.json" || true
       - name: Archive the smoke report
         if: always()
         uses: actions/upload-artifact@v4
