@@ -1,6 +1,7 @@
 import ScraperBase from './base.mjs';
 import { normalizeTeamName } from '../shared/text.mjs';
-import { ValidationError } from '../shared/errors.mjs';
+import { ValidationError, UpstreamError } from '../shared/errors.mjs';
+import { describeError, summariseReasons } from './feg-common.mjs';
 
 /** All known Betano sport IDs from sportCallerSportMapping + live layout. */
 const SPORT_IDS = ['FOOT', 'TENN', 'BASK', 'HANB', 'ICEH', 'VOLY', 'FUTS', 'DART', 'SNOO', 'MMA', 'RUGB', 'CRIC', 'ESPORTS', 'TABT', 'BADM', 'BASE', 'AMFO', 'MMAF', 'ESPS', 'VOLL', 'HAND', 'WTPL', 'TABL', 'BOXI', 'BCHV', 'VRTS', 'SWIM', 'FENC', 'TAEK', 'WINT', 'ATHL', 'GYMA', 'MOGP', 'RALL', 'MOTO', 'SPED', 'FRM1'];
@@ -33,9 +34,21 @@ export default class BetanoScraper extends ScraperBase {
       pw.chromium.use(stealth());
     } catch { pw = await import('playwright'); }
 
-    const browser = await pw.chromium.launch({ headless: true, args: ['--disable-blink-features=AutomationControlled'] });
-    const ctx = await browser.newContext({ locale: 'ro-RO', userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36' });
-    const page = await ctx.newPage();
+    // Injectable so the empty-session path is reachable without a browser:
+    // every way this adapter can come back empty used to end in a silent
+    // success, and none of them could be tested without launching Chromium.
+    // `ctx` is declared here rather than inside the else-branch so the teardown
+    // below can close it on the injected path too, where there is no browser.
+    let page;
+    let ctx = null;
+    let browser = null;
+    if (this.pageFactory) {
+      page = await this.pageFactory();
+    } else {
+      browser = await pw.chromium.launch({ headless: true, args: ['--disable-blink-features=AutomationControlled'] });
+      ctx = await browser.newContext({ locale: 'ro-RO', userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36' });
+      page = await ctx.newPage();
+    }
     await page.addInitScript(() => { Object.defineProperty(navigator, 'webdriver', { get: () => false }); });
 
     const merged = {
@@ -45,26 +58,56 @@ export default class BetanoScraper extends ScraperBase {
     try {
       // Step 1: Navigate to main page to clear Cloudflare
       await page.goto('https://ro.betano.com/', { waitUntil: 'domcontentloaded', timeout: 25000 });
-      for (let i = 0; i < 15; i++) { await page.waitForTimeout(2000); if ((await page.title()).includes('Pariuri')) break; }
+      // The title only reads "Pariuri" once the app has mounted, and a runner's
+      // locale may never produce it. The old loop ran its full 30 s in that
+      // case, on every run, before a single feed request — which is why this
+      // book took 40 s on the runner and 23 s locally. Half the budget, and the
+      // title is logged below either way, so a wait that never succeeds is
+      // visible rather than merely slow.
+      const titleDeadline = Date.now() + 15_000;
+      let title = '';
+      while (Date.now() < titleDeadline) {
+        await page.waitForTimeout(2000);
+        title = await page.title();
+        if (title.includes('Pariuri')) break;
+      }
+      if (!title.includes('Pariuri')) {
+        this.logger('info', `Betano: home page never showed the app (title="${title}")`);
+      }
       await page.waitForTimeout(3000);
 
       // Step 2: Navigate to a sport page to establish session
       await page.goto('https://betano.ro/sport/fotbal', { waitUntil: 'domcontentloaded', timeout: 25000 });
       await page.waitForTimeout(5000);
 
-      // Step 3: Fetch top-events-v2 for each sport ID via in-page fetch
+      // Step 3: Fetch top-events-v2 for each sport ID via in-page fetch.
+      //
+      // Every failure used to be swallowed: a non-2xx returned null, a missing
+      // topEventsV2 continued, a thrown in-page request was caught and ignored.
+      // All 36 could fail and the run still reported success with zero events,
+      // which is indistinguishable from a day with no fixtures. The reasons are
+      // counted so a total failure can say what actually came back.
+      const reasons = new Map();
+      const record = (why) => reasons.set(why, (reasons.get(why) || 0) + 1);
 
       for (const sportId of SPORT_IDS) {
         signal?.throwIfAborted();
         try {
           const payload = await page.evaluate(async (sid) => {
             const res = await fetch('/api/home/top-events-v2/?sportId=' + sid, { headers: { 'Accept': 'application/json' } });
-            if (!res.ok) return null;
+            if (!res.ok) return { __status: res.status };
             return res.json();
           }, sportId);
 
+          if (payload?.__status) { record(`HTTP ${payload.__status}`); continue; }
           const top = payload?.data?.topEventsV2;
-          if (!top) continue;
+          // `typeof {} === 'object'`, so a well-formed empty body used to pass
+          // this shape check. An empty topEventsV2 means the session was never
+          // established, not that there are no fixtures.
+          if (!top || typeof top !== 'object' || !Array.isArray(top.eventIdList)) {
+            record('no topEventsV2 in the response');
+            continue;
+          }
           for (const eid of (top.eventIdList || [])) {
             if (!merged.data.topEventsV2.events[String(eid)]) {
               merged.data.topEventsV2.eventIdList.push(eid);
@@ -74,7 +117,19 @@ export default class BetanoScraper extends ScraperBase {
           Object.assign(merged.data.topEventsV2.leagues, top.leagues || {});
           Object.assign(merged.data.topEventsV2.markets, top.markets || {});
           Object.assign(merged.data.topEventsV2.selections, top.selections || {});
-        } catch { /* skip failed sports */ }
+        } catch (err) {
+          if (signal?.aborted) throw err;
+          record(describeError(err));
+        }
+      }
+
+      // A run where nothing at all came back is a failed run. Reporting it as
+      // an empty success is how this book went missing for a day while the run
+      // report said "ok".
+      if (merged.data.topEventsV2.eventIdList.length === 0) {
+        throw new UpstreamError(
+          `Betano: no events from ${SPORT_IDS.length} in-page requests — ${summariseReasons(reasons)}`,
+        );
       }
 
       // Step 4: search/topevents is redundant — all its events are already
@@ -82,8 +137,10 @@ export default class BetanoScraper extends ScraperBase {
 
       this.logger('info', `Betano: merged ${merged.data.topEventsV2.eventIdList.length} event IDs, ${Object.keys(merged.data.topEventsV2.events).length} with details`);
     } finally {
-      await ctx.close().catch(() => {});
-      await browser.close().catch(() => {});
+      // No context on the injected path, where there is no browser to close.
+      await ctx?.close().catch(() => {});
+      // No browser on the injected path, where there is none to close.
+      await browser?.close().catch(() => {});
     }
 
     this.sourceUrl = 'https://betano.ro (multi-sport top-events-v2)';
