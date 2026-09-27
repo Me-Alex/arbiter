@@ -1,8 +1,8 @@
 {
-  "runId": "2026-09-26T17:39:33.427Z",
+  "runId": "2026-09-26T21:00:44.912Z",
   "status": "completed",
-  "startedAt": "2026-09-26T17:39:33.427Z",
-  "finishedAt": "2026-09-26T17:40:25.478Z",
+  "startedAt": "2026-09-26T21:00:44.912Z",
+  "finishedAt": "2026-09-26T21:01:47.594Z",
   "options": {
     "bankroll": 1000,
     "minRoiPercent": 0,
@@ -44,11 +44,11 @@
       "sourceIds": [],
       "valid": true,
       "status": "ok",
-      "events": 1285,
-      "durationMs": 1936,
+      "events": 854,
+      "durationMs": 1978,
       "error": null,
-      "startedAt": "2026-09-26T17:39:33.450Z",
-      "finishedAt": "2026-09-26T17:39:35.386Z",
+      "startedAt": "2026-09-26T21:00:45.493Z",
+      "finishedAt": "2026-09-26T21:00:47.471Z",
       "marketDiagnostics": null
     },
     {
@@ -57,11 +57,11 @@
       "sourceIds": [],
       "valid": true,
       "status": "ok",
-      "events": 93,
-      "durationMs": 1008,
+      "events": 86,
+      "durationMs": 1265,
       "error": null,
-      "startedAt": "2026-09-26T17:39:33.453Z",
-      "finishedAt": "2026-09-26T17:39:34.461Z",
+      "startedAt": "2026-09-26T21:00:45.506Z",
+      "finishedAt": "2026-09-26T21:00:46.771Z",
       "marketDiagnostics": null
     },
     {
@@ -70,11 +70,11 @@
       "sourceIds": [],
       "valid": true,
       "status": "ok",
-      "events": 313,
-      "durationMs": 25093,
+      "events": 349,
+      "durationMs": 28269,
       "error": null,
-      "startedAt": "2026-09-26T17:39:33.454Z",
-      "finishedAt": "2026-09-26T17:39:58.547Z",
+      "startedAt": "2026-09-26T21:00:45.508Z",
+      "finishedAt": "2026-09-26T21:01:13.777Z",
       "marketDiagnostics": null
     },
     {
@@ -83,11 +83,11 @@
       "sourceIds": [],
       "valid": true,
       "status": "ok",
-      "events": 1192,
-      "durationMs": 23422,
+      "events": 1104,
+      "durationMs": 22759,
       "error": null,
-      "startedAt": "2026-09-26T17:39:33.455Z",
-      "finishedAt": "2026-09-26T17:39:56.877Z",
+      "startedAt": "2026-09-26T21:00:45.513Z",
+      "finishedAt": "2026-09-26T21:01:08.272Z",
       "marketDiagnostics": null
     },
     {
@@ -97,10 +97,10 @@
       "valid": true,
       "status": "ok",
       "events": 11,
-      "durationMs": 23616,
+      "durationMs": 32625,
       "error": null,
-      "startedAt": "2026-09-26T17:39:34.461Z",
-      "finishedAt": "2026-09-26T17:39:58.077Z",
+      "startedAt": "2026-09-26T21:00:46.771Z",
+      "finishedAt": "2026-09-26T21:01:19.396Z",
       "marketDiagnostics": null
     },
     {
@@ -109,11 +109,11 @@
       "sourceIds": [],
       "valid": true,
       "status": "ok",
-      "events": 64,
-      "durationMs": 606,
+      "events": 59,
+      "durationMs": 115,
       "error": null,
-      "startedAt": "2026-09-26T17:39:35.386Z",
-      "finishedAt": "2026-09-26T17:39:35.992Z",
+      "startedAt": "2026-09-26T21:00:47.472Z",
+      "finishedAt": "2026-09-26T21:00:47.587Z",
       "marketDiagnostics": null
     },
     {
@@ -122,11 +122,11 @@
       "sourceIds": [],
       "valid": true,
       "status": "ok",
-      "events": 995,
-      "durationMs": 460,
+      "events": 789,
+      "durationMs": 2140,
       "error": null,
-      "startedAt": "2026-09-26T17:39:35.993Z",
-      "finishedAt": "2026-09-26T17:39:36.453Z",
+      "startedAt": "2026-09-26T21:00:47.587Z",
+      "finishedAt": "2026-09-26T21:00:49.727Z",
       "marketDiagnostics": null
     },
     {
@@ -135,11 +135,11 @@
       "sourceIds": [],
       "valid": true,
       "status": "ok",
-      "events": 673,
-      "durationMs": 20051,
+      "events": 649,
+      "durationMs": 20400,
       "error": null,
-      "startedAt": "2026-09-26T17:39:36.454Z",
-      "finishedAt": "2026-09-26T17:39:56.505Z",
+      "startedAt": "2026-09-26T21:00:49.727Z",
+      "finishedAt": "2026-09-26T21:01:10.127Z",
       "marketDiagnostics": null
     },
     {
@@ -148,11 +148,11 @@
       "sourceIds": [],
       "valid": true,
       "status": "ok",
-      "events": 1191,
-      "durationMs": 22922,
+      "events": 1099,
+      "durationMs": 23438,
       "error": null,
-      "startedAt": "2026-09-26T17:39:56.505Z",
-      "finishedAt": "2026-09-26T17:40:19.427Z",
+      "startedAt": "2026-09-26T21:01:08.274Z",
+      "finishedAt": "2026-09-26T21:01:31.712Z",
       "marketDiagnostics": null
     },
     {
@@ -162,10 +162,10 @@
       "valid": true,
       "status": "ok",
       "events": 11,
-      "durationMs": 26164,
+      "durationMs": 35862,
       "error": null,
-      "startedAt": "2026-09-26T17:39:56.877Z",
-      "finishedAt": "2026-09-26T17:40:23.041Z",
+      "startedAt": "2026-09-26T21:01:10.127Z",
+      "finishedAt": "2026-09-26T21:01:45.989Z",
       "marketDiagnostics": null
     },
     {
@@ -174,11 +174,11 @@
       "sourceIds": [],
       "valid": true,
       "status": "ok",
-      "events": 995,
-      "durationMs": 460,
+      "events": 789,
+      "durationMs": 380,
       "error": null,
-      "startedAt": "2026-09-26T17:39:58.077Z",
-      "finishedAt": "2026-09-26T17:39:58.537Z",
+      "startedAt": "2026-09-26T21:01:13.777Z",
+      "finishedAt": "2026-09-26T21:01:14.157Z",
       "marketDiagnostics": null
     },
     {
@@ -187,11 +187,11 @@
       "sourceIds": [],
       "valid": true,
       "status": "ok",
-      "events": 995,
-      "durationMs": 406,
+      "events": 789,
+      "durationMs": 381,
       "error": null,
-      "startedAt": "2026-09-26T17:39:58.537Z",
-      "finishedAt": "2026-09-26T17:39:58.943Z",
+      "startedAt": "2026-09-26T21:01:14.157Z",
+      "finishedAt": "2026-09-26T21:01:14.538Z",
       "marketDiagnostics": null
     },
     {
@@ -200,11 +200,11 @@
       "sourceIds": [],
       "valid": true,
       "status": "ok",
-      "events": 1037,
-      "durationMs": 820,
+      "events": 612,
+      "durationMs": 796,
       "error": null,
-      "startedAt": "2026-09-26T17:39:58.547Z",
-      "finishedAt": "2026-09-26T17:39:59.367Z",
+      "startedAt": "2026-09-26T21:01:14.538Z",
+      "finishedAt": "2026-09-26T21:01:15.334Z",
       "marketDiagnostics": null
     },
     {
@@ -213,11 +213,11 @@
       "sourceIds": [],
       "valid": true,
       "status": "ok",
-      "events": 93,
-      "durationMs": 606,
+      "events": 86,
+      "durationMs": 374,
       "error": null,
-      "startedAt": "2026-09-26T17:39:58.943Z",
-      "finishedAt": "2026-09-26T17:39:59.549Z",
+      "startedAt": "2026-09-26T21:01:15.334Z",
+      "finishedAt": "2026-09-26T21:01:15.708Z",
       "marketDiagnostics": null
     },
     {
@@ -227,10 +227,10 @@
       "valid": true,
       "status": "ok",
       "events": 568,
-      "durationMs": 4957,
+      "durationMs": 3778,
       "error": null,
-      "startedAt": "2026-09-26T17:39:59.367Z",
-      "finishedAt": "2026-09-26T17:40:04.324Z",
+      "startedAt": "2026-09-26T21:01:15.709Z",
+      "finishedAt": "2026-09-26T21:01:19.487Z",
       "marketDiagnostics": null
     },
     {
@@ -239,11 +239,11 @@
       "sourceIds": [],
       "valid": true,
       "status": "ok",
-      "events": 92,
-      "durationMs": 610,
+      "events": 86,
+      "durationMs": 439,
       "error": null,
-      "startedAt": "2026-09-26T17:39:59.550Z",
-      "finishedAt": "2026-09-26T17:40:00.160Z",
+      "startedAt": "2026-09-26T21:01:19.396Z",
+      "finishedAt": "2026-09-26T21:01:19.835Z",
       "marketDiagnostics": null
     },
     {
@@ -252,11 +252,11 @@
       "sourceIds": [],
       "valid": true,
       "status": "ok",
-      "events": 1285,
-      "durationMs": 845,
+      "events": 854,
+      "durationMs": 1264,
       "error": null,
-      "startedAt": "2026-09-26T17:40:00.160Z",
-      "finishedAt": "2026-09-26T17:40:01.005Z",
+      "startedAt": "2026-09-26T21:01:19.487Z",
+      "finishedAt": "2026-09-26T21:01:20.751Z",
       "marketDiagnostics": null
     },
     {
@@ -265,11 +265,11 @@
       "sourceIds": [],
       "valid": true,
       "status": "ok",
-      "events": 2780,
-      "durationMs": 809,
+      "events": 2593,
+      "durationMs": 1042,
       "error": null,
-      "startedAt": "2026-09-26T17:40:01.006Z",
-      "finishedAt": "2026-09-26T17:40:01.815Z",
+      "startedAt": "2026-09-26T21:01:19.836Z",
+      "finishedAt": "2026-09-26T21:01:20.878Z",
       "marketDiagnostics": null
     },
     {
@@ -278,11 +278,11 @@
       "sourceIds": [],
       "valid": true,
       "status": "ok",
-      "events": 65,
-      "durationMs": 231,
+      "events": 59,
+      "durationMs": 273,
       "error": null,
-      "startedAt": "2026-09-26T17:40:01.815Z",
-      "finishedAt": "2026-09-26T17:40:02.046Z",
+      "startedAt": "2026-09-26T21:01:20.751Z",
+      "finishedAt": "2026-09-26T21:01:21.024Z",
       "marketDiagnostics": null
     },
     {
@@ -291,11 +291,11 @@
       "sourceIds": [],
       "valid": true,
       "status": "ok",
-      "events": 92,
-      "durationMs": 401,
+      "events": 86,
+      "durationMs": 905,
       "error": null,
-      "startedAt": "2026-09-26T17:40:02.046Z",
-      "finishedAt": "2026-09-26T17:40:02.447Z",
+      "startedAt": "2026-09-26T21:01:20.878Z",
+      "finishedAt": "2026-09-26T21:01:21.783Z",
       "marketDiagnostics": null
     },
     {
@@ -304,11 +304,11 @@
       "sourceIds": [],
       "valid": true,
       "status": "ok",
-      "events": 995,
-      "durationMs": 381,
+      "events": 789,
+      "durationMs": 388,
       "error": null,
-      "startedAt": "2026-09-26T17:40:02.447Z",
-      "finishedAt": "2026-09-26T17:40:02.828Z",
+      "startedAt": "2026-09-26T21:01:21.024Z",
+      "finishedAt": "2026-09-26T21:01:21.412Z",
       "marketDiagnostics": null
     },
     {
@@ -317,11 +317,11 @@
       "sourceIds": [],
       "valid": true,
       "status": "ok",
-      "events": 2873,
-      "durationMs": 843,
+      "events": 949,
+      "durationMs": 815,
       "error": null,
-      "startedAt": "2026-09-26T17:40:02.829Z",
-      "finishedAt": "2026-09-26T17:40:03.672Z",
+      "startedAt": "2026-09-26T21:01:21.413Z",
+      "finishedAt": "2026-09-26T21:01:22.228Z",
       "marketDiagnostics": null
     }
   ],
@@ -329,7 +329,7 @@
   "summary": {
     "completed": 22,
     "failed": 0,
-    "events": 17698,
+    "events": 13271,
     "markets": []
   },
   "currentStep": {
