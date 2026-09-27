@@ -66,6 +66,20 @@ check('the live gate is scheduled',
   /^\s{2}schedule:/m.test(workflowText) && /cron: '\d+ \d+ \* \* [\d,]+'/.test(workflowText),
   (workflowText.match(/cron: '([^']+)'/) || [])[1] || 'no cron found');
 
+check('the live job records itself before the gate can fail it',
+  // A step that fails skips every later step. With the gate before the
+  // history step, a failing run — the one that most needs recording — was
+  // never filed, so the series had no failed runs in it and could never show a
+  // trend. The gate must be the last step that can fail the job.
+  (() => {
+    const gate = workflowText.indexOf('run: npm run smoke:live');
+    const file = workflowText.indexOf('data-health-history/$stamp.json');
+    const trend = workflowText.indexOf('run: npm run smoke:trend');
+    if (gate < 0 || file < 0 || trend < 0) return false;
+    return gate < file && file < trend;
+  })(),
+  'record the report, then judge the series — otherwise a failed run leaves no trace');
+
 check('the live job is gated to schedule or manual dispatch',
   /event_name == 'schedule'/.test(workflowText) && /event_name == 'workflow_dispatch'/.test(workflowText),
   'a push must not reach 22 third-party endpoints');
