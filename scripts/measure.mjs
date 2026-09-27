@@ -38,7 +38,11 @@ import { groupByEvent } from '../src/scanner/engine.mjs';
 import { isMatchResultMarket, canonicalOutcome } from '../src/scanner/market-contracts.mjs';
 import { isSharedFeed } from '../src/scanner/feed-groups.mjs';
 
-const ROOT = fileURLToPath(new URL('..', import.meta.url));
+// Resolved from the working directory, overridable, so the tool can be pointed
+// at a copy of the tree. A test that invoked it in place would append to the
+// real journal — which is how fourteen rows naming a book that does not exist
+// got in there.
+const ROOT = process.env.ARBITER_ROOT ? process.env.ARBITER_ROOT : fileURLToPath(new URL('..', import.meta.url));
 const JOURNAL = join(ROOT, 'data', 'measurements.jsonl');
 
 const DEFAULT_BOOKS = 'superbet,netbet,admiral,winner,fortuna,maxbet,don';
@@ -141,25 +145,39 @@ async function round() {
 }
 
 const rows = [];
+let skipped = 0;
 for (let i = 0; i < rounds; i += 1) {
   if (i > 0) await sleep(gapMs);
   const r = await round();
-  rows.push(r);
   const b = r.best
     ? `${r.best.roiPercent.toFixed(2)}% (${r.best.event}, ${r.best.books.join('+')})`
     : 'n/a';
   console.log(`round ${i + 1} ${r.at} | events ${String(r.events).padStart(4)} | cross-feed pairs ${String(r.crossFeedPairs).padStart(4)} | best ${b}`);
   for (const e of r.errors) console.log(`  ${e.id} failed: ${e.error.slice(0, 90)}`);
+
+  // A round that collected nothing and had no scraper failure measured nothing.
+  // Recording it would put a zero in the series next to real rounds, where it
+  // reads as "the market had nothing" rather than "nothing was asked" — and a
+  // mistyped book name is the usual cause. Tests that invoke this tool would
+  // otherwise grow the journal by a row per run.
+  if (r.events === 0 && r.errors.length === 0) {
+    skipped += 1;
+    console.log('  not recorded: no events were collected and no scraper failed, so there is nothing to measure');
+    continue;
+  }
+  rows.push(r);
 }
 
 // Append, so the series grows rather than being overwritten. One JSON object
 // per line keeps it greppable and append-safe without a rewrite.
-await fs.mkdir(join(ROOT, 'data'), { recursive: true });
-await fs.appendFile(JOURNAL, rows.map((r) => JSON.stringify(r)).join('\n') + '\n');
+if (rows.length > 0) {
+  await fs.mkdir(join(ROOT, 'data'), { recursive: true });
+  await fs.appendFile(JOURNAL, rows.map((r) => JSON.stringify(r)).join('\n') + '\n');
+}
 
 const positive = rows.filter((r) => r.best && r.best.roiPercent > 0);
-console.log(`\nrounds: ${rows.length} | with a positive cross-feed return: ${positive.length}`);
-console.log(`appended to ${JOURNAL}`);
+console.log(`\nrounds measured: ${rows.length}${skipped ? ` (${skipped} recorded nothing and were not written)` : ''} | with a positive cross-feed return: ${positive.length}`);
+console.log(rows.length > 0 ? `appended to ${JOURNAL}` : 'nothing to append');
 if (positive.length === 0) {
   console.log('A negative return is the expected shape of an arbitraged market — not a failure.');
 }

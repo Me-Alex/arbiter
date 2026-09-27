@@ -2,7 +2,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { execFile } from 'node:child_process';
 import { promises as fs } from 'node:fs';
-import { readFile } from 'node:fs/promises';
+import { mkdtemp, readFile, rm } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -91,12 +92,43 @@ test('the tool runs as npm run measure', async () => {
   assert.match(pkg.scripts.measure || '', /scripts\/measure\.mjs/, 'the tool is reachable without a path');
 });
 
-test('the tool exits 0 even when a book is unreachable', async () => {
-  // One book timing out must not abort the round: the other books still
-  // measure something, and the failure is recorded in the row.
-  const code = await new Promise((resolve) => {
-    execFile(process.execPath, [SCRIPT, 'definitely-not-a-book', '--rounds', '1'], { cwd: ROOT, timeout: 60_000 },
-      (err) => resolve(err?.code ?? 0));
+test('an unknown book is skipped, and records nothing', async (t) => {
+  // Two things at once, because they are the same guarantee from two sides:
+  // the tool does not treat a book that does not exist as a failure, and it
+  // does not write a row for it either. A row here would read as "the market
+  // had nothing that day" rather than "nothing was asked", and this test would
+  // have grown the real journal by one row on every `npm test` — which is
+  // exactly what it had been doing.
+  const dir = await mkdtemp(join(tmpdir(), 'arbiter-measure-'));
+  t.after(() => rm(dir, { recursive: true, force: true }));
+  const before = await journalRows();
+
+  // The tool reads config/scrapers.json to know which books exist, so the
+  // fixture root needs one. A copy of the real config is enough: the book under
+  // test is deliberately absent from it, which is the case being checked.
+  await fs.mkdir(join(dir, 'config'), { recursive: true });
+  await fs.copyFile(join(ROOT, 'config', 'scrapers.json'), join(dir, 'config', 'scrapers.json'));
+
+  const result = await new Promise((resolve) => {
+    execFile(process.execPath, [SCRIPT, 'definitely-not-a-book', '--rounds', '1'],
+      { cwd: dir, env: { ...process.env, ARBITER_ROOT: dir }, timeout: 60_000 },
+      (err, stdout, stderr) => resolve({ code: err?.code ?? 0, stdout, stderr }));
   });
-  assert.equal(code, 0, 'an unknown book is skipped, not treated as a failure');
+
+  assert.equal(result.code, 0, 'an unknown book is skipped, not treated as a failure');
+  assert.match(result.stdout, /not recorded/, 'the tool says it recorded nothing');
+  assert.match(result.stdout, /nothing to append/, 'and that there was nothing to append');
+
+  const after = await journalRows();
+  assert.deepEqual(after, before, 'the journal did not grow');
 });
+
+/** The real journal's contents, so "did not grow" is checked against it. */
+async function journalRows() {
+  try {
+    const text = await readFile(JOURNAL, 'utf8');
+    return text.trim().split('\n').filter(Boolean);
+  } catch {
+    return [];
+  }
+}
