@@ -21,7 +21,7 @@ const SPORT_IDS = [
   'ufo:sprt:29', // ? (6)
   'ufo:sprt:35', // ? (1)
 ];
-import { fegSportName, normalizeFegMarket } from './feg-common.mjs';
+import { fegSportName, normalizeFegMarket, describeError, summariseReasons } from './feg-common.mjs';
 
 /** Batch size for market hydration. */
 const BATCH_SIZE = 50;
@@ -62,9 +62,19 @@ export default class FortunaScraper extends ScraperBase {
     // Per-request failure accounting. Every step below swallows individual
     // failures so one dead tournament does not lose the other 120, but a run in
     // which every request failed must not be reported as a successful empty
-    // scrape:  is indistinguishable from a quiet day.
+    // scrape: that is indistinguishable from a quiet day.
     let attempted = 0;
     let failed = 0;
+    // Why the requests failed, not just how many. Without this, a refused
+    // connection, a 403 and a malformed body all surface as the same line —
+    // "all 13 catalogue requests failed" — which is the one message you cannot
+    // act on, because it names none of the three causes.
+    const reasons = new Map();
+    const recordFailure = (stage, why) => {
+      failed += 1;
+      const key = `${stage}: ${why}`;
+      reasons.set(key, (reasons.get(key) || 0) + 1);
+    };
 
     const allTournaments = [];
     for (const sportId of SPORT_IDS) {
@@ -73,14 +83,17 @@ export default class FortunaScraper extends ScraperBase {
       try {
         const url = `${BASE}/offer/structure/api/v1_0/sport/${sportId}/tournaments?categories=true&timeFilter=all`;
         const catResp = await fetch(url, { signal, headers });
-        if (!catResp.ok) { failed += 1; continue; }
+        if (!catResp.ok) { recordFailure('catalogue', `HTTP ${catResp.status}`); continue; }
         const catData = await catResp.json();
         for (const t of (catData.tournaments || [])) {
           t._sportId = sportId;
           t._sportName = fegSportName(sportId);
           allTournaments.push(t);
         }
-      } catch (err) { if (signal?.aborted) throw err; failed += 1; }
+      } catch (err) {
+        if (signal?.aborted) throw err;
+        recordFailure('catalogue', describeError(err));
+      }
     }
     const withFixtures = allTournaments.filter((t) => t.fixturesCount > 0);
     this.logger('info', `Fortuna: ${withFixtures.length} tournaments with fixtures across ${SPORT_IDS.length} sports`);
@@ -96,7 +109,7 @@ export default class FortunaScraper extends ScraperBase {
       try {
         const url = `${BASE}${MATCHES_PATH}${encodeURIComponent(t.id)}/matches`;
         const resp = await fetch(url, { signal, headers });
-        if (!resp.ok) { failed += 1; continue; }
+        if (!resp.ok) { recordFailure('matches', `HTTP ${resp.status}`); continue; }
         const data = await resp.json();
         const fixtures = data.fixtures || [];
         for (const f of fixtures) {
@@ -106,7 +119,10 @@ export default class FortunaScraper extends ScraperBase {
           f._sportName = t._sportName || 'Football';
           allFixtures.push(f);
         }
-      } catch (err) { if (signal?.aborted) throw err; failed += 1; }
+      } catch (err) {
+        if (signal?.aborted) throw err;
+        recordFailure('matches', describeError(err));
+      }
     }
     this.logger('info', `Fortuna: ${allFixtures.length} fixtures from catalogue`);
 
@@ -121,14 +137,17 @@ export default class FortunaScraper extends ScraperBase {
         const params = batch.map((id) => 'fixtureIds=' + encodeURIComponent(id)).join('&');
         const url = `${MARKETS_URL}?${params}`;
         const resp = await fetch(url, { signal, headers });
-        if (!resp.ok) { failed += 1; continue; }
+        if (!resp.ok) { recordFailure('matches', `HTTP ${resp.status}`); continue; }
         const data = await resp.json();
         for (const [fid, mkts] of Object.entries(data)) {
           if (Array.isArray(mkts) && mkts.length > 0) {
             marketsByFixture.set(fid, mkts);
           }
         }
-      } catch (err) { if (signal?.aborted) throw err; failed += 1; }
+      } catch (err) {
+        if (signal?.aborted) throw err;
+        recordFailure('markets', describeError(err));
+      }
     }
     this.logger('info', `Fortuna: ${marketsByFixture.size} fixtures with hydrated markets`);
 
@@ -137,7 +156,9 @@ export default class FortunaScraper extends ScraperBase {
     // Partial failure still returns what was collected, and the counters travel
     // with the payload so the shortfall is visible in the run report.
     if (attempted > 0 && failed === attempted) {
-      throw new UpstreamError(`Fortuna: all ${attempted} catalogue requests failed`);
+      throw new UpstreamError(
+        `Fortuna: all ${attempted} catalogue requests failed — ${summariseReasons(reasons)}`,
+      );
     }
     this.sourceUrl = `${BASE}/offer/structure/api/v1_0/sport/tournaments`;
     return { tournaments: [...tourMap.values()], fixtures: allFixtures, marketsByFixture };
