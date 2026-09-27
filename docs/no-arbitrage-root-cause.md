@@ -98,6 +98,7 @@ previous revision of this document was the same idea, counted differently.
 | 11 | 19:18, before the journal | 4 | 400 | 33 | −3.26% |
 | 12 | 20:38, from the journal | 4 | 800 | 8 | −4.52% |
 | 13 | 20:38, from the journal | 4 | 800 | 8 | −4.52% |
+| 14 | 12:30, from the journal | 7 | 1253 | 15 | −4.48% |
 <!-- measurements:end -->
 
 The best combination is consistently the same fixture — Slovakia vs Moldova,
