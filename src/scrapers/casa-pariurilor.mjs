@@ -121,8 +121,10 @@ export default class CasaPariurilorScraper extends ScraperBase {
     // Partial failure still returns what was collected, and the counters travel
     // with the payload so the shortfall is visible in the run report.
     if (attempted > 0 && failed === attempted) {
+      // `attempted` counts every request across all three phases, so calling
+      // them all "catalogue" named a phase that is only the first of three.
       throw new UpstreamError(
-        `CasaPariurilor: all ${attempted} catalogue requests failed — ${summariseReasons(reasons)}`,
+        `CasaPariurilor: all ${attempted} requests failed — ${summariseReasons(reasons)}`,
       );
     }
     this.sourceUrl = `${BASE}/offer/structure/api/v1_0/sport/tournaments`;
