@@ -40,9 +40,27 @@ test('the document marks the region the tool owns', async () => {
   );
 });
 
-test('the table currently matches the journal', async () => {
+test('the table currently matches the journal', async (t) => {
   // The check mode, not --write: this asserts agreement rather than producing
   // it, so a journal that grows without a re-sync fails here.
+  //
+  // The journal is gitignored, so a clean checkout — a CI runner, a fresh
+  // clone — has none. There is nothing to compare against, and that is not
+  // drift. The test asserts agreement when a journal exists and skips
+  // otherwise, rather than failing on an absence it cannot fix.
+  let journal;
+  try {
+    journal = await readFile(JOURNAL, 'utf8');
+  } catch {
+    t.skip('no journal in this checkout (it is gitignored); nothing to compare the table against');
+    return;
+  }
+  const hasMeasurements = journal.trim().split('\n').filter(Boolean)
+    .some((line) => JSON.parse(line).events > 0);
+  if (!hasMeasurements) {
+    t.skip('the journal has no round that collected anything; nothing to compare against');
+    return;
+  }
   const result = await runSync();
   assert.equal(result.code, 0, `the table has drifted from the journal: ${result.stderr.trim()}`);
 });
@@ -66,10 +84,19 @@ test('the tool detects a hand-edited table rather than trusting it', async () =>
 
     // Point the tool at the tampered copy by running it in a directory that
     // mirrors the two paths it reads.
+    //
+    // The journal here is written by the test rather than copied: the real one
+    // is gitignored, so a clean checkout has none, and a test that depends on
+    // it fails for a reason that has nothing to do with what it checks.
+    const journal = [
+      { at: '2030-01-01T10:00:00.000Z', books: ['a', 'b'], events: 200, crossFeedPairs: 3, best: { roiPercent: -2.5, event: 'X v Y', books: ['a', 'b'] }, errors: [] },
+      { at: '2030-01-01T10:05:00.000Z', books: ['a', 'b'], events: 200, crossFeedPairs: 3, best: { roiPercent: -2.5, event: 'X v Y', books: ['a', 'b'] }, errors: [] },
+    ].map((r) => JSON.stringify(r)).join('\n') + '\n';
+
     await fs.mkdir(join(dir, 'docs'), { recursive: true });
     await fs.mkdir(join(dir, 'data'), { recursive: true });
     await writeFile(join(dir, 'docs', 'no-arbitrage-root-cause.md'), tampered);
-    await writeFile(join(dir, 'data', 'measurements.jsonl'), await readFile(JOURNAL, 'utf8'));
+    await writeFile(join(dir, 'data', 'measurements.jsonl'), journal);
     await fs.copyFile(SYNC, join(dir, 'sync-measurements.mjs'));
 
     const result = await new Promise((resolve) => {
