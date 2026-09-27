@@ -6,13 +6,17 @@ name: test
 #   push / pull_request  the unit gate — lint plus the full suite, no network.
 #   schedule / manual    the live gate — the 22 public bookmaker endpoints.
 #
+# Pushes trigger on every branch, not just the default one. Work here happens
+# on `fix/…` and `cleanup/…` branches — that is the project's convention — and a
+# trigger restricted to master/main would mean the gate never appears on the
+# commits it is meant to check. The live job is gated separately below.
+#
 # The live job is scheduled rather than per-push because it calls 22 public
 # endpoints, and a provider being briefly unreachable is not a defect in this
 # repository. Mondays and Thursdays at 06:10 UTC: after the European evening
 # slate has settled, before the weekend's early fixtures.
 on:
   push:
-    branches: [master, main]
   pull_request:
   schedule:
     - cron: '10 6 * * 1,4'

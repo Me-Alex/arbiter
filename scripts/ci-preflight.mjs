@@ -54,6 +54,14 @@ check('a single `on:` block', onBlocks === 1,
 check('the unit gate runs on push and pull_request',
   /^\s{2}push:/m.test(workflowText) && /^\s{2}pull_request:/m.test(workflowText));
 
+check('push is not restricted to the default branch',
+  // Work here happens on fix/… and cleanup/… branches, which is the project's
+  // own convention. A trigger filtered to master/main would mean the gate never
+  // appears on the commits it exists to check, and nothing would look wrong:
+  // the workflow would simply never run.
+  !/^\s{4}branches:/m.test(workflowText),
+  'a branch filter skips every fix/… branch the project actually uses');
+
 check('the live gate is scheduled',
   /^\s{2}schedule:/m.test(workflowText) && /cron: '\d+ \d+ \* \* [\d,]+'/.test(workflowText),
   (workflowText.match(/cron: '([^']+)'/) || [])[1] || 'no cron found');
