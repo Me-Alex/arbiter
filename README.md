@@ -46,6 +46,24 @@ npm test                 # node --test test/*.test.mjs
 npm run lint
 ```
 
+### Checking a change
+
+The unit suite is offline and fast; it cannot tell you that a bookmaker still
+answers. These can, and they are how the defects in this project were mostly
+found:
+
+| Command | Answers |
+|---|---|
+| `npm run ci:preflight` | Would the CI workflow work? Runs its commands, and checks what a developer machine never does: path casing, the browser install, a single `on:` block, the pinned Node version. Add `--clean` to rehearse a fresh install. |
+| `npm run smoke:live` | Does every enabled book still return usable events? Fails on zero events or a non-`ok` status. Pass book names to check a subset. |
+| `npm run smoke:trend` | Has a book been failing repeatedly? Reads the archived reports and fails on a pattern rather than a bad day. |
+| `npm run measure` | Is there a cross-feed arbitrage right now? Records a round in `data/measurements.jsonl`, so the series grows instead of being re-derived by hand. |
+| `npm run measure:sync` | Does the table in `docs/no-arbitrage-root-cause.md` still match the journal? Exits non-zero on drift. |
+| `npm run live-check -- <book>...` | Per-adapter detail against the real feed: bytes, timings, which guard rejected a response. Reports; never fails. |
+
+`smoke:live` is the one that matters most, because a scraper which collects
+nothing reports success and looks like a quiet market day.
+
 ## Environment variables
 
 | Var                                  | Default        | Notes                                                 |
@@ -76,17 +94,21 @@ arbiter/
 │   ├── scraper-service.mjs       # runs ScraperBase child processes
 │   ├── verification.mjs          # re-scrape only involved books
 │   ├── scrapers/                 # one file per bookmaker
+│   │   ├── index.mjs             # registry: exact (engine, transport, script) contract
 │   │   ├── base.mjs              # ScraperBase contract
 │   │   ├── provider-contract.mjs # swappable parser
-│   │   ├── altenar-provider.mjs  # shared Altenar parser
-│   │   ├── altenar-sites.mjs     # Don/TopBet/Million/Baumbet/Winbet
+│   │   ├── nsoft.mjs             # one adapter, several tenants (admiral/stanleybet/maxbet)
+│   │   ├── altenar-public.mjs    # one adapter, six Altenar tenants
+│   │   ├── excelbet.mjs          # base for winboss/las-vegas/magnumbet
 │   │   ├── superbet.mjs
 │   │   ├── betano.mjs
-│   │   ├── ...                   # one file per remaining bookmaker
+│   │   └── ...                   # one file per remaining bookmaker
 │   └── scanner/
 │       ├── scanner.mjs           # scanWorkspace() entry point
 │       ├── engine.mjs            # matching + arb/middle/EV/low-hold math
 │       ├── market-contracts.mjs  # canonical market contracts + stake allocation
+│       ├── feed-groups.mjs       # which brands resell one upstream feed
+│       ├── league-aliases.mjs    # whether two competition labels name one competition
 │       └── market-catalog.mjs
 ├── public/
 │   ├── index.html                # visitor dashboard
@@ -118,44 +140,82 @@ A source can use either a bookmaker's validated public read-only offer feed or t
 
 Set `ARBITER_MAX_EVENTS_PER_BOOK` to a positive integer for a bounded per-book result count, or to `all` to retain every qualifying event available from each provider's bounded public feed/window. `all` does not fabricate events or bypass upstream pagination, browser gating, lookahead windows, rate limits, or abort/timeouts; provider availability determines the actual count.
 
-As of 2026-09-01, **Superbet is the only enabled validated source**. Unibet's dedicated public sports API v2 adapter completed one bounded smoke with fresh provenance, but three immediate repeat validations timed out, so it remains experimental and disabled until it is reliably repeatable. Betano also remains experimental and disabled because its bounded local smoke received upstream HTTP 403. Arbiter neither bypasses these protections nor reports the unavailable sources as empty.
+As of 2026-09-26, **22 of the 23 configured jobs are enabled**; `SCRAPER-TASKS.md`
+carries the per-book status and what each one rests on. Unibet is the exception:
+its adapter targets a Kambi REST endpoint that now returns 404, and the
+config's `validationReason` records that prices moved to a realtime MQTT feed,
+so re-enabling it needs an MQTT client rather than a URL change.
+
+Arbiter neither bypasses a provider's protections nor reports an unavailable
+source as an empty one. `npm run smoke:live` exists precisely because the two
+are easy to confuse: a run that collects nothing and reports success looks
+exactly like a quiet market day, and four separate defects survived a green
+test suite that way.
 
 ## Adding a new bookmaker
 
-1. Add the browser routes and link patterns to `config/scrapers.json`:
+1. Find the feed and confirm it is a public, read-only endpoint. The browser's
+   own network view is the tool for this: open the sport page, look at the
+   same-origin JSON requests it makes, and write down the full URL, the content
+   type, and whether the response carries a complete three-way result market
+   with both teams.
 
-   ```js
-   newbook: {
-     id: 'newbook',
-     name: 'Newbook',
-     baseUrl: 'https://newbook.example/sport/football',
-     liveUrl: 'https://newbook.example/live/football',
-     discoveryStrategy: 'browser-only',
-     eventUrlPattern: '[/]event[/]',
-     tournamentUrlPattern: '[/]league[/]',
-     maxMatches: 20,
-   }
-   ```
+   There is no collector script for this. The earlier
+   `scripts/endpoint-collector.mjs` is gone, and a one-off probe is usually
+   enough — `scratch/` is the right place for it, and it is gitignored on
+   purpose.
 
-2. Add an entry to `config/scrapers.json` as experimental and disabled:
+2. Add the job to `config/scrapers.json`, disabled, with the contract you
+   actually observed rather than a placeholder:
 
    ```json
    {
      "id": "newbook",
      "name": "Newbook (public endpoint pending)",
-     "enabled": true,
+     "enabled": false,
+     "supportedSports": ["football"],
+     "engine": "public-feed",
+     "transport": "bookmaker-public-json",
+     "script": "newbook.mjs",
+     "sourceIds": ["newbook"],
      "validationStatus": "experimental",
-     "engine": "api-pending",
-     "transport": "api-pending",
-     "script": "pending.mjs",
-     "sourceIds": ["newbook"]
+     "validationReason": "Why this is still experimental, in one sentence."
    }
    ```
 
-3. Run `node scripts/endpoint-collector.mjs https://newbook.example/sport/football newbook`. Inspect `data/endpoints/newbook_api.json`; the collector records request method, full URL, status, content type, source page, and capture time for each same-origin JSON endpoint.
-4. Set `enabled: true` and `validationStatus: "validated"` only after the bounded smoke proves fresh kickoff, complete 1X2, source URL, transport, and run provenance. The orchestrator and scheduler reject every other status.
+   `engine`, `transport` and `script` are a contract, not labels. The registry
+   dispatches a job only when all three match what the adapter was written
+   against (`src/scrapers/index.mjs`), and rejects anything else with
+   `ESCRAPERCONFIG` — a typo must fail loudly rather than instantiate a
+   scraper against a feed it does not implement.
 
-The registry is the source of truth, but validation is a required promotion gate rather than a configuration shortcut.
+3. Write the adapter under `src/scrapers/`, extending `ScraperBase`:
+   `fetchRaw` for the request, `normalize` for the provider shape,
+   `extractEvents` for the engine's event shape. Bounds are not optional: a
+   body cap, a deadline, and the caller's `signal` propagated through.
+
+4. Register it — the class in `src/scrapers/index.mjs`, with an exact
+   `(engine, transport, script)` entry, so a configuration typo cannot route
+   the wrong scraper to the wrong feed.
+
+5. Validate against real responses, in this order:
+
+   - `npm run smoke:live -- newbook` — the gate. It fails on zero events or a
+     non-`ok` status, which is the check that catches the failure mode where an
+     adapter collects nothing and still reports success.
+   - Save a real payload under `test/fixtures/` and write a fixture test
+     against it, as `test/winner.test.mjs` does. Use the shape the feed really
+     sends: an adapter tested only on hand-written fixtures can be broken in
+     ways a live capture alone shows.
+   - Add the book to `src/scanner/feed-groups.mjs` if it resells another
+     book's feed, and justify that with a measurement rather than an
+     assumption about who owns it.
+
+6. Only then set `"enabled": true` and `"validationStatus": "validated"`,
+   and record the outcome in `SCRAPER-TASKS.md`.
+
+The registry is the source of truth, but validation is a required promotion
+gate rather than a configuration shortcut.
 
 ## Multi-sport architecture
 
