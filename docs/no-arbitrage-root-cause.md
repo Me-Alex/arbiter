@@ -67,11 +67,34 @@ npm run measure -- superbet,netbet,admiral --rounds 3 --gap 90000
 The tool measures on the same footing the scanner does — same adapters, same
 normalisation, same engine, same shared-feed exclusion — so a scraper
 regression shows up as fewer cross-feed pairs rather than as a quietly
-different number. Its first recorded rounds, four books over two rounds:
-800 events, 8 cross-feed pairs, best −4.52% in both, no scraper errors.
+different number.
 
 `scripts/sample.mjs` predates this and still reports per-round detail to
 stdout; `measure.mjs` is the one to run repeatedly.
+
+### What the recorded rounds actually show
+
+Across the five recorded rounds the best cross-feed return stayed between
+−2.87% and −4.52%. It is **never positive**, which is the claim this document
+makes, and it holds for every book set measured: four books and seven books
+both land in the same band.
+
+Two things in the table are *not* stable, and reading them as if they were
+would be a mistake:
+
+- **The best return moves by more than a point between identical runs.** Rounds
+  15 and 16 used the same four books one minute apart and read −2.87% and
+  −4.41%. That is the spread of the best opportunity found in a snapshot, not
+  the market moving.
+- **The cross-feed pair count is volatile for the same reason** — 108 and 75
+  one minute apart, on the same set. It counts *candidate* pairings, not
+  opportunities: it rises and falls with how many books happened to publish an
+  overlapping fixture at that moment.
+
+So the honest reading is the sign and the band, not the fourth decimal place.
+A single round cannot distinguish "the market tightened" from "this round
+caught a different set of fixtures", which is why the series exists and why
+`smoke-trend` judges a book by a run of outcomes rather than one.
 
 The table below is generated from the journal by
 `node scripts/sync-measurements.mjs --write`, so it cannot drift from the runs
@@ -99,6 +122,8 @@ previous revision of this document was the same idea, counted differently.
 | 12 | 20:38, from the journal | 4 | 800 | 8 | −4.52% |
 | 13 | 20:38, from the journal | 4 | 800 | 8 | −4.52% |
 | 14 | 12:30, from the journal | 7 | 1253 | 15 | −4.48% |
+| 15 | 23:08, from the journal | 4 | 800 | 108 | −2.87% |
+| 16 | 23:09, from the journal | 4 | 800 | 75 | −4.41% |
 <!-- measurements:end -->
 
 The best combination is consistently the same fixture — Slovakia vs Moldova,
