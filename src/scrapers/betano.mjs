@@ -46,7 +46,13 @@ export default class BetanoScraper extends ScraperBase {
       page = await this.pageFactory();
     } else {
       browser = await pw.chromium.launch({ headless: true, args: ['--disable-blink-features=AutomationControlled'] });
-      ctx = await browser.newContext({ locale: 'ro-RO', userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36' });
+      // No userAgent override: the context inherits the UA of the Chromium that
+      // is actually running. The context used to pin Chrome/131 while
+      // Playwright 1.62 ships a much newer build, and a declared identity that
+      // disagrees with the binary's own TLS fingerprint is one of the most
+      // heavily weighted bot signals there is — it defeats the stealth plugin
+      // this adapter depends on rather than helping it.
+      ctx = await browser.newContext({ locale: 'ro-RO' });
       page = await ctx.newPage();
     }
     await page.addInitScript(() => { Object.defineProperty(navigator, 'webdriver', { get: () => false }); });

@@ -159,4 +159,10 @@ jobs:
           name: data-health
           path: data-health.json
           if-no-files-found: ignore
-          retention-days: 90
+          # Long enough for the trend gate to reach a verdict. It needs three
+          # runs to say anything, and it runs twice a week, so a 90-day window
+          # would expire the history before the series could ever be read — the
+          # gate would report "not enough history" forever while looking like it
+          # was working. Each run uploads its own artifact under the same name;
+          # the restore step merges them.
+          retention-days: 365
