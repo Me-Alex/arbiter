@@ -284,6 +284,72 @@ test('a qualified "Ambele ..." market is withheld rather than keyed as BTTS', (t
   }
 });
 
+test('a corners double chance is withheld rather than keyed as match double chance', (t) => {
+  // Favbet publishes "Șansă Dublă. Cornere" (corners double chance) alongside the
+  // plain "Șansă dublă" (match double chance). Both match the same "dubl" name
+  // test, so the corners market was claiming the DOUBLE_CHANCE key too. It
+  // settles on corners, not on the 1X2, so it is a different contract and must
+  // not share the family. (The engine marks DOUBLE_CHANCE arbEligible: false,
+  // so this could not produce arbitrage today — but it is the same bug class as
+  // the BTTS collision and must not be left as a landmine.)
+  atPinnedNow(t);
+  const s = new Favbet({ windowHours: 72 });
+
+  const combo = (market_name, market_id) => ({
+    bet_builder: false,
+    market_id,
+    market_name,
+    market_suspend: false,
+    outcomes: [
+      { outcome_id: 10, outcome_name: '1X', outcome_short_name: '1X', outcome_tag: '1X', outcome_coef: 1.25, outcome_visible: true },
+      { outcome_id: 11, outcome_name: '12', outcome_short_name: '12', outcome_tag: '12', outcome_coef: 1.05, outcome_visible: true },
+      { outcome_id: 12, outcome_name: 'X2', outcome_short_name: 'X2', outcome_tag: 'X2', outcome_coef: 2.22, outcome_visible: true },
+    ],
+  });
+
+  const markets = {
+    match_odds: {
+      bet_builder: false, market_id: 499, market_name: '1 X 2', market_suspend: false, market_template_id: 1,
+      outcomes: [
+        { outcome_id: 1, outcome_name: 'Gazde', outcome_short_name: '1', outcome_tag: '1', outcome_coef: 2.1, outcome_visible: true },
+        { outcome_id: 2, outcome_name: 'Egal', outcome_short_name: 'X', outcome_tag: 'X', outcome_coef: 3.4, outcome_visible: true },
+        { outcome_id: 3, outcome_name: 'Oaspeți', outcome_short_name: '2', outcome_tag: '2', outcome_coef: 3.2, outcome_visible: true },
+      ],
+    },
+    plainDC: combo('Șansă dublă', 501),
+    cornersDC: combo('Șansă Dublă. Cornere', 502),
+  };
+
+  const event = {
+    event_id: 2,
+    event_dt: Math.floor(Date.parse(PINNED_NOW) / 1000) + 86400,
+    participants: [
+      { participant_number: 1, participant_name: 'Gazde' },
+      { participant_number: 2, participant_name: 'Oaspeți' },
+    ],
+    category_name: 'Fotbal', tournament_name: 'Test', tournament_id: 'fotbal',
+    event_status_type: 'notstarted',
+  };
+
+  const envelope = {
+    events: new Map([['2', event]]),
+    markets: [{ event, markets }],
+    sourceUrl: 'https://www.favbet.ro/service/lineout/frontend_api2/',
+    observedAt: PINNED_NOW,
+  };
+
+  const out = s.extractEvents(s.normalize(envelope));
+  const e = out.find((x) => String(x.id) === '2');
+  assert.ok(e, 'the synthetic event is published');
+  const dc = (e.markets || []).filter((m) => m.key === 'DOUBLE_CHANCE');
+  assert.equal(dc.length, 1, 'only the match double chance may hold the key');
+  assert.equal(dc[0].name, 'Șansă dublă', 'and it must be the plain one');
+  assert.ok(
+    !e.markets.some((m) => m.name === 'Șansă Dublă. Cornere'),
+    'the corners double chance must be withheld',
+  );
+});
+
 test('the adapter reports a missing or malformed envelope rather than an empty success', (t) => {
   atPinnedNow(t);
   const s = new Favbet({ windowHours: 72 });

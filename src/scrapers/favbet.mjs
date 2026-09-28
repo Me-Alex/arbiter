@@ -328,6 +328,13 @@ function mapFavbetMarket(market) {
     ] };
   }
   if (/dubl|double chance/i.test(name)) {
+    // Same contract-collision rule as plain BTTS: a qualified double chance is a
+    // different payoff. Favbet publishes "Șansă Dublă. Cornere" (corners double
+    // chance) under the same "dubl" name match, so a corners price could claim
+    // the DOUBLE_CHANCE key that a match double chance also uses. A corners
+    // double chance settles on corners, not on the 1X2, so it must not share
+    // the family. Withhold it rather than invent a family for it.
+    if (/cornere|corners/i.test(name)) return null;
     const is1H = isFirstHalf(name);
     const combined = valid.filter((s) => /^(1x|x2|12)$/.test(s.tag));
     if (combined.length !== 3) return null;
