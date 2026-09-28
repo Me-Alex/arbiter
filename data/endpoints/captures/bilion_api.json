@@ -1,0 +1,26 @@
+{
+  "book": "bilion",
+  "timestamp": "2026-09-27T13:44:53.615Z",
+  "pagesVisited": 4,
+  "minPagesRequired": 50,
+  "pagesTargetReached": false,
+  "endpoints": [],
+  "keyEndpoints": [
+    {
+      "method": "GET",
+      "url": "https://app.bilion.ro/api/v1/sports",
+      "verified": true,
+      "purpose": "Sport catalogue, but only 214 bytes and no football events attached. Recorded because it is the only /sports endpoint this brand serves."
+    },
+    {
+      "method": "GET",
+      "url": "https://app.bilion.ro/api/v1/tournaments",
+      "verified": true,
+      "purpose": "178 KB of EGT Digital CASINO tournament/jackpot content — prize pools and dates, not match odds. NOT an odds source."
+    }
+  ],
+  "platform": "egt-digital (casino only)",
+  "feedStatus": "no-sports-feed",
+  "verifiedAt": null,
+  "finding": "Casino-first. app.bilion.ro/api/v1/sports answers 200 with a 214-byte catalogue and /api/v1/tournaments returns 178 KB of EGT Digital CASINO tournament content (jackpots and prize pools). The event paths a sportsbook would use — /api/v1/events, /api/v1/matches, /api/v1/odds — are all HTTP 404. There is no prematch football feed to read."
+}

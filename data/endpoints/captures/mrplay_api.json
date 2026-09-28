@@ -1,0 +1,656 @@
+{
+  "book": "mrplay",
+  "timestamp": "2026-09-27T13:06:33.886Z",
+  "pagesVisited": 2,
+  "minPagesRequired": 50,
+  "pagesTargetReached": true,
+  "endpoints": [
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/api/multilang/v1/translate/table/4/ro?tenant_id=232",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.mrplay.ro/",
+      "capturedAt": "2026-09-27T13:06:17.248Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/config-api/templatization-config/list?tenantId=232&siteId=102320&path=%2F",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://www.mrplay.ro/",
+      "capturedAt": "2026-09-27T13:06:17.251Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-t.b-cdn.net/fonts/main/font-icons.json?_=1790514377121",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.mrplay.ro/",
+      "capturedAt": "2026-09-27T13:06:17.251Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/api/v1/jackpot/events/232",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.mrplay.ro/",
+      "capturedAt": "2026-09-27T13:06:17.285Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://www.mrplay.ro/api/auth/index",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://www.mrplay.ro/",
+      "capturedAt": "2026-09-27T13:06:17.459Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/config-api/multi-bet/list?tenantId=232&siteId=102320",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://www.mrplay.ro/",
+      "capturedAt": "2026-09-27T13:06:17.963Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/elements?q=$ids@%3D_site",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.mrplay.ro/",
+      "capturedAt": "2026-09-27T13:06:17.965Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Dall_jackpots_api&tid=232&sid=102320",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.mrplay.ro/",
+      "capturedAt": "2026-09-27T13:06:18.031Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Dall_slot_games_api&tid=232&sid=102320",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.mrplay.ro/",
+      "capturedAt": "2026-09-27T13:06:18.044Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/missions/tournaments/list?tenant_id=232",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://www.mrplay.ro/",
+      "capturedAt": "2026-09-27T13:06:18.055Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://cdn.segment.com/v1/projects/SxxRFb9d6nfL6tKE8KvpPjuW2bqbpKCI/settings",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://www.mrplay.ro/",
+      "capturedAt": "2026-09-27T13:06:18.056Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/config-api/maintenance/list?tenantId=232&siteId=102320",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://www.mrplay.ro/",
+      "capturedAt": "2026-09-27T13:06:18.061Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/config-api/meta/list?tenantId=232&siteId=102320&path=%2F",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://www.mrplay.ro/",
+      "capturedAt": "2026-09-27T13:06:18.062Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Dplayer_all_slot_games_api",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.mrplay.ro/",
+      "capturedAt": "2026-09-27T13:06:18.065Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Dall_promotions_api&tid=232&sid=102320",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.mrplay.ro/",
+      "capturedAt": "2026-09-27T13:06:18.078Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Dall_jackpots_mrplay&tid=232&sid=102320",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.mrplay.ro/",
+      "capturedAt": "2026-09-27T13:06:18.084Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Dmrplay-most-played-games&tid=232&sid=102320",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.mrplay.ro/",
+      "capturedAt": "2026-09-27T13:06:18.089Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Dmrplay-originals&tid=232&sid=102320",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.mrplay.ro/",
+      "capturedAt": "2026-09-27T13:06:18.093Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Dbuy-bonus-games-mrplay&tid=232&sid=102320",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.mrplay.ro/",
+      "capturedAt": "2026-09-27T13:06:18.098Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Dplayer_all_banners_api&tid=232&sid=102320",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.mrplay.ro/",
+      "capturedAt": "2026-09-27T13:06:18.102Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Dtournaments-list&tid=232&sid=102320",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.mrplay.ro/",
+      "capturedAt": "2026-09-27T13:06:18.106Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Drewards-sample&tid=232&sid=102320",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.mrplay.ro/",
+      "capturedAt": "2026-09-27T13:06:18.109Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Dmatches-match-of-the-day&tid=232&sid=102320",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.mrplay.ro/",
+      "capturedAt": "2026-09-27T13:06:18.113Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Dmatches-live&tid=232&sid=102320",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.mrplay.ro/",
+      "capturedAt": "2026-09-27T13:06:18.116Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Dmrplay-trending-slots&tid=232&sid=102320",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.mrplay.ro/",
+      "capturedAt": "2026-09-27T13:06:18.120Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/api/calendar/v1/player/status",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://www.mrplay.ro/",
+      "capturedAt": "2026-09-27T13:06:18.124Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Dtop-games-mrplay&tid=232&sid=102320",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.mrplay.ro/",
+      "capturedAt": "2026-09-27T13:06:18.127Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Dnew-games-mrplay&tid=232&sid=102320",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.mrplay.ro/",
+      "capturedAt": "2026-09-27T13:06:18.131Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Dfruits-games-mrplay&tid=232&sid=102320",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.mrplay.ro/",
+      "capturedAt": "2026-09-27T13:06:18.135Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Danimals-theme-games-mrplay&tid=232&sid=102320",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.mrplay.ro/",
+      "capturedAt": "2026-09-27T13:06:18.140Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Dall-amusnet-games-mrplay&tid=232&sid=102320",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.mrplay.ro/",
+      "capturedAt": "2026-09-27T13:06:18.157Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Dall-egt-digital-mrplay&tid=232&sid=102320",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.mrplay.ro/",
+      "capturedAt": "2026-09-27T13:06:18.172Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Dwl-all-drops-and-wins&tid=232&sid=102320",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.mrplay.ro/",
+      "capturedAt": "2026-09-27T13:06:18.175Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Dmegaways-slots-mrplay&tid=232&sid=102320",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.mrplay.ro/",
+      "capturedAt": "2026-09-27T13:06:18.179Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Dall-vip-bell-link-games&tid=232&sid=102320",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.mrplay.ro/",
+      "capturedAt": "2026-09-27T13:06:18.182Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Dhalloween-games&tid=232&sid=102320",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.mrplay.ro/",
+      "capturedAt": "2026-09-27T13:06:18.187Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Dall-playtech&tid=232&sid=102320",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.mrplay.ro/",
+      "capturedAt": "2026-09-27T13:06:18.193Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Dall-pragmatic-mrplay&tid=232&sid=102320",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.mrplay.ro/",
+      "capturedAt": "2026-09-27T13:06:18.205Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Dmrplay-slot-games-hot&tid=232&sid=102320",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.mrplay.ro/",
+      "capturedAt": "2026-09-27T13:06:18.209Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Dall-games-mrplay&tid=232&sid=102320",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.mrplay.ro/",
+      "capturedAt": "2026-09-27T13:06:18.212Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Dprovider-cards-mr-play&tid=232&sid=102320",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.mrplay.ro/",
+      "capturedAt": "2026-09-27T13:06:18.215Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Dmrplay-slot-games-cold&tid=232&sid=102320",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.mrplay.ro/",
+      "capturedAt": "2026-09-27T13:06:18.218Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/elements?q=$ids@%3Dslot_game_1",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.mrplay.ro/",
+      "capturedAt": "2026-09-27T13:06:18.220Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Deko.footer.texts.mrplay%26%3Dtournaments-list%26%3Dcasino-navigation-list-mrplay%26%3Dall-games%26%3Dturneul-baboilor-bet7%26%3Dmrplay-most-played-games%26%3Dmrplay-trending-slots%26%3Dmrplay-originals%26%3Dtop-games-mrplay%26%3Dnew-games-mrplay%26%3Dmrplay-slot-games-cold%26%3Dall-games-mrplay%26%3Dprovider-cards-mr-play%26%3Drewards-sample%26%3Dbuy-bonus-games-mrplay%26%3Dall_jackpots_mrplay%26%3Dall-amusnet-games-mrplay%26%3Dall-egt-digital-mrplay%26%3Dall-pragmatic-mrplay%26%3Dfruits-games-mrplay%26%3Danimals-theme-games-mrplay%26%3Dmegaways-slots-mrplay%26%3Dall-vip-bell-link-games%26%3Dall-playtech%26%3Dtop-10-in-romania%26%3Dhalloween-games%26%3Dwl-all-drops-and-wins%26%3Dchristmas&tid=232&sid=102320",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.mrplay.ro/",
+      "capturedAt": "2026-09-27T13:06:18.222Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Dmrplay-slot-games-hot%26%3Dmatches-live%26%3Dmatches-match-of-the-day%26%3Djackpot_games_egt_egypt_quest&tid=232&sid=102320",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.mrplay.ro/",
+      "capturedAt": "2026-09-27T13:06:18.229Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Djackpot_games_egt_digital_clover_chance&tid=232&sid=102320",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.mrplay.ro/",
+      "capturedAt": "2026-09-27T13:06:18.314Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Djackpot_games_egt_digital_bell_link&tid=232&sid=102320",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.mrplay.ro/",
+      "capturedAt": "2026-09-27T13:06:18.318Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Djackpot_games_egt_golden_coins_link&tid=232&sid=102320",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.mrplay.ro/",
+      "capturedAt": "2026-09-27T13:06:18.321Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/missions/tournaments/leaderboard/8076",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://www.mrplay.ro/",
+      "capturedAt": "2026-09-27T13:06:18.374Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/missions/tournaments/history/list/115",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://www.mrplay.ro/",
+      "capturedAt": "2026-09-27T13:06:18.378Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1-sb.gambling-solutions.ro/api/digitain-fetcher/v2/public/dynamic-boost-cards?tenantId=232&siteId=102320",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.mrplay.ro/",
+      "capturedAt": "2026-09-27T13:06:18.381Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/config-api/bonus-rules/list?tenantId=232&siteId=102320&category=bets",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://www.mrplay.ro/",
+      "capturedAt": "2026-09-27T13:06:18.964Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/config-api/uk-markets/list?tenantId=232&siteId=102320&platformType=1",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://www.mrplay.ro/",
+      "capturedAt": "2026-09-27T13:06:19.120Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Djackpot_games_egt&tid=232&sid=102320",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.mrplay.ro/",
+      "capturedAt": "2026-09-27T13:06:19.158Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Djackpot_games_egt_digital_high_cash&tid=232&sid=102320",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.mrplay.ro/",
+      "capturedAt": "2026-09-27T13:06:19.167Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Djackpot_games_egt_digital_20_super_hot&tid=232&sid=102320",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.mrplay.ro/",
+      "capturedAt": "2026-09-27T13:06:19.177Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Djackpot_games_egt_digital_40_super_hot&tid=232&sid=102320",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.mrplay.ro/",
+      "capturedAt": "2026-09-27T13:06:19.191Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Djackpot_games_egt_digital_burning_hot&tid=232&sid=102320",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.mrplay.ro/",
+      "capturedAt": "2026-09-27T13:06:19.199Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Djackpot_games_egt_digital_versailles_gold&tid=232&sid=102320",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.mrplay.ro/",
+      "capturedAt": "2026-09-27T13:06:19.218Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://micros-prod1-sb.gambling-solutions.ro/api/digitain-fetcher/v2/public/events",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.mrplay.ro/",
+      "capturedAt": "2026-09-27T13:06:20.368Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://micros-prod1-sb.gambling-solutions.ro/api/digitain-fetcher/v2/public/meta",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.mrplay.ro/",
+      "capturedAt": "2026-09-27T13:06:20.443Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/config-api/popup-bonuses/list?tenantId=232&siteId=102320",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://www.mrplay.ro/",
+      "capturedAt": "2026-09-27T13:06:22.795Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/config-api/templatization-config/list?tenantId=232&siteId=102320&path=%2Fsport",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://www.mrplay.ro/sport",
+      "capturedAt": "2026-09-27T13:06:25.177Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-t.b-cdn.net/fonts/main/font-icons.json?_=1790514385119",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.mrplay.ro/sport",
+      "capturedAt": "2026-09-27T13:06:25.303Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/config-api/meta/list?tenantId=232&siteId=102320&path=%2Fsport",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://www.mrplay.ro/sport",
+      "capturedAt": "2026-09-27T13:06:25.679Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Dtournaments-list%26%3Deko.footer.texts.mrplay&tid=232&sid=102320",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.mrplay.ro/sport",
+      "capturedAt": "2026-09-27T13:06:25.702Z"
+    }
+  ],
+  "keyEndpoints": [
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/api/multilang/v1/translate/table/4/ro",
+      "verified": true,
+      "purpose": "Same-origin JSON endpoint observed on micros-prod1.gambling-solutions.ro. Role not further characterised."
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/config-api/templatization-config/list",
+      "verified": true,
+      "purpose": "Client configuration or build metadata. Not an odds source."
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-t.b-cdn.net/fonts/main/font-icons.json",
+      "verified": true,
+      "purpose": "Same-origin JSON endpoint observed on micros-t.b-cdn.net. Role not further characterised."
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/api/v1/jackpot/events/232",
+      "verified": true,
+      "purpose": "Promotional or jackpot content. Not an odds source."
+    },
+    {
+      "method": "POST",
+      "url": "https://www.mrplay.ro/api/auth/index",
+      "verified": true,
+      "purpose": "Same-origin JSON endpoint observed on www.mrplay.ro. Role not further characterised."
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/config-api/multi-bet/list",
+      "verified": true,
+      "purpose": "Client configuration or build metadata. Not an odds source."
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/missions/tournaments/list",
+      "verified": true,
+      "purpose": "Tournament/competition list used to group events into leagues."
+    },
+    {
+      "method": "GET",
+      "url": "https://cdn.segment.com/v1/projects/SxxRFb9d6nfL6tKE8KvpPjuW2bqbpKCI/settings",
+      "verified": true,
+      "purpose": "Client configuration or build metadata. Not an odds source."
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/config-api/maintenance/list",
+      "verified": true,
+      "purpose": "Client configuration or build metadata. Not an odds source."
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/config-api/meta/list",
+      "verified": true,
+      "purpose": "Client configuration or build metadata. Not an odds source."
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/sources",
+      "verified": true,
+      "purpose": "Tournament/competition list used to group events into leagues."
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/missions/tournaments/leaderboard/8076",
+      "verified": true,
+      "purpose": "Tournament/competition list used to group events into leagues."
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/missions/tournaments/history/list/115",
+      "verified": true,
+      "purpose": "Tournament/competition list used to group events into leagues."
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1-sb.gambling-solutions.ro/api/digitain-fetcher/v2/public/dynamic-boost-cards",
+      "verified": true,
+      "purpose": "Same-origin JSON endpoint observed on micros-prod1-sb.gambling-solutions.ro. Role not further characterised."
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/config-api/bonus-rules/list",
+      "verified": true,
+      "purpose": "Client configuration or build metadata. Not an odds source."
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/config-api/uk-markets/list",
+      "verified": true,
+      "purpose": "Client configuration or build metadata. Not an odds source."
+    },
+    {
+      "method": "POST",
+      "url": "https://micros-prod1-sb.gambling-solutions.ro/api/digitain-fetcher/v2/public/events",
+      "verified": true,
+      "purpose": "Same-origin JSON endpoint observed on micros-prod1-sb.gambling-solutions.ro. Role not further characterised."
+    },
+    {
+      "method": "POST",
+      "url": "https://micros-prod1-sb.gambling-solutions.ro/api/digitain-fetcher/v2/public/meta",
+      "verified": true,
+      "purpose": "Client configuration or build metadata. Not an odds source."
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/config-api/popup-bonuses/list",
+      "verified": true,
+      "purpose": "Client configuration or build metadata. Not an odds source."
+    }
+  ],
+  "platform": "digitain",
+  "feedStatus": "verified",
+  "verifiedAt": "2026-09-27"
+}

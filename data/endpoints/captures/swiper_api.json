@@ -1,0 +1,740 @@
+{
+  "book": "swiper",
+  "timestamp": "2026-09-27T13:07:31.119Z",
+  "pagesVisited": 2,
+  "minPagesRequired": 50,
+  "pagesTargetReached": true,
+  "endpoints": [
+    {
+      "method": "GET",
+      "url": "https://swiper.ro/ro/api/v3/project/info?fields=payment",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://swiper.ro/",
+      "capturedAt": "2026-09-27T13:07:10.053Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://swiper.ro/en/api/v3/project/info?fields=languages",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://swiper.ro/",
+      "capturedAt": "2026-09-27T13:07:10.065Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://swiper.ro/ro/api/v3/system/info",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://swiper.ro/",
+      "capturedAt": "2026-09-27T13:07:10.117Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://swiper.ro/ro/api/v3/project/info?fields=client,sportsbook,registration,login,defaultCurrency,payment",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://swiper.ro/",
+      "capturedAt": "2026-09-27T13:07:10.126Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://swiper.ro/ro/api/v3/project/info?fields=displayIgocseBanners",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://swiper.ro/",
+      "capturedAt": "2026-09-27T13:07:10.129Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://swiper.ro/ro/api/v3/project/info?fields=brandOnboarding,gamificationWithdrawal,shorts,spinRally,jackpot,chat,multiLevelVipProgram,rebates,gamificationWidgetLoader,feedSettings,quests",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://swiper.ro/",
+      "capturedAt": "2026-09-27T13:07:10.131Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://swiper.ro/ro/api/v3/project/info?fields=recommendedPopup,liveThumbnails,actionTriggers,pickGameOnBonusActivation,checkWageringRestriction,transaction,xDefaultLanguage",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://swiper.ro/",
+      "capturedAt": "2026-09-27T13:07:10.204Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://swiper.ro/ro/api/v3/casino/collection",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://swiper.ro/",
+      "capturedAt": "2026-09-27T13:07:10.223Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://swiper.ro/ro/api/v3/seo/page?page=home",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://swiper.ro/",
+      "capturedAt": "2026-09-27T13:07:10.228Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://swiper.ro/ro/api/v3/project/info?fields=captcha",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://swiper.ro/",
+      "capturedAt": "2026-09-27T13:07:10.235Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://swiper.ro/ro/api/v3/project/info?fields=cdnSettings",
+      "status": 200,
+      "contentType": "application/json;charset=utf-8",
+      "pageUrl": "https://swiper.ro/",
+      "capturedAt": "2026-09-27T13:07:10.241Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://swiper.ro/browser-logs",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://swiper.ro/",
+      "capturedAt": "2026-09-27T13:07:10.628Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://swiper.ro/ro/api/v3/lang/translation",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://swiper.ro/",
+      "capturedAt": "2026-09-27T13:07:10.658Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://swiper.ro/ro/api/v3/promotion/list?cacheBust=0&category=season_promo",
+      "status": 404,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://swiper.ro/",
+      "capturedAt": "2026-09-27T13:07:10.659Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://swiper.ro/ro/api/v3/casino/category?limit=99&collection=games",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://swiper.ro/",
+      "capturedAt": "2026-09-27T13:07:10.663Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://swiper.ro/ro/api/v3/casino/category?limit=99&collection=live-casino",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://swiper.ro/",
+      "capturedAt": "2026-09-27T13:07:10.904Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://swiper.ro/ro/api/v3/banner/list?type=unauthenticated&place=main_slider_unlogged",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://swiper.ro/",
+      "capturedAt": "2026-09-27T13:07:10.993Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://swiper.ro/ro/api/v3/article/item?page=home",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://swiper.ro/",
+      "capturedAt": "2026-09-27T13:07:11.082Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://swiper.ro/ro/api/v3/icon/list?category=footer",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://swiper.ro/",
+      "capturedAt": "2026-09-27T13:07:11.158Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://swiper.ro/ro/api/v3/sportbook/category/list",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://swiper.ro/",
+      "capturedAt": "2026-09-27T13:07:11.264Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://swiper.ro/ro/api/v3/footer/item",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://swiper.ro/",
+      "capturedAt": "2026-09-27T13:07:11.293Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://swiper.ro/ro/api/v3/project/application/link",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://swiper.ro/",
+      "capturedAt": "2026-09-27T13:07:11.299Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://swiper.ro/ro/api/v3/casino/game/list?limit=21&offset=0&category=top",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://swiper.ro/",
+      "capturedAt": "2026-09-27T13:07:11.343Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://swiper.ro/ro/api/v3/casino/game/list?limit=21&offset=0&category=new",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://swiper.ro/",
+      "capturedAt": "2026-09-27T13:07:11.347Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://swiper.ro/ro/api/v3/casino/game/list?limit=21&offset=0&category=popular",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://swiper.ro/",
+      "capturedAt": "2026-09-27T13:07:11.353Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://swiper.ro/ro/api/v3/casino/game/list?limit=21&offset=0&category=slots",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://swiper.ro/",
+      "capturedAt": "2026-09-27T13:07:11.356Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://swiper.ro/ro/api/v3/casino/game/list?limit=21&offset=0&category=top-live-casino",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://swiper.ro/",
+      "capturedAt": "2026-09-27T13:07:11.358Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://swiper.ro/ro/api/v3/casino/game/list?limit=21&offset=0&category=roulette",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://swiper.ro/",
+      "capturedAt": "2026-09-27T13:07:11.361Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://swiper.ro/ro/api/v3/casino/game/list?limit=21&offset=0&category=blackjack",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://swiper.ro/",
+      "capturedAt": "2026-09-27T13:07:11.364Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://swiper.ro/ro/api/v3/casino/game/list?limit=21&offset=0&category=jackpots",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://swiper.ro/",
+      "capturedAt": "2026-09-27T13:07:11.372Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://swiper.ro/ro/api/v3/casino/game/list?limit=21&offset=0&category=table-games",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://swiper.ro/",
+      "capturedAt": "2026-09-27T13:07:11.376Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://swiper.ro/ro/api/v3/casino/game/list?limit=21&offset=0&category=all-games",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://swiper.ro/",
+      "capturedAt": "2026-09-27T13:07:11.379Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://swiper.ro/ro/api/v3/banner/list?place=seasonal-promotion-banner",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://swiper.ro/",
+      "capturedAt": "2026-09-27T13:07:11.382Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://swiper.ro/ro/api/v3/banner/list?place=onboarding_banner",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://swiper.ro/",
+      "capturedAt": "2026-09-27T13:07:11.388Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://swiper.ro/ro/api/v3/banner/list?place=special-banner-collections",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://swiper.ro/",
+      "capturedAt": "2026-09-27T13:07:11.444Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://swiper.ro/ro/api/v3/casino/big-wins",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://swiper.ro/",
+      "capturedAt": "2026-09-27T13:07:11.446Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://swiper.ro/ro/api/v3/casino/category?collection=games",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://swiper.ro/",
+      "capturedAt": "2026-09-27T13:07:11.525Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://swiper.ro/ro/api/v3/casino/category?collection=live-casino",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://swiper.ro/",
+      "capturedAt": "2026-09-27T13:07:12.238Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://swiper.ro/ro/api/v3/system/qr-code",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://swiper.ro/",
+      "capturedAt": "2026-09-27T13:07:13.304Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://eb6a7d55b667d9b6e52e2ebe363274d7b395eb78.seondnsresolve.com/",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://swiper.ro/",
+      "capturedAt": "2026-09-27T13:07:13.756Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://fa8671027d86e588b60ad66a6fc7e51f.seondnsresolve.com/",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://swiper.ro/",
+      "capturedAt": "2026-09-27T13:07:14.673Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://gum.criteo.com/sid/json?origin=onetag&domain=swiper.ro&sn=ChromeSyncframe&so=undefined&topUrl=swiper.ro",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://swiper.ro/",
+      "capturedAt": "2026-09-27T13:07:16.223Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://d3-36c34dc0877246a0b32c4f4e24be6ce8.ecs.us-east-1.on.aws/events?cee=no",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://swiper.ro/",
+      "capturedAt": "2026-09-27T13:07:16.433Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://swiper.ro/en/api/v3/system/info",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://swiper.ro/sport",
+      "capturedAt": "2026-09-27T13:07:18.004Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://swiper.ro/en/api/v3/project/info?fields=payment",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://swiper.ro/sport",
+      "capturedAt": "2026-09-27T13:07:18.123Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://b7b7aecbbf31239ba507bf5f95aa1ebb.seondnsresolve.com/",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://swiper.ro/sport",
+      "capturedAt": "2026-09-27T13:07:19.133Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://swiper.ro/ro/api/v3/seo/page?page=sport",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://swiper.ro/sport",
+      "capturedAt": "2026-09-27T13:07:19.805Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://swiper.ro/ro/api/v3/article/item?page=sport",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://swiper.ro/sport",
+      "capturedAt": "2026-09-27T13:07:20.025Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://swiper.ro/cdn/edge/dd/js/",
+      "status": 200,
+      "contentType": "application/json;charset=utf-8",
+      "pageUrl": "https://swiper.ro/sport",
+      "capturedAt": "2026-09-27T13:07:20.762Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://sb2integration-altenar2.biahosted.com/api/M1pYSjBlV2hxYm5Oa0lHMHNMbU1nYW/Y21GdVpHOXRJR0oxYkd4emFHbDBJR2R2?culture=ro-RO&timezoneOffset=-180&integration=swiperro&deviceType=1&numFormat=en-GB&ge3F6uCFVIZiI=swiperro",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://swiper.ro/sport",
+      "capturedAt": "2026-09-27T13:07:21.385Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://sb2auth-altenar2.biahosted.com/api/WidgetAuth/GetCountryCode?culture=ro-RO&timezoneOffset=-180&integration=swiperro&deviceType=1&numFormat=en-GB",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://swiper.ro/sport",
+      "capturedAt": "2026-09-27T13:07:21.387Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://sb2integration-altenar2.biahosted.com/api/Widget/GetWidgetsConfiguration?culture=ro-RO&timezoneOffset=-180&integration=swiperro&deviceType=1&numFormat=en-GB&theme=light",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://swiper.ro/sport",
+      "capturedAt": "2026-09-27T13:07:21.429Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://sb2frontend-altenar2.biahosted.com/api/WidgetTranslation/StaticTranslations?culture=ro-RO&timezoneOffset=-180&integration=swiperro&deviceType=1&numFormat=en-GB",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://swiper.ro/sport",
+      "capturedAt": "2026-09-27T13:07:21.430Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://sb2auth-altenar2.biahosted.com/api/WidgetAuth/GetDefaultSystemParams?culture=ro-RO&timezoneOffset=-180&integration=swiperro&deviceType=1&numFormat=en-GB&countryCode=RO",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://swiper.ro/sport",
+      "capturedAt": "2026-09-27T13:07:21.823Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://sb2frontend-altenar2.biahosted.com/api/Widget/GetSportInfo?culture=ro-RO&timezoneOffset=-180&integration=swiperro&deviceType=1&numFormat=en-GB&countryCode=RO",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://swiper.ro/sport",
+      "capturedAt": "2026-09-27T13:07:21.824Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://sb2bonus-gateway-p002.biahosted.com/api/WidgetBonus/GetMultipleBonuses",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://swiper.ro/sport",
+      "capturedAt": "2026-09-27T13:07:21.855Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://consent.cookie-script.com/analytics?action=firstshown&time=1790514442079&script=5f05bc0a7efbe39061a0b835ae4f165f&category=",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://swiper.ro/sport",
+      "capturedAt": "2026-09-27T13:07:22.547Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://swiper.ro/ro/api/v3/promotion/list?type=sport",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://swiper.ro/sport",
+      "capturedAt": "2026-09-27T13:07:22.752Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://swiper.ro/ro/api/v3/tournament/list?tournamentType=sport&status=active",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://swiper.ro/sport",
+      "capturedAt": "2026-09-27T13:07:22.765Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://swiper.ro/ro/api/v3/banner/list?place=live_stream&category=banner",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://swiper.ro/sport",
+      "capturedAt": "2026-09-27T13:07:22.770Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetFavouritesChamps?culture=ro-RO&timezoneOffset=-180&integration=swiperro&deviceType=1&numFormat=en-GB&countryCode=RO",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://swiper.ro/sport",
+      "capturedAt": "2026-09-27T13:07:22.819Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetSportMenu?culture=ro-RO&timezoneOffset=-180&integration=swiperro&deviceType=1&numFormat=en-GB&countryCode=RO&period=0",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://swiper.ro/sport",
+      "capturedAt": "2026-09-27T13:07:22.820Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://sb2frontend-altenar2.biahosted.com/api/BetMentor/GetSettings?culture=ro-RO&timezoneOffset=-180&integration=swiperro&deviceType=1&numFormat=en-GB&countryCode=RO",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://swiper.ro/sport",
+      "capturedAt": "2026-09-27T13:07:22.820Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetTopSportMenu?culture=ro-RO&timezoneOffset=-180&integration=swiperro&deviceType=1&numFormat=en-GB&countryCode=RO",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://swiper.ro/sport",
+      "capturedAt": "2026-09-27T13:07:22.820Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://sb2frontend-altenar2.biahosted.com/api/BetCards/GetBetCards?culture=ro-RO&timezoneOffset=-180&integration=swiperro&deviceType=1&numFormat=en-GB&countryCode=RO&betCardListId=359&sportId=0",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://swiper.ro/sport",
+      "capturedAt": "2026-09-27T13:07:22.821Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetTopEvents?culture=ro-RO&timezoneOffset=-180&integration=swiperro&deviceType=1&numFormat=en-GB&countryCode=RO&eventCount=0&sportId=0&timePeriod=0",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://swiper.ro/sport",
+      "capturedAt": "2026-09-27T13:07:22.824Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetEventsByChamp?culture=ro-RO&timezoneOffset=-180&integration=swiperro&deviceType=1&numFormat=en-GB&countryCode=RO&champId=0&champIds=3146%2C16808%2C16809%2C2936%2C2941%2C2942%2C2950%2C3031%2C3645%2C3147%2C3709%2C3108%2C28112%2C28113&eventCount=5&withLive=false",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://swiper.ro/sport",
+      "capturedAt": "2026-09-27T13:07:22.824Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetLivenow?culture=ro-RO&timezoneOffset=-180&integration=swiperro&deviceType=1&numFormat=en-GB&countryCode=RO&eventCount=5&sportId=0",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://swiper.ro/sport",
+      "capturedAt": "2026-09-27T13:07:22.824Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetHighlights?culture=ro-RO&timezoneOffset=-180&integration=swiperro&deviceType=1&numFormat=en-GB&countryCode=RO&eventCount=5&sportId=0",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://swiper.ro/sport",
+      "capturedAt": "2026-09-27T13:07:22.825Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetEventsByChamp?culture=ro-RO&timezoneOffset=-180&integration=swiperro&deviceType=1&numFormat=en-GB&countryCode=RO&champId=0&champIds=2995%2C3450%2C2980%2C5519%2C31482%2C31858%2C31859%2C3004%2C3007%2C3009%2C3014%2C8053%2C2982&eventCount=5&withLive=false",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://swiper.ro/sport",
+      "capturedAt": "2026-09-27T13:07:22.825Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetUpcoming?culture=ro-RO&timezoneOffset=-180&integration=swiperro&deviceType=1&numFormat=en-GB&countryCode=RO&eventCount=5&sportId=0",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://swiper.ro/sport",
+      "capturedAt": "2026-09-27T13:07:23.323Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://sb2commongateway-altenar2.biahosted.com/api/BoostedBets/GetCountsByIntegration",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://swiper.ro/sport",
+      "capturedAt": "2026-09-27T13:07:23.339Z"
+    }
+  ],
+  "keyEndpoints": [
+    {
+      "method": "GET",
+      "url": "https://swiper.ro/ro/api/v3/project/info",
+      "verified": true,
+      "purpose": "Same-origin JSON endpoint observed on swiper.ro. Role not further characterised."
+    },
+    {
+      "method": "GET",
+      "url": "https://swiper.ro/en/api/v3/project/info",
+      "verified": true,
+      "purpose": "Same-origin JSON endpoint observed on swiper.ro. Role not further characterised."
+    },
+    {
+      "method": "GET",
+      "url": "https://swiper.ro/ro/api/v3/system/info",
+      "verified": true,
+      "purpose": "Same-origin JSON endpoint observed on swiper.ro. Role not further characterised."
+    },
+    {
+      "method": "GET",
+      "url": "https://swiper.ro/ro/api/v3/casino/collection",
+      "verified": true,
+      "purpose": "Same-origin JSON endpoint observed on swiper.ro. Role not further characterised."
+    },
+    {
+      "method": "GET",
+      "url": "https://swiper.ro/ro/api/v3/seo/page",
+      "verified": true,
+      "purpose": "Same-origin JSON endpoint observed on swiper.ro. Role not further characterised."
+    },
+    {
+      "method": "POST",
+      "url": "https://swiper.ro/browser-logs",
+      "verified": true,
+      "purpose": "Same-origin JSON endpoint observed on swiper.ro. Role not further characterised."
+    },
+    {
+      "method": "POST",
+      "url": "https://swiper.ro/ro/api/v3/lang/translation",
+      "verified": true,
+      "purpose": "Same-origin JSON endpoint observed on swiper.ro. Role not further characterised."
+    },
+    {
+      "method": "GET",
+      "url": "https://swiper.ro/ro/api/v3/casino/category",
+      "verified": true,
+      "purpose": "Casino lobby navigation metadata (games/categories/providers). Not an odds source."
+    },
+    {
+      "method": "GET",
+      "url": "https://swiper.ro/ro/api/v3/banner/list",
+      "verified": true,
+      "purpose": "Same-origin JSON endpoint observed on swiper.ro. Role not further characterised."
+    },
+    {
+      "method": "GET",
+      "url": "https://swiper.ro/ro/api/v3/article/item",
+      "verified": true,
+      "purpose": "Same-origin JSON endpoint observed on swiper.ro. Role not further characterised."
+    },
+    {
+      "method": "GET",
+      "url": "https://swiper.ro/ro/api/v3/icon/list",
+      "verified": true,
+      "purpose": "Casino lobby navigation metadata (games/categories/providers). Not an odds source."
+    },
+    {
+      "method": "GET",
+      "url": "https://swiper.ro/ro/api/v3/sportbook/category/list",
+      "verified": true,
+      "purpose": "Casino lobby navigation metadata (games/categories/providers). Not an odds source."
+    },
+    {
+      "method": "GET",
+      "url": "https://swiper.ro/ro/api/v3/footer/item",
+      "verified": true,
+      "purpose": "Same-origin JSON endpoint observed on swiper.ro. Role not further characterised."
+    },
+    {
+      "method": "POST",
+      "url": "https://swiper.ro/ro/api/v3/project/application/link",
+      "verified": true,
+      "purpose": "Same-origin JSON endpoint observed on swiper.ro. Role not further characterised."
+    },
+    {
+      "method": "GET",
+      "url": "https://swiper.ro/ro/api/v3/casino/game/list",
+      "verified": true,
+      "purpose": "Casino lobby navigation metadata (games/categories/providers). Not an odds source."
+    },
+    {
+      "method": "GET",
+      "url": "https://swiper.ro/ro/api/v3/casino/big-wins",
+      "verified": true,
+      "purpose": "Same-origin JSON endpoint observed on swiper.ro. Role not further characterised."
+    },
+    {
+      "method": "GET",
+      "url": "https://eb6a7d55b667d9b6e52e2ebe363274d7b395eb78.seondnsresolve.com/",
+      "verified": true,
+      "purpose": "Same-origin JSON endpoint observed on eb6a7d55b667d9b6e52e2ebe363274d7b395eb78.seondnsresolve.com. Role not further characterised."
+    },
+    {
+      "method": "POST",
+      "url": "https://fa8671027d86e588b60ad66a6fc7e51f.seondnsresolve.com/",
+      "verified": true,
+      "purpose": "Same-origin JSON endpoint observed on fa8671027d86e588b60ad66a6fc7e51f.seondnsresolve.com. Role not further characterised."
+    },
+    {
+      "method": "GET",
+      "url": "https://gum.criteo.com/sid/json",
+      "verified": true,
+      "purpose": "Same-origin JSON endpoint observed on gum.criteo.com. Role not further characterised."
+    },
+    {
+      "method": "GET",
+      "url": "https://swiper.ro/en/api/v3/system/info",
+      "verified": true,
+      "purpose": "Same-origin JSON endpoint observed on swiper.ro. Role not further characterised."
+    },
+    {
+      "method": "POST",
+      "url": "https://b7b7aecbbf31239ba507bf5f95aa1ebb.seondnsresolve.com/",
+      "verified": true,
+      "purpose": "Same-origin JSON endpoint observed on b7b7aecbbf31239ba507bf5f95aa1ebb.seondnsresolve.com. Role not further characterised."
+    },
+    {
+      "method": "POST",
+      "url": "https://swiper.ro/cdn/edge/dd/js/",
+      "verified": true,
+      "purpose": "Same-origin JSON endpoint observed on swiper.ro. Role not further characterised."
+    },
+    {
+      "method": "GET",
+      "url": "https://sb2integration-altenar2.biahosted.com/api/M1pYSjBlV2hxYm5Oa0lHMHNMbU1nYW/Y21GdVpHOXRJR0oxYkd4emFHbDBJR2R2",
+      "verified": true,
+      "purpose": "Same-origin JSON endpoint observed on sb2integration-altenar2.biahosted.com. Role not further characterised."
+    },
+    {
+      "method": "GET",
+      "url": "https://sb2auth-altenar2.biahosted.com/api/WidgetAuth/GetCountryCode",
+      "verified": true,
+      "purpose": "Same-origin JSON endpoint observed on sb2auth-altenar2.biahosted.com. Role not further characterised."
+    },
+    {
+      "method": "GET",
+      "url": "https://sb2integration-altenar2.biahosted.com/api/Widget/GetWidgetsConfiguration",
+      "verified": true,
+      "purpose": "Client configuration or build metadata. Not an odds source."
+    }
+  ],
+  "platform": "sportradar",
+  "feedStatus": "verified",
+  "verifiedAt": "2026-09-27"
+}

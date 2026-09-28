@@ -1,0 +1,368 @@
+{
+  "book": "888sport",
+  "timestamp": "2026-09-27T13:06:51.676Z",
+  "pagesVisited": 2,
+  "minPagesRequired": 50,
+  "pagesTargetReached": true,
+  "endpoints": [
+    {
+      "method": "GET",
+      "url": "https://micros-eagle-prod1.gambling-solutions.ro/config-api/templatization-config/list?tenantId=201&siteId=102010&preload=true&path=%2Fsport%2Fhome",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://888sport.ro/",
+      "capturedAt": "2026-09-27T13:06:34.368Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-eagle-prod1.gambling-solutions.ro/api/multilang/v1/translate/table/4/ro?tenant_id=201",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://888sport.ro/",
+      "capturedAt": "2026-09-27T13:06:34.978Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-t.b-cdn.net/fonts/main/font-icons.json?_=1790514394885",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://888sport.ro/",
+      "capturedAt": "2026-09-27T13:06:35.347Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-eagle-prod1.gambling-solutions.ro/config-api/meta/list?tenantId=201&siteId=102010&path=%2Fsport%2Fhome",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://888sport.ro/",
+      "capturedAt": "2026-09-27T13:06:35.509Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-eagle-prod1.gambling-solutions.ro/config-api/maintenance/list?tenantId=201&siteId=102010",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://888sport.ro/",
+      "capturedAt": "2026-09-27T13:06:35.517Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://www.888.ro/api/auth/index",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://888sport.ro/",
+      "capturedAt": "2026-09-27T13:06:35.678Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-eagle-prod1.gambling-solutions.ro/config-api/multi-bet/list?tenantId=201&siteId=102010",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://888sport.ro/",
+      "capturedAt": "2026-09-27T13:06:35.729Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://cdn.segment.com/v1/projects/XDy8cN2hArIRoHKgvwieFCnm4p0ATLpB/settings",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://888sport.ro/",
+      "capturedAt": "2026-09-27T13:06:35.734Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-eagle-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Dall_slot_games_api&tid=201&sid=102010",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://888sport.ro/",
+      "capturedAt": "2026-09-27T13:06:35.737Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-eagle-prod1.gambling-solutions.ro/data/v1/resolve/elements?q=$ids@%3D_site",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://888sport.ro/",
+      "capturedAt": "2026-09-27T13:06:35.738Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-eagle-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Dall_promotions_api&tid=201&sid=102010",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://888sport.ro/",
+      "capturedAt": "2026-09-27T13:06:35.763Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-eagle-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Dmatches-live&tid=201&sid=102010",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://888sport.ro/",
+      "capturedAt": "2026-09-27T13:06:35.768Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-eagle-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Dtournaments-list&tid=201&sid=102010",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://888sport.ro/",
+      "capturedAt": "2026-09-27T13:06:35.774Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-eagle-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Dmatches-match-of-the-day&tid=201&sid=102010",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://888sport.ro/",
+      "capturedAt": "2026-09-27T13:06:35.776Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-eagle-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Dmatches-football&tid=201&sid=102010",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://888sport.ro/",
+      "capturedAt": "2026-09-27T13:06:35.779Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-eagle-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Dmatches-Romania-Liga1&tid=201&sid=102010",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://888sport.ro/",
+      "capturedAt": "2026-09-27T13:06:35.781Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-eagle-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Dmatches-tennis&tid=201&sid=102010",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://888sport.ro/",
+      "capturedAt": "2026-09-27T13:06:35.783Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-eagle-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Dmatches-basketball&tid=201&sid=102010",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://888sport.ro/",
+      "capturedAt": "2026-09-27T13:06:35.786Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-eagle-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Dmatches-volleyball&tid=201&sid=102010",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://888sport.ro/",
+      "capturedAt": "2026-09-27T13:06:35.788Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-eagle-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Dmatches-handball&tid=201&sid=102010",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://888sport.ro/",
+      "capturedAt": "2026-09-27T13:06:35.791Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-eagle-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Dall_jackpots_api&tid=201&sid=102010",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://888sport.ro/",
+      "capturedAt": "2026-09-27T13:06:35.795Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-eagle-prod1.gambling-solutions.ro/data/v1/resolve/elements?q=$ids@%3Dbanner.sample.side-menu-promo-1",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://888sport.ro/",
+      "capturedAt": "2026-09-27T13:06:35.797Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-eagle-prod1.gambling-solutions.ro/missions/tournaments/list?tenant_id=201",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://888sport.ro/",
+      "capturedAt": "2026-09-27T13:06:35.835Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-eagle-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Deagle-banners-sportpage&tid=201&sid=102010",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://888sport.ro/",
+      "capturedAt": "2026-09-27T13:06:35.838Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-eagle-prod1.gambling-solutions.ro/config-api/bonus-rules/list?tenantId=201&siteId=102010&category=bets",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://888sport.ro/",
+      "capturedAt": "2026-09-27T13:06:35.846Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-eagle-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Dlanguage-switcher-flags-default%26%3Deko.footer.texts.eagle%26%3Dwelcome-bonus%26%3Dsport-navigation-list-eagle%26%3Dprematch-matches&tid=201&sid=102010",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://888sport.ro/",
+      "capturedAt": "2026-09-27T13:06:35.853Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-eagle-prod1.gambling-solutions.ro/config-api/uk-markets/list?tenantId=201&siteId=102010&platformType=1",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://888sport.ro/",
+      "capturedAt": "2026-09-27T13:06:35.872Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-eagle-prod1.gambling-solutions.ro/api/digitain-tickets/v1/player/bonus/rules",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://888sport.ro/",
+      "capturedAt": "2026-09-27T13:06:35.938Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://micros-eagle-prod1-sb.gambling-solutions.ro/api/digitain-fetcher/v2/public/meta",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://888sport.ro/",
+      "capturedAt": "2026-09-27T13:06:37.512Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://micros-eagle-prod1-sb.gambling-solutions.ro/api/digitain-fetcher/v2/public/events",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://888sport.ro/",
+      "capturedAt": "2026-09-27T13:06:37.585Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://micros-eagle-prod1-sb.gambling-solutions.ro/api/digitain-fetcher/v2/public/events-with-markets",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://888sport.ro/",
+      "capturedAt": "2026-09-27T13:06:37.974Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-eagle-prod1.gambling-solutions.ro/config-api/popup-bonuses/list?tenantId=201&siteId=102010",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://888sport.ro/",
+      "capturedAt": "2026-09-27T13:06:40.296Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-t.b-cdn.net/fonts/main/font-icons.json?_=1790514403032",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://888sport.ro/sport/home",
+      "capturedAt": "2026-09-27T13:06:43.493Z"
+    }
+  ],
+  "keyEndpoints": [
+    {
+      "method": "GET",
+      "url": "https://micros-eagle-prod1.gambling-solutions.ro/config-api/templatization-config/list",
+      "verified": true,
+      "purpose": "Client configuration or build metadata. Not an odds source."
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-eagle-prod1.gambling-solutions.ro/api/multilang/v1/translate/table/4/ro",
+      "verified": true,
+      "purpose": "Same-origin JSON endpoint observed on micros-eagle-prod1.gambling-solutions.ro. Role not further characterised."
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-t.b-cdn.net/fonts/main/font-icons.json",
+      "verified": true,
+      "purpose": "Same-origin JSON endpoint observed on micros-t.b-cdn.net. Role not further characterised."
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-eagle-prod1.gambling-solutions.ro/config-api/meta/list",
+      "verified": true,
+      "purpose": "Client configuration or build metadata. Not an odds source."
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-eagle-prod1.gambling-solutions.ro/config-api/maintenance/list",
+      "verified": true,
+      "purpose": "Client configuration or build metadata. Not an odds source."
+    },
+    {
+      "method": "POST",
+      "url": "https://www.888.ro/api/auth/index",
+      "verified": true,
+      "purpose": "Same-origin JSON endpoint observed on www.888.ro. Role not further characterised."
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-eagle-prod1.gambling-solutions.ro/config-api/multi-bet/list",
+      "verified": true,
+      "purpose": "Client configuration or build metadata. Not an odds source."
+    },
+    {
+      "method": "GET",
+      "url": "https://cdn.segment.com/v1/projects/XDy8cN2hArIRoHKgvwieFCnm4p0ATLpB/settings",
+      "verified": true,
+      "purpose": "Client configuration or build metadata. Not an odds source."
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-eagle-prod1.gambling-solutions.ro/data/v1/resolve/sources",
+      "verified": true,
+      "purpose": "Tournament/competition list used to group events into leagues."
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-eagle-prod1.gambling-solutions.ro/missions/tournaments/list",
+      "verified": true,
+      "purpose": "Tournament/competition list used to group events into leagues."
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-eagle-prod1.gambling-solutions.ro/config-api/bonus-rules/list",
+      "verified": true,
+      "purpose": "Client configuration or build metadata. Not an odds source."
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-eagle-prod1.gambling-solutions.ro/config-api/uk-markets/list",
+      "verified": true,
+      "purpose": "Client configuration or build metadata. Not an odds source."
+    },
+    {
+      "method": "POST",
+      "url": "https://micros-eagle-prod1-sb.gambling-solutions.ro/api/digitain-fetcher/v2/public/meta",
+      "verified": true,
+      "purpose": "Client configuration or build metadata. Not an odds source."
+    },
+    {
+      "method": "POST",
+      "url": "https://micros-eagle-prod1-sb.gambling-solutions.ro/api/digitain-fetcher/v2/public/events",
+      "verified": true,
+      "purpose": "Same-origin JSON endpoint observed on micros-eagle-prod1-sb.gambling-solutions.ro. Role not further characterised."
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-eagle-prod1.gambling-solutions.ro/config-api/popup-bonuses/list",
+      "verified": true,
+      "purpose": "Client configuration or build metadata. Not an odds source."
+    }
+  ],
+  "platform": "digitain",
+  "feedStatus": "verified",
+  "verifiedAt": "2026-09-27"
+}

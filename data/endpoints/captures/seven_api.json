@@ -1,0 +1,20 @@
+{
+  "book": "seven",
+  "timestamp": "2026-09-27T13:44:53.622Z",
+  "pagesVisited": 4,
+  "minPagesRequired": 50,
+  "pagesTargetReached": false,
+  "endpoints": [],
+  "keyEndpoints": [
+    {
+      "method": "GET",
+      "url": "https://ncms.seven.ro/api/v1/event?cagecode=SVN",
+      "verified": true,
+      "purpose": "Promotional event CMS, same shape as Admiral. Returns a 28-byte empty body for cagecode SVN — same size as the ADR control, so this brand has no CMS content. Not an odds source."
+    }
+  ],
+  "platform": "ncms CMS (same shape as admiralbet)",
+  "feedStatus": "no-sports-feed",
+  "verifiedAt": null,
+  "finding": "Serves the same ncms.<brand>.ro/api/v1/event CMS shape as admiralbet, which suggested a new NSoft brand behind a new cagecode. Measured: cagecode=SVN returns a 28-byte empty body — byte-identical in size to the ADR control on the known-good Admiral CMS. The CMS is reachable but carries no content for this brand, so there is no companyUuid to harvest and no sports feed."
+}

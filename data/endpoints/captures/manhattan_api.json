@@ -1,0 +1,33 @@
+{
+  "book": "manhattan",
+  "timestamp": "2026-09-27T23:40:00.000Z",
+  "pagesVisited": 3,
+  "minPagesRequired": 50,
+  "pagesTargetReached": false,
+  "endpoints": [
+    { "method": "GET", "url": "https://www.manhattan.ro/ro/sports/home", "status": 200, "contentType": "text/html", "pageUrl": "https://www.manhattan.ro/ro/sports/home", "capturedAt": "2026-09-27T23:34:00.000Z" },
+    { "method": "GET", "url": "https://www.manhattan.ro/localConf.json", "status": 200, "contentType": "application/json", "pageUrl": "https://www.manhattan.ro/ro/sports/home", "capturedAt": "2026-09-27T23:34:20.000Z" },
+    { "method": "GET", "url": "https://www.manhattan.ro/conf.json", "status": 200, "contentType": "application/json", "pageUrl": "https://www.manhattan.ro/ro/sports/home", "capturedAt": "2026-09-27T23:34:21.000Z" },
+    { "method": "GET", "url": "https://www.manhattan.ro/pageBuilder/sportsbookHomeLandingPage.json", "status": 200, "contentType": "application/json", "pageUrl": "https://www.manhattan.ro/ro/sports/home", "capturedAt": "2026-09-27T23:34:30.000Z" },
+    { "method": "GET", "url": "https://go.cmsbetconstruct.com/api/public/v1/rum/partners/18768464/components/99877/contents", "status": 200, "contentType": "application/json", "pageUrl": "https://www.manhattan.ro/ro/sports/home", "capturedAt": "2026-09-27T23:34:35.000Z" },
+    { "method": "GET", "url": "https://go.cmsbetconstruct.com/api/public/v1/rum/casino/partners/18768464/platforms/0/games/pages/1", "status": 200, "contentType": "application/json", "pageUrl": "https://www.manhattan.ro/ro/sports/home", "capturedAt": "2026-09-27T23:34:36.000Z" }
+  ],
+  "keyEndpoints": [
+    {
+      "method": "GET",
+      "url": "https://go.cmsbetconstruct.com/api/public/v1/rum/partners/18768464/components/99877/contents",
+      "verified": true,
+      "purpose": "BetConstruct CMS component content (banners and promotional panels for partner 18768464). Public and reachable, but it is marketing content, NOT an odds source. Recorded because it is the only BetConstruct API the sportsbook shell calls."
+    },
+    {
+      "method": "GET",
+      "url": "https://www.manhattan.ro/pageBuilder/sportsbookHomeLandingPage.json",
+      "verified": true,
+      "purpose": "Page-builder configuration for the sportsbook landing route. 2,235 bytes of layout and routing only. It names no odds endpoint and embeds no sportsbook iframe, so it is not a feed."
+    }
+  ],
+  "platform": "betconstruct (partner 18768464)",
+  "feedStatus": "no-public-odds-feed",
+  "verifiedAt": null,
+  "finding": "RESOLVED, and the answer is negative. The brand is LIVE and fully licensed — the site answers 200, is a React sportsbook at /ro/sports/home with pre-match and live event-view routes, and runs on BetConstruct (partner 18768464) with LSports-derived data. But across 40 observed JSON calls on the sportsbook routes, NOT ONE is an odds feed: every one is CMS content, page-builder config, menus, translations, icon sets, geo lookup or the Hoory chat widget. No websocket opened either. The most likely explanation is that the sportsbook fetches markets only for an authenticated session; the public shell renders structure and prices nothing. Under this project's no-credentials rule that makes it unusable, so it is recorded and closed rather than pursued further. Note the earlier 'fetch failed' verdict for this brand was an artifact of probing manhattan.ro without the www prefix — the apex 301-redirects, and www answers 200. The brand was never down."
+}

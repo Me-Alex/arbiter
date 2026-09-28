@@ -1,0 +1,20 @@
+{
+  "book": "gpcasino",
+  "timestamp": "2026-09-27T13:44:53.623Z",
+  "pagesVisited": 4,
+  "minPagesRequired": 50,
+  "pagesTargetReached": false,
+  "endpoints": [],
+  "keyEndpoints": [
+    {
+      "method": "GET",
+      "url": "https://ncms.gpcasino.ro/api/v1/event?cagecode=GPC",
+      "verified": true,
+      "purpose": "Promotional event CMS, same shape as Admiral. Returns a 28-byte empty body for cagecode GPC. Not an odds source."
+    }
+  ],
+  "platform": "ncms CMS (same shape as admiralbet)",
+  "feedStatus": "no-sports-feed",
+  "verifiedAt": null,
+  "finding": "Same NCMS CMS shape as seven.ro and admiralbet. cagecode=GPC returns a 28-byte empty body, identical to the Admiral control. Casino-first brand with no CMS content and no sports feed."
+}

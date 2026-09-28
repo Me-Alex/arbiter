@@ -1,0 +1,370 @@
+{
+  "book": "ultrabet",
+  "timestamp": "2026-09-27T13:05:56.812Z",
+  "pagesVisited": 2,
+  "minPagesRequired": 50,
+  "pagesTargetReached": true,
+  "endpoints": [
+    {
+      "method": "GET",
+      "url": "https://ultrabet.ro/v.json",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://ultrabet.ro/",
+      "capturedAt": "2026-09-27T13:05:38.242Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://ubro-api.egt-digital.com/api/ews-crm/public/cms/general-settings",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://ultrabet.ro/",
+      "capturedAt": "2026-09-27T13:05:38.351Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://ubro-api.egt-digital.com/api/ews-crm/public/currency/extended",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://ultrabet.ro/",
+      "capturedAt": "2026-09-27T13:05:38.448Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://ubro-api.egt-digital.com/api/ews-notification-service/public/popup-messages/guests",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://ultrabet.ro/",
+      "capturedAt": "2026-09-27T13:05:38.462Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://ubro-api.egt-digital.com/api/cms/public/business-units/general-settings?businessUnit=UBRO",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://ultrabet.ro/",
+      "capturedAt": "2026-09-27T13:05:38.474Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://ubro-api.egt-digital.com/api/cms/public/general-translations",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://ultrabet.ro/",
+      "capturedAt": "2026-09-27T13:05:38.720Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://ubro-api.egt-digital.com/api/cms/public/verticals/ui",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://ultrabet.ro/",
+      "capturedAt": "2026-09-27T13:05:38.727Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://ubro-api.egt-digital.com/api/cms/public/business-units/marketing-integration-tags",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://ultrabet.ro/",
+      "capturedAt": "2026-09-27T13:05:38.964Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://ubro-api.egt-digital.com/api/cms/public/icon-widgets/get-all",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://ultrabet.ro/",
+      "capturedAt": "2026-09-27T13:05:38.968Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://ubro-api.egt-digital.com/api/cms/public/schema-markup/get-schema",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://ultrabet.ro/",
+      "capturedAt": "2026-09-27T13:05:38.970Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://ubro-api.egt-digital.com/api/cms/public/menus/get-menus",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://ultrabet.ro/",
+      "capturedAt": "2026-09-27T13:05:39.021Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://ubro-api.egt-digital.com/api/cms/public/metatags/get-by-route?url=%2Fcasino&businessUnit=UBRO&language=ro",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://ultrabet.ro/",
+      "capturedAt": "2026-09-27T13:05:39.036Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://ubro-api.egt-digital.com/api/ews-crm/public/nomenclatures/iana-timezones-fo",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://ultrabet.ro/",
+      "capturedAt": "2026-09-27T13:05:39.043Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://ubro-api.egt-digital.com/api/ews-crm/public/nomenclatures/languages",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://ultrabet.ro/",
+      "capturedAt": "2026-09-27T13:05:39.048Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://ubro-api.egt-digital.com/api/ews-bonuses/public/promotions/container/PromoFeed?ttl=86400",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://ultrabet.ro/",
+      "capturedAt": "2026-09-27T13:05:39.084Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://ubro-api.egt-digital.com/api/capi/public/page-view",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://ultrabet.ro/",
+      "capturedAt": "2026-09-27T13:05:39.097Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://consentcdn.cookiebot.eu/consentconfig/9ba3ef90-e184-4567-8a07-63f87fb705f4/settings.json",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://ultrabet.ro/",
+      "capturedAt": "2026-09-27T13:05:39.485Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://ubro-api.egt-digital.com/api/cms/public/general-translations?product=casino",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://ultrabet.ro/",
+      "capturedAt": "2026-09-27T13:05:39.637Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://ubro-api.egt-digital.com/api/gaming/public/categories/grid-layout-settings",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://ultrabet.ro/",
+      "capturedAt": "2026-09-27T13:05:39.645Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://ubro-api.egt-digital.com/api/gaming/public/jackpots/internal/levels?getGames=true&getCategoryDetails=true",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://ultrabet.ro/",
+      "capturedAt": "2026-09-27T13:05:39.732Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://ubro-api.egt-digital.com/api/cms/public/casino/ui",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://ultrabet.ro/",
+      "capturedAt": "2026-09-27T13:05:39.736Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://ubro-api.egt-digital.com/api/cms/configurator/business-unit-layout-configs/get-schema?product=casino&type=value&businessUnit=UBRO",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://ultrabet.ro/",
+      "capturedAt": "2026-09-27T13:05:39.855Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://ubro-api.egt-digital.com/api/gaming/public/categories/menu-categories?rootType=CASINO",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://ultrabet.ro/",
+      "capturedAt": "2026-09-27T13:05:40.023Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://ubro-api.egt-digital.com/api/gaming/public/categories/lobby-categories/1384887697101283328",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://ultrabet.ro/",
+      "capturedAt": "2026-09-27T13:05:40.038Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://ubro-api.egt-digital.com/api/gaming/public/categories/lobby-categories?rootType=CASINO",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://ultrabet.ro/",
+      "capturedAt": "2026-09-27T13:05:40.054Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://ubro-api.egt-digital.com/api/gaming/public/providers",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://ultrabet.ro/",
+      "capturedAt": "2026-09-27T13:05:40.070Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://ubro-api.egt-digital.com/api/gaming/public/game-layout/searchBy?categoryId=1384887697101283328&page=0&size=30",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://ultrabet.ro/",
+      "capturedAt": "2026-09-27T13:05:40.248Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://ubro-api.egt-digital.com/api/cms/public/containers/slider/4224",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://ultrabet.ro/",
+      "capturedAt": "2026-09-27T13:05:40.269Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://ubro-api.egt-digital.com/api/gaming/public/game-layout/searchBy?categoryId=1379751176169840640&page=0&size=30",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://ultrabet.ro/",
+      "capturedAt": "2026-09-27T13:05:40.298Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://ubro-api.egt-digital.com/api/gaming/public/widgets/data/1378009647786962944",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://ultrabet.ro/",
+      "capturedAt": "2026-09-27T13:05:40.303Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://ubro-api.egt-digital.com/api/gaming/public/game-layout/searchBy?categoryId=1376857880222568448&page=0&size=30",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://ultrabet.ro/",
+      "capturedAt": "2026-09-27T13:05:40.348Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://ubro-api.egt-digital.com/api/cms/public/metatags/get-by-route?url=%2Fsport&businessUnit=UBRO&language=ro",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://ultrabet.ro/sport",
+      "capturedAt": "2026-09-27T13:05:46.895Z"
+    }
+  ],
+  "keyEndpoints": [
+    {
+      "method": "GET",
+      "url": "https://ubro-api.egt-digital.com/api/sportsapi/public/containers/v2/lobby/normalized/{containerId}",
+      "verified": true,
+      "purpose": "THE ODDS FEED for this bookmaker. A \"lobby container\" is a curated bundle of events with their markets and prices. Verified containers carrying prematch football 1X2 include 4155, 4136, 4146, 4147, 4161, 4162, 4169, 4170, 4204, 4988, 5087, 5161, 5170. Shape: {events:{id:{sportId, homeTeam, awayTeam, startTime, live, markets:[{marketTemplateName, marketTitle, outcomes:[{name, odds}]}]}}}. The match RESULT market is the one whose outcome names are 1 / X / 2 — note that other three-way markets exist and are NOT 1X2 (e.g. \"Golul (3)\" is goals within 3 minutes). Prematch means live === false."
+    },
+    {
+      "method": "GET",
+      "url": "https://ubro-api.egt-digital.com/api/sportsapi/public/sports",
+      "verified": true,
+      "purpose": "EGT Digital public sports API. Unauthenticated, but gated on client device headers: a bare request returns HTTP 488 {\"Message\":\"Missing user device header!\"}. The minimum that satisfies the gate is x-platform-device: desktop + x-platform-lang: ro + x-platform-tz: 180 — ordinary client locale headers. x-platform-hash is NOT verified server-side (junk and omission both return 200) and x-platform-exp is only a client clock, so this is a device-identification header, not a signature or a challenge. Returns the sport catalogue; football is sportId 1001. The per-brand subpath is UBRO."
+    },
+    {
+      "method": "GET",
+      "url": "https://ultrabet.ro/v.json",
+      "verified": true,
+      "purpose": "Same-origin JSON endpoint observed on ultrabet.ro. Role not further characterised."
+    },
+    {
+      "method": "GET",
+      "url": "https://ubro-api.egt-digital.com/api/ews-crm/public/cms/general-settings",
+      "verified": true,
+      "purpose": "Client configuration or build metadata. Not an odds source."
+    },
+    {
+      "method": "GET",
+      "url": "https://ubro-api.egt-digital.com/api/ews-crm/public/currency/extended",
+      "verified": true,
+      "purpose": "Payment/currency metadata. Not an odds source."
+    },
+    {
+      "method": "GET",
+      "url": "https://ubro-api.egt-digital.com/api/ews-notification-service/public/popup-messages/guests",
+      "verified": true,
+      "purpose": "Same-origin JSON endpoint observed on ubro-api.egt-digital.com. Role not further characterised."
+    },
+    {
+      "method": "GET",
+      "url": "https://ubro-api.egt-digital.com/api/ews-crm/public/nomenclatures/iana-timezones-fo",
+      "verified": true,
+      "purpose": "Same-origin JSON endpoint observed on ubro-api.egt-digital.com. Role not further characterised."
+    },
+    {
+      "method": "GET",
+      "url": "https://ubro-api.egt-digital.com/api/ews-crm/public/nomenclatures/languages",
+      "verified": true,
+      "purpose": "Same-origin JSON endpoint observed on ubro-api.egt-digital.com. Role not further characterised."
+    },
+    {
+      "method": "GET",
+      "url": "https://ubro-api.egt-digital.com/api/ews-bonuses/public/promotions/container/PromoFeed",
+      "verified": true,
+      "purpose": "Lobby/container feed: a curated bundle of events with their markets and prices for the front page."
+    },
+    {
+      "method": "GET",
+      "url": "https://consentcdn.cookiebot.eu/consentconfig/9ba3ef90-e184-4567-8a07-63f87fb705f4/settings.json",
+      "verified": true,
+      "purpose": "Client configuration or build metadata. Not an odds source."
+    },
+    {
+      "method": "GET",
+      "url": "https://ubro-api.egt-digital.com/api/gaming/public/categories/lobby-categories/1384887697101283328",
+      "verified": true,
+      "purpose": "Lobby/container feed: a curated bundle of events with their markets and prices for the front page."
+    },
+    {
+      "method": "GET",
+      "url": "https://ubro-api.egt-digital.com/api/gaming/public/categories/lobby-categories",
+      "verified": true,
+      "purpose": "Lobby/container feed: a curated bundle of events with their markets and prices for the front page."
+    },
+    {
+      "method": "GET",
+      "url": "https://ubro-api.egt-digital.com/api/cms/public/containers/slider/4224",
+      "verified": true,
+      "purpose": "Lobby/container feed: a curated bundle of events with their markets and prices for the front page."
+    },
+    {
+      "method": "GET",
+      "url": "https://ubro-api.egt-digital.com/api/gaming/public/widgets/data/1378009647786962944",
+      "verified": true,
+      "purpose": "Same-origin JSON endpoint observed on ubro-api.egt-digital.com. Role not further characterised."
+    }
+  ],
+  "platform": "egt-digital",
+  "feedStatus": "verified",
+  "verifiedAt": "2026-09-27",
+  "oddsFeed": {
+    "url": "https://ubro-api.egt-digital.com/api/sportsapi/public/containers/v2/lobby/normalized/{containerId}",
+    "method": "GET",
+    "auth": "none (device-header gate only)",
+    "requiredHeaders": {
+      "x-platform-device": "desktop",
+      "x-platform-lang": "ro",
+      "x-platform-tz": "180"
+    },
+    "businessUnit": "UBRO",
+    "measuredAt": "2026-09-27T13:08:21.526Z",
+    "footballSportId": 1001,
+    "priced1x2Found": 37
+  },
+  "independence": "ONE FEED across prowin/ultrabet/vipbet (corrected 2026-09-27, kickoff-keyed + feedProducerId). 22/31, 33/35 and 21/30 shared fixtures carry the SAME feedProducerId. An earlier measurement claiming independence keyed fixtures without a kickoff and was wrong.",
+  "status": "registered-disabled"
+}

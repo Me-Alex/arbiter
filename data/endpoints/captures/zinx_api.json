@@ -1,0 +1,20 @@
+{
+  "book": "zinx",
+  "timestamp": "2026-09-27T13:44:53.625Z",
+  "pagesVisited": 4,
+  "minPagesRequired": 50,
+  "pagesTargetReached": false,
+  "endpoints": [],
+  "keyEndpoints": [
+    {
+      "method": "GET",
+      "url": "https://zinx.ro/ro/api/v3/project/info?fields=client,sportsbook",
+      "verified": true,
+      "purpose": "Client configuration (login form types, default currency, payment widget). 465 bytes, no odds. Recorded because it is the only API this brand serves."
+    }
+  ],
+  "platform": "swiper-shaped /ro/api/v3 surface",
+  "feedStatus": "no-sports-feed",
+  "verifiedAt": null,
+  "finding": "Serves the same /ro/api/v3/project/info surface as swiper.ro. project/info answers 200 with 465 bytes of client configuration, but every sportsbook path beneath it (/sportsbook/sports, /sportsbook/events) is HTTP 404. Same non-usable shape as swiper: the brand exposes configuration without odds."
+}

@@ -1,0 +1,125 @@
+// The endpoint registry is only worth having if something checks it. These
+// tests pin the reconciliation between the recorded captures, the scraper
+// config, and the hand-declared feed groups.
+import { test } from 'node:test';
+import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+import {
+  loadEndpointRegistry,
+  platformOf,
+  booksOnPlatform,
+  ungroupedPlatformPeers,
+  unscrapedBooks,
+  feedStatusConflicts,
+} from '../src/shared/endpoints.mjs';
+import { FEED_GROUPS } from '../src/scanner/feed-groups.mjs';
+
+const cfg = JSON.parse(readFileSync(join('config', 'scrapers.json'), 'utf8'));
+const jobs = cfg.jobs || cfg;
+
+test('registry loads and has one record per book', () => {
+  const reg = loadEndpointRegistry();
+  assert.ok(reg, 'data/endpoints/endpoints.json must exist');
+  assert.equal(reg.schemaVersion, 1);
+  assert.ok(Object.keys(reg.books).length > 20, 'registry should cover the known books');
+  for (const [book, rec] of Object.entries(reg.books)) {
+    assert.equal(rec.book, book, `record key must match its book name (${book})`);
+  }
+});
+
+test('every scraper job is represented in the registry', () => {
+  const reg = loadEndpointRegistry();
+  const missing = jobs.map((j) => j.id).filter((id) => !reg.books[id]);
+  assert.deepEqual(missing, [], 'no configured job may be absent from the registry');
+});
+
+test('every enabled job carries the platform the registry recorded', () => {
+  const reg = loadEndpointRegistry();
+  for (const job of jobs) {
+    if (!job.enabled) continue;
+    const rec = reg.books[job.id];
+    assert.ok(rec.platform, `${job.id} has no recorded platform`);
+    assert.equal(job.platform, rec.platform, `${job.id} config platform drifted from the registry`);
+  }
+});
+
+test('the registry corroborates the declared feed groups', () => {
+  // Each declared group must sit on one platform in the recorded evidence.
+  // This is the check the hand-maintained list never had: if a book migrates
+  // provider, the group silently stops being true and this fails.
+  for (const group of FEED_GROUPS) {
+    const platforms = new Set(group.members.map((m) => platformOf(m)).filter(Boolean));
+    assert.ok(platforms.size <= 1,
+      `feed group ${group.id} spans platforms: ${[...platforms].join(', ')}`);
+  }
+});
+
+test('maxbet stays outside the nsoft group for the measured reason', () => {
+  // maxbet is on the same NSoft platform as admiral/stanleybet but under a
+  // different company UUID, and its prices genuinely differ. The registry now
+  // proves the platform is shared; the group must still exclude it, or the
+  // measured opportunity disappears.
+  const platforms = new Set(['admiral', 'stanleybet', 'maxbet'].map(platformOf));
+  assert.equal(platforms.size, 1, 'all three are on the nsoft platform');
+  const nsoft = FEED_GROUPS.find((g) => g.id === 'nsoft-company');
+  assert.ok(nsoft.members.includes('admiral') && nsoft.members.includes('stanleybet'));
+  assert.ok(!nsoft.members.includes('maxbet'), 'maxbet must not be grouped');
+});
+
+test('ungroupedPlatformPeers surfaces maxbet as a candidate, not a verdict', () => {
+  const nsoft = FEED_GROUPS.find((g) => g.id === 'nsoft-company');
+  const peers = ungroupedPlatformPeers(nsoft.members);
+  const hit = peers.find((p) => p.platform === 'nsoft');
+  assert.ok(hit, 'nsoft should have partially-grouped members');
+  assert.ok(hit.ungrouped.includes('maxbet'));
+});
+
+test('unscrapedBooks lists the additive candidates that already have evidence', () => {
+  const un = unscrapedBooks();
+  const names = un.map((b) => b.book);
+  // These have a recorded platform and/or a real capture but no scraper job.
+  assert.ok(names.includes('888sport'), '888sport has a digitain capture and no job');
+  assert.ok(names.includes('mrplay'));
+  assert.ok(!names.includes('favbet'), 'a scraped book must not be listed as a candidate');
+  for (const job of jobs) assert.ok(!names.includes(job.id), `${job.id} is configured`);
+});
+
+test('feedStatusConflicts is clean: unibet is no longer a conflict', () => {
+  // This used to assert the opposite. Unibet was the single conflict in the
+  // registry — config said `validated`, the archive said `browser-only` — and
+  // that conflict was the honest record of a job that pointed at a dead Kambi
+  // endpoint while claiming to be validated. Its feed was recovered on
+  // 2026-09-28 (Kindred sports BFF, see src/scrapers/unibet.mjs), the archive
+  // now says `verified`, and a test still asserting the conflict would keep
+  // the reconciliation check permanently red for a resolved problem.
+  const conflicts = feedStatusConflicts(jobs);
+  assert.deepEqual(conflicts, [], 'no book may disagree with the archive any more');
+
+  // The check itself must still be able to fire, or an empty list proves
+  // nothing. Unibet's old state is exactly the pair it is meant to catch, so
+  // feed it back through a synthetic registry.
+  const unibet = jobs.find((j) => j.id === 'unibet');
+  assert.equal(unibet.validationStatus, 'validated');
+  const flagged = feedStatusConflicts([unibet], {
+    books: { unibet: { book: 'unibet', feedStatus: 'browser-only' } },
+  });
+  assert.deepEqual(flagged, [
+    { book: 'unibet', registry: 'browser-only', config: 'validated', enabled: true },
+  ]);
+
+  // The opposite direction is deliberately not a conflict: a `verified` feed
+  // with an `experimental` scraper is two separate claims, not a contradiction.
+  assert.deepEqual(
+    feedStatusConflicts([{ id: 'unibet', validationStatus: 'experimental' }], {
+      books: { unibet: { book: 'unibet', feedStatus: 'verified' } },
+    }),
+    [],
+    'reachability and scraper trust are separate axes',
+  );
+});
+
+test('booksOnPlatform returns a sorted member list', () => {
+  const exa = booksOnPlatform('exalogic-xsport');
+  assert.deepEqual(exa, ['excelbet', 'las-vegas', 'magnumbet', 'winboss']);
+});

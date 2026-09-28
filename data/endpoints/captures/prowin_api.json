@@ -1,0 +1,356 @@
+{
+  "book": "prowin",
+  "timestamp": "2026-09-27T13:05:37.172Z",
+  "pagesVisited": 2,
+  "minPagesRequired": 50,
+  "pagesTargetReached": true,
+  "endpoints": [
+    {
+      "method": "GET",
+      "url": "https://prowin.ro/v.json",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://prowin.ro/",
+      "capturedAt": "2026-09-27T13:05:18.645Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://pwro-api.egt-digital.com/api/ews-crm/public/cms/general-settings",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://prowin.ro/",
+      "capturedAt": "2026-09-27T13:05:18.884Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://pwro-api.egt-digital.com/api/ews-crm/public/currency/extended",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://prowin.ro/",
+      "capturedAt": "2026-09-27T13:05:18.888Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://pwro-api.egt-digital.com/api/cms/public/business-units/general-settings?businessUnit=PWRO",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://prowin.ro/",
+      "capturedAt": "2026-09-27T13:05:18.909Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://pwro-api.egt-digital.com/api/ews-notification-service/public/popup-messages/guests",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://prowin.ro/",
+      "capturedAt": "2026-09-27T13:05:18.913Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://pwro-api.egt-digital.com/api/cms/public/general-translations",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://prowin.ro/",
+      "capturedAt": "2026-09-27T13:05:18.931Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://pwro-api.egt-digital.com/api/cms/public/verticals/ui",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://prowin.ro/",
+      "capturedAt": "2026-09-27T13:05:18.938Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://pwro-api.egt-digital.com/api/cms/public/schema-markup/get-schema",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://prowin.ro/",
+      "capturedAt": "2026-09-27T13:05:19.258Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://pwro-api.egt-digital.com/api/cms/public/business-units/marketing-integration-tags",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://prowin.ro/",
+      "capturedAt": "2026-09-27T13:05:19.267Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://pwro-api.egt-digital.com/api/cms/public/icon-widgets/get-all",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://prowin.ro/",
+      "capturedAt": "2026-09-27T13:05:19.269Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://pwro-api.egt-digital.com/api/ews-crm/public/nomenclatures/iana-timezones-fo",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://prowin.ro/",
+      "capturedAt": "2026-09-27T13:05:19.360Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://pwro-api.egt-digital.com/api/cms/public/menus/get-menus",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://prowin.ro/",
+      "capturedAt": "2026-09-27T13:05:19.364Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://pwro-api.egt-digital.com/api/cms/public/metatags/get-by-route?url=%2Fcasino&businessUnit=PWRO&language=ro",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://prowin.ro/",
+      "capturedAt": "2026-09-27T13:05:19.368Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://pwro-api.egt-digital.com/api/ews-crm/public/nomenclatures/languages",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://prowin.ro/",
+      "capturedAt": "2026-09-27T13:05:19.380Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://pwro-api.egt-digital.com/api/ews-bonuses/public/promotions/container/PromoFeed?ttl=86400",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://prowin.ro/",
+      "capturedAt": "2026-09-27T13:05:19.427Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://pwro-api.egt-digital.com/api/capi/public/page-view",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://prowin.ro/",
+      "capturedAt": "2026-09-27T13:05:19.429Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://consentcdn.cookiebot.eu/consentconfig/2fb4c2b5-9ceb-4005-a7fc-dea69454b9ac/settings.json",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://prowin.ro/",
+      "capturedAt": "2026-09-27T13:05:19.722Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://pwro-api.egt-digital.com/api/cms/public/general-translations?product=casino",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://prowin.ro/",
+      "capturedAt": "2026-09-27T13:05:21.315Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://pwro-api.egt-digital.com/api/gaming/public/categories/grid-layout-settings",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://prowin.ro/",
+      "capturedAt": "2026-09-27T13:05:21.328Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://pwro-api.egt-digital.com/api/cms/public/casino/ui",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://prowin.ro/",
+      "capturedAt": "2026-09-27T13:05:21.346Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://pwro-api.egt-digital.com/api/gaming/public/jackpots/internal/levels?getGames=true&getCategoryDetails=true",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://prowin.ro/",
+      "capturedAt": "2026-09-27T13:05:21.351Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://pwro-api.egt-digital.com/api/cms/configurator/business-unit-layout-configs/get-schema?product=casino&type=value&businessUnit=PWRO",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://prowin.ro/",
+      "capturedAt": "2026-09-27T13:05:21.446Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://pwro-api.egt-digital.com/api/gaming/public/categories/menu-categories?rootType=CASINO",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://prowin.ro/",
+      "capturedAt": "2026-09-27T13:05:21.597Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://pwro-api.egt-digital.com/api/gaming/public/categories/lobby-categories?rootType=CASINO",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://prowin.ro/",
+      "capturedAt": "2026-09-27T13:05:21.614Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://pwro-api.egt-digital.com/api/gaming/public/providers",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://prowin.ro/",
+      "capturedAt": "2026-09-27T13:05:21.643Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://pwro-api.egt-digital.com/api/cms/public/containers/slider/4456",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://prowin.ro/",
+      "capturedAt": "2026-09-27T13:05:21.811Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://pwro-api.egt-digital.com/api/gaming/public/widgets/data/1546793200066830336",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://prowin.ro/",
+      "capturedAt": "2026-09-27T13:05:21.833Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://pwro-api.egt-digital.com/api/gaming/public/game-layout/searchBy?categoryId=1386997837312737280&page=0&size=30",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://prowin.ro/",
+      "capturedAt": "2026-09-27T13:05:21.864Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://pwro-api.egt-digital.com/api/gaming/public/games/mostPlayed?gameProviderIds=1,2,4,6,8,12,14,32,51,7,9,30,33,39,46,54,59,60,63,91,93,96&betType=CASINO&count=20&period=24",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://prowin.ro/",
+      "capturedAt": "2026-09-27T13:05:22.011Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://pwro-api.egt-digital.com/api/gaming/public/widgets/jackpots/games/1546793200066830336",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://prowin.ro/",
+      "capturedAt": "2026-09-27T13:05:22.276Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://pwro-api.egt-digital.com/api/cms/public/metatags/get-by-route?url=%2Fsport&businessUnit=PWRO&language=ro",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://prowin.ro/sport",
+      "capturedAt": "2026-09-27T13:05:27.198Z"
+    }
+  ],
+  "keyEndpoints": [
+    {
+      "method": "GET",
+      "url": "https://pwro-api.egt-digital.com/api/sportsapi/public/containers/v2/lobby/normalized/{containerId}",
+      "verified": true,
+      "purpose": "THE ODDS FEED for this bookmaker. A \"lobby container\" is a curated bundle of events with their markets and prices. Verified containers carrying prematch football 1X2 include 4155, 4136, 4146, 4147, 4161, 4162, 4169, 4170, 4204, 4988, 5087, 5161, 5170. Shape: {events:{id:{sportId, homeTeam, awayTeam, startTime, live, markets:[{marketTemplateName, marketTitle, outcomes:[{name, odds}]}]}}}. The match RESULT market is the one whose outcome names are 1 / X / 2 — note that other three-way markets exist and are NOT 1X2 (e.g. \"Golul (3)\" is goals within 3 minutes). Prematch means live === false."
+    },
+    {
+      "method": "GET",
+      "url": "https://pwro-api.egt-digital.com/api/sportsapi/public/sports",
+      "verified": true,
+      "purpose": "EGT Digital public sports API. Unauthenticated, but gated on client device headers: a bare request returns HTTP 488 {\"Message\":\"Missing user device header!\"}. The minimum that satisfies the gate is x-platform-device: desktop + x-platform-lang: ro + x-platform-tz: 180 — ordinary client locale headers. x-platform-hash is NOT verified server-side (junk and omission both return 200) and x-platform-exp is only a client clock, so this is a device-identification header, not a signature or a challenge. Returns the sport catalogue; football is sportId 1001. The per-brand subpath is PWRO."
+    },
+    {
+      "method": "GET",
+      "url": "https://prowin.ro/v.json",
+      "verified": true,
+      "purpose": "Same-origin JSON endpoint observed on prowin.ro. Role not further characterised."
+    },
+    {
+      "method": "GET",
+      "url": "https://pwro-api.egt-digital.com/api/ews-crm/public/cms/general-settings",
+      "verified": true,
+      "purpose": "Client configuration or build metadata. Not an odds source."
+    },
+    {
+      "method": "GET",
+      "url": "https://pwro-api.egt-digital.com/api/ews-crm/public/currency/extended",
+      "verified": true,
+      "purpose": "Payment/currency metadata. Not an odds source."
+    },
+    {
+      "method": "GET",
+      "url": "https://pwro-api.egt-digital.com/api/ews-notification-service/public/popup-messages/guests",
+      "verified": true,
+      "purpose": "Same-origin JSON endpoint observed on pwro-api.egt-digital.com. Role not further characterised."
+    },
+    {
+      "method": "GET",
+      "url": "https://pwro-api.egt-digital.com/api/ews-crm/public/nomenclatures/iana-timezones-fo",
+      "verified": true,
+      "purpose": "Same-origin JSON endpoint observed on pwro-api.egt-digital.com. Role not further characterised."
+    },
+    {
+      "method": "GET",
+      "url": "https://pwro-api.egt-digital.com/api/ews-crm/public/nomenclatures/languages",
+      "verified": true,
+      "purpose": "Same-origin JSON endpoint observed on pwro-api.egt-digital.com. Role not further characterised."
+    },
+    {
+      "method": "GET",
+      "url": "https://pwro-api.egt-digital.com/api/ews-bonuses/public/promotions/container/PromoFeed",
+      "verified": true,
+      "purpose": "Lobby/container feed: a curated bundle of events with their markets and prices for the front page."
+    },
+    {
+      "method": "GET",
+      "url": "https://consentcdn.cookiebot.eu/consentconfig/2fb4c2b5-9ceb-4005-a7fc-dea69454b9ac/settings.json",
+      "verified": true,
+      "purpose": "Client configuration or build metadata. Not an odds source."
+    },
+    {
+      "method": "GET",
+      "url": "https://pwro-api.egt-digital.com/api/gaming/public/categories/lobby-categories",
+      "verified": true,
+      "purpose": "Lobby/container feed: a curated bundle of events with their markets and prices for the front page."
+    },
+    {
+      "method": "GET",
+      "url": "https://pwro-api.egt-digital.com/api/cms/public/containers/slider/4456",
+      "verified": true,
+      "purpose": "Lobby/container feed: a curated bundle of events with their markets and prices for the front page."
+    },
+    {
+      "method": "GET",
+      "url": "https://pwro-api.egt-digital.com/api/gaming/public/widgets/data/1546793200066830336",
+      "verified": true,
+      "purpose": "Same-origin JSON endpoint observed on pwro-api.egt-digital.com. Role not further characterised."
+    }
+  ],
+  "platform": "egt-digital",
+  "feedStatus": "verified",
+  "verifiedAt": "2026-09-27",
+  "oddsFeed": {
+    "url": "https://pwro-api.egt-digital.com/api/sportsapi/public/containers/v2/lobby/normalized/{containerId}",
+    "method": "GET",
+    "auth": "none (device-header gate only)",
+    "requiredHeaders": {
+      "x-platform-device": "desktop",
+      "x-platform-lang": "ro",
+      "x-platform-tz": "180"
+    },
+    "businessUnit": "PWRO",
+    "measuredAt": "2026-09-27T13:08:18.244Z",
+    "footballSportId": 1001,
+    "priced1x2Found": 31
+  },
+  "independence": "ONE FEED across prowin/ultrabet/vipbet (corrected 2026-09-27, kickoff-keyed + feedProducerId). 22/31, 33/35 and 21/30 shared fixtures carry the SAME feedProducerId. An earlier measurement claiming independence keyed fixtures without a kickoff and was wrong.",
+  "status": "registered-disabled"
+}

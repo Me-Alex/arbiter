@@ -1,0 +1,261 @@
+{
+  "book": "betmen",
+  "timestamp": "2026-09-27T13:05:17.563Z",
+  "pagesVisited": 4,
+  "minPagesRequired": 50,
+  "pagesTargetReached": true,
+  "endpoints": [
+    {
+      "method": "GET",
+      "url": "https://firebase.googleapis.com/v1alpha/projects/-/apps/1:659982473377:web:4f08f4dec52f7f33e0b8e0/webConfig",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "pageUrl": "https://www.betmen.ro/",
+      "capturedAt": "2026-09-27T13:04:41.734Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://cdn.skywind360.com/t1/games_exclusion/bingo-games.json",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.betmen.ro/",
+      "capturedAt": "2026-09-27T13:04:41.734Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://dvm0p9vsezqr2.cloudfront.net/visitorGame/f63ea7b0-73ac-4375-b741-6ea52784a0aa-4/e9f3843b/ro/3/is_visitor_mode/true",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.betmen.ro/",
+      "capturedAt": "2026-09-27T13:04:41.744Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://dvm0p9vsezqr2.cloudfront.net/visitorGame/f63ea7b0-73ac-4375-b741-6ea52784a0aa-4/e9f3843b/ro/700",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.betmen.ro/",
+      "capturedAt": "2026-09-27T13:04:41.820Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://site-api.betmen.ro/v1/site/games?isMobileApp=false",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://www.betmen.ro/",
+      "capturedAt": "2026-09-27T13:04:41.897Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://site-api.betmen.ro/v2/site/category?isMobileApp=false&categories=b2cd89bd-c3a4-484b-be8b-f4c1b78e5570",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://www.betmen.ro/",
+      "capturedAt": "2026-09-27T13:04:41.898Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://site-api.betmen.ro/v1/site/games/vendors",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://www.betmen.ro/",
+      "capturedAt": "2026-09-27T13:04:41.898Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://site-api.betmen.ro/v1/site/games/providers/names",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://www.betmen.ro/",
+      "capturedAt": "2026-09-27T13:04:43.049Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://firebaseinstallations.googleapis.com/v1/projects/betmen-firebase-project/installations",
+      "status": 200,
+      "contentType": "application/json; charset=UTF-8",
+      "pageUrl": "https://www.betmen.ro/",
+      "capturedAt": "2026-09-27T13:04:43.049Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://ekr.zdassets.com/compose/aff9164c-7419-4c31-bf30-bd0361b8b637",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://www.betmen.ro/",
+      "capturedAt": "2026-09-27T13:04:43.784Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://go.betmen.ro/track",
+      "status": 200,
+      "contentType": "text/json; charset=utf-8",
+      "pageUrl": "https://www.betmen.ro/",
+      "capturedAt": "2026-09-27T13:04:44.362Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://betmencrowd.zendesk.com/embeddable/config",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://www.betmen.ro/",
+      "capturedAt": "2026-09-27T13:04:44.534Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://site-api.betmen.ro/notification/v1/push/settings?siteId=889f6989-4118-403a-bd13-9b367c287f49",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://www.betmen.ro/",
+      "capturedAt": "2026-09-27T13:04:46.696Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://betmen.ro/_next/data/qAq7Tkfa7lr-aRfeU_HpN/live.json",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.betmen.ro/sport",
+      "capturedAt": "2026-09-27T13:04:49.900Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://site-api.betmen.ro/v1/site/demo/bb38eaed-3219-4b08-9a4b-e05cc343d4c3",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://www.betmen.ro/sport/football",
+      "capturedAt": "2026-09-27T13:05:08.280Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://betmen.ro/_next/data/qAq7Tkfa7lr-aRfeU_HpN/sport/football.json?slug=football",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.betmen.ro/sport/football",
+      "capturedAt": "2026-09-27T13:05:08.459Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://menhir.ro-2.nsoftcdn.com/web/resource/locales",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.betmen.ro/sport/football",
+      "capturedAt": "2026-09-27T13:05:09.344Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://betmensports.web.7platform.net/data/config.json?v=6de44330de",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.betmen.ro/sport/football",
+      "capturedAt": "2026-09-27T13:05:09.391Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://betmensports.web.7platform.net/data/modules.json?v=6de44330de",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.betmen.ro/sport/football",
+      "capturedAt": "2026-09-27T13:05:09.394Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://gravity-2.de.nsoftcdn.com/v1/web/bootstrap?v=ro",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://www.betmen.ro/sport/football",
+      "capturedAt": "2026-09-27T13:05:09.511Z"
+    }
+  ],
+  "keyEndpoints": [
+    {
+      "method": "GET",
+      "url": "https://sportsbook-sm-distribution-api.nsoft.com/api/v1/events?companyUuid=7afdd6f5-f954-43d6-b696-2e0dc0ae4ee2",
+      "verified": true,
+      "purpose": "THE ODDS FEED for this bookmaker. NSoft public distribution endpoint, no authentication. companyUuid 7afdd6f5-f954-43d6-b696-2e0dc0ae4ee2 is a public tenant identifier read from the brand's own page, not a credential. Measured 2026-09-27: 1287 events in a 3-day window; football is sportId 18 on this tenant (486 events with a complete 3-way result market, e.g. \"Austria - Kosovo\"). Response is {data:{events:{...}, _mapping:{...}}} — events is an OBJECT keyed by id and every field is a short key resolved through _mapping (the price is the \"odd\" field, markets live under the event's \"markets\" key). Query needs filter[from]/filter[to], timezone, language, shortProps=1, offerTemplate=WEB_OVERVIEW and dataFormat={\"default\":\"array\",\"events\":\"object\",\"outcomes\":\"array\"}."
+    },
+    {
+      "method": "GET",
+      "url": "https://cdn.skywind360.com/t1/games_exclusion/bingo-games.json",
+      "verified": true,
+      "purpose": "Same-origin JSON endpoint observed on cdn.skywind360.com. Role not further characterised."
+    },
+    {
+      "method": "GET",
+      "url": "https://dvm0p9vsezqr2.cloudfront.net/visitorGame/f63ea7b0-73ac-4375-b741-6ea52784a0aa-4/e9f3843b/ro/3/is_visitor_mode/true",
+      "verified": true,
+      "purpose": "Same-origin JSON endpoint observed on dvm0p9vsezqr2.cloudfront.net. Role not further characterised."
+    },
+    {
+      "method": "GET",
+      "url": "https://dvm0p9vsezqr2.cloudfront.net/visitorGame/f63ea7b0-73ac-4375-b741-6ea52784a0aa-4/e9f3843b/ro/700",
+      "verified": true,
+      "purpose": "Same-origin JSON endpoint observed on dvm0p9vsezqr2.cloudfront.net. Role not further characterised."
+    },
+    {
+      "method": "GET",
+      "url": "https://site-api.betmen.ro/v1/site/games",
+      "verified": true,
+      "purpose": "Same-origin JSON endpoint observed on site-api.betmen.ro. Role not further characterised."
+    },
+    {
+      "method": "GET",
+      "url": "https://site-api.betmen.ro/v1/site/games/vendors",
+      "verified": true,
+      "purpose": "Same-origin JSON endpoint observed on site-api.betmen.ro. Role not further characterised."
+    },
+    {
+      "method": "GET",
+      "url": "https://site-api.betmen.ro/v1/site/games/providers/names",
+      "verified": true,
+      "purpose": "Casino lobby navigation metadata (games/categories/providers). Not an odds source."
+    },
+    {
+      "method": "GET",
+      "url": "https://ekr.zdassets.com/compose/aff9164c-7419-4c31-bf30-bd0361b8b637",
+      "verified": true,
+      "purpose": "Same-origin JSON endpoint observed on ekr.zdassets.com. Role not further characterised."
+    },
+    {
+      "method": "GET",
+      "url": "https://betmencrowd.zendesk.com/embeddable/config",
+      "verified": true,
+      "purpose": "Client configuration or build metadata. Not an odds source."
+    },
+    {
+      "method": "GET",
+      "url": "https://betmen.ro/_next/data/qAq7Tkfa7lr-aRfeU_HpN/live.json",
+      "verified": true,
+      "purpose": "Same-origin JSON endpoint observed on betmen.ro. Role not further characterised."
+    },
+    {
+      "method": "GET",
+      "url": "https://betmen.ro/_next/data/qAq7Tkfa7lr-aRfeU_HpN/sport/football.json",
+      "verified": true,
+      "purpose": "Same-origin JSON endpoint observed on betmen.ro. Role not further characterised."
+    },
+    {
+      "method": "GET",
+      "url": "https://betmensports.web.7platform.net/data/config.json",
+      "verified": true,
+      "purpose": "Client configuration or build metadata. Not an odds source."
+    },
+    {
+      "method": "GET",
+      "url": "https://betmensports.web.7platform.net/data/modules.json",
+      "verified": true,
+      "purpose": "Same-origin JSON endpoint observed on betmensports.web.7platform.net. Role not further characterised."
+    }
+  ],
+  "platform": "nsoft",
+  "feedStatus": "verified",
+  "verifiedAt": "2026-09-27",
+  "oddsFeed": {
+    "url": "https://sportsbook-sm-distribution-api.nsoft.com/api/v1/events?companyUuid=7afdd6f5-f954-43d6-b696-2e0dc0ae4ee2",
+    "method": "GET",
+    "auth": "none",
+    "measuredAt": "2026-09-27T13:08:15.169Z",
+    "eventsIn3DayWindow": 1287,
+    "footballSportId": 18,
+    "eventsWithComplete1x2": 486
+  }
+}

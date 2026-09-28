@@ -1,0 +1,672 @@
+{
+  "book": "bet7",
+  "timestamp": "2026-09-27T13:07:09.197Z",
+  "pagesVisited": 2,
+  "minPagesRequired": 50,
+  "pagesTargetReached": true,
+  "endpoints": [
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/api/multilang/v1/translate/table/4/ro?tenant_id=3",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.bet7.ro/",
+      "capturedAt": "2026-09-27T13:06:52.507Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/config-api/templatization-config/list?tenantId=3&siteId=10030&path=%2F",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://www.bet7.ro/",
+      "capturedAt": "2026-09-27T13:06:52.519Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/api/v1/jackpot/events/3",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.bet7.ro/",
+      "capturedAt": "2026-09-27T13:06:52.548Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-t.b-cdn.net/fonts/main/font-icons.json?_=1790514412444",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.bet7.ro/",
+      "capturedAt": "2026-09-27T13:06:52.675Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://www.bet7.ro/api/auth/index",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://www.bet7.ro/",
+      "capturedAt": "2026-09-27T13:06:53.385Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/config-api/meta/list?tenantId=3&siteId=10030&path=%2F",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://www.bet7.ro/",
+      "capturedAt": "2026-09-27T13:06:53.480Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/config-api/maintenance/list?tenantId=3&siteId=10030",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://www.bet7.ro/",
+      "capturedAt": "2026-09-27T13:06:53.482Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/config-api/multi-bet/list?tenantId=3&siteId=10030",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://www.bet7.ro/",
+      "capturedAt": "2026-09-27T13:06:53.489Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://cdn.segment.com/v1/projects/maTLuDb1IQTH6xrpi7MASzUAjDo6t2Dp/settings",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://www.bet7.ro/",
+      "capturedAt": "2026-09-27T13:06:53.489Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/elements?q=$ids@%3D_site",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.bet7.ro/",
+      "capturedAt": "2026-09-27T13:06:53.523Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Dall_slot_games_api&tid=3&sid=10030",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.bet7.ro/",
+      "capturedAt": "2026-09-27T13:06:53.526Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Dall_promotions_api&tid=3&sid=10030",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.bet7.ro/",
+      "capturedAt": "2026-09-27T13:06:53.540Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Dtop-10-in-romania&tid=3&sid=10030",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.bet7.ro/",
+      "capturedAt": "2026-09-27T13:06:53.545Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Dplayer_all_banners_api&tid=3&sid=10030",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.bet7.ro/",
+      "capturedAt": "2026-09-27T13:06:53.549Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Dall_jackpots&tid=3&sid=10030",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.bet7.ro/",
+      "capturedAt": "2026-09-27T13:06:53.560Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Dmostplayed-games&tid=3&sid=10030",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.bet7.ro/",
+      "capturedAt": "2026-09-27T13:06:53.564Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Dbet7-originals&tid=3&sid=10030",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.bet7.ro/",
+      "capturedAt": "2026-09-27T13:06:53.568Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Dtournaments-list&tid=3&sid=10030",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.bet7.ro/",
+      "capturedAt": "2026-09-27T13:06:53.571Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Dmatches-live&tid=3&sid=10030",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.bet7.ro/",
+      "capturedAt": "2026-09-27T13:06:53.573Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Dbuy-bonus-games-bet7&tid=3&sid=10030",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.bet7.ro/",
+      "capturedAt": "2026-09-27T13:06:53.578Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Danimals-theme-games&tid=3&sid=10030",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.bet7.ro/",
+      "capturedAt": "2026-09-27T13:06:53.581Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Drewards-sample&tid=3&sid=10030",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.bet7.ro/",
+      "capturedAt": "2026-09-27T13:06:53.584Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Dnew-games-bet7&tid=3&sid=10030",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.bet7.ro/",
+      "capturedAt": "2026-09-27T13:06:53.588Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Dall-amusnetgames&tid=3&sid=10030",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.bet7.ro/",
+      "capturedAt": "2026-09-27T13:06:53.598Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Dwl-all-drops-and-wins&tid=3&sid=10030",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.bet7.ro/",
+      "capturedAt": "2026-09-27T13:06:53.603Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Dall-vip-bell-link-games&tid=3&sid=10030",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.bet7.ro/",
+      "capturedAt": "2026-09-27T13:06:53.606Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Dfruits-theme-games&tid=3&sid=10030",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.bet7.ro/",
+      "capturedAt": "2026-09-27T13:06:53.611Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Dmatches-match-of-the-day&tid=3&sid=10030",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.bet7.ro/",
+      "capturedAt": "2026-09-27T13:06:53.614Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Dgames-relax&tid=3&sid=10030",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.bet7.ro/",
+      "capturedAt": "2026-09-27T13:06:53.690Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Degtdigital-games&tid=3&sid=10030",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.bet7.ro/",
+      "capturedAt": "2026-09-27T13:06:53.695Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/missions/tournaments/list?tenant_id=3",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://www.bet7.ro/",
+      "capturedAt": "2026-09-27T13:06:53.701Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Dall-playtech&tid=3&sid=10030",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.bet7.ro/",
+      "capturedAt": "2026-09-27T13:06:53.707Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Dall-pragmatic-games&tid=3&sid=10030",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.bet7.ro/",
+      "capturedAt": "2026-09-27T13:06:53.720Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/api/calendar/v1/player/status",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://www.bet7.ro/",
+      "capturedAt": "2026-09-27T13:06:53.723Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/api/airtimer/v1/player/status",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://www.bet7.ro/",
+      "capturedAt": "2026-09-27T13:06:53.725Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Dall-playson-games&tid=3&sid=10030",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.bet7.ro/",
+      "capturedAt": "2026-09-27T13:06:53.728Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Dprovider-cards-bet7&tid=3&sid=10030",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.bet7.ro/",
+      "capturedAt": "2026-09-27T13:06:53.731Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Dhalloween-games&tid=3&sid=10030",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.bet7.ro/",
+      "capturedAt": "2026-09-27T13:06:53.735Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Dmegaways-games&tid=3&sid=10030",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.bet7.ro/",
+      "capturedAt": "2026-09-27T13:06:53.737Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Dall-games&tid=3&sid=10030",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.bet7.ro/",
+      "capturedAt": "2026-09-27T13:06:53.740Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Dall-pateplay-games&tid=3&sid=10030",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.bet7.ro/",
+      "capturedAt": "2026-09-27T13:06:53.745Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/elements?q=$ids@%3Dslot_game_1",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.bet7.ro/",
+      "capturedAt": "2026-09-27T13:06:53.747Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Djackpot_games_egt_egypt_quest&tid=3&sid=10030",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.bet7.ro/",
+      "capturedAt": "2026-09-27T13:06:53.749Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Dall_jackpots_api&tid=3&sid=10030",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.bet7.ro/",
+      "capturedAt": "2026-09-27T13:06:53.779Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Dbet7-slot-games-hot&tid=3&sid=10030",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.bet7.ro/",
+      "capturedAt": "2026-09-27T13:06:53.782Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Dslot-games-cold-bet7&tid=3&sid=10030",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.bet7.ro/",
+      "capturedAt": "2026-09-27T13:06:53.786Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Deko.footer.texts.bet7%26%3Dall-amusnet-games%26%3Deagle-amusnet-top-hits%26%3Dall_jackpots_bet7%26%3Dcasino-navigation-list-bet7%26%3Deagle-trending-slots%26%3Deagle-new-games%26%3Dturneul-baboilor-bet7%26%3Dchristmas&tid=3&sid=10030",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.bet7.ro/",
+      "capturedAt": "2026-09-27T13:06:53.800Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1-sb.gambling-solutions.ro/api/digitain-fetcher/v2/public/dynamic-boost-cards?tenantId=3&siteId=10030",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.bet7.ro/",
+      "capturedAt": "2026-09-27T13:06:53.852Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/missions/tournaments/leaderboard/8068",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://www.bet7.ro/",
+      "capturedAt": "2026-09-27T13:06:54.199Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/missions/tournaments/history/list/9",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://www.bet7.ro/",
+      "capturedAt": "2026-09-27T13:06:54.215Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Djackpot_games_egt_golden_coins_link&tid=3&sid=10030",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.bet7.ro/",
+      "capturedAt": "2026-09-27T13:06:54.351Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Djackpot_games_egt_digital_clover_chance&tid=3&sid=10030",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.bet7.ro/",
+      "capturedAt": "2026-09-27T13:06:54.372Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/config-api/bonus-rules/list?tenantId=3&siteId=10030&category=bets",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://www.bet7.ro/",
+      "capturedAt": "2026-09-27T13:06:54.382Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/config-api/uk-markets/list?tenantId=3&siteId=10030&platformType=1",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://www.bet7.ro/",
+      "capturedAt": "2026-09-27T13:06:54.516Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Djackpot_games_egt_digital_rise_of_ra&tid=3&sid=10030",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.bet7.ro/",
+      "capturedAt": "2026-09-27T13:06:54.637Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Djackpot_games_egt_digital_bell_link&tid=3&sid=10030",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.bet7.ro/",
+      "capturedAt": "2026-09-27T13:06:54.649Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Djackpot_games_egt_digital_20_super_hot&tid=3&sid=10030",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.bet7.ro/",
+      "capturedAt": "2026-09-27T13:06:54.658Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Djackpot_games_egt_digital_burning_hot&tid=3&sid=10030",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.bet7.ro/",
+      "capturedAt": "2026-09-27T13:06:54.667Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Djackpot_games_egt_digital_40_super_hot&tid=3&sid=10030",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.bet7.ro/",
+      "capturedAt": "2026-09-27T13:06:54.678Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Djackpot_games_egt_digital_high_cash&tid=3&sid=10030",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.bet7.ro/",
+      "capturedAt": "2026-09-27T13:06:54.687Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Djackpot_games_egt&tid=3&sid=10030",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.bet7.ro/",
+      "capturedAt": "2026-09-27T13:06:54.715Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://micros-prod1-sb.gambling-solutions.ro/api/digitain-fetcher/v2/public/meta",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.bet7.ro/",
+      "capturedAt": "2026-09-27T13:06:55.272Z"
+    },
+    {
+      "method": "POST",
+      "url": "https://micros-prod1-sb.gambling-solutions.ro/api/digitain-fetcher/v2/public/events",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.bet7.ro/",
+      "capturedAt": "2026-09-27T13:06:55.343Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/config-api/popup-bonuses/list?tenantId=3&siteId=10030",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://www.bet7.ro/",
+      "capturedAt": "2026-09-27T13:06:58.162Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/config-api/templatization-config/list?tenantId=3&siteId=10030&path=%2Fsport",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://www.bet7.ro/sport",
+      "capturedAt": "2026-09-27T13:07:00.495Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-t.b-cdn.net/fonts/main/font-icons.json?_=1790514420430",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.bet7.ro/sport",
+      "capturedAt": "2026-09-27T13:07:00.593Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/sources?q=$ids@%3Deko.footer.texts.bet7%26%3Dtournaments-list%26%3Dwelcome-bonus&tid=3&sid=10030",
+      "status": 200,
+      "contentType": "application/json",
+      "pageUrl": "https://www.bet7.ro/sport",
+      "capturedAt": "2026-09-27T13:07:01.186Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/config-api/meta/list?tenantId=3&siteId=10030&path=%2Fsport",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://www.bet7.ro/sport",
+      "capturedAt": "2026-09-27T13:07:01.336Z"
+    }
+  ],
+  "keyEndpoints": [
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/api/multilang/v1/translate/table/4/ro",
+      "verified": true,
+      "purpose": "Same-origin JSON endpoint observed on micros-prod1.gambling-solutions.ro. Role not further characterised."
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/config-api/templatization-config/list",
+      "verified": true,
+      "purpose": "Client configuration or build metadata. Not an odds source."
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/api/v1/jackpot/events/3",
+      "verified": true,
+      "purpose": "Promotional or jackpot content. Not an odds source."
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-t.b-cdn.net/fonts/main/font-icons.json",
+      "verified": true,
+      "purpose": "Same-origin JSON endpoint observed on micros-t.b-cdn.net. Role not further characterised."
+    },
+    {
+      "method": "POST",
+      "url": "https://www.bet7.ro/api/auth/index",
+      "verified": true,
+      "purpose": "Same-origin JSON endpoint observed on www.bet7.ro. Role not further characterised."
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/config-api/meta/list",
+      "verified": true,
+      "purpose": "Client configuration or build metadata. Not an odds source."
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/config-api/maintenance/list",
+      "verified": true,
+      "purpose": "Client configuration or build metadata. Not an odds source."
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/config-api/multi-bet/list",
+      "verified": true,
+      "purpose": "Client configuration or build metadata. Not an odds source."
+    },
+    {
+      "method": "GET",
+      "url": "https://cdn.segment.com/v1/projects/maTLuDb1IQTH6xrpi7MASzUAjDo6t2Dp/settings",
+      "verified": true,
+      "purpose": "Client configuration or build metadata. Not an odds source."
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/data/v1/resolve/sources",
+      "verified": true,
+      "purpose": "Tournament/competition list used to group events into leagues."
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/missions/tournaments/list",
+      "verified": true,
+      "purpose": "Tournament/competition list used to group events into leagues."
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1-sb.gambling-solutions.ro/api/digitain-fetcher/v2/public/dynamic-boost-cards",
+      "verified": true,
+      "purpose": "Same-origin JSON endpoint observed on micros-prod1-sb.gambling-solutions.ro. Role not further characterised."
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/missions/tournaments/leaderboard/8068",
+      "verified": true,
+      "purpose": "Tournament/competition list used to group events into leagues."
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/missions/tournaments/history/list/9",
+      "verified": true,
+      "purpose": "Tournament/competition list used to group events into leagues."
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/config-api/bonus-rules/list",
+      "verified": true,
+      "purpose": "Client configuration or build metadata. Not an odds source."
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/config-api/uk-markets/list",
+      "verified": true,
+      "purpose": "Client configuration or build metadata. Not an odds source."
+    },
+    {
+      "method": "POST",
+      "url": "https://micros-prod1-sb.gambling-solutions.ro/api/digitain-fetcher/v2/public/meta",
+      "verified": true,
+      "purpose": "Client configuration or build metadata. Not an odds source."
+    },
+    {
+      "method": "POST",
+      "url": "https://micros-prod1-sb.gambling-solutions.ro/api/digitain-fetcher/v2/public/events",
+      "verified": true,
+      "purpose": "Same-origin JSON endpoint observed on micros-prod1-sb.gambling-solutions.ro. Role not further characterised."
+    },
+    {
+      "method": "GET",
+      "url": "https://micros-prod1.gambling-solutions.ro/config-api/popup-bonuses/list",
+      "verified": true,
+      "purpose": "Client configuration or build metadata. Not an odds source."
+    }
+  ],
+  "platform": "digitain",
+  "feedStatus": "verified",
+  "verifiedAt": "2026-09-27"
+}
