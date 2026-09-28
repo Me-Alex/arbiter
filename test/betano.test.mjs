@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { promises as fs } from 'node:fs';
 
 import Betano from '../src/scrapers/betano.mjs';
 
@@ -41,14 +42,32 @@ function failingPage(kind) {
   };
 }
 
-/** Run the adapter with a stubbed browser, returning the envelope. */
+/**
+ * Run the adapter with a stubbed browser, returning the envelope.
+ *
+ * The `dataDir` is mandatory and temporary. `ScraperBase` defaults it to
+ * `<cwd>/data` and `run()` promotes the result to
+ * `data/workspace/betano_events.json`, so a test that omits it writes its
+ * fixture straight over the real Betano snapshot. That is not hypothetical:
+ * the "a real payload still produces events" fixture below — event 111,
+ * FCSB v Dinamo, 2.10/3.30/3.20 — replaced 235 genuinely scraped events in the
+ * production workspace, and the next scan happily reported one synthetic match
+ * as live Betano data. A test that can overwrite the data it is meant to be
+ * checking is worse than no test.
+ */
 async function runWith(page, opts = {}) {
-  const scraper = new Betano({ timeoutMs: 20_000, ...opts });
-  // The adapter also reads the context for cookies after collecting.
-  const ctx = { cookies: async () => [] };
-  page.context = async () => ctx;
-  scraper.pageFactory = async () => page;
-  return scraper.run();
+  const dataDir = './data-test-betano-' + Math.random().toString(36).slice(2);
+  await fs.mkdir(`${dataDir}/workspace`, { recursive: true });
+  try {
+    const scraper = new Betano({ timeoutMs: 20_000, dataDir, ...opts });
+    // The adapter also reads the context for cookies after collecting.
+    const ctx = { cookies: async () => [] };
+    page.context = async () => ctx;
+    scraper.pageFactory = async () => page;
+    return await scraper.run();
+  } finally {
+    await fs.rm(dataDir, { recursive: true, force: true });
+  }
 }
 
 test('a session that returned no events is a failed run, not an empty one', async () => {
