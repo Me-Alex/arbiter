@@ -126,13 +126,40 @@ jobs:
       # `github-token` widens the search to every run of the workflow, which is
       # what makes the history exist at all.
       - name: Restore the reports from earlier runs
-        uses: actions/download-artifact@v4
-        continue-on-error: true
-        with:
-          pattern: data-health
-          path: data-health-history
-          merge-multiple: true
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+        # `actions/download-artifact` always resolves `run-id` to the run in
+        # progress, whatever token is given, so it can only ever see this job's
+        # own artifacts — and the upload comes later in the job. A token with
+        # `actions: read` lets the API list runs and fetch artifacts from any of
+        # them, which is what a series across runs actually needs.
+        #
+        # Failing here is not fatal: the first run has no history, and the gate
+        # says so rather than pretending the series is complete.
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          mkdir -p data-health-history
+          # The endpoint returns { total_count, artifacts }, so the filter is
+          # `.artifacts[].id`. `.[].id` parses as an object and yields nothing —
+          # which would leave the history empty and silent, the failure this
+          # step exists to stop.
+          for id in $(gh api "repos/${{ github.repository }}/actions/artifacts?name=data-health&per_page=30" --jq '.artifacts[].id' 2>/dev/null); do
+            gh api "repos/${{ github.repository }}/actions/artifacts/$id/zip" > /tmp/a.zip 2>/dev/null || continue
+            # Every artifact holds a file called data-health.json, so unpacking
+            # them into one directory would leave only the last run's report and
+            # the series would still be a single point. Each is renamed to the
+            # run that produced it, which is the name the trend tool reads.
+            unzip -p /tmp/a.zip data-health.json >/dev/null 2>&1 || continue
+            created=$(gh api "repos/${{ github.repository }}/actions/artifacts/$id" --jq '.created_at' 2>/dev/null)
+            [ -n "$created" ] || continue
+            # `T` and `Z` survive, so the name matches what smoke-trend.mjs
+            # accepts; stripping them (tr -c '0-9') produced a name it rejected,
+            # which would have emptied the history again for a third reason.
+            stamp=$(printf '%s' "$created" | tr ':.' '--')
+            unzip -p /tmp/a.zip data-health.json > "data-health-history/$stamp.json" 2>/dev/null || true
+          done
+          count=$(ls data-health-history 2>/dev/null | wc -l)
+          echo "restored $count previous report(s)"
+          [ "$count" -ge 1 ] || echo "  (first run: no history yet, which the trend gate reports rather than hides)" 
 
       # The gate exits non-zero when an enabled job brings back no usable
       # events, or does not complete cleanly. This is the check that would
