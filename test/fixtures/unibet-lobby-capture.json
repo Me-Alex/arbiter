@@ -1,0 +1,142 @@
+{
+  "_capturedAt": "2026-09-28T16:04:00.000Z",
+  "_note": "Verbatim-shaped slice of a real `GET https://sportsbff-ams.kindredext.net/sports-api/api/v2/views/lobby?category=football:international:internationalfriendlies&clientOffset=-120&sortBy=relevance&tab=matches&timeFilter=all` response. Only the fields the adapter reads are kept; team names and prices are real, the contestKey is shortened. Trimming keeps the fixture reviewable and the test suite fast, and the shapes that matter — `LobbyFixtureContest` nested under `contestGroups`, the T1/Draw/T2 option types, the `variantName` totals line — are preserved exactly.",
+  "_requestHeaders": {
+    "accept": "application/json",
+    "content-type": "application/json",
+    "locale": "ro_RO",
+    "jurisdiction": "RO",
+    "ksp_jurisdiction": "mga",
+    "brand": "unibet",
+    "origin": "https://www.unibet.ro",
+    "referer": "https://www.unibet.ro/betting/odds"
+  },
+  "_typ": "LobbyPageViewResponse",
+  "view": {
+    "_typ": "LobbyPageView",
+    "pageHeader": {
+      "_typ": "PageHeader",
+      "contestType": "Football",
+      "headerText": "Fotbal"
+    },
+    "matches": [
+      {
+        "_typ": "LobbyAccordionItem",
+        "identifier": "Joi, 1 Oct",
+        "contestGroups": [
+          {
+            "_typ": "LobbyContestGroup",
+            "contests": [
+              {
+                "_typ": "LobbyFixtureContest",
+                "contestKey": "aaaa1111",
+                "contestType": "Football",
+                "status": "PreGame",
+                "name": "Japonia vs Ecuador",
+                "category": "football:international:internationalfriendlies",
+                "categoriesDetailed": [
+                  {
+                    "_typ": "CategoryDetailed",
+                    "categoryRn": "football:international:internationalfriendlies",
+                    "name": "Meciuri Amicale"
+                  },
+                  {
+                    "_typ": "CategoryDetailed",
+                    "categoryRn": "football:international",
+                    "name": "Internațional"
+                  },
+                  {
+                    "_typ": "CategoryDetailed",
+                    "categoryRn": "football",
+                    "name": "Fotbal"
+                  }
+                ],
+                "startDateTimeUtc": {
+                  "_typ": "Date",
+                  "unixms": 1790604000000,
+                  "value": "2026-10-01T10:10:00.000Z"
+                },
+                "timeStampBFFUtc": "2026-09-28T16:02:41.117Z",
+                "propositionCount": 2,
+                "propositions": [
+                  {
+                    "_typ": "LobbyFixtureContestProposition",
+                    "key": "aaaa1111:1x2",
+                    "propositionKey": "1x2",
+                    "propositionType": "1x2",
+                    "displayName": "Rezultat final",
+                    "status": "Active",
+                    "options": [
+                      {
+                        "_typ": "FixtureContestPropositionOption",
+                        "optionType": "T1",
+                        "optionName": "Japonia",
+                        "optionDisplayName": "1",
+                        "variantName": "Plain",
+                        "price": 2.45,
+                        "bettingOpen": true,
+                        "priceKey": "aaaa1111:base:1x2:j1:plain:offering"
+                      },
+                      {
+                        "_typ": "FixtureContestPropositionOption",
+                        "optionType": "Draw",
+                        "optionName": "Egalitate",
+                        "optionDisplayName": "X",
+                        "variantName": "Plain",
+                        "price": 3.25,
+                        "bettingOpen": true,
+                        "priceKey": "aaaa1111:base:1x2:draw:plain:offering"
+                      },
+                      {
+                        "_typ": "FixtureContestPropositionOption",
+                        "optionType": "T2",
+                        "optionName": "Ecuador",
+                        "optionDisplayName": "2",
+                        "variantName": "Plain",
+                        "price": 2.9,
+                        "bettingOpen": true,
+                        "priceKey": "aaaa1111:base:1x2:u1:plain:offering"
+                      }
+                    ]
+                  },
+                  {
+                    "_typ": "LobbyFixtureContestProposition",
+                    "key": "aaaa1111:total",
+                    "propositionKey": "total",
+                    "propositionType": "total",
+                    "displayName": "Total goluri",
+                    "status": "Active",
+                    "options": [
+                      {
+                        "_typ": "FixtureContestPropositionOption",
+                        "optionType": "TotalOver",
+                        "optionName": "Peste",
+                        "optionDisplayName": "Peste",
+                        "variantName": "9.5",
+                        "variantType": "OverUnder",
+                        "price": 1.5,
+                        "bettingOpen": true,
+                        "priceKey": "aaaa1111:base:total:total_over:9.5:offering"
+                      },
+                      {
+                        "_typ": "FixtureContestPropositionOption",
+                        "optionType": "TotalUnder",
+                        "optionName": "Sub",
+                        "optionDisplayName": "Sub",
+                        "variantName": "9.5",
+                        "variantType": "OverUnder",
+                        "price": 2.2,
+                        "bettingOpen": true,
+                        "priceKey": "aaaa1111:base:total:total_under:9.5:offering"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

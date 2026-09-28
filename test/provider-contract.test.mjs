@@ -4,25 +4,28 @@ import assert from 'node:assert/strict';
 import MaxBet from '../src/scrapers/maxbet.mjs';
 import Admiral from '../src/scrapers/admiral.mjs';
 import StanleyBet from '../src/scrapers/stanleybet.mjs';
-import Unibet from '../src/scrapers/unibet.mjs';
 
 /**
- * The four ProviderContract adapters are the legacy parsing path: they share
+ * The three ProviderContract adapters are the legacy parsing path: they share
  * one fetch helper and one set of parsers, and no configured job routes to
  * them (config/scrapers.json points every NSoft book at nsoft.mjs instead).
  *
- * They have no real-response fixture and cannot get one. All four endpoints
+ * They have no real-response fixture and cannot get one. All three endpoints
  * are retired — checked 2026-09-26:
  *
  *   maxbet      https://www.maxbet.ro/api/sports                       404
  *   admiral     https://www.admiral.ro/feeds/prematch.json             301 → SPA
  *               https://www.admiralbet.ro/feeds/prematch.json          200 HTML
  *   stanleybet  https://www.stanleybet.ro/feeds/events                 200 HTML
- *   unibet      https://www.unibet.ro/api/kambi/offer/v1/betoffer/...  404
  *
- * The saved captures in data/endpoints-all/ agree: the "admiral" capture
- * already records NSoft URLs, which is what the current adapter uses. These
- * classes appear never to have been the live path.
+ * Unibet was the fourth member here until 2026-09-28, when its live feed was
+ * found behind the Kindred sports BFF and it became a normal ScraperBase job
+ * again (see src/scrapers/unibet.mjs and test/unibet-feed.test.mjs).
+ *
+ * The saved captures agree: the `admiral` record in
+ * data/endpoints/endpoints.json (body in data/endpoints/captures/) already
+ * carries NSoft URLs, which is what the current adapter uses. These classes
+ * appear never to have been the live path.
  *
  * So these tests do not claim a real payload. They pin the two things that
  * actually broke while the classes sat unused:
@@ -38,7 +41,6 @@ const CLASSES = [
   { name: 'maxbet', Cls: MaxBet, base: 'https://www.maxbet.ro' },
   { name: 'admiral', Cls: Admiral, base: 'https://www.admiral.ro' },
   { name: 'stanleybet', Cls: StanleyBet, base: 'https://www.stanleybet.ro' },
-  { name: 'unibet', Cls: Unibet, base: 'https://www.unibet.ro' },
 ];
 
 for (const { name, Cls, base } of CLASSES) {
@@ -101,40 +103,10 @@ test('MaxBet drops sides whose odds are missing or below 1', () => {
   assert.ok(!odds.includes(0.9), 'the sub-1 price is dropped rather than published');
 });
 
-test('Unibet parses the Kambi offer shape, including its wrapped odds', () => {
-  const s = new Unibet({});
-  const events = s.parse({
-    events: [{
-      event: { id: 4242, homeName: 'Rapid', awayName: 'U Craiova', start: '2030-01-01T12:00:00Z' },
-      sport: 'Fotbal', leagueName: 'Liga 1',
-      betOffers: [{
-        betOfferType: { name: 'Match Odds' },
-        outcomes: [
-          { label: 'Rapid', criterion: { label: 'Rapid' }, odds: { decimal: 1.95 } },
-          { label: 'X', criterion: { label: 'X' }, odds: { decimal: 3.60 } },
-          { label: 'U Craiova', criterion: { label: 'U Craiova' }, odds: { decimal: 4.20 } },
-        ],
-      }],
-    }],
-  });
-  assert.equal(events.length, 1);
-  assert.equal(events[0].homeTeam, 'Rapid');
-
-  // Kambi wraps the price: `odds: { decimal: 1.95 }`. Reading that with
-  // Number() is NaN, so every selection was filtered out and the event
-  // vanished — a Kambi feed that answered perfectly produced nothing.
-  const out = s.extractEvents(events);
-  assert.equal(out.length, 1, 'a priced Kambi market must survive parsing');
-  const odds = (out[0].markets || []).flatMap((m) => m.selections.map((x) => Number(x.odds)));
-  assert.deepEqual(odds.sort((a, b) => a - b), [1.95, 3.60, 4.20],
-    'the wrapped decimal prices are unwrapped, not dropped');
-  assert.equal(out[0].sourceUrl, 'https://www.unibet.ro/sportsbook/#/event/4242');
-});
-
 test('a synthesised event id is not turned into a deep link', () => {
   // When the provider omits an id, `parse` synthesises one from the teams and
   // kickoff. Emitting that as a URL produces a link that 404s, so the guard
-  // requires a numeric id — the same rule maxbet, stanleybet and unibet share.
+  // requires a numeric id — the same rule maxbet and stanleybet share.
   const s = new MaxBet({});
   const events = s.parse({
     events: [{
@@ -160,7 +132,7 @@ test('no enabled job routes to a legacy ProviderContract class', async () => {
   const { instantiate } = await import('../src/scrapers/index.mjs');
   const cfg = JSON.parse(await fs.readFile(new URL('../config/scrapers.json', import.meta.url), 'utf8'));
 
-  const legacy = new Set(['maxbet', 'admiral', 'stanleybet', 'unibet']);
+  const legacy = new Set(['maxbet', 'admiral', 'stanleybet']);
   for (const job of cfg.jobs) {
     if (job.enabled === false) continue;
     let scraper;
@@ -171,10 +143,10 @@ test('no enabled job routes to a legacy ProviderContract class', async () => {
     }
     const cls = scraper?.constructor?.name;
     assert.ok(
-      !['MaxBetScraper', 'AdmiralScraper', 'StanleybetScraper', 'UnibetScraper'].includes(cls),
+      !['MaxBetScraper', 'AdmiralScraper', 'StanleybetScraper'].includes(cls),
       `${job.id} instantiates ${cls}, a legacy class whose endpoint is retired`,
     );
-    assert.ok(!(legacy.has(job.id) && cls && cls.endsWith('Scraper') && /MaxBet|Admiral|Stanley|Unibet/.test(cls)),
+    assert.ok(!(legacy.has(job.id) && cls && cls.endsWith('Scraper') && /MaxBet|Admiral|Stanley/.test(cls)),
       `${job.id} must not reach a legacy adapter`);
   }
 });
@@ -226,9 +198,9 @@ test('every registered scraper is either used or has a recorded reason', async (
     'these scrapers are registered but neither enabled nor explained: ' + orphans.join(', '));
 });
 
-test('the four legacy classes each carry the reason they are kept', async () => {
+test('the three legacy classes each carry the reason they are kept', async () => {
   const fs = await import('node:fs/promises');
-  const files = ['maxbet', 'admiral', 'stanleybet', 'unibet'];
+  const files = ['maxbet', 'admiral', 'stanleybet'];
   for (const id of files) {
     const src = await fs.readFile(new URL(`../src/scrapers/${id}.mjs`, import.meta.url), 'utf8');
     const header = src.slice(0, 1500);
