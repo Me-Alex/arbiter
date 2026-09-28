@@ -3,11 +3,48 @@ import { scanWorkspace } from './scanner/scanner.mjs';
 import {
   canonicalOutcome,
   supportedContractForMarket,
+  resolveContract,
+  canonicalOutcomeFor,
   roundedArbitrageAllocation,
 } from './scanner/market-contracts.mjs';
 
-/** The one contract an arbitrage can be built on: a full-time three-way result. */
-const RESULT_CONTRACT = { key: 'MATCH_ODDS', outcomes: ['home', 'draw', 'away'] };
+/**
+ * Resolve the contract a given opportunity belongs to. The engine now emits
+ * `family` + `period` + `line` on every opportunity, but verification must
+ * also work on opportunities emitted by older scans that only carried
+ * `marketKey`, so we resolve from marketKey as a fallback.
+ *
+ * Returns null only when the marketKey isn't recognised AND the engine didn't
+ * tag the opportunity — fall through to the legacy 1X2 guard so a missing tag
+ * never silently rejects a real arb.
+ */
+function resolveTargetContract(target) {
+  if (target && target.family) {
+    return {
+      family: target.family,
+      period: target.period || 'fulltime',
+      lineKey: target.line || '_',
+      outcomes: matchOddsForFamily(target.family),
+    };
+  }
+  if (target?.marketKey) {
+    return resolveContract({ key: target.marketKey, selections: (target.legs || []).map((l) => ({ name: l.selection })) });
+  }
+  return null;
+}
+
+function matchOddsForFamily(family) {
+  switch (family) {
+    case 'MATCH_ODDS': return ['home', 'draw', 'away'];
+    case 'BTTS': return ['yes', 'no'];
+    case 'OVER_UNDER':
+    case 'ASIAN_HANDICAP':
+      return ['home', 'away']; // treat 'over' and 'home' as the "first" leg; the canonical router routes actual names
+    default:
+      // DC etc — not arb-eligible; verification rejects them upstream
+      return null;
+  }
+}
 
 /**
  * verification.mjs — the second-opinion pass.
@@ -133,21 +170,29 @@ function keyOf(target) {
 
 export function verifySignal(target, confirmationScan, { index, tolerance = RECHECK_TOLERANCE } = {}) {
   const legs = target.legs || [];
+  // Resolve the family for this opportunity once. Older scans that only carry
+  // marketKey fall through to a per-key resolution. Doubling up the resolver
+  // is intentional — verification must keep working on historical scan.json
+  // files written before today.
+  const contract = resolveTargetContract(target);
   if (target.type === 'arb') {
-    // The contract an opportunity was built on is the match-result contract.
-    // Requiring a *known* key here rejected every provider-opaque 1X2 (superbet
-    // 547, winner 1, netbet `default`, betano MRES, FEG ufo:mtyp:00-00) that
-    // findArbitrage had deliberately accepted: the opportunity appeared in the
-    // scan and could never be confirmed.
-    //
-    // So the check is inverted. Reject only when a leg names a contract we do
-    // recognise and it is not the result market — that is real evidence the
-    // legs do not settle together. An unrecognised key is not evidence either
-    // way, so it is allowed through and judged by the outcome-set check below,
-    // which still requires exactly one home, one draw and one away.
+    if (!contract || !contract.outcomes || contract.family === 'DOUBLE_CHANCE') {
+      // DC has overlapping outcomes (1X/12/X2) — it cannot be arbitraged
+      // because backing all three is not a surebet. Any opportunity that
+      // claims a DC family is malformed; reject it explicitly.
+      return { target, status: 'rejected', reason: 'unsupported contract: settlement equivalence not established', legs: [] };
+    }
+    // Reject legs that name a *different, recognised* contract. An unrecognised
+    // marketKey is not evidence either way: a provider-opaque 1X2 (superbet 547,
+    // winner 1, netbet `default`, betano MRES, FEG ufo:mtyp:00-00) flows through
+    // findArbitrage untouched, and we judge it by outcome shape below, which
+    // requires exactly the right set of canonical outcomes.
     const isForeignContract = (leg) => {
       const known = supportedContractForMarket(leg?.marketKey || target.marketKey);
-      return Boolean(known) && known.key !== 'MATCH_ODDS';
+      if (known) return known.key !== contract.family;
+      // Unrecognised key on this leg — fall back to its own contract resolution.
+      const own = resolveContract({ key: leg?.marketKey || target.marketKey, selections: [{ name: leg.selection }] });
+      return Boolean(own) && own.family !== contract.family;
     };
     if (legs.some(isForeignContract)) {
       return { target, status: 'rejected', reason: 'unsupported contract: settlement equivalence not established', legs: [] };
@@ -182,20 +227,17 @@ export function verifySignal(target, confirmationScan, { index, tolerance = RECH
   if (rejectedReason) {
     return { target, status: 'rejected', reason: rejectedReason, legs: reconfirmed };
   }
-  if (target.type === 'arb') {
-    // Judge the reconfirmed legs by their canonical outcomes, whatever the
-    // provider called the market: a tradable three-way result needs exactly one
-    // home, one draw and one away, from at least two independent books, all
-    // priced above 1.
-    const outcomes = reconfirmed.map((l) => canonicalOutcome(l.selection, {
-      marketKey: supportedContractForMarket(l.marketKey || target.marketKey) ? (l.marketKey || target.marketKey) : '',
-      homeTeam: l.homeTeam ?? target.homeTeam,
-      awayTeam: l.awayTeam ?? target.awayTeam,
-    }));
+  if (target.type === 'arb' && contract) {
+    // Family-aware outcome routing. The legacy canonicalOutcome only handled
+    // 1X2; canonicalOutcomeFor routes BTTS (Yes/Da → yes), OVER_UNDER
+    // (Peste 2.5 → over), and ASIAN_HANDICAP (1 (-1.5) → home) by family.
+    const outcomes = reconfirmed.map((l) => canonicalOutcomeFor(l.selection, contract)
+      ?? canonicalOutcome(l.selection, { marketKey: l.marketKey || target.marketKey, homeTeam: l.homeTeam ?? target.homeTeam, awayTeam: l.awayTeam ?? target.awayTeam }));
+    const expected = contract.outcomes;
     if (outcomes.some((o) => !o)
-      || outcomes.length !== RESULT_CONTRACT.outcomes.length
+      || outcomes.length !== expected.length
       || new Set(outcomes).size !== outcomes.length
-      || !RESULT_CONTRACT.outcomes.every((o) => outcomes.includes(o))
+      || !expected.every((o) => outcomes.includes(o))
       || new Set(reconfirmed.map((l) => l.sourceId)).size < 2
       || reconfirmed.some((l) => !Number.isFinite(l.currentOdds) || l.currentOdds <= 1)) {
       return { target, status: 'rejected', reason: 'incomplete or unsupported contract', legs: reconfirmed };

@@ -52,6 +52,29 @@ export const FEED_GROUPS = Object.freeze([
   { id: 'nsoft-company', brand: 'NSoft company', provider: 'NSoft', members: Object.freeze(['admiral', 'stanleybet']) },
   { id: 'fortuna-bff', brand: 'Fortuna BFF', provider: 'Fortuna', members: Object.freeze(['fortuna', 'casa-pariurilor']) },
   { id: 'everymatrix-wamp', brand: 'EveryMatrix WAMP', provider: 'EveryMatrix', members: Object.freeze(['getsbet', 'contibet']) },
+  // prowin, ultrabet and vipbet are three EGT Digital brands and ONE upstream
+  // feed. This was measured, not assumed, and the first measurement was wrong:
+  // it keyed fixtures as `home|away` with no kickoff, so two different matches
+  // between the same clubs collapsed into one and a price "difference" could be
+  // a different fixture. Re-measured kickoff-keyed, and cross-checked against
+  // the provider's own feedProducerId, which is a direct identity signal rather
+  // than price correlation:
+  //
+  //   prowin vs ultrabet  31 shared, 22 SAME feedProducerId
+  //   prowin vs vipbet    35 shared, 33 SAME feedProducerId
+  //   ultrabet vs vipbet  30 shared, 21 SAME feedProducerId
+  //
+  // Producer 50 alone covers 83 of prowin's and 64 of ultrabet's events, and 21
+  // covers 28 of both. The same producer with different prices is mid-scrape
+  // drift, not arbitrage — exactly the failure this file exists to prevent —
+  // and it is visible in the data: "Sp. Biblioteca Athens v San Martin de
+  // Formosa", producer 21 on both brands, 3.60/2.50/2.35 at prowin against
+  // 3.40/2.40/2.57 at ultrabet.
+  //
+  // Consequence: enabling all three would add three brands and zero independent
+  // price sources. The jobs are therefore registered DISABLED. See
+  // config/scrapers.json for the measurement that says so.
+  { id: 'egt-digital', brand: 'EGT Digital', provider: 'EGT Digital', members: Object.freeze(['prowin', 'ultrabet', 'vipbet']) },
 ]);
 
 /** @type {Map<string, string>} sourceId → group id */

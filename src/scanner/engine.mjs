@@ -1,6 +1,14 @@
 import { eventIdentityKey, impliedProbability } from '../shared/text.mjs';
 import { round2, round4 } from '../shared/math.mjs';
-import { canonicalOutcome, supportedContractForMarket, isMatchResultMarket, isFullTimeMarket } from './market-contracts.mjs';
+import {
+  canonicalOutcome,
+  supportedContractForMarket,
+  isMatchResultMarket,
+  isFullTimeMarket,
+  resolveContract,
+  canonicalOutcomeFor,
+  bucketKeyForContract,
+} from './market-contracts.mjs';
 import { isSharedFeed } from './feed-groups.mjs';
 import { leaguesMatch } from './league-aliases.mjs';
 
@@ -10,11 +18,15 @@ export function buildSelectionIndex(events) {
     for (const event of instances) {
       for (const market of event.markets || []) {
         // The same guard findArbitrage uses, so a market that can produce a
-        // candidate can also be re-priced during verification. Restricting this
-        // to a known contract key meant every provider-opaque 1X2 (superbet 547,
-        // winner 1, netbet default, betano MRES, FEG ufo:mtyp:00-00) produced an
-        // arbitrage that no verification pass could ever confirm.
-        if (!isMatchResultMarket(market)) continue;
+        // candidate can also be re-priced during verification. Now family-
+        // aware: BTTS / OVER_UNDER / ASIAN_HANDICAP legs index too, so a
+        // verification re-quote can match a freshly scraped selection against
+        // the original opportunity's leg. Restricting this to 1X2 in the past
+        // caused every non-MATCH_ODDS opportunity (including all four BTTS
+        // arbs found on 2026-09-28) to be rejected as "leg missing" even
+        // though the price was alive on the book.
+        const contract = resolveContract(market);
+        if (!contract) continue;
         for (const selection of market.selections || []) {
           const key = `${eventKey}::${market.key}::${String(selection.name).toLowerCase()}`;
           const candidates = index.get(key) || [];
@@ -116,21 +128,28 @@ export function findArbitrage(grouped, { minRoiPercent = 0 } = {}) {
     for (const ev of instances) {
       for (const m of ev.markets || []) {
         if (!m || !Array.isArray(m.selections)) continue;
-        let contract = supportedContractForMarket(m.key, ev.sport);
-        // Providers emit opaque keys (547, 1, default, MRES, ufo:mtyp:00-00)
-        // for the full-time 1X2 market. When the selection set is literally
-        // {1, X, 2} AND the market really settles on the final whistle, treat
-        // it as MATCH_ODDS so cross-book comparison can happen instead of
-        // silently dropping it. First-half markets and settlement windows like
-        // `ufo:mtyp:00-2d` (2 days) MUST NOT be bucketed together with
-        // full-time odds — different settlement, and pairing them invents arbs.
-        if (!contract && isMatchResultMarket(m)) {
-          contract = { key: 'MATCH_ODDS', outcomes: ['home', 'draw', 'away'] };
+        // Resolve to a structured contract. Falls back to the legacy MATCH_ODDS
+        // guard for opaque provider keys whose selection set is literally
+        // {1, X, 2}; those resolve through resolveContract as well, but kept
+        // here as a defensive older path so a future contract family addition
+        // can't silently drop 1X2 if its key isn't in the resolver.
+        let contract = resolveContract(m);
+        if (!contract) {
+          const legacy = supportedContractForMarket(m.key, ev.sport);
+          if (legacy && isMatchResultMarket(m)) {
+            contract = { family: 'MATCH_ODDS', period: 'fulltime', lineKey: '_', outcomes: legacy.outcomes };
+          }
         }
         if (!contract || !isFullTimeMarket(m)) continue;
-        // Bucket by the canonical contract key so different provider keys for
-        // the same contract (547 vs 1 vs default) land in the same bucket.
-        const bucketKey = `${eventKey}::${contract.key}::${contract.outcomes.join(',')}`;
+        // Skip families whose outcomes aren't mutually exclusive — the inverse-
+        // sum < 1 test on them would either silently miss or invent arbs.
+        // DOUBLE_CHANCE (1X/12/X2) is recognized but excluded here.
+        if (contract.arbEligible === false) continue;
+        // Bucket by (event × family × period × line) so a half-time BTTS can
+        // never pair with a full-time BTTS, and an OVER 2.5 with an OVER 3.5.
+        // Both collisions were real prior bugs in ufo:mtyp:00-0u and any
+        // multi-line bundled totals market.
+        const bucketKey = bucketKeyForContract(eventKey, contract);
         let bucket = buckets.get(bucketKey);
         if (!bucket) {
           bucket = {
@@ -143,14 +162,21 @@ export function findArbitrage(grouped, { minRoiPercent = 0 } = {}) {
           buckets.set(bucketKey, bucket);
         }
         for (const s of m.selections) {
-          const outcome = canonicalOutcome(s.name, {
+          // Family-aware outcome routing with team context for 2-way markets
+          // that name selections by player / team (superbet numerics, FEG
+          // esports, betano H2HT/HTOH/HHTT). Falls back to legacy
+          // canonicalOutcome for any shape the family router doesn't know.
+          const outcome = canonicalOutcomeFor(s.name, contract, {
+            homeTeam: ev.homeTeam,
+            awayTeam: ev.awayTeam,
+          }) ?? canonicalOutcome(s.name, {
             marketKey: m.key,
             homeTeam: ev.homeTeam,
             awayTeam: ev.awayTeam,
             handicap: s.handicap ?? null,
             sport: ev.sport,
           });
-          if (!outcome) continue;
+          if (!outcome || !contract.outcomes.includes(outcome)) continue;
           const odds = Number(s.odds);
           if (!Number.isFinite(odds) || odds <= 1) continue;
           const choices = bucket.choices.get(outcome);
@@ -195,6 +221,9 @@ export function findArbitrage(grouped, { minRoiPercent = 0 } = {}) {
     const ev = b.meta.event;
     out.push({
       type: SIGNAL_TYPES.ARB,
+      family: b.contract.family,
+      period: b.contract.period,
+      line: b.contract.lineKey === '_' ? null : b.contract.lineKey,
       eventKey: b.eventKey,
       marketKey: b.marketKey,
       sport: ev.sport,
