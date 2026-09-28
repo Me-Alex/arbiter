@@ -289,3 +289,88 @@
   --surface-card-elevated-end: #ffffff;
   --surface-scan-tint: rgba(2, 132, 199, 0.06);
 }
+
+/* ============================================================
+   Scrape control — its own visual language.
+
+   A page that runs 26 bookmakers and reports on them live needs a different
+   shape from a dashboard: the work is comparing rows, not reading a headline.
+   So this layer trades the app's decorative gradients for a flatter, denser
+   surface with a single accent, and adds the two things this page needs and
+   the rest of the app does not have — a status scale that is legible at a
+   glance across 26 rows, and a rhythm for tabular numbers.
+
+   Additive on purpose: nothing here redefines a core token, so the other five
+   pages are untouched and a wrong guess here cannot break them.
+   ============================================================ */
+:root {
+  /* Surfaces: one step lighter than the app, so cards read as panels on the
+     page rather than as holes in it. */
+  --sl-0: #0e1316;
+  --sl-1: #141b1f;
+  --sl-2: #1a2226;
+  --sl-3: #212b30;
+  --sl-hover: #263238;
+  --sl-active: #2b383e;
+
+  --sl-line: #2a353a;
+  --sl-line-soft: #212a2e;
+  --sl-line-strong: #3a4a50;
+
+  /* One accent. The page has four live states competing for attention, so the
+     neutral chrome stays neutral and colour is spent only on state. */
+  --sl-accent: #4fd1c5;
+  --sl-accent-dim: #38b2ac;
+  --sl-accent-ink: #04211f;
+  --sl-accent-wash: rgba(79, 209, 197, 0.10);
+  --sl-accent-line: rgba(79, 209, 197, 0.32);
+
+  /* Status. Each has a text colour, a wash, a line, and a dot — a row has to
+     be readable without relying on colour alone, so the label always says
+     what the state is. */
+  --sl-ok: #4ade80;
+  --sl-ok-wash: rgba(74, 222, 128, 0.10);
+  --sl-ok-line: rgba(74, 222, 128, 0.30);
+  --sl-warn: #fbbf24;
+  --sl-warn-wash: rgba(251, 191, 36, 0.10);
+  --sl-warn-line: rgba(251, 191, 36, 0.30);
+  --sl-bad: #fb7185;
+  --sl-bad-wash: rgba(251, 113, 133, 0.10);
+  --sl-bad-line: rgba(251, 113, 133, 0.32);
+  --sl-idle: #64748b;
+  --sl-idle-wash: rgba(100, 116, 139, 0.10);
+  --sl-idle-line: rgba(100, 116, 139, 0.28);
+  --sl-run: #60a5fa;
+  --sl-run-wash: rgba(96, 165, 250, 0.12);
+  --sl-run-line: rgba(96, 165, 250, 0.36);
+
+  --sl-text: #e6edf0;
+  --sl-text-dim: #94a5ad;
+  --sl-text-faint: #64757e;
+
+  /* Rhythm for a 26-row table: tighter than the app's cards, because the
+     point is to see many rows at once. */
+  --sl-row-h: 30px;
+  --sl-cell-x: 12px;
+  --sl-cell-y: 7px;
+  --sl-r-sm: 5px;
+  --sl-r-md: 8px;
+  --sl-r-lg: 12px;
+  --sl-r-full: 999px;
+
+  /* Numerals line up in a column only if the digits are the same width. */
+  --sl-font-num: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --sl-fs-micro: 10px;
+  --sl-fs-xs: 11px;
+  --sl-fs-sm: 12px;
+  --sl-fs-md: 13px;
+  --sl-fs-lg: 15px;
+  --sl-fs-xl: 19px;
+  --sl-fs-2xl: 26px;
+
+  --sl-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --sl-shadow-lift: 0 4px 16px rgba(0, 0, 0, 0.45);
+  --sl-t-fast: 120ms;
+  --sl-t-base: 190ms;
+  --sl-ease: cubic-bezier(0.2, 0, 0, 1);
+}

@@ -273,7 +273,17 @@ async function init() {
   const scraperResponse = await arbiterApi.get('/api/scrapers');
   scrapers = scraperResponse.jobs || [];
   validatedIds = new Set((scraperResponse.validatedJobs || []).map((scraper) => scraper.id));
-  selectedIds = new Set(scrapers.filter((s) => s.enabled !== false).map((s) => s.id));
+  // Select only what the orchestrator will actually run.
+  //
+  // The promotion gate in src/scrape-orchestrator.mjs excludes a job whose
+  // validationStatus is not "validated", so selecting on `enabled` alone ticked
+  // jobs that were then dropped server-side. The run reported success over
+  // N-1 books with no notice — the same "reports an unavailable source as an
+  // empty one" failure the project's own rules refuse. Keep this predicate in
+  // step with the orchestrator's.
+  selectedIds = new Set(
+    scrapers.filter((s) => s.enabled !== false && validatedIds.has(s.id)).map((s) => s.id)
+  );
   profiles = (await arbiterApi.get('/api/profiles')).profiles || [];
   const sel = $('profile');
   sel.innerHTML = profiles.map((p) => `<option value="${escapeHtml(p.id)}">${escapeHtml(p.label)}</option>`).join('');
@@ -376,14 +386,17 @@ function refreshJobRows() {
     const errorText = !j.error
       ? ''
       : typeof j.error === 'string' ? j.error : (j.error.message || j.error.code || '');
-    return `<div class="row job-row-item" role="listitem">
-      <span class="mono strong">${escapeHtml(id)}</span>
-      <span class="status ${escapeHtml(j.status)}">${escapeHtml(j.status)}</span>${errorText ? `<span class="job-error">${escapeHtml(errorText)}</span>` : ''}
-      <span class="spacer"></span>
-      <span class="muted mono">${evs} ev</span>
-      <span class="muted mono job-row-duration">${fmtDuration(ms) || ms + 'ms'}</span>
-    </div>`;
-  }).join('') : `<div class="empty">${escapeHtml(t('noRunYet'))}</div>`;
+    // Table rows, not divs: the page renders a 26-row queue, and a table is
+    // what gives the event count and the duration a column that lines up. The
+    // previous markup put a status word between the name and the numbers, so
+    // both drifted freely and the eye had to pair them by position.
+    return `<tr role="listitem">
+      <td class="mono">${escapeHtml(id)}</td>
+      <td class="sl-num mono">${(evs).toLocaleString()}</td>
+      <td class="sl-num mono">${fmtDuration(ms) || ms + 'ms'}</td>
+      <td><span class="status ${escapeHtml(j.status)}">${escapeHtml(j.status)}</span>${errorText ? `<div class="job-error">${escapeHtml(errorText)}</div>` : ''}</td>
+    </tr>`;
+  }).join('') : `<tr><td colspan="4" class="sl-empty">${escapeHtml(t('noRunYet'))}</td></tr>`;
 }
 
 /**

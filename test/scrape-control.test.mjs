@@ -53,7 +53,17 @@ test('source checkbox selectors exclude group toggles and layout preserves uniqu
   assert.doesNotMatch(source, /#bookmaker-list input:checked|list\.querySelectorAll\('input\[type=checkbox\]/);
   const html = readFileSync(new URL('../public/admin/scrape.html', import.meta.url), 'utf8');
   const ids = [...html.matchAll(/\bid="([^"]+)"/g)].map((match) => match[1]);
-  assert.equal(new Set(ids).size, ids.length);
-  assert.ok(html.indexOf('scrape-workspace') < html.indexOf('scrape-kpis'));
+  assert.equal(new Set(ids).size, ids.length, 'every id in the page is unique');
+  // The settings have to be usable before the readouts: the previous layout
+  // put the run bar and the source list above the numbers, and this pins that
+  // so a redesign cannot bury the control that starts a run.
+  assert.ok(html.indexOf('sl-runbar') < html.indexOf('sl-stats'), 'the run bar comes before the readouts');
+  assert.ok(html.indexOf('sl-sources') < html.indexOf('sl-stats'), 'and so does the source list');
   for (const id of ['run-btn', 'cancel-btn', 'bookmaker-list', 'job-rows', 'profile']) assert.ok(ids.includes(id));
+  // Every control the script binds by id must still be in the page. This is the
+  // check that catches a redesign which drops a hook and leaves the page
+  // silently inert rather than broken.
+  const bound = [...new Set([...source.matchAll(/\$\('([^']+)'\)/g)].map((m) => m[1]))];
+  const missing = bound.filter((id) => !ids.includes(id));
+  assert.deepEqual(missing, [], 'the page keeps every element the script binds by id');
 });
