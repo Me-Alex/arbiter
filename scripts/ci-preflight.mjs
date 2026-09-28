@@ -73,8 +73,11 @@ check('the live job records itself before the gate can fail it',
   // trend. The gate must be the last step that can fail the job.
   (() => {
     const gate = workflowText.indexOf('run: npm run smoke:live');
-    const file = workflowText.indexOf('data-health-history/$stamp.json');
-    const trend = workflowText.indexOf('run: npm run smoke:trend');
+    // Search after the gate: the restore step also writes into the history
+    // directory, and matching the first occurrence of either string would
+    // compare the restore against the gate and report an order that is fine.
+    const file = workflowText.indexOf('data-health-history/$stamp.json', gate);
+    const trend = workflowText.indexOf('run: npm run smoke:trend', gate);
     if (gate < 0 || file < 0 || trend < 0) return false;
     return gate < file && file < trend;
   })(),
