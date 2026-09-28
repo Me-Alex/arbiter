@@ -52,6 +52,12 @@ function matchOddsForFamily(family) {
  * Picks out the sourceIds backing every leg of every flagged opportunity /
  * middle, re-scrapes just those books, re-scans, and verifies each target
  * still has every leg at odds that meet the original ROI threshold.
+ *
+ * Verification outcomes are `confirmed`, `rejected`, `expired`, and
+ * `unconfirmed`. `rejected` means the opportunity was re-priced and failed
+ * (drift, ROI drop, wrong contract). `unconfirmed` means a leg could not be
+ * located in the independent re-scrape at all — which is not evidence it is
+ * false, only that it could not be re-confirmed this pass.
  */
 
 const DEFAULT_PARALLEL = 12;
@@ -73,6 +79,7 @@ export async function runVerificationPass(targets, baseScan, opts = {}) {
       confirmed: 0,
       rejected: 0,
       expired: 0,
+      unconfirmed: 0,
       verifications: [],
       newScan: null,
     };
@@ -90,7 +97,7 @@ export async function runVerificationPass(targets, baseScan, opts = {}) {
 
   if (requiredSourceIds.length === 0) {
     return {
-      confirmed: 0, rejected: 0, expired: 0,
+      confirmed: 0, rejected: 0, expired: 0, unconfirmed: 0,
       verifications: targets.map((t) => ({ target: t, status: 'expired', reason: 'no sourceIds' })),
       newScan: null,
     };
@@ -112,7 +119,7 @@ export async function runVerificationPass(targets, baseScan, opts = {}) {
   });
   if (signal?.aborted || batch.report.status === 'cancelled') {
     return {
-      confirmed: 0, rejected: 0, expired: targets.length,
+      confirmed: 0, rejected: 0, expired: targets.length, unconfirmed: 0,
       verifications: targets.map((target) => ({ target, status: 'expired', reason: 'verification cancelled' })),
       newScan: null,
     };
@@ -140,13 +147,14 @@ export async function runVerificationPass(targets, baseScan, opts = {}) {
 
   const verifications = targets.map((t) => verifySignal(t, newScan, { index, tolerance: RECHECK_TOLERANCE }));
 
-  let confirmed = 0, rejected = 0, expired = 0;
+  let confirmed = 0, rejected = 0, expired = 0, unconfirmed = 0;
   for (const v of verifications) {
     if (v.status === 'confirmed') confirmed++;
     else if (v.status === 'rejected') rejected++;
     else if (v.status === 'expired') expired++;
+    else if (v.status === 'unconfirmed') unconfirmed++;
   }
-  emit({ type: 'verify-end', confirmed, rejected, expired });
+  emit({ type: 'verify-end', confirmed, rejected, expired, unconfirmed });
 
   // merge confirmed into baseScan so the dashboard shows the verified status.
   const verifyByKey = new Map(verifications.map((v) => [keyOf(v.target), v]));
@@ -158,9 +166,9 @@ export async function runVerificationPass(targets, baseScan, opts = {}) {
     const v = verifyByKey.get(keyOf(m));
     return v ? { ...m, verification: { status: v.status, reason: v.reason, legs: v.legs } } : m;
   });
-  baseScan.verificationSummary = { confirmed, rejected, expired, at: new Date().toISOString() };
+  baseScan.verificationSummary = { confirmed, rejected, expired, unconfirmed, at: new Date().toISOString() };
 
-  return { confirmed, rejected, expired, verifications, newScan };
+  return { confirmed, rejected, expired, unconfirmed, verifications, newScan };
 }
 
 function keyOf(target) {
@@ -200,6 +208,7 @@ export function verifySignal(target, confirmationScan, { index, tolerance = RECH
   }
   const reconfirmed = [];
   let rejectedReason = null;
+  let missingLegReason = null;
   for (const leg of legs) {
     const k = `${leg.eventKey || target.eventKey}::${leg.marketKey || target.marketKey}::${String(leg.selection || '').toLowerCase()}`;
     const candidates = index ? (index.get(k) || []) : [];
@@ -215,7 +224,33 @@ export function verifySignal(target, confirmationScan, { index, tolerance = RECH
     }
     const m = matches[0];
     if (!m) {
-      rejectedReason = `${leg.sourceId} leg missing`;
+      // Distinguish a genuine mismatch from a re-scrape coverage gap.
+      //
+      // If the book's event appears in the index at all for this eventKey, the
+      // re-scrape reached the event, so a selection that is not there is a real
+      // difference (the line moved, the market changed) and the opportunity is
+      // rejected. If the event is absent from the index entirely, the re-scrape
+      // simply did not reach it — an independent, bounded crawl — and the price
+      // may be alive on the book. That is not evidence it is false.
+      //
+      // Proven live on 2026-09-28: 37 "unibet leg missing" rejections, of which
+      // Unibet's own contest-page feed served the exact quoted BTTS price for
+      // 37/37. Treating a coverage gap as `rejected` asserted the opportunity
+      // was invalid and discarded real arbitrage.
+      // "Reached" must be judged per source: the same eventKey can be present
+      // because a DIFFERENT book's event was indexed under it, which proves
+      // nothing about whether this leg's own book was re-scraped for it. So we
+      // look for any indexed candidate for this eventKey from this leg's own
+      // sourceId.
+      const eventKey = leg.eventKey || target.eventKey;
+      const eventSeen = Boolean(index) && [...index.entries()].some(
+        ([ik, cands]) => ik.startsWith(`${eventKey}::`) && cands.some((c) => c.sourceId === leg.sourceId),
+      );
+      if (eventSeen) {
+        rejectedReason = `${leg.sourceId} selection missing from re-scrape (event present)`;
+      } else {
+        missingLegReason = `${leg.sourceId} leg missing from re-scrape (event not reached)`;
+      }
       break;
     }
     if (Math.abs(m.odds - leg.odds) / leg.odds > tolerance) {
@@ -223,6 +258,9 @@ export function verifySignal(target, confirmationScan, { index, tolerance = RECH
       break;
     }
     reconfirmed.push({ ...leg, currentOdds: m.odds });
+  }
+  if (missingLegReason) {
+    return { target, status: 'unconfirmed', reason: missingLegReason, legs: reconfirmed };
   }
   if (rejectedReason) {
     return { target, status: 'rejected', reason: rejectedReason, legs: reconfirmed };

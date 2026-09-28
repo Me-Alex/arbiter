@@ -98,6 +98,29 @@ test('verification rejects a changed selection line', () => {
   assert.equal(verifySignal(target, {}, { index }).status, 'rejected');
 });
 
+test('a leg whose own book was not re-scraped is unconfirmed, not rejected', () => {
+  // The real 2026-09-28 failure: an opportunity whose legs span two books, but
+  // the verification re-scrape only reached one of them (Unibet's contest fell
+  // outside the bounded re-crawl). The other book's event is present under the
+  // SAME eventKey, so a naive "is the eventKey indexed?" test wrongly concludes
+  // the re-scrape reached it and rejects. Presence must be judged per sourceId.
+  //
+  // Proven live: all 37 of these rejections served the exact quoted Unibet BTTS
+  // price on the book, so rejecting them discarded real arbitrage.
+  const onlyBookA = engine.buildSelectionIndex([events[0]]); // book 'b' absent
+  const result = verifySignal(target, { options: { bankroll: 1000 }, opportunities: [] }, { index: onlyBookA });
+  assert.equal(result.status, 'unconfirmed');
+  assert.match(result.reason, /not reached|missing/i);
+});
+
+test('a leg missing because its line moved is still rejected, not unconfirmed', () => {
+  // Same event reached by the leg's own book, but the selection's handicap no
+  // longer matches — a real mismatch, so it must be rejected. This is the
+  // per-source-present branch, distinct from the not-reached branch above.
+  const index = engine.buildSelectionIndex(events.map(e => ({ ...e, markets: e.markets.map(m => ({ ...m, selections: m.selections.map(s => ({ ...s, handicap: 1 })) })) })));
+  assert.equal(verifySignal(target, {}, { index }).status, 'rejected');
+});
+
 test('canonical result markets with first-half period are not full-time contracts', () => {
   const input = events.map(e => ({ ...e, markets: e.markets.map(m => ({ ...m, period: 'firsthalf' })) }));
   assert.equal(engine.findArbitrage(engine.groupByEvent(input)).length, 0);

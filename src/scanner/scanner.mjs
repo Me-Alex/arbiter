@@ -304,7 +304,7 @@ export async function scanWorkspace(args) {
     middles,
     positiveEv,
     lowHold,
-    verificationSummary: { confirmed: 0, rejected: 0, expired: 0 },
+    verificationSummary: { confirmed: 0, rejected: 0, expired: 0, unconfirmed: 0 },
   };
 
   // Verification consumes the very same eligible observations, never signal winners.

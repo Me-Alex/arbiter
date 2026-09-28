@@ -90,7 +90,13 @@ test('verifySignal rejects when odds drift beyond tolerance', () => {
   assert.match(v.reason, /drift/);
 });
 
-test('verifySignal rejects when a leg is missing', () => {
+test('verifySignal reports a leg missing from the re-scrape as unconfirmed, not rejected', () => {
+  // A leg that cannot be located in the independent re-scrape has not been
+  // proven false — the book may simply not have been reached, or the market
+  // may not have been captured on this pass. Reporting it as `rejected`
+  // asserted the opportunity was invalid and threw away real arbitrage:
+  // on 2026-09-28, 37 "unibet leg missing" rejections were all real, with
+  // Unibet's own feed serving the exact quoted BTTS price for 37/37.
   const events = [event('a', [['H', 2.10]])];
   const key = canonicalKey(events);
   const target = {
@@ -102,7 +108,7 @@ test('verifySignal rejects when a leg is missing', () => {
   const v = verifySignal(target, { options: { bankroll: 1000 }, opportunities: [] }, {
     index: indexFor(events),
   });
-  assert.equal(v.status, 'rejected');
+  assert.equal(v.status, 'unconfirmed');
   assert.match(v.reason, /missing/);
 });
 
