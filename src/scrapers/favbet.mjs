@@ -251,6 +251,25 @@ function mapFavbetMarket(market) {
   const isFirstHalf = (label) => /repriza\s*1|1st\s*half|prima\s*repriza/i.test(label);
   const periodFor = (label) => (isFirstHalf(label) ? 'firsthalf' : 'fulltime');
 
+  /**
+   * True only for the unqualified "both teams score" market.
+   *
+   * Favbet's feed carries several markets whose names all begin "Ambele echipe"
+   * but which settle on different events: a goal threshold ("mai mult de 1.5
+   * goluri"), a per-half requirement ("în ambele reprize"), or something
+   * unrelated to scoring entirely ("vor executa câte un penalty"). Only the
+   * bare form is the plain BTTS contract that other books also price, so only
+   * the bare form may share the BTTS engine bucket with them.
+   *
+   * Qualifiers detected here: a numeric goal line, "în ambele"/"in ambele"
+   * (both halves), "penalty"/"penalt", and the first-half markers already used
+   * by `isFirstHalf`.
+   */
+  const isPlainBothTeamsScore = (label) =>
+    !/\d/.test(label)
+    && !/ambele\s+(?:reprize|in\s+ambele)/i.test(label)
+    && !/penalty|penalt/i.test(label);
+
   if (isFirstHalf(name) && /1x2|rezultat|winner|final/i.test(name)) {
     const byKind = new Map(valid.map((s) => [s.tag.toUpperCase(), s]));
     if (['1', 'X', '2'].every((k) => byKind.has(k))) {
@@ -281,6 +300,28 @@ function mapFavbetMarket(market) {
     const yes = valid.find((s) => /^(yes|da|gg)\b/i.test(s.tag));
     const no = valid.find((s) => /^(no|nu|ng)\b/i.test(s.tag));
     if (!yes || !no) return null;
+    // Only the unqualified market is plain BTTS. This branch matches a whole
+    // family of "Ambele ..." markets that are NOT plain BTTS, and they settle
+    // differently from one another:
+    //
+    //   "Ambele Marcheaza"                              both teams score, once  ✔
+    //   "Ambele echipe marchează mai mult de 1.5 goluri" both score OVER 1.5    ✘
+    //   "Ambele echipe să înscrie în ambele reprize"    both score in BOTH halves ✘
+    //   "Ambele echipe vor executa câte un penalty"      both teams take a penalty ✘
+    //
+    // Keying them all `BOTH_TEAMS_SCORE` put them in one engine bucket, so a
+    // price from one was paired against another book's plain BTTS leg and
+    // reported as arbitrage. On the 2026-09-28 scan that produced 126
+    // "live-confirmed" BTTS opportunities; tracing every leg back to its exact
+    // selectionId showed 126 of the 128 legs came from a qualified Favbet
+    // market (94 over-1.5, 23 under-1.5, 8 both-halves, 1 penalty) and only
+    // 2 were genuine plain BTTS. The headline 92% ROI was a both-halves price
+    // at 8.40 against another book's plain BTTS "No".
+    //
+    // A qualifier means the contract differs, so it must not resolve to the
+    // plain BTTS family at all. Returning null keeps it out of the comparison
+    // rather than inventing a family for it.
+    if (!isPlainBothTeamsScore(name)) return null;
     return { key: is1H ? 'BOTH_TEAMS_SCORE_1H' : 'BOTH_TEAMS_SCORE', name, period: periodFor(name), selections: [
       { id: yes.id, name: 'Yes', odds: yes.odds, group: 'Main' },
       { id: no.id, name: 'No', odds: no.odds, group: 'Main' },

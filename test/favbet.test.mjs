@@ -143,6 +143,147 @@ test('KNOWN DEFECT: markets are emitted more than once per event', (t) => {
   }
 });
 
+test('only the unqualified "both teams score" market may take the BTTS key', () => {
+  // Favbet's feed carries several markets whose names all begin "Ambele echipe"
+  // but which settle on different events:
+  //
+  //   "Ambele Marcheaza"                               both teams score          ✔
+  //   "Ambele echipe marchează mai mult de 1.5 goluri"  both score OVER 1.5       ✘
+  //   "Ambele echipe să înscrie în ambele reprize"     both score in BOTH halves  ✘
+  //   "Ambele echipe vor executa câte un penalty"       both teams take a penalty  ✘
+  //
+  // Keying them all BOTH_TEAMS_SCORE put them in one engine bucket, so a
+  // qualified price got paired against another book's plain BTTS leg and
+  // reported as arbitrage. Observed on the 2026-09-28 scan: 126 opportunities
+  // "confirmed" with a live re-quote; tracing each leg to its exact
+  // selectionId showed 126 of 128 legs came from a qualified market (94
+  // over-1.5, 23 under-1.5, 8 both-halves, 1 penalty) — the headline 92% ROI
+  // was a both-halves price at 8.40 against another book's plain BTTS "No".
+  //
+  // The guard is the market NAME, so it is checked here against the real
+  // capture's own market rows rather than a hand-written list.
+  const s = new Favbet({ windowHours: 72 });
+  const out = s.extractEvents(s.normalize(raw()));
+  assert.ok(out.length > 0, 'the fixture must produce events');
+
+  const bttsNames = new Set();
+  for (const e of out) {
+    for (const m of e.markets) {
+      if (m.key !== 'BOTH_TEAMS_SCORE') continue;
+      bttsNames.add(m.name);
+      assert.doesNotMatch(
+        m.name,
+        /\d/,
+        `a market with a goal threshold is not plain BTTS: "${m.name}"`,
+      );
+      assert.doesNotMatch(
+        m.name,
+        /penalty|penalt/i,
+        `a penalty market is not BTTS: "${m.name}"`,
+      );
+      assert.doesNotMatch(
+        m.name,
+        /ambele\s+(?:reprize|in\s+ambele)/i,
+        `a both-halves market is not plain BTTS: "${m.name}"`,
+      );
+    }
+  }
+});
+
+test('a qualified "Ambele ..." market is withheld rather than keyed as BTTS', (t) => {
+  // Direct check on the classifier: feed it the exact market names observed on
+  // the live endpoint and assert only the bare one survives. Pinned for the
+  // same reason the capture tests are: the synthetic kickoff is derived from
+  // PINNED_NOW, and the adapter drops anything already kicked off.
+  atPinnedNow(t);
+  const s = new Favbet({ windowHours: 72 });
+
+  // The classifier reads a per-event market map, so each candidate needs a
+  // distinct market_id (the 1X2 is skipped by id, and duplicate ids would make
+  // one candidate look like the template-1 market) plus its own outcomes.
+  let nextMarketId = 100;
+  const candidate = (market_name) => ({
+    bet_builder: false,
+    market_id: (nextMarketId += 1),
+    market_name,
+    market_suspend: false,
+    outcomes: [
+      { outcome_id: 900, outcome_name: 'Da', outcome_short_name: 'Da', outcome_tag: 'Da', outcome_coef: 8.4, outcome_visible: true },
+      { outcome_id: 901, outcome_name: 'Nu', outcome_short_name: 'Nu', outcome_tag: 'Nu', outcome_coef: 1.04, outcome_visible: true },
+    ],
+  });
+
+  const matchOdds = {
+    bet_builder: false,
+    market_id: 99,
+    market_name: '1 X 2',
+    market_suspend: false,
+    market_template_id: 1,
+    outcomes: [
+      { outcome_id: 1, outcome_name: 'Gazde', outcome_short_name: '1', outcome_tag: '1', outcome_coef: 2.1, outcome_visible: true },
+      { outcome_id: 2, outcome_name: 'Egal', outcome_short_name: 'X', outcome_tag: 'X', outcome_coef: 3.4, outcome_visible: true },
+      { outcome_id: 3, outcome_name: 'Oaspeți', outcome_short_name: '2', outcome_tag: '2', outcome_coef: 3.2, outcome_visible: true },
+    ],
+  };
+
+  const markets = {
+    match_odds: matchOdds,
+    plain: candidate('Ambele Marcheaza'),
+    overLine: candidate('Ambele echipe marchează mai mult de 1.5 goluri'),
+    underLine: candidate('Ambele echipe marchează mai puțin de 1.5 goluri'),
+    bothHalves: candidate('Ambele echipe să înscrie în ambele reprize'),
+    penalties: candidate('Ambele echipe vor executa cate un penalty'),
+  };
+
+  const event = {
+    event_id: 1,
+    event_dt: Math.floor(Date.parse(PINNED_NOW) / 1000) + 86400,
+    participants: [
+      { participant_number: 1, participant_name: 'Gazde' },
+      { participant_number: 2, participant_name: 'Oaspeți' },
+    ],
+    category_name: 'Fotbal',
+    tournament_name: 'Test',
+    tournament_id: 'fotbal',
+    event_status_type: 'notstarted',
+  };
+
+  // The adapter requires a top-level `markets` array of { event, markets } rows
+  // and a non-empty `events` map; anything else fails the normalize guard.
+  const envelope = {
+    events: new Map([['1', event]]),
+    markets: [{ event, markets }],
+    sourceUrl: 'https://www.favbet.ro/service/lineout/frontend_api2/',
+    observedAt: PINNED_NOW,
+  };
+
+  const out = s.extractEvents(s.normalize(envelope));
+  const e = out.find((x) => String(x.id) === '1');
+  assert.ok(e, 'the synthetic event is published');
+  const btts = (e?.markets || []).filter((m) => m.key === 'BOTH_TEAMS_SCORE');
+
+  assert.equal(btts.length, 1, 'exactly one market may claim the BTTS key');
+  assert.equal(btts[0].name, 'Ambele Marcheaza', 'and it must be the plain one');
+  assert.deepEqual(
+    btts[0].selections.map((x) => `${x.name}@${x.odds}`),
+    ['Yes@8.4', 'No@1.04'],
+    'the plain market keeps its own prices',
+  );
+
+  // The qualified names must be gone entirely, not just re-keyed somewhere the
+  // BTTS assertion misses: a "both halves" or "over 1.5" price still settles
+  // differently and has no honest home in the cross-book comparison.
+  const published = e.markets.map((m) => m.name);
+  for (const withheld of [
+    'Ambele echipe marchează mai mult de 1.5 goluri',
+    'Ambele echipe marchează mai puțin de 1.5 goluri',
+    'Ambele echipe să înscrie în ambele reprize',
+    'Ambele echipe vor executa cate un penalty',
+  ]) {
+    assert.ok(!published.includes(withheld), `qualified market must be withheld: "${withheld}"`);
+  }
+});
+
 test('the adapter reports a missing or malformed envelope rather than an empty success', (t) => {
   atPinnedNow(t);
   const s = new Favbet({ windowHours: 72 });
