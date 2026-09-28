@@ -569,3 +569,35 @@ test('detailLimit caps how many contests pay for the extra request', async () =>
   });
   assert.equal(seen.length, 2, 'the detail pass must be bounded');
 });
+
+test('the detail budget is spent on the sport the scan is reading', async () => {
+  // Contests arrive in crawl order, which is alphabetical by sport. A plain
+  // slice would spend the whole budget on the first sport in the menu while
+  // the scan — which filters to one sport — reads only the last, so the cap
+  // would buy markets nobody looks at.
+  const mk = (contestKey, contestType) => ({
+    contestKey,
+    contestType,
+    _sport: contestType,
+    propositions: [],
+  });
+  const contests = [
+    ...Array.from({ length: 10 }, (_, i) => mk(`ice${i}`, 'IceHockey')),
+    ...Array.from({ length: 10 }, (_, i) => mk(`foo${i}`, 'Football')),
+  ];
+
+  const s = new Unibet({ fullMarkets: true, detailLimit: 4, sport: 'football' });
+  const seen = [];
+  s._get = async (path) => {
+    seen.push(path);
+    return { contest: { propositions: [propositionOfType('both_teams_to_score')] } };
+  };
+  await s._enrichMarkets(contests, {
+    signal: undefined,
+    stats: { attempted: 0, failed: 0, reasons: new Map(), record() {} },
+  });
+
+  assert.equal(seen.length, 4);
+  assert.ok(seen.every((p) => /contestKey=foo/.test(p)),
+    `every request must target the scanned sport, got ${seen.join(', ')}`);
+});

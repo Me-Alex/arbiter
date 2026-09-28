@@ -327,6 +327,10 @@ export default class UnibetScraper extends ScraperBase {
     }
     const requested = Array.isArray(opts.sports) && opts.sports.length ? opts.sports : DEFAULT_SPORTS;
     this.sports = [...new Set(requested.map(String))];
+    // The sport the scan is filtering on, if any. Unibet crawls many sports but
+    // the arb scan reads one, so this is what tells the detail pass which
+    // contests are worth the extra request.
+    this.sport = String(opts.sport || '').trim();
     // Deep mode costs one contest-page request per event, on top of the lobby
     // crawl. It is the difference between Unibet contributing only a 1X2
     // result market and Unibet contributing totals, BTTS and handicaps — but
@@ -475,9 +479,27 @@ export default class UnibetScraper extends ScraperBase {
    *
    * A contest whose detail call fails keeps its lobby preview. That is the right
    * failure mode: a partial market set on one event must not cost the event.
+   *
+   * The budget is spent on the contests most likely to pair with another book.
+   * Contests arrive in crawl order, which is alphabetical by sport, so a plain
+   * `slice` spends the whole budget on the first sport in the menu while the
+   * scan — which filters to one sport — reads only the last. Ranking by the
+   * requested sport first is what makes the cap pay for itself.
    */
   async _enrichMarkets(contests, { signal, stats }) {
-    const queue = contests.slice(0, this.detailLimit);
+    const priority = String(this.sport || '').trim().toLowerCase();
+    const rank = (c) => {
+      if (!priority) return 0;
+      const type = String(c.contestType || c._sport || '').trim().toLowerCase();
+      return type === priority ? 0 : 1;
+    };
+    // Stable: within a rank the crawl order is preserved, so this is a
+    // partition by sport rather than a reshuffle.
+    const queue = contests
+      .map((contest, i) => ({ contest, i }))
+      .sort((a, b) => rank(a.contest) - rank(b.contest) || a.i - b.i)
+      .slice(0, this.detailLimit)
+      .map((x) => x.contest);
     let enriched = 0;
 
     await Promise.all(
