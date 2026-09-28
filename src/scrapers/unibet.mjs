@@ -33,7 +33,19 @@ import { describeError, summariseReasons } from './feg-common.mjs';
  *     `FixtureContest`, so matching on the wrong one silently finds nothing.
  *
  * The lobby returns a one-market preview per contest (the default `1x2`), which
- * is exactly the market the arb engine needs for a result comparison.
+ * is exactly the market the arb engine needs for a result comparison — but only
+ * that one market.
+ *
+ * A contest actually advertises far more: the lobby's `LobbyFixtureContest`
+ * carries `propositionCount` (often 30-150) and `hasMorePropositions`, yet ships
+ * a single `1x2` proposition. The full surface lives one request away at
+ * `v2/views/contest-page?contestKey=...`, which returns a
+ * `GetContestPage` whose `contest.propositions[]` is the whole menu — totals,
+ * BTTS, double chance, handicaps, half-time, and a long tail of player props.
+ * That detail call is opt-in (`fullMarkets`) because it is one request per
+ * event: it multiplies the request count, so the default crawl still takes the
+ * cheap lobby preview and the deep mode is what a scan that wants Unibet in the
+ * arbitrage comparison turns on.
  */
 
 /**
@@ -127,27 +139,93 @@ export function contestsIn(view) {
 }
 
 /**
- * Render one `LobbyFixtureContestProposition` as an engine-shaped market.
+ * Unibet `propositionType` → the market key the engine resolves.
  *
- * The market key is the provider's own `propositionType` (`1x2`, `total`, ...)
- * because the engine already routes both: `1x2` is a named MATCH_ODDS contract
- * and `TOTAL` is a named OVER_UNDER key whose line is read off the selections.
+ * The engine buckets by resolved family + period + line, and `resolveContract`
+ * whitelists a handful of keys outright. Emitting the provider's own
+ * `propositionType` would work for `1x2` (a literal whitelist hit) but leave
+ * `total`, `2_way_handicap` and friends to the shape-based fallbacks, which is
+ * fragile. Mapping to the documented keys makes the contract explicit.
  *
- * Selection names are the bet as the customer sees it. For the result market
- * that is the literal `1` / `X` / `2` triple (`optionDisplayName`), which is
- * what lets the engine recognise a full-time result by shape. For totals the
- * line (`variantName`, e.g. `9.5`) is folded into the name, because the engine's
- * totals resolver extracts the line from the selection text — emitting a bare
- * `Peste` would bucket every total on the event together.
- *
- * @returns {object|null} null when the proposition has no two-sided price.
+ * `null` means "not arbitrable / not worth publishing":
+ *  - player props and player-card markets have no cross-book counterpart;
+ *  - `1x2_{xup}up` is a two-goal-margin result no other book prices the same way;
+ *  - `3_way_handicap` settles 1/X/2 against a spread, which the engine has no
+ *    family for — and its selection shape is a literal 1/X/2 triple, so
+ *    publishing it unfiltered is how a handicap price would get paired against
+ *    another book's plain full-time result and reported as a profit;
+ *  - `draw_no_bet` refunds the draw, so its two sides are not jointly
+ *    exhaustive. Its selection names are a bare `1` / `2`, which the engine's
+ *    generic two-way fallback reads as a clean match winner — publishing it
+ *    would book an arbitrage whose third outcome is a stake return.
  */
-function normalizeMarket(proposition) {
-  const key = String(proposition?.propositionType || proposition?.propositionKey || '').trim();
-  if (!key) return null;
+const ENGINE_KEYS = {
+  '1x2': '1x2',
+  total: 'TOTAL',
+  '1st_half_total': 'TOTAL',
+  '1st_half_1x2': '1x2',
+  both_teams_to_score: 'BOTH_TEAMS_SCORE',
+  double_chance: 'DOUBLE_CHANCE',
+  '2_way_handicap': 'HANDICAP',
+};
 
+/**
+ * Market keys whose variant lines must be half-lines (`.5`) to be arbitrable.
+ *
+ * The engine's Asian-handicap contract only accepts `a === -b` where the
+ * magnitude is a half: a whole line pushes, and a quarter line splits the stake
+ * two ways, so neither is the clean "exactly one side pays" contract the
+ * inverse-sum arithmetic assumes.
+ *
+ * This matters beyond a lost opportunity. Unibet lists 13 two-way handicap
+ * lines per event, of which only 4 are half-lines. A whole-line variant like
+ * `1 -1 | 2 +1` carries no "handicap" word in its selection names, so if it is
+ * published it reaches the engine's generic two-way fallback and resolves as a
+ * 2-way MATCH_ODDS — which would then be compared against a real full-time
+ * result from another book and produce an arbitrage that cannot exist.
+ */
+const HALF_LINE_ONLY = new Set(['HANDICAP']);
+
+/** True for `.5` / `-.5` / `1.5` / `-1.5` — the only arbitrable handicap lines. */
+function isHalfLine(line) {
+  const n = Number(line);
+  return Number.isFinite(n) && Math.abs(n) % 1 !== 0 && Math.abs(n) * 2 === Math.round(Math.abs(n) * 2);
+}
+
+/**
+ * Option types that name a person rather than an event outcome. A market built
+ * from these is a player prop: correct in isolation, but never comparable
+ * against another book (Unibet spells players "Desire Doue 1+", others use
+ * different line notation), so pairing one would fabricate an arbitrage out of
+ * two different bets.
+ */
+const PLAYER_OPTION_TYPES = new Set(['Participant', 'Player']);
+
+/** Proposition types that settle before the final whistle. */
+function periodFor(propositionType) {
+  return /1st_half|half_time/.test(String(propositionType)) ? 'half1' : 'fulltime';
+}
+
+/**
+ * One engine-shaped market from a single *variant* (one priceable row) of a
+ * Unibet proposition.
+ *
+ * A contest-page proposition is `variants: [[opts], [opts], ...]` — one inner
+ * array per line. Totals arrive with six of them (0.5 / 1.5 / 2.5 / …), the
+ * 2-way handicap with thirteen. Each is a distinct market at a distinct line, so
+ * each becomes its own engine market; collapsing them would put six different
+ * lines in one bucket and let the engine pair Over 0.5 against Over 3.5.
+ *
+ * @returns {object|null} null when the variant has no two-sided price.
+ */
+function normalizeVariant(proposition, variant, key) {
   const selections = [];
-  for (const option of proposition.options || []) {
+  for (const option of variant || []) {
+    // Player props are excluded here rather than filtered by propositionType so
+    // a new player-market type is dropped automatically instead of leaking
+    // through an allowlist that has to be kept current.
+    if (PLAYER_OPTION_TYPES.has(option?.optionType)) continue;
+
     const odds = Number(option?.price);
     if (!Number.isFinite(odds) || odds <= 1) continue;
     if (option.bettingOpen === false) continue;
@@ -155,34 +233,79 @@ function normalizeMarket(proposition) {
     const label = String(option.optionDisplayName || option.optionName || '').trim();
     if (!label) continue;
 
-    // `variantName` is the line for over/under ("9.5"); for a plain 1x2 it is
-    // "Plain" and must not leak into the selection name.
-    const line = String(option.variantName || '').trim();
-    const isOverUnder = key === 'total' || /^(TotalOver|TotalUnder)$/.test(String(option.optionType || ''));
-    const name = isOverUnder && line && /^\d+(?:\.\d+)?$/.test(line) ? `${label} ${line}` : label;
+    // `variantName` carries the line for over/under ("2.5") and the handicap
+    // ("-1", "+1"); on a plain market it is the literal "Plain" and must not
+    // leak into the selection name, or every 1X2 would read as "1 Plain".
+    // The leading `+` matters: Unibet writes the two sides of a handicap as
+    // "-0.5" and "+0.5", and dropping the plus would leave the second side
+    // line-less and break the symmetric pair the AH resolver needs.
+    const rawLine = String(option.variantName || '').trim();
+    const isLine = /^[+-]?\d+(?:\.\d+)?$/.test(rawLine);
+    const line = isLine ? rawLine : null;
 
     selections.push({
       id: String(option.priceKey || option.optionKey || ''),
-      name,
+      name: line ? `${label} ${line}` : label,
       odds,
-      handicap: isOverUnder ? line : null,
+      handicap: line,
       group: 'Main',
     });
   }
 
   if (selections.length < 2) return null;
+
+  // Reject a handicap line the engine cannot settle as a surebet. See
+  // HALF_LINE_ONLY — without this, a whole-line handicap is published and
+  // resolves as a 2-way MATCH_ODDS, which is an arbitrage that cannot exist.
+  const line = selections[0]?.handicap ?? null;
+  if (HALF_LINE_ONLY.has(key) && !(line && isHalfLine(line))) return null;
+
   return {
-    id: String(proposition.key || proposition.propositionKey || key),
+    id: `${String(proposition.propositionKey || key)}:${String(variant?.[0]?.variantKey ?? '')}`,
     key,
-    // The provider's own market label. Kept out of `key` deliberately: the
-    // engine's full-time guard reads `name` and rejects anything that names a
-    // sub-settlement window, and Unibet's labels ("Rezultat final", "Total
-    // goluri") are exactly the ones that must survive that check.
+    // The provider's own market label, deliberately kept out of `key`: the
+    // engine's full-time guard reads `name` and rejects anything naming a
+    // sub-settlement window. "Pauză/Final" and "Total Goluri - Repriză a 1-a"
+    // are exactly the names that must survive that check — and `period` is what
+    // actually separates them, not the label.
     name: String(proposition.displayName || key),
-    period: 'fulltime',
-    line: selections[0]?.handicap ?? null,
+    period: periodFor(proposition.propositionType),
+    line,
     selections,
   };
+}
+
+/**
+ * Every arbitrable market on one Unibet proposition.
+ *
+ * The lobby's preview propositions ship `options[]` with no `variants` wrapper;
+ * contest-page propositions ship `variants[][]`. Both are accepted so the same
+ * function serves the cheap crawl and the deep one.
+ *
+ * @returns {object[]}
+ */
+export function marketsFromProposition(proposition) {
+  const rawType = String(proposition?.propositionType || '').trim();
+  const key = ENGINE_KEYS[rawType];
+  if (!key) return [];
+
+  const groups = Array.isArray(proposition.variants) && proposition.variants.length
+    ? proposition.variants
+    : [proposition.options || []];
+
+  const out = [];
+  const seen = new Set();
+  for (const variant of groups) {
+    const market = normalizeVariant(proposition, variant, key);
+    if (!market) continue;
+    // Same key + same line must appear once; the feed repeats a proposition
+    // under both its display and its raw type on some events.
+    const slot = `${market.key}@${market.line ?? '_'}@${market.period}`;
+    if (seen.has(slot)) continue;
+    seen.add(slot);
+    out.push(market);
+  }
+  return out;
 }
 
 export default class UnibetScraper extends ScraperBase {
@@ -204,6 +327,22 @@ export default class UnibetScraper extends ScraperBase {
     }
     const requested = Array.isArray(opts.sports) && opts.sports.length ? opts.sports : DEFAULT_SPORTS;
     this.sports = [...new Set(requested.map(String))];
+    // Deep mode costs one contest-page request per event, on top of the lobby
+    // crawl. It is the difference between Unibet contributing only a 1X2
+    // result market and Unibet contributing totals, BTTS and handicaps — but
+    // it also multiplies request count and load, so it is configured per job
+    // rather than hardcoded on.
+    this.fullMarkets = Boolean(opts.fullMarkets ?? opts.jobConfig?.fullMarkets);
+    // Cap on how many events get the detail call. A full football crawl is ~700
+    // contests; without a cap a deep run issues 700 extra requests.
+    this.detailLimit = Number.isInteger(opts.detailLimit)
+      ? opts.detailLimit
+      : Number.isInteger(opts.jobConfig?.detailLimit)
+        ? opts.jobConfig.detailLimit
+        : this.maxEvents;
+    if (!Number.isInteger(this.detailLimit) || this.detailLimit < 0) {
+      throw new ValidationError('Unibet: invalid detailLimit');
+    }
     this.observedAt = new Date().toISOString();
   }
 
@@ -314,10 +453,58 @@ export default class UnibetScraper extends ScraperBase {
       throw new UpstreamError(`Unibet: ${leagues} leagues crawled, 0 contests — ${summariseReasons(stats.reasons)}`);
     }
 
+    const contests = [...events.values()];
+    let enriched = 0;
+    if (this.fullMarkets) {
+      enriched = await this._enrichMarkets(contests, { signal, stats });
+    }
+
     this.sourceUrl = `${BFF}/v2/views/az-menu`;
-    this.discovery = { sports: wanted.length, leagues, contests: events.size };
+    this.discovery = { sports: wanted.length, leagues, contests: contests.length, enrichedMarkets: enriched };
     this.extraction = { ok: 0, failed: 0 };
-    return { contests: [...events.values()] };
+    return { contests };
+  }
+
+  /**
+   * Replace each contest's one-market lobby preview with its full proposition
+   * set from `v2/views/contest-page`.
+   *
+   * The detail view returns the same contest object with `propositions[]`
+   * populated in full, so the swap is a field replacement rather than a merge —
+   * no risk of the preview and the detail disagreeing about teams or kickoff.
+   *
+   * A contest whose detail call fails keeps its lobby preview. That is the right
+   * failure mode: a partial market set on one event must not cost the event.
+   */
+  async _enrichMarkets(contests, { signal, stats }) {
+    const queue = contests.slice(0, this.detailLimit);
+    let enriched = 0;
+
+    await Promise.all(
+      Array.from({ length: this.concurrency }, async () => {
+        while (queue.length) {
+          signal?.throwIfAborted();
+          const contest = queue.shift();
+          const page = await this._get(
+            `v2/views/contest-page?contestKey=${encodeURIComponent(contest.contestKey)}`,
+            { signal, stats },
+          );
+          const full = page?.contest;
+          if (!full || !Array.isArray(full.propositions) || full.propositions.length === 0) continue;
+          // Keep the crawl's own _sport/_league annotations: the detail view
+          // carries `category` but the league label we already resolved is the
+          // one the rest of the pipeline matched on.
+          contest.propositions = full.propositions;
+          enriched += 1;
+        }
+      }),
+    );
+
+    this.logger(
+      'info',
+      `Unibet: deep markets — ${enriched}/${queue.length + enriched} contests expanded beyond 1X2`,
+    );
+    return enriched;
   }
 
   normalize(raw) {
@@ -331,18 +518,19 @@ export default class UnibetScraper extends ScraperBase {
       if (!Number.isFinite(+kickoff)) continue;
 
       const markets = [];
-      // One market per (type, line): the lobby can repeat a propositionType
-      // (Unibet lists "Rezultat final" and "Cote meci" as two 1x2 markets on
-      // some events). Emitting both would put two full-time result legs in the
-      // same engine bucket, so the first priced one wins.
       const taken = new Set();
       for (const proposition of contest.propositions || []) {
-        const market = normalizeMarket(proposition);
-        if (!market) continue;
-        const slot = `${market.key}@${market.line ?? '_'}`;
-        if (taken.has(slot)) continue;
-        taken.add(slot);
-        markets.push(market);
+        for (const market of marketsFromProposition(proposition)) {
+          // One market per (key, line, period): the feed repeats a
+          // propositionType (Unibet lists "Rezultat final" and "Cote meci" as
+          // two 1x2 markets on some events). Emitting both would put two
+          // full-time result legs in the same engine bucket, so the first
+          // priced one wins.
+          const slot = `${market.key}@${market.line ?? '_'}@${market.period}`;
+          if (taken.has(slot)) continue;
+          taken.add(slot);
+          markets.push(market);
+        }
       }
       if (markets.length === 0) continue;
 
@@ -408,9 +596,15 @@ export default class UnibetScraper extends ScraperBase {
       observedAt: this.observedAt,
       coverage: {
         sport: this.sports.length > 1 ? 'multi-sport' : this.sports[0],
-        allMarkets: false,
+        // False means "1X2 preview only", which is all the lobby gives. With
+        // fullMarkets the crawl carries totals, BTTS, double chance and
+        // handicaps — still not literally every market, since player props are
+        // deliberately dropped as un-comparable across books.
+        allMarkets: Boolean(this.fullMarkets),
+        markets: this.fullMarkets ? 'result/totals/btts/double-chance/handicap' : 'result-only',
         live: true,
         maxEvents: this.maxEvents,
+        detailLimit: this.fullMarkets ? this.detailLimit : 0,
       },
     };
   }

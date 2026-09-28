@@ -203,7 +203,7 @@ test('the totals line is carried into the selection name', () => {
   // bare "Peste" would bucket every total line on the event into one market.
   const s = new Unibet({});
   const [contest] = s.normalize({ contests: [lobbyView().view.matches[0].contestGroups[0].contests[0]] });
-  const totals = contest.markets.find((m) => m.key === 'total');
+  const totals = contest.markets.find((m) => m.key === 'TOTAL');
   assert.deepEqual(totals.selections.map((x) => x.name), ['Peste 9.5', 'Sub 9.5']);
 
   const contract = resolveContract(totals);
@@ -312,4 +312,260 @@ test('the registry records the BFF as a verified kindred endpoint', async () => 
   assert.equal(book.feedStatus, 'verified');
   const urls = (book.keyEndpoints || []).map((e) => e.url).join(' ');
   assert.match(urls, /sportsbff[a-z0-9.-]*kindredext\.net/, 'the live BFF host must be recorded');
+});
+
+// ===========================================================================
+// The deep market surface — v2/views/contest-page
+// ===========================================================================
+
+/**
+ * The lobby ships one proposition per contest: the default `1x2`. A contest
+ * object advertises the rest of its menu in `propositionCount` (36-150 in
+ * practice) and `hasMorePropositions`, and `v2/views/contest-page?contestKey=`
+ * is the request that returns it. These tests pin what the deep mode is allowed
+ * to publish from that response, against a recorded capture.
+ *
+ * The failure they guard against is not a missing opportunity — it is a
+ * fabricated one. Several of these markets have selection shapes the engine
+ * recognises as something else entirely, so publishing them unfiltered pairs a
+ * handicap price against a plain full-time result from another book and reports
+ * a profit that cannot exist.
+ */
+
+const CONTEST_PAGE = new URL('./fixtures/unibet-contest-page-capture.json', import.meta.url);
+
+/** The recorded `GetContestPage`, from a real 2026-09-28 football fixture. */
+function contestPage() {
+  return JSON.parse(fs.readFileSync(CONTEST_PAGE, 'utf8'));
+}
+
+function propositionOfType(type) {
+  return contestPage().contest.propositions.find((p) => p.propositionType === type);
+}
+
+/** Every market the normaliser emits for the captured contest. */
+function deepMarkets() {
+  const s = new Unibet({ fullMarkets: true });
+  const [contest] = s.normalize({ contests: [contestPage().contest] });
+  return contest.markets;
+}
+
+test('the lobby preview carries only 1x2, while the detail view carries the menu', () => {
+  const lobbyContest = lobbyView().view.matches[0].contestGroups[0].contests[0];
+  const preview = new Unibet({}).normalize({ contests: [lobbyContest] })[0].markets;
+  assert.deepEqual(
+    [...new Set(preview.map((m) => m.key))],
+    ['1x2', 'TOTAL'],
+    'the cheap crawl yields a result market and nothing else',
+  );
+
+  const deep = deepMarkets();
+  const keys = new Set(deep.map((m) => m.key));
+  for (const expected of ['1x2', 'TOTAL', 'BOTH_TEAMS_SCORE', 'DOUBLE_CHANCE', 'HANDICAP']) {
+    assert.ok(keys.has(expected), `deep mode must publish ${expected}`);
+  }
+  assert.ok(deep.length > preview.length, 'the detail view must yield strictly more markets');
+});
+
+test('every totals line becomes its own OVER_UNDER contract', () => {
+  // The feed sends six totals lines as six `variants` of one proposition. If
+  // they collapse into a single market, Over 0.5 gets compared against Under 5.5.
+  const totals = deepMarkets().filter((m) => m.key === 'TOTAL' && m.period === 'fulltime');
+  assert.equal(totals.length, 6, 'each priced full-time totals line is its own market');
+
+  const lines = totals.map((m) => resolveContract(m).lineKey).sort();
+  assert.deepEqual(lines, ['0.5', '1.5', '2.5', '3.5', '4.5', '5.5']);
+  assert.equal(new Set(lines).size, lines.length, 'no two totals markets may share a line');
+
+  for (const m of totals) {
+    const contract = resolveContract(m);
+    assert.equal(contract.family, 'OVER_UNDER');
+    assert.deepEqual(contract.outcomes, ['over', 'under']);
+    assert.ok(
+      m.selections.every((s) => s.name.includes(String(m.line))),
+      `the ${m.line} line must be readable from both selection names`,
+    );
+  }
+});
+
+test('corner totals are not folded into the goals-total buckets', () => {
+  // Unibet also prices total corners. They share the "total" English word but
+  // count a different quantity, so publishing them under the goals TOTAL key
+  // would let a 9.5 corner line pair against a 9.5 goal line from another book.
+  const allTotals = deepMarkets().filter((m) => m.key === 'TOTAL');
+  for (const m of allTotals) {
+    assert.doesNotMatch(m.name, /corners/i, 'a corners total must not reuse the goals bucket');
+  }
+});
+
+test('both teams to score resolves as a BTTS contract', () => {
+  const [btts] = deepMarkets().filter((m) => m.key === 'BOTH_TEAMS_SCORE');
+  assert.ok(btts, 'BTTS must be published');
+  // Unibet spells the sides "Da" / "Nu"; the resolver knows both.
+  assert.deepEqual(btts.selections.map((s) => s.name), ['Da', 'Nu']);
+  const contract = resolveContract(btts);
+  assert.equal(contract.family, 'BTTS');
+  assert.deepEqual(contract.outcomes, ['yes', 'no']);
+});
+
+test('double chance is catalogued but never treated as a surebet', () => {
+  const [dc] = deepMarkets().filter((m) => m.key === 'DOUBLE_CHANCE');
+  assert.deepEqual(dc.selections.map((s) => s.name), ['1X', '12', 'X2']);
+  const contract = resolveContract(dc);
+  assert.equal(contract.family, 'DOUBLE_CHANCE');
+  assert.equal(contract.arbEligible, false,
+    'the three double-chance legs overlap, so paying all three is not a surebet');
+});
+
+test('only half-line handicaps are published, and each resolves as ASIAN_HANDICAP', () => {
+  // Unibet lists 13 two-way handicap lines per event. Only the half-lines are a
+  // clean exclusive-exhaustive pair; a whole line pushes and a quarter line
+  // splits the stake, so neither is the contract the inverse-sum assumes.
+  const markets = deepMarkets().filter((m) => m.key === 'HANDICAP');
+  assert.equal(markets.length, 3, 'the fixture has exactly three half-lines');
+
+  const seen = new Set();
+  for (const m of markets) {
+    assert.equal(m.selections.length, 2, 'a two-way handicap publishes two sides');
+    const [a, b] = m.selections.map((s) => s.name);
+    assert.match(a, /^[12] [+-]/, `the ${m.line} line must be readable from both sides, got "${a}"`);
+    assert.match(b, /^[12] [+-]/, `the ${m.line} line must be readable from both sides, got "${b}"`);
+
+    const contract = resolveContract(m);
+    assert.equal(contract.family, 'ASIAN_HANDICAP', `line ${m.line} must resolve as a handicap`);
+    seen.add(contract.lineKey);
+  }
+  assert.equal(seen.size, 3, 'each handicap line gets its own bucket');
+});
+
+test('a whole-line handicap is withheld instead of posing as a match winner', () => {
+  // The specific hazard: "1 -1" / "2 +1" carries no handicap keyword, so if it
+  // reached the engine it would resolve through the generic two-way fallback as
+  // MATCH_ODDS and be compared against another book's full-time result.
+  const markets = deepMarkets();
+  assert.equal(markets.filter((m) => m.line === '-1' || m.line === '1').length, 0,
+    'whole-line handicaps must not be published');
+
+  const whole = propositionOfType('2_way_handicap').variants.find((v) => v[0].variantKey === '-1');
+  const s = new Unibet({ fullMarkets: true });
+  const events = s.normalize({
+    contests: [{ ...contestPage().contest, propositions: [whole] }],
+  });
+  assert.deepEqual(events, [], 'a lone whole-line handicap is not an event');
+});
+
+test('a three-way handicap is withheld, not published as a 1X2 result', () => {
+  // Its selections are a literal 1/X/2 triple. Unfiltered it would be read as
+  // the full-time result contract and paired against a real 1X2 from another
+  // book — a guaranteed false arbitrage.
+  const events = new Unibet({ fullMarkets: true }).normalize({
+    contests: [{ ...contestPage().contest, propositions: [propositionOfType('3_way_handicap')] }],
+  });
+  assert.deepEqual(events, [], 'a 3-way handicap is not an arbitrable contract');
+
+  const keys = new Set(deepMarkets().map((m) => m.key));
+  assert.ok(!keys.has('3_way_handicap'), 'it must never be published under any key');
+});
+
+test('draw no bet is withheld: the draw refunds, so the pair is not exhaustive', () => {
+  const events = new Unibet({ fullMarkets: true }).normalize({
+    contests: [{ ...contestPage().contest, propositions: [propositionOfType('draw_no_bet')] }],
+  });
+  assert.deepEqual(events, [], 'draw-no-bet has a third outcome that returns the stake');
+});
+
+test('player props are dropped rather than published as comparable markets', () => {
+  // `Participant` options name a person, so two books rarely spell the line the
+  // same way — pairing them would invent an arbitrage between two different
+  // bets. Excluding by option type means a new player-market type is dropped
+  // automatically instead of leaking through an allowlist.
+  const playerMarket = {
+    propositionType: 'anytime_goalscorer_supersub',
+    propositionKey: 'anytime_goalscorer_supersub',
+    displayName: 'Marcator Oricând - Power Sub',
+    variants: [[
+      { optionDisplayName: 'Ousmane Dembele', optionType: 'Participant', price: 3.1, bettingOpen: true },
+      { optionDisplayName: 'Marcus Thuram', optionType: 'Participant', price: 4.2, bettingOpen: true },
+    ]],
+  };
+  const events = new Unibet({ fullMarkets: true }).normalize({
+    contests: [{ ...contestPage().contest, propositions: [playerMarket] }],
+  });
+  assert.deepEqual(events, [], 'a player-prop market is not a cross-book contract');
+});
+
+test('a first-half market is kept out of the full-time buckets', () => {
+  const [half] = deepMarkets().filter((m) => resolveContract(m)?.period === 'half1');
+  assert.ok(half, 'the first-half totals market is published');
+  assert.equal(half.key, 'TOTAL');
+  assert.equal(half.period, 'half1');
+  // The engine buckets on period, so a first-half 1.5 total can never be
+  // compared against a full-time 1.5 total.
+  assert.notEqual(half.line, null);
+});
+
+test('deep mode is opt-in and is reported honestly in the coverage block', async () => {
+  const shallow = new Unibet({})._serializable([], {});
+  assert.equal(shallow.coverage.allMarkets, false);
+  assert.equal(shallow.coverage.markets, 'result-only');
+  assert.equal(shallow.coverage.detailLimit, 0);
+
+  const deep = new Unibet({ fullMarkets: true })._serializable([], {});
+  assert.equal(deep.coverage.allMarkets, true);
+  assert.equal(deep.coverage.detailLimit, deep.coverage.maxEvents);
+  assert.match(deep.coverage.markets, /totals/);
+});
+
+test('the detail call replaces the preview rather than merging into it', async () => {
+  // A contest whose detail call fails must keep its lobby preview, so a partial
+  // market set never costs the event. And the swap must not re-derive the
+  // sport/league annotations the crawl already resolved.
+  const s = new Unibet({ fullMarkets: true, detailLimit: 1 });
+  const contests = [
+    { contestKey: 'aaa', propositions: [{ propositionType: '1x2', options: [] }], _sport: 'Football', _league: 'x' },
+  ];
+  const called = [];
+  s._get = async (path) => {
+    called.push(path);
+    return { contest: { propositions: [propositionOfType('both_teams_to_score')] } };
+  };
+  const enriched = await s._enrichMarkets(contests, { signal: undefined, stats: { attempted: 0, failed: 0, reasons: new Map(), record() {} } });
+
+  assert.equal(enriched, 1);
+  assert.equal(called.length, 1);
+  assert.match(called[0], /^v2\/views\/contest-page\?contestKey=aaa$/);
+  assert.equal(contests[0]._sport, 'Football', 'the crawl annotations survive the swap');
+  assert.equal(contests[0].propositions.length, 1);
+});
+
+test('a failed detail call leaves the lobby preview in place', async () => {
+  const s = new Unibet({ fullMarkets: true });
+  const preview = [{ propositionType: '1x2', options: [{ optionDisplayName: '1', price: 2, bettingOpen: true }] }];
+  const contests = [{ contestKey: 'aaa', propositions: preview }];
+  s._get = async () => null; // transient 503 exhausting its retries
+
+  const enriched = await s._enrichMarkets(contests, {
+    signal: undefined,
+    stats: { attempted: 0, failed: 0, reasons: new Map(), record() {} },
+  });
+  assert.equal(enriched, 0);
+  assert.deepEqual(contests[0].propositions, preview, 'the event keeps its 1X2 preview');
+});
+
+test('detailLimit caps how many contests pay for the extra request', async () => {
+  const s = new Unibet({ fullMarkets: true, detailLimit: 2 });
+  const contests = Array.from({ length: 5 }, (_, i) => ({
+    contestKey: `k${i}`,
+    propositions: [],
+  }));
+  const seen = [];
+  s._get = async (path) => {
+    seen.push(path);
+    return { contest: { propositions: [propositionOfType('both_teams_to_score')] } };
+  };
+  await s._enrichMarkets(contests, {
+    signal: undefined,
+    stats: { attempted: 0, failed: 0, reasons: new Map(), record() {} },
+  });
+  assert.equal(seen.length, 2, 'the detail pass must be bounded');
 });

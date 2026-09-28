@@ -4834,7 +4834,7 @@
     },
     "unibet": {
       "book": "unibet",
-      "endpointCount": 4,
+      "endpointCount": 5,
       "capturedAt": "2026-09-28T16:10:00.000Z",
       "keyEndpoints": [
         {
@@ -4854,6 +4854,12 @@
           "url": "https://sportsbff-ams.kindredext.net/sports-api/api/v2/views/lobby?category=<leagueCategoryRn>&clientOffset=-120&sortBy=relevance&tab=matches&timeFilter=all",
           "verified": true,
           "note": "Per-league view. Contests at view.matches[].contestGroups[].contests[] as _typ LobbyFixtureContest, with propositions[].options[].price."
+        },
+        {
+          "method": "GET",
+          "url": "https://sportsbff-ams.kindredext.net/sports-api/api/v2/views/contest-page?contestKey=<contestKey>",
+          "verified": true,
+          "note": "Per-contest detail view (_typ GetContestPage). Returns the FULL market menu at contest.propositions[] as variants[][] — 25 propositions on a typical football fixture: total (6 lines), 1st_half_total, both_teams_to_score, double_chance, 2_way_handicap (13 lines), 3_way_handicap, draw_no_bet, correct score, and player props. The lobby view ships only the default 1x2 proposition, so this call is what puts Unibet into the totals/BTTS/handicap comparison at all."
         },
         {
           "method": "GET",
@@ -4939,7 +4945,8 @@
             "events": 10
           }
         },
-        "fullMenuNote": "Crawling all 30 sports the feed offers yields 1563 events in ~28s."
+        "fullMenuNote": "Crawling all 30 sports the feed offers yields 1563 events in ~28s.",
+        "fullMarkets": "Opt-in per job (fullMarkets in config/scrapers.json). Costs one contest-page request per event; detailLimit caps it. Measured 2026-09-28 with detailLimit=400 on Football: 689 contests crawled, 380 expanded, 687 events published, 3306 markets (4.81 per event, up from 1.0). Resolved families: 687 MATCH_ODDS, 862 OVER_UNDER/fulltime, 501 OVER_UNDER/half1, 556 ASIAN_HANDICAP, 346 BTTS, 350 DOUBLE_CHANCE; 4 unresolved of 3306."
       },
       "unavailableSports": [],
       "captureFiles": [
@@ -4971,6 +4978,10 @@
           "The caller is getBFFClient in ksp-shared-components, which also names the four tenant headers.",
           "az-menu and views/lobby then return 200 with events."
         ]
+      },
+      "measured": {
+        "deepMarketsRun": "2026-09-28 Football-only deep run: 687 events, 3306 markets, 380 events with a full surface, 29.8-32.6s wall clock.",
+        "arbitrageContribution": "2026-09-28 five-book scan (unibet, favbet, betano, fortuna, admiral): 36 confirmed opportunities, 31 of them involving Unibet against Favbet. Before the deep pass the same five books produced 5 opportunities, none involving Unibet."
       }
     },
     "vipbet": {
