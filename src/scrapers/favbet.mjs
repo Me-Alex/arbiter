@@ -328,13 +328,28 @@ function mapFavbetMarket(market) {
     ] };
   }
   if (/dubl|double chance/i.test(name)) {
-    // Same contract-collision rule as plain BTTS: a qualified double chance is a
-    // different payoff. Favbet publishes "Șansă Dublă. Cornere" (corners double
-    // chance) under the same "dubl" name match, so a corners price could claim
-    // the DOUBLE_CHANCE key that a match double chance also uses. A corners
-    // double chance settles on corners, not on the 1X2, so it must not share
-    // the family. Withhold it rather than invent a family for it.
-    if (/cornere|corners/i.test(name)) return null;
+    // Same contract-collision rule as plain BTTS: only the unqualified match
+    // double chance is the plain contract, and a qualified one settles on
+    // something else entirely. Favbet's feed carries several, all matching the
+    // same "dubl" name test:
+    //
+    //   "Șansă dublă"                double chance on the 1X2        ✔
+    //   "Șansă Dublă. Cornere"       double chance on corners        ✘
+    //   "Șansă dublă cartonașe"      double chance on cards          ✘
+    //
+    // All three landed on the DOUBLE_CHANCE key, so a corners or cards price
+    // could stand in for a match double chance. A qualified market settles on a
+    // different event, so it must not share the family — withhold it rather
+    // than invent a family for it. (The engine marks DOUBLE_CHANCE
+    // arbEligible: false, so this cannot produce arbitrage today, but it is the
+    // same bug class as the BTTS collision and must not be left as a landmine.)
+    //
+    // The check is the market's own text, matching the BTTS guard: any word
+    // that names a non-result target, plus a numeric line, disqualifies it.
+    const isPlainDoubleChance = (label) =>
+      !/\d/.test(label)
+      && !/cornere|corners|cartona|cards?|yellow|red|goluri|goals?|over|under|peste|sub/i.test(label);
+    if (!isPlainDoubleChance(name)) return null;
     const is1H = isFirstHalf(name);
     const combined = valid.filter((s) => /^(1x|x2|12)$/.test(s.tag));
     if (combined.length !== 3) return null;

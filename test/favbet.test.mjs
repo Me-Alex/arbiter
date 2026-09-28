@@ -284,7 +284,7 @@ test('a qualified "Ambele ..." market is withheld rather than keyed as BTTS', (t
   }
 });
 
-test('a corners double chance is withheld rather than keyed as match double chance', (t) => {
+test('a qualified double chance (corners / cards) is withheld, not keyed as match double chance', (t) => {
   // Favbet publishes "Șansă Dublă. Cornere" (corners double chance) alongside the
   // plain "Șansă dublă" (match double chance). Both match the same "dubl" name
   // test, so the corners market was claiming the DOUBLE_CHANCE key too. It
@@ -318,6 +318,7 @@ test('a corners double chance is withheld rather than keyed as match double chan
     },
     plainDC: combo('Șansă dublă', 501),
     cornersDC: combo('Șansă Dublă. Cornere', 502),
+    cardsDC: combo('Șansă dublă cartonașe', 503),
   };
 
   const event = {
@@ -347,6 +348,10 @@ test('a corners double chance is withheld rather than keyed as match double chan
   assert.ok(
     !e.markets.some((m) => m.name === 'Șansă Dublă. Cornere'),
     'the corners double chance must be withheld',
+  );
+  assert.ok(
+    !e.markets.some((m) => m.name === 'Șansă dublă cartonașe'),
+    'the cards double chance must be withheld — it settles on cards, not the 1X2',
   );
 });
 
