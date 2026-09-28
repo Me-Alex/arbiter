@@ -90,6 +90,16 @@ check('the restored history matches the artifact that is uploaded', () => {
   return upload[1] === restore[1];
 }, 'the download pattern and the upload name are the same string, or the history restores empty');
 
+check('the history is restored from earlier runs, not just this one', () => {
+  // download-artifact without a `github-token` searches only the current run,
+  // where nothing has been uploaded yet. The step still succeeds, the
+  // directory is empty, and the trend gate reports "not enough history" for
+  // ever — the same silent failure as a wrong pattern.
+  const restore = workflowText.match(/actions\/download-artifact@[\d.]+[\s\S]*?path: data-health-history/);
+  if (!restore) return false;
+  return /github-token:/.test(restore[0]);
+}, 'the download carries a github-token, so it can see previous runs');
+
 check('the history outlives the runs needed to judge a trend', () => {
   // The gate needs three runs to say anything and runs twice a week. A
   // retention shorter than that expires the evidence before a verdict, and the

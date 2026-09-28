@@ -115,17 +115,24 @@ jobs:
       # Without a history, a provider that starts returning nothing fails
       # every run from then on and nothing connects those failures — each one
       # reads as a bad day rather than as a feed that moved.
-      # Downloads every artifact whose name matches, into one directory. The
-      # pattern is the exact artifact name, not a prefix: `data-health-*` matches
-      # nothing, because the upload is named `data-health` with no suffix, so
-      # the history restored as empty and the trend below always saw zero runs.
-      - name: Restore the previous reports
+      # Download the reports left by earlier runs, across the whole workflow —
+      # not just this run.
+      #
+      # Two things were wrong before and both failed silently. The pattern was
+      # `data-health-*` while the upload is named `data-health`, so the glob
+      # matched nothing. And download-artifact without `run-id` or
+      # `github-token` searches only the current run, where nothing has been
+      # uploaded yet — so even the right pattern restored an empty directory.
+      # `github-token` widens the search to every run of the workflow, which is
+      # what makes the history exist at all.
+      - name: Restore the reports from earlier runs
         uses: actions/download-artifact@v4
         continue-on-error: true
         with:
           pattern: data-health
           path: data-health-history
           merge-multiple: true
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
       # The gate exits non-zero when an enabled job brings back no usable
       # events, or does not complete cleanly. This is the check that would
