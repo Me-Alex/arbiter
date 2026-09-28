@@ -592,18 +592,26 @@ if (eventDetailModal) {
 // card and the dialog render legs identically). Dashboards whose module loaded
 // delegate to it; only when the module failed to load (eventDetailModal null)
 // does this render its own copy as a degraded fallback.
-function dashRenderLeg(l, t, roiPercent) {
-  if (eventDetailModal) return eventDetailModal.renderLeg(l, t, roiPercent);
+function dashRenderLeg(l, t, _roiPercent) {
+  if (eventDetailModal) return eventDetailModal.renderLeg(l, t, _roiPercent);
   const pal = paletteFor(l.sourceId);
   const url = l.eventUrl ? ` data-event-url="${escapeHtml(l.eventUrl)}"` : '';
+  // Same rule as the module: a leg's own money is payout − stake. ROI is a
+  // property of the whole combination, so it is never scaled by one stake.
+  const stake = Number(l.stake) || 0;
+  const odds = Number(l.odds) || 0;
+  const hasPayout = Number.isFinite(l.payout) && l.payout > 0;
+  const net = hasPayout ? Math.round((l.payout - stake + Number.EPSILON) * 100) / 100 : null;
   return `<div class="leg"${url}>
       <div class="head">
         <span class="book" style="color:${pal.color};">${escapeHtml(l.sourceId)}</span>
-        <span class="stake">${t('stake')} ${fmtStake(l.stake)}</span>
+        <span class="stake">${t('stake')} ${fmtStake(stake)}</span>
       </div>
       <div class="pick">${escapeHtml(l.selection)}</div>
-      <div class="odds">${fmtOdds(l.odds)}</div>
-      <div class="profit">+${fmtStake((l.stake || 0) * (roiPercent || 0) / 100)} RON</div>
+      <div class="odds">${fmtOdds(odds)}</div>
+      ${hasPayout
+        ? `<div class="profit${net < 0 ? ' is-neg' : ''}">${net >= 0 ? '+' : ''}${fmtStake(net)} RON</div>`
+        : '<div class="profit is-muted">' + fmtStake(odds) + '</div>'}
     </div>`;
 }
 

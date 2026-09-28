@@ -398,6 +398,9 @@ export async function readEventDetailRoute(res, parsedUrl, dataDir) {
   const snapshots = await loadEventDetailSnapshots(dataDir);
 
   const events = [];
+  // The engine-shaped copies of every matched book, kept aside so the arbitrage
+  // planner sees the same contract/selection shape the scanner does.
+  const engineInstances = [];
 
   for (const entry of snapshots) {
     if (!entry || !Array.isArray(entry.snapshot.events)) continue;
@@ -416,6 +419,13 @@ export async function readEventDetailRoute(res, parsedUrl, dataDir) {
       const homeMatch = evHome === normHome || eventKeyTokensMatch(ev.eventKey, normHome, normAway);
       const awayMatch = evAway === normAway || eventKeyTokensMatch(ev.eventKey, normHome, normAway);
       if (!homeMatch || !awayMatch) continue;
+      // Keep an engine-shaped copy: findArbitrage() buckets by eventKey and
+      // reads selection/market objects exactly as the scrapers emitted them, so
+      // the detail arb is planned from the same contract machinery as a scan
+      // rather than a re-implementation of it.
+      if (Array.isArray(ev.markets) && ev.markets.length) {
+        engineInstances.push({ ...ev, sourceId });
+      }
       events.push({
         sourceId,
         sourceUrl: ev.sourceUrl || null,
@@ -434,7 +444,29 @@ export async function readEventDetailRoute(res, parsedUrl, dataDir) {
     }
   }
 
-  return sendJson(res, 200, { events });
+  // Per-market cross-book arbitrage with a reconciled money plan. Computed once
+  // for the whole fixture and attached by market key, so the detail view can
+  // show where the headline ROI actually comes from instead of a per-book
+  // overround that cannot reproduce it.
+  let arbs = new Map();
+  if (engineInstances.length >= 2) {
+    try {
+      const { findDetailArbitrages } = await import('./scanner/event-arbs.mjs');
+      arbs = findDetailArbitrages(engineInstances);
+    } catch {
+      // Detection is additive: a failure here must not break the odds view.
+    }
+  }
+  if (arbs.size) {
+    for (const ev of events) {
+      for (const market of ev.markets) {
+        const arb = arbs.get(String(market.key));
+        if (arb) market.arb = arb;
+      }
+    }
+  }
+
+  return sendJson(res, 200, { events, arbs: [...arbs.values()] });
 }
 
 function eventKeyTokensMatch(eventKey, normHome, normAway) {

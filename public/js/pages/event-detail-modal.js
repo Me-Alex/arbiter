@@ -31,19 +31,35 @@
     /gambling-solutions\.ro/, /service\/lineout/,
   ];
 
-  // Render a single leg row used by both the opportunity card and the
-  // market-chip swap path — a single source of truth for leg markup.
-  function renderLeg(l, t, roiPercent) {
+  // Render a single leg row used by the opportunity card.
+  //
+  // A leg's own money is `payout - stake`, where payout = stake × odds. ROI is
+  // a property of the WHOLE combination, not a percentage slice of each leg, so
+  // this row must never show `stake × ROI%` on every leg: that rendered the
+  // same profit N times and did not match either the payout or the stake. When
+  // the caller has a per-leg payout (the backend allocation always supplies
+  // one) the real net is shown; otherwise only the stake is stated.
+  // `roiPercent` is deliberately unused: ROI describes the whole combination,
+  // so scaling it by a single leg's stake was the original fabrication. The
+  // parameter stays in the signature because dashboard.js passes it positionally.
+  function renderLeg(l, t, _roiPercent) {
     const pal = helpers.paletteFor(l.sourceId);
     const url = l.eventUrl ? ` data-event-url="${helpers.escapeHtml(l.eventUrl)}"` : '';
+    const stake = Number(l.stake) || 0;
+    const odds = Number(l.odds) || 0;
+    const hasPayout = Number.isFinite(l.payout) && l.payout > 0;
+    const net = hasPayout ? Math.round((l.payout - stake + Number.EPSILON) * 100) / 100 : null;
+    const profitHtml = hasPayout
+      ? `<div class="profit${net < 0 ? ' is-neg' : ''}">${net >= 0 ? '+' : ''}${helpers.fmtStake(net)} RON</div>`
+      : `<div class="profit is-muted">${helpers.fmtOdds(odds)}</div>`;
     return `<div class="leg"${url}>
       <div class="head">
         <span class="book" style="color:${pal.color};">${helpers.escapeHtml(l.sourceId)}</span>
-        <span class="stake">${t('stake')} ${helpers.fmtStake(l.stake)}</span>
+        <span class="stake">${t('stake')} ${helpers.fmtStake(stake)}</span>
       </div>
       <div class="pick">${helpers.escapeHtml(l.selection)}</div>
-      <div class="odds">${helpers.fmtOdds(l.odds)}</div>
-      <div class="profit">+${helpers.fmtStake((l.stake || 0) * (roiPercent || 0) / 100)} RON</div>
+      <div class="odds">${helpers.fmtOdds(odds)}</div>
+      ${profitHtml}
     </div>`;
   }
 
@@ -112,6 +128,13 @@ function collectCardLegs(card) {
    *  - `opts.error` set (API/network failure) → fall back with the distinct
    *    "error" note. These two states must render different user-facing
    *    messages; both note strings live in i18n and must stay translatable.
+   *
+   * Each market that the backend found a cross-book arbitrage for (`m.arb`,
+   * see src/scanner/event-arbs.mjs) leads with a reconciled money plan —
+   * stake, payout, guaranteed profit — so the headline ROI is reproducible from
+   * what is on screen. The per-book odds matrix stays as the reference that
+   * proves each quoted price; its Edge column is a book's own overround and is
+   * labelled as such, because it is NOT the arbitrage.
    * @param {any} data
    * @param {{fallbackLegs?:{legs:Array,marketLabel:string}|null, error?:boolean, target?:Element}} opts
    */
@@ -166,7 +189,7 @@ function collectCardLegs(card) {
       for (const m of ev.markets) {
         let entry = byMarket.get(String(m.key));
         if (!entry) {
-          entry = { key: String(m.key), name: m.name || String(m.key), books: new Map() };
+          entry = { key: String(m.key), name: m.name || String(m.key), books: new Map(), arb: m.arb || null };
           byMarket.set(entry.key, entry);
         }
         entry.books.set(ev.sourceId, m.selections || []);
@@ -181,7 +204,9 @@ function collectCardLegs(card) {
 
     body.className = 'dialog-body';
     const sections = [];
+    let arbCount = 0;
     for (const m of byMarket.values()) {
+      if (m.arb) arbCount++;
       const threshold = thresholdFromKey(m.key);
       const headingLabel = threshold
         ? `${helpers.escapeHtml(m.name)} <span class="market-threshold">${helpers.escapeHtml(threshold)}</span>`
@@ -197,8 +222,10 @@ function collectCardLegs(card) {
       }
       const selList = [...selNames.keys()];
 
-      // Pre-compute edge % per book: sum(1/odds) - 1, using only selections in
-      // selList. A book qualifies only when 2+ selections have odds > 1.
+      // Pre-compute each book's own overround % = sum(1/odds) - 1, using only
+      // selections in selList. A book qualifies only when 2+ selections have
+      // odds > 1. This is the book's margin, NOT the arbitrage ROI, and is
+      // labelled as such so the two can never be confused again.
       const edgeMap = new Map();
       let minEdge = Infinity;
       for (const [book, sels] of m.books) {
@@ -213,6 +240,15 @@ function collectCardLegs(card) {
         if (edge !== null && edge < minEdge) minEdge = edge;
       }
 
+      // Legs used in the reconciled plan, so their cells can be highlighted in
+      // the reference matrix below.
+      const arbLegs = m.arb && Array.isArray(m.arb.legs) ? m.arb.legs : [];
+      const arbByBook = new Map();
+      for (const leg of arbLegs) {
+        if (!arbByBook.has(leg.sourceId)) arbByBook.set(leg.sourceId, []);
+        arbByBook.get(leg.sourceId).push(leg);
+      }
+
       const rows = [];
       for (const [book, sels] of m.books) {
         const pal = helpers.paletteFor(book);
@@ -221,17 +257,22 @@ function collectCardLegs(card) {
         const linkIcon = url
           ? `<a class="book-link" href="${helpers.escapeHtml(url)}" target="_blank" rel="noopener" title="Open ${helpers.escapeHtml(book)} →"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>`
           : '';
+        const picks = arbByBook.get(book) || [];
         const oddsCells = selList.map((selName) => {
           const match = (sels || []).find((s) => (s.name || s.id || '') === selName);
-          return `<span>${match ? helpers.fmtOdds(match.odds) : '—'}</span>`;
+          if (!match) return '<span class="odds-cell is-missing">—</span>';
+          // A price that is actually staked in the plan is marked, so the
+          // matrix and the money panel can be read against each other.
+          const used = picks.some((p) => p.selection === (match.name || match.id || ''));
+          return `<span class="odds-cell${used ? ' is-arb' : ''}">${helpers.fmtOdds(match.odds)}</span>`;
         }).join('');
         const edge = edgeMap.get(book);
         const isBest = edge !== null && edge === minEdge;
         const edgeCell = edge !== null
           ? `<td class="edge-cell${isBest ? ' best-edge' : ''}">${edge >= 0 ? '+' : ''}${edge.toFixed(1)}%</td>`
-          : `<td class="edge-cell dim">—</td>`;
+          : '<td class="edge-cell dim">—</td>';
         rows.push(`
-        <tr>
+        <tr${picks.length ? ' class="is-arb-row"' : ''}>
           <td>
             <div class="bookmaker-cell">
               <span class="book-avatar" style="color:${pal.color};background:${pal.bg};border:1px solid ${pal.border};">${helpers.escapeHtml(initials)}</span>
@@ -244,24 +285,127 @@ function collectCardLegs(card) {
       }
 
       sections.push(`
-      <div class="ev-market-section">
-        <h4>${headingLabel}</h4>
-        <div class="odds-table-wrap">
-          <table class="odds-table">
-            <thead>
-              <tr>
-                <th>${helpers.escapeHtml(t('bookmaker'))}</th>
-                <th><div class="selections-header">${selList.map((s) => `<span>${helpers.escapeHtml(s)}</span>`).join('')}</div></th>
-                <th class="num">Edge</th>
-              </tr>
-            </thead>
-            <tbody>${rows.join('')}</tbody>
-          </table>
+      <section class="ev-market-section">
+        <div class="ev-market-head">
+          <h4>${headingLabel}</h4>
+          ${m.arb ? `<span class="ev-arb-flag" title="${helpers.escapeHtml(t('arbOnLiveOdds'))}">${helpers.escapeHtml(t('arbLive'))}</span>` : ''}
         </div>
-      </div>`);
+        ${m.arb ? renderArbPanel(m.arb, t) : ''}
+        <div class="ev-market-odds">
+          <div class="ev-subhead">
+            <span>${helpers.escapeHtml(t('marketOdds'))}</span>
+            <span class="ev-subhead-note" title="${helpers.escapeHtml(t('edgeHint'))}">${helpers.escapeHtml(t('edge'))}</span>
+          </div>
+          <div class="odds-table-wrap">
+            <table class="odds-table">
+              <thead>
+                <tr>
+                  <th>${helpers.escapeHtml(t('bookmaker'))}</th>
+                  <th><div class="selections-header">${selList.map((s) => `<span>${helpers.escapeHtml(s)}</span>`).join('')}</div></th>
+                  <th class="num">${helpers.escapeHtml(t('edge'))}</th>
+                </tr>
+              </thead>
+              <tbody>${rows.join('')}</tbody>
+            </table>
+          </div>
+        </div>
+      </section>`);
     }
 
-    body.innerHTML = sections.join('') || `<div class="empty">${helpers.escapeHtml(t('noOddsFound'))}</div>`;
+    const summary = arbCount > 1
+      ? `<div class="ev-summary"><span class="ev-summary-dot"></span>${helpers.escapeHtml(arbCount)} ${helpers.escapeHtml(t('livePrice'))}</div>`
+      : '';
+    body.innerHTML = (summary + sections.join('')) || `<div class="empty">${helpers.escapeHtml(t('noOddsFound'))}</div>`;
+  }
+
+  /**
+   * Reconciled money plan for one market's cross-book arbitrage.
+   *
+   * Every figure here comes from the backend allocation
+   * (src/scanner/event-arbs.mjs → roundedArbitrageAllocation), so the panel
+   * is guaranteed to add up:
+   *   Σ stake === totalStake
+   *   payout === stake × odds          (per leg, cent-rounded)
+   *   guaranteed profit === min(payout) − totalStake
+   *   theoretical ROI === (1/inverseSum − 1) × 100
+   * The displayed profit is the *rounded, guaranteed* one, and a rounding-risk
+   * note appears when it falls below the theoretical figure.
+   */
+  function renderArbPanel(arb, t) {
+    const legs = Array.isArray(arb.legs) ? arb.legs : [];
+    if (!legs.length) return '';
+    const esc = helpers.escapeHtml;
+    // The panel is the one place the figures must visibly reconcile, so it
+    // keeps cents (37.67 → "37.67") rather than the whole-unit fmtStake used
+    // for headline card numbers. Older harnesses may not provide fmtMoney.
+    const fmt = helpers.fmtMoney || helpers.fmtStake;
+    const money = (n) => `${fmt(n)} <span class="unit">RON</span>`;
+
+    const legRows = legs.map((leg) => {
+      const pal = helpers.paletteFor(leg.sourceId);
+      const net = Math.round(((leg.payout - leg.stake) + Number.EPSILON) * 100) / 100;
+      return `
+      <tr>
+        <td>
+          <div class="bookmaker-cell">
+            <span class="book-avatar" style="color:${pal.color};background:${pal.bg};border:1px solid ${pal.border};">${esc(String(leg.sourceId).slice(0, 2))}</span>
+            ${esc(leg.sourceId)}
+          </div>
+        </td>
+        <td class="arb-pick">${esc(leg.selection || '—')}</td>
+        <td class="num tabnum mono arb-odds">${helpers.fmtOdds(leg.odds)}</td>
+        <td class="num tabnum mono">${fmt(leg.stake)}</td>
+        <td class="num tabnum mono arb-payout">${fmt(leg.payout)}</td>
+        <td class="num tabnum mono arb-net${net < 0 ? ' is-neg' : ''}">${net >= 0 ? '+' : ''}${fmt(net)}</td>
+      </tr>`;
+    }).join('');
+
+    const totalStake = arb.totalStake !== null && arb.totalStake !== undefined
+      ? arb.totalStake
+      : legs.reduce((s, l) => s + l.stake, 0);
+    const minPayout = (arb.worstCasePayout !== null && arb.worstCasePayout !== undefined)
+      ? arb.worstCasePayout
+      : Math.min(...legs.map((l) => l.payout));
+    const guaranteed = (arb.guaranteedProfit !== null && arb.guaranteedProfit !== undefined)
+      ? arb.guaranteedProfit
+      : Math.round((minPayout - totalStake + Number.EPSILON) * 100) / 100;
+
+    const risk = arb.roundingRisk || guaranteed < 0;
+
+    return `
+    <div class="ev-arb${risk ? ' has-risk' : ''}">
+      <div class="ev-arb-head">
+        <div class="ev-arb-roi">
+          <span class="ev-arb-roi-value">+${(Number(arb.roiPercent) || 0).toFixed(2)}<span class="pct">%</span></span>
+          <span class="ev-arb-roi-label">${esc(t('theoreticalRoi'))}</span>
+        </div>
+        <dl class="ev-arb-figures">
+          <div><dt>${esc(t('totalStake'))}</dt><dd class="mono">${money(totalStake)}</dd></div>
+          <div><dt>${esc(t('bestPayout'))}</dt><dd class="mono">${money(minPayout)}</dd></div>
+          <div class="is-profit"><dt>${esc(t('guaranteed'))}</dt><dd class="mono">+${fmt(guaranteed)} <span class="unit">RON</span></dd></div>
+        </dl>
+      </div>
+      <div class="odds-table-wrap">
+        <table class="odds-table arb-table">
+          <thead>
+            <tr>
+              <th>${esc(t('bookmaker'))}</th>
+              <th>${esc(t('pick'))}</th>
+              <th class="num">${esc(t('odds'))}</th>
+              <th class="num">${esc(t('stakePerLeg'))}</th>
+              <th class="num">${esc(t('payoutIfWins'))}</th>
+              <th class="num">${esc(t('profit'))}</th>
+            </tr>
+          </thead>
+          <tbody>${legRows}</tbody>
+        </table>
+      </div>
+      <p class="ev-arb-equation">
+        ${legs.map((l) => `${fmt(l.stake)} × ${helpers.fmtOdds(l.odds)} = ${fmt(l.payout)}`).join(' &nbsp;·&nbsp; ')}
+        &nbsp;→&nbsp; ${esc(t('guaranteed'))} ${money(guaranteed)}
+      </p>
+      ${risk ? `<p class="ev-arb-risk" role="note">⚠ ${esc(t('roundingRisk'))} — ${esc(t('roundingRiskHint'))}</p>` : ''}
+    </div>`;
   }
 
   /**
@@ -427,6 +571,7 @@ function collectCardLegs(card) {
     renderEventDetail,
     collectCardLegs,
     buildFallbackFromLegs,
+    renderArbPanel,
     isEventUrl,
     formatKickoff,
     parseDate,

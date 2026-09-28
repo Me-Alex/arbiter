@@ -42,6 +42,20 @@
     return Number(n || 0).toLocaleString('en-US', { maximumFractionDigits: 0 });
   }
 
+  /**
+   * Format money with cents kept (e.g. 37.67 → "37.67").
+   *
+   * fmtStake rounds to whole units, which is right for a headline figure but
+   * wrong wherever the numbers have to visibly reconcile: a leg staked 37.67 at
+   * 3.16 pays 119.04, not 119. Use this for the arbitrage money panel so
+   * `stake × odds = payout` can be checked by eye.
+   */
+  function fmtMoney(n) {
+    const v = Number(n);
+    if (!Number.isFinite(v)) return '—';
+    return v.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+
   /** Normalize a market key for display (e.g. "OVER_UNDER_2_5" → "OVER UNDER 2.5"). */
   function fmtMarketKey(k) {
     return String(k || '').replace(/_/g, ' ');
@@ -80,6 +94,7 @@
     paletteFor,
     fmtOdds,
     fmtStake,
+    fmtMoney,
     fmtMarketKey,
     parseStakeAmount,
     parseDate,
