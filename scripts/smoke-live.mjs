@@ -18,9 +18,12 @@
  *
  * It is a *smoke*, not an assertion about the market. A book with genuinely
  * nothing scheduled today is a legitimate outcome, so jobs may declare a
- * floor. There is no such floor in config/scrapers.json today, which is the
- * correct default: an unconfigured book is expected to return events, and a
- * book that stops is a change worth being told about rather than absorbed.
+ * `minEvents` floor, which overrides the global --min-events for that job. No
+ * job declares one today, which is the correct default: an unconfigured book is
+ * expected to return events, and a book that stops is a change worth being told
+ * about rather than absorbed. A floor belongs on a source whose coverage is
+ * legitimately small, where the global floor of 1 would still pass on a single
+ * stray event after real coverage had collapsed.
  *
  * Usage:
  *   npm run smoke:live                       # every enabled job
@@ -105,11 +108,17 @@ for (const job of targets) {
     });
     continue;
   }
-  if (report.events < minEvents) {
+  // A job may declare its own floor. The global default is deliberately 1:
+  // a book that stops publishing is worth being told about rather than absorbed.
+  // A per-job floor exists for the opposite case — a source whose own coverage
+  // is legitimately small, where a global floor of 1 would still pass on a
+  // single stray event while real coverage had silently collapsed to nothing.
+  const floor = Number.isInteger(job.minEvents) && job.minEvents > 0 ? job.minEvents : minEvents;
+  if (report.events < floor) {
     rows.push({
       id: job.id,
       verdict: 'FAIL',
-      why: `collected ${report.events} event(s), expected >= ${minEvents}`,
+      why: `collected ${report.events} event(s), expected >= ${floor}${job.minEvents ? ' (job floor)' : ''}`,
       hint: 'the feed answered but nothing was accepted — a parser or filter regression, or a feed that stopped publishing',
       ms,
     });

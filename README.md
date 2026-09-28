@@ -131,10 +131,22 @@ arbiter/
 
 ## Public endpoint pipeline
 
-A source can use either a bookmaker's validated public read-only offer feed or the public endpoint adapters:
+A source uses a bookmaker's own public, unauthenticated, read-only offer feed, reached either by a plain HTTP client or — where the host gates a bare request — from a real browser navigation context, exactly as a visitor's browser would load it. No credentials are used, and no challenge or access control is bypassed.
 
-1. The validated Superbet source reads its current public offer v3 feed directly, records the exact feed URL and capture metadata, and keeps only standard complete 1X2 markets.
-2. The Unibet candidate observes the bookmaker-owned public sports API response loaded by its football page; the Betano candidate reads only publicly rendered prematch rows. Other experimental sources remain API-pending until a native adapter is verified. Every candidate remains disabled until a current bounded smoke validates its route, parser, provenance, and freshness.
+23 jobs are enabled across six platform families, and 22 of those brands resolve to **11 independent price sources**. The platform, not the brand, is what decides whether a source is worth adding: `src/scanner/feed-groups.mjs` refuses to pair two brands that resell one upstream feed, because a price gap between them is a capture artifact rather than an edge.
+
+| Platform | Enabled brands | Independent? |
+|---|---|---|
+| NSoft | admiral, stanleybet, maxbet, betmen | admiral/stanleybet are one company feed; maxbet and betmen are independent tenants, each with its own football sport id and result-market ids |
+| Exalogic XSport | excelbet, winboss, las-vegas, magnumbet | one feed |
+| Altenar | don, topbet, million, baumbet, powerbet, winbet | one feed |
+| Fortuna BFF | fortuna, casa-pariurilor | one feed |
+| EveryMatrix WAMP | getsbet, contibet | one feed |
+| Superbet, Betano, NetBet, Favbet, Winner | one each | independent |
+
+Two further sources are implemented and **disabled** because measurement showed they add no independent pricing: EGT Digital (prowin, ultrabet, vipbet — all one upstream feed, grouped in `feed-groups.mjs`) and Unibet (its REST offer endpoint is retired; prices moved to a realtime MQTT socket, so re-enabling it is a build rather than a configuration change).
+
+Evidence for each platform, including the negative results and the measurements behind each grouping, is recorded in `data/endpoints/` and `docs/platform-findings.json`.
 
 `maxDiscoveredMatches`, `maxLiveMatches`, `maxTournaments`, and `maxMatches` in `config/scrapers.json` are safety limits; `maxMatches` controls how many discovered links are extracted in one cycle.
 
@@ -215,7 +227,14 @@ test suite that way.
    and record the outcome in `SCRAPER-TASKS.md`.
 
 The registry is the source of truth, but validation is a required promotion
-gate rather than a configuration shortcut.
+gate rather than a configuration shortcut. A job runs only when **both**
+`enabled` is not `false` **and** `validationStatus` is `"validated"`;
+`src/scrape-orchestrator.mjs` enforces that, and the scrape UI selects on the
+same predicate so a gated job is never ticked and then silently dropped. A
+registry that declares an enabled-but-unvalidated job fails
+`test/scraper-routing.test.mjs` on the commit that promotes it, and a run that
+names only a non-runnable job fails with the specific reason rather than a
+generic "nothing selected".
 
 ## Multi-sport architecture
 
@@ -327,8 +346,11 @@ Why a scan may legitimately come back empty is measured, not assumed: see
 finds the best available cross-feed return to be negative — the market is
 arbitraged, not mis-scanned.
 
-Status as of this writing: 22 of the 29 configured jobs are enabled and
-implemented against verified public endpoints; `unibet`, `mozzartbet` and the
-five `sport-generic` stubs stay disabled because repeatable real-source
-validation did not pass for them. `SCRAPER-TASKS.md` tracks per-book status.
+Status as of this writing: 23 of the 26 configured jobs are enabled and
+implemented against verified public endpoints. `unibet`, `prowin` and
+`ultrabet` stay disabled for different reasons — Unibet's REST offer endpoint is
+retired in favour of a realtime MQTT socket, and the two EGT brands are disabled
+because all three of their brands are one upstream feed, so enabling them would
+add coverage without adding an independent price source. `SCRAPER-TASKS.md`
+tracks per-book status and `docs/platform-findings.json` holds the evidence.
 

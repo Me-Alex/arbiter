@@ -1,0 +1,160 @@
+{
+  "_provenance": {
+    "note": "Actual compact response subset from the NSoft public distribution endpoint, captured live on 2026-09-27 for the betmen tenant. Dates are the real ones; only kickoff times are advanced in tests. Shape is the feed's own positional wire format: every event field is a single-letter key resolved through data._mapping, and the price is the 'odd' outcome field.",
+    "endpoint": "https://sportsbook-sm-distribution-api.nsoft.com/api/v1/events",
+    "companyUuid": "7afdd6f5-f954-43d6-b696-2e0dc0ae4ee2",
+    "capturedAt": "2026-09-27T12:36:33.000Z",
+    "tenant": "betmen",
+    "footballSportId": 18,
+    "resultMarketId": 6
+  },
+  "data": {
+    "_mapping": {
+      "event": {
+        "id": "a",
+        "sportId": "b",
+        "categoryId": "c",
+        "categoryName": "d",
+        "categoryPosition": "e",
+        "tournamentId": "f",
+        "tournamentName": "g",
+        "tournamentPosition": "h",
+        "tournamentGroupId": "i",
+        "name": "j",
+        "description": "k",
+        "active": "l",
+        "totalMarkets": "m",
+        "startsAt": "n",
+        "markets": "o",
+        "competitors": "p",
+        "rootEventId": "q",
+        "displayId": "r",
+        "tournamentPrefix": "s"
+      },
+      "market": {
+        "id": "a",
+        "marketId": "b",
+        "name": "c",
+        "active": "d",
+        "favourite": "e",
+        "marketGroups": "f",
+        "specialValues": "g",
+        "outcomes": "h",
+        "competitors": "i"
+      },
+      "outcome": {
+        "id": "a",
+        "outcomeId": "b",
+        "active": "c",
+        "shortcut": "d",
+        "name": "e",
+        "description": "f",
+        "odd": "g"
+      },
+      "competitor": {
+        "id": "a",
+        "teamId": "b",
+        "type": "c",
+        "name": "d",
+        "shortName": "e"
+      }
+    },
+    "events": {
+      "41061599": {
+        "a": 41061599,
+        "r": 3328,
+        "q": "41061599",
+        "b": 18,
+        "c": 244,
+        "f": 646,
+        "i": 57795,
+        "j": "Austria - Kosovo",
+        "k": null,
+        "l": 1,
+        "m": 24,
+        "n": "2026-10-02T19:00:00.000Z",
+        "o": [
+          {
+            "a": 900000001,
+            "b": 6,
+            "c": "Final",
+            "d": 1,
+            "e": false,
+            "f": [],
+            "g": [],
+            "h": [
+              { "a": 910000001, "b": 6, "c": 1, "e": "1", "d": "1", "g": 1.6, "f": null },
+              { "a": 910000002, "b": 9, "c": 1, "e": "X", "d": "0", "g": 4.0, "f": null },
+              { "a": 910000003, "b": 12, "c": 1, "e": "2", "d": "2", "g": 5.6, "f": null }
+            ],
+            "i": []
+          },
+          {
+            "a": 900000002,
+            "b": 2445,
+            "c": "Pauza sau Final (PSF)",
+            "d": 1,
+            "e": false,
+            "f": [],
+            "g": [],
+            "h": [
+              { "a": 910000011, "b": 8496, "c": 1, "e": "PsF 1", "d": "1", "g": 1.3, "f": null },
+              { "a": 910000012, "b": 8499, "c": 1, "e": "PsF X", "d": "0", "g": 3.6, "f": null },
+              { "a": 910000013, "b": 8502, "c": 1, "e": "PsF 2", "d": "2", "g": 8.5, "f": null }
+            ],
+            "i": []
+          }
+        ],
+        "p": [
+          { "a": 800000001, "b": 501, "c": 1, "d": "Austria", "e": "AUT" },
+          { "a": 800000002, "b": 502, "c": 2, "d": "Kosovo", "e": "KOS" }
+        ],
+        "d": "International",
+        "e": null,
+        "g": "UEFA - Nations League",
+        "h": null,
+        "s": null
+      },
+      "41061600": {
+        "a": 41061600,
+        "r": 3328,
+        "q": "41061600",
+        "b": 18,
+        "c": 244,
+        "f": 646,
+        "i": 57796,
+        "j": "Israel - Ireland",
+        "k": null,
+        "l": 1,
+        "m": 22,
+        "n": "2026-10-02T20:45:00.000Z",
+        "o": [
+          {
+            "a": 900000003,
+            "b": 6,
+            "c": "Final",
+            "d": 1,
+            "e": false,
+            "f": [],
+            "g": [],
+            "h": [
+              { "a": 910000021, "b": 6, "c": 1, "e": "1", "d": "1", "g": 2.05, "f": null },
+              { "a": 910000022, "b": 9, "c": 1, "e": "X", "d": "0", "g": 3.3, "f": null },
+              { "a": 910000023, "b": 12, "c": 1, "e": "2", "d": "2", "g": 3.9, "f": null }
+            ],
+            "i": []
+          }
+        ],
+        "p": [
+          { "a": 800000003, "b": 503, "c": 1, "d": "Israel", "e": "ISR" },
+          { "a": 800000004, "b": 504, "c": 2, "d": "Ireland", "e": "IRL" }
+        ],
+        "d": "International",
+        "e": null,
+        "g": "UEFA - Nations League",
+        "h": null,
+        "s": null
+      }
+    }
+  }
+}

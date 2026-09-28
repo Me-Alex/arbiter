@@ -67,7 +67,13 @@ test('exact routing contracts and snapshot provenance for all three tenants', as
     assert.equal(result.valid, true);
     const snapshot = JSON.parse(await fs.readFile(result.outputs[0]));
     assert.equal(snapshot.runId, 'fixture-run');
-    assert.equal(snapshot.transport, 'nsoft-public-sports-json');
+    // The snapshot transport must equal the job's CONFIGURED transport, per
+    // tenant. This previously asserted a hardcoded 'nsoft-public-sports-json',
+    // which passed only because the adapter also hardcoded it — so admiral,
+    // whose config declares 'bookmaker-public-json', was recording a transport
+    // that contradicted its own job and nothing noticed. The two hardcodings
+    // cancelled out; asserting against the config is what exposes that.
+    assert.equal(snapshot.transport, jobConfig.transport, `snapshot transport must match the configured transport for ${id}`);
     assert.match(snapshot.sourceUrl, /companyUuid=/);
     assert.equal(snapshot.events[0].sourceId, id);
     assert.throws(() => instantiate(id, { jobConfig: { ...jobConfig, script: 'unknown.mjs' } }), { code: 'ESCRAPERCONFIG' });

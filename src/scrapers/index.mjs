@@ -1,5 +1,6 @@
 import Superbet from './superbet.mjs';
-import NSoft, { matchesNSoftConfig } from './nsoft.mjs';
+import NSoft, { matchesNSoftConfig, NSOFT_TENANT_IDS } from './nsoft.mjs';
+import Egt, { matchesEgtConfig, EGT_TENANT_IDS } from './egt.mjs';
 import AltenarPublic, { matchesAltenarConfig } from './altenar-public.mjs';
 import Betano from './betano.mjs';
 import Fortuna from './fortuna.mjs';
@@ -36,13 +37,16 @@ const DIRECT = {
   superbet: Superbet,
   betano: Betano,
   fortuna: Fortuna,
-  // The four below are the legacy ProviderContract path. No configured job
-  // routes to them: maxbet, admiral and stanleybet are all NSoft books whose
-  // config entries point at nsoft.mjs, and unibet is disabled. They are kept
-  // as the reference for that shape (and for the Kambi offer format) and are
-  // reachable only by a direct `instantiate` without a job config. Their
-  // endpoints are retired — see the header in each file.
+  // Active again since 2026-09-28: the feed was recovered as a REST crawl
+  // behind the Kindred sports BFF, so it is an ordinary configured job.
   unibet: Unibet,
+  // The three below are the legacy ProviderContract path. No configured job
+  // routes to them: maxbet, admiral and stanleybet are all NSoft books whose
+  // config entries point at nsoft.mjs. They are kept as the reference for that
+  // shape (and for the Kambi offer format) and are reachable only by a direct
+  // `instantiate` without a job config. Their endpoints are retired — see the
+  // header in each file. Unibet was the fourth member of this group until its
+  // feed was recovered; it now sits above with the live adapters.
   stanleybet: Stanleybet,
   admiral: Admiral,
   maxbet: MaxBet,
@@ -124,6 +128,7 @@ export function instantiate(jobId, opts = {}) {
       return new Superbet(opts);
     }
     if (matchesNSoftConfig(jobId, cfg)) return new NSoft(jobId, opts);
+    if (matchesEgtConfig(jobId, cfg)) return new Egt(jobId, opts);
     if (matchesAltenarConfig(jobId, cfg)) return new AltenarPublic(jobId, opts);
     // Every job that has an exact-contract matcher is validated against it, so
     // a typo in engine/transport/script is a configuration error rather than a
@@ -141,10 +146,19 @@ export function instantiate(jobId, opts = {}) {
     if (matchesDirectContract(jobId)) return new DIRECT[jobId](opts);
     // Jobs whose config has a specific matcher above but did not match exactly
     // are mis-configured — reject, don't silently fall back to DIRECT.
-    // This covers superbet (public-offer-v3), NSoft tenants (admiral,
-    // stanleybet, maxbet), and Altenar tenants (don, topbet, etc.).
+    // This covers superbet (public-offer-v3), every NSoft tenant, every EGT
+    // tenant, and the Altenar tenants (don, topbet, etc.).
+    //
+    // The tenant sets are exported by the modules that implement them rather
+    // than re-typed here. A hand-kept list rots invisibly: a tenant missing
+    // from this set still fails closed at the fall-through throw below, so the
+    // routing tests stay green while this guard has stopped guarding. Only a
+    // tenant that also appears in DIRECT would fall through unnoticed, which is
+    // exactly stanleybet's situation.
     const SPECIFICALLY_MATCHED_IDS = new Set([
-      'superbet', 'admiral', 'stanleybet', 'maxbet',
+      'superbet',
+      ...NSOFT_TENANT_IDS,
+      ...EGT_TENANT_IDS,
       ...ALTENAR_IDS,
       ...Object.keys(DIRECT_CONTRACTS),
     ]);

@@ -287,7 +287,12 @@ describe('connection-status IIFE plumbing', () => {
     assert.equal(bannerEl.className, 'data-freshness-banner visible');
     // Status token is localized via the REAL RO dictionary ('învechit').
     assert.match(bannerEl.innerHTML, /Starea datelor: învechit \(2 surse actuale\)/);
-    assert.match(bannerEl.innerHTML, /Pornește rǎzuirea/);
+    // The link text is read from the dictionary rather than typed out here.
+    // A hand-typed literal had drifted: this line carried U+01CE (a with DOUBLE
+    // breve) where i18n.js holds the standard U+0103, so the assertion failed on a
+    // spelling variant rather than on any behaviour. The sandbox already loads the
+    // real dictionary, so reading the value makes that class of drift impossible.
+    assert.ok(bannerEl.innerHTML.includes(REAL_RO.runScrape), 'banner must carry the dictionary runScrape text');
     assert.ok(!toasts.length);
   });
 

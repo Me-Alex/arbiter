@@ -81,7 +81,16 @@ function startServer(route) {
 }
 
 function closeServer(server) {
-  return new Promise((resolve) => server.close(() => resolve()));
+  // closeAllConnections is required, not optional. `server.close(cb)` waits for
+  // every open socket to go idle, and keep-alive connections from earlier
+  // requests in this file stay open, so the callback can hang. That produced an
+  // intermittent file-level failure with all subtests green — a teardown hang,
+  // not a logic failure — on roughly one run in five, on a suite CI runs on
+  // every push.
+  return new Promise((resolve) => {
+    server.closeAllConnections?.();
+    server.close(() => resolve());
+  });
 }
 
 async function fetchOnce(server, path, { method = 'GET', headers = {}, body } = {}) {

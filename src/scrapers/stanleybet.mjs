@@ -12,8 +12,9 @@ import { buildEventKey, flattenMarkets } from './_http-helpers.mjs';
  * `src/scanner/feed-groups.mjs` and never paired with each other.
  *
  * The endpoint this class targets, `/feeds/events`, returns the SPA shell
- * rather than JSON. The saved capture in data/endpoints-all/ already records
- * NSoft URLs, which is the path that works.
+ * rather than JSON. The saved capture in
+ * `data/endpoints/captures/stanleybet_api.json` already records NSoft URLs,
+ * which is the path that works.
  */
 export default class StanleybetScraper extends ProviderContract {
   id = 'stanleybet';

@@ -1,0 +1,160 @@
+{
+  "generatedAt": "2026-09-27",
+  "purpose": "Platform-level findings that are not tied to a single bookmaker, so they have no per-book capture file. Each entry records what was measured, not what was assumed.",
+  "platforms": {
+    "digitain-gambling-solutions": {
+      "brands": ["winner", "mrplay", "888sport", "bet7"],
+      "tenantsObserved": { "winner": 176, "mrplay": 232, "888sport": 201, "bet7": 3 },
+      "verdict": "one-feed",
+      "measured": {
+        "sharedFixtures": 1262,
+        "identicalPrices": 1262,
+        "differingPrices": 0,
+        "note": "All three hosts (micros-prod1-sb, micros-prod1, micros-eagle-prod1) return byte-identical 1X2 vectors on every one of 1262 priced football fixtures. There is NO way to select a tenant: POSTing {tenantId}, {tenant_id}, ?tenantId= or ?tenant_id= in any combination changes nothing. The host is the only discriminator and all hosts serve the same data."
+      },
+      "consequence": "mrplay, 888sport and bet7 must be declared in src/scanner/feed-groups.mjs as one group with winner, or pairing them will manufacture arbitrage out of mid-scrape drift. Adding them adds no independent price source.",
+      "prematchFeed": {
+        "status": "unauthorized",
+        "detail": "POST /api/digitain-fetcher/v2/public/events returns the full catalogue but the per-tenant CMS paths (/data/v1/resolve/sources?q=$ids@=matches-prematch etc.) all return HTTP 401. There is no public per-tenant prematch endpoint."
+      },
+      "wireFormat": "Unlike NSoft, this feed has NO _mapping. Fields are friendly: data.events[] with team1Name, team2Name, matchDateTime, matchBets[].mbOutcomes[].bValue (the price). Reading it through an NSoft-style mapping silently yields undefined."
+    },
+    "egt-digital": {
+      "brands": ["prowin", "ultrabet", "vipbet"],
+      "businessUnits": { "prowin": "PWRO", "ultrabet": "UBRO", "vipbet": "VPRO" },
+      "verdict": "one-feed — all three brands, corrected measurement",
+      "gate": {
+        "bareRequest": "HTTP 488 {\"StatusCode\":488,\"Message\":\"Missing user device header!\"}",
+        "minimumHeaders": { "x-platform-device": "desktop", "x-platform-lang": "ro", "x-platform-tz": "180" },
+        "note": "x-platform-hash is NOT verified server-side — junk and omission both return HTTP 200. x-platform-exp is only a client clock. This is device identification, not a signature and not a challenge, so it is the same read-only access a browser already has."
+      },
+      "feed": {
+        "catalogue": "/api/sportsapi/public/sports",
+        "odds": "/api/sportsapi/public/containers/v2/lobby/normalized/{containerId}",
+        "footballSportId": 1001,
+        "containersWithPrematch1x2": [4136, 4146, 4147, 4155, 4161, 4162, 4169, 4170, 4204, 4988, 5087, 5161, 5170],
+        "shape": "events keyed by id; each has sportId, homeTeam, awayTeam, startTime, live (boolean), feedProducerId, markets[].outcomes[].odds",
+        "resultMarketRule": "The match RESULT is the market whose outcome names are 1 / X / 2. Other three-way markets exist and are NOT 1X2 — 'Golul X' is which goal in which minute, and carries 1 / Niciunul / 2.",
+        "int64Warning": "marketId and outcome.id exceed Number.MAX_SAFE_INTEGER, so JSON.parse has already rounded them. The adapter derives selection identity from the event id plus the outcome name, and publishes no provider market id, rather than minting a plausible-looking id from a rounded number.",
+        "timeWarning": "scheduledTimeUtc carries NO timezone suffix and reads 3 hours behind the Z-suffixed startTime for the same event — local time mislabelled as UTC. Date.parse treats it as machine-local, so it is only correct on a Europe/Bucharest runner. The adapter uses startTime.",
+        "noContainerIndex": "There is no public container-index endpoint: /containers, /containers/v2, /containers/v2/lobby and /sports/{id}/containers all 404, and /Sports/config contains no container or lobby keys. The thirteen container ids are a hardcoded snapshot obtained by scanning id ranges, and they will rot silently."
+      },
+      "measured": {
+        "method": "kickoff-keyed fixture identity, cross-checked against the provider's own feedProducerId",
+        "prowin_vs_ultrabet": { "shared": 31, "sameFeedProducerId": 22, "identicalPrices": 5, "differingPrices": 26 },
+        "prowin_vs_vipbet": { "shared": 35, "sameFeedProducerId": 33, "identicalPrices": 22, "differingPrices": 13 },
+        "ultrabet_vs_vipbet": { "shared": 30, "sameFeedProducerId": 21, "identicalPrices": 5, "differingPrices": 25 },
+        "dominantProducers": "producer 50 covers 83 of prowin's and 64 of ultrabet's events; producer 21 covers 28 of both"
+      },
+      "correctedError": "An earlier measurement reported these pairs INDEPENDENT (28/33 and 27/31 differing). It keyed fixtures as home|away with NO kickoff and kept only the first occurrence per key, so two different matches between the same clubs collapsed into one and a 'differing' price could be a different fixture rather than independent pricing. Re-measured with the kickoff inside the key and checked against feedProducerId, every pair is the same upstream feed. The earlier verdict was wrong.",
+      "example": "Sp. Biblioteca Athens v San Martin de Formosa, feedProducerId 21 on BOTH prowin and ultrabet, prices 3.60/2.50/2.35 against 3.40/2.40/2.57. Same producer with different prices is mid-scrape drift, not arbitrage.",
+      "consequence": "Enabling all three would add three brands and zero independent price sources. The adapter and its fixture suite are committed and tested, but both jobs are registered DISABLED in config/scrapers.json with the measurement recorded in validationReason. All three brands are declared as one group in src/scanner/feed-groups.mjs, so enabling any subset later cannot manufacture arbitrage.",
+      "vsExistingFeeds": "prowin's slate (Brazilian, Argentine and Mexican lower divisions) shared ZERO kickoff-keyed fixtures with Admiral, betmen or superbet in the sampled window, so no pairing opportunity was demonstrated against the feeds already configured either. Coverage is 27-36 priced 1X2 against betmen's 486."
+    },
+    "nsoft": {
+      "brands": ["superbet-legacy", "admiral", "stanleybet", "maxbet", "betmen"],
+      "verdict": "exhausted",
+      "harvest": {
+        "domainsRendered": 95,
+        "uuidsHarvested": 8975,
+        "uuidsProbedAgainstLiveEndpoint": 8973,
+        "newLiveTenantsFound": 1
+      },
+      "newTenant": {
+        "brand": "betmen",
+        "companyUuid": "7afdd6f5-f954-43d6-b696-2e0dc0ae4ee2",
+        "footballSportId": 18,
+        "note": "Football is a PER-TENANT concept on this platform: 4 for Admiral/Stanleybet, 2 for MaxBet, 18 for Betmen."
+      },
+      "independence": {
+        "betmen_vs_admiral": { "shared": 117, "identical": 16, "differing": 101 },
+        "betmen_vs_maxbet": { "shared": 125, "identical": 16, "differing": 109 }
+      },
+      "wireFormat": "Positional. data.events is an OBJECT keyed by event id and every field is a single-letter key resolved through data._mapping. The price is the 'odd' field (source key 'g'); markets live under the event's 'markets' key. Reading friendly names off this object finds nothing."
+    },
+    "sportradar": {
+      "brands": ["swiper"],
+      "verdict": "not-usable",
+      "detail": "swiper.ro serves its own /ro/api/v3/... surface (only project/info answers, and it carries no odds) while the actual odds data sits behind licensed Sportradar endpoints (tm.ads.sportradar.com, a.sportradarserving.com). Those are a paid B2B feed, not a public one, so this is out of scope under the project's no-credentials rule."
+    }
+  },
+  "vendorSurvey": {
+    "generatedAt": "2026-09-27",
+    "method": "One Chromium navigation per licensed domain, classifying by vendor markers found in hosts and script URLs (never in arbitrary page text, to avoid the 'nSoft' and 'display:none' false-positive traps).",
+    "domainsScreened": 68,
+    "groups": {
+      "digitain (ONE FEED — adds nothing)": ["mrplay.ro", "888sport.ro", "bet7.ro", "888.ro", "888casino.ro", "pacanele.ro", "eliteslots.ro", "hotspins.ro", "ladycasino.ro"],
+      "egt-digital (new platform)": ["prowin.ro", "ultrabet.ro", "vipbet.ro", "luckyseven.ro", "fortunapalace.ro", "onecasino.ro", "maxwin.ro"],
+      "skywind (casino only)": ["betmen.ro", "betone.ro", "luck.com", "princesscasino.ro", "royalslots.ro"],
+      "altenar": ["swiper.ro", "frankcasino.ro"],
+      "everymatrix": ["player.ro"],
+      "entain-gfe (exchange)": ["betfair.ro"],
+      "lsports + betconstruct": ["manhattan.ro"],
+      "unclassified, mostly casino-only": ["kingcasino.ro", "winmasters.ro", "pariuriplus.ro", "totogaming.ro", "betinia.ro", "xbet.ro", "mrbit.ro", "vicorybet.ro", "victorybet.ro", "pokerstarssports.ro", "12xbet.ro", "luck.com", "bilion.ro", "32rosu.ro", "777.ro", "redsevens.ro", "luckyseven.ro", "cashpot.ro", "win2.ro", "seven.ro", "spin.ro", "slotv.ro", "zinx.ro", "wowcasino.ro", "joacagratis.ro", "napoleongames.ro", "gpcasino.ro", "coolcasino.ro", "casinofun.ro", "casinoroyale.ro", "gameworld.ro", "gpcasino.ro", "jokercasino.ro", "pokerstars.ro", "pokerstarscasino.ro", "vipcazino.ro", "vladcazino.ro", "frankcasino.ro", "manhattan.ro", "orientalcasino.ro", "luckyseven.ro", "onecasino.ro", "princesscasino.ro", "royalslots.ro", "vladcazino.ro", "wowcasino.ro"]
+    },
+    "conclusion": "Of 68 licensed domains, every sports-capable one resolves to a platform this project either already supports or has now characterised. The unclassified remainder is casino-first brands whose vendor marker is simply absent from the marker table, not a hidden new platform."
+  },
+  "tenantSaturation": {
+    "generatedAt": "2026-09-27",
+    "nsoft": {
+      "tested": "8973 UUIDs harvested from 95 rendered domains, each probed against the live distribution endpoint",
+      "result": "exactly one new live tenant (betmen). The platform is exhausted for Romanian brands."
+    },
+    "egtDigital": {
+      "tested": "12 candidate business-unit host prefixes (pwro/ubro/vpro + bmro/cfro/kkro/ssro/mmsro/plro/trro/aero/biro)",
+      "result": "only pwro-api, ubro-api and vpro-api answer. No further Romanian tenants on this platform."
+    },
+    "altenar": {
+      "tested": "35 candidate integration ids against sb2frontend-altenar2.biahosted.com GetUpcoming (sportId=66)",
+      "result": "no unregistered brand answers as an integration. The six configured tenants (don, topbet, million, baumbet, powerbet, winbet) are the complete Romanian set."
+    }
+  },
+  "stopCriterion": {
+    "registeredAt": "2026-09-27",
+    "question": "Should more bookmakers be added?",
+    "rationale": "The edge is negative across every measured round, so adding a feed raises coverage, not profitability. The question therefore needs a pre-registered, falsifiable rule rather than a judgement call each time.",
+    "continueOnlyIfBoth": [
+      "best cross-feed ROI in a round is >= 0, breaking the observed -1.8% to -4.5% band",
+      "the count of fixtures covered by three or more INDEPENDENT feeds exceeds 17 (the figure at docs/no-arbitrage-root-cause.md) in two consecutive rounds"
+    ],
+    "stopAfter": "20 consecutive rounds satisfying neither condition",
+    "doNotRestartWithout": "a platform whose upstream feed producer differs from every known one, plus a written independence measurement keyed WITH a kickoff and cross-checked against the provider's own producer identifier",
+    "falsifiers": [
+      "any round with a positive best cross-feed return",
+      "the >=3-independent-feed fixture count rising in two consecutive rounds",
+      "a new feed returning >=100 events in under 2 seconds (coverage evidence, not economics)"
+    ],
+    "reporting": "Record the >=3-feed count per round in data/measurements.jsonl so the criterion is checkable from the journal rather than from memory."
+  },
+  "deadLeads": {
+    "generatedAt": "2026-09-27",
+    "bilion.ro": "app.bilion.ro/api/v1/sports answers 200 with 214 bytes and /api/v1/tournaments returns 178 KB of EGT Digital CASINO tournament content (jackpots, prize pools). /events, /matches and /odds are all 404. Casino-first, no sportsbook feed.",
+    "seven.ro and gpcasino.ro": "Serve the same ncms.<brand>.ro/api/v1/event CMS shape as admiralbet, so a new cagecode looked like a new NSoft brand. Measured: SVN and GPC both return a 28-byte empty body — identical to the ADR control. The CMS is reachable but carries no content for these brands.",
+    "zinx.ro": "Serves the same /ro/api/v3/project/info surface as swiper. project/info answers 200 (465 B, configuration only); every sportsbook path under it is 404. Same non-usable shape as swiper.",
+    "manhattan.ro": "RESOLVED negative, and worth recording how. The brand is live and fully licensed — www.manhattan.ro answers 200, it is a React sportsbook at /ro/sports/home with pre-match and live event-view routes, and it runs on BetConstruct (partner 18768464) with LSports-derived data. But across 40 observed JSON calls on the sportsbook routes, NOT ONE is an odds feed: every one is CMS content, page-builder config, menus, translations, icon sets, geo lookup or the Hoory chat widget, and no websocket opened. The sportsbook almost certainly fetches markets only for an authenticated session, which the project's no-credentials rule forbids. The earlier 'fetch failed' verdict for this brand was an artifact of probing manhattan.ro WITHOUT the www prefix — the apex 301-redirects and www answers 200, so the brand was never down.",
+    "swiper.ro": "Own API serves only project/info (configuration, no odds). The price data sits behind licensed Sportradar endpoints (tm.ads.sportradar.com, a.sportradarserving.com), which are a paid B2B feed and therefore out of scope under the no-credentials rule."
+  },
+  "deadFilters": {
+    "bulkParkingIp": {
+      "ips": ["86.35.3.192", "86.35.3.193"],
+      "signature": "A byte-identical ~9,586-byte AdOcean/romtelecom 'TELEKOM' placeholder page.",
+      "criticalWarning": "These domains return HTTP 200. A status-code-only health check reports them as live. Verify page CONTENT, not the status code.",
+      "confirmedOn": ["kikibet.ro", "unicbet.ro", "wepbet.ro", "elvenbet.ro", "betmill.ro", "hotbets.ro", "beteasy.ro", "yolobet.ro", "jackpotbet.ro", "nicibet.ro", "hot-bet.ro"]
+    },
+    "gone410": {
+      "signature": "HTTP 410 Gone from a Caddy server with a zero-length body.",
+      "confirmedOn": ["www.marathonbet.ro", "1xbet.ro", "www.williamhill.ro"]
+    },
+    "sinkholeIp": {
+      "ips": ["104.247.81.99"],
+      "signature": "A parked link-monitor page with noindex and generic 'best information' copy, shared by unrelated names.",
+      "confirmedOn": ["yolo.ro", "1xbet.ro", "www.marathonbet.ro"]
+    }
+  },
+  "methodologyNotes": [
+    "ALWAYS run a known-good control before believing a negative result. Two probe shapes returned '0 events' for the known-good Admiral tenant because data.events is an object, not an array. A control that must be non-zero turns a silent false negative into a visible failure.",
+    "Prefer page CONTENT over HTTP status when screening candidate domains: parked pages return 200.",
+    "A company UUID harvested from a page is noise until the live endpoint answers for it. Of 8,975 harvested UUIDs only one returned a catalogue.",
+    "Wayback CDX needs pacing (~2s between queries) and a known-good control, or an empty [] means rate-limited rather than never-archived."
+  ]
+}

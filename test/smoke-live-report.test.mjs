@@ -65,6 +65,39 @@ test('the gate writes a report and a job summary', async (t) => {
   assert.match(json.jobs[0].why, /expected >= 999999/, 'the reason names the threshold that was missed');
 });
 
+test('a per-job minEvents floor overrides the global default', async (t) => {
+  // The floor exists for a source whose own coverage is legitimately small,
+  // where a global floor of 1 would still pass on a single stray event after
+  // real coverage collapsed. That only works if the job's declared floor is
+  // actually consulted, so this asserts the override directly.
+  //
+  // superbet declares no floor, so with --min-events 1 it must PASS; a scratch
+  // config where superbet DOES declare a floor of 999999 must FAIL on that
+  // floor even though the global default is 1. Without the override, a job
+  // declaring a floor would be silently ignored.
+  const configDir = await mkdtemp(join(tmpdir(), 'arbiter-smoke-floor-'));
+  t.after(() => rm(configDir, { recursive: true, force: true }));
+
+  const original = await fs.readFile(join(ROOT, 'config', 'scrapers.json'), 'utf8');
+  const originalPath = join(ROOT, 'config', 'scrapers.json');
+  t.after(() => fs.writeFile(originalPath, original, 'utf8').catch(() => {}));
+
+  // Declare a floor nothing can meet, and ask for the default global floor.
+  const withFloor = JSON.parse(original);
+  const superbet = withFloor.jobs.find((j) => j.id === 'superbet');
+  superbet.minEvents = 999999;
+  await fs.writeFile(originalPath, JSON.stringify(withFloor, null, 2), 'utf8');
+
+  const report = join(configDir, 'report.json');
+  const result = await runSmoke({ SMOKE_REPORT_PATH: report });
+  assert.equal(result.code, 1, "a job's own floor must fail the gate even when the global default is 1");
+
+  const json = JSON.parse(await readFile(report, 'utf8'));
+  assert.equal(json.jobs[0].verdict, 'FAIL');
+  assert.match(json.jobs[0].why, /expected >= 999999/, 'the job floor is the threshold reported');
+  assert.match(json.jobs[0].why, /job floor/, 'the report says which threshold applied');
+});
+
 test('the report is written even without a CI environment', async (t) => {
   // A developer running the gate locally should still get a file to look at,
   // and the default path must not be somewhere that pollutes the repository

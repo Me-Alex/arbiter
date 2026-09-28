@@ -46,18 +46,60 @@ test('orchestrator cancellation transitions an active run to cancelled', async (
   await rm(dataDir, { recursive: true });
 });
 
-test('orchestrator allows enabled experimental bookmaker jobs', async () => {
+test('orchestrator rejects an enabled job that has not been validated', async () => {
+  // This test previously asserted the OPPOSITE — that an enabled experimental
+  // job runs — which meant the documented promotion gate was contradicted by an
+  // intentional, tested decision rather than merely left unimplemented.
+  // README.md promises "validation is a required promotion gate rather than a
+  // configuration shortcut"; an experimental job running like any other is the
+  // definition of a configuration shortcut.
   const dataDir = await mkdtemp(join(tmpdir(), 'arbiter-orchestrator-'));
   const configPath = join(dataDir, 'scrapers.json');
   await writeFile(configPath, JSON.stringify({ jobs: [{ id: 'superbet', enabled: true, validationStatus: 'experimental', sourceIds: ['superbet'] }] }));
-  const b = broadcaster();
-  const orchestrator = new ScrapeOrchestrator({ dataDir, configPath, broadcaster: b });
-  const state = await orchestrator.launch({ bookIds: ['superbet'] });
+  const orchestrator = new ScrapeOrchestrator({ dataDir, configPath, broadcaster: broadcaster() });
+  await assert.rejects(orchestrator.launch({ bookIds: ['superbet'] }), (error) => error.code === 'EBADINPUT');
+  await rm(dataDir, { recursive: true });
+});
+
+test('the gate is the validation status, not a hardcoded allowlist', async () => {
+  // Guards against the gate being satisfied by anything other than the declared
+  // status. `enabled: true` alone, or a status that merely looks validated,
+  // must not promote a job.
+  const cases = [
+    ['status omitted entirely', { id: 'a', enabled: true, sourceIds: ['a'] }],
+    ['status is a near-miss string', { id: 'a', enabled: true, validationStatus: 'Validated', sourceIds: ['a'] }],
+    ['status is empty', { id: 'a', enabled: true, validationStatus: '', sourceIds: ['a'] }],
+    ['status is pending', { id: 'a', enabled: true, validationStatus: 'pending', sourceIds: ['a'] }],
+  ];
+  for (const [label, job] of cases) {
+    const dataDir = await mkdtemp(join(tmpdir(), 'arbiter-orchestrator-'));
+    const configPath = join(dataDir, 'scrapers.json');
+    await writeFile(configPath, JSON.stringify({ jobs: [job] }));
+    const orchestrator = new ScrapeOrchestrator({ dataDir, configPath, broadcaster: broadcaster() });
+    await assert.rejects(
+      orchestrator.launch({ bookIds: ['a'] }),
+      (error) => error.code === 'EBADINPUT',
+      `${label} must not promote a job`
+    );
+    await rm(dataDir, { recursive: true });
+  }
+});
+
+test('a validated job still runs when a sibling is not', async () => {
+  // The gate excludes the unvalidated job; it must not empty the whole
+  // selection, which is the failure mode the sport filter used to have.
+  const dataDir = await mkdtemp(join(tmpdir(), 'arbiter-orchestrator-'));
+  const configPath = join(dataDir, 'scrapers.json');
+  await writeFile(configPath, JSON.stringify({
+    jobs: [
+      { id: 'good', enabled: true, validationStatus: 'validated', sourceIds: ['good'] },
+      { id: 'iffy', enabled: true, validationStatus: 'experimental', sourceIds: ['iffy'] },
+    ],
+  }));
+  const orchestrator = new ScrapeOrchestrator({ dataDir, configPath, broadcaster: broadcaster() });
+  const state = await orchestrator.launch({ bookIds: ['good'] });
   assert.equal(state.status, 'running');
   await orchestrator.cancel();
-  // cancel() aborts the run but returns before the pipeline has unwound, and
-  // the unwinding still writes state files. Removing the directory here races
-  // those writes (ENOTEMPTY on Windows). Await the pipeline instead.
   await orchestrator._pipeline?.catch(() => {});
   await rm(dataDir, { recursive: true });
 });
@@ -107,9 +149,9 @@ test('orchestrator sport filter keeps undeclared jobs but honours explicit ones'
   // undeclared job and a single missing array emptied the whole selection.
   await writeFile(configPath, JSON.stringify({
     jobs: [
-      { id: 'football-a', enabled: true, sourceIds: ['football-a'], supportedSports: ['football'] },
-      { id: 'no-sports', enabled: true, sourceIds: ['no-sports'] },
-      { id: 'tennis-only', enabled: true, sourceIds: ['tennis-only'], supportedSports: ['tennis'] },
+      { id: 'football-a', enabled: true, validationStatus: 'validated', sourceIds: ['football-a'], supportedSports: ['football'] },
+      { id: 'no-sports', enabled: true, validationStatus: 'validated', sourceIds: ['no-sports'] },
+      { id: 'tennis-only', enabled: true, validationStatus: 'validated', sourceIds: ['tennis-only'], supportedSports: ['tennis'] },
     ],
   }));
   const b = broadcaster();

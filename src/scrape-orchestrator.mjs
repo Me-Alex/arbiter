@@ -108,7 +108,28 @@ export class ScrapeOrchestrator {
       if (!Array.isArray(job.supportedSports) || job.supportedSports.length === 0) return true;
       return job.supportedSports.includes(sportFilter);
     };
-    const runnable = jobs.filter((job) => job.enabled !== false && jobMatchesSport(job));
+
+    // Validation is a promotion gate, not a label. `enabled` says the operator
+    // switched the job on; `validationStatus` says its route, parser, provenance
+    // and freshness were proven against a real upstream. Only a job that cleared
+    // both is runnable, so editing the registry cannot put an unvalidated feed
+    // in front of the engine.
+    //
+    // This was documented in README.md and not implemented: `validationStatus`
+    // appeared in exactly one production line, a display filter in router.mjs,
+    // so an `enabled: true, validationStatus: 'experimental'` job ran like any
+    // other — and a test asserted that it should. The registry was therefore a
+    // plain configuration shortcut, which is the thing the README says it is not.
+    //
+    // The gate is deliberately silent about the reason: a job that fails it is
+    // simply not runnable, and the "no enabled bookmaker jobs selected" error
+    // below already covers that case identically to a disabled job. Listing
+    // every excluded job's status in that message would leak configuration into
+    // an error string and help nothing; the reason is recorded in the job's own
+    // `validationReason`, which is where a reader looks.
+    const isValidated = (job) => job.validationStatus === 'validated';
+
+    const runnable = jobs.filter((job) => job.enabled !== false && isValidated(job) && jobMatchesSport(job));
 
     const enabledIds = new Set();
     for (const job of runnable) {
@@ -120,7 +141,22 @@ export class ScrapeOrchestrator {
       : runnable.map((job) => job.id);
     const selected = [...new Set(requested)].filter((id) => enabledIds.has(id));
     if (selected.length === 0) {
-      const err = new Error('no enabled bookmaker jobs selected');
+      // Name WHY each requested job was dropped. "no enabled bookmaker jobs
+      // selected" is a lie for a job that is enabled but unvalidated, and the
+      // scheduler re-runs this on every interval while persisting the message,
+      // so a wrong reason here is re-asserted forever against an operator who
+      // has no way to see which of the two conditions bit.
+      const blockers = [];
+      for (const id of new Set(requested)) {
+        const job = jobs.find((j) => j.id === id);
+        if (!job) blockers.push(`${id}: not in the registry`);
+        else if (job.enabled === false) blockers.push(`${id}: disabled`);
+        else if (!isValidated(job)) blockers.push(`${id}: validationStatus="${job.validationStatus ?? 'unset'}" (needs "validated")`);
+        else blockers.push(`${id}: not runnable for this sport filter`);
+      }
+      const err = new Error(
+        `no runnable bookmaker jobs selected${blockers.length ? ` — ${blockers.join('; ')}` : ''}`
+      );
       err.code = 'EBADINPUT';
       throw err;
     }

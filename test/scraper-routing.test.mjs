@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { promises as fs } from 'node:fs';
+import { promises as fs, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { instantiate, ALL_SCRAPERS, ALL_TINYFISH_IDS, isKnownJob } from '../src/scrapers/index.mjs';
@@ -10,8 +10,12 @@ import { runScraperBatch } from '../src/scraper-service.mjs';
 import { runVerificationPass } from '../src/verification.mjs';
 import { ScrapeOrchestrator } from '../src/scrape-orchestrator.mjs';
 
-const tinyfishJob = (id) => ({ id, enabled: true, engine: 'tinyfish', transport: 'tinyfish-browser', script: 'tinyfish-scraper.mjs' });
-const unknownJob = (id) => ({ id, enabled: true, engine: 'unknown-engine', transport: 'unknown-transport', script: 'unknown.mjs' });
+// These fixtures carry `validationStatus: 'validated'` because the orchestrator's
+// promotion gate now excludes unvalidated jobs BEFORE dispatch. Without it these
+// tests would stop at "no enabled bookmaker jobs selected" and never reach the
+// rejection they exist to check — the gate would silently mask them.
+const tinyfishJob = (id) => ({ id, enabled: true, validationStatus: 'validated', engine: 'tinyfish', transport: 'tinyfish-browser', script: 'tinyfish-scraper.mjs' });
+const unknownJob = (id) => ({ id, enabled: true, validationStatus: 'validated', engine: 'unknown-engine', transport: 'unknown-transport', script: 'unknown.mjs' });
 async function fixture(t, jobs) {
   // Under the OS temp dir, not the repo root: a test that dies before its
   // cleanup hook leaves no litter behind, and the suite still runs from a
@@ -23,26 +27,56 @@ async function fixture(t, jobs) {
   return { dataDir: dir, configPath };
 }
 
-test('configured jobs with a matching direct scraper class instantiate that class', async () => {
+test('the registry cannot express an unvalidated job as enabled', () => {
+  // The promotion gate at runtime is defence-in-depth. The property that
+  // actually matches README's "validation is a required promotion gate rather
+  // than a configuration shortcut" is that the INVALID STATE is not
+  // representable in the registry in the first place: an enabled job whose
+  // validation is not "validated" is a mistake, and it should fail in CI on
+  // the commit that promotes it, not on the run that later trips over it.
+  //
+  // Today this passes because the two experimental jobs are also disabled. It
+  // is the assertion that stops that coincidence from mattering.
+  const { jobs } = JSON.parse(readFileSync(new URL('../config/scrapers.json', import.meta.url), 'utf8'));
+  const promoted = jobs.filter((j) => j.enabled !== false && j.validationStatus !== 'validated');
+  assert.deepEqual(
+    promoted.map((j) => `${j.id}=${j.validationStatus ?? 'unset'}`),
+    [],
+    'an enabled job must be validated; set enabled:false until validation passes'
+  );
+});
+
+test('every enabled job in the config instantiates, and no disabled one does', async () => {
   const { jobs } = JSON.parse(await fs.readFile(new URL('../config/scrapers.json', import.meta.url), 'utf8'));
-  // Job IDs that have a concrete scraper class in the DIRECT registry or a
-  // specific config-driven matcher (NSoft, Altenar).  Every enabled job in
-  // the config that is NOT in this list has no implementation and must throw.
-  const implemented = new Set([
-    'superbet', 'betano', 'fortuna', 'unibet', 'stanleybet', 'casa-pariurilor',
-    'excelbet', 'netbet', 'admiral', 'winboss', 'maxbet', 'las-vegas',
-    'don', 'topbet', 'million', 'baumbet', 'powerbet', 'winbet', 'magnumbet', 'winner',
-    'getsbet', 'contibet', 'favbet',
-  ]);
+  // This used to compare against a hand-maintained list of implemented ids.
+  // That silently rotted: adding a job to config/scrapers.json turned the suite
+  // red with a misleading "expected ESCRAPERCONFIG", which reads like a missing
+  // implementation rather than an out-of-date test. The property that actually
+  // matters is the one stated here: whatever the config enables must run.
   for (const jobConfig of jobs) {
-    if (jobConfig.engine === 'tinyfish') continue; // skip TinyFish jobs
-    if (jobConfig.enabled === false) continue; // skip disabled
-    if (implemented.has(jobConfig.id)) {
-      const inst = instantiate(jobConfig.id, { jobConfig });
-      assert.ok(inst, `expected an instance for ${jobConfig.id}`);
-    } else {
-      // No implementation exists — should throw ESCRAPERCONFIG
-      assert.throws(() => instantiate(jobConfig.id, { jobConfig }), { code: 'ESCRAPERCONFIG' });
+    if (jobConfig.engine === 'tinyfish') continue; // TinyFish is disabled outright
+    if (jobConfig.enabled === false) {
+      // A registered but disabled job must be rejected, not silently run.
+      assert.throws(() => instantiate(jobConfig.id, { jobConfig }), { code: 'ESCRAPERCONFIG' }, `${jobConfig.id} is disabled and must not instantiate`);
+      continue;
+    }
+    const inst = instantiate(jobConfig.id, { jobConfig });
+    assert.ok(inst, `expected an instance for enabled job ${jobConfig.id}`);
+  }
+});
+
+test('a configured job whose contract drifts from its implementation is rejected', async () => {
+  // The safety property behind the removed list: editing engine/transport/script
+  // in the config must produce a configuration error, never a run against a
+  // feed the adapter was not written for.
+  const { jobs } = JSON.parse(await fs.readFile(new URL('../config/scrapers.json', import.meta.url), 'utf8'));
+  for (const jobConfig of jobs.filter((j) => j.enabled !== false && j.engine !== 'tinyfish')) {
+    for (const field of ['engine', 'transport', 'script']) {
+      assert.throws(
+        () => instantiate(jobConfig.id, { jobConfig: { ...jobConfig, [field]: 'drifted' } }),
+        { code: 'ESCRAPERCONFIG' },
+        `${jobConfig.id} must reject ${field} drift`,
+      );
     }
   }
 });

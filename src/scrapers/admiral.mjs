@@ -14,8 +14,10 @@ import { buildEventKey, flattenMarkets } from './_http-helpers.mjs';
  *
  * The endpoint this class targets, `/feeds/prematch.json`, 301s off
  * `admiral.ro` to the `admiralbet.ro` domain, where it returns the SPA shell
- * rather than JSON. The saved capture in data/endpoints-all/ records NSoft
- * URLs under Admiral's name, which is the path that actually works.
+ * rather than JSON. The saved capture recorded in
+ * `data/endpoints/captures/admiral_api.json` holds NSoft URLs under Admiral's
+ * name, which is the path that actually works — see the `admiral` record in
+ * data/endpoints/endpoints.json.
  */
 export default class AdmiralScraper extends ProviderContract {
   id = 'admiral';

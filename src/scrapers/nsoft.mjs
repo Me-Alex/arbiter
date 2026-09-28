@@ -20,6 +20,36 @@ const TENANT_FOOTBALL_SPORT = Object.freeze({
   admiral: 4,
   stanleybet: 4,
   maxbet: 2,
+  betmen: 18,
+});
+
+/**
+ * The full-time result contract, per tenant: which market is the match result,
+ * what it is called, and which outcome ids carry 1 / X / 2.
+ *
+ * There is no global NSoft numbering here either. Measured live on 2026-09-27
+ * by tallying every active, priced three-outcome market on each tenant's own
+ * football events:
+ *
+ *   admiral / stanleybet   marketId 1  "Rezultat Final"   outcomes 1:1  4:X  7:2
+ *   maxbet                 marketId 2  "Final"             outcomes 2:1  5:X  8:2
+ *   betmen                 marketId 6  "Final"             outcomes 6:1  9:X  12:2
+ *
+ * The top shape covered 98.7%, 91.8% and 100% of football events respectively,
+ * which is what makes each one the result market rather than a coincidental
+ * three-way bet.
+ *
+ * This replaces a two-branch `maxbet ? 2 : 1` test. That test encoded two of
+ * these three tenants, so a third was wired to the wrong market id and would
+ * have published nothing at all — the failure mode this project has already
+ * been bitten by once, when MaxBet's football was mislabelled and no MaxBet
+ * event could pair with another book.
+ */
+const TENANT_RESULT_MARKET = Object.freeze({
+  admiral: Object.freeze({ marketId: 1, name: 'Rezultat Final', outcomes: Object.freeze([[1, '1'], [4, 'X'], [7, '2']]) }),
+  stanleybet: Object.freeze({ marketId: 1, name: 'Rezultat Final', outcomes: Object.freeze([[1, '1'], [4, 'X'], [7, '2']]) }),
+  maxbet: Object.freeze({ marketId: 2, name: 'Final', outcomes: Object.freeze([[2, '1'], [5, 'X'], [8, '2']]) }),
+  betmen: Object.freeze({ marketId: 6, name: 'Final', outcomes: Object.freeze([[6, '1'], [9, 'X'], [12, '2']]) }),
 });
 
 /**
@@ -28,29 +58,45 @@ const TENANT_FOOTBALL_SPORT = Object.freeze({
  * after the id itself rather than guessed — a wrong sport label breaks event
  * matching, while an opaque one only reads less nicely.
  *
+ * The lookup is scoped to THIS tenant's own football id. Matching the union of
+ * every tenant's id would label 18 as "Football" for Admiral too, where 18 is
+ * some other sport entirely — the same class of defect as the MaxBet incident
+ * this file documents, and one that a new tenant makes easier to reintroduce.
+ *
  * @param {string|number} id
+ * @param {string} tenantId
  * @returns {string}
  */
-function nsoftSportLabel(id) {
+function nsoftSportLabel(id, tenantId) {
   const key = String(id);
-  // Only the football ids are known per tenant; anything else is named after
-  // the id rather than guessed.
-  for (const footballId of Object.values(TENANT_FOOTBALL_SPORT)) {
-    if (String(footballId) === key) return 'Football';
-  }
+  if (String(TENANT_FOOTBALL_SPORT[tenantId]) === key) return 'Football';
   return `Sport ${key}`;
 }
 
 // Public tenant identifiers recorded in historical snapshots/config; no credentials.
+// The companyUuid values are public identifiers read from each brand's own front
+// end. The distribution endpoint answers without authentication, which is what
+// makes them identifiers rather than secrets.
 const TENANTS = {
   admiral: ['682e6a38-b5ad-4c58-a743-3b06c79e55cd', 'nsoft-public-json', 'bookmaker-public-json', 'nsoft.mjs'],
   stanleybet: ['682e6a38-b5ad-4c58-a743-3b06c79e55cd', 'nsoft-public-json', 'nsoft-public-sports-json', 'stanleybet.mjs'],
   maxbet: ['2191e3d6-b0e1-4f06-8b6a-4683203fb2fe', 'nsoft', 'nsoft-public-sports-json', 'maxbet.mjs'],
+  betmen: ['7afdd6f5-f954-43d6-b696-2e0dc0ae4ee2', 'nsoft-public-json', 'nsoft-public-sports-json', 'nsoft.mjs'],
 };
 export function matchesNSoftConfig(id, cfg) {
   const t = TENANTS[id];
   return Boolean(t && cfg.engine === t[1] && cfg.transport === t[2] && cfg.script === t[3]);
 }
+
+/**
+ * Every tenant this module implements, for the dispatcher's matched-id set.
+ *
+ * Exported rather than re-typed in src/scrapers/index.mjs: a hand-kept list of
+ * tenant ids rots silently, because a tenant missing from that set still fails
+ * closed at the fall-through throw, so every test stays green while the guard
+ * has quietly stopped guarding.
+ */
+export const NSOFT_TENANT_IDS = Object.freeze(Object.keys(TENANTS));
 
 export default class NSoftScraper extends ScraperBase {
   maxAttempts = 1;
@@ -148,6 +194,19 @@ export default class NSoftScraper extends ScraperBase {
     });
   }
 
+  /**
+   * The transport this tenant's snapshot records.
+   *
+   * Read from the tenant table rather than hardcoded: admiral's configured
+   * contract is `bookmaker-public-json`, so a literal here would have written a
+   * transport that disagrees with the job it came from. Provenance that
+   * contradicts its own configuration is worse than no provenance, because
+   * nothing flags the disagreement.
+   */
+  get transport() {
+    return TENANTS[this.id]?.[2] || 'nsoft-public-sports-json';
+  }
+
   extractEvents(events) {
     const out = [];
     const seen = new Set();
@@ -161,24 +220,23 @@ export default class NSoftScraper extends ScraperBase {
       const away = e.competitors.filter((c) => c.type === 2);
       if (home.length !== 1 || away.length !== 1 || !home[0].name || !away[0].name) continue;
       // Only publish contracts established by tenant-specific response fixtures.
-      // Both the sport id and the result market id differ per tenant, so they
-      // are read from the same measured table rather than one hardcoded
-      // branch: a tenant added later would otherwise be wired to the wrong
-      // catalogue and silently publish nothing.
-      const maxbet = this.id === 'maxbet';
+      // The sport id, the result market id, its display name and its outcome ids
+      // all differ per tenant, so they are read from the same measured tables
+      // rather than a hardcoded branch: a tenant added later would otherwise be
+      // wired to the wrong catalogue and silently publish nothing.
       const footballSportId = TENANT_FOOTBALL_SPORT[this.id];
+      const contract = TENANT_RESULT_MARKET[this.id];
       const isFootball = e.sportId === footballSportId;
       let markets;
-      if (isFootball) {
-        const candidates = e.markets.filter((m) => m.marketId === (maxbet ? 2 : 1));
+      if (isFootball && contract) {
+        const candidates = e.markets.filter((m) => m.marketId === contract.marketId);
         if (candidates.length !== 1) continue;
         const m = candidates[0];
-        if (m.active !== 1 || m.name !== (maxbet ? 'Final' : 'Rezultat Final')
+        if (m.active !== 1 || m.name !== contract.name
             || !Array.isArray(m.specialValues) || m.specialValues.length
             || m.outcomes.length !== 3) continue;
-        const expected = maxbet ? [[2, '1'], [5, 'X'], [8, '2']] : [[1, '1'], [4, 'X'], [7, '2']];
         const selections = [];
-        for (const [outcomeId, name] of expected) {
+        for (const [outcomeId, name] of contract.outcomes) {
           const matches = m.outcomes.filter((o) => o.outcomeId === outcomeId && o.name === name);
           if (matches.length !== 1) break;
           const o = matches[0];
@@ -202,10 +260,10 @@ export default class NSoftScraper extends ScraperBase {
       if (!league) continue;
       const teams = [home[0].name, away[0].name];
       seen.add(e.id);
-      const sportName = nsoftSportLabel(e.sportId);
+      const sportName = nsoftSportLabel(e.sportId, this.id);
       const sportKey = sportName.toLowerCase().replace(/\s+/g, '-');
       out.push({ id: String(e.id), sourceId: this.id, sourceUrl: this.sourceUrl,
-        transport: 'nsoft-public-sports-json', runId: this.runId, observedAt: this.observedAt,
+        transport: this.transport, runId: this.runId, observedAt: this.observedAt,
         sport: sportName, league, kickoff, homeTeam: teams[0], awayTeam: teams[1], isLive: false,
         eventKey: [sportKey, normalizeTeamName(league), kickoff, ...teams.map(normalizeTeamName)].join('|'),
         markets });
@@ -215,7 +273,7 @@ export default class NSoftScraper extends ScraperBase {
 
   _serializable(events, raw) {
     return { ...super._serializable(events, raw), sourceUrl: this.sourceUrl,
-      transport: 'nsoft-public-sports-json', observedAt: this.observedAt,
+      transport: this.transport, observedAt: this.observedAt,
       coverage: { sport: 'football', market: 'fulltime-1x2', live: false, windowHours: this.windowHours, maxEvents: this.maxEvents } };
   }
 }

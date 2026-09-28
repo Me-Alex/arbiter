@@ -14,7 +14,10 @@
         "superbet"
       ],
       "validationStatus": "validated",
-      "validationReason": "Public offer v3 feed smoke-validated on 2026-09-01; bounded read-only collection with snapshot provenance."
+      "validationReason": "Public offer v3 feed smoke-validated on 2026-09-01; bounded read-only collection with snapshot provenance.",
+      "platform": "superbet-offer",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-09-01"
     },
     {
       "id": "betano",
@@ -30,7 +33,13 @@
         "betano"
       ],
       "validationStatus": "validated",
-      "validationReason": "Kaizen top-events-v2 JSON feed (ro.betano.com/api/home/top-events-v2/) smoke-validated on 2026-09-02 via headless browser navigation: 16 fresh prematch events with complete 1X2 ('Rezultat final', MRES/typeId 1) markets. The host Cloudflare-challenges bare fetch, so the feed is read in a real Chromium navigation context."
+      "validationReason": "Kaizen top-events-v2 JSON feed (ro.betano.com/api/home/top-events-v2/) smoke-validated on 2026-09-02 via headless browser navigation: 16 fresh prematch events with complete 1X2 ('Rezultat final', MRES/typeId 1) markets. The host Cloudflare-challenges bare fetch, so the feed is read in a real Chromium navigation context.",
+      "platform": "kaizen-betano",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-09-01",
+      "unavailableSports": [
+        "top-events-sample"
+      ]
     },
     {
       "id": "fortuna",
@@ -46,12 +55,15 @@
         "fortuna"
       ],
       "validationStatus": "validated",
-      "validationReason": "Targets api.efortuna.ro/offer/bff/graphql with preMatchEvents query; smoke validation pending."
+      "validationReason": "Targets api.efortuna.ro/offer/bff/graphql with preMatchEvents query; smoke validation pending.",
+      "platform": "fortuna-group",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-09-01"
     },
     {
       "id": "unibet",
-      "name": "Unibet (public sports API v2)",
-      "enabled": false,
+      "name": "Unibet (Kindred sports BFF v2)",
+      "enabled": true,
       "engine": "public-sports-api-v2",
       "transport": "bookmaker-public-json",
       "script": "unibet.mjs",
@@ -59,7 +71,9 @@
         "unibet"
       ],
       "validationStatus": "validated",
-      "validationReason": "Endpoint retired. The adapter targets /api/kambi/offer/v1/betoffer/list.json, which now returns 404 while the site returns 200. Observed 2026-09-26 via scripts/discover-unibet.mjs: prices moved to wss://sportsbff-ams.kindredext.net/betting-mqtt-sports/, a realtime feed, not a pollable REST endpoint. The public REST siblings (odds-ladder, az-menu, configured-landing-page) answer without cookies but carry no events. Re-enabling needs an MQTT client and a live reconnect test, not a URL change."
+      "validationReason": "Feed recovered 2026-09-28. The MQTT conclusion in the previous revision was wrong: prices are served by a plain pollable REST surface at https://sportsbff-ams.kindredext.net/sports-api/api/v2/. Two undocumented conditions gate it. (1) Every request needs the site's own tenant headers under their plain names - locale, jurisdiction, ksp_jurisdiction, brand - because the load balancer answers 400 InvalidRequestException otherwise; the X-Brand / X-Locale pair belongs to the separate betting client and is rejected here, which is what made this look like a malformed query. (2) There is no bulk fixture list: v2/contests/list, the endpoint whose GetFixtureContestsRequest model carries from/size, answers 503 on every request and is unused by the site. The working bulk path is az-menu for the sport list, then views/lobby per sport for its leagues, then views/lobby per league for its contests. Measured 2026-09-28: Football 697 events over 130 leagues, 2075 prices; the full 30-sport menu yields 1563 events in ~28s. The adapter crawls the 13 high-volume sports by default.",
+      "platform": "kindred-xns",
+      "feedStatus": "verified"
     },
     {
       "id": "stanleybet",
@@ -75,7 +89,105 @@
         "stanleybet"
       ],
       "validationStatus": "validated",
-      "validationReason": "NSoft public sports events endpoint smoke-validated on 2026-09-01 with future prematch events and complete 1X2 markets; shares companyUuid with Admiral."
+      "validationReason": "NSoft public sports events endpoint smoke-validated on 2026-09-01 with future prematch events and complete 1X2 markets; shares companyUuid with Admiral.",
+      "platform": "nsoft",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-09-01"
+    },
+    {
+      "id": "betmen",
+      "name": "Betmen (NSoft public JSON)",
+      "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
+      "engine": "nsoft-public-json",
+      "transport": "nsoft-public-sports-json",
+      "script": "nsoft.mjs",
+      "sourceIds": [
+        "betmen"
+      ],
+      "minEvents": 20,
+      "validationStatus": "validated",
+      "validationReason": "NSoft public distribution endpoint, companyUuid 7afdd6f5-f954-43d6-b696-2e0dc0ae4ee2 (a public tenant identifier read from the brand's own page, not a credential — the endpoint answers without authentication). Measured 2026-09-27: football is sportId 18 on this tenant, and the full-time result market is marketId 6 named 'Final' with outcome ids 6:1, 9:X, 12:2 — present on 285 of 285 sampled football events. Contract is tenant-specific, not shared with the Admiral/MaxBet tenants, so it is declared per tenant in src/scrapers/nsoft.mjs. Independence measured rather than assumed: 117 fixtures shared with Admiral, 101 differing, 16 identical; 125 shared with MaxBet, 109 differing, 16 identical. It is therefore NOT in the nsoft-company feed group.",
+      "platform": "nsoft",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-09-27",
+      "oddsFeed": {
+        "url": "https://sportsbook-sm-distribution-api.nsoft.com/api/v1/events?companyUuid=7afdd6f5-f954-43d6-b696-2e0dc0ae4ee2",
+        "method": "GET",
+        "auth": "none",
+        "measuredAt": "2026-09-27T13:08:15.169Z",
+        "eventsIn3DayWindow": 1287,
+        "footballSportId": 18,
+        "eventsWithComplete1x2": 486
+      }
+    },
+    {
+      "id": "prowin",
+      "name": "Prowin (EGT Digital public sports API)",
+      "enabled": false,
+      "supportedSports": [
+        "football"
+      ],
+      "engine": "egt-public-sports-api",
+      "transport": "egt-public-sports-json",
+      "script": "egt.mjs",
+      "sourceIds": [
+        "prowin"
+      ],
+      "validationStatus": "experimental",
+      "validationReason": "Adapter implemented, fixture-covered and tested, but DISABLED because it adds no independent price source. Measured 2026-09-27: prowin, ultrabet and vipbet are all ONE upstream EGT feed — 22 of 31, 33 of 35 and 21 of 30 shared fixtures carry the SAME feedProducerId, and the same producer with different prices is mid-scrape drift, not arbitrage. They are declared as one group in src/scanner/feed-groups.mjs. A first independence measurement claimed these brands were independent; that measurement keyed fixtures as home|away with no kickoff, so two different matches between the same clubs collapsed into one, and it was wrong. Against the feeds already configured, prowin's slate (Brazilian, Argentine and Mexican lower divisions) did not overlap Admiral, betmen or superbet at all in the sampled window, so no pairing opportunity was demonstrated either. Coverage is also thin at 27-36 priced 1X2 against betmen's 486, and the platform publishes no container index, so the thirteen container ids are a hardcoded snapshot that will rot silently. The feed itself is sound: unauthenticated, gated only on three ordinary client locale headers, football is sportId 1001, and the result market is the one the provider names 1X2.",
+      "platform": "egt-digital",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-09-27",
+      "oddsFeed": {
+        "url": "https://pwro-api.egt-digital.com/api/sportsapi/public/containers/v2/lobby/normalized/{containerId}",
+        "method": "GET",
+        "auth": "none (device-header gate only)",
+        "requiredHeaders": {
+          "x-platform-device": "desktop",
+          "x-platform-lang": "ro",
+          "x-platform-tz": "180"
+        },
+        "businessUnit": "PWRO",
+        "measuredAt": "2026-09-27T13:08:18.244Z",
+        "footballSportId": 1001,
+        "priced1x2Found": 31
+      }
+    },
+    {
+      "id": "ultrabet",
+      "name": "Ultrabet (EGT Digital public sports API)",
+      "enabled": false,
+      "supportedSports": [
+        "football"
+      ],
+      "engine": "egt-public-sports-api",
+      "transport": "egt-public-sports-json",
+      "script": "egt.mjs",
+      "sourceIds": [
+        "ultrabet"
+      ],
+      "validationStatus": "experimental",
+      "validationReason": "Same platform and same measured verdict as prowin: one upstream EGT feed shared across prowin, ultrabet and vipbet, grouped in src/scanner/feed-groups.mjs. Registered so the adapter's second tenant is configured and testable, and disabled so it cannot be scraped as if it were a second independent source.",
+      "platform": "egt-digital",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-09-27",
+      "oddsFeed": {
+        "url": "https://ubro-api.egt-digital.com/api/sportsapi/public/containers/v2/lobby/normalized/{containerId}",
+        "method": "GET",
+        "auth": "none (device-header gate only)",
+        "requiredHeaders": {
+          "x-platform-device": "desktop",
+          "x-platform-lang": "ro",
+          "x-platform-tz": "180"
+        },
+        "businessUnit": "UBRO",
+        "measuredAt": "2026-09-27T13:08:21.526Z",
+        "footballSportId": 1001,
+        "priced1x2Found": 37
+      }
     },
     {
       "id": "casa-pariurilor",
@@ -91,7 +203,10 @@
         "casa-pariurilor"
       ],
       "validationStatus": "validated",
-      "validationReason": "Shares Fortuna Entertainment Group platform with efortuna.ro; targets api.casapariurilor.ro/offer/bff/graphql via FortunaProvider; smoke validation pending."
+      "validationReason": "Shares Fortuna Entertainment Group platform with efortuna.ro; targets api.casapariurilor.ro/offer/bff/graphql via FortunaProvider; smoke validation pending.",
+      "platform": "fortuna-group",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-09-01"
     },
     {
       "id": "excelbet",
@@ -107,7 +222,10 @@
         "excelbet"
       ],
       "validationStatus": "validated",
-      "validationReason": "Exalogic XSport getPalinsestoDelGiorno feed (systemCode=EXCELBET) smoke-validated on 2026-09-02 with future football events and complete 1X2 markets."
+      "validationReason": "Exalogic XSport getPalinsestoDelGiorno feed (systemCode=EXCELBET) smoke-validated on 2026-09-02 with future football events and complete 1X2 markets.",
+      "platform": "exalogic-xsport",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-09-01"
     },
     {
       "id": "netbet",
@@ -123,7 +241,10 @@
         "netbet"
       ],
       "validationStatus": "validated",
-      "validationReason": "Public Sportify inventory-events feed smoke-validated on 2026-09-01 with future prematch events and complete 1X2 markets."
+      "validationReason": "Public Sportify inventory-events feed smoke-validated on 2026-09-01 with future prematch events and complete 1X2 markets.",
+      "platform": "sportify",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-09-01"
     },
     {
       "id": "admiral",
@@ -139,7 +260,10 @@
         "admiral"
       ],
       "validationStatus": "validated",
-      "validationReason": "NSoft public sports events endpoint smoke-validated on 2026-09-01 with future prematch events and complete 1X2 markets."
+      "validationReason": "NSoft public sports events endpoint smoke-validated on 2026-09-01 with future prematch events and complete 1X2 markets.",
+      "platform": "nsoft",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-09-01"
     },
     {
       "id": "winboss",
@@ -155,7 +279,10 @@
         "winboss"
       ],
       "validationStatus": "validated",
-      "validationReason": "Exalogic XSport getPalinsestoDelGiorno feed (systemCode=WINBOSS) smoke-validated on 2026-09-02 with future football events and complete 1X2 markets."
+      "validationReason": "Exalogic XSport getPalinsestoDelGiorno feed (systemCode=WINBOSS) smoke-validated on 2026-09-02 with future football events and complete 1X2 markets.",
+      "platform": "exalogic-xsport",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-09-01"
     },
     {
       "id": "maxbet",
@@ -171,7 +298,10 @@
         "maxbet"
       ],
       "validationStatus": "validated",
-      "validationReason": "NSoft public events feed (companyUuid=2191e3d6-b0e1-4f06-8b6a-4683203fb2fe) smoke-validated on 2026-09-02 with future football events and complete 1X2 markets."
+      "validationReason": "NSoft public events feed (companyUuid=2191e3d6-b0e1-4f06-8b6a-4683203fb2fe) smoke-validated on 2026-09-02 with future football events and complete 1X2 markets.",
+      "platform": "nsoft",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-09-01"
     },
     {
       "id": "las-vegas",
@@ -187,7 +317,10 @@
         "las-vegas"
       ],
       "validationStatus": "validated",
-      "validationReason": "Exalogic XSport getPalinsestoDelGiorno feed (systemCode=LASVEGAS) smoke-validated on 2026-09-02 with future football events and complete 1X2 markets."
+      "validationReason": "Exalogic XSport getPalinsestoDelGiorno feed (systemCode=LASVEGAS) smoke-validated on 2026-09-02 with future football events and complete 1X2 markets.",
+      "platform": "exalogic-xsport",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-09-01"
     },
     {
       "id": "don",
@@ -203,7 +336,10 @@
         "don"
       ],
       "validationStatus": "validated",
-      "validationReason": "Altenar sb2 widget feed (sb2frontend-altenar2.biahosted.com GetUpcoming) smoke-validated on 2026-09-01 with future prematch events and complete 1X2 markets."
+      "validationReason": "Altenar sb2 widget feed (sb2frontend-altenar2.biahosted.com GetUpcoming) smoke-validated on 2026-09-01 with future prematch events and complete 1X2 markets.",
+      "platform": "altenar-sb2",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-09-01"
     },
     {
       "id": "topbet",
@@ -219,7 +355,10 @@
         "topbet"
       ],
       "validationStatus": "validated",
-      "validationReason": "Altenar sb2 widget feed (sb2frontend-altenar2.biahosted.com GetUpcoming) smoke-validated on 2026-09-01 with future prematch events and complete 1X2 markets."
+      "validationReason": "Altenar sb2 widget feed (sb2frontend-altenar2.biahosted.com GetUpcoming) smoke-validated on 2026-09-01 with future prematch events and complete 1X2 markets.",
+      "platform": "altenar-sb2",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-09-01"
     },
     {
       "id": "million",
@@ -235,7 +374,10 @@
         "million"
       ],
       "validationStatus": "validated",
-      "validationReason": "Altenar sb2 widget feed (sb2frontend-altenar2.biahosted.com GetUpcoming, integration=million) smoke-validated on 2026-09-02 with future prematch events and complete 1X2 markets."
+      "validationReason": "Altenar sb2 widget feed (sb2frontend-altenar2.biahosted.com GetUpcoming, integration=million) smoke-validated on 2026-09-02 with future prematch events and complete 1X2 markets.",
+      "platform": "altenar-sb2",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-09-01"
     },
     {
       "id": "baumbet",
@@ -251,7 +393,10 @@
         "baumbet"
       ],
       "validationStatus": "validated",
-      "validationReason": "Altenar sb2 widget feed (sb2frontend-altenar2.biahosted.com GetUpcoming, integration=baumbet) smoke-validated on 2026-09-02 with future prematch events and complete 1X2 markets."
+      "validationReason": "Altenar sb2 widget feed (sb2frontend-altenar2.biahosted.com GetUpcoming, integration=baumbet) smoke-validated on 2026-09-02 with future prematch events and complete 1X2 markets.",
+      "platform": "altenar-sb2",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-09-01"
     },
     {
       "id": "powerbet",
@@ -267,7 +412,10 @@
         "powerbet"
       ],
       "validationStatus": "validated",
-      "validationReason": "Altenar sb2 widget feed (sb2frontend-altenar2.biahosted.com GetUpcoming, integration=powerbet) smoke-validated on 2026-09-02 with future prematch events and complete 1X2 markets."
+      "validationReason": "Altenar sb2 widget feed (sb2frontend-altenar2.biahosted.com GetUpcoming, integration=powerbet) smoke-validated on 2026-09-02 with future prematch events and complete 1X2 markets.",
+      "platform": "altenar-sb2",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-09-01"
     },
     {
       "id": "winbet",
@@ -283,7 +431,10 @@
         "winbet"
       ],
       "validationStatus": "validated",
-      "validationReason": "Altenar sb2 widget feed (sb2frontend-altenar2.biahosted.com GetUpcoming, integration=winbet) smoke-validated on 2026-09-02 with future prematch events and complete 1X2 markets."
+      "validationReason": "Altenar sb2 widget feed (sb2frontend-altenar2.biahosted.com GetUpcoming, integration=winbet) smoke-validated on 2026-09-02 with future prematch events and complete 1X2 markets.",
+      "platform": "altenar-sb2",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-09-01"
     },
     {
       "id": "getsbet",
@@ -299,7 +450,10 @@
         "getsbet"
       ],
       "validationStatus": "validated",
-      "validationReason": "EveryMatrix ODDS RealtimeDealer WAMP v2 feed (wss://api-online.getsbet.ro/v2, realm online.getsbet.ro, operator 2476) smoke-validated on 2026-09-02: tournaments via /sports/2476/ro/tournaments/1/187, match discovery via tournament-aggregator-groups-overview (groups 2794,2795), 1X2 (bettingTypeId 69) per event via match-odds/market-group/Populare. 33 complete 1X2 events, fresh."
+      "validationReason": "EveryMatrix ODDS RealtimeDealer WAMP v2 feed (wss://api-online.getsbet.ro/v2, realm online.getsbet.ro, operator 2476) smoke-validated on 2026-09-02: tournaments via /sports/2476/ro/tournaments/1/187, match discovery via tournament-aggregator-groups-overview (groups 2794,2795), 1X2 (bettingTypeId 69) per event via match-odds/market-group/Populare. 33 complete 1X2 events, fresh.",
+      "platform": "everymatrix-odds",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-09-01"
     },
     {
       "id": "favbet",
@@ -315,7 +469,10 @@
         "favbet"
       ],
       "validationStatus": "validated",
-      "validationReason": "ErlyLine/Betinvest JSON-RPC gateway (POST /service/lineout/frontend_api2/) smoke-validated on 2026-09-02: frontend/event/get lists prematch football, frontend/market/get returns 1X2 (template 1). 100 complete 1X2 events, fresh."
+      "validationReason": "ErlyLine/Betinvest JSON-RPC gateway (POST /service/lineout/frontend_api2/) smoke-validated on 2026-09-02: frontend/event/get lists prematch football, frontend/market/get returns 1X2 (template 1). 100 complete 1X2 events, fresh.",
+      "platform": "erlyline",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-09-01"
     },
     {
       "id": "winner",
@@ -331,7 +488,10 @@
         "winner"
       ],
       "validationStatus": "validated",
-      "validationReason": "Digitain public events POST endpoint at micros-prod1-sb.gambling-solutions.ro smoke-validated on 2026-09-02 with future football events and complete 1X2 markets."
+      "validationReason": "Digitain public events POST endpoint at micros-prod1-sb.gambling-solutions.ro smoke-validated on 2026-09-02 with future football events and complete 1X2 markets.",
+      "platform": "digitain",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-09-01"
     },
     {
       "id": "magnumbet",
@@ -347,7 +507,10 @@
         "magnumbet"
       ],
       "validationStatus": "validated",
-      "validationReason": "Exalogic XSport getPalinsestoDelGiorno feed (systemCode=MAGNUMBET) smoke-validated on 2026-09-02 with future football events and complete 1X2 markets."
+      "validationReason": "Exalogic XSport getPalinsestoDelGiorno feed (systemCode=MAGNUMBET) smoke-validated on 2026-09-02 with future football events and complete 1X2 markets.",
+      "platform": "exalogic-xsport",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-09-01"
     },
     {
       "id": "contibet",
@@ -363,7 +526,10 @@
         "contibet"
       ],
       "validationStatus": "validated",
-      "validationReason": "EveryMatrix ODDS RealtimeDealer WAMP v2 feed (wss://api.conticazino.ro/v2, realm www.conticazino.ro, operator 2349) smoke-validated on 2026-09-02: same WAMP flow as getsbet. 33 complete 1X2 events, fresh."
+      "validationReason": "EveryMatrix ODDS RealtimeDealer WAMP v2 feed (wss://api.conticazino.ro/v2, realm www.conticazino.ro, operator 2349) smoke-validated on 2026-09-02: same WAMP flow as getsbet. 33 complete 1X2 events, fresh.",
+      "platform": "everymatrix-odds",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-09-01"
     }
   ]
 }
