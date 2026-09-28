@@ -263,7 +263,22 @@ export default class ScraperBase {
             );
           }
           priced = true;
-          s.odds = Number(o.toFixed(3));
+          // Publish the price the bookmaker actually serves.
+          //
+          // This used to be `Number(o.toFixed(3))`, which silently re-priced
+          // every selection to three decimals. Books that quote four (the
+          // Altenar tenants serve 2.3334, 1.1765, 2.4546) were then reported at
+          // a price that was not on their board. That is not cosmetic: the
+          // engine derives ROI from 1/odds, so rounding a price DOWN raises
+          // 1/odds, lowers inverseSum and inflates the reported ROI — a
+          // fabricated edge on an opportunity whose whole value is that it is
+          // real. Rounding UP destroys edge the same way. The published number
+          // has to be the number the book will honour.
+          //
+          // `o` is already Number(s.odds); assigning it back normalises a
+          // string price from a provider without changing its value, and
+          // leaves any precision the feed sent intact.
+          s.odds = o;
         }
       }
       if (priced) out.push(e);
