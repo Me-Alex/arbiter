@@ -115,11 +115,15 @@ jobs:
       # Without a history, a provider that starts returning nothing fails
       # every run from then on and nothing connects those failures — each one
       # reads as a bad day rather than as a feed that moved.
+      # Downloads every artifact whose name matches, into one directory. The
+      # pattern is the exact artifact name, not a prefix: `data-health-*` matches
+      # nothing, because the upload is named `data-health` with no suffix, so
+      # the history restored as empty and the trend below always saw zero runs.
       - name: Restore the previous reports
         uses: actions/download-artifact@v4
         continue-on-error: true
         with:
-          pattern: data-health-*
+          pattern: data-health
           path: data-health-history
           merge-multiple: true
 

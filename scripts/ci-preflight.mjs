@@ -80,6 +80,24 @@ check('the live job records itself before the gate can fail it',
   })(),
   'record the report, then judge the series — otherwise a failed run leaves no trace');
 
+check('the restored history matches the artifact that is uploaded', () => {
+  // A pattern that matches nothing fails silently: download-artifact with
+  // continue-on-error restores an empty directory, the trend sees zero runs,
+  // and it reports "not enough history" — which looks like the gate working.
+  const upload = workflowText.match(/name:\s*(\S[\w-]*)\s*\n\s*path: data-health\.json/);
+  const restore = workflowText.match(/pattern:\s*(\S[\w-]*)\s*\n\s*path: data-health-history/);
+  if (!upload || !restore) return false;
+  return upload[1] === restore[1];
+}, 'the download pattern and the upload name are the same string, or the history restores empty');
+
+check('the history outlives the runs needed to judge a trend', () => {
+  // The gate needs three runs to say anything and runs twice a week. A
+  // retention shorter than that expires the evidence before a verdict, and the
+  // gate then reports "not enough history" indefinitely while appearing to work.
+  const days = [...workflowText.matchAll(/name: data-health\b[\s\S]*?retention-days:\s*(\d+)/g)].map((m) => Number(m[1]));
+  return days.length > 0 && Math.min(...days) >= 180;
+}, `retention-days: ${[...workflowText.matchAll(/retention-days:\s*(\d+)/g)].map((m) => m[1]).join(', ')}`);
+
 check('the live job is gated to schedule or manual dispatch',
   /event_name == 'schedule'/.test(workflowText) && /event_name == 'workflow_dispatch'/.test(workflowText),
   'a push must not reach 22 third-party endpoints');
