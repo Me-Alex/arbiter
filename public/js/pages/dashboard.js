@@ -23,29 +23,13 @@ const sourceSkeleton = `<div class="dash-loading" aria-label="Loading sources">
 oppList.innerHTML = oppSkeleton;
 sourceHealthList.innerHTML = sourceSkeleton;
 
-// Book avatar palette
-const BOOK_PALETTE = [
-  { color: '#60c9fa', bg: 'rgba(96, 201, 250, 0.12)', border: 'rgba(96, 201, 250, 0.30)' },
-  { color: '#a78bfa', bg: 'rgba(167, 139, 250, 0.12)', border: 'rgba(167, 139, 250, 0.30)' },
-  { color: '#34d399', bg: 'rgba(52, 211, 153, 0.12)', border: 'rgba(52, 211, 153, 0.30)' },
-  { color: '#fbbf24', bg: 'rgba(251, 191, 36, 0.12)', border: 'rgba(251, 191, 36, 0.30)' },
-  { color: '#22d3ee', bg: 'rgba(34, 211, 238, 0.12)', border: 'rgba(34, 211, 238, 0.30)' },
-  { color: '#f472b6', bg: 'rgba(244, 114, 182, 0.12)', border: 'rgba(244, 114, 182, 0.30)' },
-  { color: '#a3e635', bg: 'rgba(163, 230, 53, 0.12)', border: 'rgba(163, 230, 53, 0.30)' },
-  { color: '#f87171', bg: 'rgba(248, 113, 113, 0.12)', border: 'rgba(248, 113, 113, 0.30)' },
-];
-
-// Shared formatters — single source of truth in /js/format.js (window.arbiterFormat).
-// These wrappers delegate to the shared implementation when available but remain
-// fully self-contained so they can be extracted and unit-tested in isolation.
+// Shared formatters — single source of truth in /js/format.js (window.arbiterFormat),
+// which index.html always loads before this file. The local book palette that used
+// to sit here duplicated format.js's palette with a different hash, so a book
+// changed color depending on script order; there is now exactly one palette.
 function paletteFor(id) {
-  if (typeof window !== 'undefined' && window.arbiterFormat && window.arbiterFormat.paletteFor) {
-    return window.arbiterFormat.paletteFor(id);
-  }
-  if (!id) return BOOK_PALETTE[0];
-  let h = 0;
-  for (let i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) >>> 0;
-  return BOOK_PALETTE[h % BOOK_PALETTE.length];
+  if (window.arbiterFormat && window.arbiterFormat.paletteFor) return window.arbiterFormat.paletteFor(id);
+  return { color: '#f472b6', bg: 'rgba(244,114,182,0.12)', border: 'rgba(244,114,182,0.30)' };
 }
 
 function fmtStake(n) {
