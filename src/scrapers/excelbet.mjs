@@ -30,6 +30,36 @@ const TOTAL_GOALS_MARKET = 7989;
 /** "ASIAN HANDICAP" — the two-way goals handicap. */
 const ASIAN_HANDICAP_MARKET = 60016;
 
+/**
+ * The whole market vocabulary of this feed, counted 2026-10-02.
+ *
+ * Census of every `cs` row across the entire live payload — 630 `avs.avs`
+ * entries, all 630 carrying `scs[]` — returns SEVEN distinct market ids and no
+ * more:
+ *
+ *     cs=7989  "TOTAL GOALS"      3286 rows    published as OVER_UNDER
+ *     cs=8     "HANDICAP"         2340 rows    whole-line, refused
+ *     cs=60016 "ASIAN HANDICAP"    763 rows    published as ASIAN_HANDICAP
+ *     cs=3     "FINAL"             630 rows    published as MATCH_ODDS
+ *     cs=17    "DOUBLE CHANCE"     620 rows    catalogued, not arbitrable
+ *     cs=16    "DOUBLE CHANCE"     617 rows    catalogued, not arbitrable
+ *     cs=15    "DOUBLE CHANCE"     599 rows    catalogued, not arbitrable
+ *
+ * Seven ids is the entire feed, so the absence of both-teams-to-score here is
+ * the feed's and not a reader that has not found it yet. That question was open
+ * because these four brands publish 1X2, totals and the handicap on 543 football
+ * events each and no BTTS, which is the shape of a gap until you know the
+ * vocabulary. The three positive controls are what make the negative mean
+ * anything: all three of the constants above are in the census, so the walker
+ * reads this payload correctly and is not simply missing rows.
+ *
+ * A census keyed on outcome NAMES was tried first and was worthless twice over:
+ * its totals control matched "Sunderland" (which contains "under") and "Frigg
+ * Oslo" (which contains "gg"), and it never descended into the market map at
+ * all, so it reported six totals where this feed serves 3,286. Counting the
+ * feed's own ids needs no pattern matching at all.
+ */
+
 /** The three result codes, in the order the feed lists them. */
 const RESULT_SIDES = new Map([[1, '1'], [2, 'X'], [3, '2']]);
 /**
