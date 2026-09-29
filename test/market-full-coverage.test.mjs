@@ -42,12 +42,23 @@ test('netbet total_points with line in name → OVER_UNDER', () => {
   assert.equal(c.lineKey, '171.5');
 });
 
-test('betano FHOT (signed +/- X.X) → ASIAN_HANDICAP', () => {
-  const c = resolveContract(ev('FHOT', [
+test('betano FHOT (signed +/- X.X) → ASIAN_HANDICAP, in either leg order', () => {
+  // The leg order carries no meaning and betano does not keep it: measured on the
+  // 2026-09-29 capture, FHOT listed the negative leg first on 29 markets and the
+  // positive leg first on 15. A lineKey built from array position therefore gave
+  // one handicap two buckets, and a second book quoting the same spread could
+  // pair with one of them and never the other. Ordering by sign — the negative
+  // side IS the home handicap — makes both orders the same contract.
+  const forward = resolveContract(ev('FHOT', [
+    { name: '-10.5' }, { name: '+10.5' },
+  ]));
+  const reversed = resolveContract(ev('FHOT', [
     { name: '+10.5' }, { name: '-10.5' },
   ]));
-  assert.equal(c.family, 'ASIAN_HANDICAP');
-  assert.equal(c.lineKey, '10.5/-10.5');
+  assert.equal(forward.family, 'ASIAN_HANDICAP');
+  assert.equal(reversed.family, 'ASIAN_HANDICAP');
+  assert.equal(forward.lineKey, '-10.5/10.5', 'the home handicap leads the key');
+  assert.equal(reversed.lineKey, forward.lineKey, 'leg order must not split the contract');
 });
 
 test('betano FTGO ("Game-uri", a tennis games total) is withheld, not a goals total', () => {

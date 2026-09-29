@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import NSoft from '../src/scrapers/nsoft.mjs';
 import { instantiate } from '../src/scrapers/index.mjs';
-import { resolveContract } from '../src/scanner/market-contracts.mjs';
+import { resolveContract, canonicalOutcomeFor } from '../src/scanner/market-contracts.mjs';
 
 const fixture = JSON.parse(await fs.readFile(new URL('./fixtures/nsoft-public.json', import.meta.url)));
 const config = JSON.parse(await fs.readFile(new URL('../config/scrapers.json', import.meta.url)));
@@ -275,7 +275,29 @@ for (const [id, marketId] of Object.entries(AH_MARKETS)) {
         assert.equal(contract.lineKey, `${m.line}/${String(-Number(m.line))}`, `${id}: both legs must reach the contract`);
         // One market per line: a -0.5 and a 0.5 handicap are different contracts.
         assert.equal(m.selections.length, 2, `${id}: a handicap is two-way`);
-        assert.deepEqual(m.selections.map((s2) => s2.name), [`H1 ${m.line}`, `H2 ${-Number(m.line)}`]);
+        // The feed's own labels are "H1 -0.5"/"H2 0.5"; they are recognised, not
+        // published. canonicalOutcomeFor labels an Asian-handicap leg by a
+        // leading 1/2, "home" or "away" and nothing else, so the numbered form is
+        // the only one that PRICES. The provider label survives on providerName.
+        assert.deepEqual(m.selections.map((s2) => s2.name), [`1 (${m.line})`, `2 (${-Number(m.line)})`]);
+        assert.deepEqual(m.selections.map((s2) => s2.providerName), [`H1 ${m.line}`, `H2 ${-Number(m.line)}`],
+          `${id}: the provider label is preserved verbatim`);
+        // A contract that resolves is not a contract that prices. This is the
+        // assertion that was missing while "H1"/"H2" shipped: 583 markets and
+        // 1,166 legs across maxbet/admiral/stanleybet resolved ASIAN_HANDICAP
+        // and then routed every single leg to null, so the largest block of
+        // handicap markets in the engine produced no price at all.
+        assert.deepEqual(
+          m.selections.map((s2) => canonicalOutcomeFor(s2.name, contract, m)),
+          ['home', 'away'],
+          `${id}: both legs must route to a side`,
+        );
+        // The two legs sit at opposite values by construction. findMiddles pairs
+        // any two legs in a bucket whose handicaps differ without checking they
+        // are the same side, so stamping the MARKET line on both would report a
+        // middle between one market's own two sides.
+        assert.deepEqual(m.selections.map((s2) => Number(s2.handicap)), [Number(m.line), -Number(m.line)],
+          `${id}: each leg carries its OWN line`);
         for (const s2 of m.selections) assert.ok(s2.odds > 1, `${id}: a priced leg needs odds > 1`);
         assert.equal(m.period, 'fulltime', `${id}: only full-time handicaps are published`);
         assert.equal(m.providerMarketId, marketId, `${id}: the provider id is preserved`);

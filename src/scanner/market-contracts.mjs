@@ -799,6 +799,24 @@ function handicapLineKey(selections, a, b) {
   const first = isHome(selections[0]?.name);
   const second = isHome(selections[1]?.name);
   if (first === null || second === null || first === second) {
+    // Neither leg carries a side token, so fall back to the SIGN. This function
+    // is reached only from the Asian-handicap branch of classifyAndExtractLine,
+    // which has already proven the pair is a spread (a === -b on a half line),
+    // and in a two-way handicap the NEGATIVE side is the home handicap by
+    // definition — so this is the contract, not a guess.
+    //
+    // It used to keep the provider's leg order here "rather than guess at" one.
+    // That was right for a bare "- 6.5"/"+ 6.5" spread and wrong for a leg named
+    // after the player, which is betano's tennis TGHC ("Karen Khachanov +2.5" /
+    // "Felix Auger Aliassime -2.5"): neither name starts with a side token, so
+    // betano's own handicaps landed in TWO buckets for one contract — "2.5/-2.5"
+    // on the events listing the home player first, "-4.5/4.5" on the rest. A book
+    // quoting the same spread could then pair with one of them and never the
+    // other. Measured on the 2026-09-29 capture: 9 lineKeys for 9 distinct
+    // magnitudes, split 4/5 purely by leg order.
+    const lo = Math.min(a, b);
+    const hi = Math.max(a, b);
+    if (lo === -hi) return `${normalizeLine(lo)}/${normalizeLine(hi)}`;
     return `${normalizeLine(a)}/${normalizeLine(b)}`;
   }
   return first ? `${normalizeLine(a)}/${normalizeLine(b)}` : `${normalizeLine(b)}/${normalizeLine(a)}`;
@@ -914,7 +932,19 @@ export function canonicalOutcomeFor(selectionName, contract, ctx = {}) {
     if (/^away\b/i.test(raw)) return 'away';
     const home = normalizeTeamName(ctx.homeTeam || '');
     const away = normalizeTeamName(ctx.awayTeam || '');
-    const stripped = raw.replace(/^[+-]\s*\d+(?:[.,]\d+)?\s*/, '').replace(/^\d+(?:[.,]\d+)?\s+/, '');
+    // The line may LEAD the player name ("-1.5 Alcaraz") or TRAIL it. betano's
+    // tennis TGHC ("Total Game-uri Handicap") publishes the trailing form —
+    // "Karen Khachanov +2.5" / "Felix Auger Aliassime -2.5" — and stripping
+    // only a leading line left "karen khachanov +2.5" to be compared against the
+    // event's "karen khachanov", which never matches. The contract resolved
+    // (the line is legible) and then priced no leg, so every tennis handicap on
+    // the feed resolved into a bucket nothing could quote against. The trailing
+    // strip only fires inside the ASIAN_HANDICAP family and only when a signed
+    // number closes the name, so no totals or match-winner shape is affected.
+    const stripped = raw
+      .replace(/^[+-]\s*\d+(?:[.,]\d+)?\s*/, '')
+      .replace(/^\d+(?:[.,]\d+)?\s+/, '')
+      .replace(/\s*[+-]\s*\d+(?:[.,]\d+)?\s*$/, '');
     const normSel = normalizeTeamName(stripped);
     if (home && normSel && normSel === home) return 'home';
     if (away && normSel && normSel === away) return 'away';

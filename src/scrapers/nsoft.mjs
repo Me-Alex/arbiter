@@ -386,6 +386,12 @@ export default class NSoftScraper extends ScraperBase {
    * helper's "both legs carry the market's line" rule cannot be reused — that
    * rule is right for OVER/UNDER and wrong for H1/H2, and applying it rejects
    * every real handicap while accepting none of the impostors.
+   *
+   * The "H1"/"H2" prefix is how the sides are RECOGNISED, not how they are
+   * published: the emitted selection names are "1 (-0.5)" / "2 (0.5)". The
+   * engine's AH side matcher reads a leading 1/2, home or away and nothing else,
+   * so the feed's own labels resolve the contract and then price no leg. The
+   * provider label survives on `providerName`.
    */
   _asianHandicapMarkets(e, spec) {
     const out = [];
@@ -407,9 +413,39 @@ export default class NSoftScraper extends ScraperBase {
         name: m.name,
         period: 'fulltime',
         line,
-        selections: [home, away].map((o) => ({
-          id: String(o.id), providerOutcomeId: o.outcomeId, name: o.name, odds: o.odd, handicap: line,
-        })),
+        // "1 (-0.5)" / "2 (0.5)", not the feed's "H1 -0.5" / "H2 0.5". Both
+        // resolve the same contract, but only the numbered form ROUTES:
+        // canonicalOutcomeFor labels an Asian-handicap leg home/away by /^[12]\b/,
+        // /^home\b/ or /^away\b/, and "H1 -0.5" matches none of them, so the
+        // nsoft shape resolved ASIAN_HANDICAP and then priced no leg at all.
+        // Measured on the 2026-09-29 production sweep across all 24 enabled
+        // jobs, that was 583 markets and 1,166 legs on maxbet, admiral and
+        // stanleybet — the largest single block of unpriceable contracts in the
+        // engine, and larger than any book that was working. The feed's own
+        // label is kept on `providerName` and its outcome id on
+        // `providerOutcomeId`; only the engine-facing name is canonicalised.
+        // everymatrix-wamp.mjs emits the same numbered shape for the same reason.
+        selections: [home, away].map((o, i) => {
+          // Already proven non-null and exactly opposing by the
+          // oppositeHandicapLegs check above, which returns false on either.
+          const legLine = nameLine(o.name);
+          return {
+            id: String(o.id),
+            providerOutcomeId: o.outcomeId,
+            providerName: o.name,
+            name: `${i === 0 ? '1' : '2'} (${legLine})`,
+            odds: o.odd,
+            // The leg's OWN line, not the market's. A two-way handicap's two
+            // legs sit at opposite values by construction, so stamping both
+            // with the market line made the home and the away leg carry the
+            // same handicap — and findMiddles pairs any two legs in a bucket
+            // whose handicaps differ without checking they are the same side,
+            // which is exactly the shape that reports a middle between one
+            // market's own two sides. everymatrix-wamp.mjs already emits the
+            // per-leg value.
+            handicap: legLine,
+          };
+        }),
       });
     }
     return out;

@@ -7,6 +7,59 @@ import { describeError, summariseReasons } from './feg-common.mjs';
 const SPORT_IDS = ['FOOT', 'TENN', 'BASK', 'HANB', 'ICEH', 'VOLY', 'FUTS', 'DART', 'SNOO', 'MMA', 'RUGB', 'CRIC', 'ESPORTS', 'TABT', 'BADM', 'BASE', 'AMFO', 'MMAF', 'ESPS', 'VOLL', 'HAND', 'WTPL', 'TABL', 'BOXI', 'BCHV', 'VRTS', 'SWIM', 'FENC', 'TAEK', 'WINT', 'ATHL', 'GYMA', 'MOGP', 'RALL', 'MOTO', 'SPED', 'FRM1'];
 
 /**
+ * Betano markets whose two selections are bare signed spreads with no side
+ * token at all — "FHOT" (Handicap) publishes "-8.5" / "+8.5" and nothing else.
+ * Neither leg can be labelled home or away from its own name, so the contract
+ * resolved (the line is legible) and then priced no leg at all.
+ *
+ * The SIGN is the side, which is what a spread without team names means: a
+ * negative line is the home handicap, a positive one the away handicap. Index
+ * order carries no such guarantee and cannot be used — measured on the
+ * 2026-09-29 capture, FHOT listed the negative leg first on 29 markets and the
+ * positive leg first on 15. Ordering the buckets by position would have split
+ * one handicap across two lineKeys, so the side is stamped into the name and
+ * the provider's own leg order is left untouched; handicapLineKey then normalises
+ * by the token and both orders collapse onto the same line.
+ *
+ * Only a market whose BOTH legs are bare, opposite-signed and on a half line is
+ * rewritten. Anything else is passed through unchanged so resolveContract keeps
+ * withholding a shape it cannot prove exhaustive.
+ */
+const BARE_SPREAD_KEYS = new Set(['FHOT']);
+const BARE_SPREAD = /^\s*([+-])\s*(\d+(?:[.,]\d+)?)\s*$/;
+
+/** Returns the selections with sides assigned, or the input if it is not this shape. */
+function assignBareSpreadSides(key, sels) {
+  if (!BARE_SPREAD_KEYS.has(key) || sels.length !== 2) return sels;
+  const legs = sels.map((s) => BARE_SPREAD.exec(String(s.name || '')));
+  if (legs.some((m) => m === null)) return sels;
+  const [a, b] = legs.map((m) => ({ sign: m[1], line: Number(m[2].replace(',', '.')) }));
+  if (a.sign === b.sign) return sels;
+  // Half lines only. At .0 the result pushes instead of settling, so the market
+  // is not exhaustive; this also excludes 0, which is neither a spread nor a line.
+  const isHalf = (x) => !Number.isInteger(x) && Number.isInteger(x * 2);
+  if (!isHalf(a.line) || !isHalf(b.line)) return sels;
+  return sels.map((s, i) => {
+    const { sign, line } = i === 0 ? a : b;
+    return {
+      ...s,
+      providerName: s.name,
+      // "1 (-8.5)" / "2 (+8.5)": the canonical numbered form every other adapter
+      // publishes and the only one canonicalOutcomeFor labels. A signed line on
+      // its own is not enough — it is the side token the matcher looks for. The
+      // sign is kept inside the brackets because it is what the provider printed.
+      name: `${sign === '-' ? '1' : '2'} (${sign}${line})`,
+      // The provider's own `handicap` on this market is a type flag (measured:
+      // 3 and 4 on FHOT, 1 on TGHC), not a line. Stamping each leg with its own
+      // signed line keeps findMiddles comparing lines instead of flags; it never
+      // checks that two legs are the same side, so both legs carrying one value
+      // would report a middle between one market's own two sides.
+      handicap: `${sign}${line}`,
+    };
+  });
+}
+
+/**
  * Betano scraper — multi-sport stealth interception.
  *
  * Navigates to one sport page to clear Cloudflare, then fetches
@@ -192,7 +245,7 @@ export default class BetanoScraper extends ScraperBase {
           .filter((s) => Number.isFinite(s.price) && s.price > 1)
           .map((s) => ({ id: String(s.id), name: String(s.shortName || s.name || '').trim(), odds: Number(s.price), handicap: s.handicap ?? null, group: 'Main' }));
         if (sels.length < 2) continue;
-        eventMarkets.push({ key: m.type || String(mid), name: m.name || m.type || 'Market', period: 'fulltime', selections: sels });
+        eventMarkets.push({ key: m.type || String(mid), name: m.name || m.type || 'Market', period: 'fulltime', selections: assignBareSpreadSides(m.type || String(mid), sels) });
       }
       if (eventMarkets.length === 0) continue;
       // Per-event deep link only. The feed URL is an API endpoint, not a
