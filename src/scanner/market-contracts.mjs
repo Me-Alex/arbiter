@@ -830,11 +830,17 @@ export function canonicalOutcomeFor(selectionName, contract, ctx = {}) {
   if (contract.family === 'OVER_UNDER') {
     // O/U family uses signed +/- as well as peste/sub/over/under text. Decode
     // signed selections: +X.X ’ over, -X.X ’ under, magnitude is in lineKey.
+    // Matched against `lower`, not `raw`: these patterns are case-SENSITIVE and
+    // the Romanian bookmakers that dominate this feed title the selection
+    // "Peste 2.5" / "Sub 2.5" with a capital letter. Tested against `raw` they
+    // never matched, so every Romanian O/U leg routed to null and the contract
+    // resolved but could not be priced — the totals family was silently dead
+    // for exactly the books that publish the most of them.
     const sign = /^\s*[+]\s*\d/.test(raw) ? '+' : /^\s*[-]\s*\d/.test(raw) ? '-' : null;
     if (sign === '+') return 'over';
     if (sign === '-') return 'under';
-    if (/^(?:over|peste|mai mult)\b/.test(raw)) return 'over';
-    if (/^(?:under|sub|putin)\b/.test(raw)) return 'under';
+    if (/^(?:over|peste|mai mult)\b/.test(lower)) return 'over';
+    if (/^(?:under|sub|putin)\b/.test(lower)) return 'under';
     // betano TGOT: P X.X = peste / over; S X.X = sub / under
     if (/^p\s/i.test(raw)) return 'over';
     if (/^s\s/i.test(raw)) return 'under';

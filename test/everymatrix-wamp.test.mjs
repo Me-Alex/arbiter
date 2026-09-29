@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import EveryMatrixWampScraper from '../src/scrapers/everymatrix-wamp.mjs';
 import GetsBetScraper from '../src/scrapers/getsbet.mjs';
 import ContibetScraper from '../src/scrapers/contibet.mjs';
-import { isFullTimeMarket } from '../src/scanner/market-contracts.mjs';
+import { isFullTimeMarket, resolveContract, canonicalOutcomeFor } from '../src/scanner/market-contracts.mjs';
 
 /**
  * EveryMatrix WAMP is the most complex transport in src/scrapers/ — a reverse
@@ -279,4 +279,272 @@ test('a dump aborted before it starts never opens a socket', async () => {
     (err) => err.code === 'EABORTED',
   );
   assert.equal(opened, false, 'no socket is opened for an already-cancelled run');
+});
+
+/**
+ * The family extractors (everything except 1X2).
+ *
+ * A live getsbet capture on 2026-09-29 showed the feed publishing 77 markets
+ * per match across 19 betting type ids, of which this adapter published 21 —
+ * the 1X2 and nothing else. Two separate faults caused that, and both were
+ * silent, so both are pinned here:
+ *
+ *   1. OUTCOME records carry NO `marketId`. The only outcome→market link is a
+ *      MARKET_OUTCOME_RELATION row, so every extractor that compared
+ *      `outcome.marketId` to a market id discarded every leg.
+ *   2. `typeName` is the English CATEGORY and is identical for both legs of a
+ *      market ("Total Score Over"/"Total Score Under", "Both Teams To Score"),
+ *      while `shortTranslatedName` is the per-leg LABEL ("Peste 2.5", "Da").
+ *      Reading the category gave both legs the same string, so no side regex
+ *      could split them even once the join worked.
+ *
+ * `familyDump` builds records in the real shape: a relation row per leg, no
+ * `marketId` on any outcome, and a `typeName` that is deliberately useless as
+ * a side label.
+ */
+function leg(marketId, id, typeName, side, odds) {
+  return [
+    { _type: 'OUTCOME', id, typeName, shortTranslatedName: side },
+    { _type: 'MARKET_OUTCOME_RELATION', id: `r${id}`, marketId, outcomeId: id },
+    ...(odds === null ? [] : [{ _type: 'BETTING_OFFER', id: `o${id}`, outcomeId: id, odds, isAvailable: true }]),
+  ];
+}
+
+function familyDump(extraMarkets) {
+  return [...oneXTwoRecords(makeScraper()), ...extraMarkets];
+}
+
+function marketsOf(s, records) {
+  const [ev] = s.extractEvents([{ match: makeMatch(), records }]);
+  assert.ok(ev, 'a complete 1X2 keeps the event, so the extras are reachable');
+  return ev.markets;
+}
+
+function byKey(markets, key) {
+  return markets.filter((m) => m.key === key);
+}
+
+test('legs are attributed through MARKET_OUTCOME_RELATION, not outcome.marketId', () => {
+  const s = makeScraper();
+  const records = familyDump([
+    { _type: 'MARKET', id: 700, bettingTypeId: '76', name: 'Ambele echipe marchează - Timp regulamentar.' },
+    // Both legs share one category, exactly as the dealer sends them.
+    ...leg(700, 710, 'Both Teams To Score', 'Da', 1.83),
+    ...leg(700, 711, 'Both Teams To Score', 'Nu', 1.98),
+  ]);
+  for (const r of records) {
+    // The relation row is the one place marketId belongs; the OUTCOME must not
+    // carry it, or the join would never be exercised.
+    if (r._type === 'OUTCOME') assert.equal(r.marketId, undefined, 'the fixture must not hand the join a shortcut');
+  }
+  const btts = byKey(marketsOf(s, records), 'BOTH_TEAMS_SCORE');
+  assert.equal(btts.length, 1, 'the relation table is enough to attribute both legs');
+  assert.deepEqual(btts[0].selections.map((x) => x.name), ['Yes', 'No']);
+  assert.deepEqual(btts[0].selections.map((x) => x.odds), [1.83, 1.98]);
+});
+
+test('a goals total resolves as a canonical OVER_UNDER with the line in the name', () => {
+  const s = makeScraper();
+  const records = familyDump([
+    { _type: 'MARKET', id: 720, bettingTypeId: '47', name: 'Total Peste/Sub 2.5 Timp regulamentar.', paramFloat1: 2.5 },
+    ...leg(720, 721, 'Total Score Over', 'Peste 2.5', 1.80),
+    ...leg(720, 722, 'Total Score Under', 'Sub 2.5', 1.88),
+  ]);
+  const [total] = byKey(marketsOf(s, records), 'TOTAL_GOALS');
+  assert.ok(total, 'a half-line total is published');
+  assert.deepEqual(total.selections.map((x) => x.name), ['Peste 2.5', 'Sub 2.5']);
+
+  // Resolving is not enough: the leg has to route to over/under as well, or
+  // the contract prices nothing. Capitalised "Peste" used to fail this.
+  const contract = resolveContract({ ...total, sport: 'Football', homeTeam: 'FCSB', awayTeam: 'Dinamo' });
+  assert.equal(contract.family, 'OVER_UNDER');
+  assert.equal(contract.lineKey, '2.5');
+  assert.notEqual(contract.arbEligible, false, 'a two-way goals total is arbitrable');
+  assert.deepEqual(
+    total.selections.map((x) => canonicalOutcomeFor(x.name, contract, {})),
+    ['over', 'under'],
+  );
+});
+
+test('a first-half total is separated by period, not by a key suffix', () => {
+  const s = makeScraper();
+  const records = familyDump([
+    { _type: 'MARKET', id: 730, bettingTypeId: '47', name: 'Total Peste/Sub 0.5 Repriza 1', paramFloat1: 0.5 },
+    ...leg(730, 731, 'Total Score Over', 'Peste 0.5', 1.36),
+    ...leg(730, 732, 'Total Score Under', 'Sub 0.5', 2.80),
+  ]);
+  const markets = marketsOf(s, records);
+  const [firstHalf] = byKey(markets, 'TOTAL_GOALS');
+  assert.ok(firstHalf, 'the first-half total is published, not dropped');
+  assert.equal(firstHalf.key, 'TOTAL_GOALS', 'no _1H suffix, which resolves to nothing');
+  assert.equal(firstHalf.period, 'half1', 'the window travels in period');
+  const contract = resolveContract({ ...firstHalf, sport: 'Football', homeTeam: 'FCSB', awayTeam: 'Dinamo' });
+  assert.equal(contract.period, 'half1', 'and the resolver buckets on it');
+});
+
+test('totals at a whole or quarter line are withheld, because they are not exhaustive', () => {
+  const s = makeScraper();
+  // "Total Peste/Sub 2" pushes at exactly 2; "2.25" half-pushes one leg.
+  // classifyAndExtractLine does NOT test this on the O/U path — it only
+  // requires equal magnitudes — so TOTAL_GOALS at these lines would otherwise
+  // resolve and price as arbitrable.
+  for (const line of [2, 2.25, 3, 1.75]) {
+    const records = familyDump([
+      { _type: 'MARKET', id: 740, bettingTypeId: '47', name: `Total Peste/Sub ${line} Timp regulamentar.`, paramFloat1: line },
+      ...leg(740, 741, 'Total Score Over', `Peste ${line}`, 1.40),
+      ...leg(740, 742, 'Total Score Under', `Sub ${line}`, 2.60),
+    ]);
+    assert.equal(
+      byKey(marketsOf(s, records), 'TOTAL_GOALS').length, 0,
+      `a total at ${line} must not be published as an arbitrable two-way`,
+    );
+  }
+});
+
+test('a team total is not a match total', () => {
+  const s = makeScraper();
+  // Type 77 carries the identical "Total Peste/Sub" wording for ONE team's
+  // goals. Publishing it would let another book's match total stand in for it.
+  const records = familyDump([
+    { _type: 'MARKET', id: 750, bettingTypeId: '77', name: 'Poli Timisoara Total Peste/Sub 2.5 - Timp regulamentar.', paramFloat1: 2.5 },
+    ...leg(750, 751, 'Team Score Over/Under', 'Gazde Peste 2.5', 3.10),
+    ...leg(750, 752, 'Team Score Over/Under', 'Gazde Sub 2.5', 1.30),
+  ]);
+  assert.equal(byKey(marketsOf(s, records), 'TOTAL_GOALS').length, 0);
+});
+
+test('an Asian handicap routes home/away and is keyed on the line, not on leg order', () => {
+  const s = makeScraper();
+  const records = familyDump([
+    { _type: 'MARKET', id: 760, bettingTypeId: '48', name: 'Handicap asiatic -1.5 - Timp regulamentar.', paramFloat1: 1.5 },
+    // Listed away-first on purpose: the two legs must not decide the contract.
+    ...leg(760, 761, 'Handicap Winner With Money Back On Draw', 'Oaspeţi (+1.5)', 1.40),
+    ...leg(760, 762, 'Handicap Winner With Money Back On Draw', 'Gazde (-1.5)', 2.63),
+  ]);
+  const [hcap] = byKey(marketsOf(s, records), 'ASIAN_HANDICAP');
+  assert.ok(hcap, 'a half-line handicap is published');
+  assert.deepEqual(hcap.selections.map((x) => x.name), ['1 (-1.5)', '2 (1.5)']);
+
+  const contract = resolveContract({ ...hcap, sport: 'Football', homeTeam: 'FCSB', awayTeam: 'Dinamo' });
+  assert.equal(contract.family, 'ASIAN_HANDICAP');
+  assert.equal(contract.lineKey, '-1.5/1.5', 'the line key is home-first whatever the leg order');
+  assert.deepEqual(
+    hcap.selections.map((x) => canonicalOutcomeFor(x.name, contract, {})),
+    ['home', 'away'],
+    'the numbered shape routes; nsoft’s "H1 -1.5" resolves but prices nothing',
+  );
+});
+
+test('a whole or quarter handicap is withheld', () => {
+  const s = makeScraper();
+  for (const line of [1, 1.25, 2.25]) {
+    const records = familyDump([
+      { _type: 'MARKET', id: 770, bettingTypeId: '48', name: `Handicap asiatic -${line} - Timp regulamentar.`, paramFloat1: line },
+      ...leg(770, 771, 'Handicap Winner With Money Back On Draw', `Gazde (-${line})`, 2.10),
+      ...leg(770, 772, 'Handicap Winner With Money Back On Draw', `Oaspeţi (+${line})`, 1.80),
+    ]);
+    assert.equal(
+      byKey(marketsOf(s, records), 'ASIAN_HANDICAP').length, 0,
+      `a handicap at ${line} pushes or half-settles, so it is not a surebet`,
+    );
+  }
+});
+
+test('a handicap whose legs are not negations is withheld', () => {
+  const s = makeScraper();
+  // Two same-signed legs do not cover the outcome space, whatever the name says.
+  const records = familyDump([
+    { _type: 'MARKET', id: 780, bettingTypeId: '48', name: 'Handicap asiatic -1.5 - Timp regulamentar.', paramFloat1: 1.5 },
+    ...leg(780, 781, 'Handicap Winner With Money Back On Draw', 'Gazde (-1.5)', 2.10),
+    ...leg(780, 782, 'Handicap Winner With Money Back On Draw', 'Oaspeţi (-1.5)', 1.80),
+  ]);
+  assert.equal(byKey(marketsOf(s, records), 'ASIAN_HANDICAP').length, 0);
+});
+
+test('a leg with no price is not a market', () => {
+  const s = makeScraper();
+  const records = familyDump([
+    { _type: 'MARKET', id: 790, bettingTypeId: '47', name: 'Total Peste/Sub 2.5 Timp regulamentar.', paramFloat1: 2.5 },
+    ...leg(790, 791, 'Total Score Over', 'Peste 2.5', 1.80),
+    ...leg(790, 792, 'Total Score Under', 'Sub 2.5', null),
+  ]);
+  assert.equal(byKey(marketsOf(s, records), 'TOTAL_GOALS').length, 0);
+});
+
+test('draw no bet is catalogued under a bare key, and stays non-arbitrable', () => {
+  const s = makeScraper();
+  const records = familyDump([
+    { _type: 'MARKET', id: 800, bettingTypeId: '112', name: 'Egal - Pariul se rambursează - Timp regulamentar.' },
+    ...leg(800, 801, 'Winner with money back on draw', 'Gazde', 1.72),
+    ...leg(800, 802, 'Winner with money back on draw', 'Oaspeţi', 2.05),
+  ]);
+  const markets = marketsOf(s, records);
+  const [dnb] = byKey(markets, 'DRAW_NO_BET');
+  assert.ok(dnb, 'a draw-refunded product is still catalogued');
+
+  // DNB_1H / DRAW_NO_BET_1H match no whitelist and fall through to the generic
+  // 2-way resolver, which returns an ARBITRABLE MATCH_ODDS for "1"/"2" — a
+  // fake surebet for a product that cannot arbitrage. The key must stay bare.
+  const contract = resolveContract({ ...dnb, sport: 'Football', homeTeam: 'FCSB', awayTeam: 'Dinamo' });
+  assert.equal(contract.family, 'DRAW_NO_BET');
+  assert.equal(contract.arbEligible, false, 'the draw is refunded, so this is not a surebet');
+  assert.notEqual(
+    resolveContract({ key: 'DNB_1H', selections: dnb.selections, period: 'half1' })?.arbEligible,
+    false,
+    'documents the landmine the bare key avoids: a _1H suffix resolves ARBITRABLE',
+  );
+});
+
+test('double chance is catalogued with its three legs and is not arbitrable', () => {
+  const s = makeScraper();
+  const records = familyDump([
+    { _type: 'MARKET', id: 810, bettingTypeId: '9', name: 'Șansă Dublă - Timp regulamentar.' },
+    ...leg(810, 811, 'Double Chance', 'Gazde sau Egal', 1.10),
+    ...leg(810, 812, 'Double Chance', 'Oaspeţi sau Egal', 2.05),
+    ...leg(810, 813, 'Double Chance', 'Gazde sau Oaspeţi', 1.22),
+  ]);
+  const [dc] = byKey(marketsOf(s, records), 'DOUBLE_CHANCE');
+  assert.ok(dc, 'double chance is published for coverage');
+  assert.deepEqual(dc.selections.map((x) => x.name), ['1X', 'X2', '12']);
+  const contract = resolveContract({ ...dc, sport: 'Football', homeTeam: 'FCSB', awayTeam: 'Dinamo' });
+  assert.equal(contract.family, 'DOUBLE_CHANCE');
+  assert.equal(contract.arbEligible, false, '1X and X2 both settle on a draw, so they overlap');
+});
+
+test('a BTTS COMBINATION is not published as plain BTTS', () => {
+  const s = makeScraper();
+  // Type 419 and 743 label their legs "Da și Sub 2.5" / "… : Nu" — the words
+  // are there, the contract is not. Only type 76 is plain both-teams-to-score.
+  for (const id of ['419', '743']) {
+    const records = familyDump([
+      { _type: 'MARKET', id: 820, bettingTypeId: id, name: 'Ambele echipe marchează și Total goluri - Timp regulamentar.' },
+      ...leg(820, 821, 'Both Teams To Score And Totals', 'Da și Sub 2.5', 1.50),
+      ...leg(820, 822, 'Both Teams To Score And Totals', 'Nu și Peste 2.5', 2.35),
+    ]);
+    assert.equal(byKey(marketsOf(s, records), 'BOTH_TEAMS_SCORE').length, 0, `type ${id} is a combination`);
+  }
+});
+
+test('a contradictory duplicate offer does not overwrite the first price', () => {
+  const s = makeScraper();
+  const records = familyDump([
+    { _type: 'MARKET', id: 830, bettingTypeId: '47', name: 'Total Peste/Sub 2.5 Timp regulamentar.', paramFloat1: 2.5 },
+    ...leg(830, 831, 'Total Score Over', 'Peste 2.5', 1.80),
+    ...leg(830, 832, 'Total Score Under', 'Sub 2.5', 1.88),
+    { _type: 'BETTING_OFFER', id: 'dup', outcomeId: 831, odds: 99, isAvailable: true },
+  ]);
+  const [total] = byKey(marketsOf(s, records), 'TOTAL_GOALS');
+  assert.equal(total.selections[0].odds, 1.80, 'the first price stands');
+});
+
+test('an unavailable offer is not a price', () => {
+  const s = makeScraper();
+  const records = familyDump([
+    { _type: 'MARKET', id: 840, bettingTypeId: '76', name: 'Ambele echipe marchează - Timp regulamentar.' },
+    ...leg(840, 841, 'Both Teams To Score', 'Da', 1.83),
+    { _type: 'OUTCOME', id: 842, typeName: 'Both Teams To Score', shortTranslatedName: 'Nu' },
+    { _type: 'MARKET_OUTCOME_RELATION', id: 'r842', marketId: 840, outcomeId: 842 },
+    { _type: 'BETTING_OFFER', id: 'o842', outcomeId: 842, odds: 1.98, isAvailable: false },
+  ]);
+  assert.equal(byKey(marketsOf(s, records), 'BOTH_TEAMS_SCORE').length, 0);
 });
