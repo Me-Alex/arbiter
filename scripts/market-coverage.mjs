@@ -46,7 +46,17 @@ import { resolveContract } from '../src/scanner/market-contracts.mjs';
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url));
 
-const DEFAULT_BOOKS = 'fortuna,casa-pariurilor,admiral,maxbet,excelbet,winboss,superbet,netbet,don';
+// The books measured by default. Every entry here is an enabled job that
+// publishes a first-class 1X2, chosen to span the independent feeds rather than
+// to list every configured brand: one representative per provider is enough to
+// measure a contract, and extra brands inside a feed add no independent pairs.
+//
+// unibet and betano are here because both are enabled, both publish totals,
+// BTTS and (betano) the Asian handicap, and both are independent of every other
+// feed below. Leaving them out understated the Asian handicap as 6 books when
+// the live captures carry it on a 7th independent feed, and understated totals
+// and BTTS by two publishers each. Pass an explicit list to measure others.
+const DEFAULT_BOOKS = 'fortuna,casa-pariurilor,admiral,maxbet,excelbet,winboss,superbet,netbet,don,unibet,betano';
 
 const args = process.argv.slice(2);
 const wanted = (args[0] || DEFAULT_BOOKS).split(',').map((b) => b.trim()).filter(Boolean);

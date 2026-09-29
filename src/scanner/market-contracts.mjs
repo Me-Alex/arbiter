@@ -106,12 +106,15 @@ export function isFullTimeMarket(m = {}) {
 const SUB_SETTLEMENT_WORDS = [
   // Romanian, in both the ordinal-first and the word-first orderings a book
   // actually emits. `1. repriza` is the FEG spelling and the one a new adapter
-  // is most likely to copy, so matching only `repriza 1` left it open.
-  /\brepriza\s*[12]\b/i, /\b[12]\.?\s*repriza\b/i,
-  /\bprima\s*repriza\b/i, /\ba\s*doua\s*repriza\b/i,
+  // is most likely to copy, so matching only `repriza 1` left it open. The
+  // `repriz[aă]` classes are diacritic-insensitive AND the lookahead replaces
+  // the trailing `\b` because JS `\w` is ASCII-only: `ă` is a non-word char, so
+  // `\b` never fires after it and the live spelling "repriză" was missed.
+  /\brepriz[aă]\s*[12](?![a-z0-9])/i, /\b[12]\.?\s*repriz[aă](?![a-z0-9])/i,
+  /\bprima\s*repriz[aă](?![a-z0-9])/i, /\ba\s*doua\s*repriz[aă](?![a-z0-9])/i,
   /\b1st\s*half\b/i, /\b2nd\s*half\b/i, /\bfirst\s*half\b/i, /\bsecond\s*half\b/i,
-  /\bhalf\s*time\s*or\s*full\b/i, /\bpauza\s*sau\s*final\b/i,
-  /\bhalf\s*time\b/i, /\bpauza\b/i,
+  /\bhalf\s*time\s*or\s*full\b/i, /\bpauz[aă]\s*sau\s*final\b/i,
+  /\bhalf\s*time\b/i, /\bpauz[aă]\b/i,
   /\bdouble\s*chance\b/i, /\bdubla\s*(?:sansa|sanșa|șansă|chance)\b/i,
 ];
 
@@ -214,6 +217,36 @@ function round2(value) {
 // ===========================================================================
 
 /**
+ * Settlement-window words that appear in a market's own NAME, used to correct a
+ * declared `period` that the adapter stamped too broadly.
+ *
+ * A subset of SUB_SETTLEMENT_WORDS above, split by WHICH half they name so the
+ * contract can be bucketed as half1/half2 rather than merely "not full-time" —
+ * the period is part of the bucket key, so a first-half total must not land in
+ * the same bucket as the full-time total of the same line.
+ *
+ * These are the spellings measured on the live feeds: betano's first-half goals
+ * total is `OUH1 "Goluri prima repriză Peste/Sub"`, FEG writes `1. repriza`,
+ * and the English books write "1st half"/"First Half".
+ *
+ * The Romanian spellings are written diacritic-insensitively on purpose, and
+ * they deliberately avoid a trailing `\b`. JS `\b`/`\w` are ASCII-only
+ * (`[A-Za-z0-9_]`), so a Romanian letter such as `ă` counts as a NON-word
+ * character: `\brepriz[aă]\b` matches "repriza" but silently fails on
+ * "repriză" — the char after `[aă]` is a non-word letter and the next is a
+ * space, so no boundary exists there. `(?![a-z0-9])` is the Unicode-safe "not
+ * followed by another word character" test and fires for both spellings.
+ */
+const FIRST_HALF_WORDS = [
+  /\bprima\s*repriz[aă](?![a-z0-9])/i, /\brepriz[aă]\s*[1i](?![a-z0-9])/i, /\b[1i]\.?\s*repriz[aă](?![a-z0-9])/i,
+  /\b1st\s*half\b/i, /\bfirst\s*half\b/i,
+];
+const SECOND_HALF_WORDS = [
+  /\ba\s*doua\s*repriz[aă](?![a-z0-9])/i, /\brepriz[aă]\s*[2ii](?![a-z0-9])/i, /\b[2ii]\.?\s*repriz[aă](?![a-z0-9])/i,
+  /\b2nd\s*half\b/i, /\bsecond\s*half\b/i,
+];
+
+/**
  * A family is `arbEligible: true` when its outcomes are mutually exclusive and
  * jointly exhaustive — i.e. exactly one outcome is guaranteed to pay out at
  * full stake. Only such families admit the inverse-sum < 1 arbitrage math.
@@ -224,7 +257,23 @@ function round2(value) {
  * recognized for cataloging and reporting, just not scanned for arbitrage.
  */
 export function canonicalPeriod(market = {}) {
-  if (isFullTimeMarket(market)) return 'fulltime';
+  if (isFullTimeMarket(market)) {
+    // A declared `fulltime` period is only as trustworthy as the adapter that
+    // wrote it, and several adapters stamp it on every market they emit.
+    // betano hardcodes `period: 'fulltime'` on all of them, so its first-half
+    // goals total ("Goluri prima repriza Peste/Sub", key OUH1) declared
+    // fulltime and resolved to OVER_UNDER/0.5 — the exact bucket a genuine
+    // full-time goals 0.5 uses. A first-half price and a full-time price then
+    // pair and the scanner reports an arbitrage over two different settlement
+    // windows. The market's own name is the provider's text, so when the two
+    // disagree the name wins, the same rule isDeclaredFullTimeMarket applies.
+    const name = String(market.name || '').trim();
+    if (name) {
+      if (FIRST_HALF_WORDS.some((re) => re.test(name))) return 'half1';
+      if (SECOND_HALF_WORDS.some((re) => re.test(name))) return 'half2';
+    }
+    return 'fulltime';
+  }
   const p = String(market?.period || '').trim().toLowerCase();
   if (p === 'half1' || p === '1st_half' || p === 'first_half' || /prima\s*repriza|^repriza\s*1\b|[12](st|nd)?\s*half/.test(p)) return 'half1';
   if (p === 'half2' || p === '2nd_half' || p === 'second_half' || /a\s*doua\s*repriza|^repriza\s*2\b|^[2]\s*repriza/.test(p)) return 'half2';
@@ -296,6 +345,34 @@ export function resolveContract(market = {}) {
     }
   }
 
+  // ---- 3b. DRAW_NO_BET (2-way, draw refunds) — recognized, NEVER arbitrable ----
+  //
+  // This is the highest-consequence family in this file and the easiest to get
+  // wrong, because a draw-no-bet market *looks* exactly like a two-way match
+  // winner: two priced sides, the winner pays, the loser loses. The difference
+  // is the third outcome. On a draw the stake is REFUNDED, so the two legs are
+  // NOT jointly exhaustive — one outcome out of three returns the stake instead
+  // of paying. The inverse-sum < 1 test assumes exactly one leg pays in full for
+  // every outcome, so on a draw it books an "arbitrage" whose real payout is a
+  // partial stake return. Nothing about the selection shape distinguishes it,
+  // which is why this must be keyed off the market, never inferred from "1|2".
+  //
+  // Measured on the live feeds, DNB is served as:
+  //   FEG     ufo:mtyp:00-03  "Victorie fara egal"  1/2 sides
+  //   Betano  DNOB            "Niciun pariu pe egal"  team-name sides
+  // Both were routed to a 2-outcome MATCH_ODDS — arbitrable — which put a DNB
+  // "1" in the same engine bucket as a real full-time result "1". A Fortuna DNB
+  // "1" at 2.10 paired against another book's full-time "1" at 1.90 reads as a
+  // surebet and then evaporates on any draw. It is catalogued here (arbEligible
+  // :false) rather than dropped, so a run can still report that the feed carries
+  // it and exactly why it is not a candidate.
+  if (key === 'DRAW_NO_BET' || key === 'DNOB' || key === 'DRAW_NO_BET_2WAY' || key === 'UFO:MTYP:00-03') {
+    const sides = market.selections || [];
+    if (sides.length === 2) {
+      return { family: 'DRAW_NO_BET', period, lineKey: '_', outcomes: ['home', 'away'], arbEligible: false };
+    }
+  }
+
   // ---- 4. OVER/UNDER and ASIAN_HANDICAP via provider whitelists ----
   // FEG routing table — sport-prefix in XX selects the family, market-suffix in
   // YY names the contract shape. This covers ALL FEG markets across football,
@@ -340,10 +417,44 @@ export function resolveContract(market = {}) {
     const inline = classifyAndExtractLine(market.selections, { kind: 'AH' });
     if (inline) return { family: 'ASIAN_HANDICAP', period, lineKey: inline.lineKey, outcomes: inline.outcomes };
   }
-  // TOTAL_* (favbet/netbet style bundled keys) + betano *OU/*OUT keys + FEG *-02 totals — line in name
-  if (key === 'TOTAL_GOALS' || key === 'TOTAL' || key === 'TOTAL_GAMES' || key === 'TOTAL_POINTS' || key === 'TOTAL_180S' || /^H?CTG$/i.test(key) || /^T?GOT$/i.test(key) || /^OUH\d?$/i.test(key) || key === 'FTGO' || key === 'FTPO' || key === 'FOUT' || key === 'CNOU' || key === 'TCOU' || key === 'TSMF' || key === 'OVUN' || key === 'UFO:MTYP:00-0U' || key === 'UFO:MTYP:14-02' || key === 'UFO:MTYP:11-01' || key === 'UFO:MTYP:0C-03' || key === 'UFO:MTYP:35-01' || key === 'UFO:MTYP:02-06') {
+  // Goal totals (favbet/netbet style bundled keys + betano *GOT keys + FEG
+  // *-0U/-02 totals) — line in name. Non-goal totals (corners, cards, points,
+  // games) are deliberately absent: they are withheld by the guard below,
+  // because the OVER_UNDER contract cannot express WHAT the line counts.
+  if (key === 'TOTAL_GOALS' || key === 'TOTAL' || key === 'TOTAL_180S' || /^H?CTG$/i.test(key) || /^T?GOT$/i.test(key) || /^OUH\d?$/i.test(key) || key === 'OVUN' || key === 'UFO:MTYP:00-0U' || key === 'UFO:MTYP:14-02' || key === 'UFO:MTYP:11-01' || key === 'UFO:MTYP:0C-03' || key === 'UFO:MTYP:35-01' || key === 'UFO:MTYP:02-06') {
     const inline = classifyAndExtractLine(market.selections, { kind: 'OU' });
     if (inline) return { family: 'OVER_UNDER', period, lineKey: inline.lineKey, outcomes: ['over', 'under'] };
+  }
+
+  // ---- 5b. Non-goal totals are WITHHELD: the engine has no "what is counted"
+  // dimension, so a corners or cards line would bucket with a goals line ----
+  //
+  // The OVER_UNDER contract is (family, period, lineKey) and nothing says what
+  // the line counts. Betano publishes several totals that are NOT goals, and
+  // measured on the live feed they are named distinctly:
+  //
+  //   CNOU  "Cornere Peste/Sub"        corners      -> was OVER_UNDER/8.5
+  //   TCOU  "Total cartonașe Peste/Sub" cards       -> was OVER_UNDER/3.5
+  //   TSMF  "Total Hărți"              cards       -> was OVER_UNDER/x
+  //   FTPO  "Total Puncte"             points      -> was OVER_UNDER/41.5
+  //   FOUT  "Total Puncte"             points      -> was OVER_UNDER/x
+  //   FTGO  "Game-uri"                 games       -> was OVER_UNDER/x
+  //
+  // A corners 8.5 landing in OVER_UNDER/8.5 is the same bucket as another book's
+  // goals 8.5 — two markets that settle on entirely different events. The engine
+  // would pair them and report an arbitrage that is arithmetic on one contract
+  // and priced from another. There is no cross-book counterparty for a corners
+  // line that the engine can prove, so the honest move is to withhold it: the
+  // same call made for Altenar's first-goal market and Unibet's player props.
+  //
+  // This guard is placed before every fallback on purpose. Returning null from
+  // the whitelist above is NOT enough: "Peste 8.5"/"Sub 8.5" is a valid
+  // equal-magnitude O/U shape, so the generic line-in-name resolver below would
+  // immediately re-classify the same market as OVER_UNDER/8.5 and the withholding
+  // would be a no-op. These keys are therefore authoritative: if a market
+  // declares itself a non-goal total, it resolves to nothing and to nothing else.
+  if (/^(CNOU|TCOU|TSMF|FTPO|FOUT|FTGO|TOTP|TSCR|TCOR)$/.test(key)) {
+    return null;
   }
 
   // ---- 6. Generic line-in-name resolver (handles any 2-outcome market whose
@@ -383,10 +494,13 @@ function fegRoute(rawKey, market) {
   const sport = m[1].toLowerCase();
   const mtype = m[2].toLowerCase();
 
-  // Football 00-XX — already routed for the 1X2 / DC / totals cases via the
-  // primary matchers above; only the sport-specific extras land here.
+  // Football 00-XX — already routed for the 1X2 / DC / totals / DNB cases via
+  // the primary matchers above; only the sport-specific extras land here.
   if (sport === '00') {
-    if (mtype === '03') return twoWayFootball(); // Draw No Bet
+    // 00-03 "Victorie fara egal" is draw-no-bet, handled in resolveContract as
+    // DRAW_NO_BET (arbEligible:false). It must not resolve as a 2-way match
+    // winner: its 1/2 sides are not exhaustive because a draw refunds.
+    if (mtype === '03') return null;
     if (mtype === '10' || mtype === '13') {
       const inline = classifyAndExtractLine(market.selections, { kind: 'AH' });
       if (inline) return { family: 'ASIAN_HANDICAP', lineKey: inline.lineKey, outcomes: ['home', 'away'] };
@@ -457,13 +571,14 @@ function betanoKeyRoute(rawKey, market) {
       return { family: 'MATCH_ODDS', lineKey: '_', outcomes: ['home', 'away'] };
     }
   }
-  // Draw-No-Bet (DNOB) — 2-way with no draw, line-bearing? Looking at the
-  // sample, selections are team/player names. Generic 2-way match winner.
+  // Draw-No-Bet (DNOB) is draw-no-bet: 2-way, and a draw REFUNDS the stake, so
+  // the pair is not jointly exhaustive. It is handled in resolveContract as
+  // DRAW_NO_BET (arbEligible:false) and must never resolve here as a generic
+  // 2-way match winner — a DNB "1" leg does not share a payoff with another
+  // book's full-time result "1", so pairing them books an arbitrage that a draw
+  // erases. Return null here so the family stays the single source of truth.
   if (key === 'DNOB') {
-    const selNames = (market.selections || []).map((s) => String(s?.name || '').trim());
-    if (selNames.length === 2) {
-      return { family: 'MATCH_ODDS', lineKey: '_', outcomes: ['home', 'away'] };
-    }
+    return null;
   }
   // BTSC — BTTS yes/no with a slightly different spelling ("Da (GG)" / "Nu (NG)")
   if (key === 'BTSC') {

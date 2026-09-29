@@ -50,12 +50,14 @@ test('betano FHOT (signed +/- X.X) → ASIAN_HANDICAP', () => {
   assert.equal(c.lineKey, '10.5/-10.5');
 });
 
-test('betano FTGO (Peste X.X / Sub X.X) → OVER_UNDER', () => {
+test('betano FTGO ("Game-uri", a tennis games total) is withheld, not a goals total', () => {
+  // Measured on the live feed: FTGO is "Game-uri" on Tennis events (Peste/Sub
+  // 21.5 games), not goals. As a bare OVER_UNDDER line it shared a bucket with a
+  // goals line of the same value, which are entirely different contracts.
   const c = resolveContract(ev('FTGO', [
     { name: 'Peste 22.5' }, { name: 'Sub 22.5' },
   ]));
-  assert.equal(c.family, 'OVER_UNDER');
-  assert.equal(c.lineKey, '22.5');
+  assert.equal(c, null, 'a tennis games total must not resolve as a goal total');
 });
 
 test('betano TGOT (P X.X / S X.X) → OVER_UNDER', () => {
@@ -108,12 +110,88 @@ test('betano H2HT (tennis player names) → MATCH_ODDS 2-way', () => {
   assert.equal(canonicalOutcomeFor('Aimhaus', c, { homeTeam: 'ENCE', awayTeam: 'Aimhaus' }), 'away');
 });
 
-test('betano DNOB (draw no bet) → MATCH_ODDS 2-way', () => {
+test('betano DNOB (draw no bet) → DRAW_NO_BET, never arbitrable', () => {
+  // Measured on the live betano feed: DNOB is "Niciun pariu pe egal" with the
+  // two team names as its sides. It used to resolve as a 2-way MATCH_ODDS,
+  // which put a DNB leg in the same bucket as a real full-time result.
   const c = resolveContract(ev('DNOB', [
     { name: 'Belgia' }, { name: 'Franța' },
   ]));
+  assert.equal(c.family, 'DRAW_NO_BET');
+  assert.equal(c.arbEligible, false, 'a draw refunds the stake, so the pair is not exhaustive');
+});
+
+test('FEG ufo:mtyp:00-03 (Victorie fara egal) → DRAW_NO_BET, never arbitrable', () => {
+  // Same defect, second feed: 00-03 is draw-no-bet with literal 1/2 sides, so
+  // it collided with the full-time result contract on both legs.
+  const c = resolveContract(ev('ufo:mtyp:00-03', [
+    { name: '1' }, { name: '2' },
+  ]));
+  assert.equal(c.family, 'DRAW_NO_BET');
+  assert.equal(c.arbEligible, false);
+});
+
+test('draw no bet is a different family from a match result, so they never bucket together', () => {
+  const dnb = resolveContract(ev('DNOB', [{ name: 'Belgia' }, { name: 'Franța' }]));
+  const result = resolveContract(ev('MRES', [{ name: '1' }, { name: 'X' }, { name: '2' }]));
+  assert.equal(result.family, 'MATCH_ODDS');
+  assert.notEqual(dnb.family, result.family, 'a DNB leg must never share a bucket with a result leg');
+});
+
+test('a genuine two-way match winner is still arbitrable (the fix is narrow)', () => {
+  // Guards against the DNB fix over-reaching: H2HT is a real 2-outcome winner
+  // and must keep resolving as an arbitrable MATCH_ODDS.
+  const c = resolveContract(ev('H2HT', [{ name: 'ENCE' }, { name: 'Aimhaus' }]));
   assert.equal(c.family, 'MATCH_ODDS');
-  assert.deepEqual(c.outcomes, ['home', 'away']);
+  assert.notEqual(c.arbEligible, false);
+});
+
+test('non-goal totals are withheld: a corners line is not a goals line', () => {
+  // Measured on the live betano feed. CNOU "Cornere Peste/Sub" was resolving as
+  // OVER_UNDER/8.5 — the same bucket a goals 8.5 uses — so a corners price and
+  // a goals price from two books would pair as one contract.
+  for (const [key, name, sels] of [
+    ['CNOU', 'Cornere Peste/Sub', [{ name: 'Peste 8.5' }, { name: 'Sub 8.5' }]],
+    ['TCOU', 'Total cartonașe Peste/Sub', [{ name: 'Peste 3.5' }, { name: 'Sub 3.5' }]],
+    ['TSMF', 'Total Hărți', [{ name: 'Peste 3.5' }, { name: 'Sub 3.5' }]],
+    ['FTPO', 'Total Puncte', [{ name: 'Peste 41.5' }, { name: 'Sub 41.5' }]],
+  ]) {
+    assert.equal(resolveContract({ key, name, period: 'fulltime', selections: sels }), null,
+      `${key} (${name}) must not resolve as a goal total`);
+  }
+});
+
+test('a goals total is still arbitrable (the withholding is narrow)', () => {
+  const c = resolveContract({
+    key: 'HCTG', name: 'Total goluri Peste/Sub', period: 'fulltime',
+    selections: [{ name: 'Peste 2.5' }, { name: 'Sub 2.5' }],
+  });
+  assert.equal(c.family, 'OVER_UNDER');
+  assert.equal(c.lineKey, '2.5');
+  assert.notEqual(c.arbEligible, false);
+});
+
+test('a first-half total never shares a bucket with the full-time total of the same line', () => {
+  // betano hardcodes period:'fulltime' on every market, so its first-half goals
+  // total declared fulltime and landed in OVER_UNDER/0.5 — identical to a real
+  // full-time goals 0.5. Both the diacritic and the stripped spelling of
+  // "prima repriza" have to be caught.
+  for (const name of ['Goluri prima repriză Peste/Sub', 'Goluri prima repriza Peste/Sub']) {
+    const half = resolveContract({ key: 'OUH1', name, period: 'fulltime', selections: [{ name: 'Peste 0.5' }, { name: 'Sub 0.5' }] });
+    const full = resolveContract({ key: 'TOTAL', name: 'Total goluri', period: 'fulltime', selections: [{ name: 'Peste 0.5' }, { name: 'Sub 0.5' }] });
+    assert.equal(half.period, 'half1', `"${name}" must resolve as first half`);
+    assert.equal(full.period, 'fulltime');
+    assert.equal(half.lineKey, full.lineKey, 'same line, so only the period can separate them');
+    assert.notEqual(half.period, full.period);
+  }
+});
+
+test('a second-half total resolves as half2', () => {
+  const c = resolveContract({
+    key: 'X', name: 'Goluri a doua repriză', period: 'fulltime',
+    selections: [{ name: 'Peste 0.5' }, { name: 'Sub 0.5' }],
+  });
+  assert.equal(c.period, 'half2');
 });
 
 test('betano BTSC (BTTS yes/no in Romanian) → BTTS', () => {
