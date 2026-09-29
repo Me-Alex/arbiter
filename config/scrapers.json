@@ -14,9 +14,11 @@
         "superbet"
       ],
       "validationStatus": "validated",
-      "validationReason": "Public offer v3 feed smoke-validated on 2026-09-01; bounded read-only collection with snapshot provenance.",
+      "validationReason": "Public offer v3 feed smoke-validated on 2026-09-01; bounded read-only collection with snapshot provenance. The index is a lobby listing, not the offer: /v3 carries exactly one result market per event while the same event advertises marketCount 141 (1400 odds) on /v2/ro-RO/events/{eventId}. fullMarkets adds one detail read per event to pick up the full-time goals total (200734) and the full-time handicap (200736); the two Asian variants superbet also publishes (530, 529) are deliberately not taken, measured over 30 events as 0 of 198 and 0 of 207 line pairs on a half line, so every one of them is push-capable.",
       "platform": "superbet-offer",
       "feedStatus": "verified",
+      "fullMarkets": true,
+      "detailLimit": 100,
       "endpointVerifiedAt": "2026-09-01"
     },
     {

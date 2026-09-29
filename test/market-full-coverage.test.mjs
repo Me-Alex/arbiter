@@ -10,6 +10,65 @@ function ev(key, selections) {
   return { key, period: 'fulltime', name: '', selections };
 }
 
+test('a spread and its reciprocal are never the same bucket', () => {
+  // The invariant the whole two-way handicap key rests on. A provider may
+  // publish BOTH "home gives 1.5" and "home receives 1.5" on the same fixture;
+  // they settle on opposite results, so one unordered key for both lets the
+  // engine pair home -1.5 against away -1.5 — two legs that each pay only when
+  // their own team wins by two, which can both lose and covers nothing.
+  //
+  // Ordered by sign instead of by side, both of superbet's markets sorted to
+  // "-1.5/1.5". Every one of the 33 arbitrages the first live superbet deep
+  // capture reported was that artifact, and all 33 disappeared once the legs
+  // carried a side.
+  const gives = resolveContract(ev('sb:200736:Handicap', [
+    { name: '1 (-1.5)' }, { name: '2 (1.5)' },
+  ]));
+  const receives = resolveContract(ev('sb:200736:Handicap', [
+    { name: '1 (1.5)' }, { name: '2 (-1.5)' },
+  ]));
+  assert.equal(gives.family, 'ASIAN_HANDICAP');
+  assert.equal(receives.family, 'ASIAN_HANDICAP');
+  assert.equal(gives.lineKey, '-1.5/1.5');
+  assert.equal(receives.lineKey, '1.5/-1.5');
+  assert.notEqual(gives.lineKey, receives.lineKey, 'the two directions must not merge');
+  // And the legs still label home/away correctly in the receiving direction.
+  assert.deepEqual(
+    [{ name: '1 (1.5)' }, { name: '2 (-1.5)' }].map((s) => canonicalOutcomeFor(s.name, receives)),
+    ['home', 'away'],
+  );
+});
+
+test('superbet publishes the goals total and the handicap, and nothing else it measured', () => {
+  // Measured over 30 live football events: 200734 carries 9 half lines,
+  // 200736 carries 10 half lines (158 of 158 pairs), and 530 / 529 carry
+  // 0 half lines between them (0 of 198 and 0 of 207) — every one of those is
+  // a whole, quarter or zero line, where the margin returns the stake instead
+  // of settling and the two sides are not jointly exhaustive.
+  const total = resolveContract(ev('sb:200734:Total goluri', [
+    { name: 'Sub 2.5' }, { name: 'Peste 2.5' },
+  ]));
+  assert.equal(total.family, 'OVER_UNDER');
+  assert.equal(total.lineKey, '2.5');
+  assert.deepEqual(
+    [{ name: 'Sub 2.5' }, { name: 'Peste 2.5' }].map((s) => canonicalOutcomeFor(s.name, total)),
+    ['under', 'over'],
+  );
+  // A wrong name on the right id is a different contract and gets nothing:
+  // 200735/200738 are the first- and second-half versions of the same total.
+  for (const k of ['sb:200735:Prima repriză - Total goluri', 'sb:200738:A doua repriză - Total goluri',
+    'sb:200737:Prima repriză - Handicap', 'sb:200739:A doua repriză - Handicap',
+    'sb:200751:GG în oricare repriză', 'sb:530:Handicap asiatic', 'sb:535:Total goluri Anglia']) {
+    assert.equal(resolveContract(ev(k, [{ name: '1' }, { name: '2' }])), null, `${k} must not resolve`);
+  }
+  // Authoritative in the other direction too: a declared superbet detail market
+  // whose legs are not a provable two-way half-line spread resolves to nothing
+  // rather than falling through to the numeric 1/2 match-winner fallback.
+  assert.equal(resolveContract(ev('sb:200736:Handicap', [
+    { name: '1 (-2)' }, { name: '2 (2)' },
+  ])), null, 'a whole line is push-capable and must not be priced as a match winner');
+});
+
 test('a bare signed spread is labelled by sign, not left unlabelled', () => {
   // Measured live on casa-pariurilor's FEG feed: ufo:mtyp:00-10 publishes
   // "Echipa 1 Total goluri 1.5" as "+ 1.5" / "- 1.5" with no team or player

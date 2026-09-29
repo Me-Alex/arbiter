@@ -423,6 +423,23 @@ export function resolveContract(market = {}) {
   const betanoRoute = betanoKeyRoute(rawKey, market);
   if (betanoRoute) return { ...betanoRoute, period };
 
+  // superbet per-event detail markets: the provider's market id AND its exact
+  // market name, which together are the contract. See superbetDetailRoute.
+  if (key.startsWith('SB:')) {
+    const declared = superbetDetailRoute(key, market);
+    // Authoritative, and placed before the numeric fallback on purpose.
+    // superbetNumericRoute reads any two distinct names that lack a
+    // totals/handicap keyword as a 2-way match winner, and superbet's
+    // handicap legs are exactly that: "Belgia (-1.5)" / "Turcia (1.5)" name
+    // the two teams and no keyword. It resolves to MATCH_ODDS/_ — a contract
+    // whose two sides cannot tie — so a score-adjusted spread is priced
+    // against another book's result market and settles on a different event.
+    // And returning null is not enough on its own: the last-resort 2-way path
+    // would re-admit the same pair. This branch is terminal either way.
+    if (declared) return { ...declared, period };
+    return null;
+  }
+
   // superbet numerics + nsoft + others: most are 2-way match winners (1|2)
   // with literally-named selections. Route them to MATCH_ODDS with 2 outcomes.
   const superbetRoute = superbetNumericRoute(rawKey, market);
@@ -639,6 +656,34 @@ function betanoKeyRoute(rawKey, market) {
 }
 
 /**
+ * Superbet's markets as read from the per-event detail payload, keyed by the
+ * provider's own market id AND its exact market name. Both halves of the key
+ * are load-bearing, and the adapter's comment on DETAIL_MARKETS carries the
+ * measurement; the short version is that the same id names a different
+ * contract depending on the fixture. 535 is "Total goluri <Team>" — a single
+ * team's goals, not the match's — so an id-only table reads a team total as
+ * the match total, and the OVER_UNDER contract has no subject dimension to
+ * catch it.
+ *
+ * The line lives in the selection name ("Sub 2.5" / "Belgia (-1.5)"), so both
+ * families resolve through the same line parser every other book uses, and the
+ * half-line rule that keeps push-capable spreads out is applied there rather
+ * than restated here.
+ */
+const SUPERBET_DETAIL = new Map([
+  ['SB:200734:TOTAL GOLURI', 'OU'],
+  ['SB:200736:HANDICAP', 'AH'],
+]);
+
+function superbetDetailRoute(key, market) {
+  const kind = SUPERBET_DETAIL.get(key);
+  if (!kind) return null;
+  const inline = classifyAndExtractLine(market.selections, { kind });
+  if (!inline) return null;
+  return { family: kind === 'OU' ? 'OVER_UNDER' : 'ASIAN_HANDICAP', lineKey: inline.lineKey, outcomes: inline.outcomes };
+}
+
+/**
  * superbet numerics (and other books with opaque integer keys) route to a
  * 2-way match winner when their selections look like 1/2/winner pairs. The
  * numeric ID itself carries no semantic meaning — the SCAN is driven entirely
@@ -799,21 +844,35 @@ function handicapLineKey(selections, a, b) {
   const first = isHome(selections[0]?.name);
   const second = isHome(selections[1]?.name);
   if (first === null || second === null || first === second) {
-    // Neither leg carries a side token, so fall back to the SIGN. This function
-    // is reached only from the Asian-handicap branch of classifyAndExtractLine,
-    // which has already proven the pair is a spread (a === -b on a half line),
-    // and in a two-way handicap the NEGATIVE side is the home handicap by
-    // definition — so this is the contract, not a guess.
+    // Neither leg carries a side token, so fall back to the SIGN.
     //
-    // It used to keep the provider's leg order here "rather than guess at" one.
-    // That was right for a bare "- 6.5"/"+ 6.5" spread and wrong for a leg named
-    // after the player, which is betano's tennis TGHC ("Karen Khachanov +2.5" /
-    // "Felix Auger Aliassime -2.5"): neither name starts with a side token, so
-    // betano's own handicaps landed in TWO buckets for one contract — "2.5/-2.5"
-    // on the events listing the home player first, "-4.5/4.5" on the rest. A book
-    // quoting the same spread could then pair with one of them and never the
-    // other. Measured on the 2026-09-29 capture: 9 lineKeys for 9 distinct
-    // magnitudes, split 4/5 purely by leg order.
+    // This is sound only for a provider that publishes ONE handicap per
+    // magnitude, where the negative side is the home handicap by definition.
+    // That is not universal, and getting it wrong is not a labelling nit: it
+    // merges a line with its own reciprocal. Superbet publishes "Moldova (-1.5)
+    // / Feroe (1.5)" AND "Moldova (1.5) / Feroe (-1.5)" as two markets, both
+    // of which sort to "-1.5/1.5" here, so the bucket then held home -1.5 and
+    // away -1.5 and the engine priced them as one contract. They pay on
+    // opposite results and neither covers the other, so a real surebet is
+    // booked on two legs that can both lose. Measured live: 33 of 33 reported
+    // arbitrages on the first superbet deep capture were that artifact.
+    //
+    // Adapters whose legs name teams must therefore re-label them with a side
+    // token before publishing ("1 (-1.5)" / "2 (1.5)"), which is the path
+    // above and the shape every other adapter already emits. What is left here
+    // is a bare spread that names nobody — casa-pariurilor's "+ 1.5" / "- 1.5"
+    // and betano's "Karen Khachanov +2.5" style legs.
+    //
+    // The provider's leg order is deliberately not used. It used to be kept
+    // here "rather than guess at" one, which was right for a bare spread and
+    // wrong for a leg named after the player, which is betano's tennis TGHC
+    // ("Karen Khachanov +2.5" / "Felix Auger Aliassime -2.5"): neither name
+    // starts with a side token, so betano's own handicaps landed in TWO
+    // buckets for one contract — "2.5/-2.5" on the events listing the home
+    // player first, "-4.5/4.5" on the rest. A book quoting the same spread
+    // could then pair with one of them and never the other. Measured on the
+    // 2026-09-29 capture: 9 lineKeys for 9 distinct magnitudes, split 4/5
+    // purely by leg order.
     const lo = Math.min(a, b);
     const hi = Math.max(a, b);
     if (lo === -hi) return `${normalizeLine(lo)}/${normalizeLine(hi)}`;
@@ -944,6 +1003,14 @@ export function canonicalOutcomeFor(selectionName, contract, ctx = {}) {
     const stripped = raw
       .replace(/^[+-]\s*\d+(?:[.,]\d+)?\s*/, '')
       .replace(/^\d+(?:[.,]\d+)?\s+/, '')
+      // Parenthesised line. Superbet's "Handicap" legs name the two teams and
+      // put the spread in brackets — "Belgia (-1.5)" / "Turcia (1.5)" — and
+      // every strip above left the bracket, so "belgia (-1.5)" was compared
+      // against the event's "belgia" and never matched. The contract resolved
+      // and then priced no leg, so all 158 measured handicap lines landed in
+      // buckets nothing could quote against. Scoped to this family and to a
+      // trailing bracketed number, which no player or team name ends with.
+      .replace(/\s*[[(]\s*[+-]?\d+(?:[.,]\d+)?\s*[)]\s*$/, '')
       .replace(/\s*[+-]\s*\d+(?:[.,]\d+)?\s*$/, '');
     const normSel = normalizeTeamName(stripped);
     if (home && normSel && normSel === home) return 'home';
