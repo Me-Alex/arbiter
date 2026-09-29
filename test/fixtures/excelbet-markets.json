@@ -1,0 +1,1534 @@
+{
+  "avs": {
+    "avs": [
+      {
+        "lv": false,
+        "bid": 73021908,
+        "ts": "20260929 18:45:00",
+        "dsl": {
+          "PT": "Peterborough Sports FC - Redditch United",
+          "ORIGINAL_FROM_DB": "PETERBOROUGH SPORTS - REDDITCH UNITED",
+          "EN": "Peterborough Sports - Redditch United",
+          "FR": "Peterborough Sports - Redditch United",
+          "RO": "Peterborough Sports FC - Redditch Utd.",
+          "ES": "Peterborough Sports FC - Redditch United"
+        },
+        "p": 26400,
+        "scs": [
+          {
+            "cs": 3,
+            "h": 0,
+            "th": 0,
+            "hs": "0",
+            "ia": {
+              "type": 0,
+              "info1": 0,
+              "info2": 0,
+              "info3": 0,
+              "info4": 0,
+              "info5": 0,
+              "info6": 0,
+              "info7": 0,
+              "info8": 0,
+              "info_valide": 0,
+              "descrizione": 0
+            },
+            "eqs": [
+              {
+                "ce": 1,
+                "q": 203,
+                "qo": 0,
+                "dsl": null,
+                "dsls": null
+              },
+              {
+                "ce": 2,
+                "q": 355,
+                "qo": 0,
+                "dsl": null,
+                "dsls": null
+              },
+              {
+                "ce": 3,
+                "q": 310,
+                "qo": 0,
+                "dsl": null,
+                "dsls": null
+              }
+            ],
+            "qps": null,
+            "dia": null,
+            "d": "FINAL",
+            "ming": 1,
+            "maxg": 30,
+            "mings": null,
+            "maxgs": null,
+            "csh": false,
+            "s": null,
+            "plyc": false,
+            "mag": false,
+            "mags": false,
+            "hid": false
+          },
+          {
+            "cs": 15,
+            "h": 0,
+            "th": 0,
+            "hs": "0",
+            "ia": {
+              "type": 0,
+              "info1": 0,
+              "info2": 0,
+              "info3": 0,
+              "info4": 0,
+              "info5": 0,
+              "info6": 0,
+              "info7": 0,
+              "info8": 0,
+              "info_valide": 0,
+              "descrizione": 0
+            },
+            "eqs": [
+              {
+                "ce": 1,
+                "q": 129,
+                "qo": 0,
+                "dsl": null,
+                "dsls": null
+              },
+              {
+                "ce": 2,
+                "q": 310,
+                "qo": 0,
+                "dsl": null,
+                "dsls": null
+              }
+            ],
+            "qps": null,
+            "dia": null,
+            "d": "DOUBLE CHANCE",
+            "ming": 1,
+            "maxg": 30,
+            "mings": null,
+            "maxgs": null,
+            "csh": false,
+            "s": null,
+            "plyc": false,
+            "mag": false,
+            "mags": false,
+            "hid": false
+          },
+          {
+            "cs": 16,
+            "h": 0,
+            "th": 0,
+            "hs": "0",
+            "ia": {
+              "type": 0,
+              "info1": 0,
+              "info2": 0,
+              "info3": 0,
+              "info4": 0,
+              "info5": 0,
+              "info6": 0,
+              "info7": 0,
+              "info8": 0,
+              "info_valide": 0,
+              "descrizione": 0
+            },
+            "eqs": [
+              {
+                "ce": 1,
+                "q": 203,
+                "qo": 0,
+                "dsl": null,
+                "dsls": null
+              },
+              {
+                "ce": 2,
+                "q": 165,
+                "qo": 0,
+                "dsl": null,
+                "dsls": null
+              }
+            ],
+            "qps": null,
+            "dia": null,
+            "d": "DOUBLE CHANCE",
+            "ming": 1,
+            "maxg": 30,
+            "mings": null,
+            "maxgs": null,
+            "csh": false,
+            "s": null,
+            "plyc": false,
+            "mag": false,
+            "mags": false,
+            "hid": false
+          },
+          {
+            "cs": 17,
+            "h": 0,
+            "th": 0,
+            "hs": "0",
+            "ia": {
+              "type": 0,
+              "info1": 0,
+              "info2": 0,
+              "info3": 0,
+              "info4": 0,
+              "info5": 0,
+              "info6": 0,
+              "info7": 0,
+              "info8": 0,
+              "info_valide": 0,
+              "descrizione": 0
+            },
+            "eqs": [
+              {
+                "ce": 1,
+                "q": 355,
+                "qo": 0,
+                "dsl": null,
+                "dsls": null
+              },
+              {
+                "ce": 2,
+                "q": 123,
+                "qo": 0,
+                "dsl": null,
+                "dsls": null
+              }
+            ],
+            "qps": null,
+            "dia": null,
+            "d": "DOUBLE CHANCE",
+            "ming": 1,
+            "maxg": 30,
+            "mings": null,
+            "maxgs": null,
+            "csh": false,
+            "s": null,
+            "plyc": false,
+            "mag": false,
+            "mags": false,
+            "hid": false
+          },
+          {
+            "cs": 7989,
+            "h": 50,
+            "th": 4,
+            "hs": "50",
+            "ia": {
+              "type": 4,
+              "info1": 50,
+              "info2": 0,
+              "info3": 0,
+              "info4": 0,
+              "info5": 0,
+              "info6": 0,
+              "info7": 0,
+              "info8": 0,
+              "info_valide": 1,
+              "descrizione": 0
+            },
+            "eqs": [
+              {
+                "ce": 1,
+                "q": 940,
+                "qo": 0,
+                "dsl": null,
+                "dsls": null
+              },
+              {
+                "ce": 2,
+                "q": 103,
+                "qo": 0,
+                "dsl": null,
+                "dsls": null
+              }
+            ],
+            "qps": null,
+            "dia": null,
+            "d": "TOTAL GOALS",
+            "ming": 1,
+            "maxg": 30,
+            "mings": null,
+            "maxgs": null,
+            "csh": false,
+            "s": null,
+            "plyc": false,
+            "mag": false,
+            "mags": false,
+            "hid": false
+          },
+          {
+            "cs": 7989,
+            "h": 150,
+            "th": 4,
+            "hs": "150",
+            "ia": {
+              "type": 4,
+              "info1": 150,
+              "info2": 0,
+              "info3": 0,
+              "info4": 0,
+              "info5": 0,
+              "info6": 0,
+              "info7": 0,
+              "info8": 0,
+              "info_valide": 1,
+              "descrizione": 0
+            },
+            "eqs": [
+              {
+                "ce": 1,
+                "q": 420,
+                "qo": 0,
+                "dsl": null,
+                "dsls": null
+              },
+              {
+                "ce": 2,
+                "q": 119,
+                "qo": 0,
+                "dsl": null,
+                "dsls": null
+              }
+            ],
+            "qps": null,
+            "dia": null,
+            "d": "TOTAL GOALS",
+            "ming": 1,
+            "maxg": 30,
+            "mings": null,
+            "maxgs": null,
+            "csh": false,
+            "s": null,
+            "plyc": false,
+            "mag": false,
+            "mags": false,
+            "hid": false
+          },
+          {
+            "cs": 7989,
+            "h": 250,
+            "th": 4,
+            "hs": "250",
+            "ia": {
+              "type": 4,
+              "info1": 250,
+              "info2": 0,
+              "info3": 0,
+              "info4": 0,
+              "info5": 0,
+              "info6": 0,
+              "info7": 0,
+              "info8": 0,
+              "info_valide": 1,
+              "descrizione": 0
+            },
+            "eqs": [
+              {
+                "ce": 1,
+                "q": 217,
+                "qo": 0,
+                "dsl": null,
+                "dsls": null
+              },
+              {
+                "ce": 2,
+                "q": 161,
+                "qo": 0,
+                "dsl": null,
+                "dsls": null
+              }
+            ],
+            "qps": null,
+            "dia": null,
+            "d": "TOTAL GOALS",
+            "ming": 1,
+            "maxg": 30,
+            "mings": null,
+            "maxgs": null,
+            "csh": false,
+            "s": null,
+            "plyc": false,
+            "mag": false,
+            "mags": false,
+            "hid": false
+          },
+          {
+            "cs": 7989,
+            "h": 350,
+            "th": 4,
+            "hs": "350",
+            "ia": {
+              "type": 4,
+              "info1": 350,
+              "info2": 0,
+              "info3": 0,
+              "info4": 0,
+              "info5": 0,
+              "info6": 0,
+              "info7": 0,
+              "info8": 0,
+              "info_valide": 1,
+              "descrizione": 0
+            },
+            "eqs": [
+              {
+                "ce": 1,
+                "q": 148,
+                "qo": 0,
+                "dsl": null,
+                "dsls": null
+              },
+              {
+                "ce": 2,
+                "q": 248,
+                "qo": 0,
+                "dsl": null,
+                "dsls": null
+              }
+            ],
+            "qps": null,
+            "dia": null,
+            "d": "TOTAL GOALS",
+            "ming": 1,
+            "maxg": 30,
+            "mings": null,
+            "maxgs": null,
+            "csh": false,
+            "s": null,
+            "plyc": false,
+            "mag": false,
+            "mags": false,
+            "hid": false
+          },
+          {
+            "cs": 7989,
+            "h": 450,
+            "th": 4,
+            "hs": "450",
+            "ia": {
+              "type": 4,
+              "info1": 450,
+              "info2": 0,
+              "info3": 0,
+              "info4": 0,
+              "info5": 0,
+              "info6": 0,
+              "info7": 0,
+              "info8": 0,
+              "info_valide": 1,
+              "descrizione": 0
+            },
+            "eqs": [
+              {
+                "ce": 1,
+                "q": 118,
+                "qo": 0,
+                "dsl": null,
+                "dsls": null
+              },
+              {
+                "ce": 2,
+                "q": 430,
+                "qo": 0,
+                "dsl": null,
+                "dsls": null
+              }
+            ],
+            "qps": null,
+            "dia": null,
+            "d": "TOTAL GOALS",
+            "ming": 1,
+            "maxg": 30,
+            "mings": null,
+            "maxgs": null,
+            "csh": false,
+            "s": null,
+            "plyc": false,
+            "mag": false,
+            "mags": false,
+            "hid": false
+          },
+          {
+            "cs": 8,
+            "h": -100,
+            "th": 1,
+            "hs": "-100",
+            "ia": {
+              "type": 1,
+              "info1": -100,
+              "info2": 0,
+              "info3": 0,
+              "info4": 0,
+              "info5": 0,
+              "info6": 0,
+              "info7": 0,
+              "info8": 0,
+              "info_valide": 1,
+              "descrizione": 0
+            },
+            "eqs": [
+              {
+                "ce": 1,
+                "q": 325,
+                "qo": 0,
+                "dsl": null,
+                "dsls": null
+              },
+              {
+                "ce": 2,
+                "q": 370,
+                "qo": 0,
+                "dsl": null,
+                "dsls": null
+              },
+              {
+                "ce": 3,
+                "q": 160,
+                "qo": 0,
+                "dsl": null,
+                "dsls": null
+              }
+            ],
+            "qps": null,
+            "dia": null,
+            "d": "HANDICAP",
+            "ming": 1,
+            "maxg": 30,
+            "mings": null,
+            "maxgs": null,
+            "csh": false,
+            "s": null,
+            "plyc": false,
+            "mag": false,
+            "mags": false,
+            "hid": false
+          },
+          {
+            "cs": 8,
+            "h": 100,
+            "th": 1,
+            "hs": "100",
+            "ia": {
+              "type": 1,
+              "info1": 100,
+              "info2": 0,
+              "info3": 0,
+              "info4": 0,
+              "info5": 0,
+              "info6": 0,
+              "info7": 0,
+              "info8": 0,
+              "info_valide": 1,
+              "descrizione": 0
+            },
+            "eqs": [
+              {
+                "ce": 1,
+                "q": 127,
+                "qo": 0,
+                "dsl": null,
+                "dsls": null
+              },
+              {
+                "ce": 2,
+                "q": 430,
+                "qo": 0,
+                "dsl": null,
+                "dsls": null
+              },
+              {
+                "ce": 3,
+                "q": 560,
+                "qo": 0,
+                "dsl": null,
+                "dsls": null
+              }
+            ],
+            "qps": null,
+            "dia": null,
+            "d": "HANDICAP",
+            "ming": 1,
+            "maxg": 30,
+            "mings": null,
+            "maxgs": null,
+            "csh": false,
+            "s": null,
+            "plyc": false,
+            "mag": false,
+            "mags": false,
+            "hid": false
+          },
+          {
+            "cs": 8,
+            "h": -200,
+            "th": 1,
+            "hs": "-200",
+            "ia": {
+              "type": 1,
+              "info1": -200,
+              "info2": 0,
+              "info3": 0,
+              "info4": 0,
+              "info5": 0,
+              "info6": 0,
+              "info7": 0,
+              "info8": 0,
+              "info_valide": 1,
+              "descrizione": 0
+            },
+            "eqs": [
+              {
+                "ce": 1,
+                "q": 620,
+                "qo": 0,
+                "dsl": null,
+                "dsls": null
+              },
+              {
+                "ce": 2,
+                "q": 490,
+                "qo": 0,
+                "dsl": null,
+                "dsls": null
+              },
+              {
+                "ce": 3,
+                "q": 120,
+                "qo": 0,
+                "dsl": null,
+                "dsls": null
+              }
+            ],
+            "qps": null,
+            "dia": null,
+            "d": "HANDICAP",
+            "ming": 1,
+            "maxg": 30,
+            "mings": null,
+            "maxgs": null,
+            "csh": false,
+            "s": null,
+            "plyc": false,
+            "mag": false,
+            "mags": false,
+            "hid": false
+          },
+          {
+            "cs": 60016,
+            "h": -150,
+            "th": 2,
+            "hs": "-150",
+            "ia": {
+              "type": 2,
+              "info1": -150,
+              "info2": 0,
+              "info3": 0,
+              "info4": 0,
+              "info5": 0,
+              "info6": 0,
+              "info7": 0,
+              "info8": 0,
+              "info_valide": 1,
+              "descrizione": 0
+            },
+            "eqs": [
+              {
+                "ce": 1,
+                "q": 330,
+                "qo": 0,
+                "dsl": null,
+                "dsls": null
+              },
+              {
+                "ce": 2,
+                "q": 124,
+                "qo": 0,
+                "dsl": null,
+                "dsls": null
+              }
+            ],
+            "qps": null,
+            "dia": null,
+            "d": "ASIAN HANDICAP",
+            "ming": 1,
+            "maxg": 30,
+            "mings": null,
+            "maxgs": null,
+            "csh": false,
+            "s": null,
+            "plyc": false,
+            "mag": false,
+            "mags": false,
+            "hid": false
+          },
+          {
+            "cs": 60016,
+            "h": -50,
+            "th": 2,
+            "hs": "-50",
+            "ia": {
+              "type": 2,
+              "info1": -50,
+              "info2": 0,
+              "info3": 0,
+              "info4": 0,
+              "info5": 0,
+              "info6": 0,
+              "info7": 0,
+              "info8": 0,
+              "info_valide": 1,
+              "descrizione": 0
+            },
+            "eqs": [
+              {
+                "ce": 1,
+                "q": 196,
+                "qo": 0,
+                "dsl": null,
+                "dsls": null
+              },
+              {
+                "ce": 2,
+                "q": 167,
+                "qo": 0,
+                "dsl": null,
+                "dsls": null
+              }
+            ],
+            "qps": null,
+            "dia": null,
+            "d": "ASIAN HANDICAP",
+            "ming": 1,
+            "maxg": 30,
+            "mings": null,
+            "maxgs": null,
+            "csh": false,
+            "s": null,
+            "plyc": false,
+            "mag": false,
+            "mags": false,
+            "hid": false
+          },
+          {
+            "cs": 60016,
+            "h": 50,
+            "th": 2,
+            "hs": "50",
+            "ia": {
+              "type": 2,
+              "info1": 50,
+              "info2": 0,
+              "info3": 0,
+              "info4": 0,
+              "info5": 0,
+              "info6": 0,
+              "info7": 0,
+              "info8": 0,
+              "info_valide": 1,
+              "descrizione": 0
+            },
+            "eqs": [
+              {
+                "ce": 1,
+                "q": 131,
+                "qo": 0,
+                "dsl": null,
+                "dsls": null
+              },
+              {
+                "ce": 2,
+                "q": 285,
+                "qo": 0,
+                "dsl": null,
+                "dsls": null
+              }
+            ],
+            "qps": null,
+            "dia": null,
+            "d": "ASIAN HANDICAP",
+            "ming": 1,
+            "maxg": 30,
+            "mings": null,
+            "maxgs": null,
+            "csh": false,
+            "s": null,
+            "plyc": false,
+            "mag": false,
+            "mags": false,
+            "hid": false
+          }
+        ]
+      },
+      {
+        "lv": false,
+        "bid": 73021912,
+        "ts": "20260929 18:45:00",
+        "dsl": {
+          "PT": "Real Bedford - Leiston FC",
+          "ORIGINAL_FROM_DB": "REAL BEDFORD - LEISTON FC",
+          "EN": "Real Bedford - Leiston FC",
+          "FR": "Real Bedford - Leiston Fc",
+          "RO": "Real Bedford - Leiston FC",
+          "ES": "Real Bedford - Leiston FC"
+        },
+        "p": 26400,
+        "scs": [
+          {
+            "cs": 3,
+            "h": 0,
+            "th": 0,
+            "hs": "0",
+            "ia": {
+              "type": 0,
+              "info1": 0,
+              "info2": 0,
+              "info3": 0,
+              "info4": 0,
+              "info5": 0,
+              "info6": 0,
+              "info7": 0,
+              "info8": 0,
+              "info_valide": 0,
+              "descrizione": 0
+            },
+            "eqs": [
+              {
+                "ce": 1,
+                "q": 140,
+                "qo": 0,
+                "dsl": null,
+                "dsls": null
+              },
+              {
+                "ce": 2,
+                "q": 460,
+                "qo": 0,
+                "dsl": null,
+                "dsls": null
+              },
+              {
+                "ce": 3,
+                "q": 600,
+                "qo": 0,
+                "dsl": null,
+                "dsls": null
+              }
+            ],
+            "qps": null,
+            "dia": null,
+            "d": "FINAL",
+            "ming": 1,
+            "maxg": 30,
+            "mings": null,
+            "maxgs": null,
+            "csh": false,
+            "s": null,
+            "plyc": false,
+            "mag": false,
+            "mags": false,
+            "hid": false
+          },
+          {
+            "cs": 15,
+            "h": 0,
+            "th": 0,
+            "hs": "0",
+            "ia": {
+              "type": 0,
+              "info1": 0,
+              "info2": 0,
+              "info3": 0,
+              "info4": 0,
+              "info5": 0,
+              "info6": 0,
+              "info7": 0,
+              "info8": 0,
+              "info_valide": 0,
+              "descrizione": 0
+            },
+            "eqs": [
+              {
+                "ce": 1,
+                "q": 107,
+                "qo": 0,
+                "dsl": null,
+                "dsls": null
+              },
+              {
+                "ce": 2,
+                "q": 600,
+                "qo": 0,
+                "dsl": null,
+                "dsls": null
+              }
+            ],
+            "qps": null,
+            "dia": null,
+            "d": "DOUBLE CHANCE",
+            "ming": 1,
+            "maxg": 30,
+            "mings": null,
+            "maxgs": null,
+            "csh": false,
+            "s": null,
+            "plyc": false,
+            "mag": false,
+            "mags": false,
+            "hid": false
+          },
+          {
+            "cs": 16,
+            "h": 0,
+            "th": 0,
+            "hs": "0",
+            "ia": {
+              "type": 0,
+              "info1": 0,
+              "info2": 0,
+              "info3": 0,
+              "info4": 0,
+              "info5": 0,
+              "info6": 0,
+              "info7": 0,
+              "info8": 0,
+              "info_valide": 0,
+              "descrizione": 0
+            },
+            "eqs": [
+              {
+                "ce": 1,
+                "q": 140,
+                "qo": 0,
+                "dsl": null,
+                "dsls": null
+              },
+              {
+                "ce": 2,
+                "q": 260,
+                "qo": 0,
+                "dsl": null,
+                "dsls": null
+              }
+            ],
+            "qps": null,
+            "dia": null,
+            "d": "DOUBLE CHANCE",
+            "ming": 1,
+            "maxg": 30,
+            "mings": null,
+            "maxgs": null,
+            "csh": false,
+            "s": null,
+            "plyc": false,
+            "mag": false,
+            "mags": false,
+            "hid": false
+          },
+          {
+            "cs": 17,
+            "h": 0,
+            "th": 0,
+            "hs": "0",
+            "ia": {
+              "type": 0,
+              "info1": 0,
+              "info2": 0,
+              "info3": 0,
+              "info4": 0,
+              "info5": 0,
+              "info6": 0,
+              "info7": 0,
+              "info8": 0,
+              "info_valide": 0,
+              "descrizione": 0
+            },
+            "eqs": [
+              {
+                "ce": 1,
+                "q": 460,
+                "qo": 0,
+                "dsl": null,
+                "dsls": null
+              },
+              {
+                "ce": 2,
+                "q": 114,
+                "qo": 0,
+                "dsl": null,
+                "dsls": null
+              }
+            ],
+            "qps": null,
+            "dia": null,
+            "d": "DOUBLE CHANCE",
+            "ming": 1,
+            "maxg": 30,
+            "mings": null,
+            "maxgs": null,
+            "csh": false,
+            "s": null,
+            "plyc": false,
+            "mag": false,
+            "mags": false,
+            "hid": false
+          },
+          {
+            "cs": 7989,
+            "h": 150,
+            "th": 4,
+            "hs": "150",
+            "ia": {
+              "type": 4,
+              "info1": 150,
+              "info2": 0,
+              "info3": 0,
+              "info4": 0,
+              "info5": 0,
+              "info6": 0,
+              "info7": 0,
+              "info8": 0,
+              "info_valide": 1,
+              "descrizione": 0
+            },
+            "eqs": [
+              {
+                "ce": 1,
+                "q": 540,
+                "qo": 0,
+                "dsl": null,
+                "dsls": null
+              },
+              {
+                "ce": 2,
+                "q": 112,
+                "qo": 0,
+                "dsl": null,
+                "dsls": null
+              }
+            ],
+            "qps": null,
+            "dia": null,
+            "d": "TOTAL GOALS",
+            "ming": 1,
+            "maxg": 30,
+            "mings": null,
+            "maxgs": null,
+            "csh": false,
+            "s": null,
+            "plyc": false,
+            "mag": false,
+            "mags": false,
+            "hid": false
+          },
+          {
+            "cs": 7989,
+            "h": 250,
+            "th": 4,
+            "hs": "250",
+            "ia": {
+              "type": 4,
+              "info1": 250,
+              "info2": 0,
+              "info3": 0,
+              "info4": 0,
+              "info5": 0,
+              "info6": 0,
+              "info7": 0,
+              "info8": 0,
+              "info_valide": 1,
+              "descrizione": 0
+            },
+            "eqs": [
+              {
+                "ce": 1,
+                "q": 265,
+                "qo": 0,
+                "dsl": null,
+                "dsls": null
+              },
+              {
+                "ce": 2,
+                "q": 142,
+                "qo": 0,
+                "dsl": null,
+                "dsls": null
+              }
+            ],
+            "qps": null,
+            "dia": null,
+            "d": "TOTAL GOALS",
+            "ming": 1,
+            "maxg": 30,
+            "mings": null,
+            "maxgs": null,
+            "csh": false,
+            "s": null,
+            "plyc": false,
+            "mag": false,
+            "mags": false,
+            "hid": false
+          },
+          {
+            "cs": 7989,
+            "h": 350,
+            "th": 4,
+            "hs": "350",
+            "ia": {
+              "type": 4,
+              "info1": 350,
+              "info2": 0,
+              "info3": 0,
+              "info4": 0,
+              "info5": 0,
+              "info6": 0,
+              "info7": 0,
+              "info8": 0,
+              "info_valide": 1,
+              "descrizione": 0
+            },
+            "eqs": [
+              {
+                "ce": 1,
+                "q": 171,
+                "qo": 0,
+                "dsl": null,
+                "dsls": null
+              },
+              {
+                "ce": 2,
+                "q": 202,
+                "qo": 0,
+                "dsl": null,
+                "dsls": null
+              }
+            ],
+            "qps": null,
+            "dia": null,
+            "d": "TOTAL GOALS",
+            "ming": 1,
+            "maxg": 30,
+            "mings": null,
+            "maxgs": null,
+            "csh": false,
+            "s": null,
+            "plyc": false,
+            "mag": false,
+            "mags": false,
+            "hid": false
+          },
+          {
+            "cs": 7989,
+            "h": 450,
+            "th": 4,
+            "hs": "450",
+            "ia": {
+              "type": 4,
+              "info1": 450,
+              "info2": 0,
+              "info3": 0,
+              "info4": 0,
+              "info5": 0,
+              "info6": 0,
+              "info7": 0,
+              "info8": 0,
+              "info_valide": 1,
+              "descrizione": 0
+            },
+            "eqs": [
+              {
+                "ce": 1,
+                "q": 129,
+                "qo": 0,
+                "dsl": null,
+                "dsls": null
+              },
+              {
+                "ce": 2,
+                "q": 325,
+                "qo": 0,
+                "dsl": null,
+                "dsls": null
+              }
+            ],
+            "qps": null,
+            "dia": null,
+            "d": "TOTAL GOALS",
+            "ming": 1,
+            "maxg": 30,
+            "mings": null,
+            "maxgs": null,
+            "csh": false,
+            "s": null,
+            "plyc": false,
+            "mag": false,
+            "mags": false,
+            "hid": false
+          },
+          {
+            "cs": 7989,
+            "h": 550,
+            "th": 4,
+            "hs": "550",
+            "ia": {
+              "type": 4,
+              "info1": 550,
+              "info2": 0,
+              "info3": 0,
+              "info4": 0,
+              "info5": 0,
+              "info6": 0,
+              "info7": 0,
+              "info8": 0,
+              "info_valide": 1,
+              "descrizione": 0
+            },
+            "eqs": [
+              {
+                "ce": 1,
+                "q": 111,
+                "qo": 0,
+                "dsl": null,
+                "dsls": null
+              },
+              {
+                "ce": 2,
+                "q": 540,
+                "qo": 0,
+                "dsl": null,
+                "dsls": null
+              }
+            ],
+            "qps": null,
+            "dia": null,
+            "d": "TOTAL GOALS",
+            "ming": 1,
+            "maxg": 30,
+            "mings": null,
+            "maxgs": null,
+            "csh": false,
+            "s": null,
+            "plyc": false,
+            "mag": false,
+            "mags": false,
+            "hid": false
+          },
+          {
+            "cs": 8,
+            "h": -100,
+            "th": 1,
+            "hs": "-100",
+            "ia": {
+              "type": 1,
+              "info1": -100,
+              "info2": 0,
+              "info3": 0,
+              "info4": 0,
+              "info5": 0,
+              "info6": 0,
+              "info7": 0,
+              "info8": 0,
+              "info_valide": 1,
+              "descrizione": 0
+            },
+            "eqs": [
+              {
+                "ce": 1,
+                "q": 189,
+                "qo": 0,
+                "dsl": null,
+                "dsls": null
+              },
+              {
+                "ce": 2,
+                "q": 365,
+                "qo": 0,
+                "dsl": null,
+                "dsls": null
+              },
+              {
+                "ce": 3,
+                "q": 250,
+                "qo": 0,
+                "dsl": null,
+                "dsls": null
+              }
+            ],
+            "qps": null,
+            "dia": null,
+            "d": "HANDICAP",
+            "ming": 1,
+            "maxg": 30,
+            "mings": null,
+            "maxgs": null,
+            "csh": false,
+            "s": null,
+            "plyc": false,
+            "mag": false,
+            "mags": false,
+            "hid": false
+          },
+          {
+            "cs": 8,
+            "h": 100,
+            "th": 1,
+            "hs": "100",
+            "ia": {
+              "type": 1,
+              "info1": 100,
+              "info2": 0,
+              "info3": 0,
+              "info4": 0,
+              "info5": 0,
+              "info6": 0,
+              "info7": 0,
+              "info8": 0,
+              "info_valide": 1,
+              "descrizione": 0
+            },
+            "eqs": [
+              {
+                "ce": 1,
+                "q": 108,
+                "qo": 0,
+                "dsl": null,
+                "dsls": null
+              },
+              {
+                "ce": 2,
+                "q": 560,
+                "qo": 0,
+                "dsl": null,
+                "dsls": null
+              },
+              {
+                "ce": 3,
+                "q": 1000,
+                "qo": 0,
+                "dsl": null,
+                "dsls": null
+              }
+            ],
+            "qps": null,
+            "dia": null,
+            "d": "HANDICAP",
+            "ming": 1,
+            "maxg": 30,
+            "mings": null,
+            "maxgs": null,
+            "csh": false,
+            "s": null,
+            "plyc": false,
+            "mag": false,
+            "mags": false,
+            "hid": false
+          },
+          {
+            "cs": 8,
+            "h": -200,
+            "th": 1,
+            "hs": "-200",
+            "ia": {
+              "type": 1,
+              "info1": -200,
+              "info2": 0,
+              "info3": 0,
+              "info4": 0,
+              "info5": 0,
+              "info6": 0,
+              "info7": 0,
+              "info8": 0,
+              "info_valide": 1,
+              "descrizione": 0
+            },
+            "eqs": [
+              {
+                "ce": 1,
+                "q": 305,
+                "qo": 0,
+                "dsl": null,
+                "dsls": null
+              },
+              {
+                "ce": 2,
+                "q": 400,
+                "qo": 0,
+                "dsl": null,
+                "dsls": null
+              },
+              {
+                "ce": 3,
+                "q": 161,
+                "qo": 0,
+                "dsl": null,
+                "dsls": null
+              }
+            ],
+            "qps": null,
+            "dia": null,
+            "d": "HANDICAP",
+            "ming": 1,
+            "maxg": 30,
+            "mings": null,
+            "maxgs": null,
+            "csh": false,
+            "s": null,
+            "plyc": false,
+            "mag": false,
+            "mags": false,
+            "hid": false
+          },
+          {
+            "cs": 60016,
+            "h": -150,
+            "th": 2,
+            "hs": "-150",
+            "ia": {
+              "type": 2,
+              "info1": -150,
+              "info2": 0,
+              "info3": 0,
+              "info4": 0,
+              "info5": 0,
+              "info6": 0,
+              "info7": 0,
+              "info8": 0,
+              "info_valide": 1,
+              "descrizione": 0
+            },
+            "eqs": [
+              {
+                "ce": 1,
+                "q": 196,
+                "qo": 0,
+                "dsl": null,
+                "dsls": null
+              },
+              {
+                "ce": 2,
+                "q": 167,
+                "qo": 0,
+                "dsl": null,
+                "dsls": null
+              }
+            ],
+            "qps": null,
+            "dia": null,
+            "d": "ASIAN HANDICAP",
+            "ming": 1,
+            "maxg": 30,
+            "mings": null,
+            "maxgs": null,
+            "csh": false,
+            "s": null,
+            "plyc": false,
+            "mag": false,
+            "mags": false,
+            "hid": false
+          },
+          {
+            "cs": 60016,
+            "h": -50,
+            "th": 2,
+            "hs": "-50",
+            "ia": {
+              "type": 2,
+              "info1": -50,
+              "info2": 0,
+              "info3": 0,
+              "info4": 0,
+              "info5": 0,
+              "info6": 0,
+              "info7": 0,
+              "info8": 0,
+              "info_valide": 1,
+              "descrizione": 0
+            },
+            "eqs": [
+              {
+                "ce": 1,
+                "q": 138,
+                "qo": 0,
+                "dsl": null,
+                "dsls": null
+              },
+              {
+                "ce": 2,
+                "q": 260,
+                "qo": 0,
+                "dsl": null,
+                "dsls": null
+              }
+            ],
+            "qps": null,
+            "dia": null,
+            "d": "ASIAN HANDICAP",
+            "ming": 1,
+            "maxg": 30,
+            "mings": null,
+            "maxgs": null,
+            "csh": false,
+            "s": null,
+            "plyc": false,
+            "mag": false,
+            "mags": false,
+            "hid": false
+          },
+          {
+            "cs": 60016,
+            "h": -250,
+            "th": 2,
+            "hs": "-250",
+            "ia": {
+              "type": 2,
+              "info1": -250,
+              "info2": 0,
+              "info3": 0,
+              "info4": 0,
+              "info5": 0,
+              "info6": 0,
+              "info7": 0,
+              "info8": 0,
+              "info_valide": 1,
+              "descrizione": 0
+            },
+            "eqs": [
+              {
+                "ce": 1,
+                "q": 315,
+                "qo": 0,
+                "dsl": null,
+                "dsls": null
+              },
+              {
+                "ce": 2,
+                "q": 126,
+                "qo": 0,
+                "dsl": null,
+                "dsls": null
+              }
+            ],
+            "qps": null,
+            "dia": null,
+            "d": "ASIAN HANDICAP",
+            "ming": 1,
+            "maxg": 30,
+            "mings": null,
+            "maxgs": null,
+            "csh": false,
+            "s": null,
+            "plyc": false,
+            "mag": false,
+            "mags": false,
+            "hid": false
+          }
+        ]
+      }
+    ]
+  }
+}
