@@ -1,3 +1,7 @@
+import ScraperBase from './base.mjs';
+import { normalizeTeamName } from '../shared/text.mjs';
+import { ValidationError, UpstreamError } from '../shared/errors.mjs';
+
 export const FEG_SPORT_NAMES = Object.freeze({
   'ufo:sprt:00': 'Football', 'ufo:sprt:01': 'Tennis', 'ufo:sprt:02': 'Basketball',
   'ufo:sprt:03': 'Ice Hockey', 'ufo:sprt:04': 'Handball', 'ufo:sprt:07': 'Rugby',
@@ -72,4 +76,245 @@ export function normalizeFegMarket(m) {
   // Opaque provider IDs and 1/X/2 labels do not establish settlement rules.
   return { id: m.id, key: m.marketTypeId || 'unknown', name: m.name || 'Market',
     period: m.period || 'unknown', line: m.line ?? null, selections };
+}
+
+const FEG_MATCHES_PATH = '/offer/structure/api/v1_0/tournament/';
+const FEG_MARKETS_PATH = '/offer/markets/api/v1_0/fixtures/markets/overview';
+/** Batch size for market hydration. */
+const FEG_BATCH_SIZE = 50;
+
+/**
+ * Sport ids the FEG catalogue is walked for, in traversal order.
+ *
+ * The ids past `ufo:sprt:11` have no friendly name in `FEG_SPORT_NAMES`; they
+ * are still walked because the provider lists live fixtures under them and
+ * `fegSportName` keeps them apart by naming the raw id (see there). The two
+ * brands of this feed (Fortuna, Casa Pariurilor) expose the same catalogue, so
+ * this list is shared rather than copied.
+ */
+const FEG_SPORT_IDS = Object.freeze([
+  'ufo:sprt:00', // Football
+  'ufo:sprt:01', // Tennis
+  'ufo:sprt:02', // Basketball
+  'ufo:sprt:03', // Ice Hockey
+  'ufo:sprt:04', // Handball
+  'ufo:sprt:07', // Rugby
+  'ufo:sprt:09', // Darts
+  'ufo:sprt:11', // Futsal
+  'ufo:sprt:23', 'ufo:sprt:26', 'ufo:sprt:27', 'ufo:sprt:29', 'ufo:sprt:35',
+]);
+
+const FEG_HEADERS = Object.freeze({
+  'Accept': 'application/json',
+  'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+});
+
+/**
+ * FegCatalogueScraper — the shared multi-sport catalogue traversal behind the
+ * two brands of the Fortuna BFF (fortuna, casa-pariurilor).
+ *
+ * Both brands are resold from one upstream (see the `fortuna-bff` feed group in
+ * scanner/feed-groups.mjs), so they walk the identical pipeline against their
+ * own hostname: sport catalogue → per-tournament match lists → batched market
+ * overview. This class holds that one traversal; a brand supplies only its
+ * `apiBase` and the `transport` label that appears on its events.
+ *
+ * `sourceId` is taken from `this.id`, not a literal, so a brand can never
+ * publish under another brand's id.
+ */
+export class FegCatalogueScraper extends ScraperBase {
+  /** @type {string} per-brand upstream origin, e.g. https://api.efortuna.ro */
+  apiBase = '';
+  /** @type {string} provenance label stamped on each event, e.g. fortuna-catalogue-v1 */
+  transport = '';
+
+  constructor(opts = {}) {
+    super(opts);
+    // The traversal performs ~13 sport catalogue requests + up to ~120
+    // tournament match-list requests + market-overview batches, which routinely
+    // takes 25-60s. Keep the per-attempt deadline well above that so the base
+    // class doesn't abort the whole run mid-traversal.
+    this.timeoutMs = opts.timeoutMs ?? 120_000;
+    this.maxAttempts = opts.maxAttempts ?? 1;
+    this.maxEvents = opts.maxEvents === 'all' ? 5000 : Math.min(Number(opts.maxEvents ?? 100), 5000);
+    if (!Number.isInteger(this.maxEvents) || this.maxEvents < 0 || this.maxEvents > 5000) {
+      throw new ValidationError(`${this.id}: invalid maxEvents`);
+    }
+  }
+
+  async fetchRaw({ signal } = {}) {
+    signal?.throwIfAborted();
+    this.observedAt = new Date().toISOString();
+    const headers = { ...FEG_HEADERS };
+
+    // Per-request failure accounting. Every step below swallows individual
+    // failures so one dead tournament does not lose the other 120, but a run in
+    // which every request failed must not be reported as a successful empty
+    // scrape: that is indistinguishable from a quiet day.
+    let attempted = 0;
+    let failed = 0;
+    // Why the requests failed, not just how many. Without this, a refused
+    // connection, a 403 and a malformed body all surface as the same line —
+    // "all 13 catalogue requests failed" — which is the one message you cannot
+    // act on, because it names none of the three causes.
+    const reasons = new Map();
+    const recordFailure = (stage, why) => {
+      failed += 1;
+      const key = `${stage}: ${why}`;
+      reasons.set(key, (reasons.get(key) || 0) + 1);
+    };
+
+    // Step 1: fetch the tournament catalogue for every sport.
+    const allTournaments = [];
+    for (const sportId of FEG_SPORT_IDS) {
+      signal?.throwIfAborted();
+      attempted += 1;
+      try {
+        const url = `${this.apiBase}/offer/structure/api/v1_0/sport/${sportId}/tournaments?categories=true&timeFilter=all`;
+        const catResp = await fetch(url, { signal, headers });
+        if (!catResp.ok) { recordFailure('catalogue', `HTTP ${catResp.status}`); continue; }
+        const catData = await catResp.json();
+        for (const t of (catData.tournaments || [])) {
+          t._sportId = sportId;
+          t._sportName = fegSportName(sportId);
+          allTournaments.push(t);
+        }
+      } catch (err) {
+        if (signal?.aborted) throw err;
+        recordFailure('catalogue', describeError(err));
+      }
+    }
+    const withFixtures = allTournaments.filter((t) => t.fixturesCount > 0);
+    this.logger('info', `${this.name}: ${withFixtures.length} tournaments with fixtures across ${FEG_SPORT_IDS.length} sports`);
+
+    // Step 2: fetch matches from each tournament that has any.
+    const allFixtures = [];
+    const tourMap = new Map();
+    for (const t of allTournaments) tourMap.set(t.id, t);
+
+    for (const t of withFixtures) {
+      signal?.throwIfAborted();
+      attempted += 1;
+      try {
+        const url = `${this.apiBase}${FEG_MATCHES_PATH}${encodeURIComponent(t.id)}/matches`;
+        const resp = await fetch(url, { signal, headers });
+        if (!resp.ok) { recordFailure('matches', `HTTP ${resp.status}`); continue; }
+        const data = await resp.json();
+        const fixtures = data.fixtures || [];
+        for (const f of fixtures) {
+          f._tournamentName = t.name;
+          f._tournamentSeoName = t.seoName || t.name;
+          f._categorySeoName = t.categorySeoName || '';
+          f._sportName = t._sportName || 'Football';
+          allFixtures.push(f);
+        }
+      } catch (err) {
+        if (signal?.aborted) throw err;
+        recordFailure('matches', describeError(err));
+      }
+    }
+    this.logger('info', `${this.name}: ${allFixtures.length} fixtures from catalogue`);
+
+    // Step 3: hydrate markets in batches.
+    const fixtureIds = allFixtures.map((f) => f.id);
+    const marketsByFixture = new Map();
+    for (let i = 0; i < fixtureIds.length; i += FEG_BATCH_SIZE) {
+      signal?.throwIfAborted();
+      const batch = fixtureIds.slice(i, i + FEG_BATCH_SIZE);
+      attempted += 1;
+      try {
+        const params = batch.map((id) => 'fixtureIds=' + encodeURIComponent(id)).join('&');
+        const url = `${this.apiBase}${FEG_MARKETS_PATH}?${params}`;
+        const resp = await fetch(url, { signal, headers });
+        if (!resp.ok) { recordFailure('markets', `HTTP ${resp.status}`); continue; }
+        const data = await resp.json();
+        for (const [fid, mkts] of Object.entries(data)) {
+          if (Array.isArray(mkts) && mkts.length > 0) {
+            marketsByFixture.set(fid, mkts);
+          }
+        }
+      } catch (err) {
+        if (signal?.aborted) throw err;
+        recordFailure('markets', describeError(err));
+      }
+    }
+    this.logger('info', `${this.name}: ${marketsByFixture.size} fixtures with hydrated markets`);
+
+    // Total upstream failure is a failed run, not an empty one: a scrape that
+    // collected nothing because every request failed is not a quiet market day.
+    // Partial failure still returns what was collected, and the counters travel
+    // with the payload so the shortfall is visible in the run report.
+    if (attempted > 0 && failed === attempted) {
+      // `attempted` counts every request across all three phases, so the stage
+      // in each recorded reason is what tells you which phase died.
+      throw new UpstreamError(
+        `${this.name}: all ${attempted} requests failed — ${summariseReasons(reasons)}`,
+      );
+    }
+    this.sourceUrl = `${this.apiBase}/offer/structure/api/v1_0/sport/tournaments`;
+    return { tournaments: [...tourMap.values()], fixtures: allFixtures, marketsByFixture };
+  }
+
+  normalize(raw) {
+    if (!raw?.fixtures) throw new ValidationError(`${this.name}: missing fixtures`);
+    const out = [];
+    for (const fix of raw.fixtures) {
+      const homeP = (fix.participants || []).find((p) => p.type === 'HOME');
+      const awayP = (fix.participants || []).find((p) => p.type === 'AWAY');
+      if (!homeP?.name || !awayP?.name) continue;
+      const kickoff = new Date(fix.startDatetime);
+      if (!Number.isFinite(+kickoff)) continue;
+      const mkts = (raw.marketsByFixture || new Map()).get(fix.id) || [];
+      if (mkts.length === 0) continue;
+      out.push({
+        id: fix.id,
+        sport: fix._sportName || 'Football',
+        league: fix._tournamentSeoName || 'unknown',
+        kickoff: kickoff.toISOString(),
+        homeTeam: homeP.name,
+        awayTeam: awayP.name,
+        markets: mkts,
+      });
+    }
+    return out;
+  }
+
+  extractEvents(rawEvents) {
+    const out = [];
+    const seen = new Set();
+    for (const r of rawEvents) {
+      if (out.length >= this.maxEvents) break;
+      if (seen.has(r.id)) continue;
+      seen.add(r.id);
+
+      const markets = (r.markets || [])
+        .map(normalizeFegMarket)
+        .filter(Boolean);
+      if (markets.length === 0) continue;
+
+      const eventKey = [
+        normalizeTeamName(r.sport), normalizeTeamName(r.league), r.kickoff,
+        normalizeTeamName(r.homeTeam), normalizeTeamName(r.awayTeam),
+      ].join('|');
+
+      out.push({
+        id: r.id, sourceId: this.id, sourceUrl: this.sourceUrl,
+        transport: this.transport, observedAt: this.observedAt,
+        sport: r.sport, league: r.league, kickoff: r.kickoff,
+        homeTeam: r.homeTeam, awayTeam: r.awayTeam, eventKey, markets,
+      });
+    }
+    return out;
+  }
+
+  _serializable(events, raw) {
+    return {
+      ...super._serializable(events, raw),
+      sourceUrl: this.sourceUrl, transport: this.transport,
+      observedAt: this.observedAt,
+      // Multi-sport: the traversal walks every sport in the catalogue, so
+      // claiming `football` here misdescribed what the run actually collected.
+      coverage: { sport: 'multi-sport', allMarkets: true, live: false, maxEvents: this.maxEvents },
+    };
+  }
 }

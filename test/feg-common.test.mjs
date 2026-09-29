@@ -87,3 +87,80 @@ test('a total failure names its cause, whichever it was', async () => {
     await rm(dataDir, { recursive: true, force: true });
   }
 });
+
+/**
+ * The two brands are one upstream feed resold under two names, which is why
+ * they are declared together in the `fortuna-bff` group in feed-groups.mjs.
+ * Their adapters were near-verbatim copies that had already drifted, so these
+ * assertions pin the shared contract the copies used to disagree on.
+ */
+
+const BRANDS = [
+  { id: 'casa-pariurilor', Cls: Casa, transport: 'casa-catalogue-v1', host: /casapariurilor/i },
+  { id: 'fortuna', Cls: Fortuna, transport: 'fortuna-catalogue-v1', host: /efortuna/i },
+];
+
+for (const { id, Cls, transport, host } of BRANDS) {
+  test(`${id} is configured with the origin its fetch actually calls`, () => {
+    const s = new Cls();
+    // A subclass that forgot its origin would build every request from the
+    // empty string, resolve nowhere, and report a clean empty day.
+    assert.ok(s.apiBase, `${id}: apiBase must be assigned`);
+    assert.match(s.apiBase, host, `${id}: apiBase should point at this brand's host`);
+    assert.ok(!s.apiBase.includes('undefined'), `${id}: apiBase must not contain "undefined"`);
+    assert.ok(s.transport, `${id}: transport must be assigned`);
+  });
+
+  test(`${id} publishes under its own sourceId, not the other brand's`, () => {
+    // The misattribution this guards: fetchRaw/extractEvents are shared, so a
+    // literal sourceId would file one brand's prices under the other's id.
+    const s = new Cls();
+    const [event] = s.extractEvents([{
+      id: 'fx', sport: 'Football', league: 'Liga 1', kickoff: '2030-01-01T12:00:00Z',
+      homeTeam: 'Dinamo', awayTeam: 'Rapid',
+      markets: [{ id: 'm', marketTypeId: 'ufo:mtyp:01-1', outcomes: [{ id: '1', name: '1', odds: 2.1 }, { id: '2', name: '2', odds: 3.2 }] }],
+    }]);
+    assert.equal(event.sourceId, id, `${id}: must publish as "${id}", not "${event.sourceId}"`);
+    assert.equal(event.transport, transport, `${id}: must keep its own transport label`);
+  });
+}
+
+test('the two FEG brands share one traversal, not two copies that drift', () => {
+  assert.equal(Casa.prototype.fetchRaw, Fortuna.prototype.fetchRaw,
+    'both brands must share the one fetchRaw implementation');
+  assert.equal(Casa.prototype.extractEvents, Fortuna.prototype.extractEvents,
+    'both brands must share the one extractEvents implementation');
+  assert.equal(Casa.prototype.normalize, Fortuna.prototype.normalize,
+    'both brands must share the one normalize implementation');
+});
+
+test('the two FEG brands agree on the identity of the same fixture', () => {
+  // This is the invariant the copies had lost. They are in one feed group, so
+  // the same match scraped from both must resolve to one event — otherwise the
+  // shared-feed check compares different events and stops recognising the pair
+  // as one price source. Their sport keys disagreed before consolidation
+  // ("ice-hockey" vs "ice hockey", and unmapped sports kept stray punctuation);
+  // the base class additionally rewrites eventKey to eventIdentityKey(), but the
+  // raw key must not contradict itself between the two brands either.
+  const fixture = {
+    id: 'fx', sport: 'Ice Hockey', league: 'NHL', kickoff: '2030-01-01T12:00:00Z',
+    homeTeam: 'Dinamo', awayTeam: 'Rapid',
+    markets: [{ id: 'm', marketTypeId: 'ufo:mtyp:01-1', outcomes: [{ id: '1', name: '1', odds: 2.1 }, { id: '2', name: '2', odds: 3.2 }] }],
+  };
+  const [casaEvent] = new Casa().extractEvents([fixture]);
+  const [fortunaEvent] = new Fortuna().extractEvents([fixture]);
+  assert.equal(casaEvent.eventKey, fortunaEvent.eventKey,
+    'the same fixture must produce the same key from either brand');
+  assert.notEqual(casaEvent.sourceId, fortunaEvent.sourceId,
+    'but they remain two distinct sources, which is what the feed group is for');
+});
+
+test('a failure in the market phase is reported as a market failure', () => {
+  // Both copies shared one counter but Casa labelled every phase "catalogue",
+  // so a dead market endpoint reported as a catalogue problem. The stage in the
+  // message is the only thing that says which of the three phases to look at.
+  const s = new Fortuna();
+  const source = Fortuna.prototype.fetchRaw.toString();
+  assert.match(source, /recordFailure\('markets'/, 'the market phase must label itself');
+  assert.equal(s.id, 'fortuna');
+});
