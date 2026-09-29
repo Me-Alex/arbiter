@@ -266,9 +266,43 @@ export class FegCatalogueScraper extends ScraperBase {
       if (!Number.isFinite(+kickoff)) continue;
       const mkts = (raw.marketsByFixture || new Map()).get(fix.id) || [];
       if (mkts.length === 0) continue;
+      // A FIXTURE'S OWN sportId, not the tree it was discovered under.
+      //
+      // The traversal walks one catalogue per sport and stamps each fixture
+      // with that tree's label, which is right for every sport this feed maps —
+      // measured 2026-10-02 across all 890 fixtures, the tree label and the
+      // fixture's own `sportId` agree exactly on football (775/775, 103 real
+      // tournaments, 0 esports), tennis, basketball, darts, handball, ice
+      // hockey, futsal, rugby and on the unmapped ids 26, 27 and 35.
+      //
+      // They disagree on exactly one group. Four fixtures found under the
+      // FOOTBALL tree carry `sportId: ufo:sprt:0c`, an id absent from
+      // FEG_SPORT_NAMES, and all four are esports battles: "Esports Battle -
+      // Liga Campionilor (2x6 min.)" and "Esports Battle - Serie A (2x4 min.)",
+      // with a player alias welded onto a real club — "Juventus (Pex) v
+      // B Dortmund (ZORO)", "Colombia (mPm) v Ecuador (ramzes)". Stamped from
+      // the tree they were published as football, and their totals resolved into
+      // the engine's football OVER_UNDER buckets.
+      //
+      // The parenthesised format is the tell and the reason those lines looked
+      // impossible: "(2x4 min.)" is a best-of-two-then-four battle series, so
+      // its total counts ROUNDS won, not goals. That is where the single-book
+      // O/U 9.5, 11.5 and 12.5 rows in the coverage report came from — not
+      // football markets at all, and not fixable by listing tournament names,
+      // since the provider writes the same prefix on every one of them. Nor by
+      // the parenthesised alias, which real clubs carry too.
+      //
+      // Reading the fixture's own field instead fixes the whole group and needs
+      // no maintained list: `ufo:sprt:0c` has no name here, so `fegSportName`
+      // renders it exactly as it already renders 26, 27 and 35 — "Unknown
+      // (ufo:sprt:0c)" — which keeps it out of the football path and keeps it
+      // apart from every other unmapped sport in the event key. The field is
+      // preferred, not required: a fixture without one still falls back to the
+      // tree label, as before.
+      const ownSportId = String(fix.sportId || '').trim();
       out.push({
         id: fix.id,
-        sport: fix._sportName || 'Football',
+        sport: ownSportId ? fegSportName(ownSportId) : (fix._sportName || 'Football'),
         league: fix._tournamentSeoName || 'unknown',
         kickoff: kickoff.toISOString(),
         homeTeam: homeP.name,

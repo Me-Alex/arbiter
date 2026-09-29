@@ -6,6 +6,7 @@ import { join } from 'node:path';
 import Casa from '../src/scrapers/casa-pariurilor.mjs';
 import Fortuna from '../src/scrapers/fortuna.mjs';
 import { describeError, summariseReasons } from '../src/scrapers/feg-common.mjs';
+import { canonicalSport } from '../src/shared/text.mjs';
 
 for (const Adapter of [Casa, Fortuna]) {
   test(`${Adapter.name} preserves unknown settlement and provider identifiers`, () => {
@@ -164,3 +165,94 @@ test('a failure in the market phase is reported as a market failure', () => {
   assert.match(source, /recordFailure\('markets'/, 'the market phase must label itself');
   assert.equal(s.id, 'fortuna');
 });
+
+/**
+ * A fixture's own sportId outranks the catalogue tree it was found under.
+ *
+ * The traversal walks one catalogue per sport and stamps every fixture with that
+ * tree's label. Measured 2026-10-02 over all 890 live fixtures the two agree
+ * exactly — 775/775 on football across 103 real tournaments, and the same on
+ * tennis, basketball, darts, handball, ice hockey, futsal, rugby and the
+ * unmapped ids 26, 27 and 35. They disagree on exactly one group.
+ */
+const KICKOFF = '2030-01-01T12:00:00.000Z';
+
+/** One raw fixture, as the catalogue traversal hands it to normalize(). */
+function fixture({ id, sportId, treeSport, home, away, tournament }) {
+  return {
+    id,
+    sportId,
+    sportSeoName: 'efotbal',
+    _sportName: treeSport,
+    _tournamentName: tournament,
+    _tournamentSeoName: tournament.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+    startDatetime: new Date(KICKOFF).getTime(),
+    participants: [
+      { type: 'HOME', name: home },
+      { type: 'AWAY', name: away },
+    ],
+  };
+}
+
+/** A priced two-way market, enough for normalize() to keep the fixture. */
+function market(id) {
+  return [{ id, marketTypeId: 'ufo:mtyp:03-0c', name: 'Total goluri', period: 'FT',
+    outcomes: [{ id: `${id}-o`, name: 'Over', odds: 1.91 }, { id: `${id}-u`, name: 'Under', odds: 1.91 }] }];
+}
+
+for (const { id, Cls } of BRANDS) {
+  test(`${id} reads an esports battle filed under the football tree as not football`, () => {
+    // "Esports Battle - Liga Campionilor (2x6 min.)", found by walking the
+    // ufo:sprt:00 catalogue but carrying sportId ufo:sprt:0c — an id absent
+    // from FEG_SPORT_NAMES. Stamped from the tree it was published as football,
+    // and its total (which counts ROUNDS of a best-of-2-then-6 battle, not
+    // goals) resolved into the engine's football OVER_UNDER buckets. That is
+    // where the single-book O/U 9.5, 11.5 and 12.5 rows in the coverage report
+    // came from. There is no way to filter these by name alone: the provider
+    // writes the same "Esports Battle" prefix on every one of them, and the
+    // player alias welded onto the club ("Juventus (Pex)") is not a safe test
+    // either — real clubs carry parentheses too.
+    const battle = fixture({
+      id: 'fx-battle', sportId: 'ufo:sprt:0c', treeSport: 'Football',
+      home: 'Juventus (Pex)', away: 'B Dortmund (ZORO)',
+      tournament: 'Esports Battle - Liga Campionilor (2x6 min.)',
+    });
+    const real = fixture({
+      id: 'fx-real', sportId: 'ufo:sprt:00', treeSport: 'Football',
+      home: 'Juventus', away: 'B Dortmund',
+      tournament: 'Serie A',
+    });
+    const adapter = new Cls();
+    const marketsByFixture = new Map([['fx-battle', market('m1')], ['fx-real', market('m2')]]);
+    const events = adapter.extractEvents(adapter.normalize({ fixtures: [battle, real], marketsByFixture }));
+    const byId = new Map(events.map((e) => [e.id, e]));
+
+    assert.equal(byId.get('fx-real').sport, 'Football', 'a real football fixture is still football');
+    assert.notEqual(byId.get('fx-battle').sport, 'Football',
+      `an esports battle must not be published as football (got ${byId.get('fx-battle').sport})`);
+    assert.notEqual(canonicalSport(byId.get('fx-battle').sport), 'football',
+      'and it must not survive the engine football scoping either');
+    // Naming the unknown id is the existing convention for a sport this feed
+    // has no name for, and it keeps the battle in its own event rather than
+    // colliding with the real match it is named after.
+    assert.match(byId.get('fx-battle').sport, /0c/);
+    assert.notEqual(byId.get('fx-battle').eventKey, byId.get('fx-real').eventKey,
+      'a battle and the real fixture it mimics must not share an event key');
+  });
+
+  test(`${id} falls back to the tree label when the fixture carries no sportId`, () => {
+    // The new field is preferred, not required. A fixture that omits it must
+    // still be labelled from the tree the traversal walked, exactly as before.
+    const adapter = new Cls();
+    const bare = fixture({
+      id: 'fx-bare', treeSport: 'Handball', home: 'Dinamo', away: 'Rapid',
+      tournament: 'Liga Nationala',
+    });
+    delete bare.sportId;
+    const [event] = adapter.extractEvents(adapter.normalize({
+      fixtures: [bare],
+      marketsByFixture: new Map([['fx-bare', market('m')]]),
+    }));
+    assert.equal(event.sport, 'Handball');
+  });
+}
