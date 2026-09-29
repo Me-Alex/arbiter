@@ -123,6 +123,18 @@ export default class ExcelBetScraper extends ScraperBase {
       // result market and could be paired against another book's full-time
       // legs. They are not needed for the FT 1X2 contract, so they are dropped
       // rather than re-mapped from unverified outcome semantics.
+      //
+      // This endpoint carries no totals and no both-teams-to-score, and that
+      // is a measured property of the feed, not a gap in this reader. Captured
+      // 2026-09-29 from all four tenants (excelbet, winboss, las-vegas,
+      // magnumbet) at 150 events each, the only market codes present were
+      // 3 "FINAL" (3 outcomes, ce 1/X/2) and 15/16/17 "DOUBLE CHANCE" (2
+      // outcomes each, reusing the same ce 1/2/3 result codes for the 1&2, 1&X
+      // and X&2 pairs). The idSport/idAggregata variants the tenant front end
+      // exposes answer HTTP 406, so the shape this adapter requests is the
+      // working one. There is therefore no totals or BTTS contract to publish
+      // here: extending these books means finding a different endpoint, not
+      // reading this one differently, and an invented code would be a mislabel.
       const marketMap = { 3: '1x2' };
       const markets = (e.scs || [])
         .map((sc) => {

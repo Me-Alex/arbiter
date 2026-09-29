@@ -24,7 +24,19 @@ const SPORT_NAMES = {
   29: 'Field Hockey', 38: 'Squash', 27: 'Beach Soccer', 30: 'Padel Tennis',
 };
 
-/** Public v3 schema verified against the Romanian feed; multi-sport prematch. */
+/**
+ * Public v3 schema verified against the Romanian feed; multi-sport prematch.
+ *
+ * On totals and BTTS: this reader is generic — it maps every market the payload
+ * carries, by line group — so it is not what limits Superbet to the result
+ * market. The public index is. Captured 2026-09-29, the `active-prematch`,
+ * `active` and `all-prematch` projections (and the 141-market count the event
+ * advertises in `inplay_stats_metadata`) all return exactly one market per
+ * event, the featured result market ("Final", or a sport-specific winner such as
+ * "Câștigător"). No goals total or both-teams-to-score appears on the public
+ * index. Publishing one would mean a different, unverified endpoint, not reading
+ * this one differently.
+ */
 export default class SuperbetScraper extends ScraperBase {
   id = 'superbet';
   name = 'Superbet';

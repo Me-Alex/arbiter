@@ -245,7 +245,13 @@ export default class NetBetScraper extends ScraperBase {
       sourceUrl: this.sourceUrl,
       transport: 'netbet-sportify-public-json',
       observedAt: this.observedAt,
-      coverage: { sports: this.sports.length, market: 'fulltime-1x2', live: false, maxEvents: this.maxEvents },
+      // Verified 2026-09-29 against a live football inventory: each event
+      // carries `default` (Rezultat Final), `total_goals` (Total Goluri) and
+      // `btts` (Ambele Marcheaza) on all but a handful of fixtures, and the
+      // totals resolve to a real OVER_UNDER contract at the line named in the
+      // selection. This string said 1x2 only, which understated what the run
+      // actually collects and hid the two arbitrable families from the report.
+      coverage: { sports: this.sports.length, market: 'fulltime-1x2+tgoals+btts', live: false, maxEvents: this.maxEvents },
     };
   }
 }

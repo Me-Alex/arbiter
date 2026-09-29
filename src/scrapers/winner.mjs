@@ -49,6 +49,17 @@ function marketPeriod(name) {
  * Returns 3,000+ events across 30+ sports in a single POST request.
  * Each event has matchBets[] with outcomes and odds.
  */
+/**
+ * Digitain (Gambling Solutions) public events feed.
+ *
+ * On totals and BTTS: as with Superbet, the reader is not the limit. Captured
+ * 2026-09-29 from the full 3,113-event payload, every one of the 1,159 football
+ * events carried exactly one entry in `matchBets` — "Final" (or "Câștigător",
+ * and outright-specific labels on the few non-league fixtures). No goals total
+ * and no both-teams-to-score is present on this public endpoint, so there is no
+ * such contract to publish here; it would take a different, unverified endpoint
+ * rather than different parsing.
+ */
 export default class WinnerScraper extends ScraperBase {
   id = 'winner';
   name = 'Winner';
