@@ -52,13 +52,21 @@ function marketPeriod(name) {
 /**
  * Digitain (Gambling Solutions) public events feed.
  *
- * On totals and BTTS: as with Superbet, the reader is not the limit. Captured
- * 2026-09-29 from the full 3,113-event payload, every one of the 1,159 football
- * events carried exactly one entry in `matchBets` — "Final" (or "Câștigător",
- * and outright-specific labels on the few non-league fixtures). No goals total
- * and no both-teams-to-score is present on this public endpoint, so there is no
- * such contract to publish here; it would take a different, unverified endpoint
- * rather than different parsing.
+ * On totals: the reader WAS the limit, and has been fixed. An earlier note here
+ * said the public endpoint carries no goals total, from a capture in which
+ * every football event held exactly one matchBets entry. Re-measured
+ * 2026-09-29 on the full 3,533-event payload, that still holds for all but one
+ * fixture — 1 of 1,269 football events — and the totals that do exist were
+ * being dropped, not absent. Across the whole payload there are 26
+ * total-named markets, all under idBet 3: 13 basketball, 4 rugby union, 3
+ * handball, 2 American football, 2 polo, 1 bandy, and that single football
+ * fixture with "Total goluri" at 4.5/5.5/6.5/7. So this book is genuinely
+ * thin on totals, but not empty, and the reason it published none is in
+ * extractEvents: the line lives in `argument`, not in the leg name.
+ *
+ * There is no both-teams-to-score on this endpoint — still unverified as
+ * absent rather than merely unpublished, since no such market name appeared
+ * in any sport in the payload.
  */
 export default class WinnerScraper extends ScraperBase {
   id = 'winner';
@@ -174,6 +182,77 @@ export default class WinnerScraper extends ScraperBase {
         if (!bet.mbActive) continue;
         const betName = this._localize(bet.mbDisplayName, `Market ${bet.idBet}`);
         const outcomes = bet.mbOutcomes || [];
+
+        // A goals total arrives BUNDLED: one matchBets entry whose outcomes
+        // cover every line the book quotes for that fixture. Measured 2026-09-29
+        // on the live payload, a single football fixture (idMatch 41130989)
+        // carried "Total goluri" with outcomes at 4.5, 5.5, 6.5 and 7 — four
+        // lines in one entry, eight legs. Publishing that as one market is the
+        // multi-line bug the engine already documents: the legs would collapse
+        // into whichever line the router happened to read.
+        //
+        // The line is not in the leg name either. Every outcome reads bare
+        // "Peste"/"Sub" and carries the number in a sibling field, `argument`
+        // (4.5, 5.5, …), with the side in `mboType`/`mboCode` (1 Over, 2
+        // Under). The name alone therefore yields no lineKey at all, which is
+        // why this book contributed no total at all. So the line is composed
+        // back into the leg name here — the shape every other adapter already
+        // publishes — and each line is emitted as its own market.
+        //
+        // Only on the half. A whole or quarter line is not a two-sided
+        // contract: at exactly 7 goals, "Peste 7" and "Sub 7" both push, so the
+        // pair settles to a refund rather than covering the outcome. The router
+        // refuses those too; skipping them here keeps a non-exhaustive market
+        // out of the payload in the first place.
+        if (this.sportFilter === 'football') {
+          const byLine = new Map();
+          let total = true;
+          for (const o of outcomes) {
+            if (!o.mboActive) continue;
+            const line = Number(o.argument);
+            const sideWord = this._localize(o.mboType, this._localize(o.mboDisplayName, ''));
+            const side = /^(over|peste)$/i.test(sideWord) ? 'over'
+              : /^(under|sub)$/i.test(sideWord) ? 'under' : null;
+            if (!Number.isFinite(line) || !side) { total = false; break; }
+            const odds = Number(o.mboOddValue);
+            if (!Number.isFinite(odds) || odds <= 1) { total = false; break; }
+            if (!byLine.has(line)) byLine.set(line, {});
+            byLine.get(line)[side] = { id: String(o.idMbo || ''), sideWord, odds };
+          }
+          if (total && byLine.size > 0) {
+            // The shape alone does not say WHAT is counted, and only goals can be
+            // paired as `total_goals`. Swept across the whole payload
+            // 2026-09-29, every bundled over/under market is under idBet 3 and
+            // takes one of three names: "Total puncte Peste/Sub" (18 — basketball,
+            // American football, rugby union), "Total goluri" (handball and
+            // football) and "Total" (polo, bandy). A points total republished as
+            // goals would be a mislabel that pairs against a real goals line.
+            //
+            // Only football reaches here, and `canonicalSportKey` already drops
+            // the points sports — "Fotbal American" maps to `american-football`,
+            // measured, not assumed. The gate is still terminal rather than
+            // assumed-away: an unrecognised name publishes NOTHING. Falling
+            // through would republish this as one market spanning every line,
+            // which is the multi-line bug this branch exists to prevent.
+            if (!/^total\b/i.test(betName) || !/\bgoluri\b|\bgoals\b/i.test(betName)) continue;
+            for (const [line, sides] of byLine) {
+              // Exactly two opposite sides, or it is not a contract.
+              if (!sides.over || !sides.under) continue;
+              if (line % 1 === 0 || line * 2 !== Math.round(line * 2)) continue;
+              markets.push({
+                key: 'total_goals',
+                name: `${betName} ${line}`,
+                period: marketPeriod(betName),
+                selections: [
+                  { id: sides.over.id, name: `${sides.over.sideWord} ${line}`, odds: sides.over.odds, handicap: null },
+                  { id: sides.under.id, name: `${sides.under.sideWord} ${line}`, odds: sides.under.odds, handicap: null },
+                ],
+              });
+            }
+            continue;
+          }
+        }
+
         const selections = [];
         for (const o of outcomes) {
           if (!o.mboActive) continue;
