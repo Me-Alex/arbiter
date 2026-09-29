@@ -2,6 +2,7 @@ import ScraperBase from './base.mjs';
 import { normalizeTeamName } from '../shared/text.mjs';
 import { ValidationError, UpstreamError } from '../shared/errors.mjs';
 import { describeError, summariseReasons } from './feg-common.mjs';
+import { unibetEventIsLive, markMarketsLive, eventIsLive, liveCoverageFor } from './live-status.mjs';
 
 /**
  * Unibet (RO) — Kindred XNS sports BFF.
@@ -348,6 +349,11 @@ export default class UnibetScraper extends ScraperBase {
       throw new ValidationError('Unibet: invalid detailLimit');
     }
     this.observedAt = new Date().toISOString();
+    // This feed publishes in-play contests and says so on the contest itself, so
+    // the flag is honoured rather than warned about. Measured 2026-09-29 22:5x
+    // UTC: 12-13 started contests, every one `status: "InPlay"` against
+    // `PreGame` on all ~830 future ones.
+    this.includeLive = opts.includeLive === true;
   }
 
   /**
@@ -556,6 +562,14 @@ export default class UnibetScraper extends ScraperBase {
       }
       if (markets.length === 0) continue;
 
+      // Unibet states live-ness on the CONTEST, so every market of an in-play
+      // contest is a live market. The flag is stamped here rather than in
+      // extractEvents because `includeLive` is a collection decision: a run that
+      // did not ask for in-play should not pay to carry those markets at all.
+      const live = unibetEventIsLive(contest);
+      if (live && !this.includeLive) continue;
+      markMarketsLive(markets, () => live);
+
       const { home, away } = resolveTeams(contest);
       if (!home || !away) continue;
 
@@ -603,6 +617,10 @@ export default class UnibetScraper extends ScraperBase {
         homeTeam: r.homeTeam,
         awayTeam: r.awayTeam,
         eventKey,
+        // The scanner's live gate and the 90-second live freshness window both
+        // read this. It was previously absent on every Unibet event, so an
+        // in-play contest was dropped on kickoff exactly like a finished one.
+        live: eventIsLive(r),
         markets: r.markets,
       });
     }
@@ -624,7 +642,11 @@ export default class UnibetScraper extends ScraperBase {
         // deliberately dropped as un-comparable across books.
         allMarkets: Boolean(this.fullMarkets),
         markets: this.fullMarkets ? 'result/totals/btts/double-chance/handicap' : 'result-only',
-        live: true,
+        // Was a blanket `true`, which described the transport rather than the
+        // run: it said "live" even on a pre-match-only collection. The measured
+        // capability, and whether THIS run actually collected in-play contests.
+        ...liveCoverageFor(this.id),
+        liveCollected: this.includeLive,
         maxEvents: this.maxEvents,
         detailLimit: this.fullMarkets ? this.detailLimit : 0,
       },

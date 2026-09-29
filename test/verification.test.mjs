@@ -35,7 +35,10 @@ function indexFor(events) {
     for (const e of instances) {
       for (const m of e.markets || []) {
         for (const s of m.selections || []) {
-          const k = `${key}::${m.key}::${String(s.name).toLowerCase()}`;
+          // The scope is part of the key: `buildSelectionIndex` separates a live
+          // leg from a pre-match one, and this index has to speak the same
+          // language or every confirmation reports its own legs missing.
+          const k = `${key}::${m.key}::${m.live === true ? 'live' : 'prematch'}::${String(s.name).toLowerCase()}`;
           const arr = index.get(k) || [];
           arr.push({ sourceId: e.sourceId, odds: s.odds, handicap: s.handicap ?? null, kickoff: e.kickoff });
           index.set(k, arr);

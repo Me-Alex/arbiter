@@ -1,6 +1,7 @@
 import ScraperBase from './base.mjs';
 import { normalizeTeamName } from '../shared/text.mjs';
 import { ValidationError, UpstreamError } from '../shared/errors.mjs';
+import { liveCoverageFor } from './live-status.mjs';
 import { describeError, summariseReasons } from './feg-common.mjs';
 
 /** All known Betano sport IDs from sportCallerSportMapping + live layout. */
@@ -292,6 +293,6 @@ export default class BetanoScraper extends ScraperBase {
   _serializable(events, raw) {
     return { ...super._serializable(events, raw), sourceUrl: this.sourceUrl,
       transport: 'betano-top-events-json', observedAt: this.observedAt,
-      coverage: { sport: 'multi-sport', allMarkets: true, live: false, maxEvents: this.maxEvents } };
+      coverage: { sport: 'multi-sport', allMarkets: true, ...liveCoverageFor(this.id), maxEvents: this.maxEvents } };
   }
 }

@@ -1,6 +1,7 @@
 import ScraperBase from './base.mjs';
 import { normalizeTeamName, canonicalSport } from '../shared/text.mjs';
 import { ValidationError, UpstreamError } from '../shared/errors.mjs';
+import { superbetEventIsLive, markMarketsLive, liveCoverageFor } from './live-status.mjs';
 
 const HOST = 'https://production-superbet-offer-ro.freetls.fastly.net';
 
@@ -220,7 +221,9 @@ export default class SuperbetScraper extends ScraperBase {
       throw new ValidationError('superbet: invalid detailLimit');
     }
     this.concurrency = Math.max(1, Number(opts.concurrency ?? opts.jobConfig?.concurrency ?? 4));
-    if (opts.includeLive) this.logger('warn', 'superbet: live collection is unsupported; collecting prematch only');
+    // The feed publishes in-play events and names them, so the flag is honoured
+    // here instead of being answered with a warning that it was unsupported.
+    this.includeLive = opts.includeLive === true;
   }
 
 
@@ -345,12 +348,21 @@ export default class SuperbetScraper extends ScraperBase {
     for (const event of rawEvents) {
       if (out.length >= this.maxEvents) break;
       const f = event.fixture;
-      if (f?.offer_state_status?.['1'] !== 1
-          || event.inplay_stats_metadata?.status !== 'NOT_STARTED') continue;
+      // The feed publishes in-play events and names them on
+      // `inplay_stats_metadata.status`, which is `NOT_STARTED` until the match
+      // begins. That field was read here only to THROW those events away,
+      // unconditionally, whatever the caller asked for — so `includeLive` was
+      // honoured by warning that it was unsupported. Measured 2026-09-29 22:5x
+      // UTC the feed carried 1133 future football fixtures and no started one,
+      // so the branch below has not been observed keeping anything; it refuses
+      // to claim a live event it cannot see.
+      if (f?.offer_state_status?.['1'] !== 1) continue;
+      if (!this.includeLive && event.inplay_stats_metadata?.status !== 'NOT_STARTED') continue;
       const teams = f.event_name?.split('·').map((s) => s.trim());
       const date = new Date(f.utc_date);
+      const live = superbetEventIsLive(event);
       if (teams?.length !== 2 || teams.some((s) => !s) || !Number.isFinite(+date)
-          || (!this.includePast && +date <= Date.now()) || !event.event_id) continue;
+          || (!this.includePast && !live && +date <= Date.now()) || !event.event_id) continue;
       // Extract ALL markets with valid odds from the event
       const markets = (event.markets || [])
         .map((m) => {
@@ -395,9 +407,11 @@ export default class SuperbetScraper extends ScraperBase {
       // so a run filtered to football still emitted every other sport the feed
       // carried, and they consumed the event cap.
       if (this.sportFilter && canonicalSportKey(sportName) !== this.sportFilter) continue;
+      // A live event's markets are live markets; the engine pairs on that flag.
+      markMarketsLive(markets, () => live);
       out.push({
         id: String(event.event_id), sourceId: this.id, sport: sportName, league, kickoff,
-        homeTeam: teams[0], awayTeam: teams[1], isLive: false,
+        homeTeam: teams[0], awayTeam: teams[1], live, isLive: live,
         eventKey: [sportName.toLowerCase(), normalizeTeamName(league), kickoff, ...teams.map(normalizeTeamName)].join('|'),
         // No public per-event page has been verified for this feed; a v2 path on
         // the JSON CDN is not a browseable link, so emit null rather than a URL
@@ -424,7 +438,9 @@ export default class SuperbetScraper extends ScraperBase {
         // deliberately dropped as un-comparable across books.
         allMarkets: Boolean(this.fullMarkets),
         market: this.fullMarkets ? 'fulltime-1x2+totals+handicap' : 'fulltime-1x2',
-        live: false,
+        // Measured capability, plus whether this run took its in-play events.
+        ...liveCoverageFor(this.id),
+        liveCollected: this.includeLive,
         windowHours: this.windowHours * 4,
         maxEvents: this.maxEvents,
         detailLimit: this.fullMarkets ? this.detailLimit : 0,

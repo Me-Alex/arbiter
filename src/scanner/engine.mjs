@@ -12,6 +12,26 @@ import {
 import { isSharedFeed } from './feed-groups.mjs';
 import { leaguesMatch } from './league-aliases.mjs';
 
+/**
+ * Which side of the book an in-play market belongs to.
+ *
+ * A live leg and a pre-match leg are different products, not two prices for the
+ * same one: the live leg is a bet on the score as it stands, the pre-match leg is
+ * a bet on the final result. Pairing them across books and dividing one by the
+ * other produces an "arbitrage" that cannot be placed — the two bets do not
+ * settle together. The FEG feed makes this concrete: it publishes LIVE and
+ * PREMATCH markets side by side on the SAME fixture, so a single event object
+ * carries both, and without this scope in the bucket key the engine would happily
+ * pair the provider's own live 1X2 against another book's pre-match 1X2.
+ *
+ * Derived from `market.live`, which the adapters set from each provider's own
+ * status field. An absent flag means pre-match, which is what every market was
+ * before live collection existed, so the default cannot invent a live leg.
+ */
+function pairingScope(market) {
+  return market?.live === true ? 'live' : 'prematch';
+}
+
 export function buildSelectionIndex(events) {
   const index = new Map();
   for (const [eventKey, instances] of groupByEvent(events)) {
@@ -28,7 +48,10 @@ export function buildSelectionIndex(events) {
         const contract = resolveContract(market);
         if (!contract) continue;
         for (const selection of market.selections || []) {
-          const key = `${eventKey}::${market.key}::${String(selection.name).toLowerCase()}`;
+          // The pairing scope travels with the key for the same reason it travels
+          // with the arbitrage bucket: a verification re-quote has to find the leg
+          // it was priced against, and a live leg is not that leg.
+          const key = `${eventKey}::${market.key}::${pairingScope(market)}::${String(selection.name).toLowerCase()}`;
           const candidates = index.get(key) || [];
           candidates.push({ sourceId: event.sourceId, odds: Number(selection.odds), handicap: selection.handicap ?? null,
             kickoff: event.kickoff, providerEventId: event.providerEventId || event.id,
@@ -212,7 +235,7 @@ export function findArbitrage(grouped, { minRoiPercent = 0 } = {}) {
         // never pair with a full-time BTTS, and an OVER 2.5 with an OVER 3.5.
         // Both collisions were real prior bugs in ufo:mtyp:00-0u and any
         // multi-line bundled totals market.
-        const bucketKey = bucketKeyForContract(eventKey, contract);
+        const bucketKey = `${bucketKeyForContract(eventKey, contract)}::${pairingScope(m)}`;
         let bucket = buckets.get(bucketKey);
         if (!bucket) {
           bucket = {
@@ -253,6 +276,9 @@ export function findArbitrage(grouped, { minRoiPercent = 0 } = {}) {
               handicap: s.handicap ?? null,
               marketKey: m.key,
               eventKey,
+              // Travels with the leg so a verification re-quote looks up the same
+              // scope the price came from, and so the UI can mark a live signal.
+              live: m.live === true,
               eventUrl: ev.sourceUrl || null,
               kickoff: ev.kickoff,
               providerEventId: ev.providerEventId || ev.id,
@@ -289,6 +315,7 @@ export function findArbitrage(grouped, { minRoiPercent = 0 } = {}) {
       line: b.contract.lineKey === '_' ? null : b.contract.lineKey,
       eventKey: b.eventKey,
       marketKey: b.marketKey,
+      live: b.meta.market.live === true,
       sport: ev.sport,
       league: ev.league,
       kickoff: ev.kickoff,
@@ -322,7 +349,7 @@ export function findMiddles(grouped, {
       for (const m of ev.markets || []) {
         if (!m || !Array.isArray(m.selections)) continue;
         if (!looksLikeTotalsOrHandicap(m.key)) continue;
-        const key = `${eventKey}::${m.key.split('_').slice(0, 2).join('_')}`;
+        const key = `${eventKey}::${m.key.split('_').slice(0, 2).join('_')}::${pairingScope(m)}`;
         let bucket = buckets.get(key);
         if (!bucket) {
           bucket = { eventKey, marketKey: m.key, legs: [], meta: { event: ev, market: m } };
@@ -337,6 +364,7 @@ export function findMiddles(grouped, {
             handicap: Number(s.handicap),
             marketKey: m.key,
             eventKey,
+            live: m.live === true,
             eventUrl: ev.sourceUrl || null,
           });
         }
@@ -374,6 +402,10 @@ export function findMiddles(grouped, {
           type: SIGNAL_TYPES.MIDDLE,
           eventKey: b.eventKey,
           marketKey: b.marketKey,
+          // The bucket is scoped, so every leg is the same kind of bet and the
+          // market that opened it names the scope honestly. Without this the UI
+          // could show a live middle with no way to tell it from a pre-match one.
+          live: b.meta.market.live === true,
           sport: ev.sport,
           league: ev.league,
           kickoff: ev.kickoff,
@@ -412,6 +444,7 @@ export function findMiddles(grouped, {
           type: SIGNAL_TYPES.MIDDLE,
           eventKey: b.eventKey,
           marketKey: b.marketKey,
+          live: b.meta.market.live === true,
           sport: ev.sport,
           league: ev.league,
           kickoff: ev.kickoff,
@@ -463,7 +496,7 @@ export function findPositiveEV(grouped, { minEvPercent = 2 } = {}) {
       for (const m of ev.markets || []) {
         if (!m || !Array.isArray(m.selections)) continue;
         for (const s of m.selections) {
-          const selKey = `${m.key}::${String(s.name || '').toLowerCase().trim()}`;
+          const selKey = `${m.key}::${pairingScope(m)}::${String(s.name || '').toLowerCase().trim()}`;
           const k = `${eventKey}::${selKey}`;
           let b = buckets.get(k);
           if (!b) {
@@ -504,6 +537,11 @@ export function findPositiveEV(grouped, { minEvPercent = 2 } = {}) {
         type: SIGNAL_TYPES.POSITIVE_EV,
         eventKey: b.eventKey,
         marketKey: b.marketKey,
+        // The consensus is drawn from one scope only, so the signal inherits it.
+        // An EV computed on in-play prices against other in-play prices is a
+        // different claim from one computed on a pre-match consensus, and the
+        // caller cannot tell them apart if this is left off.
+        live: b.meta.market.live === true,
         selection: b.selection,
         sourceId: l.sourceId,
         odds: l.odds,

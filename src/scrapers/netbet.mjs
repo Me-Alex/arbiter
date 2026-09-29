@@ -1,6 +1,7 @@
 import ScraperBase from './base.mjs';
 import { normalizeTeamName } from '../shared/text.mjs';
 import { ValidationError, UpstreamError } from '../shared/errors.mjs';
+import { liveCoverageFor } from './live-status.mjs';
 
 const SPORTIFY_URL = 'https://api.sportify.bet/api/content/inventory-events';
 const BOOKMAKER = 'netbetro';
@@ -374,7 +375,10 @@ export default class NetBetScraper extends ScraperBase {
         kickoff,
         homeTeam: home.name,
         awayTeam: away.name,
-        isLive: false,
+        // A true statement about the emitted set, not about the feed: only future
+        // fixtures are emitted, and no measured field distinguishes a running
+        // one. The `isLive` field that used to sit here was read by nobody.
+        live: false,
         eventKey,
         markets,
       });
@@ -397,7 +401,7 @@ export default class NetBetScraper extends ScraperBase {
       // `ou_legs` as OVER_UNDER, and `btts` as BTTS. The earlier string said
       // 1x2 only, which understated what the run collects and hid three of
       // those four families from the report.
-      coverage: { sports: this.sports.length, market: 'fulltime-1x2+asian_handicap+totals+btts', live: false, maxEvents: this.maxEvents },
+      coverage: { sports: this.sports.length, market: 'fulltime-1x2+asian_handicap+totals+btts', ...liveCoverageFor(this.id), maxEvents: this.maxEvents },
     };
   }
 }

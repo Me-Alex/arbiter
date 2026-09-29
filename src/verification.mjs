@@ -210,7 +210,13 @@ export function verifySignal(target, confirmationScan, { index, tolerance = RECH
   let rejectedReason = null;
   let missingLegReason = null;
   for (const leg of legs) {
-    const k = `${leg.eventKey || target.eventKey}::${leg.marketKey || target.marketKey}::${String(leg.selection || '').toLowerCase()}`;
+    // The scope travels in the key for the same reason it travels in the engine's
+    // bucket key: a live leg and a pre-match leg settle differently, so a
+    // re-quote of a live signal must be matched against a live price. Both sides
+    // of this key are built by `buildSelectionIndex`; changing one without the
+    // other turns every confirmation into "leg missing".
+    const scope = leg.live === true ? 'live' : 'prematch';
+    const k = `${leg.eventKey || target.eventKey}::${leg.marketKey || target.marketKey}::${scope}::${String(leg.selection || '').toLowerCase()}`;
     const candidates = index ? (index.get(k) || []) : [];
     const matches = candidates.filter((c) => c.sourceId === leg.sourceId
       && (c.handicap ?? null) === (leg.handicap ?? null)

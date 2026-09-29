@@ -1,6 +1,7 @@
 import ScraperBase from './base.mjs';
 import { normalizeTeamName } from '../shared/text.mjs';
 import { ValidationError, UpstreamError } from '../shared/errors.mjs';
+import { fegMarketIsLive, eventIsLive, liveCoverageFor } from './live-status.mjs';
 
 export const FEG_SPORT_NAMES = Object.freeze({
   'ufo:sprt:00': 'Football', 'ufo:sprt:01': 'Tennis', 'ufo:sprt:02': 'Basketball',
@@ -180,6 +181,10 @@ export class FegCatalogueScraper extends ScraperBase {
     if (!Number.isInteger(this.maxEvents) || this.maxEvents < 0 || this.maxEvents > 5000) {
       throw new ValidationError(`${this.id}: invalid maxEvents`);
     }
+    // This feed publishes in-play markets, so the flag is honoured here rather
+    // than warned about. It was previously ignored entirely, and the class had
+    // no field to read.
+    this.includeLive = opts.includeLive === true;
   }
 
   async fetchRaw({ signal } = {}) {
@@ -361,9 +366,26 @@ export class FegCatalogueScraper extends ScraperBase {
       if (seen.has(r.id)) continue;
       seen.add(r.id);
 
+      // The provider tags every MARKET, not the fixture: `kind` is `LIVE` or
+      // `PREMATCH`, measured categorical and disjoint against the kickoff. It is
+      // read off the raw market because `normalizeFegMarket` reduces a market to
+      // the engine's shape and the kind does not survive that — which is how a
+      // live 1X2 ended up indistinguishable from a pre-match one.
+      //
+      // Dropping live markets when the caller did not ask for them is what makes
+      // `includeLive` mean something here. This adapter never filtered on
+      // kickoff, so a pre-match run still carried in-play prices to the scanner,
+      // which discarded the whole event and took the fixture's pre-match markets
+      // with it.
       const markets = (r.markets || [])
         .filter((m) => !isFegMarketTypeWithheld(m?.marketTypeId))
-        .map(normalizeFegMarket)
+        .filter((m) => this.includeLive || !fegMarketIsLive(m))
+        .map((m) => {
+          const normalized = normalizeFegMarket(m);
+          if (!normalized) return null;
+          normalized.live = fegMarketIsLive(m);
+          return normalized;
+        })
         .filter(Boolean);
       if (markets.length === 0) continue;
 
@@ -376,7 +398,13 @@ export class FegCatalogueScraper extends ScraperBase {
         id: r.id, sourceId: this.id, sourceUrl: this.sourceUrl,
         transport: this.transport, observedAt: this.observedAt,
         sport: r.sport, league: r.league, kickoff: r.kickoff,
-        homeTeam: r.homeTeam, awayTeam: r.awayTeam, eventKey, markets,
+        homeTeam: r.homeTeam, awayTeam: r.awayTeam, eventKey,
+        // True when ANY market on the fixture is in-play. The scanner's
+        // `includeLive` gate and the 90-second live freshness window both read
+        // this field, so leaving it undefined is what kept a live fixture
+        // invisible: it was dropped on kickoff like a finished match.
+        live: eventIsLive({ markets }),
+        markets,
       });
     }
     return out;
@@ -389,7 +417,17 @@ export class FegCatalogueScraper extends ScraperBase {
       observedAt: this.observedAt,
       // Multi-sport: the traversal walks every sport in the catalogue, so
       // claiming `football` here misdescribed what the run actually collected.
-      coverage: { sport: 'multi-sport', allMarkets: true, live: false, maxEvents: this.maxEvents },
+      // `live` is the measured capability of THIS brand's feed, and
+      // `liveCollected` is whether this run took its in-play markets — the two
+      // were one blanket `false` before, which said the same thing about all 24
+      // books and was true in detail of none of them.
+      coverage: {
+        sport: 'multi-sport',
+        allMarkets: true,
+        ...liveCoverageFor(this.id),
+        liveCollected: this.includeLive,
+        maxEvents: this.maxEvents,
+      },
     };
   }
 }

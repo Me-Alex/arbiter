@@ -1,6 +1,7 @@
 import ScraperBase from './base.mjs';
 import { normalizeTeamName } from '../shared/text.mjs';
 import { ValidationError, UpstreamError } from '../shared/errors.mjs';
+import { liveCoverageFor } from './live-status.mjs';
 
 /**
  * EGT Digital — a new platform, read from its public sports API.
@@ -100,7 +101,10 @@ export default class EgtScraper extends ScraperBase {
         || !Number.isFinite(this.windowHours) || this.windowHours <= 0 || this.windowHours > 720) {
       throw new ValidationError('EGT: invalid cap/window (maximum 5000 events/720 hours)');
     }
-    if (opts.includeLive) this.logger('warn', 'EGT: only future prematch football is published');
+    // The feed publishes a `live` boolean per event, so the flag is honoured
+    // rather than warned about. The tenant is disabled in config, so this path
+    // is exercised only by the fixture suite.
+    this.includeLive = opts.includeLive === true;
   }
 
   async fetchRaw({ signal } = {}) {
@@ -168,14 +172,29 @@ export default class EgtScraper extends ScraperBase {
     const seen = new Set();
     for (const ev of rawEvents) {
       if (out.length >= this.maxEvents) break;
-      // `live` is the provider's own boolean. Prematch only: the project scans
-      // prematch by default, and a live-only snapshot is not comparable with
-      // another book's prematch leg.
-      if (ev.live === true || ev.live === 'true') continue;
+      // `live` is the provider's own boolean. It was read here only to throw
+      // those events away, whatever the caller asked for, so `includeLive` was
+      // answered with a warning that live was unsupported on a feed that
+      // publishes it. The tenant is disabled and its fixture suite is red for an
+      // unrelated reason, so the branch that keeps a live event has not been
+      // observed firing; it keeps only what this field actually marks.
+      const live = ev.live === true || ev.live === 'true';
       if (ev.sportId !== FOOTBALL_SPORT_ID) continue;
       const time = Date.parse(ev.startTime);
       if (!Number.isFinite(time) || !ev.sportEventId) continue;
-      if (time <= (this.from ?? Date.now()) || time > (this.to ?? Date.now() + this.windowHours * 3600000)) continue;
+      // The one live gate, and it reads as a single condition on purpose.
+      //
+      // A live event's kickoff is already past, so the pre-match window below
+      // would drop it a second time — that is what made the flag unusable here,
+      // and it is why `includeLive` has to relax the window rather than merely
+      // be checked separately. Written the other way round, as an explicit
+      // `if (live && !this.includeLive) continue;` in front of this line, it was
+      // provably identical to it: a live event with the flag off is already
+      // dropped by the window, and with the flag on the window is skipped. Two
+      // gates, one behaviour, and the first one untestable — a mutation that
+      // removed it changed nothing, which is the honest signal that it was
+      // duplication and not insurance.
+      if ((!live || !this.includeLive) && (time <= (this.from ?? Date.now()) || time > (this.to ?? Date.now() + this.windowHours * 3600000))) continue;
       if (seen.has(ev.sportEventId)) continue;
 
       const home = String(ev.homeTeam || '').trim();
@@ -228,7 +247,12 @@ export default class EgtScraper extends ScraperBase {
         kickoff,
         homeTeam: home,
         awayTeam: away,
-        isLive: false,
+        // `isLive` was written here and read by nobody; the scanner gates on
+        // `live`. A live event's markets are live markets — the engine pairs on
+        // that flag, so leaving it off would let a running-match price pair
+        // against another book's pre-match one.
+        live,
+        isLive: live,
         eventKey: [
           'football',
           normalizeTeamName(league),
@@ -242,6 +266,7 @@ export default class EgtScraper extends ScraperBase {
           // rounds, so publishing it would record a corrupted identifier.
           name: m.marketTemplateName || m.marketTitle || '1X2',
           period: 'fulltime',
+          live,
           selections,
         }],
       });
@@ -258,7 +283,10 @@ export default class EgtScraper extends ScraperBase {
       coverage: {
         sport: 'football',
         market: 'fulltime-1x2',
-        live: false,
+        // The feed names live per event, so this is the measured capability plus
+        // whether this run took its in-play events.
+        ...liveCoverageFor(this.id),
+        liveCollected: this.includeLive,
         windowHours: this.windowHours,
         maxEvents: this.maxEvents,
         containersProbed: CONTAINERS.length,

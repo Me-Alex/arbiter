@@ -1,6 +1,7 @@
 import ScraperBase from './base.mjs';
 import { normalizeTeamName } from '../shared/text.mjs';
 import { ValidationError, UpstreamError } from '../shared/errors.mjs';
+import { liveCoverageFor } from './live-status.mjs';
 
 export const ALTENAR_IDS = ['don', 'topbet', 'million', 'baumbet', 'powerbet', 'winbet'];
 const TRANSPORT = 'altenar-sb2-widget-json';
@@ -322,9 +323,20 @@ export default class AltenarPublic extends ScraperBase {
     const sportNames = this.sportNames || {};
     for (const e of events) {
       if (out.length >= this.maxEvents) break;
+      // Unmeasured on this feed: no categorical field separated started from
+      // future events in the 2026-09-29/30 window, so nothing is claimed here
+      // and the event is published pre-match or not at all. This is the single
+      // line to change if a status field is ever measured — see live-status.mjs.
+      const live = false;
       const time = Date.parse(e.startDate);
+      // `!live` is a no-op today — this feed has no measured in-play field, so
+      // every event carries `live: false` (see live-status.mjs) — and it is kept
+      // deliberately. The same pattern in winner/superbet/egt exists because a
+      // live event's kickoff is already past: wiring a real status field here
+      // without this disjunct would make `includeLive` collect nothing, which is
+      // exactly the bug the live-status work had to fix in three other adapters.
       if (e.status !== 0 || e.et !== 0 || e.isParlay !== false
-          || seen.has(e.id) || !Number.isFinite(time) || time <= (this.from ?? Date.now())
+          || seen.has(e.id) || !Number.isFinite(time) || (!live && time <= (this.from ?? Date.now()))
           || time > (this.to ?? Date.now() + this.windowHours * 3600000)) continue;
       // Only football full-time 1X2 is a verified contract for this feed.
       if (e.sportId !== FOOTBALL_SPORT_ID) continue;
@@ -348,7 +360,12 @@ export default class AltenarPublic extends ScraperBase {
       out.push({ id: String(e.id), sourceId: this.id, sourceUrl: this.sourceUrl,
         transport: TRANSPORT, runId: this.runId, observedAt: this.observedAt,
         providerEventId: String(e.id), attributionStatus: 'public-integration-unverified-brand',
-        sport: sportName, league, kickoff, homeTeam: teams[0], awayTeam: teams[1], isLive: false,
+        sport: sportName, league, kickoff, homeTeam: teams[0], awayTeam: teams[1],
+        // A true statement about the emitted set, not about the feed: this
+        // adapter only ever emits fixtures whose kickoff is in the future, and no
+        // measured field distinguishes a running one. The `isLive` field that
+        // used to sit here was read by nobody.
+        live,
         eventKey: [sportKey, normalizeTeamName(league), kickoff, ...teams.map(normalizeTeamName)].join('|'),
         markets });
     }
@@ -598,7 +615,7 @@ export default class AltenarPublic extends ScraperBase {
     if (seen.has('BTTS')) families.push('btts');
     return { ...super._serializable(events, raw), sourceUrl: this.sourceUrl, transport: TRANSPORT,
       observedAt: this.observedAt, integration: this.id, attributionStatus: 'public-integration-unverified-brand',
-      coverage: { sport: 'football', market: families.join('+'), live: false, page: 1, exhaustive: false,
+      coverage: { sport: 'football', market: families.join('+'), ...liveCoverageFor(this.id), page: 1, exhaustive: false,
         maxEvents: this.maxEvents, windowHours: this.windowHours, requiresCountryIso: true } };
   }
 }

@@ -232,7 +232,15 @@ test('the declared coverage matches what is actually emitted', () => {
   const s = new Winner({ timeoutMs: 5_000 });
   const snapshot = s._serializable([], {});
   assert.equal(snapshot.coverage.sport, 'football', 'not the 30+ sports the feed carries');
-  assert.equal(snapshot.coverage.live, false);
+  // `live` is the feed's measured capability — the Digitain payload names a
+  // running match on `currentStatus`, and the adapter reads that field. It is
+  // NOT a claim about this run: `liveCollected` is, and defaults to false. The
+  // old assertion read `Boolean(this.includeLive)` and so described the run
+  // under the capability's name, making a live-capable feed look incapable on
+  // every prematch-configured run.
+  assert.equal(snapshot.coverage.live, true, 'the feed names in-play events');
+  assert.equal(snapshot.coverage.scope, 'event');
+  assert.equal(snapshot.coverage.liveCollected, false, 'a prematch run collected no in-play events');
   assert.equal(snapshot.transport, 'winner-digitain-public-json');
   // sourceUrl is established by fetchRaw, so a snapshot taken before a fetch
   // carries none — the scanner rejects such a snapshot, which is the point.

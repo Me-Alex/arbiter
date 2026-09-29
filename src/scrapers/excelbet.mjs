@@ -1,6 +1,7 @@
 import ScraperBase from './base.mjs';
 import { normalizeTeamName } from '../shared/text.mjs';
 import { ValidationError, UpstreamError } from '../shared/errors.mjs';
+import { liveCoverageFor } from './live-status.mjs';
 
 const DEFAULT_BASE = 'https://exalogic.excelbet.ro/XSportDatastore';
 const SYSTEM_CODE = 'EXCELBET';
@@ -319,7 +320,10 @@ export default class ExcelBetScraper extends ScraperBase {
         kickoff,
         homeTeam: home,
         awayTeam: away,
-        isLive: false,
+        // A true statement about the emitted set, not about the feed: only future
+        // fixtures are emitted, and no measured field distinguishes a running
+        // one. The `isLive` field that used to sit here was read by nobody.
+        live: false,
         eventKey,
         markets,
       });
@@ -336,7 +340,7 @@ export default class ExcelBetScraper extends ScraperBase {
       coverage: {
         sport: 'football',
         market: 'fulltime-1x2+tgoals+asian_handicap',
-        live: false,
+        ...liveCoverageFor(this.id),
         maxEvents: this.maxEvents,
         aggregates: AGGREGATE_IDS.join(','),
         // Never silently short: a category that stopped answering shows up in

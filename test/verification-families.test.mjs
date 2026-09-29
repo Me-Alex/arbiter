@@ -32,7 +32,8 @@ function makeOpportunity({ marketKey, family, period = 'fulltime', line = null, 
 function makeIndex(legs) {
   const idx = new Map();
   for (const leg of legs) {
-    const k = `${leg.eventKey || 'event1'}::${leg.marketKey}::${String(leg.selection).toLowerCase()}`;
+    // The scope is part of the key, exactly as `buildSelectionIndex` writes it.
+    const k = `${leg.eventKey || 'event1'}::${leg.marketKey}::${leg.live === true ? 'live' : 'prematch'}::${String(leg.selection).toLowerCase()}`;
     idx.set(k, [{ sourceId: leg.sourceId, odds: leg.odds, handicap: leg.handicap ?? null,
       kickoff: leg.kickoff || '2026-10-12T15:00:00.000Z',
       providerEventId: leg.providerEventId || `pid-${leg.sourceId}`,

@@ -1,6 +1,7 @@
 import ScraperBase from './base.mjs';
 import { normalizeTeamName } from '../shared/text.mjs';
 import { ValidationError, UpstreamError } from '../shared/errors.mjs';
+import { liveCoverageFor } from './live-status.mjs';
 
 /**
  * The football sportId, per tenant.
@@ -334,9 +335,14 @@ export default class NSoftScraper extends ScraperBase {
     const seen = new Set();
     for (const e of events) {
       if (out.length >= this.maxEvents) break;
+      // Unmeasured on this feed: no categorical field separated started from
+      // future events in the 2026-09-29/30 window, so nothing is claimed here.
+      // This is the single line to change if one is ever measured — and the
+      // `!live` below has to change with it. See live-status.mjs.
+      const live = false;
       const time = Date.parse(e.startsAt);
       if (e.active !== 1 || !e.id || seen.has(e.id)
-          || !Number.isFinite(time) || time <= (this.from ?? Date.now())
+          || !Number.isFinite(time) || (!live && time <= (this.from ?? Date.now()))
           || time > (this.to ?? Date.now() + this.windowHours * 3600000)) continue;
       const home = e.competitors.filter((c) => c.type === 1);
       const away = e.competitors.filter((c) => c.type === 2);
@@ -392,7 +398,12 @@ export default class NSoftScraper extends ScraperBase {
       const sportKey = sportName.toLowerCase().replace(/\s+/g, '-');
       out.push({ id: String(e.id), sourceId: this.id, sourceUrl: this.sourceUrl,
         transport: this.transport, runId: this.runId, observedAt: this.observedAt,
-        sport: sportName, league, kickoff, homeTeam: teams[0], awayTeam: teams[1], isLive: false,
+        sport: sportName, league, kickoff, homeTeam: teams[0], awayTeam: teams[1],
+        // A true statement about the emitted set, not about the feed: only
+        // future fixtures are emitted, and no measured field distinguishes a
+        // running one. The `isLive` field that used to sit here was read by
+        // nobody.
+        live,
         eventKey: [sportKey, normalizeTeamName(league), kickoff, ...teams.map(normalizeTeamName)].join('|'),
         markets });
     }
@@ -592,7 +603,7 @@ export default class NSoftScraper extends ScraperBase {
     if (extras?.btts) families.push('btts');
     return { ...super._serializable(events, raw), sourceUrl: this.sourceUrl,
       transport: this.transport, observedAt: this.observedAt,
-      coverage: { sport: 'football', market: families.join('+'), live: false, windowHours: this.windowHours, maxEvents: this.maxEvents } };
+      coverage: { sport: 'football', market: families.join('+'), ...liveCoverageFor(this.id), windowHours: this.windowHours, maxEvents: this.maxEvents } };
   }
 }
 

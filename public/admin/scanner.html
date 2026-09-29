@@ -26,6 +26,7 @@
       <div class="summary-item"><span class="summary-label" data-i18n="dataHealth">Data health</span><strong id="health-state">—</strong><span id="health-detail" class="summary-detail">—</span></div>
       <div class="summary-item"><span class="summary-label" data-i18n="lastUpdated">Last updated</span><strong id="scan-updated">—</strong><span id="scan-events" class="summary-detail">—</span></div>
       <div class="summary-item"><span class="summary-label" data-i18n="signalMix">Signal mix</span><strong id="signal-mix">—</strong><span class="summary-detail" data-i18n="sortedByRoi">ROI-sorted opportunities</span></div>
+      <div class="summary-item"><span class="summary-label" data-i18n="liveSignals">In-play signals</span><strong id="live-count">—</strong><span class="summary-detail" data-i18n="liveSignalsNote">Settle on the score as it stands</span></div>
     </section>
 
     <div id="scan-sport-indicator" class="hidden mb-3"></div>
@@ -44,8 +45,12 @@
         <div class="field"><label data-i18n="minMiddleRoi">Min middle ROI %</label><input type="number" id="mid-roi" value="20" step="0.5"></div>
         <div class="field"><label data-i18n="profile">Profile</label><select id="profile"></select></div>
       </div>
-      <div class="mt-2">
+      <div class="mt-2 row">
         <button class="primary" id="rescan" data-i18n="rescan">Re-scan</button>
+        <label class="checkbox" title="In-play events settle on the score as it stands, and their prices expire in 90 seconds">
+          <input type="checkbox" id="inc-live"><span data-i18n="includeLive">include live</span>
+        </label>
+        <span class="muted text-xs" data-i18n="livePreviewNote">Prices older than 90s are dropped from in-play results</span>
       </div>
     </div>
 

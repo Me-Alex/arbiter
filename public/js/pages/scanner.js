@@ -16,6 +16,21 @@
         : `<span class="muted text-xs">${escapeHtml(t('unverified'))}</span>`;
     }
 
+    /**
+     * The in-play marker.
+     *
+     * It reads the signal's own `live`, which the engine takes from the market
+     * the price came from — never from the fixture's kickoff. A match whose
+     * kickoff is in the past is a pre-match price that has simply gone stale,
+     * and badging it LIVE would teach the trader to ignore the one badge whose
+     * whole job is to say "this price expires in 90 seconds".
+     */
+    function liveBadge(t, signal) {
+      return signal && signal.live === true
+        ? `<span class="chip red live-badge" title="${escapeHtml(t('liveTooltip'))}">${escapeHtml(t('live'))}</span>`
+        : '';
+    }
+
     async function init() {
       const [profiles, sportsData] = await Promise.all([
         arbiterApi.get('/api/profiles').then((d) => d.profiles || []),
@@ -80,7 +95,7 @@
           minRoiPercent: Number($('min-roi').value),
           maxMiddleRiskPercent: Number($('mid-risk').value),
           minMiddleRoiPercent: Number($('mid-roi').value),
-          includeLive: false,
+          includeLive: $('inc-live') ? $('inc-live').checked : false,
           includePast: false,
           ...(sportVal ? { sport: sportVal } : {}),
         });
@@ -159,7 +174,7 @@
         <tr class="arb-main-row ${cls}" data-arb-toggle aria-expanded="false">
           <td>
             <div class="strong">${escapeHtml(o.homeTeam)} <span class="muted">${t('vs')}</span> ${escapeHtml(o.awayTeam)}</div>
-            <div class="secondary"><span class="chip chip-sport">${escapeHtml(o.sport || 'Football')}</span> ${escapeHtml(o.league || '')}${o.kickoff ? ` · <span class="mono">${escapeHtml(new Date(o.kickoff).toLocaleString())}</span>` : ''}</div>
+            <div class="secondary"><span class="chip chip-sport">${escapeHtml(o.sport || 'Football')}</span> ${liveBadge(t, o)} ${escapeHtml(o.league || '')}${o.kickoff ? ` · <span class="mono">${escapeHtml(new Date(o.kickoff).toLocaleString())}</span>` : ''}</div>
           </td>
           <td>
             <div class="mono">${escapeHtml(o.marketKey)}</div>
@@ -177,7 +192,7 @@
       $('mid-count').textContent = `${mids.length} ${t('middles')}`;
       mid.innerHTML = mids.length ? mids.map((m) => `
         <tr class="${m.verification?.status === 'confirmed' ? 'row-confirmed' : ''}">
-          <td><div class="strong">${escapeHtml(m.homeTeam)} <span class="muted">${t('vs')}</span> ${escapeHtml(m.awayTeam)}</div><div class="secondary"><span class="chip chip-sport">${escapeHtml(m.sport || 'Football')}</span></div></td>
+          <td><div class="strong">${escapeHtml(m.homeTeam)} <span class="muted">${t('vs')}</span> ${escapeHtml(m.awayTeam)}</div><div class="secondary"><span class="chip chip-sport">${escapeHtml(m.sport || 'Football')}</span> ${liveBadge(t, m)}</div></td>
           <td><div class="mono text-xs market-label">${escapeHtml(m.marketKey || '—')}</div>${(m.legs || []).map((l) => `<div class="mono text-xs">${escapeHtml(l.sourceId)} ${escapeHtml(l.selection)} ${escapeHtml(l.handicap)} <span class="muted">@</span> <span class="strong">${(l.odds || 0).toFixed(2)}</span></div>`).join('')}</td>
           <td class="num tabnum"><span class="strong purple">+${(m.roiPercent || 0).toFixed(2)}</span></td>
           <td class="num tabnum"><span class="yellow">${(m.riskPercent || 0).toFixed(2)}</span></td>
@@ -189,7 +204,7 @@
       const evs = filterBySport(scan.positiveEv || [], activeSport).sort((a, b) => (b.evPercent || 0) - (a.evPercent || 0)).slice(0, 100);
       ev.innerHTML = evs.length ? evs.map((e) => `
         <tr>
-          <td><div class="strong">${evMatchLabel(e.eventKey)}</div><div class="secondary mono">${escapeHtml(e.marketKey || '—')}</div></td>
+          <td><div class="strong">${evMatchLabel(e.eventKey)} ${liveBadge(t, e)}</div><div class="secondary mono">${escapeHtml(e.marketKey || '—')}</div></td>
           <td>${escapeHtml(e.selection)}</td>
           <td class="mono">${escapeHtml(e.sourceId)}</td>
           <td class="num tabnum">${(e.odds || 0).toFixed(2)}</td>
@@ -197,6 +212,17 @@
           <td class="num tabnum">${(e.legs?.[0]?.stake || 0).toFixed(2)}</td>
         </tr>
       `).join('') : `<tr><td colspan="6" class="empty">${escapeHtml(noData ? t('noFreshData') : t('noEvFound'))}</td></tr>`;
+
+      // Counted across the three tables, because "in-play" is a property of the
+      // price and not of the strategy: an in-play middle is just as perishable as
+      // an in-play arbitrage. Counted after the sport filter, so the number
+      // describes the rows on screen.
+      const liveSignals = [...opps, ...mids, ...evs].filter((s) => s.live === true).length;
+      const liveCell = $('live-count');
+      if (liveCell) {
+        liveCell.textContent = String(liveSignals);
+        liveCell.className = liveSignals > 0 ? 'text-red' : '';
+      }
 
       // Flash effect on data update (skip first load)
       if (!_isFirstScanLoad) {

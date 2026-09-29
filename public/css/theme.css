@@ -1676,6 +1676,7 @@ input[type="checkbox"], input[type="radio"] {
 .text-green { color: var(--green); }
 .text-purple { color: var(--purple); }
 .text-yellow { color: var(--yellow); }
+.text-red { color: var(--red); }
 .text-accent { color: var(--accent); }
 
 /* ROI magnitude color classes */

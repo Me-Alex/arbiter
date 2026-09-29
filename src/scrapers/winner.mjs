@@ -1,6 +1,7 @@
 import ScraperBase from './base.mjs';
 import { normalizeTeamName, canonicalSport } from '../shared/text.mjs';
 import { ValidationError, UpstreamError } from '../shared/errors.mjs';
+import { digitainEventIsLive, markMarketsLive, liveCoverageFor } from './live-status.mjs';
 
 const DIGITAIN_URL = 'https://micros-prod1-sb.gambling-solutions.ro/api/digitain-fetcher/v2/public/events';
 
@@ -13,19 +14,11 @@ function canonicalSportKey(label) {
  * Live, whatever the provider calls it. The status is a localised string whose
  * casing varies with the language entry that answered, so a plain `=== 'live'`
  * comparison missed every capitalised variant.
+ *
+ * The implementation moved to live-status.mjs, which holds it beside the
+ * measurement that justifies it. It stayed byte-identical on the way.
  */
-function isLiveStatus(status) {
-  // `currentStatus` is a score object, not a label: {HomeTeamScore, LiveEventTime,
-  // LiveMatchShortStatus, …}. A running match is the one whose live clock has
-  // started, so that is the signal. The string form is still accepted for the
-  // case where the feed sends a plain label.
-  if (status && typeof status === 'object') {
-    const label = status.LiveMatchShortStatus?.['42'] || status.LiveMatchShortStatus?.['2'] || '';
-    if (/^live/i.test(String(label).trim())) return true;
-    return Number(status.LiveEventTime) > 0 || status.IsLiveStarted === true;
-  }
-  return /^live$/i.test(String(status || '').trim());
-}
+const isLiveStatus = digitainEventIsLive;
 
 /**
  * Settlement window implied by a market's display name.
@@ -162,11 +155,17 @@ export default class WinnerScraper extends ScraperBase {
         ? Number(e.matchDateTime)
         : Date.parse(e.matchDateTime);
       if (!Number.isFinite(startMs)) continue;
+      // Digitain states live-ness on the event, so every market of a running
+      // match is a live market. It is read BEFORE the window checks on purpose:
+      // a live event's kickoff is already in the past, so the pre-match window
+      // below drops it a second time — which is what made the flag unusable and
+      // left `includeLive` able to collect nothing at all.
+      const live = isLiveStatus(e.currentStatus);
       // Prematch football only. The feed returns 30+ sports and live events in
       // one payload; without this filter they consumed the event cap and
       // reached the scan as if they were tradable pre-match football.
-      if (!this.includeLive && isLiveStatus(e.currentStatus)) continue;
-      if (!this.includePast && startMs <= nowMs) continue;
+      if (live && !this.includeLive) continue;
+      if (!this.includePast && !live && startMs <= nowMs) continue;
       if (startMs > toMs) continue;
       const sport = this._localize(e.sportName, 'Unknown');
       if (this.sportFilter && canonicalSportKey(sport) !== this.sportFilter) continue;
@@ -283,6 +282,11 @@ export default class WinnerScraper extends ScraperBase {
         normalizeTeamName(home),
         normalizeTeamName(away),
       ].join('|');
+      // Digitain states live-ness on the event, so all of its markets are live
+      // markets. The engine pairs on the MARKET's flag, not the event's: without
+      // this a live 1X2 would still bucket with another book's pre-match 1X2,
+      // because nothing told the bucket the price was a running-match price.
+      markMarketsLive(markets, () => live);
       out.push({
         id: matchId,
         sourceId: this.id,
@@ -296,8 +300,8 @@ export default class WinnerScraper extends ScraperBase {
         awayTeam: away,
         // The scanner filters on `live`; `isLive` was never read, so a live
         // event passed the includeLive gate.
-        live: isLiveStatus(e.currentStatus),
-        isLive: isLiveStatus(e.currentStatus),
+        live,
+        isLive: live,
         eventKey,
         markets,
       });
@@ -311,8 +315,18 @@ export default class WinnerScraper extends ScraperBase {
       sourceUrl: this.sourceUrl,
       transport: this.transport,
       observedAt: this.observedAt,
-      // Pre-match football, matching what extractEvents actually emits.
-      coverage: { sport: this.sportFilter || 'football', allMarkets: true, live: Boolean(this.includeLive), maxEvents: this.maxEvents },
+      // `live` here is the measured capability of the feed; `liveCollected` is
+      // whether this run actually took its in-play events. The previous
+      // `Boolean(this.includeLive)` answered the second question under the first
+      // question's name, so a feed that can do live looked incapable whenever a
+      // prematch run was configured.
+      coverage: {
+        sport: this.sportFilter || 'football',
+        allMarkets: true,
+        ...liveCoverageFor(this.id),
+        liveCollected: Boolean(this.includeLive),
+        maxEvents: this.maxEvents,
+      },
     };
   }
 }
