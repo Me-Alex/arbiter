@@ -1,6 +1,7 @@
 import { join } from 'node:path';
 import { scanWorkspace } from './scanner/scanner.mjs';
 import { readJson } from './shared/atomic-write.mjs';
+import { csvRow } from './shared/csv.mjs';
 
 /**
  * scan-service — thin wrappers around the scanner entry point so the router
@@ -159,16 +160,9 @@ export function buildScanCsv(scan, types = []) {
     'riskPercent', 'gap',
     'verificationStatus', 'verificationReason',
   ];
-  return [header, ...rows].map((cells) => cells.map(csvCell).join(',')).join('\r\n');
+  return [header, ...rows].map((cells) => csvRow(cells)).join('\r\n');
 }
 
 function asArray(v) {
   return Array.isArray(v) ? v : [];
-}
-
-function csvCell(v) {
-  if (v === null || v === undefined) return '';
-  const s = String(v);
-  if (/[",\n\r]/.test(s)) return `"${s.replace(/"/g, '""')}"`;
-  return s;
 }

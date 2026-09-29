@@ -1,5 +1,6 @@
 import { join } from 'node:path';
 import { readJson, writeJsonAtomic } from './shared/atomic-write.mjs';
+import { csvRow, parseCsvLine } from './shared/csv.mjs';
 
 /**
  * tracker-service.mjs — bet tracker + alert preferences + CSV import/export.
@@ -79,7 +80,7 @@ export class TrackerService {
     const headers = ['id', 'createdAt', 'eventKey', 'marketKey', 'selection', 'sourceId', 'odds', 'stake', 'status', 'notes'];
     const rows = [headers.join(',')];
     for (const b of t.items) {
-      rows.push(headers.map((h) => csvCell(b[h])).join(','));
+      rows.push(csvRow(headers.map((h) => b[h])));
     }
     return rows.join('\n');
   }
@@ -169,29 +170,4 @@ function defaultAlertPreferences() {
     quietHours: { from: '23:00', to: '07:00', enabled: false },
     cooldownSeconds: 60,
   };
-}
-
-function csvCell(v) {
-  if (v === null || v === undefined) return '';
-  const s = String(v);
-  if (/[",\n]/.test(s)) return `"${s.replace(/"/g, '""')}"`;
-  return s;
-}
-
-function parseCsvLine(line) {
-  const out = [];
-  let cur = '';
-  let inQuotes = false;
-  for (let i = 0; i < line.length; i++) {
-    const ch = line[i];
-    if (inQuotes) {
-      if (ch === '"' && line[i + 1] === '"') { cur += '"'; i++; }
-      else if (ch === '"') { inQuotes = false; }
-      else { cur += ch; }
-    } else if (ch === '"') { inQuotes = true; }
-    else if (ch === ',') { out.push(cur); cur = ''; }
-    else { cur += ch; }
-  }
-  out.push(cur);
-  return out;
 }
