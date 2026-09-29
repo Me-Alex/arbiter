@@ -147,21 +147,48 @@ for (const { name, Cls } of TENANTS) {
     assert.deepEqual(peterborough.map((m) => m.line), [0.5, 1.5, 2.5, 3.5, 4.5]);
     assert.deepEqual(bedford.map((m) => m.line), [1.5, 2.5, 3.5, 4.5, 5.5]);
 
-    // The 0.5 line, verbatim: Over 9.40 / Under 1.03. A threshold that low is
-    // almost certain to go under, and the price says so.
+    // The 0.5 line, verbatim: Under 0.5 at 9.40, Over 0.5 at 1.03. Peterborough's
+    // 1X2 is 2.03/3.55/3.10, so a 3.55 draw makes 0:0 worth roughly a tenth and
+    // Under 0.5 — which settles on 0:0 alone — is the 9.40, while Over 0.5 is the
+    // 1.03. Reading "Over 0.5" as "0.5 goals or fewer" is what inverted this once.
     const lowest = peterborough[0];
     assert.equal(lowest.providerMarketId, '7989:50');
     assert.equal(lowest.name, 'TOTAL GOALS');
     assert.equal(lowest.period, 'fulltime');
-    assert.deepEqual(lowest.selections.map((x) => x.name), ['Over 0.5', 'Under 0.5']);
+    assert.deepEqual(lowest.selections.map((x) => x.name), ['Under 0.5', 'Over 0.5']);
     assert.deepEqual(lowest.selections.map((x) => x.odds), [9.4, 1.03]);
 
-    // And the highest, on the other event: Over 5.5 at 1.11 against Under 5.5
-    // at 5.40. Both legs are priced, so both are real.
+    // And the highest, on the other event: Over 5.5 at 5.40 against Under 5.5 at
+    // 1.11. Both legs are priced, so both are real.
     const highest = bedford[bedford.length - 1];
     assert.equal(highest.providerMarketId, '7989:550');
-    assert.deepEqual(highest.selections.map((x) => x.name), ['Over 5.5', 'Under 5.5']);
+    assert.deepEqual(highest.selections.map((x) => x.name), ['Under 5.5', 'Over 5.5']);
     assert.deepEqual(highest.selections.map((x) => x.odds), [1.11, 5.4]);
+
+    // The invariant that was actually violated, asserted on the PUBLISHED
+    // output rather than on the raw codes: within one event the Over price rises
+    // as the line rises and the Under price falls. A side map inverted in either
+    // direction still yields two well-formed legs, and still passes every
+    // literal assertion above, so the literals alone do not protect this.
+    for (const board of [peterborough, bedford]) {
+      const byLine = (m) => Object.fromEntries(
+        m.selections.map((s) => [s.name.split(' ')[0], s.odds]),
+      );
+      for (let i = 0; i + 1 < board.length; i += 1) {
+        const low = byLine(board[i]);
+        const high = byLine(board[i + 1]);
+        assert.ok(
+          high.Over > low.Over,
+          `${name}: Over must shorten-proof (get longer) as the line rises — `
+          + `line ${board[i].line} Over ${low.Over}, line ${board[i + 1].line} Over ${high.Over}`,
+        );
+        assert.ok(
+          high.Under < low.Under,
+          `${name}: Under must get shorter as the line rises — `
+          + `line ${board[i].line} Under ${low.Under}, line ${board[i + 1].line} Under ${high.Under}`,
+        );
+      }
+    }
   });
 
   test(`${name} publishes every goals handicap, one market per line`, () => {

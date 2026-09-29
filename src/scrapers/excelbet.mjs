@@ -32,8 +32,33 @@ const ASIAN_HANDICAP_MARKET = 60016;
 
 /** The three result codes, in the order the feed lists them. */
 const RESULT_SIDES = new Map([[1, '1'], [2, 'X'], [3, '2']]);
-/** Total-goal legs: `ce=1` is Over, `ce=2` is Under. */
-const TOTAL_GOALS_SIDES = new Map([[1, 'Over'], [2, 'Under']]);
+/**
+ * Total-goal legs: `ce=1` is Under, `ce=2` is Over.
+ *
+ * This was published the other way round first, and the mistake is worth
+ * recording because it was invisible to the test that motivated it. `ce=1` is
+ * the CHEAP side at a high line and the LONG side at a low one, which is what
+ * the ladder in `test/fixtures/excelbet-markets.json` shows on Peterborough
+ * (1X2 2.03/3.55/3.10):
+ *
+ *     line 0.5   ce=1 9.40   ce=2 1.03
+ *     line 2.5   ce=1 2.17   ce=2 1.61
+ *     line 4.5   ce=1 1.18   ce=2 4.30
+ *
+ * The Over price RISES with the line and the Under price falls — Over 0.5 is
+ * all but certain at 1.03, Over 4.5 is long at 4.30, and "Over 0.5" was read as
+ * "0.5 goals or fewer", which is Under. The 1X2 on the same fixture settles it
+ * independently: a 3.55 draw is P(0:0) of roughly a tenth, so Under 0.5 —
+ * which settles precisely on 0:0 — is worth about 9.40, and the complement
+ * Over 0.5 is worth about 1.03.
+ *
+ * A monotonicity argument cannot rescue this, and the first one here did not:
+ * it was written as "the Over price can only fall as the line rises", which is
+ * backwards, and so it confirmed 2,061 of 2,061 steps while measuring the wrong
+ * direction. The corrected form is asserted in the tests as a property of the
+ * published output, because that is the shape that was actually violated.
+ */
+const TOTAL_GOALS_SIDES = new Map([[1, 'Under'], [2, 'Over']]);
 /** Handicap legs: `ce=1` is the home side, `ce=2` the away side. */
 const ASIAN_HANDICAP_SIDES = new Map([[1, 'home'], [2, 'away']]);
 
@@ -387,15 +412,20 @@ function resultMarket(e) {
  * separate markets, and each is its own contract at its own line. Merging them
  * would bucket "Over 0.5" with "Over 1.5".
  *
- * `ce=1` is Over and `ce=2` is Under. A goals threshold admits exactly one
- * monotone assignment, so this is determined rather than guessed: within a
- * single event the Over price can only fall as the line rises and the Under
- * price can only rise. Measured 2026-09-29 on aggregate 8 across five days and
- * all four tenants, over 442 events carrying two or more lines and 2,061
- * consecutive line steps between them, `ce=1` fell on every step and `ce=2`
- * rose on every step — no exceptions. Pooled medians across the whole board
- * show the same shape (8.40 → 1.04 for `ce=1` from the 0.5 line to the 5.5
- * line), but the pooled view is not the proof: it mixes events, and a per-event
+ * A goals threshold admits exactly one monotone assignment, so the sides are
+ * determined rather than guessed — but the direction has to be right before the
+ * argument says anything. It is: the OVER price RISES as the line rises and the
+ * UNDER price falls. Over 0.5 is settled by any goal at all, so it is all but
+ * certain and short; Over 5.5 is long. Measured 2026-09-29 on aggregate 8
+ * across five days and all four tenants, over 442 events carrying two or more
+ * lines and 2,061 consecutive line steps between them, `ce=1` fell on every step
+ * and `ce=2` rose on every step — no exceptions — which is to say `ce=1` is the
+ * side that shortens as the threshold rises, and that is UNDER. See
+ * `TOTAL_GOALS_SIDES` for the first version of this, which had the sentence
+ * backwards and read the fall as Over.
+ *
+ * Pooled medians show the same shape (8.40 -> 1.04 for `ce=1` from the 0.5 line
+ * to the 5.5 line) but are not the proof: they mix events, and a per-event
  * count is what makes the assignment forced.
  */
 function totalGoalsMarkets(e) {
