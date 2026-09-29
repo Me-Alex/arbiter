@@ -14,27 +14,65 @@ export function matchesAltenarConfig(id, cfg) {
 const UPCOMING_BASE = 'https://sb2frontend-altenar2.biahosted.com/api/widget/GetUpcoming';
 
 /**
- * Football sport id and the only market family we publish: the full-time
- * 1X2 result. Verified against the tenants' GetSportMenu response, where
- * Fotbal is id 66 (68 = Tenis, 67 = Baschet, …).
+ * Football sport id and the market families we publish. Verified against the
+ * tenants' GetSportMenu response, where Fotbal is id 66 (68 = Tenis,
+ * 67 = Baschet, …), and against captured GetUpcoming payloads from all six
+ * tenants, which agree on these typeIds.
  */
 const FOOTBALL_SPORT_ID = 66;
-/** Altenar market typeId → market name. Verified: 1 = "1x2" full-time result. */
-const MATCH_ODDS_MARKET_TYPE = 1;
 
 /**
- * Altenar outcome typeId → canonical 1/X/2 label.
+ * Altenar market typeId → the family the engine can price.
+ *
+ * The feed serves far more than the 1X2 the adapter used to publish; these are
+ * the typeIds present in every captured tenant payload that map onto a family
+ * `resolveContract()` prices for arbitrage:
+ *
+ *   1  "1x2"                        full-time match result
+ *   18 "Total" / "Total goluri"     goals over/under, line in `sv` ("2.5")
+ *   29 "Ambele echipe să înscrie"   both teams to score
+ *
+ * Deliberately NOT published, and why — the feed serves them, but the engine
+ * cannot price them as a surebet or must not treat them as a match result:
+ *
+ *   10 "Șansă dublă" (double chance) — DOUBLE_CHANCE is arbEligible:false by
+ *      design: taking 2 of 3 double chances is not a surebet.
+ *   11 "Egal pariu nul" (draw no bet) — 2-way with a draw refund. The engine
+ *      would fall back to routing it as a 2-way MATCH_ODDS, and an Altenar DNB
+ *      "1" leg does not share a payoff with another book's match-result "1".
+ *      Publishing it under that key would invent an arbitrage.
+ *   8  "Golul primul" (first goal)   — first-goalscorer, outcome id 7 is
+ *      "Niciunul"; no contract models it.
+ */
+const MATCH_ODDS_MARKET_TYPE = 1;
+const TOTALS_MARKET_TYPE = 18;
+const BTTS_MARKET_TYPE = 29;
+
+/**
+ * Outcome typeId → canonical selection label, per family.
  *
  * `odd.name` is NOT the label to trust: the same tenant returns "1"/"2" for
  * some integrations and the competitor's own name for others (don/topbet
  * return "Club Dr Benjamin Aceval"/"Tembetary"). The stable field is
  * `odd.typeId`, which is the provider's own outcome taxonomy, so the emitted
  * selection names are canonical regardless of tenant localisation.
+ *
+ * The totals labels keep the line ("Peste 2.5" / "Sub 2.5") because
+ * `classifyAndExtractLine` reads the line out of the selection name when the
+ * market key alone does not carry it.
  */
 const OUTCOME_LABELS = new Map([
   [1, '1'],
   [2, 'X'],
   [3, '2'],
+]);
+const TOTALS_LABELS = new Map([
+  [12, 'over'],
+  [13, 'under'],
+]);
+const BTTS_LABELS = new Map([
+  [74, 'yes'],
+  [76, 'no'],
 ]);
 
 export default class AltenarPublic extends ScraperBase {
@@ -161,8 +199,8 @@ export default class AltenarPublic extends ScraperBase {
       if (!league) continue;
       // A simulated (virtual) event carries the empty ISO sentinel.
       if (category.iso === '') continue;
-      const market = this._matchOddsMarket(e);
-      if (!market) continue;
+      const markets = this._markets(e);
+      if (markets.length === 0) continue;
       const kickoff = new Date(time).toISOString();
       const sportName = sportNames[e.sportId] || 'Football';
       const sportKey = sportName.toLowerCase().replace(/\s+/g, '-');
@@ -172,8 +210,29 @@ export default class AltenarPublic extends ScraperBase {
         providerEventId: String(e.id), attributionStatus: 'public-integration-unverified-brand',
         sport: sportName, league, kickoff, homeTeam: teams[0], awayTeam: teams[1], isLive: false,
         eventKey: [sportKey, normalizeTeamName(league), kickoff, ...teams.map(normalizeTeamName)].join('|'),
-        markets: [market] });
+        markets });
     }
+    return out;
+  }
+
+  /**
+   * Every market this event publishes that the engine can price, in a fixed
+   * order with the 1X2 first.
+   *
+   * The result is required: an event whose 1X2 is incomplete or mislabelled is
+   * not a trustworthy event, so it is dropped whole rather than published with
+   * only the extras. The extras are additive and may be absent — a tenant that
+   * suspends a total simply yields fewer markets, and an unusable extra is
+   * skipped without taking the event down with it.
+   */
+  _markets(e) {
+    const matchOdds = this._matchOddsMarket(e);
+    if (!matchOdds) return [];
+    const out = [matchOdds];
+    const totals = this._totalsMarkets(e);
+    if (totals) out.push(...totals);
+    const btts = this._bttsMarket(e);
+    if (btts) out.push(btts);
     return out;
   }
 
@@ -216,10 +275,86 @@ export default class AltenarPublic extends ScraperBase {
     return { key: '1x2', providerMarketId: String(m.id), name: m.name, period: 'fulltime', selections };
   }
 
+  /**
+   * Every full-time goals total this event publishes, one market per line.
+   *
+   * An event carries several totals (1.5, 2.5, 3.5 …) as separate markets, and
+   * each is its own contract at its own line: publishing only the first would
+   * discard real prices, and merging them would bucket OVER 2.5 with OVER 3.5.
+   * The line lives in the market's `sv` and is repeated in each selection name
+   * ("Peste 2.5" / "Sub 2.5"), which is where `classifyAndExtractLine` reads it
+   * from, so both are emitted.
+   */
+  _totalsMarkets(e) {
+    const t = this.tables;
+    const out = [];
+    for (const m of e.marketIds.map((id) => t.markets.get(id))) {
+      if (!m || m.typeId !== TOTALS_MARKET_TYPE) continue;
+      const line = String(m.sv ?? m.sn ?? '').trim();
+      // Without a line the market cannot be bucketed, and the two selections
+      // would collapse into a nameless 2-way contract.
+      if (!line) continue;
+      const byType = this._completePair(m, TOTALS_LABELS);
+      if (!byType) continue;
+      // "Peste 2.5" / "Sub 2.5" — the label carries the line the engine reads.
+      const labels = { 12: `Peste ${line}`, 13: `Sub ${line}` };
+      const selections = [12, 13].map((typeId) => ({
+        id: String(byType.get(typeId).id),
+        providerOutcomeId: typeId,
+        name: labels[typeId],
+        odds: byType.get(typeId).price,
+        handicap: null,
+      }));
+      out.push({ key: 'TOTAL_GOALS', providerMarketId: String(m.id), name: m.name, period: 'fulltime', line, selections });
+    }
+    return out;
+  }
+
+  /** The full-time both-teams-to-score market, or null when absent/unusable. */
+  _bttsMarket(e) {
+    const t = this.tables;
+    for (const m of e.marketIds.map((id) => t.markets.get(id))) {
+      if (!m || m.typeId !== BTTS_MARKET_TYPE) continue;
+      const byType = this._completePair(m, BTTS_LABELS);
+      if (!byType) continue;
+      // The engine's BTTS matcher accepts the Romanian spellings directly;
+      // keeping them is what makes the market recognisable.
+      const selections = [74, 76].map((typeId) => ({
+        id: String(byType.get(typeId).id),
+        providerOutcomeId: typeId,
+        name: BTTS_LABELS.get(typeId) === 'yes' ? 'Da' : 'Nu',
+        odds: byType.get(typeId).price,
+        handicap: null,
+      }));
+      return { key: 'BTTS', providerMarketId: String(m.id), name: m.name, period: 'fulltime', selections };
+    }
+    return null;
+  }
+
+  /**
+   * Read a market's outcomes as a complete, live, priced pair — exactly one of
+   * each type in `labels`, no duplicates, nothing suspended, every price > 1.
+   * Returns null on any defect so a half-quoted market is never published.
+   *
+   * @returns {Map<number, {id: number, price: number}>|null}
+   */
+  _completePair(m, labels) {
+    const t = this.tables;
+    const byType = new Map();
+    for (const oddId of m.oddIds || []) {
+      const o = t.odds.get(oddId);
+      if (!o || o.oddStatus !== 0 || !Number.isFinite(o.price) || o.price <= 1) return null;
+      if (!labels.has(o.typeId) || byType.has(o.typeId)) return null;
+      byType.set(o.typeId, o);
+    }
+    if (byType.size !== labels.size) return null;
+    return byType;
+  }
+
   _serializable(events, raw) {
     return { ...super._serializable(events, raw), sourceUrl: this.sourceUrl, transport: TRANSPORT,
       observedAt: this.observedAt, integration: this.id, attributionStatus: 'public-integration-unverified-brand',
-      coverage: { sport: 'football', market: 'fulltime-1x2', live: false, page: 1, exhaustive: false,
+      coverage: { sport: 'football', market: 'fulltime-1x2+tgoals+btts', live: false, page: 1, exhaustive: false,
         maxEvents: this.maxEvents, windowHours: this.windowHours, requiresCountryIso: true } };
   }
 }
