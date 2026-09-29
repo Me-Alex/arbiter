@@ -4,6 +4,10 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import Favbet from '../src/scrapers/favbet.mjs';
+import {
+  resolveContract, isFullTimeMarket, bucketKeyForContract,
+} from '../src/scanner/market-contracts.mjs';
+import { groupByEvent, findArbitrage } from '../src/scanner/engine.mjs';
 
 const FIXTURE = JSON.parse(readFileSync(fileURLToPath(new URL('./fixtures/favbet.json', import.meta.url)), 'utf8'));
 
@@ -103,26 +107,34 @@ test('the event key is stable and does not depend on market ordering', (t) => {
   assert.deepEqual(keyOf(first), keyOf(second), 'identity survives reordering');
 });
 
-test('KNOWN DEFECT: a synthetic totals pool is published as a football fixture', (t) => {
+test('a synthetic totals pool is no longer published as a football fixture', (t) => {
   atPinnedNow(t);
   // favbet lists totals pools such as "Goluri Gazde (8 Meciuri) v Goluri
-  // Oaspeti (8 Meciuri)" as events with a complete 1X2 market. The adapter
-  // publishes them, and because they sort to the front of the feed they can
+  // Oaspeti (8 Meciuri)" as events with a complete 1X2 market. The adapter used
+  // to publish them, and because they sort to the front of the feed they could
   // consume a small `maxEvents` budget before any real fixture is reached —
   // observed live: 60 events published, all of them pools, while 540 real
   // football fixtures were available in the same response.
   //
-  // This test pins the CURRENT behaviour deliberately. It is a finding, not an
-  // endorsement: when the filter is added, this test is what should flip to
-  // assert the pools are dropped, and its presence means that change cannot
-  // land silently.
+  // This test pinned that behaviour on purpose, as a finding rather than an
+  // endorsement, and said which assertion should replace it once a filter
+  // landed. The filter is `isMultiMatchTie`: the provider declares the aggregate
+  // in the event's own 1X2 text — "Goluri Gazde (8 Meciuri)" — so this reads a
+  // declaration rather than inferring one from a name. It is also the reading
+  // that keeps the goals families honest, because the pool's handicap lines are
+  // half lines like any other and would otherwise enter the engine as match
+  // handicaps.
   const s = new Favbet({ windowHours: 72 });
   const out = s.extractEvents(s.normalize(raw()));
   const pools = out.filter((e) => /^\s*Goluri/i.test(e.homeTeam) || /^\s*Goluri/i.test(e.awayTeam));
 
-  assert.ok(pools.length > 0, 'the fixture keeps a pool row; if a filter lands, assert this is 0 instead');
-  for (const p of pools) {
-    assert.ok(p.markets.some((m) => m.key === 'MATCH_ODDS'), 'the pool is published as a match-result market');
+  assert.deepEqual(pools, [], 'the aggregate is dropped whole, not degraded');
+  assert.equal(out.length, 2, 'the two real fixtures are published and nothing else');
+  for (const e of out) {
+    assert.ok(
+      !/^\s*Goluri/i.test(e.homeTeam) && !/^\s*Goluri/i.test(e.awayTeam),
+      'no published event is an aggregate',
+    );
   }
 });
 
@@ -551,3 +563,431 @@ test('the adapter reports a missing or malformed envelope rather than an empty s
   assert.equal(out.length, broken.markets.length - 1, 'exactly the broken row is dropped');
   assert.ok(!out.some((e) => String(e.id) === victimId), 'the broken row is not published');
 });
+
+/* ------------------------------------------------------------------------- *
+ * The two goals families: template 50 "Peste / Sub" and template 190 "Handicap"
+ *
+ * Both were dropped whole before this, in two independent ways, and both failures
+ * were silent — no error, no empty market, just a contract that never arrived.
+ *
+ *   1. The threshold is in the leg's own text ("peste (2.5)"), never in the
+ *      market name ("Peste / Sub", no number), so the line extractor returned
+ *      null and both branches bailed before pricing anything.
+ *   2. The handicap's side cannot be read from `outcome_tag`. On template 190
+ *      that field is populated on 672 of 4,294 full-time rows, and — this is the
+ *      part that makes a tag-keyed reader look plausible — it is populated on
+ *      the WHOLE lines and null on the HALF lines. So the tag resolves the
+ *      markets this adapter refuses and loses the ones it is for. 80 markets
+ *      were published against 1,598 once the side came from the club name.
+ *
+ * The prices below are the capture's own, in `test/fixtures/favbet.json`.
+ * ------------------------------------------------------------------------- */
+
+test('the real capture publishes every full-time goals total, one market per line', (t) => {
+  atPinnedNow(t);
+  const s = new Favbet({ windowHours: 72 });
+  const out = s.extractEvents(s.normalize(raw()));
+
+  // The fixture holds three events, one of which is a multi-match tie and is
+  // withheld by its own 1X2 text (tested separately below).
+  const byId = new Map(out.map((e) => [String(e.id), e]));
+  const latvia = byId.get('43432785');
+  const moldova = byId.get('43432794');
+  assert.ok(latvia && moldova, 'both real two-team fixtures are published');
+
+  const totals = (e) => (e.markets || []).filter((m) => m.key === 'TOTAL_GOALS');
+  // Letonia v Cipru quotes 0.5 through 4.5; Moldova v Insulele Feroe the same
+  // five. Whole lines (1.0, 2.0, 3.0, 4.0) are in the capture and are NOT here:
+  // they push, so the pair is not exhaustive.
+  assert.deepEqual(totals(latvia).map((m) => m.line), [0.5, 1.5, 2.5, 3.5, 4.5]);
+  assert.deepEqual(totals(moldova).map((m) => m.line), [0.5, 1.5, 2.5, 3.5, 4.5]);
+
+  // Verbatim, lowest line: "Peste (0.5)" 1.08 / "Sub (0.5)" 7.40.
+  const lowest = totals(latvia)[0];
+  assert.equal(lowest.providerMarketId, '50:0.5');
+  assert.equal(lowest.name, 'Peste / Sub');
+  assert.equal(lowest.period, 'fulltime');
+  assert.deepEqual(lowest.selections.map((x) => x.name), ['Over 0.5', 'Under 0.5']);
+  assert.deepEqual(lowest.selections.map((x) => x.odds), [1.08, 7.4]);
+
+  // And the highest on the other event: "Peste (4.5)" 10.30 / "Sub (4.5)" 1.03.
+  const highest = totals(moldova)[4];
+  assert.equal(highest.providerMarketId, '50:4.5');
+  assert.deepEqual(highest.selections.map((x) => x.name), ['Over 4.5', 'Under 4.5']);
+  assert.deepEqual(highest.selections.map((x) => x.odds), [10.3, 1.03]);
+
+  // The direction, asserted on the PUBLISHED output rather than on the raw
+  // words. "peste" and "sub" were the two words this branch had to tell apart,
+  // and a map with them the wrong way round still produces two well-formed
+  // legs that pass every literal assertion above. Raising the threshold makes
+  // Over longer and Under shorter, and both events' ladders do exactly that.
+  for (const e of [latvia, moldova]) {
+    const byLine = (m) => Object.fromEntries(
+      m.selections.map((s) => [s.name.split(' ')[0], s.odds]),
+    );
+    const board = totals(e);
+    for (let i = 0; i + 1 < board.length; i += 1) {
+      const low = byLine(board[i]);
+      const high = byLine(board[i + 1]);
+      assert.ok(
+        high.Over > low.Over,
+        `Over must get longer as the line rises — line ${board[i].line} Over ${low.Over}, `
+        + `line ${board[i + 1].line} Over ${high.Over}`,
+      );
+      assert.ok(
+        high.Under < low.Under,
+        `Under must get shorter as the line rises — line ${board[i].line} Under ${low.Under}, `
+        + `line ${board[i + 1].line} Under ${high.Under}`,
+      );
+    }
+  }
+});
+
+test('the real capture publishes every full-time goals handicap, one market per line', (t) => {
+  atPinnedNow(t);
+  const s = new Favbet({ windowHours: 72 });
+  const out = s.extractEvents(s.normalize(raw()));
+  const byId = new Map(out.map((e) => [String(e.id), e]));
+
+  const hands = (e) => (e.markets || []).filter((m) => m.key === 'ASIAN_HANDICAP');
+  // Letonia v Cipru quotes -2.5, -1.5, +1.5, +2.5; Moldova v Insulele Feroe
+  // -1.5, +1.5, +2.5. The (0.0) lines in the capture are whole lines and are
+  // absent; so are the (-2.0), (-1.0), (+1.0) and (+2.0) lines.
+  assert.deepEqual(hands(byId.get('43432785')).map((m) => m.line), [-2.5, -1.5, 1.5, 2.5]);
+  assert.deepEqual(hands(byId.get('43432794')).map((m) => m.line), [-1.5, 1.5, 2.5]);
+
+  // Verbatim, the favourite's line: "Letonia (-2.5)" 12.70 / "Cipru (+2.5)" 1.02.
+  // Letonia is side 1 and receives -2.5; a 1.02 on the outsider covers everything
+  // up to a three-goal home win, and 12.70 is the far tail. Swapping the two
+  // would file a 12.70 on the side that cannot lose.
+  const strongest = hands(byId.get('43432785'))[0];
+  assert.equal(strongest.providerMarketId, '190:-2.5');
+  assert.equal(strongest.name, 'Handicap');
+  assert.equal(strongest.period, 'fulltime');
+  assert.deepEqual(strongest.selections.map((x) => x.name), ['1 (-2.5)', '2 (+2.5)']);
+  assert.deepEqual(strongest.selections.map((x) => x.odds), [12.7, 1.02]);
+
+  // Every published pair must be an exact negation, and the two sides must not
+  // agree on a line: a market whose legs cancel to the same number is one
+  // number twice, not a two-way contract.
+  for (const e of out) {
+    for (const m of hands(e)) {
+      assert.equal(m.selections.length, 2, `${m.providerMarketId} has exactly two legs`);
+      const [h, a] = m.selections;
+      assert.ok(h.name.startsWith('1 ('), 'the home leg is named as side 1');
+      assert.ok(a.name.startsWith('2 ('), 'the away leg is named as side 2');
+      const hl = Number(h.name.slice(3, -1));
+      const al = Number(a.name.slice(3, -1));
+      assert.ok(Math.abs(hl + al) < 1e-9, `${m.providerMarketId} legs cancel: ${hl} / ${al}`);
+      assert.notEqual(hl, al, `${m.providerMarketId} legs are not the same line twice`);
+      assert.ok(Number.isInteger(Math.abs(hl) * 2) && !Number.isInteger(Math.abs(hl)),
+        `${m.providerMarketId} is on the half, which is what makes it exhaustive`);
+    }
+  }
+});
+
+test('a handicap resolves its side with no outcome_tag at all', (t) => {
+  // The regression in one fixture. Both legs carry tag null — the shape the feed
+  // serves for 84% of full-time rows, and the shape every half line arrives in,
+  // because the tag is filled on the whole lines. A tag-keyed reader publishes
+  // nothing here; the club name inside each leg is what identifies the side.
+  atPinnedNow(t);
+  const s = new Favbet({ windowHours: 72 });
+  const out = s.extractEvents(s.normalize(envelopeWith([
+    handicap(701, 'Timp Regulamentar', [
+      leg(7011, null, 'Slovacia (-1.5)', 1.64),
+      leg(7012, null, 'Kazakhstan (+1.5)', 2.28),
+    ]),
+  ], { home: 'Slovacia', away: 'Kazakhstan' })));
+
+  const e = out[0];
+  const hands = (e.markets || []).filter((m) => m.key === 'ASIAN_HANDICAP');
+  assert.equal(hands.length, 1, 'the market is published without a single tag');
+  assert.deepEqual(hands[0].selections.map((x) => x.name), ['1 (-1.5)', '2 (+1.5)']);
+  assert.deepEqual(hands[0].selections.map((x) => x.odds), [1.64, 2.28]);
+});
+
+test('the threshold is the LAST number in a leg, not the first', (t) => {
+  // Football clubs are named after years, and favbet writes the club into each
+  // handicap leg: "Bayer 04 Leverkusen (+1.5)". 35 of 676 live events have a
+  // club with a digit in its name — Bayer 04 Leverkusen, TSG 1899 Hoffenheim,
+  // Hannover 96, Fleury 91 FC, Bohemians 1905 — and 258 of their real full-time
+  // goals legs carry a number before the threshold. A reader that took the
+  // first number would read 04, or 1899, or 96 as the line, call it a whole
+  // number, and refuse the market: silently losing every handicap on those
+  // clubs. The prices below are the test's own; the club name and the leg text
+  // are the feed's, which is the part the rule is about.
+  atPinnedNow(t);
+  const s = new Favbet({ windowHours: 72 });
+  const out = s.extractEvents(s.normalize(envelopeWith([
+    handicap(706, 'Timp Regulamentar', [
+      leg(7061, null, 'Lech Poznan (-1.5)', 2.66),
+      leg(7062, null, 'Bayer 04 Leverkusen (+1.5)', 1.49),
+    ]),
+  ], { home: 'Lech Poznan', away: 'Bayer 04 Leverkusen' })));
+
+  const hands = (out[0].markets || []).filter((m) => m.key === 'ASIAN_HANDICAP');
+  assert.equal(hands.length, 1, 'a club with a year in its name does not cost it the market');
+  assert.equal(hands[0].line, -1.5, 'the line is the threshold, not the 04');
+  assert.deepEqual(hands[0].selections.map((x) => x.name), ['1 (-1.5)', '2 (+1.5)']);
+});
+
+test('the outcome_tag is a check on the side, not the way to find it', (t) => {
+  // Where the provider does fill the tag in it agreed with the club name on
+  // 700 of 700 comparisons, so a tag that contradicts the name means the row
+  // is not what it appears to be. Both cases are refused rather than resolved
+  // in favour of either reading.
+  atPinnedNow(t);
+  const s = new Favbet({ windowHours: 72 });
+
+  const agree = s.extractEvents(s.normalize(envelopeWith([
+    handicap(702, 'Timp Regulamentar', [
+      leg(7021, '1', 'Slovacia (-1.5)', 1.64),
+      leg(7022, '2', 'Kazakhstan (+1.5)', 2.28),
+    ]),
+  ], { home: 'Slovacia', away: 'Kazakhstan' })));
+  assert.equal(
+    (agree[0].markets || []).filter((m) => m.key === 'ASIAN_HANDICAP').length,
+    1,
+    'a tag that agrees does not veto the market',
+  );
+
+  for (const [label, homeTag, awayTag] of [
+    ['swapped', '2', '1'],
+    ['both home', '1', '1'],
+  ]) {
+    const clash = s.extractEvents(s.normalize(envelopeWith([
+      handicap(703, 'Timp Regulamentar', [
+        leg(7031, homeTag, 'Slovacia (-2.5)', 2.66),
+        leg(7032, awayTag, 'Kazakhstan (+2.5)', 1.49),
+      ]),
+    ], { home: 'Slovacia', away: 'Kazakhstan' })));
+    assert.equal(
+      (clash[0].markets || []).filter((m) => m.key === 'ASIAN_HANDICAP').length,
+      0,
+      `a ${label} tag contradicts the leg names, so the market is refused`,
+    );
+  }
+});
+
+test('a handicap whose two legs cannot be told apart is refused, and one club inside another is not that', (t) => {
+  // "Hodd (-1.0)" against home "Hodd" / away "Odd" is the only pair in 675
+  // sampled where one club's name sits inside the other's, so both names are
+  // substrings of the home leg. A plain substring test reads the away club out
+  // of the home leg's name and files this market with its sides swapped. The
+  // match is on word boundaries, so it resolves — and this test is what says
+  // which way round it must resolve, since "it published something" would pass
+  // just as well with the legs exchanged.
+  atPinnedNow(t);
+  const s = new Favbet({ windowHours: 72 });
+
+  const nested = s.extractEvents(s.normalize(envelopeWith([
+    handicap(704, 'Timp Regulamentar', [
+      leg(7041, null, 'Hodd (-1.5)', 2.66),
+      leg(7042, null, 'Odd (+1.5)', 1.49),
+    ]),
+  ], { home: 'Hodd', away: 'Odd' })));
+  const nestedHands = (nested[0].markets || []).filter((m) => m.key === 'ASIAN_HANDICAP');
+  assert.equal(nestedHands.length, 1, 'the nested pair still resolves');
+  assert.deepEqual(
+    nestedHands[0].selections.map((x) => `${x.name}@${x.odds}`),
+    ['1 (-1.5)@2.66', '2 (+1.5)@1.49'],
+    'the home club keeps its own line, and the club named inside it does not steal it',
+  );
+
+  // The two shapes with no reading at all. Neither may be published: the first
+  // is one club twice, which is not two sides, and the second names neither.
+  const refused = [
+    ['the same club on both legs', 'Hodd (-1.5)', 'Hodd (+1.5)'],
+    ['neither leg names a club', 'Cote (-1.5)', 'Visiteur (+1.5)'],
+  ];
+  for (const [label, homeLeg, awayLeg] of refused) {
+    const out = s.extractEvents(s.normalize(envelopeWith([
+      handicap(705, 'Timp Regulamentar', [
+        leg(7051, null, homeLeg, 2.66),
+        leg(7052, null, awayLeg, 1.49),
+      ]),
+    ], { home: 'Hodd', away: 'Odd' })));
+    assert.equal(
+      (out[0].markets || []).filter((m) => m.key === 'ASIAN_HANDICAP').length,
+      0,
+      `refused when ${label}`,
+    );
+  }
+});
+
+test('the goals families refuse every non-exhaustive or undeclared shape', (t) => {
+  // Each row below is refused for a different reason, and each reason is one the
+  // live feed actually produces. Publishing any of them would put a push-capable
+  // pair or a mixed-window pair into an exhaustive bucket, which is how an
+  // inverse sum below 1 stops meaning "no risk".
+  atPinnedNow(t);
+  const s = new Favbet({ windowHours: 72 });
+
+  const refused = [
+    // Half-time and second-half totals are in the capture for every fixture;
+    // they settle on 45 minutes, not on the match.
+    ['a first-half total', total(710, 'Prima repriză', 1.5, 3.36, 1.30), {}],
+    ['a second-half handicap', handicap(711, 'A doua repriză', [
+      leg(7111, null, 'Slovacia (-1.5)', 9.2), leg(7112, null, 'Kazakhstan (+1.5)', 1.03),
+    ]), {}],
+    // A whole line pushes both legs; a quarter line pushes half of one.
+    ['a whole-number total', total(712, 'Timp Regulamentar', 2.0, 1.77, 2.09), {}],
+    ['a quarter-line handicap', handicap(713, 'Timp Regulamentar', [
+      leg(7131, null, 'Slovacia (-1.25)', 6.10), leg(7132, null, 'Kazakhstan (+1.25)', 1.24),
+    ]), {}],
+    // The window is not declared, so it is not full time.
+    ['a total with no window', total(714, null, 2.5, 1.77, 2.09), {}],
+    // One leg is not priced. A one-sided market is a side that always wins and
+    // a side that never does.
+    ['a total missing its Under leg', {
+      market_id: 715, market_name: 'Peste / Sub', market_suspend: false, market_template_id: 50,
+      result_type_name: 'Timp Regulamentar', result_type_short_name: 'Tr',
+      outcomes: [leg(7151, '2', 'Peste (2.5)', 1.77)],
+    }, {}],
+    // The legs disagree about the threshold: not one market.
+    ['legs quoting different lines', {
+      market_id: 716, market_name: 'Peste / Sub', market_suspend: false, market_template_id: 50,
+      result_type_name: 'Timp Regulamentar', result_type_short_name: 'Tr',
+      outcomes: [leg(7161, '2', 'Peste (2.5)', 1.77), leg(7162, '1', 'Sub (3.5)', 1.83)],
+    }, {}],
+    // The two thresholds are not negations, so there is no handicap to settle.
+    ['handicap legs that do not cancel', handicap(717, 'Timp Regulamentar', [
+      leg(7171, null, 'Slovacia (-1.5)', 1.64), leg(7172, null, 'Kazakhstan (+1.0)', 2.28),
+    ]), {}],
+    // A suspended row is not a price.
+    ['a suspended total', { ...total(718, 'Timp Regulamentar', 2.5, 1.77, 2.09), market_suspend: true }, {}],
+  ];
+
+  for (const [label, market] of refused) {
+    const out = s.extractEvents(s.normalize(envelopeWith([
+      market,
+    ], { home: 'Slovacia', away: 'Kazakhstan' })));
+    const e = out[0];
+    assert.ok(e, 'the fixture event itself is still published');
+    const goals = (e.markets || []).filter((m) => m.key === 'TOTAL_GOALS' || m.key === 'ASIAN_HANDICAP');
+    assert.equal(goals.length, 0, `refused: ${label}`);
+  }
+});
+
+test('the two goals families survive the real router and land in exhaustive buckets', (t) => {
+  // The adapter emitting a well-formed market does not mean the engine will
+  // arbitrate it. A total published as "Over 2.5" with the wrong key, or a
+  // handicap whose selection names lose their signs, buckets somewhere useless
+  // or nowhere at all — and the engine never complains, it just finds nothing.
+  // So this drives the real resolveContract and bucketKeyForContract.
+  atPinnedNow(t);
+  const s = new Favbet({ windowHours: 72 });
+  const out = s.extractEvents(s.normalize(raw()));
+
+  const buckets = new Map();
+  for (const e of out) {
+    for (const m of e.markets || []) {
+      if (m.key !== 'TOTAL_GOALS' && m.key !== 'ASIAN_HANDICAP') continue;
+      const c = resolveContract(m);
+      assert.ok(c, `${m.providerMarketId} resolves to a contract`);
+      assert.notEqual(c.arbEligible, false, `${m.providerMarketId} is arbitrable`);
+      assert.ok(isFullTimeMarket(m), `${m.providerMarketId} is a full-time market`);
+      const bucket = bucketKeyForContract('', c).replace(/^::/, '');
+      buckets.set(bucket, (buckets.get(bucket) || 0) + 1);
+    }
+  }
+
+  // Both ladders are present and every bucket names a single line pair.
+  assert.ok(buckets.has('OVER_UNDER::fulltime::2.5'), 'the 2.5 total is arbitrable');
+  assert.ok(buckets.has('OVER_UNDER::fulltime::3.5'), 'the 3.5 total is arbitrable');
+  assert.ok(buckets.has('ASIAN_HANDICAP::fulltime::-1.5/1.5'), 'the -1.5 handicap is arbitrable');
+  assert.ok(buckets.has('ASIAN_HANDICAP::fulltime::1.5/-1.5'), 'the +1.5 handicap is a separate bucket');
+
+  for (const [bucket, n] of buckets) {
+    assert.ok(n > 0, `${bucket} is populated`);
+    if (bucket.startsWith('OVER_UNDER')) {
+      const line = Number(bucket.split('::')[2]);
+      assert.ok(Number.isInteger(line * 2) && !Number.isInteger(line), `${bucket} is on the half`);
+    } else {
+      const [home, away] = bucket.split('::')[2].split('/');
+      assert.equal(Number(home), -Number(away), `${bucket} is a cancelling pair`);
+    }
+  }
+});
+
+test('favbet never disagrees with itself', (t) => {
+  // One book cannot arbitrage against its own prices, so any "arbitrage" here is
+  // a bug in grouping or bucketing — a side filed twice, or a market paired with
+  // its own negation. This is the check that catches a mis-read side map: the
+  // real capture would be self-arbitrage-rich if a handicap's legs were filed
+  // under the wrong line.
+  atPinnedNow(t);
+  const s = new Favbet({ windowHours: 72 });
+  const out = s.extractEvents(s.normalize(raw()));
+  const grouped = groupByEvent(out, 'favbet');
+  const arbs = findArbitrage(grouped, { minRoiPercent: 0 });
+  assert.deepEqual(arbs, [], 'no self-arbitrage across the capture');
+  assert.ok(grouped.size > 0, 'the capture does produce grouped events');
+});
+
+/* --- synthetic row builders, shaped like the capture ---------------------- */
+
+function leg(outcomeId, tag, name, coef) {
+  return {
+    outcome_id: outcomeId, outcome_name: name, outcome_short_name: name,
+    outcome_tag: tag, outcome_coef: coef, outcome_visible: true,
+  };
+}
+
+function total(marketId, window, line, overOdds, underOdds) {
+  const m = {
+    market_id: marketId, market_name: 'Peste / Sub', market_suspend: false, market_template_id: 50,
+    outcomes: [leg(marketId * 10 + 2, '2', `Peste (${line})`, overOdds), leg(marketId * 10 + 1, '1', `Sub (${line})`, underOdds)],
+  };
+  if (window) { m.result_type_name = window; m.result_type_short_name = 'Tr'; }
+  return m;
+}
+
+function handicap(marketId, window, legs) {
+  const m = {
+    market_id: marketId, market_name: 'Handicap', market_suspend: false, market_template_id: 190,
+    outcomes: legs,
+  };
+  if (window) { m.result_type_name = window; m.result_type_short_name = 'Tr'; }
+  return m;
+}
+
+function matchOdds(marketId) {
+  return {
+    market_id: marketId, market_name: '1 X 2', market_suspend: false, market_template_id: 1,
+    result_type_name: 'Timp Regulamentar', result_type_short_name: 'Tr',
+    outcomes: [
+      leg(marketId * 10 + 1, '1', 'Gazde', 2.1),
+      leg(marketId * 10 + 2, 'X', 'Egal', 3.4),
+      leg(marketId * 10 + 3, '2', 'Oaspeți', 3.2),
+    ],
+  };
+}
+
+/**
+ * One event carrying the given markets, in the envelope the adapter consumes.
+ *
+ * The 1X2 is always present because the adapter publishes an event only if its
+ * own match-result market is there; a test that omitted it would assert nothing
+ * at all, since every event it built would be dropped before the goals families
+ * were ever read.
+ */
+function envelopeWith(markets, { home, away, eventId = 5 } = {}) {
+  const event = {
+    event_id: eventId,
+    event_dt: Math.floor(Date.parse(PINNED_NOW) / 1000) + 86400,
+    participants: [
+      { participant_number: 1, participant_name: home },
+      { participant_number: 2, participant_name: away },
+    ],
+    category_name: 'Fotbal', tournament_name: 'Test', tournament_id: 'fotbal',
+    event_status_type: 'notstarted',
+  };
+  return {
+    events: new Map([[String(eventId), event]]),
+    markets: [{ event, markets: { m: [matchOdds(eventId * 100), ...markets] } }],
+    sourceUrl: 'https://www.favbet.ro/service/lineout/frontend_api2/',
+    observedAt: PINNED_NOW,
+  };
+}

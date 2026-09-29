@@ -25,7 +25,42 @@ import { readBoundedJson, DEFAULT_MAX_BODY_BYTES } from '../shared/bounded-json.
  * A `server_time` key inside `by` is rejected (-32600), and the gateway
  * answers HTML 500 to any non-number event_id shape, so keep the payloads
  * exact. Origin/Referer must be first-party or the gateway HTML 500s.
+ *
+ * THE LINE LIVES IN THE OUTCOME NAME, NOT IN THE MARKET NAME
+ *
+ * `frontend/market/get` returns every market an event carries, keyed by
+ * event_id, and two of those templates are plain football contracts that this
+ * reader used to drop on the floor:
+ *
+ *   template 50   "Peste / Sub"   the goals total     1,334 markets / 120 events
+ *   template 190  "Handicap"      the goals handicap   1,280 markets / 120 events
+ *
+ * Both name their threshold in the OUTCOME, not in the market: the market is
+ * called "Peste / Sub" with no number at all, and its legs read "peste (2.5)"
+ * and "sub (2.5)". `extractNumber(market_name)` is therefore null for every
+ * one of them, and the totals branch dropped on `if (line === null) return
+ * null` before pricing anything. The handicap branch dropped the same way.
+ * Reading the line out of the leg text is the whole fix.
+ *
+ * `outcome_tag` is 1/2 on the totals and there it is NOT a side: the total's
+ * "sides" are "peste" and "sub", so a tag can only ever hold 1 or 2 whichever
+ * way round the legs are, and the totals branch was looking for over/under in
+ * it. The words are in `outcome_name` and that is what makes the legs resolve.
+ *
+ * On the handicap the tag LOOKS like the side and reading it there is a trap
+ * that fails silently. It is populated on 15.6% of full-time rows, and the
+ * split is not random: it is there on the whole lines and null on the half
+ * lines, so a tag-keyed reader accepts exactly the push markets this adapter
+ * refuses and drops every half line. Measured on 4,300 rows. The side is read
+ * from the club name inside each leg's own text instead — 4,294 of 4,294 — with
+ * the tag kept only as a check that may not contradict it. See
+ * `handicapLegSide`.
  */
+
+/** template 50 — "Peste / Sub", the two-way goals total. */
+const GOALS_TOTAL_TEMPLATE = 50;
+/** template 190 — "Handicap", the two-way goals handicap. */
+const GOALS_HANDICAP_TEMPLATE = 190;
 export default class FavbetScraper extends ProviderContract {
   id = 'favbet';
   name = 'Favbet';
@@ -176,6 +211,12 @@ export default class FavbetScraper extends ProviderContract {
       const priced = list.filter((m) => m.market_suspend === false);
       const matchOdds = priced.find((m) => Number(m.market_template_id) === 1);
       if (!matchOdds) continue;
+      // A fixture quoted as an aggregate over N matches settles on the tie, not
+      // on the match, and the provider says so in the 1X2's own outcome text.
+      // Withholding the event is the fail-closed reading: the alternative is a
+      // full-time 1X2 that settles on something else, which is the same defect
+      // as publishing a spread as a result.
+      if (isMultiMatchTie(matchOdds)) continue;
       const byKind = new Map();
       for (const s of matchOdds.outcomes || []) {
         const odds = Number(s.outcome_coef);
@@ -184,6 +225,26 @@ export default class FavbetScraper extends ProviderContract {
         if (['1', 'X', '2'].includes(kind)) byKind.set(kind, s);
       }
       if (!byKind.has('1') || !byKind.has('X') || !byKind.has('2')) continue;
+
+      // The two goals families, read from the line in each leg's own text.
+      // They are handled before the generic mapper on purpose: that mapper
+      // resolves a family from the market NAME, and both templates are named
+      // without a number, so it would classify neither.
+      // The handicap needs the two clubs' normalized names to tell its legs
+      // apart, because the provider's own side tag is empty on 84% of rows.
+      const homeKey = normalizeTeamName(home);
+      const awayKey = normalizeTeamName(away);
+      const goalMarkets = [];
+      for (const m of priced) {
+        const template = Number(m.market_template_id);
+        if (template === GOALS_TOTAL_TEMPLATE) {
+          const mapped = goalsTotalMarket(m);
+          if (mapped) goalMarkets.push(mapped);
+        } else if (template === GOALS_HANDICAP_TEMPLATE) {
+          const mapped = goalsHandicapMarket(m, homeKey, awayKey);
+          if (mapped) goalMarkets.push(mapped);
+        }
+      }
 
       // Surface additional markets (totals, BTTS, double chance, handicaps)
       // beyond template 1, mirroring the multi-market pattern of other books.
@@ -215,7 +276,7 @@ export default class FavbetScraper extends ProviderContract {
             const s = byKind.get(kind);
             return { id: String(s.outcome_id), name: kind, odds: Number(s.outcome_coef), group: 'Main' };
           }),
-        }, ...additionalMarkets],
+        }, ...goalMarkets, ...additionalMarkets],
       });
       if (limitReached(out.length, this.maxEvents)) break;
     }
@@ -280,14 +341,9 @@ function mapFavbetMarket(market) {
   // canonicalPeriod() buckets on. Note `half1`, not `firsthalf`: the contracts
   // layer normalizes the Romanian source text itself, but a bare `firsthalf`
   // matches none of its patterns and would silently fall back to full-time.
-  const declaredPeriod = (() => {
-    const label = String(market.result_type_name || market.result_type_short_name || '').trim();
-    if (!label) return null;
-    if (/prima\s*repriz|\brepriz\s*1|1st\s*half|first\s*half|\b1\b\s*repriz/i.test(label)) return 'half1';
-    if (/a\s*doua\s*repriz|\brepriz\s*2|2nd\s*half|second\s*half|\b2\b\s*repriz/i.test(label)) return 'half2';
-    if (/timp\s*regulamentar|\btr\b|full\s*time|fulltime|match\s*time/i.test(label)) return 'fulltime';
-    return null; // an unrecognised window must not be guessed into fulltime
-  })();
+  // Shared with the goals families above, so there is one answer to what a
+  // window is rather than two that can drift apart.
+  const declaredPeriod = favbetPeriod(market);
 
   const isFirstHalf = (label) => /repriza\s*1|1st\s*half|prima\s*repriza/i.test(label);
   const periodFor = (label) => declaredPeriod
@@ -450,4 +506,238 @@ function mapFavbetMarket(market) {
 function extractNumber(text) {
   const match = String(text || '').match(/[-+]?\d+(?:[.,]\d+)?/);
   return match ? Number(match[0].replace(',', '.')) : null;
+}
+
+/**
+ * The LAST number in a leg's own text, which is the threshold that leg is
+ * quoted at: "peste (2.5)" is 2.5, and "Goluri Gazde (8 Meciuri) (-3.5)" is
+ * -3.5 rather than 8. The first number would be the match count on an
+ * aggregate market, so the last one is the only reading that can be the line.
+ */
+function legLine(text) {
+  const all = String(text || '').match(/[-+]?\d+(?:[.,]\d+)?/g);
+  if (!all) return null;
+  return Number(all[all.length - 1].replace(',', '.'));
+}
+
+/**
+ * The line in goals, or null when it is not on the half.
+ *
+ * A whole line pushes both legs and a quarter line pushes half of one, so
+ * neither pair is exhaustive and an inverse sum below 1 would not be a
+ * surebet. Favbet quotes plenty of both — of 20 distinct total lines only 10
+ * are on the half, and of 27 handicap lines only 12 — so this is doing real
+ * work rather than restating an observation.
+ *
+ * THE UNIT IS GOALS HERE, NOT HUNDREDTHS. Favbet writes the threshold into the
+ * leg text as "2.5", so the test is whether the value is a half-integer.
+ * Another feed encodes the same line as 250 hundredths, and a guard written
+ * for that one reads 2.5 as "2.5 mod 50, which is not 0" and refuses every
+ * market on the board — which is what this did on the first run, publishing
+ * none of the 347 it should have. The modulus below is only ever asked whether
+ * a number is integral, never compared against a feed-specific constant.
+ *
+ * The absolute value matters for the same reason as in every other half-line
+ * guard here: JavaScript's `%` keeps the sign of the dividend, so a negative
+ * half line has to be tested on its magnitude or it is rejected while its
+ * positive twin is accepted.
+ */
+function halfGoalLine(value) {
+  const n = Number(value);
+  if (!Number.isFinite(n)) return null;
+  const abs = Math.abs(n);
+  // A half line is a non-integer whose double is an integer: 2.5 -> 5, 3 -> 6
+  // (integral, and rejected below), 1.25 -> 2.5 (not integral, rejected).
+  if (!Number.isInteger(abs * 2)) return null;
+  if (Number.isInteger(abs)) return null;
+  return n;
+}
+
+/** The line with its sign made explicit: "-1.5" / "1.5". */
+function signedLine(line) {
+  return line < 0 ? String(line) : `+${line}`;
+}
+
+/** A market's odds above 1. Anything else is not a price. */
+function isPriced(outcome) {
+  const odds = Number(outcome?.outcome_coef);
+  return Number.isFinite(odds) && odds > 1;
+}
+
+/**
+ * The settlement window, as the canonical period.
+ *
+ * Module level so the families below and `mapFavbetMarket` cannot disagree
+ * about what a window is. An unrecognised window returns null rather than
+ * full-time: a market that will not say when it settles must not be filed as
+ * a full-time price, which is how a first-half quote ends up paired against
+ * another book's full-time legs.
+ */
+function favbetPeriod(market) {
+  const label = String(market?.result_type_name || market?.result_type_short_name || '').trim();
+  if (!label) return null;
+  if (/prima\s*repriz|\brepriz\s*1|1st\s*half|first\s*half|\b1\b\s*repriz/i.test(label)) return 'half1';
+  if (/a\s*doua\s*repriz|\brepriz\s*2|2nd\s*half|second\s*half|\b2\b\s*repriz/i.test(label)) return 'half2';
+  if (/timp\s*regulamentar|\btr\b|full\s*time|fulltime|match\s*time/i.test(label)) return 'fulltime';
+  return null;
+}
+
+/**
+ * True when the event is a multi-match tie rather than one match.
+ *
+ * Favbet quotes some fixtures as an aggregate over N matches, and says so in
+ * its own outcome text: "Goluri Gazde (8 Meciuri)". An eight-match total is not
+ * a match total and an eight-match handicap is not a match handicap, so the
+ * whole event is withheld rather than published under a contract that settles
+ * on something else. The same text appears on the event's own 1X2, which makes
+ * this a reading of the provider's declaration and not a guess: 1 of 120
+ * sampled events.
+ */
+function isMultiMatchTie(marketOdds) {
+  return (marketOdds?.outcomes || []).some((o) =>
+    /\d+\s*meciuri?\b/i.test(String(o?.outcome_name ?? o?.outcome_short_name ?? '')));
+}
+
+/**
+ * A goals total, or null when this market is not one we may publish.
+ *
+ * "peste" is Over and "sub" is Under, proved by within-event monotonicity
+ * rather than by translation: a threshold that rises cannot make the Over side
+ * shorter, so the Over price must rise with the line. Measured 2026-09-29 over
+ * 120 events and 1,334 template-50 markets, grouped per event AND per
+ * settlement window, the Over price rose on 235 of 235 consecutive steps and
+ * the Under price fell on 235 of 235 — and again on the exact 347 markets that
+ * survive the filters below, so the filter cannot have decided the direction.
+ * The ladder on one event, full time:
+ *
+ *     0.5 peste 1.02 / sub 11.00      3.5 peste 2.85 / sub 1.45
+ *     1.5 peste 1.23 / sub  4.30      4.5 peste 5.20 / sub 1.16
+ *     2.5 peste 1.77 / sub  2.16      5.5 peste 9.55 / sub 1.04
+ *
+ * Read the other way round and Over 0.5 would be 11.00 and Over 5.5 would be
+ * 1.04, which is a book that pays 11 to happen and 1.04 not to.
+ *
+ * Fail-closed on everything else: a non-full-time window, a missing leg, legs
+ * that disagree about the line, or a line that is not on the half. Of 1,334
+ * markets 347 are published; the rest are half-time and second-half quotes
+ * (648), whole lines (338) and multi-match ties (3).
+ */
+function goalsTotalMarket(market) {
+  if (favbetPeriod(market) !== 'fulltime') return null;
+  const legs = (market.outcomes || []).filter(isPriced);
+  const over = legs.find((o) => /^(peste|over)\b/i.test(String(o.outcome_name ?? '').trim()));
+  const under = legs.find((o) => /^(sub|under)\b/i.test(String(o.outcome_name ?? '').trim()));
+  if (!over || !under) return null;
+  const overLine = legLine(over.outcome_name);
+  const underLine = legLine(under.outcome_name);
+  // Two legs that disagree about the threshold are not one market.
+  if (overLine === null || overLine !== underLine) return null;
+  const line = halfGoalLine(overLine);
+  if (line === null) return null;
+  return {
+    key: 'TOTAL_GOALS',
+    providerMarketId: `${GOALS_TOTAL_TEMPLATE}:${overLine}`,
+    name: String(market.market_name || 'Peste / Sub'),
+    period: 'fulltime',
+    line,
+    selections: [
+      { id: String(over.outcome_id), name: `Over ${line}`, odds: Number(over.outcome_coef), group: 'Main' },
+      { id: String(under.outcome_id), name: `Under ${line}`, odds: Number(under.outcome_coef), group: 'Main' },
+    ],
+  };
+}
+
+/**
+ * Which side a handicap leg belongs to, read from the leg's OWN text.
+ *
+ * `outcome_tag` looks like the side — "1" home, "2" away — and on the 1X2 and on
+ * BTTS it is, so it was the first thing to reach for here. It is not: on
+ * template 190 the tag is populated on 672 of 4,294 full-time rows (15.6%) and
+ * is null on the other 3,622. The split is not random — the tag is there on the
+ * WHOLE lines and absent on the HALF lines, so reading the side from the tag
+ * accepts the 338-line push markets this reader is meant to reject and drops
+ * every half line worth having. Measured on 4300 template-190 full-time rows.
+ *
+ * What every leg does carry is the team it belongs to, in the leg's own name:
+ * "Slovacia (-1.5)" against "Kazakhstan (+1.5)". That reading resolved
+ * 4,294 of 4,294 rows, and where the tag is also present the two readings agree
+ * on 700 of 700 comparisons with zero contradictions — so this is the tag's own
+ * meaning read from a field the provider never leaves empty, not a second
+ * guess at it.
+ *
+ * Matching is on word boundaries and the read fails closed. "Hodd (-1.0)" against
+ * home "Hodd" / away "Odd" contains BOTH names as substrings, which is the one
+ * pair in 675 where one club's name sits inside the other's; a boundary match
+ * reads it correctly and an ambiguous leg is refused rather than guessed.
+ * Measured on 8,594 full-time legs: 4,290 whole-token home, 4,298 whole-token
+ * away, 0 matching on a bare substring only, 6 ambiguous, 0 unresolved.
+ *
+ * An aggregate event's legs read "Goluri Gazde" / "Goluri Oaspeti" — home goals
+ * and away goals — and the event's own participants are named the same way, so
+ * the same match resolves them. Where the word reading and the name reading are
+ * both available they agreed on every row measured.
+ *
+ * The tag is kept as a guard rather than a key: when the provider does fill it
+ * in, it must not contradict the name.
+ */
+function handicapLegSide(outcome, homeKey, awayKey) {
+  const text = normalizeTeamName(outcome?.outcome_name ?? '');
+  if (!text || !homeKey || !awayKey) return null;
+  const hasHome = new RegExp(`(?:^|\\s)${homeKey}(?:\\s|$)`).test(text);
+  const hasAway = new RegExp(`(?:^|\\s)${awayKey}(?:\\s|$)`).test(text);
+  if (hasHome === hasAway) return null; // neither, or both — never a guess
+  return hasHome ? '1' : '2';
+}
+
+/**
+ * A goals handicap, or null when this market is not one we may publish.
+ *
+ * Each leg names its own threshold, and the two are exact negations of each
+ * other — "Slovacia (-1.5)" against "Kazakhstan (+1.5)" — which held on
+ * 1,622 of 1,622 half-line rows. So the home leg's number is the home line and
+ * the away leg's is its negation; the selection names carry the signed line
+ * because that is where the contract layer reads it, and the side token is what
+ * orients the bucket.
+ *
+ * The Asian templates are NOT here and must not be. Template 1227 "Handicap
+ * Asiatic" and 1226 "Total Asiatic" quote quarter lines (-1.25, -0.75,
+ * -1.75), which is the push-capable form of this same contract: admitting the
+ * half-line template while ignoring the quarter one would be a choice about
+ * the sport rather than about settlement.
+ *
+ * A market with one priced leg is not a two-way contract, and publishing it
+ * would enter the bucket as a side that always wins and a side that never does,
+ * so a missing or unresolvable leg refuses the whole market.
+ */
+function goalsHandicapMarket(market, homeKey, awayKey) {
+  if (favbetPeriod(market) !== 'fulltime') return null;
+  const legs = (market.outcomes || []).filter(isPriced);
+  const sides = legs.map((o) => handicapLegSide(o, homeKey, awayKey));
+  if (legs.length !== 2 || sides[0] === null || sides[1] === null || sides[0] === sides[1]) return null;
+  const home = sides[0] === '1' ? legs[0] : legs[1];
+  const away = sides[0] === '1' ? legs[1] : legs[0];
+  // The provider's own tag, when it filled one in, may not contradict the name.
+  for (const [leg, side] of [[home, '1'], [away, '2']]) {
+    const tag = String(leg.outcome_tag);
+    if (tag === '1' || tag === '2') {
+      if (tag !== side) return null;
+    }
+  }
+  const homeLine = legLine(home.outcome_name);
+  const awayLine = legLine(away.outcome_name);
+  if (homeLine === null || awayLine === null) return null;
+  if (Math.abs(homeLine + awayLine) > 1e-9) return null;
+  const line = halfGoalLine(homeLine);
+  if (line === null) return null;
+  return {
+    key: 'ASIAN_HANDICAP',
+    providerMarketId: `${GOALS_HANDICAP_TEMPLATE}:${homeLine}`,
+    name: String(market.market_name || 'Handicap'),
+    period: 'fulltime',
+    line,
+    selections: [
+      { id: String(home.outcome_id), name: `1 (${signedLine(line)})`, odds: Number(home.outcome_coef), group: 'Main' },
+      { id: String(away.outcome_id), name: `2 (${signedLine(-line)})`, odds: Number(away.outcome_coef), group: 'Main' },
+    ],
+  };
 }
