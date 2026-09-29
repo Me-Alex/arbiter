@@ -54,6 +54,9 @@ test('caps, duplicates, malformed schemas and unsupported options', async () => 
   await assert.rejects(s.fetchRaw({ signal: ac.signal }), { name: 'AbortError' });
 });
 test('exact routing contracts and snapshot provenance for all three tenants', async (t) => {
+  // scratch/ is gitignored, so it does not exist in a fresh clone and mkdtemp
+  // into it would fail there. Create the root before asking for a child of it.
+  await fs.mkdir(new URL('../scratch/', import.meta.url), { recursive: true });
   const dir = await fs.mkdtemp(new URL('../scratch/nsoft-test-', import.meta.url));
   t.after(() => fs.rm(dir, { recursive: true, force: true }));
   for (const id of ['admiral', 'stanleybet', 'maxbet']) {
@@ -397,11 +400,97 @@ test('an invalid handicap never costs the event its 1X2 or its other markets', (
   assert.ok(out[0].markets.some((m) => resolveContract(m)?.family === 'BTTS'), 'the BTTS survives');
 });
 
-test('a tenant with no measured extras still publishes its 1X2 alone', () => {
-  // betmen has no capture establishing its totals/BTTS ids, so it must not
-  // guess them: it contributes the result market and nothing more.
-  const s = new NSoft('betmen', { windowHours: 24 });
-  assert.match(s._serializable([], {}).coverage.market, /fulltime-1x2$/);
+test('the coverage string names only the families a tenant actually contributes', () => {
+  // It used to be a hardcoded 'fulltime-1x2+tgoals+ah+btts' for any tenant with
+  // an extras entry, which would have told the scanner betmen serves totals and
+  // handicaps. It does not: betmen publishes BTTS and nothing else on football.
+  assert.match(new NSoft('betmen', { windowHours: 24 })._serializable([], {}).coverage.market, /^fulltime-1x2\+btts$/);
   assert.match(new NSoft('admiral', { windowHours: 24 })._serializable([], {}).coverage.market, /tgoals\+ah\+btts/);
+  assert.match(new NSoft('maxbet', { windowHours: 24 })._serializable([], {}).coverage.market, /tgoals\+ah\+btts/);
+});
+
+/**
+ * betmen's BTTS, and the markets next to it that must stay out.
+ *
+ * This file previously asserted the opposite: "a tenant with no measured extras
+ * still publishes its 1X2 alone", on the stated grounds that betmen's football
+ * projection carried the result market and one combined market and nothing
+ * else, so there was no id to look for. A capture taken 2026-09-29 over 293
+ * football events falsified that — 261 of them carry "Ambele Marcheaza". The
+ * tenant was contributing no BTTS at all, and a whole arbitrage family was
+ * sitting unfetched behind a stale belief.
+ *
+ * The fixture is that capture, trimmed to one event, with the feed's own
+ * `_mapping` intact so normalize() runs the production decode.
+ */
+const betmenFixture = JSON.parse(await fs.readFile(new URL('./fixtures/nsoft-betmen-btts.json', import.meta.url)));
+
+test('betmen: its both-teams-to-score market is published and the engine prices it', () => {
+  const s = new NSoft('betmen', { windowHours: 24 });
+  const events = s.normalize(structuredClone(betmenFixture));
+  for (const e of events) e.startsAt = new Date(Date.now() + 3600000).toISOString();
+  const out = s.extractEvents(events);
+  assert.equal(out.length, 1, 'the football event is published');
+
+  const btts = out[0].markets.filter((m) => m.key === 'BTTS');
+  assert.equal(btts.length, 1, 'exactly one BTTS market, not one per line');
+  const m = btts[0];
+  // 4607 "Ambele Marcheaza" — the id and the display name are both recorded,
+  // because a marketId alone is not a contract and this feed serves several
+  // markets that mention GG or Total Goluri and settle differently.
+  assert.equal(m.providerMarketId, 4607);
+  assert.equal(m.name, 'Ambele Marcheaza');
+  assert.equal(m.period, 'fulltime');
+  assert.equal(m.selections.length, 2, 'BTTS is two-way');
+  // betmen's own sides are GG / NG; _bttsMarket recognises both and re-emits
+  // the canonical pair the engine's BTTS matcher reads.
+  assert.deepEqual(m.selections.map((s2) => s2.name), ['Da', 'Nu']);
+  assert.deepEqual(m.selections.map((s2) => s2.providerOutcomeId), [16676, 16679]);
+  assert.ok(m.selections.every((s2) => s2.odds > 1), 'both legs are priced');
+
+  const contract = resolveContract(m);
+  assert.equal(contract.family, 'BTTS');
+  assert.equal(contract.arbEligible, undefined, 'BTTS is arbitrable');
+  // Resolving is not pricing. Both legs must reach a side or the market cannot
+  // be compared with any other book's BTTS.
+  assert.deepEqual(
+    m.selections.map((s2) => canonicalOutcomeFor(s2.name, contract, {
+      homeTeam: out[0].homeTeam, awayTeam: out[0].awayTeam,
+    })),
+    ['yes', 'no'],
+  );
+  assert.equal(resolveContract(out[0].markets[0]).family, 'MATCH_ODDS', 'the 1X2 stays first');
+});
+
+test('betmen: its interval totals and combination markets are not published', () => {
+  // The fixture carries everything betmen quotes on this event. Only the 1X2 and
+  // the BTTS may come out.
+  //
+  // 3960 "Total Goluri (TG)" is the trap. Its four legs are goal INTERVALS and
+  // push lines — "2-4", "2-5", "2+", "3+" — in one market, with specialValues
+  // empty so the line cannot even be read. There is no over leg and no under leg.
+  // Reading "2-4" as one side of a goals total would invent an Over 1.5 /
+  // Under 4.5 contract betmen never quoted, and it would pair with another
+  // book's 2.5 total and settle on a different event.
+  const s = new NSoft('betmen', { windowHours: 24 });
+  const events = s.normalize(structuredClone(betmenFixture));
+  for (const e of events) e.startsAt = new Date(Date.now() + 3600000).toISOString();
+  const out = s.extractEvents(events);
+  const keys = out[0].markets.map((m) => m.key);
+  assert.deepEqual(keys, ['1x2', 'BTTS'], 'the 1X2 and the BTTS, nothing else');
+
+  // Belt and braces: nothing that reached the engine resolves as a total, a
+  // handicap or a combined contract.
+  for (const m of out[0].markets) {
+    const family = resolveContract(m)?.family;
+    assert.ok(family === 'MATCH_ODDS' || family === 'BTTS',
+      `${m.key} must not resolve as ${family}`);
+  }
+  // And the refused ids really were present on the feed, so this is a decision
+  // rather than a fixture that happens not to carry them.
+  const feedIds = new Set(events[0].markets.map((m) => m.marketId));
+  for (const id of [3960, 4008, 2439, 2442, 2484, 2532, 3504, 2259, 3501, 2517, 398, 2445]) {
+    assert.ok(feedIds.has(id), `fixture should carry market ${id}`);
+  }
 });
 

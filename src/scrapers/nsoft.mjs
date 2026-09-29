@@ -66,13 +66,29 @@ const TENANT_RESULT_MARKET = Object.freeze({
  *   maxbet                 totals 1547 "Total goluri"     BTTS 1709 "Ambele marchează"
  *                          AH 8 "Handicap Asiatic"
  *
- * `betmen` is intentionally absent, and not merely unmeasured: its football
- * events carry the result market and one half-time/full-time combined market
- * ("Pauza sau Final", which spans periods and is not a full-time 1X2) and
- * nothing else. There are no totals, no both-teams-to-score and no handicap
- * markets on its projection to publish, so there is no id to go looking for —
- * and a tenant that contributes the result market alone is correct, whereas a
- * guessed id is a mislabel.
+ * `betmen` was listed here as "intentionally absent, and not merely
+ * unmeasured" — the claim being that its football projection carried the result
+ * market, one half-time/full-time combined market and nothing else, so there
+ * was no id to go looking for. That was WRONG, and a capture taken on
+ * 2026-09-29 over 293 football events in a 72h window falsifies it: besides
+ * "Final", betmen serves "Ambele Marcheaza" (both teams to score) on 261 of
+ * them. Only the BTTS id is claimed, and only because it is the one market
+ * there that is provably an exhaustive two-way contract:
+ *
+ *   betmen 4607 "Ambele Marcheaza"  BTTS, GG/NG, 261 of 293 football events
+ *
+ * Its totals markets are deliberately NOT claimed, and the absence is measured
+ * rather than assumed. betmen quotes them as a single four-outcome market whose
+ * legs are goal INTERVALS and push lines — 3960 "Total Goluri (TG)" carries
+ * "2-4", "2-5", "2+" and "3+" together, and 2439/2442 do the same for the first
+ * and second half. There is no over leg and no under leg to pair, the lines are
+ * not a single shared value, and `specialValues` is empty, so the line cannot
+ * even be read. Publishing "2-4" as one side of a goals total would invent an
+ * Over 1.5 / Under 4.5 contract that betmen never quoted.
+ *
+ * betmen also publishes no handicap on football at all (the 15 market ids
+ * measured on the projection contain none), so `ah` stays absent rather than
+ * being borrowed from maxbet's id 8 — a tenant's ids are its own.
  *
  * The market NAME is recorded alongside the id and required on read, because a
  * marketId alone is not a contract. The same feed also serves, under other ids,
@@ -87,6 +103,9 @@ const TENANT_RESULT_MARKET = Object.freeze({
  *   admiral 208 "Prima Rep - Total Goluri" first-half total
  *   maxbet 1571/1574 "Total goluri echipa 1/2"  one team's goals
  *   maxbet 1700  "Ambele marchează sau peste 2.5 goluri"  a single leg
+ *   betmen 2532 "Sansa Dubla & Total Goluri (TG)"       combined legs, not a total
+ *   betmen 3504 "Combinatii de GG"                     a GG/over combination
+ *   betmen 2259 "Marcheaza (GG)"                       scores plus a GG leg
  *
  * A scoring handicap routed to ASIAN_HANDICAP would let a goals-scored price
  * stand in for another book's result handicap and be reported as arbitrage
@@ -103,6 +122,12 @@ const TENANT_EXTRAS = Object.freeze({
   admiral: Object.freeze({ totals: Object.freeze({ marketId: 886, name: 'Total goluri S/P' }), btts: Object.freeze({ marketId: 2056, name: 'Ambele Inscriu' }), ah: Object.freeze({ marketId: 262, name: 'Handicap' }) }),
   stanleybet: Object.freeze({ totals: Object.freeze({ marketId: 886, name: 'Total goluri S/P' }), btts: Object.freeze({ marketId: 2056, name: 'Ambele Inscriu' }), ah: Object.freeze({ marketId: 262, name: 'Handicap' }) }),
   maxbet: Object.freeze({ totals: Object.freeze({ marketId: 1547, name: 'Total goluri' }), btts: Object.freeze({ marketId: 1709, name: 'Ambele marchează' }), ah: Object.freeze({ marketId: 8, name: 'Handicap Asiatic' }) }),
+  // BTTS only. Measured 2026-09-29 on 293 football events: 261 carry this
+  // market, and _bttsMarket needs no new code for it — betmen's sides are "GG"
+  // and "NG", both already in BTTS_YES / BTTS_NO, and specialValues is empty as
+  // the guard expects. This is a 100% clean add of a whole family the tenant
+  // was contributing none of.
+  betmen: Object.freeze({ btts: Object.freeze({ marketId: 4607, name: 'Ambele Marcheaza' }) }),
 });
 
 /**
@@ -528,12 +553,17 @@ export default class NSoftScraper extends ScraperBase {
   _serializable(events, raw) {
     // The extras are per-tenant and evidence-backed, so the coverage string says
     // which families this tenant actually contributes rather than promising the
-    // union for every tenant (betmen, with no measured extras, still serves only
-    // the 1X2).
-    const families = TENANT_EXTRAS[this.id] ? 'fulltime-1x2+tgoals+ah+btts' : 'fulltime-1x2';
+    // union for every tenant. It is built from the tenant's own keys: a hardcoded
+    // "fulltime-1x2+tgoals+ah+btts" for any tenant with an extras entry claimed
+    // totals and handicaps for betmen, which publishes BTTS and neither.
+    const extras = TENANT_EXTRAS[this.id];
+    const families = ['fulltime-1x2'];
+    if (extras?.totals) families.push('tgoals');
+    if (extras?.ah) families.push('ah');
+    if (extras?.btts) families.push('btts');
     return { ...super._serializable(events, raw), sourceUrl: this.sourceUrl,
       transport: this.transport, observedAt: this.observedAt,
-      coverage: { sport: 'football', market: families, live: false, windowHours: this.windowHours, maxEvents: this.maxEvents } };
+      coverage: { sport: 'football', market: families.join('+'), live: false, windowHours: this.windowHours, maxEvents: this.maxEvents } };
   }
 }
 

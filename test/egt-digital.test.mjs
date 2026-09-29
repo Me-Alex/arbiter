@@ -267,6 +267,8 @@ for (const id of ['prowin', 'ultrabet']) {
     assert.throws(() => instantiate(id, { jobConfig }), { code: 'ESCRAPERCONFIG', message: /job is disabled/ });
 
     // The adapter itself must still work when constructed directly.
+    // scratch/ is gitignored and does not exist in a fresh clone.
+    await fs.mkdir(new URL('../scratch/', import.meta.url), { recursive: true });
     const dir = await fs.mkdtemp(new URL('../scratch/egt-test-', import.meta.url));
     t.after(() => fs.rm(dir, { recursive: true, force: true }));
     const s = new Egt(id, { dataDir: dir, runId: 'egt-fixture-run', windowHours: 24, fetchImpl: stubFetch([]) });

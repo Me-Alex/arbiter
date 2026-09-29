@@ -117,6 +117,9 @@ test('the betmen config job routes and preserves snapshot provenance', async (t)
   assert.deepEqual(jobConfig.supportedSports, ['football']);
   assert.ok(matchesNSoftConfig('betmen', jobConfig), 'the tenant matcher accepts the configured triple');
 
+  // scratch/ is gitignored and does not exist in a fresh clone; mkdtemp needs its
+  // root to be there first.
+  await fs.mkdir(new URL('../scratch/', import.meta.url), { recursive: true });
   const dir = await fs.mkdtemp(new URL('../scratch/nsoft-betmen-', import.meta.url));
   t.after(() => fs.rm(dir, { recursive: true, force: true }));
 
@@ -137,7 +140,14 @@ test('the betmen config job routes and preserves snapshot provenance', async (t)
   assert.match(snapshot.sourceUrl, /companyUuid=7afdd6f5-f954-43d6-b696-2e0dc0ae4ee2/);
   assert.equal(snapshot.events[0].sourceId, 'betmen');
   assert.equal(snapshot.coverage.sport, 'football');
-  assert.equal(snapshot.coverage.market, 'fulltime-1x2');
+  // Was 'fulltime-1x2', asserting that betmen contributes nothing but the result
+  // market. A capture on 2026-09-29 over 293 football events showed 261 of them
+  // carry "Ambele Marcheaza" (4607), so the tenant was leaving a whole
+  // arbitrage family unfetched. This fixture happens to hold two events that
+  // quote only the result market, so the snapshot still reports two events and
+  // their coverage string names the family the tenant serves, not the families
+  // this particular event happened to carry.
+  assert.equal(snapshot.coverage.market, 'fulltime-1x2+btts');
 
   // Editing any contract field must be a configuration error, never a silent
   // fall back to a hardcoded class.

@@ -226,6 +226,10 @@ test('markets the engine cannot price as a surebet are still not published', () 
 });
 
 test('the run reports the markets it now covers', async () => {
+  // scratch/ is gitignored, so it does not exist in a fresh clone. This used to
+  // rely on the earlier lifecycle test having created the same root first, so the
+  // two tests were only safe in the order they happened to be declared.
+  await fs.mkdir('scratch/altenar-repair', { recursive: true });
   const dir = await fs.mkdtemp('scratch/altenar-repair/cov-');
   try {
     const raw = structuredClone(fixtures.million);
