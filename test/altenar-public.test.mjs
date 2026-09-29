@@ -85,6 +85,60 @@ test('bounded request, abort, zero cap and HTTP failures', async () => {
     await new Promise(resolve => setTimeout(resolve, 20)); signal.throwIfAborted();
   } }).fetchRaw());
 });
+test('pagination reaches the rest of the board, and rows are deduplicated across pages', async () => {
+  // Measured live 2026-09-29 on don and million: the widget serves `eventCount`
+  // pages of exactly 100, and five pages returned 500 events with ZERO overlap,
+  // running from 2026-09-29T15:27 out to 2026-10-02T23:00. Page 1 alone starts
+  // at "now", so most of its hundred events are already in play and get dropped
+  // — a tenant with an event cap of 3000 was publishing 37 fixtures off a
+  // board of several hundred. `eventCount` above 100 is refused by the feed, so
+  // paging is the only way through.
+  const page = (n, opts = {}) => {
+    const base = structuredClone(fixtures.don);
+    base.events = base.events.map((e, i) => ({ ...e, id: n * 1000 + i }));
+    return Response.json(base, opts);
+  };
+  const seenPages = [];
+  const a = new A('don', {
+    maxEvents: 5000,
+    fetchImpl: async (url) => {
+      const p = Number(new URL(url).searchParams.get('page'));
+      seenPages.push(p);
+      assert.equal(new URL(url).searchParams.get('eventCount'), '100', 'a page is 100; the feed refuses more');
+      // Pages 1-3 carry fresh events; page 4 serves page 1 again, which is what
+      // the end of a board looks like: no new event, so no read past it.
+      return p > 3 ? page(1) : page(p);
+    },
+  });
+  const raw = await a.fetchRaw();
+  assert.deepEqual(seenPages, [1, 2, 3, 4], 'stops on the first page that adds nothing new');
+  // Two events per fixture page, disjoint by construction: the three pages that
+  // carried new events. The fourth was page 1 again and contributed nothing.
+  assert.equal(raw.events.length, 6);
+  // champs/categories/headers repeat identically on every real page, and
+  // normalize() rejects a duplicate id outright — so merging must dedup.
+  for (const key of ['markets', 'odds', 'competitors', 'champs', 'categories']) {
+    const ids = raw[key].map((r) => r.id);
+    assert.equal(new Set(ids).size, ids.length, `${key} has duplicate ids after merging pages`);
+  }
+  assert.doesNotThrow(() => a.normalize(raw), 'the merged payload must pass normalize');
+
+  // A later page failing ends pagination and keeps what already succeeded; page
+  // 1 failing is still fatal, because that is what the single read used to do.
+  let n = 0;
+  const partial = new A('don', {
+    maxEvents: 5000,
+    fetchImpl: async (url) => {
+      n++;
+      if (n === 1) return page(1);
+      throw new Error('HTTP 503 from page 2');
+    },
+  });
+  const kept = await partial.fetchRaw();
+  assert.equal(kept.events.length, 2, 'the pages that succeeded are kept');
+  await assert.rejects(new A('don', { fetchImpl: async () => new Response('', { status: 500 }) }).fetchRaw(), /HTTP 500/);
+});
+
 test('scratch lifecycle snapshots load; exact duplicate offers are not independent legs', async (t) => {
   await fs.mkdir('scratch/altenar-repair', { recursive: true });
   const dir = await fs.mkdtemp('scratch/altenar-repair/offline-');

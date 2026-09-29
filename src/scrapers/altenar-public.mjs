@@ -22,6 +22,16 @@ const UPCOMING_BASE = 'https://sb2frontend-altenar2.biahosted.com/api/widget/Get
 const FOOTBALL_SPORT_ID = 66;
 
 /**
+ * Ceiling on pages per tenant, 25 × 100 = 2,500 events.
+ *
+ * The widget paginates without overlap and each page is a small JSON body, but
+ * the request count is still the cost of the run and nothing above this has
+ * been observed to be useful: measured 2026-09-29, five pages already reach
+ * 2026-10-02 from a 2026-09-29 start.
+ */
+const MAX_PAGES = 25;
+
+/**
  * Altenar market typeId → the family the engine can price.
  *
  * The feed serves far more than the 1X2 the adapter used to publish; these are
@@ -94,6 +104,17 @@ export default class AltenarPublic extends ScraperBase {
         || !Number.isInteger(this.timeoutMs) || this.timeoutMs < 1 || this.timeoutMs > 60000) {
       throw new ValidationError('Altenar: invalid cap/window/timeout');
     }
+    // Pages of 100, because the widget rejects a larger `eventCount` (measured:
+    // 100 answers JSON, 250/500/1000 answer a non-JSON body). So the board is
+    // reached by paging, not by asking for more.
+    this.pageSize = 100;
+    // At least one page even for a zero event cap: that cap short-circuits inside
+    // fetchRaw before any request, and must not be turned into a config error.
+    this.pageLimit = Number(opts.pageLimit ?? opts.jobConfig?.pageLimit
+      ?? Math.max(1, Math.min(Math.ceil(this.maxEvents / this.pageSize), MAX_PAGES)));
+    if (!Number.isInteger(this.pageLimit) || this.pageLimit < 1 || this.pageLimit > MAX_PAGES) {
+      throw new ValidationError(`Altenar: invalid pageLimit (1-${MAX_PAGES})`);
+    }
     this.sourceUrl = `${UPCOMING_BASE}?integration=${id}`;
   }
 
@@ -141,18 +162,78 @@ export default class AltenarPublic extends ScraperBase {
       }
     };
 
-    // One bounded read of the football feed. These tenants expose a
-    // per-sport catalogue and only football full-time 1X2 is a verified
-    // contract, so we ask for exactly that instead of fanning out over every
-    // sport and discarding the ones we cannot interpret. `redirect: 'error'`
-    // above keeps the read on the declared host.
-    const eventCount = Math.min(this.maxEvents, 100);
-    const url = `${UPCOMING_BASE}?culture=ro-RO&timezoneOffset=-180&deviceType=1`
+    // Bounded reads of the football feed, one page at a time. These tenants
+    // expose a per-sport catalogue and only football full-time 1X2 is a
+    // verified contract, so we ask for exactly that instead of fanning out over
+    // every sport and discarding the ones we cannot interpret. `redirect:
+    // 'error'` above keeps the read on the declared host.
+    //
+    // Paging is not an optimisation, it is how the board is reached at all.
+    // `eventCount` above 100 is refused by the widget (measured: 100 answers
+    // JSON, 250/500/1000 answer a non-JSON body), and the query takes a `page`
+    // the adapter used to hardcode to 1. Measured 2026-09-29 on `don` and
+    // `million`, five pages of 100 returned 500 events with ZERO overlap and a
+    // kickoff range running from 2026-09-29T15:27 to 2026-10-02T23:00. Page 1
+    // alone starts at "now", so most of its hundred events are already in play
+    // and get dropped — which is why a tenant with an event cap of 3000 was
+    // publishing 37. A book can only be paired with another book on the same
+    // fixture, so a board that stops at kick-off time is a board that can
+    // barely be paired at all.
+    //
+    // Page 1 stays fatal on failure, exactly as a single read was. A later
+    // page ends pagination instead: a truncated board with honest gaps beats
+    // discarding pages that already succeeded. AbortError is not a page
+    // failure and propagates.
+    const TABLES = ['events', 'markets', 'odds', 'competitors', 'champs', 'categories', 'headers'];
+    const merged = Object.fromEntries(TABLES.map((k) => [k, []]));
+    // normalize() rejects a duplicate id outright, and champs/categories/headers
+    // repeat identically on every page, so rows are deduplicated as they arrive
+    // rather than concatenated.
+    const seenRows = new Map(TABLES.map((k) => [k, new Set()]));
+    const pageUrl = (page) => `${UPCOMING_BASE}?culture=ro-RO&timezoneOffset=-180&deviceType=1`
       + `&numFormat=en-GB&countryCode=RO&sportId=${FOOTBALL_SPORT_ID}`
-      + `&eventCount=${eventCount}&page=1&integration=${this.id}`;
-    const data = await fetchJson(url);
+      + `&eventCount=${this.pageSize}&page=${page}&integration=${this.id}`;
+
+    let read = 0;
+    for (let page = 1; page <= this.pageLimit; page++) {
+      let data;
+      if (page === 1) {
+        data = await fetchJson(pageUrl(1));
+      } else {
+        bounded.throwIfAborted();
+        try {
+          data = await fetchJson(pageUrl(page));
+        } catch (err) {
+          if (err?.name === 'AbortError') throw err;
+          this.logger('warn', `Altenar: ${this.name} page ${page} failed, keeping ${merged.events.length} events: ${String(err?.message || err).slice(0, 80)}`);
+          break;
+        }
+      }
+      if (data?.error) {
+        if (page === 1) throw new ValidationError('Altenar: upstream error');
+        break;
+      }
+      let added = 0;
+      for (const key of TABLES) {
+        for (const row of data?.[key] || []) {
+          const id = row?.id;
+          if (id === undefined || id === null || seenRows.get(key).has(id)) continue;
+          seenRows.get(key).add(id);
+          merged[key].push(row);
+          if (key === 'events') added++;
+        }
+      }
+      read = page;
+      // A page that adds no event is the end of the board, not a transient empty.
+      if (added === 0) break;
+      if (merged.events.length >= this.maxEvents) break;
+    }
+    this.sourceUrl = pageUrl(1);
+    if (merged.events.length === 0) {
+      throw new UpstreamError(`Altenar: ${this.name} returned 0 events over ${read} page(s)`);
+    }
     this.observedAt = new Date().toISOString();
-    return { ...data, _sportNames: { [FOOTBALL_SPORT_ID]: 'Football' } };
+    return { ...merged, _sportNames: { [FOOTBALL_SPORT_ID]: 'Football' } };
   }
 
   normalize(raw) {
