@@ -1,6 +1,6 @@
 import { join } from 'node:path';
 import { runScraperBatch, persistRunReport, loadScraperJobs, normalizeScrapeParallel, toProgressJob } from './scraper-service.mjs';
-import { scanWorkspace } from './scanner/scanner.mjs';
+import { scanWorkspace, DEFAULT_SCAN_OPTIONS } from './scanner/scanner.mjs';
 import { buildMarketCatalog } from './scanner/market-catalog.mjs';
 import { runVerificationPass } from './verification.mjs';
 import { writeJsonAtomic, tryReadJson } from './shared/atomic-write.mjs';
@@ -287,13 +287,13 @@ export class ScrapeOrchestrator {
         sourceIds: books,
         scrapeRunId: runId,
         capturedAt: new Date().toISOString(),
-        bankroll: scanOptions.bankroll ?? 1000,
-        minRoiPercent: scanOptions.minRoiPercent ?? 0,
-        minEvPercent: scanOptions.minEvPercent ?? 2,
-        maxMiddleRiskPercent: scanOptions.maxMiddleRiskPercent ?? 15,
-        minMiddleRoiPercent: scanOptions.minMiddleRoiPercent ?? 20,
-        includeLive: scanOptions.includeLive ?? false,
-        includePast: scanOptions.includePast ?? false,
+        bankroll: scanOptions.bankroll ?? DEFAULT_SCAN_OPTIONS.bankroll,
+        minRoiPercent: scanOptions.minRoiPercent ?? DEFAULT_SCAN_OPTIONS.minRoiPercent,
+        minEvPercent: scanOptions.minEvPercent ?? DEFAULT_SCAN_OPTIONS.minEvPercent,
+        maxMiddleRiskPercent: scanOptions.maxMiddleRiskPercent ?? DEFAULT_SCAN_OPTIONS.maxMiddleRiskPercent,
+        minMiddleRoiPercent: scanOptions.minMiddleRoiPercent ?? DEFAULT_SCAN_OPTIONS.minMiddleRoiPercent,
+        includeLive: scanOptions.includeLive ?? DEFAULT_SCAN_OPTIONS.includeLive,
+        includePast: scanOptions.includePast ?? DEFAULT_SCAN_OPTIONS.includePast,
         sport: scanOptions.sport,
         publish: false,
       });
@@ -457,22 +457,22 @@ export function resolveTerminalStatus({ scanFailed, verifyFailed, jobs = [] }) {
 
 export function resolveScanRequest(input) {
   const {
-    bankroll = 1000,
-    minRoiPercent = 0,
-    minEvPercent = 2,
-    maxMiddleRiskPercent = 15,
-    minMiddleRoiPercent = 20,
-    includeLive = false,
-    includePast = false,
+    bankroll = DEFAULT_SCAN_OPTIONS.bankroll,
+    minRoiPercent = DEFAULT_SCAN_OPTIONS.minRoiPercent,
+    minEvPercent = DEFAULT_SCAN_OPTIONS.minEvPercent,
+    maxMiddleRiskPercent = DEFAULT_SCAN_OPTIONS.maxMiddleRiskPercent,
+    minMiddleRoiPercent = DEFAULT_SCAN_OPTIONS.minMiddleRoiPercent,
+    includeLive = DEFAULT_SCAN_OPTIONS.includeLive,
+    includePast = DEFAULT_SCAN_OPTIONS.includePast,
     maxEvents,
     sport,
   } = input || {};
   return {
-    bankroll: clampNumber(bankroll, 10, 1000000, 1000),
-    minRoiPercent: clampNumber(minRoiPercent, -50, 100, 0),
-    minEvPercent: clampNumber(minEvPercent, 0, 100, 2),
-    maxMiddleRiskPercent: clampNumber(maxMiddleRiskPercent, 0, 100, 15),
-    minMiddleRoiPercent: clampNumber(minMiddleRoiPercent, 0, 100, 20),
+    bankroll: clampNumber(bankroll, 10, 1000000, DEFAULT_SCAN_OPTIONS.bankroll),
+    minRoiPercent: clampNumber(minRoiPercent, -50, 100, DEFAULT_SCAN_OPTIONS.minRoiPercent),
+    minEvPercent: clampNumber(minEvPercent, 0, 100, DEFAULT_SCAN_OPTIONS.minEvPercent),
+    maxMiddleRiskPercent: clampNumber(maxMiddleRiskPercent, 0, 100, DEFAULT_SCAN_OPTIONS.maxMiddleRiskPercent),
+    minMiddleRoiPercent: clampNumber(minMiddleRoiPercent, 0, 100, DEFAULT_SCAN_OPTIONS.minMiddleRoiPercent),
     includeLive: Boolean(includeLive),
     includePast: Boolean(includePast),
     maxEvents: normalizeMaxEvents(maxEvents),

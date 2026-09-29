@@ -1,5 +1,5 @@
 import { runScraperBatch } from './scraper-service.mjs';
-import { scanWorkspace } from './scanner/scanner.mjs';
+import { scanWorkspace, DEFAULT_SCAN_OPTIONS } from './scanner/scanner.mjs';
 import {
   canonicalOutcome,
   supportedContractForMarket,
@@ -132,13 +132,13 @@ export async function runVerificationPass(targets, baseScan, opts = {}) {
     sourceIds: requiredSourceIds,
     scrapeRunId: batch.runId,
     capturedAt: new Date().toISOString(),
-    bankroll: baseScan.options?.bankroll ?? 1000,
-    minRoiPercent: baseScan.options?.minRoiPercent ?? 0,
-    minEvPercent: opts.minEvPercent ?? baseScan.options?.minEvPercent ?? 2,
-    maxMiddleRiskPercent: baseScan.options?.maxMiddleRiskPercent ?? 15,
-    minMiddleRoiPercent: baseScan.options?.minMiddleRoiPercent ?? 20,
-    includeLive: baseScan.options?.includeLive ?? false,
-    includePast: baseScan.options?.includePast ?? false,
+    bankroll: baseScan.options?.bankroll ?? DEFAULT_SCAN_OPTIONS.bankroll,
+    minRoiPercent: baseScan.options?.minRoiPercent ?? DEFAULT_SCAN_OPTIONS.minRoiPercent,
+    minEvPercent: opts.minEvPercent ?? baseScan.options?.minEvPercent ?? DEFAULT_SCAN_OPTIONS.minEvPercent,
+    maxMiddleRiskPercent: baseScan.options?.maxMiddleRiskPercent ?? DEFAULT_SCAN_OPTIONS.maxMiddleRiskPercent,
+    minMiddleRoiPercent: baseScan.options?.minMiddleRoiPercent ?? DEFAULT_SCAN_OPTIONS.minMiddleRoiPercent,
+    includeLive: baseScan.options?.includeLive ?? DEFAULT_SCAN_OPTIONS.includeLive,
+    includePast: baseScan.options?.includePast ?? DEFAULT_SCAN_OPTIONS.includePast,
     sport: opts.sport ?? baseScan.options?.sport,
     prematchMaxAgeMs: baseScan.options?.prematchMaxAgeMs,
     liveMaxAgeMs: baseScan.options?.liveMaxAgeMs,

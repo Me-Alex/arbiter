@@ -190,6 +190,29 @@ function inverseSum(market) {
 }
 
 /**
+ * The scan settings a caller gets when it does not choose them.
+ *
+ * These were written out three times — as scanWorkspace's destructuring
+ * defaults, again as `scanOptions.x ?? value` at the orchestrator's call site,
+ * and a third time in resolveScanRequest — so a change to any one of them left
+ * the other two disagreeing about what a default scan is. The orchestrator
+ * imports this instead.
+ *
+ * @type {Readonly<{bankroll: number, minRoiPercent: number, minEvPercent: number,
+ *   maxMiddleRiskPercent: number, minMiddleRoiPercent: number,
+ *   includeLive: boolean, includePast: boolean}>}
+ */
+export const DEFAULT_SCAN_OPTIONS = Object.freeze({
+  bankroll: 1000,
+  minRoiPercent: 0,
+  minEvPercent: 2,
+  maxMiddleRiskPercent: 15,
+  minMiddleRoiPercent: 20,
+  includeLive: false,
+  includePast: false,
+});
+
+/**
  * @param {object} args
  * @param {string} args.dataDir
  * @param {string[]} [args.sourceIds]
@@ -211,13 +234,13 @@ export async function scanWorkspace(args) {
     sourceIds = null,
     scrapeRunId = null,
     capturedAt = new Date().toISOString(),
-    bankroll = 1000,
-    minRoiPercent = 0,
-    minEvPercent = 2,
-    maxMiddleRiskPercent = 15,
-    minMiddleRoiPercent = 20,
-    includeLive = false,
-    includePast = false,
+    bankroll = DEFAULT_SCAN_OPTIONS.bankroll,
+    minRoiPercent = DEFAULT_SCAN_OPTIONS.minRoiPercent,
+    minEvPercent = DEFAULT_SCAN_OPTIONS.minEvPercent,
+    maxMiddleRiskPercent = DEFAULT_SCAN_OPTIONS.maxMiddleRiskPercent,
+    minMiddleRoiPercent = DEFAULT_SCAN_OPTIONS.minMiddleRoiPercent,
+    includeLive = DEFAULT_SCAN_OPTIONS.includeLive,
+    includePast = DEFAULT_SCAN_OPTIONS.includePast,
     publish = true,
     prematchMaxAgeMs,
     liveMaxAgeMs,
