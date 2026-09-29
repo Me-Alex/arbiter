@@ -98,6 +98,7 @@ export function buildScanCsv(scan, types = []) {
           // neither, and omitting them here shifted every later column left.
           '', '',
           o.verification?.status ?? '', o.verification?.reason ?? '',
+          csvScope(o),
         ]);
       }
     }
@@ -115,6 +116,7 @@ export function buildScanCsv(scan, types = []) {
           '', o.roiPercent, '', '', '', '',
           o.riskPercent, o.gap ?? '',
           o.verification?.status ?? '', o.verification?.reason ?? '',
+          csvScope(o),
         ]);
       }
     }
@@ -132,6 +134,7 @@ export function buildScanCsv(scan, types = []) {
         o.totalStake ?? '', '', o.guaranteedProfit ?? '', '',
         '', o.consensusProbability,
         '', '',
+        csvScope(o),
       ]);
     }
   }
@@ -147,6 +150,11 @@ export function buildScanCsv(scan, types = []) {
         '', '', '', '', '', '',
         o.holdPercent, o.selectionCount,
         '', '',
+        // findLowHold does not emit `live`, so this lands on the helper's
+        // not-measured case. It goes through csvScope anyway, rather than
+        // hardcoding '', so that if the engine ever starts recording the scope
+        // here the export picks it up instead of quietly claiming 'prematch'.
+        csvScope(o),
       ]);
     }
   }
@@ -159,8 +167,22 @@ export function buildScanCsv(scan, types = []) {
     'totalStake', 'worstCasePayout', 'guaranteedProfit', 'roundingRisk',
     'riskPercent', 'gap',
     'verificationStatus', 'verificationReason',
+    // Appended last on purpose: a column inserted mid-row shifts every later
+    // column and silently re-points an existing export at the wrong field.
+    'scope',
   ];
   return [header, ...rows].map((cells) => csvRow(cells)).join('\r\n');
+}
+
+/**
+ * The pairing scope a signal was built in, in the same vocabulary the engine
+ * uses (`pairingScope`): a live price and a pre-match price are different
+ * products, so the scope travels with the row rather than being inferred from
+ * the kickoff. Signals that carry no `live` yield an empty cell, which is a
+ * different statement from 'prematch'.
+ */
+function csvScope(o) {
+  return o.live === true ? 'live' : o.live === false ? 'prematch' : '';
 }
 
 function asArray(v) {

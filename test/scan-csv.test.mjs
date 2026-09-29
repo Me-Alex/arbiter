@@ -7,7 +7,7 @@ import { buildScanCsv } from '../src/scan-service.mjs';
  * so the output has to be a valid spreadsheet file with no browser round-trip.
  */
 
-const HEADER = 'type,sport,league,kickoff,homeTeam,awayTeam,marketKey,sourceId,selection,outcome,odds,handicap,stake,payout,profit,inverseSum,roiPercent,totalStake,worstCasePayout,guaranteedProfit,roundingRisk,riskPercent,gap,verificationStatus,verificationReason';
+const HEADER = 'type,sport,league,kickoff,homeTeam,awayTeam,marketKey,sourceId,selection,outcome,odds,handicap,stake,payout,profit,inverseSum,roiPercent,totalStake,worstCasePayout,guaranteedProfit,roundingRisk,riskPercent,gap,verificationStatus,verificationReason,scope';
 
 function makeScan() {
   return {
@@ -164,4 +164,41 @@ test('opportunity rows carry the verification status in its own column', () => {
   assert.equal(cells[header.indexOf('verificationStatus')], 'confirmed');
   assert.equal(cells[header.indexOf('riskPercent')], '', 'an opportunity has no middle risk');
   assert.equal(cells[header.indexOf('gap')], '', 'an opportunity has no middle gap');
+});
+
+/**
+ * The scope of the pairing travels with the row, because a live price and a
+ * pre-match price are different products: an export that cannot tell them apart
+ * is a file a trader can misread, and the kickoff column cannot settle it — a
+ * pre-match price whose kickoff has passed is stale, not running.
+ *
+ * The three states are kept distinct on purpose. A signal that carries no
+ * `live` at all (findLowHold) leaves the cell empty, which says "not measured";
+ * writing 'prematch' there would claim the engine measured something it did not.
+ */
+test('scope column distinguishes live, prematch, and not-measured', () => {
+  const lines = rows(buildScanCsv({
+    opportunities: [
+      { marketKey: 'MATCH_ODDS', live: true, legs: [{ sourceId: 'a' }] },
+      { marketKey: 'MATCH_ODDS', live: false, legs: [{ sourceId: 'b' }] },
+    ],
+    middles: [{ marketKey: 'AH_HOME_-1', live: true, legs: [{ sourceId: 'a' }] }],
+    positiveEv: [{ marketKey: 'MATCH_ODDS', sourceId: 'a', live: true, evPercent: 22.5 }],
+    lowHold: [{ marketKey: 'MATCH_ODDS', sourceId: 'a', holdPercent: 2.56, selectionCount: 2 }],
+  }, []));
+  const header = lines[0].split(',');
+  const scopeAt = header.indexOf('scope');
+  const byLine = (n) => lines[n].split(/,(?=(?:[^"]*"[^"]*")*[^"]*$)/);
+  const scopeByRow = lines.slice(1).map((line) => byLine(lines.indexOf(line))[scopeAt]);
+
+  assert.equal(byLine(1)[0], 'opportunity', 'row 1 is the live opportunity');
+  assert.equal(scopeByRow[0], 'live', 'an in-play opportunity is exported as live');
+  assert.equal(byLine(2)[0], 'opportunity', 'row 2 is the pre-match opportunity');
+  assert.equal(scopeByRow[1], 'prematch', 'a pre-match opportunity is exported as prematch');
+  assert.equal(byLine(3)[0], 'middle', 'row 3 is the middle');
+  assert.equal(scopeByRow[2], 'live', 'an in-play middle is exported as live');
+  assert.equal(byLine(4)[0], 'positiveEv', 'row 4 is the +EV signal');
+  assert.equal(scopeByRow[3], 'live', 'an in-play +EV signal is exported as live');
+  assert.equal(byLine(5)[0], 'lowHold', 'row 5 is the low-hold signal');
+  assert.equal(scopeByRow[4], '', 'a low-hold signal has no measured scope, so the cell stays empty');
 });

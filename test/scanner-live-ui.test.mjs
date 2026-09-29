@@ -157,3 +157,31 @@ test('the page carries the controls its own code drives', () => {
     assert.equal(uses, 2, `${key} is translated in both languages`);
   }
 });
+
+/**
+ * The badge is emitted on two pages, so its rule cannot live in one page's own
+ * stylesheet. It sat in scanner.css, which public/index.html does not load, so
+ * the dashboard rendered an unstyled span — invisible in the sense that matters,
+ * since a trader learns within a day to ignore a mark that carries no weight.
+ *
+ * The assertion is reachability, not placement: for each page whose script emits
+ * the badge, at least one stylesheet that page actually links must define it.
+ */
+test('every page that renders the badge also loads the rule for it', () => {
+  const stylesheetsOf = html => [...read(html).matchAll(/<link[^>]+href="\/css\/([^"]+)"/g)].map(m => m[1]);
+  const emitsBadge = script => read(script).includes('live-badge');
+  const pages = [
+    { html: 'public/admin/scanner.html', script: 'public/js/pages/scanner.js' },
+    { html: 'public/index.html', script: 'public/js/pages/dashboard.js' },
+  ];
+  for (const { html, script } of pages.filter(p => emitsBadge(p.script))) {
+    const sheets = stylesheetsOf(html);
+    assert.ok(sheets.length > 0, `${html} links at least one stylesheet`);
+    // A real selector, not a substring: `.live-badge-RENAMED {` contains the
+    // text `.live-badge` and would sail past a plain includes(), which is
+    // exactly the shape of a rule that stops matching the markup.
+    const defines = new RegExp(`(^|[^\\w-])\\.live-badge\\s*\\{`, 'm');
+    const styled = sheets.filter(sheet => defines.test(read(`public/css/${sheet}`)));
+    assert.ok(styled.length > 0, `${html} renders the badge but loads no stylesheet defining .live-badge (links: ${sheets.join(', ')})`);
+  }
+});

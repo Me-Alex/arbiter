@@ -8,7 +8,10 @@ const escapeHtml = value => String(value ?? '').replace(/[&<>"']/g, c => ({ '&':
 function renderer(lang = 'en') {
   const context = { URLSearchParams, escapeHtml, arbiterI18n: { lang, t: key => key }, fmtMarketKey: key => key, formatKickoff: value => value };
   vm.createContext(context);
-  vm.runInContext(source.slice(source.indexOf('function renderOppGroup('), source.indexOf('// Badge age thresholds')), context);
+  // Start at dashLiveBadge, not renderOppGroup: the row renderer calls it, and
+  // slicing from the renderer would drop the definition and fail on a
+  // ReferenceError rather than on anything about the row.
+  vm.runInContext(source.slice(source.indexOf('function dashLiveBadge('), source.indexOf('// Badge age thresholds')), context);
   return context.renderOppGroup;
 }
 test('110 repeated findings render one compact escaped row with unique market count', () => {
@@ -30,6 +33,29 @@ test('row count is unique markets; Romanian type and negative ROI remain accurat
   assert.match(html, /class="num">2<\/td>/);
   assert.match(html, /Arbitraj/);
   assert.match(html, /-2\.00%/);
+});
+
+/**
+ * A row is one match with every market found on it, so the row is marked live
+ * when any of them is. The control is the ordering: the best-ROI opportunity
+ * sorts first and is the one the row is built from, so a `best`-only reading
+ * leaves a live match unmarked whenever a cheaper pre-match market wins the sort.
+ * That is the case the first assertion pins.
+ */
+test('a row is marked live when any opportunity in the group is in-play', () => {
+  const row = renderer();
+  // Control: pre-match best, in-play sibling, best ROI -> still marked.
+  const mixed = row([{ marketKey: 'A', roiPercent: 5, live: false }, { marketKey: 'B', roiPercent: 1, live: true }]);
+  assert.match(mixed, /class="chip red live-badge"/, 'an in-play sibling marks the row');
+  assert.match(mixed, /title="liveTooltip"/);
+  assert.match(mixed, />live</);
+  // Control: the best opportunity itself is in-play.
+  assert.match(row([{ marketKey: 'A', roiPercent: 5, live: true }]), /live-badge/);
+  // Negative: nothing in-play, and the field simply absent.
+  assert.doesNotMatch(row([{ marketKey: 'A', roiPercent: 5, live: false }]), /live-badge/);
+  assert.doesNotMatch(row([{ marketKey: 'A', roiPercent: 5 }]), /live-badge/);
+  // A kickoff in the past is stale, not running: the row is not marked from it.
+  assert.doesNotMatch(row([{ marketKey: 'A', roiPercent: 5, kickoff: '2000-01-01T00:00:00.000Z' }]), /live-badge/);
 });
 test('row click follows link while native and modified links remain untouched', () => {
   let clicked = 0;

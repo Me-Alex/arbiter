@@ -74,37 +74,6 @@
   color: var(--text-dim);
 }
 
-/*
- * The in-play marker. A sportsbook convention rather than a house style: red,
- * uppercase, tight. It is deliberately louder than `chip-sport` because it is
- * the one badge that changes how a price must be handled — it expires — rather
- * than describing what the row is.
- */
-.live-badge {
-  min-height: 18px;
-  padding: 1px 6px;
-  font-size: 9.5px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  vertical-align: middle;
-  animation: livePulse 2.4s var(--ease-out) infinite;
-}
-
-/*
- * A slow breath, not a blink. The badge must never be mistaken for the
- * connection-status dot, which pulses because a socket is reconnecting; this
- * one pulses because a price is moving, and the two must stay distinguishable.
- */
-@keyframes livePulse {
-  0%, 100% { opacity: 1; }
-  50%      { opacity: 0.62; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .live-badge { animation: none; }
-}
-
 @media (max-width: 640px) {
   .scan-summary {
     grid-template-columns: repeat(2, 1fr);

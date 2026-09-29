@@ -339,6 +339,22 @@ function fmtMarketKey(key) {
   return pretty[upper] || key.replace(/_/g, ' ');
 }
 
+/**
+ * The in-play marker, identical to the scanner page's.
+ *
+ * The dashboard is where a signal is first looked at, so an in-play price that
+ * is not marked here is a price a trader places on a match that has moved on.
+ * It is given a boolean, not a signal, because the caller decides what "this
+ * match is being played" means across the group — see renderOppGroup. It never
+ * reads the kickoff: a pre-match price whose kickoff has passed is stale, not
+ * running.
+ */
+function dashLiveBadge(t, inPlay) {
+  return inPlay === true
+    ? `<span class="chip red live-badge" title="${escapeHtml(t('liveTooltip'))}">${escapeHtml(t('live'))}</span>`
+    : '';
+}
+
 // Render a group of opportunities for the same match as one collapsed card
 function renderOppGroup(opps) {
   if (!opps || !opps.length) return '';
@@ -350,8 +366,13 @@ function renderOppGroup(opps) {
   const marketCount = new Set(opps.map(o => o.marketKey || o.market || '').filter(Boolean)).size;
   const roi = Number(best.roiPercent || 0);
   const kind = best.kind === 'middle' ? (arbiterI18n.lang === 'en' ? 'Middle' : 'Mijloc') : (arbiterI18n.lang === 'en' ? 'Arbitrage' : 'Arbitraj');
+  // A row is one match with every market found on it, so the row is live when
+  // any of them is — not only when the ROI-best one happens to be. Marking only
+  // the best would leave a live match unmarked whenever a cheaper pre-match
+  // market sorts first.
+  const inPlay = opps.some(o => o.live === true);
   return `<tr class="opportunity-row">
-    <th scope="row"><span class="strong">${escapeHtml(event)}</span><small>${escapeHtml([best.sport, best.league, formatKickoff(best.kickoff)].filter(Boolean).join(' · '))}</small></th>
+    <th scope="row"><span class="strong">${escapeHtml(event)}</span> ${dashLiveBadge(t, inPlay)}<small>${escapeHtml([best.sport, best.league, formatKickoff(best.kickoff)].filter(Boolean).join(' · '))}</small></th>
     <td>${escapeHtml(fmtMarketKey(best.marketKey || best.market || ''))}</td>
     <td>${escapeHtml(kind)}<small>${escapeHtml(best.verification?.status ? t(best.verification.status) : t('unverified'))}</small></td>
     <td class="num">${marketCount}</td><td class="num tabnum mono">${roi >= 0 ? '+' : ''}${roi.toFixed(2)}%</td>
@@ -418,6 +439,10 @@ function renderOppV2(o, allMarkets) {
 
   // Market chips: one per unique market key in the group, best one active
   const markets = allMarkets && allMarkets.length > 1 ? allMarkets : null;
+  // The card groups several opportunities of one match, so the verdict is taken
+  // over the whole group: a card is live if any market in it is. Reading `o`
+  // alone would mark it from the one opportunity the card was built for.
+  const inPlay = o.live === true || (markets || []).some((m) => m.live === true);
   const marketChips = markets
     ? `<div class="opp-market-chips">${markets.map((m, i) => {
         const mk = m.marketKey || m.market || '';
@@ -461,6 +486,7 @@ const dataAttrs = [
 </div>
 <div class="match-meta">
           <span class="chip">${escapeHtml(sport)}</span>
+          ${dashLiveBadge(t, inPlay)}
           ${league ? `<span>${escapeHtml(league)}</span>` : ''}
           ${kickoff ? `<span class="dim mono">${escapeHtml(kickoff)}</span>` : ''}
           ${marketLabel ? `<span class="chip chip-market">${escapeHtml(marketLabel)}</span>` : ''}

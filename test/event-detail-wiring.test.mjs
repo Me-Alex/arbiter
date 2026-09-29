@@ -130,7 +130,7 @@ evDialog._metaEl = evDialogMeta;
 // Extract the named listener reference from dashboard.js and eval it with the
 // real functions in scope.
 const listenerName = extractListener(dashSrc);
-const dashFnSrcs = Object.fromEntries(['dashRenderLeg', 'formatKickoff'].map((n) => [n, extractFn(n, dashSrc)]));
+const dashFnSrcs = Object.fromEntries(['dashRenderLeg', 'formatKickoff', 'dashLiveBadge'].map((n) => [n, extractFn(n, dashSrc)]));
 
 const assert = (cond, msg) => { console.log((cond ? 'PASS' : 'FAIL') + ':', msg); if (!cond) process.exitCode = 1; };
 
@@ -316,6 +316,7 @@ const { renderOppV2 } = await eval(`(async () => {
   const eventDetailModal = window.__EDM_exports;
   const dashRenderLeg = ${dashFnSrcs.dashRenderLeg};
   const formatKickoff = ${dashFnSrcs.formatKickoff};
+  const dashLiveBadge = ${dashFnSrcs.dashLiveBadge};
   const ROI_BAR_SCALE = 12;
   const BADGE_FRESH_MS = 5 * 60 * 1000;
   const BADGE_RECENT_MS = 30 * 60 * 1000;
@@ -352,6 +353,26 @@ const mixedCardHtml = renderOppV2({
 }, []);
 assert(mixedCardHtml.includes('<span class="dim mono">'), 'mixed: healthy kickoff renders label');
 assert(!/(time-badge)/.test(mixedCardHtml), 'mixed: malformed detectedAt renders NO time badge');
+
+// ---- Scenario 11b: the card's in-play verdict is taken over the whole group ----
+// The card groups several opportunities of one match, and `o` is only the one it
+// was built for, so reading `o` alone leaves a live card unmarked whenever a
+// cheaper pre-match market wins the sort. The control is that ordering: the
+// in-play market is the second element, so a `o`-only reading misses it.
+const groupedCard = (o, allMarkets) => renderOppV2({
+  sport: 'Football', homeTeam: 'A', awayTeam: 'B',
+  marketKey: '1X2', roiPercent: 3,
+  kickoff: '2026-09-08T21:45:00.000Z',
+  legs: [{ sourceId: 'maxbet', selection: '1', odds: 2, stake: 100 }],
+  ...o,
+}, allMarkets);
+assert(groupedCard({ live: true }, []).includes('live-badge'), '11b: an in-play opportunity badges the card');
+assert(groupedCard({ live: false }, [{ marketKey: '1X2', roiPercent: 3, live: false }, { marketKey: 'TOTAL', roiPercent: 1, live: true }]).includes('live-badge'),
+  '11b: an in-play sibling market badges the card even when the opportunity is not');
+assert(!groupedCard({ live: false }, []).includes('live-badge'), '11b: a pre-match card is not badged');
+assert(!groupedCard({}, [{ marketKey: '1X2', roiPercent: 3 }]).includes('live-badge'), '11b: a card with no measured scope is not badged');
+// A kickoff in the past is stale, not running: the verdict never reads the clock.
+assert(!groupedCard({ kickoff: '2000-01-01T00:00:00.000Z' }, []).includes('live-badge'), '11b: a past kickoff does not badge the card');
 
 // ---- Scenario 12: S1 injection — a " in sourceId/selection is escaped ----
 const injCardHtml = renderOppV2({
