@@ -4,6 +4,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import NSoft from '../src/scrapers/nsoft.mjs';
 import { instantiate } from '../src/scrapers/index.mjs';
+import { resolveContract } from '../src/scanner/market-contracts.mjs';
 
 const fixture = JSON.parse(await fs.readFile(new URL('./fixtures/nsoft-public.json', import.meta.url)));
 const config = JSON.parse(await fs.readFile(new URL('../config/scrapers.json', import.meta.url)));
@@ -128,3 +129,123 @@ test('an unrecognised sport id is named after itself, not guessed', () => {
   const out = s.extractEvents([unknown]);
   assert.equal(out.length, 0, 'a non-football event is not published at all');
 });
+
+/**
+ * These tenants serve goals totals and both-teams-to-score in the same response
+ * as the 1X2, so publishing only the result market threw away two
+ * arbitrage-eligible families for three bookmakers.
+ *
+ * The risks these guard are the ones that would invent an arbitrage rather than
+ * find one: a total that loses its line (OVER 2.5 colliding with OVER 3.5), a
+ * BTTS market published under a spelling the engine cannot read (so it silently
+ * stops being compared), and a neighbouring market that settles differently —
+ * a team total, a first-half total, or MaxBet's single-leg
+ * "Ambele marchează sau peste 2.5" — being published as the plain contract.
+ */
+const extrasFixtures = {
+  admiral: fixture,
+  maxbet: maxbetFixture,
+};
+
+/** Read the decoded football events for a tenant, timed so they are in window. */
+function extrasEvents(id) {
+  const s = new NSoft(id, { windowHours: 24 });
+  const events = s.normalize(structuredClone(extrasFixtures[id]));
+  for (const e of events) e.startsAt = new Date(Date.now() + 3600000).toISOString();
+  return { s, events };
+}
+
+for (const id of Object.keys(extrasFixtures)) {
+  test(`${id}: the feed's totals and BTTS are published and the engine prices both`, () => {
+    const { s, events } = extrasEvents(id);
+    const out = s.extractEvents(events);
+    assert.ok(out.length > 0, `${id}: expected the football event`);
+    for (const e of out) {
+      // The 1X2 is still first and still the contract that makes the event
+      // trustworthy; the extras are additive behind it.
+      assert.equal(resolveContract(e.markets[0]).family, 'MATCH_ODDS', `${id}: 1X2 must stay first`);
+
+      const totals = e.markets.filter((m) => m.key === 'TOTAL_GOALS');
+      assert.ok(totals.length > 0, `${id}: expected at least one total`);
+      const lines = new Set();
+      for (const m of totals) {
+        const contract = resolveContract(m);
+        assert.equal(contract.family, 'OVER_UNDER', `${id}: ${m.line} must price as a total`);
+        // The line is the whole point: OVER 2.5 must never bucket with 3.5.
+        assert.equal(contract.lineKey, m.line, `${id}: the line must reach the contract`);
+        assert.deepEqual(m.selections.map((s2) => s2.name), [`Peste ${m.line}`, `Sub ${m.line}`]);
+        for (const s2 of m.selections) assert.ok(s2.odds > 1, `${id}: a priced leg needs odds > 1`);
+        lines.add(m.line);
+      }
+      assert.equal(lines.size, totals.length, `${id}: one market per line, no duplicates`);
+
+      for (const m of e.markets.filter((x) => x.key === 'BTTS')) {
+        const contract = resolveContract(m);
+        assert.equal(contract.family, 'BTTS', `${id}: the BTTS must price as BTTS`);
+        // Admiral's feed says "GG"/"NGG" and MaxBet's "Da"/"Nu"; both are
+        // emitted canonically because the engine's matcher cannot read "NGG",
+        // which would silently drop the leg from every comparison.
+        assert.deepEqual(m.selections.map((s2) => s2.name), ['Da', 'Nu']);
+        assert.equal(m.period, 'fulltime');
+        for (const s2 of m.selections) assert.ok(s2.odds > 1, `${id}: a priced leg needs odds > 1`);
+      }
+    }
+  });
+
+  test(`${id}: markets that settle differently are never published`, () => {
+    const { s, events } = extrasEvents(id);
+    for (const e of s.extractEvents(events)) {
+      for (const m of e.markets) {
+        // Team totals, first-half totals and the single-leg "both teams score
+        // OR over 2.5" are different contracts under other market ids. None may
+        // be republished as a plain full-time total or BTTS.
+        assert.ok(!/echipa|prima\s*rep|1h/i.test(String(m.name)), `${id}: ${m.name} is a different contract`);
+        assert.equal(m.period, 'fulltime', `${id}: only full-time contracts are published`);
+        const contract = resolveContract(m);
+        if (contract) assert.notEqual(contract.family, 'DOUBLE_CHANCE', `${id}: DC is not a surebet`);
+      }
+    }
+  });
+}
+
+test('the totals and BTTS are additive: a bad extra never costs the event its 1X2', () => {
+  // Suspend the 2.5 total and unprice the BTTS on MaxBet: both extras must
+  // disappear, every other line must survive, and the 1X2 must still publish.
+  const raw = structuredClone(maxbetFixture);
+  for (const v of Object.values(raw.data.events)) {
+    for (const m of (v.o || [])) {
+      if (m.b === 1547 && String(m.g?.[0]) === '2.5') m.d = 0; // market inactive
+      if (m.b === 1709) m.h[0].g = 1; // BTTS "Da" priced at 1
+    }
+  }
+  const s = new NSoft('maxbet', { windowHours: 24 });
+  const events = s.normalize(raw);
+  for (const e of events) e.startsAt = new Date(Date.now() + 3600000).toISOString();
+  const out = s.extractEvents(events);
+  assert.equal(out.length, 1);
+  const families = out[0].markets.map((m) => resolveContract(m)?.family);
+  assert.equal(families[0], 'MATCH_ODDS', 'the 1X2 still publishes');
+  assert.ok(!families.includes('BTTS'), 'the unpriced BTTS is dropped');
+  assert.ok(!out[0].markets.some((m) => m.line === '2.5'), 'the suspended total is dropped');
+  assert.ok(out[0].markets.some((m) => m.line === '3.5'), 'the other totals survive');
+});
+
+test('the 1X2 is still required: breaking it drops the event whole', () => {
+  const raw = structuredClone(maxbetFixture);
+  for (const v of Object.values(raw.data.events)) {
+    for (const m of (v.o || [])) if (m.b === 2) m.h[0].g = 1; // "1" priced at 1
+  }
+  const s = new NSoft('maxbet', { windowHours: 24 });
+  const events = s.normalize(raw);
+  for (const e of events) e.startsAt = new Date(Date.now() + 3600000).toISOString();
+  assert.deepEqual(s.extractEvents(events), [], 'extras never rescue an event without a valid result');
+});
+
+test('a tenant with no measured extras still publishes its 1X2 alone', () => {
+  // betmen has no capture establishing its totals/BTTS ids, so it must not
+  // guess them: it contributes the result market and nothing more.
+  const s = new NSoft('betmen', { windowHours: 24 });
+  assert.match(s._serializable([], {}).coverage.market, /fulltime-1x2$/);
+  assert.match(new NSoft('admiral', { windowHours: 24 })._serializable([], {}).coverage.market, /tgoals\+btts/);
+});
+

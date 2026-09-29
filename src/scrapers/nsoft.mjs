@@ -53,6 +53,48 @@ const TENANT_RESULT_MARKET = Object.freeze({
 });
 
 /**
+ * The arbitrage-eligible extras each tenant's feed serves beyond the 1X2, by the
+ * same per-tenant, measured-from-the-feed discipline as the result market
+ * above. These are the totals and both-teams-to-score contracts, keyed by
+ * marketId so a tenant's own numbering is used rather than a shared guess.
+ *
+ * Measured on 2026-09-26 from each tenant's football responses:
+ *
+ *   admiral / stanleybet   totals 886 "Total goluri S/P"   BTTS 2056 "Ambele Inscriu"
+ *   maxbet                 totals 1547 "Total goluri"     BTTS 1709 "Ambele marchează"
+ *
+ * `betmen` is intentionally absent: no capture in the repo establishes its
+ * totals/BTTS ids, and an unmeasured tenant that published nothing extra is
+ * correct, whereas a guessed id is a mislabel.
+ *
+ * The market NAME is recorded alongside the id and required on read, because a
+ * marketId alone is not a contract: the same feed also serves team totals
+ * (maxbet 1571/1574 "Total goluri echipa 1/2") and a first-half total
+ * (admiral 208 "Prima Rep - Total Goluri") under other ids, and every one of
+ * them settles differently from a full-time match total.
+ */
+const TENANT_EXTRAS = Object.freeze({
+  admiral: Object.freeze({ totals: Object.freeze({ marketId: 886, name: 'Total goluri S/P' }), btts: Object.freeze({ marketId: 2056, name: 'Ambele Inscriu' }) }),
+  stanleybet: Object.freeze({ totals: Object.freeze({ marketId: 886, name: 'Total goluri S/P' }), btts: Object.freeze({ marketId: 2056, name: 'Ambele Inscriu' }) }),
+  maxbet: Object.freeze({ totals: Object.freeze({ marketId: 1547, name: 'Total goluri' }), btts: Object.freeze({ marketId: 1709, name: 'Ambele marchează' }) }),
+});
+
+/**
+ * Canonical BTTS selection names, and the provider spellings that map onto them.
+ *
+ * The tenants disagree on how they label the two sides — the Admiral/Stanleybet
+ * feed says "GG"/"NGG" while MaxBet's says "Da"/"Nu" — and the engine's BTTS
+ * matcher does not read "NGG" (its no-marker `\b(ng)\b` cannot match inside it),
+ * so an Admiral BTTS leg published under its raw name would resolve to no
+ * contract at all and be dropped from every comparison. The side is therefore
+ * recognised from the provider's own word and emitted under the canonical
+ * Romanian pair the matcher accepts. This is a recognition alias, not a
+ * relabel: `providerOutcomeId` still carries the feed's own outcome id.
+ */
+const BTTS_YES = /^(?:gg|da|yes|y)$/i;
+const BTTS_NO = /^(?:ngg|ng|nu|no|n)$/i;
+
+/**
  * A label for any sport id, used only for the sport name on an event. The
  * numbers are not comparable between tenants, so an unrecognised id is named
  * after the id itself rather than guessed — a wrong sport label breaks event
@@ -245,6 +287,12 @@ export default class NSoftScraper extends ScraperBase {
         }
         if (selections.length !== 3 || new Set(selections.map((s) => s.id)).size !== 3) continue;
         markets = [{ key: '1x2', providerMarketId: m.marketId, name: m.name, period: 'fulltime', selections }];
+        // The totals and BTTS this tenant also serves are additive: the 1X2 above
+        // is the contract that makes the event trustworthy and it is validated
+        // first and unconditionally. Each extra is either published whole or
+        // skipped on its own, so a suspended or half-quoted extra never costs
+        // the event its result market.
+        markets.push(...this._extraMarkets(e, TENANT_EXTRAS[this.id]));
       } else {
         // Non-football events are not published. Every configured job declares
         // `supportedSports: ["football"]` and the verified contract is the
@@ -271,9 +319,160 @@ export default class NSoftScraper extends ScraperBase {
     return out;
   }
 
+  /**
+   * The totals and both-teams-to-score markets this tenant's feed serves for an
+   * event, as separate arbitrable contracts. Returns [] for a tenant with no
+   * measured extras, or when the event carries none.
+   *
+   * @param {object} e decoded event
+   * @param {{totals?: {marketId:number,name:string}, btts?: {marketId:number,name:string}}|undefined} extras
+   * @returns {object[]}
+   */
+  _extraMarkets(e, extras) {
+    if (!extras) return [];
+    const out = [];
+    if (extras.totals) out.push(...this._totalsMarkets(e, extras.totals));
+    if (extras.btts) {
+      const btts = this._bttsMarket(e, extras.btts);
+      if (btts) out.push(btts);
+    }
+    return out;
+  }
+
+  /**
+   * Every full-time goals total for the event, one market per line.
+   *
+   * The feed carries one market object per line (0.5, 1.5, 2.5 …), so each is
+   * its own contract at its own line. Merging them would bucket OVER 2.5 with
+   * OVER 3.5, and publishing only the first would discard real prices, so they
+   * are emitted one apiece. The line is recovered from the outcome names
+   * ("Peste 2.5" / "Sub 2.5") and cross-checked against the market's own
+   * `specialValues`; both are emitted, because the engine reads the line out of
+   * the selection name.
+   */
+  _totalsMarkets(e, spec) {
+    const out = [];
+    for (const m of e.markets) {
+      if (m.marketId !== spec.marketId || m.name !== spec.name) continue;
+      if (m.active !== 1) continue;
+      // A total with no line is not a bucketable contract; the two selections
+      // would collapse into a nameless 2-way market.
+      const line = totalsLine(m.specialValues);
+      if (line === null) continue;
+      // A suspended or half-quoted total is skipped, not published.
+      const pair = pricedPair(m.outcomes);
+      if (!pair) continue;
+      const over = pair.find((o) => /^peste\b|^over\b/i.test(String(o.name).trim()));
+      const under = pair.find((o) => /^sub\b|^under\b/i.test(String(o.name).trim()));
+      if (!over || !under || over === under) continue;
+      // The names must agree with the market's own line, so a mislabelled or
+      // team/half-specific market can never be published as a full-time total.
+      if (!sameLine(over.name, line) || !sameLine(under.name, line)) continue;
+      out.push({
+        key: 'TOTAL_GOALS',
+        providerMarketId: m.marketId,
+        name: m.name,
+        period: 'fulltime',
+        line,
+        selections: [over, under].map((o) => ({
+          id: String(o.id), providerOutcomeId: o.outcomeId, name: o.name, odds: o.odd, handicap: null,
+        })),
+      });
+    }
+    return out;
+  }
+
+  /**
+   * The full-time both-teams-to-score market, or null when absent/unusable.
+   *
+   * The two sides are recognised from the provider's own labels and re-emitted
+   * as the canonical "Da"/"Nu" pair the engine's BTTS matcher reads (see the
+   * BTTS_YES/BTTS_NO comment), because the tenants disagree — "GG"/"NGG" on one
+   * feed, "Da"/"Nu" on another — and "NGG" is not a spelling that matcher
+   * recognises.
+   */
+  _bttsMarket(e, spec) {
+    for (const m of e.markets) {
+      if (m.marketId !== spec.marketId || m.name !== spec.name || m.active !== 1) continue;
+      if (m.specialValues && (Array.isArray(m.specialValues) ? m.specialValues.length : 1)) continue;
+      const pair = pricedPair(m.outcomes);
+      if (!pair) continue;
+      const yes = pair.find((o) => BTTS_YES.test(String(o.name).trim()));
+      const no = pair.find((o) => BTTS_NO.test(String(o.name).trim()));
+      if (!yes || !no || yes === no) continue;
+      return {
+        key: 'BTTS',
+        providerMarketId: m.marketId,
+        name: m.name,
+        period: 'fulltime',
+        selections: [yes, no].map((o, i) => ({
+          id: String(o.id), providerOutcomeId: o.outcomeId, name: i === 0 ? 'Da' : 'Nu', odds: o.odd, handicap: null,
+        })),
+      };
+    }
+    return null;
+  }
+
   _serializable(events, raw) {
+    // The extras are per-tenant and evidence-backed, so the coverage string says
+    // which families this tenant actually contributes rather than promising the
+    // union for every tenant (betmen, with no measured extras, still serves only
+    // the 1X2).
+    const families = TENANT_EXTRAS[this.id] ? 'fulltime-1x2+tgoals+btts' : 'fulltime-1x2';
     return { ...super._serializable(events, raw), sourceUrl: this.sourceUrl,
       transport: this.transport, observedAt: this.observedAt,
-      coverage: { sport: 'football', market: 'fulltime-1x2', live: false, windowHours: this.windowHours, maxEvents: this.maxEvents } };
+      coverage: { sport: 'football', market: families, live: false, windowHours: this.windowHours, maxEvents: this.maxEvents } };
   }
+}
+
+/**
+ * The line a totals market is quoted at, or null when it has none.
+ *
+ * The feed's `specialValues` carries the line in more than one shape — an array
+ * such as ["2.5"] on some responses, a bare number 2.5 on others, and an empty
+ * array or value on markets with no line at all — so all of them are read and a
+ * market with no usable line is refused.
+ *
+ * @param {unknown} specialValues
+ * @returns {string|null} the canonical line, e.g. "2.5"
+ */
+function totalsLine(specialValues) {
+  const raw = Array.isArray(specialValues) ? specialValues[0] : specialValues;
+  if (raw === null || raw === undefined || raw === '') return null;
+  const value = Number(raw);
+  if (!Number.isFinite(value)) return null;
+  return String(value);
+}
+
+/**
+ * True when a selection name's own line equals the market's line, so a total
+ * whose two legs disagree with the market, or whose name carries a different
+ * number, is not published as that line.
+ */
+function sameLine(selectionName, line) {
+  const match = String(selectionName).match(/(-?\d+(?:[.,]\d+)?)/);
+  if (!match) return false;
+  return String(Number(match[1].replace(',', '.'))) === String(Number(line));
+}
+
+/**
+ * A market's outcomes as a complete, live, priced set, or null on any defect.
+ *
+ * A market missing a leg, carrying a suspended or unpriced outcome, or repeating
+ * one must not be published half-formed: the engine would read a single "Peste"
+ * as an incomplete 2-way and pair it against another book.
+ *
+ * @param {Array<{id?:unknown, active?:number, odd?:number}>} outcomes
+ * @returns {Array<object>|null}
+ */
+function pricedPair(outcomes) {
+  if (!Array.isArray(outcomes) || outcomes.length !== 2) return null;
+  const ids = new Set();
+  for (const o of outcomes) {
+    if (!o || o.active !== 1 || !o.id || !Number.isFinite(o.odd) || o.odd <= 1) return null;
+    const id = String(o.id);
+    if (ids.has(id)) return null;
+    ids.add(id);
+  }
+  return outcomes;
 }
