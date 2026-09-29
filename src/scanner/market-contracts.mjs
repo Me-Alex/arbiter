@@ -317,6 +317,25 @@ export function resolveContract(market = {}) {
   // ---- 5. netbet-style keys with line in name only (no `handicap` field) ----
   // game_handicap / handicap / goals_handicap from netbet publish the line in
   // the selection name ("1 (-7.5)") instead of an explicit handicap field.
+  //
+  // ASIAN_HANDICAP is an explicit, adapter-asserted key (nsoft emits it only
+  // after proving both legs are the market's line and its negation), so it
+  // routes on the key rather than through the name heuristics below, and it is
+  // authoritative: a market that declares itself a handicap either resolves as
+  // one or resolves to nothing. Both halves matter, and both are reachable
+  // defects. Letting it fall through to the auto-detector reads nsoft's
+  // "H1 -0.5" / "H2 0.5" as OVER_UNDER — the handicap keyword only matches
+  // names starting with "1"/"2", these start with "H1"/"H2", and the
+  // equal-magnitude fallback then buckets a 0.5 handicap into the same line as a
+  // 0.5 goals total, two contracts with opposite payouts reported as one. And
+  // returning null for a whole line is not enough on its own: the generic
+  // resolver below would still classify "H1 -1"/"H2 1" as OVER_UNDER/1, so the
+  // market would keep trading, mislabelled, on a line where a push returns the
+  // stake instead of settling it.
+  if (key === 'ASIAN_HANDICAP') {
+    const declared = classifyAndExtractLine(market.selections, { kind: 'AH' });
+    return declared ? { family: 'ASIAN_HANDICAP', period, lineKey: declared.lineKey, outcomes: declared.outcomes } : null;
+  }
   if (key === 'GAME_HANDICAP' || key === 'GOALS_HANDICAP' || key === 'HANDICAP' || key === 'TGHC' || key === 'FAHC' || key === 'HCAP' || key === 'AHCP' || key === 'FHOT') {
     const inline = classifyAndExtractLine(market.selections, { kind: 'AH' });
     if (inline) return { family: 'ASIAN_HANDICAP', period, lineKey: inline.lineKey, outcomes: inline.outcomes };

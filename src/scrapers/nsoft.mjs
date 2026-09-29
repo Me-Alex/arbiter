@@ -55,28 +55,50 @@ const TENANT_RESULT_MARKET = Object.freeze({
 /**
  * The arbitrage-eligible extras each tenant's feed serves beyond the 1X2, by the
  * same per-tenant, measured-from-the-feed discipline as the result market
- * above. These are the totals and both-teams-to-score contracts, keyed by
- * marketId so a tenant's own numbering is used rather than a shared guess.
+ * above. These are the totals, both-teams-to-score and two-way Asian handicap
+ * contracts, keyed by marketId so a tenant's own numbering is used rather than a
+ * shared guess.
  *
  * Measured on 2026-09-26 from each tenant's football responses:
  *
  *   admiral / stanleybet   totals 886 "Total goluri S/P"   BTTS 2056 "Ambele Inscriu"
+ *                          AH 262 "Handicap"
  *   maxbet                 totals 1547 "Total goluri"     BTTS 1709 "Ambele marchează"
+ *                          AH 8 "Handicap Asiatic"
  *
  * `betmen` is intentionally absent: no capture in the repo establishes its
- * totals/BTTS ids, and an unmeasured tenant that published nothing extra is
- * correct, whereas a guessed id is a mislabel.
+ * ids, and an unmeasured tenant that published nothing extra is correct,
+ * whereas a guessed id is a mislabel.
  *
  * The market NAME is recorded alongside the id and required on read, because a
- * marketId alone is not a contract: the same feed also serves team totals
- * (maxbet 1571/1574 "Total goluri echipa 1/2") and a first-half total
- * (admiral 208 "Prima Rep - Total Goluri") under other ids, and every one of
- * them settles differently from a full-time match total.
+ * marketId alone is not a contract. The same feed also serves, under other ids,
+ * markets that look similar but settle differently, and requiring the name is
+ * what keeps them out:
+ *
+ *   maxbet 389  "Handicap game-uri"        handicap on goals scored, not the result
+ *   maxbet 770  "Handicap 1X2"             three-way, with an HX draw outcome
+ *   maxbet 497  "Handicap (Incl.prelungiri)" settles including extra time
+ *   maxbet 530  "PR Handicap"              first period
+ *   admiral 526 "Handicap (incl prel)"     likewise, extra time
+ *   admiral 208 "Prima Rep - Total Goluri" first-half total
+ *   maxbet 1571/1574 "Total goluri echipa 1/2"  one team's goals
+ *   maxbet 1700  "Ambele marchează sau peste 2.5 goluri"  a single leg
+ *
+ * A scoring handicap routed to ASIAN_HANDICAP would let a goals-scored price
+ * stand in for another book's result handicap and be reported as arbitrage
+ * that does not exist, so the name gate is the whole safety mechanism here.
+ *
+ * MaxBet also serves a second Asian handicap, 779 "Handicap asiatic", which is
+ * deliberately not wired here: in the capture it appears only on sport id 17
+ * events, never on a football one (0 of 136), and its markets carry a period
+ * marker the football handicap does not. A tenant's own sport numbering is
+ * exactly the trap this file documents elsewhere, so id 8 — measured on
+ * football — is the only one claimed here.
  */
 const TENANT_EXTRAS = Object.freeze({
-  admiral: Object.freeze({ totals: Object.freeze({ marketId: 886, name: 'Total goluri S/P' }), btts: Object.freeze({ marketId: 2056, name: 'Ambele Inscriu' }) }),
-  stanleybet: Object.freeze({ totals: Object.freeze({ marketId: 886, name: 'Total goluri S/P' }), btts: Object.freeze({ marketId: 2056, name: 'Ambele Inscriu' }) }),
-  maxbet: Object.freeze({ totals: Object.freeze({ marketId: 1547, name: 'Total goluri' }), btts: Object.freeze({ marketId: 1709, name: 'Ambele marchează' }) }),
+  admiral: Object.freeze({ totals: Object.freeze({ marketId: 886, name: 'Total goluri S/P' }), btts: Object.freeze({ marketId: 2056, name: 'Ambele Inscriu' }), ah: Object.freeze({ marketId: 262, name: 'Handicap' }) }),
+  stanleybet: Object.freeze({ totals: Object.freeze({ marketId: 886, name: 'Total goluri S/P' }), btts: Object.freeze({ marketId: 2056, name: 'Ambele Inscriu' }), ah: Object.freeze({ marketId: 262, name: 'Handicap' }) }),
+  maxbet: Object.freeze({ totals: Object.freeze({ marketId: 1547, name: 'Total goluri' }), btts: Object.freeze({ marketId: 1709, name: 'Ambele marchează' }), ah: Object.freeze({ marketId: 8, name: 'Handicap Asiatic' }) }),
 });
 
 /**
@@ -332,9 +354,59 @@ export default class NSoftScraper extends ScraperBase {
     if (!extras) return [];
     const out = [];
     if (extras.totals) out.push(...this._totalsMarkets(e, extras.totals));
+    if (extras.ah) out.push(...this._asianHandicapMarkets(e, extras.ah));
     if (extras.btts) {
       const btts = this._bttsMarket(e, extras.btts);
       if (btts) out.push(btts);
+    }
+    return out;
+  }
+
+  /**
+   * Every two-way Asian handicap the feed serves for the event, one per line.
+   *
+   * Only half-lines are published. That is a settlement requirement, not a
+   * stylistic one: at a whole line the stake is returned on a push, so the
+   * market is not an exhaustive two-way contract and pairing it as one would
+   * report an arbitrage that a push cancels. It is also where the engine's
+   * router stops agreeing with us — a whole-line "H1 -1"/"H2 1" pair is read
+   * as OVER_UNDER/1 rather than as a handicap at all. Half-lines are the only
+   * lines on which this pair is both exhaustive and correctly routed, and both
+   * tenants quote their plain handicap only at half-lines anyway (admiral 262
+   * serves -0.5/0.5/-1.5/1.5, maxbet 8 serves -0.5 through 3.5).
+   *
+   * The two sides are recognised by the "H1"/"H2" prefix the feed uses, and each
+   * must carry the handicap it is actually quoted at: the home leg at the
+   * market's own line and the away leg at its exact negation. A handicap pair is
+   * the one market here whose two legs deliberately disagree, so the totals
+   * helper's "both legs carry the market's line" rule cannot be reused — that
+   * rule is right for OVER/UNDER and wrong for H1/H2, and applying it rejects
+   * every real handicap while accepting none of the impostors.
+   */
+  _asianHandicapMarkets(e, spec) {
+    const out = [];
+    for (const m of e.markets) {
+      if (m.marketId !== spec.marketId || m.name !== spec.name || m.active !== 1) continue;
+      const line = totalsLine(m.specialValues);
+      if (line === null) continue;
+      // Reject a whole line: at .0 the result pushes instead of settling.
+      if (!isHalfLine(line)) continue;
+      const pair = pricedPair(m.outcomes);
+      if (!pair) continue;
+      const home = pair.find((o) => /^h1\b/i.test(String(o.name).trim()));
+      const away = pair.find((o) => /^h2\b/i.test(String(o.name).trim()));
+      if (!home || !away || home === away) continue;
+      if (!oppositeHandicapLegs(home.name, away.name, line)) continue;
+      out.push({
+        key: 'ASIAN_HANDICAP',
+        providerMarketId: m.marketId,
+        name: m.name,
+        period: 'fulltime',
+        line,
+        selections: [home, away].map((o) => ({
+          id: String(o.id), providerOutcomeId: o.outcomeId, name: o.name, odds: o.odd, handicap: line,
+        })),
+      });
     }
     return out;
   }
@@ -418,7 +490,7 @@ export default class NSoftScraper extends ScraperBase {
     // which families this tenant actually contributes rather than promising the
     // union for every tenant (betmen, with no measured extras, still serves only
     // the 1X2).
-    const families = TENANT_EXTRAS[this.id] ? 'fulltime-1x2+tgoals+btts' : 'fulltime-1x2';
+    const families = TENANT_EXTRAS[this.id] ? 'fulltime-1x2+tgoals+ah+btts' : 'fulltime-1x2';
     return { ...super._serializable(events, raw), sourceUrl: this.sourceUrl,
       transport: this.transport, observedAt: this.observedAt,
       coverage: { sport: 'football', market: families, live: false, windowHours: this.windowHours, maxEvents: this.maxEvents } };
@@ -453,6 +525,63 @@ function sameLine(selectionName, line) {
   const match = String(selectionName).match(/(-?\d+(?:[.,]\d+)?)/);
   if (!match) return false;
   return String(Number(match[1].replace(',', '.'))) === String(Number(line));
+}
+
+/**
+ * True when a two-way handicap's two legs are the market's line and its exact
+ * negation, so "H1 -0.5" / "H2 0.5" is accepted for a -0.5 market and anything
+ * else is not.
+ *
+ * A handicap is the one market whose legs are *meant* to disagree, so this
+ * cannot be the totals rule (both legs equal the line). It is also stricter
+ * than "the two lines differ": it pins the home leg to the market's own line
+ * and the away leg to its negation, in that order, which is what separates a
+ * real handicap from a pair that merely happens to differ — a mislabelled leg,
+ * a pair quoted at a line the market does not carry, or a side that repeats the
+ * other side's handicap.
+ *
+ * @param {string} homeName selection name, e.g. "H1 -0.5"
+ * @param {string} awayName selection name, e.g. "H2 0.5"
+ * @param {string} line the market's own line
+ * @returns {boolean}
+ */
+function oppositeHandicapLegs(homeName, awayName, line) {
+  const home = nameLine(homeName);
+  const away = nameLine(awayName);
+  if (home === null || away === null) return false;
+  return home === Number(line) && away === -Number(line);
+}
+
+/**
+ * The handicap a selection name is quoted at, or null when it carries none.
+ *
+ * The sign is part of the value, so "-0.5" and "0.5" are different lines and
+ * this must not normalise the way `sameLine` does for totals: there, "2.5" and
+ * "2.50" are the same line and only the magnitude matters, but a handicap whose
+ * sign is dropped is the wrong market.
+ *
+ * @param {unknown} selectionName
+ * @returns {number|null}
+ */
+function nameLine(selectionName) {
+  // The line is the number the name *ends* with, after the "H1"/"H2" token.
+  // Scanning from the start would latch onto the digit in "H1" itself and read
+  // "H1 -0.5" as 1, which matches nothing and silently drops every handicap.
+  const match = String(selectionName).match(/(-?\d+(?:[.,]\d+)?)\s*$/);
+  if (!match) return null;
+  const value = Number(match[1].replace(',', '.'));
+  return Number.isFinite(value) ? value : null;
+}
+
+/**
+ * True when a line is a half line, the only kind on which a two-way Asian
+ * handicap has no push. "2.5" and "-0.5" are half lines; "1" and "-2" are not.
+ *
+ * @param {string} line
+ * @returns {boolean}
+ */
+function isHalfLine(line) {
+  return /-?\d+\.5$/.test(String(line).trim());
 }
 
 /**

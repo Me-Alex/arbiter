@@ -73,6 +73,35 @@ test('ASIAN_HANDICAP family: line comes from selection handicap, key is generic'
   assert.deepEqual(c.outcomes, ['home', 'away']);
 });
 
+test('a "H1"/"H2" handicap resolves as a handicap, never as a goals total', () => {
+  // nsoft labels its handicap legs "H1 -0.5" / "H2 0.5". The auto-detector's
+  // handicap keyword only matches names starting with 1 or 2, so on these names
+  // it fell through to the equal-magnitude fallback and returned OVER_UNDER —
+  // bucketing a 0.5 handicap into the same line as a 0.5 goals total, two
+  // contracts with opposite payouts reported as one. The explicit key routes
+  // on the adapter's own assertion instead of on the spelling.
+  for (const [line, legs] of [['-0.5', ['H1 -0.5', 'H2 0.5']], ['0.5', ['H1 0.5', 'H2 -0.5']]]) {
+    const c = resolveContract({ key: 'ASIAN_HANDICAP', period: 'fulltime', line, selections: legs.map((name) => ({ name })) });
+    assert.equal(c.family, 'ASIAN_HANDICAP', `${line} must price as a handicap`);
+    assert.equal(c.lineKey, `${line}/${-Number(line)}`);
+    assert.deepEqual(c.outcomes, ['home', 'away']);
+  }
+});
+
+test('a whole-line handicap is not arbitrable: the stake is returned, not settled', () => {
+  // The half-line guard lives in the `kind: 'AH'` hint. Without it a whole-line
+  // "H1 -1"/"H2 1" pair would resolve to a contract whose two legs can both push.
+  assert.equal(resolveContract({
+    key: 'ASIAN_HANDICAP', period: 'fulltime', line: '-1',
+    selections: [{ name: 'H1 -1' }, { name: 'H2 1' }],
+  }), null);
+  // And a pair whose legs are not exact opposites is refused outright.
+  assert.equal(resolveContract({
+    key: 'ASIAN_HANDICAP', period: 'fulltime', line: '-0.5',
+    selections: [{ name: 'H1 -0.5' }, { name: 'H2 -0.5' }],
+  }), null);
+});
+
 test('bucket key isolates by period and line — critical for cross-book correctness', () => {
   const cFt = resolveContract({ key: 'BTTS', period: 'fulltime', selections: [{ name: 'Yes' }, { name: 'No' }] });
   const cH1 = resolveContract({ key: 'BTTS', period: 'half1', selections: [{ name: 'Yes' }, { name: 'No' }] });

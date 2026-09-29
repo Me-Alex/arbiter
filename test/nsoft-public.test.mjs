@@ -241,11 +241,145 @@ test('the 1X2 is still required: breaking it drops the event whole', () => {
   assert.deepEqual(s.extractEvents(events), [], 'extras never rescue an event without a valid result');
 });
 
+/**
+ * The two-way Asian handicap these feeds serve alongside the totals, and the
+ * third arbitrage-eligible family these tenants contribute.
+ *
+ * The risks guarded here are specific to handicaps, because a handicap is the
+ * one market whose two legs are *meant* to disagree — the totals rule ("both
+ * legs carry the market's line") rejects every real handicap — and the one
+ * family the engine's auto-detector reads backwards on the provider's own
+ * "H1"/"H2" names. Each test below pins one way that could invent an
+ * arbitrage rather than find one.
+ */
+const AH_MARKETS = { admiral: 262, maxbet: 8 };
+
+for (const [id, marketId] of Object.entries(AH_MARKETS)) {
+  test(`${id}: the two-way Asian handicap is published per line and prices as a handicap`, () => {
+    const { s, events } = extrasEvents(id);
+    const out = s.extractEvents(events);
+    assert.ok(out.length > 0, `${id}: expected the football event`);
+
+    for (const e of out) {
+      const hands = e.markets.filter((m) => m.key === 'ASIAN_HANDICAP');
+      assert.ok(hands.length > 0, `${id}: expected at least one handicap`);
+      const seen = new Set();
+      for (const m of hands) {
+        const contract = resolveContract(m);
+        // The decisive assertion: "H1 -0.5"/"H2 0.5" must not be read as a
+        // goals total. The auto-detector's handicap keyword only matches names
+        // starting with 1/2, so without an explicit key route a 0.5 handicap
+        // buckets into OVER_UNDER/0.5 alongside a 0.5 total — two contracts
+        // with opposite payouts reported as one.
+        assert.equal(contract.family, 'ASIAN_HANDICAP', `${id}: ${m.line} must price as a handicap`);
+        assert.equal(contract.lineKey, `${m.line}/${String(-Number(m.line))}`, `${id}: both legs must reach the contract`);
+        // One market per line: a -0.5 and a 0.5 handicap are different contracts.
+        assert.equal(m.selections.length, 2, `${id}: a handicap is two-way`);
+        assert.deepEqual(m.selections.map((s2) => s2.name), [`H1 ${m.line}`, `H2 ${-Number(m.line)}`]);
+        for (const s2 of m.selections) assert.ok(s2.odds > 1, `${id}: a priced leg needs odds > 1`);
+        assert.equal(m.period, 'fulltime', `${id}: only full-time handicaps are published`);
+        assert.equal(m.providerMarketId, marketId, `${id}: the provider id is preserved`);
+        assert.ok(!seen.has(m.line), `${id}: ${m.line} published twice`);
+        seen.add(m.line);
+        // A half-line is the only line on which a handicap has no push.
+        assert.match(m.line, /^-?\d+\.5$/, `${id}: only half lines are exhaustive`);
+      }
+    }
+  });
+
+  test(`${id}: a handicap never reuses a neighbouring contract`, () => {
+    const { s, events } = extrasEvents(id);
+    for (const e of s.extractEvents(events)) {
+      for (const m of e.markets) {
+        // "Handicap (incl prel)" settles including extra time, MaxBet's
+        // "Handicap game-uri" handicaps goals scored rather than the result and
+        // "Handicap 1X2" is three-way with an HX leg. Publishing any of them as
+        // a result handicap lets a price that settles on a different event stand
+        // in for another book's handicap.
+        if (m.key === 'ASIAN_HANDICAP') {
+          assert.equal(m.outcomes, undefined, `${id}: no stray outcomes field`);
+          assert.equal(m.selections.length, 2, `${id}: never a three-way handicap`);
+        }
+        assert.ok(!/incl\s*prel/i.test(String(m.name)), `${id}: ${m.name} settles with extra time`);
+        assert.ok(!/game-uri|1x2/i.test(String(m.name)), `${id}: ${m.name} is a different contract`);
+      }
+    }
+  });
+}
+
+test('a whole-line handicap is refused: at a whole line the stake is returned, so it is not exhaustive', () => {
+  // No tenant currently quotes a whole line, so the case is built by hand. The
+  // engine would also read a whole-line "H1 -1"/"H2 1" pair as OVER_UNDER/1
+  // rather than as a handicap, so publishing one would both report a
+  // push-cancelled arbitrage and mislabel the contract.
+  const raw = structuredClone(maxbetFixture);
+  for (const v of Object.values(raw.data.events)) {
+    for (const m of (v.o || [])) {
+      if (m.b !== 8) continue;
+      const line = String(m.g[0]).replace('.5', '');
+      m.g = [line];
+      m.h[0].e = `H1 ${line}`;
+      m.h[1].e = `H2 ${-Number(line)}`;
+    }
+  }
+  const s = new NSoft('maxbet', { windowHours: 24 });
+  const events = s.normalize(raw);
+  for (const e of events) e.startsAt = new Date(Date.now() + 3600000).toISOString();
+  const out = s.extractEvents(events);
+  assert.equal(out.length, 1, 'the event still publishes');
+  assert.ok(!out[0].markets.some((m) => m.key === 'ASIAN_HANDICAP'), 'no whole-line handicap is published');
+  assert.equal(resolveContract(out[0].markets[0]).family, 'MATCH_ODDS', 'the 1X2 is unaffected');
+});
+
+test('a handicap whose legs do not mirror each other is refused', () => {
+  const cases = [
+    ['both legs at the market line', (m) => { m.h[1].e = m.h[0].e; }],
+    ['a leg at a line the market does not carry', (m) => { m.h[1].e = `H2 ${-Number(m.g[0]) - 1}`; }],
+    ['the home leg missing its line', (m) => { m.h[0].e = 'H1'; }],
+  ];
+  for (const [what, break_] of cases) {
+    const raw = structuredClone(maxbetFixture);
+    for (const v of Object.values(raw.data.events)) {
+      for (const m of (v.o || [])) if (m.b === 8) break_(m);
+    }
+    const s = new NSoft('maxbet', { windowHours: 24 });
+    const events = s.normalize(raw);
+    for (const e of events) e.startsAt = new Date(Date.now() + 3600000).toISOString();
+    const out = s.extractEvents(events);
+    assert.equal(out.length, 1, `${what}: the event still publishes`);
+    assert.ok(!out[0].markets.some((m) => m.key === 'ASIAN_HANDICAP'), `${what}: the handicap is refused`);
+    assert.equal(resolveContract(out[0].markets[0]).family, 'MATCH_ODDS', `${what}: the 1X2 is unaffected`);
+  }
+});
+
+test('an invalid handicap never costs the event its 1X2 or its other markets', () => {
+  // Suspend the -0.5 handicap and unprice the -1.5 one: both must disappear
+  // while the remaining lines, the totals, the BTTS and the 1X2 all survive.
+  const raw = structuredClone(maxbetFixture);
+  for (const v of Object.values(raw.data.events)) {
+    for (const m of (v.o || [])) {
+      if (m.b !== 8) continue;
+      if (String(m.g?.[0]) === '-0.5') m.d = 0;
+      if (String(m.g?.[0]) === '-1.5') m.h[1].g = 1;
+    }
+  }
+  const s = new NSoft('maxbet', { windowHours: 24 });
+  const events = s.normalize(raw);
+  for (const e of events) e.startsAt = new Date(Date.now() + 3600000).toISOString();
+  const out = s.extractEvents(events);
+  assert.equal(out.length, 1);
+  const hands = out[0].markets.filter((m) => m.key === 'ASIAN_HANDICAP');
+  assert.deepEqual(hands.map((m) => m.line), ['0.5'], 'only the sound line survives');
+  assert.equal(resolveContract(out[0].markets[0]).family, 'MATCH_ODDS', 'the 1X2 still publishes');
+  assert.ok(out[0].markets.some((m) => resolveContract(m)?.family === 'OVER_UNDER'), 'the totals survive');
+  assert.ok(out[0].markets.some((m) => resolveContract(m)?.family === 'BTTS'), 'the BTTS survives');
+});
+
 test('a tenant with no measured extras still publishes its 1X2 alone', () => {
   // betmen has no capture establishing its totals/BTTS ids, so it must not
   // guess them: it contributes the result market and nothing more.
   const s = new NSoft('betmen', { windowHours: 24 });
   assert.match(s._serializable([], {}).coverage.market, /fulltime-1x2$/);
-  assert.match(new NSoft('admiral', { windowHours: 24 })._serializable([], {}).coverage.market, /tgoals\+btts/);
+  assert.match(new NSoft('admiral', { windowHours: 24 })._serializable([], {}).coverage.market, /tgoals\+ah\+btts/);
 });
 

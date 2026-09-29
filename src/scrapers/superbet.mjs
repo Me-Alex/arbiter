@@ -29,13 +29,14 @@ const SPORT_NAMES = {
  *
  * On totals and BTTS: this reader is generic — it maps every market the payload
  * carries, by line group — so it is not what limits Superbet to the result
- * market. The public index is. Captured 2026-09-29, the `active-prematch`,
- * `active` and `all-prematch` projections (and the 141-market count the event
- * advertises in `inplay_stats_metadata`) all return exactly one market per
- * event, the featured result market ("Final", or a sport-specific winner such as
- * "Câștigător"). No goals total or both-teams-to-score appears on the public
- * index. Publishing one would mean a different, unverified endpoint, not reading
- * this one differently.
+ * market. The public index is. Captured 2026-09-29, the `active-prematch` and
+ * `active` projections (and the 141-market count the event advertises in
+ * `inplay_stats_metadata`) both return exactly one market per event, the
+ * featured result market ("Final", or a sport-specific winner such as
+ * "Câștigător"); `all-prematch` is not a usable third reading, answering HTTP
+ * 400 rather than a payload. No goals total or both-teams-to-score appears on
+ * the public index. Publishing one would mean a different, unverified endpoint,
+ * not reading this one differently.
  */
 export default class SuperbetScraper extends ScraperBase {
   id = 'superbet';
