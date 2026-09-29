@@ -70,3 +70,46 @@ test('MagnumBet inherits the adapter but not the parent identity', () => {
   assert.equal(s.systemCode, 'MAGNUMBET', 'it overrides the system code');
   assert.notEqual(s.systemCode, new ExcelBet({}).systemCode);
 });
+
+test('WinBoss and Las Vegas inherit the adapter, not a copy of it', () => {
+  // Both used to be near-verbatim copies of excelbet.mjs. A copy fixes bugs
+  // only if someone remembers to fix it in every copy, and the WinBoss copy's
+  // content-type error still said "ExcelBet". Assert on the shared prototype so
+  // a future divergence is a test failure rather than silent drift.
+  for (const Cls of [WinBoss, LasVegas, MagnumBet]) {
+    assert.equal(Cls.prototype.fetchRaw, ExcelBet.prototype.fetchRaw,
+      `${Cls.name} must share the one fetchRaw implementation`);
+    assert.equal(Cls.prototype.extractEvents, ExcelBet.prototype.extractEvents,
+      `${Cls.name} must share the one extractEvents implementation`);
+  }
+  assert.notEqual(new WinBoss({}).systemCode, new LasVegas({}).systemCode);
+  assert.match(new WinBoss({}).name, /WinBoss/i);
+  assert.match(new LasVegas({}).name, /Las Vegas/i);
+});
+
+test('every Exalogic tenant publishes under its own sourceId, not the parent\'s', () => {
+  // The misattribution this guards: extractEvents is shared, so a literal
+  // sourceId would file MagnumBet/WinBoss/LasVegas prices under 'excelbet'
+  // and make one feed look like four independent books.
+  const raw = {
+    avs: {
+      avs: [{
+        lv: 0, bid: 9001, ts: '20261015 16:45:00',
+        dsl: { RO: 'Gazogene - Rangers' }, p: 'Liga 1',
+        scs: [{ cs: 3, d: 'FINAL', eqs: [{ ce: 1, q: '315' }, { ce: 2, q: '457' }, { ce: 3, q: '149' }] }],
+      }],
+    },
+  };
+  const seen = new Set();
+  for (const { name, Cls } of TENANTS) {
+    const s = new Cls({ maxEvents: 10 });
+    const [event] = s.extractEvents(s.normalize(raw));
+    assert.ok(event, `${name}: must extract the fixture event`);
+    assert.equal(event.sourceId, name, `${name}: must publish as "${name}", not "${event.sourceId}"`);
+    assert.equal(event.transport, 'exalogic-xsport-public-json');
+    // Four-decimal prices must survive q/100 exactly.
+    assert.equal(event.markets[0].selections[0].odds, 3.15);
+    seen.add(event.sourceId);
+  }
+  assert.equal(seen.size, 4, 'four tenants must produce four distinct sourceIds');
+});

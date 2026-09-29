@@ -29,13 +29,13 @@ export default class ExcelBetScraper extends ScraperBase {
     // configured value was silently dropped.
     const days = Number(opts.days ?? 7);
     if (!Number.isInteger(days) || days < 1 || days > 31) {
-      throw new ValidationError('excelbet: invalid days (1-31)');
+      throw new ValidationError(`${this.name}: invalid days (1-31)`);
     }
     this.days = days;
     this.timeoutMs = opts.timeoutMs ?? 25_000;
     this.maxEvents = opts.maxEvents === 'all' ? 5000 : Math.min(Number(opts.maxEvents ?? 100), 5000);
     if (!Number.isInteger(this.maxEvents) || this.maxEvents < 0 || this.maxEvents > 5000) {
-      throw new ValidationError('ExcelBet: invalid maxEvents');
+      throw new ValidationError(`${this.name}: invalid maxEvents`);
     }
   }
 
@@ -58,11 +58,11 @@ export default class ExcelBetScraper extends ScraperBase {
       const bounded = signal ? AbortSignal.any([signal, timeout]) : timeout;
       const response = await fetch(url.href, { signal: bounded, headers });
       if (!response.ok) {
-        throw new UpstreamError(`ExcelBet: HTTP ${response.status} for ${ds}`);
+        throw new UpstreamError(`${this.name}: HTTP ${response.status} for ${ds}`);
       }
       const ct = response.headers.get('content-type') || '';
       if (!ct.includes('json') && !ct.includes('text/plain')) {
-        throw new ValidationError(`ExcelBet: expected JSON for ${ds}, received ${ct || 'no content-type'}`);
+        throw new ValidationError(`${this.name}: expected JSON for ${ds}, received ${ct || 'no content-type'}`);
       }
       const reader = response.body.getReader();
       const chunks = [];
@@ -73,7 +73,7 @@ export default class ExcelBetScraper extends ScraperBase {
           const { value, done } = await reader.read();
           if (done) break;
           size += value.byteLength;
-          if (size > 20_000_000) throw new ValidationError('ExcelBet: response exceeds 20 MB');
+          if (size > 20_000_000) throw new ValidationError(`${this.name}: response exceeds 20 MB`);
           chunks.push(Buffer.from(value));
         }
       } finally { await reader.cancel(); }
@@ -87,12 +87,12 @@ export default class ExcelBetScraper extends ScraperBase {
     for (const r of results) {
       if (r.status === 'fulfilled' && Array.isArray(r.value)) allEvents.push(...r.value);
     }
-    if (allEvents.length === 0) throw new UpstreamError('ExcelBet: all day fetches returned 0 events');
+    if (allEvents.length === 0) throw new UpstreamError(`${this.name}: all day fetches returned 0 events`);
     return { avs: { avs: allEvents } };
   }
 
   normalize(raw) {
-    if (!raw?.avs?.avs) throw new ValidationError('ExcelBet: missing avs.avs');
+    if (!raw?.avs?.avs) throw new ValidationError(`${this.name}: missing avs.avs`);
     return raw.avs.avs;
   }
 
