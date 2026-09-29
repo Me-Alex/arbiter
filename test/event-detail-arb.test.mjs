@@ -93,6 +93,35 @@ test('detects a real cross-book arb and every figure reconciles', () => {
   assert.equal(arb.roundingRisk, false);
 });
 
+test('a plan carries the scope it was priced in, and never mixes two', () => {
+  const scoped = (aLive, bLive) => [
+    book('favbet', [{ ...bttsMarket(2.84, 1.55), live: aLive }]),
+    book('casa-pariurilor', [{ ...bttsMarket(1.9, 2.55), live: bLive }]),
+  ];
+
+  // Both legs in-play: the plan is live, and the 90-second claim holds for
+  // every stake in it.
+  assert.equal(findDetailArbitrages(scoped(true, true), { bankroll: 1000 }).get('BOTH_TEAMS_SCORE')?.live, true,
+    'an all-in-play plan is marked live');
+  // Both legs pre-match: not live.
+  assert.equal(findDetailArbitrages(scoped(false, false), { bankroll: 1000 }).get('BOTH_TEAMS_SCORE')?.live, false,
+    'an all-pre-match plan is not marked live');
+
+  // The control that makes the first two mean something: a live price and a
+  // pre-match price are different products, not two prices for one bet, so the
+  // mixed pair must produce no plan at all rather than a plan with a flag.
+  assert.equal(findDetailArbitrages(scoped(true, false), { bankroll: 1000 }).has('BOTH_TEAMS_SCORE'), false,
+    'a live leg is never paired against a pre-match one');
+
+  // No `live` on the books at all is a pre-match plan, not an unknown one: the
+  // engine's own default is prematch, and the adapters that cannot measure it
+  // say nothing rather than guessing.
+  assert.equal(findDetailArbitrages([
+    book('favbet', [bttsMarket(2.84, 1.55)]), book('casa-pariurilor', [bttsMarket(1.9, 2.55)]),
+  ], { bankroll: 1000 }).get('BOTH_TEAMS_SCORE')?.live, false,
+    'a pair with no scope recorded is pre-match');
+});
+
 test('the reported case reproduces the headline ROI, not the per-book overround', () => {
   const arb = findDetailArbitrages(REAL_CASE, { bankroll: 1000 }).get('BOTH_TEAMS_SCORE');
   // Favbet 1/2.84 + 1/1.55 = 0.997 → about -0.27% overround on its own.

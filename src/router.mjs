@@ -435,9 +435,16 @@ export async function readEventDetailRoute(res, parsedUrl, dataDir) {
         kickoff: ev.kickoff,
         homeTeam: ev.homeTeam,
         awayTeam: ev.awayTeam,
+        // Kept, not dropped: the dashboard marks an in-play row and this page is
+        // where that row is opened, so a price list that arrives unmarked reads
+        // as a different, calmer thing than the signal the trader just clicked.
+        live: ev.live === true,
         markets: Array.isArray(ev.markets) ? ev.markets.map((m) => ({
           key: m.key,
           name: m.name || m.key,
+          // Per-market, not per-event: the adapters mark each market from the
+          // provider's own field, and two books of one event can disagree.
+          live: m.live === true,
           selections: Array.isArray(m.selections) ? m.selections : [],
         })) : [],
       });

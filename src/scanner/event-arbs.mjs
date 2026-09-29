@@ -36,6 +36,7 @@ export const DETAIL_BANKROLL = 100;
  * @property {number} worstCasePayout
  * @property {number} guaranteedProfit
  * @property {boolean} roundingRisk
+ * @property {boolean} live       the scope every leg in this plan was priced in
  */
 
 /**
@@ -90,6 +91,11 @@ export function findDetailArbitrages(instances, opts = {}) {
         period: arb.period,
         line: arb.line ?? null,
         marketKey: arb.marketKey,
+        // Carried from the engine's own scope. findArbitrage already refuses to
+        // pair a live leg with a pre-match one, so this is a single coherent
+        // statement about every leg in the plan — and the view has to be able
+        // to say out loud that a plan expires in 90 seconds.
+        live: arb.live === true,
         legs: allocation.legs.map((leg) => ({
           sourceId: leg.sourceId,
           selection: leg.selection,

@@ -301,6 +301,50 @@ evDialogBody.innerHTML = '';
 renderEventDetail({ events: [{ sourceId: 'maxbet', sourceUrl: 'https://maxbet.ro/g/1', markets: [{ key: 'MATCH_WINNER', name: '1X2', selections: [{ name: '1', odds: 1.0 }, { name: 'X', odds: 1.0 }] }] }] }, {});
 assert(evDialogBody.innerHTML.includes('edge-cell dim">—'), 'boundary odds 1.0 → edge cell shows — (validCount<2)');
 
+// ---- Scenario 9c: in-play scope survives the trip to the detail page ----
+// The dashboard marks a live row and this page is where that row is opened, so
+// a price list that arrived unmarked would read as a calmer thing than the
+// signal the trader just clicked. The two badges are deliberately different
+// claims: a market section is fed by every book quoting that key, so it can be
+// a mix, while an arb plan is scope-pure because findArbitrage refuses to pair
+// a live leg with a pre-match one.
+const marketLive = (live) => ({ events: [{ sourceId: 'maxbet', sourceUrl: 'https://maxbet.ro/g/1',
+  markets: [{ key: 'MATCH_WINNER', name: '1X2', live,
+    selections: [{ name: '1', odds: 2.1 }, { name: 'X', odds: 3.4 }] }] }] });
+evDialogBody.innerHTML = '';
+renderEventDetail(marketLive(true), {});
+assert(evDialogBody.innerHTML.includes('live-badge'), '9c: an in-play market is badged');
+assert(evDialogBody.innerHTML.includes('title="liveInMarket"'), '9c: the market badge claims only that it contains in-play prices');
+assert(evDialogBody.innerHTML.includes('>live<'), '9c: the badge carries the label');
+evDialogBody.innerHTML = '';
+renderEventDetail(marketLive(false), {});
+assert(!evDialogBody.innerHTML.includes('live-badge'), '9c: a pre-match market is not badged');
+evDialogBody.innerHTML = '';
+renderEventDetail(marketLive(undefined), {});
+assert(!evDialogBody.innerHTML.includes('live-badge'), '9c: an unmeasured market is not badged');
+// Mixed: one book in-play, one not, same market key. The section must still say
+// so — hiding it would be the one outcome worse than showing it.
+evDialogBody.innerHTML = '';
+renderEventDetail({ events: [
+  { sourceId: 'maxbet', markets: [{ key: 'MATCH_WINNER', name: '1X2', live: true, selections: [{ name: '1', odds: 2.1 }] }] },
+  { sourceId: 'unibet', markets: [{ key: 'MATCH_WINNER', name: '1X2', live: false, selections: [{ name: '1', odds: 2.0 }] }] },
+] }, {});
+assert(evDialogBody.innerHTML.includes('live-badge'), '9c: a market with one in-play book is badged');
+
+// The plan's own badge: only when the plan itself was built in-play.
+const planLive = (live) => ({ events: [{ sourceId: 'maxbet', sourceUrl: 'https://maxbet.ro/g/1',
+  markets: [{ key: 'MATCH_WINNER', name: '1X2', live: false, arb: { live, roiPercent: 3, totalStake: 100,
+    worstCasePayout: 103, guaranteedProfit: 3, roundingRisk: false,
+    legs: [{ sourceId: 'maxbet', selection: '1', odds: 2.1, stake: 100, payout: 210 }] },
+    selections: [{ name: '1', odds: 2.1 }, { name: 'X', odds: 3.4 }] }] }] });
+evDialogBody.innerHTML = '';
+renderEventDetail(planLive(true), {});
+assert((evDialogBody.innerHTML.match(/live-badge/g) || []).length === 1, '9c: a live plan is badged once, on the plan alone');
+assert(evDialogBody.innerHTML.includes('title="liveTooltip"'), '9c: the plan badge makes the 90-second claim, which pairingScope guarantees');
+evDialogBody.innerHTML = '';
+renderEventDetail(planLive(false), {});
+assert(!evDialogBody.innerHTML.includes('live-badge'), '9c: a pre-match plan is not badged');
+
 // ---- Scenario 10: renderOppV2 tolerates malformed kickoff/detectedAt ----
 // renderOppV2 lives in dashboard.js — extract it too.
 const renderOppV2Src = extractFn('renderOppV2', dashSrc);

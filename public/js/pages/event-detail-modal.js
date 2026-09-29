@@ -189,9 +189,15 @@ function collectCardLegs(card) {
       for (const m of ev.markets) {
         let entry = byMarket.get(String(m.key));
         if (!entry) {
-          entry = { key: String(m.key), name: m.name || String(m.key), books: new Map(), arb: m.arb || null };
+          entry = { key: String(m.key), name: m.name || String(m.key), books: new Map(), arb: m.arb || null, live: false };
           byMarket.set(entry.key, entry);
         }
+        // One section per market key, fed by every book that quotes it, so the
+        // section is "contains in-play prices" when any book priced it live.
+        // It is deliberately not the same claim as the plan's badge below: two
+        // books can quote one key in different scopes, and a section that
+        // merged them would either lie or hide the mix.
+        if (m.live === true) entry.live = true;
         entry.books.set(ev.sourceId, m.selections || []);
       }
     }
@@ -288,6 +294,7 @@ function collectCardLegs(card) {
       <section class="ev-market-section">
         <div class="ev-market-head">
           <h4>${headingLabel}</h4>
+          ${m.live === true ? `<span class="chip red live-badge" title="${helpers.escapeHtml(t('liveInMarket'))}">${helpers.escapeHtml(t('live'))}</span>` : ''}
           ${m.arb ? `<span class="ev-arb-flag" title="${helpers.escapeHtml(t('arbOnLiveOdds'))}">${helpers.escapeHtml(t('arbLive'))}</span>` : ''}
         </div>
         ${m.arb ? renderArbPanel(m.arb, t) : ''}
@@ -375,6 +382,7 @@ function collectCardLegs(card) {
     return `
     <div class="ev-arb${risk ? ' has-risk' : ''}">
       <div class="ev-arb-head">
+        ${arb.live === true ? `<span class="chip red live-badge" title="${esc(t('liveTooltip'))}">${esc(t('live'))}</span>` : ''}
         <div class="ev-arb-roi">
           <span class="ev-arb-roi-value">+${(Number(arb.roiPercent) || 0).toFixed(2)}<span class="pct">%</span></span>
           <span class="ev-arb-roi-label">${esc(t('theoreticalRoi'))}</span>

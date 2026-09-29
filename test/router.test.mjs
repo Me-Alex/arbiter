@@ -313,6 +313,74 @@ test('unknown path returns 404 JSON', async () => {
   } finally { await closeServer(server); }
 });
 
+// ---- /api/event-detail keeps the in-play scope -----------------------------
+
+/**
+ * The dashboard marks an in-play row and this route is where that row is opened,
+ * so a projection that dropped `live` would hand the detail page a price list
+ * unmarked — a different, calmer thing than the signal the trader just clicked.
+ *
+ * Per market, not per event: the adapters mark each market from the provider's
+ * own field, so two books of one event can legitimately disagree and the page
+ * has to be able to show that.
+ */
+test('event detail keeps live on the event and on each market', async () => {
+  const { mkdtemp, mkdir, writeFile, rm } = await import('node:fs/promises');
+  const { tmpdir } = await import('node:os');
+  const { join } = await import('node:path');
+  const { readEventDetailRoute } = await import('../src/router.mjs');
+
+  const QUERY = { sport: 'Football', home: 'Home', away: 'Away', kickoff: '2030-01-01T12:00:00.000Z' };
+  const snapshot = (eventLive, marketLive) => ({
+    events: [{
+      sport: 'Football', league: 'Liga 1', kickoff: QUERY.kickoff,
+      homeTeam: 'Home', awayTeam: 'Away', sourceUrl: 'https://book.ro/e/1',
+      live: eventLive,
+      markets: [{ key: 'MATCH_ODDS', name: '1X2', live: marketLive,
+        selections: [{ name: '1', odds: 2.1 }, { name: 'X', odds: 3.4 }] }],
+    }],
+  });
+
+  // A fresh dataDir per case: the route caches snapshots per directory, so
+  // reusing one would read the previous case's files and pass regardless.
+  const detailFrom = async (label, favbet, unibet) => {
+    const dir = await mkdtemp(join(tmpdir(), `arb-detail-${label}-`));
+    await mkdir(join(dir, 'workspace'), { recursive: true });
+    await writeFile(join(dir, 'workspace', 'favbet_events.json'), JSON.stringify(snapshot(...favbet)));
+    await writeFile(join(dir, 'workspace', 'unibet_events.json'), JSON.stringify(snapshot(...unibet)));
+    const { body } = await readEventDetailRoute(null, { searchParams: new URLSearchParams(QUERY) }, dir);
+    await rm(dir, { recursive: true, force: true });
+    return {
+      favbet: body.events.find((e) => e.sourceId === 'favbet'),
+      unibet: body.events.find((e) => e.sourceId === 'unibet'),
+    };
+  };
+
+  // Two books of one event in different scopes: both must survive separately.
+  const mixed = await detailFrom('mixed', [true, true], [false, false]);
+  assert.equal(mixed.favbet.live, true, 'an in-play event is still in-play downstream');
+  assert.equal(mixed.favbet.markets[0].live, true, 'and so is its market');
+  assert.equal(mixed.unibet.live, false, 'a pre-match event is not marked');
+  assert.equal(mixed.unibet.markets[0].live, false, 'and neither is its market');
+
+  // The control that makes the two lines above mean something: the event flag
+  // and the market flag are measured from different provider fields, so they can
+  // disagree. A route that copied one onto the other would pass the first case
+  // and be wrong here — a pre-match event header over a live price, or worse, a
+  // live market silently downgraded because the event header was stale.
+  const disagree = await detailFrom('disagree', [false, true], [true, false]);
+  assert.equal(disagree.favbet.live, false, 'the event keeps its own scope');
+  assert.equal(disagree.favbet.markets[0].live, true, 'and the market keeps its own, even when the event header disagrees');
+  assert.equal(disagree.unibet.live, true);
+  assert.equal(disagree.unibet.markets[0].live, false);
+
+  // A snapshot with no `live` at all — what the 21 books that cannot measure it
+  // emit — must not read as in-play.
+  const unmeasured = await detailFrom('unmeasured', [undefined, undefined], [undefined, undefined]);
+  assert.equal(unmeasured.favbet.live, false, 'an unmeasured event is not marked in-play');
+  assert.equal(unmeasured.favbet.markets[0].live, false, 'and neither is its market');
+});
+
 // ---- /api/scrape/state ----------------------------------------------------
 
 test('returns empty scrape state', async () => {

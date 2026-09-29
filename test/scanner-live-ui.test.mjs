@@ -152,7 +152,7 @@ test('the page carries the controls its own code drives', () => {
   assert.match(markup, /id="live-count"/);
   // Every i18n key the page's live strings need, in both languages.
   const i18n = read('public/js/i18n.js');
-  for (const key of ['includeLive', 'liveSignals', 'liveSignalsNote', 'liveTooltip', 'livePreviewNote', 'live']) {
+  for (const key of ['includeLive', 'liveSignals', 'liveSignalsNote', 'liveTooltip', 'livePreviewNote', 'live', 'liveInMarket']) {
     const uses = (i18n.match(new RegExp(`^\\s*${key}:`, 'gm')) || []).length;
     assert.equal(uses, 2, `${key} is translated in both languages`);
   }
@@ -173,6 +173,10 @@ test('every page that renders the badge also loads the rule for it', () => {
   const pages = [
     { html: 'public/admin/scanner.html', script: 'public/js/pages/scanner.js' },
     { html: 'public/index.html', script: 'public/js/pages/dashboard.js' },
+    // The dashboard opens the event-detail dialog from the same page, and
+    // /event.html loads the same modal standalone, so both must reach the rule.
+    { html: 'public/index.html', script: 'public/js/pages/event-detail-modal.js' },
+    { html: 'public/event.html', script: 'public/js/pages/event-detail-modal.js' },
   ];
   for (const { html, script } of pages.filter(p => emitsBadge(p.script))) {
     const sheets = stylesheetsOf(html);
