@@ -269,3 +269,166 @@ test('buildSelectionIndex maps (event,market,selection) → every book that quot
   assert.deepEqual(sources, ['a', 'b'], 'both books quoting that selection are present');
   assert.equal(idx.get(homeKey).find((c) => c.sourceId === 'b').odds, 2.5);
 });
+
+/**
+ * First-half markets are compared with each other, not skipped.
+ *
+ * The engine used to gate every market on `isFullTimeMarket(m)`, which reads the
+ * `period` field the ADAPTER wrote. That field is documented as untrustworthy in
+ * `canonicalPeriod`'s own comment, and betano hardcodes `period: 'fulltime'` on
+ * everything it emits. So the gate discriminated on the one signal it should not
+ * have used: betano's first-half goals totals reached the engine as half1
+ * contracts, while unibet's and the everymatrix pair's — same contract line, same
+ * events, declared `half1` — were dropped. Measured over the 24 live books,
+ * OVER_UNDER::half1::0.5/1.5/2.5 was priced by three independent feeds and
+ * reachable from one of them, and market-coverage.mjs reported it as betano-only.
+ *
+ * `bucketKeyForContract` already carries the corrected period, so the key itself
+ * is what keeps a first-half line apart from the full-time line of the same
+ * number. These tests pin that isolation rather than the removal: admitting a
+ * market is only safe while the two cannot meet.
+ */
+
+/** A football event on one contract line, with a declared period and a name. */
+function periodEvent(sourceId, eventKey, { period, name, marketKey, selections }) {
+  return {
+    id: `${sourceId}-${eventKey}`, sourceId, eventKey,
+    sport: 'Football', league: 'Liga 1', kickoff: new Date('2030-01-01').toISOString(),
+    homeTeam: 'Home', awayTeam: 'Away',
+    markets: [{ key: marketKey, name, period, selections }],
+  };
+}
+
+// The prices are INVERTED, and the best price for each outcome sits on a
+// different book, so every pair below is a real arbitrage with one exception:
+// the settlement window. 1/1.50 + 1/3.20 = 0.979 < 1.
+//
+// This matters more than it looks. A first version of these tests used the same
+// un-inverted prices on both books, the first-half pair returned nothing, and the
+// reason was arithmetic — the tests were measuring "no arbitrage" and reading it
+// as "the periods were kept apart". They would have passed just as happily if the
+// period had been thrown away entirely. The period is the ONLY variable now.
+const OVER_A = { name: 'Peste 0.5', odds: 1.50 };
+const UNDER_A = { name: 'Sub 0.5', odds: 2.60 };
+const OVER_B = { name: 'Peste 0.5', odds: 1.45 };
+const UNDER_B = { name: 'Sub 0.5', odds: 3.20 };
+
+test('two publishers of the same first-half total pair, whatever they declared', () => {
+  // The asymmetry this fixes: unibet declares `half1` and betano declares
+  // `fulltime` on markets that are both "first half, over/under 0.5". Before the
+  // change only betano's reached the engine, so no pair was possible.
+  const declared = findArbitrage(groupByEvent([
+    periodEvent('unibet', 'k1', { period: 'half1', name: 'Total Goluri - Repriză a 1-a', marketKey: 'TOTAL', selections: [OVER_A, UNDER_A] }),
+    periodEvent('betano', 'k1', { period: 'fulltime', name: 'Goluri prima repriză Peste/Sub', marketKey: 'OUH1', selections: [OVER_B, UNDER_B] }),
+  ]));
+  assert.equal(declared.length, 1, 'the first-half line pairs across both publishers');
+  assert.equal(declared[0].period, 'half1', 'and it is bucketed as first-half');
+  assert.equal(declared[0].family, 'OVER_UNDER');
+  assert.equal(declared[0].line, '0.5');
+  // The leg that came from the book which DECLARES `fulltime` is still first-half:
+  // the name is what corrected it, and the declared field never decided anything.
+  assert.deepEqual(declared[0].legs.map((l) => l.sourceId).sort(), ['betano', 'unibet']);
+  assert.ok(declared[0].inverseSum < 1, 'the pair is a real arbitrage, not a counted match');
+});
+
+test('a first-half total never pairs with the full-time total of the same line', () => {
+  // The invariant the whole change rests on. The prices are inverted and
+  // cross-book, so the only thing stopping an arbitrage report is the period:
+  // 1/1.50 + 1/3.20 = 0.979, and these two settle on different windows.
+  const crossed = findArbitrage(groupByEvent([
+    periodEvent('a', 'k1', { period: 'half1', name: 'Total Goluri - Repriză a 1-a', marketKey: 'TOTAL', selections: [OVER_A, UNDER_A] }),
+    periodEvent('b', 'k1', { period: 'fulltime', name: 'Total goluri', marketKey: 'TOTAL_GOALS', selections: [OVER_B, UNDER_B] }),
+  ]));
+  assert.equal(crossed.length, 0, 'a first-half price and a full-time price are not the same contract');
+
+  // And the same holds for the halves against each other.
+  const halves = findArbitrage(groupByEvent([
+    periodEvent('a', 'k1', { period: 'half1', name: 'Goluri prima repriza', marketKey: 'OUH1', selections: [OVER_A, UNDER_A] }),
+    periodEvent('b', 'k1', { period: 'half2', name: 'Goluri a doua repriza', marketKey: 'OUH2', selections: [OVER_B, UNDER_B] }),
+  ]));
+  assert.equal(halves.length, 0, 'first half and second half are separate contracts');
+});
+
+test('a period this engine cannot name is refused, not defaulted to full-time', () => {
+  // `canonicalPeriod` used to answer 'fulltime' for a declared period that is
+  // explicitly not full-time and that it cannot read, which was harmless only
+  // while `isFullTimeMarket` was still gating the engine. With the gate on the
+  // contract's own period, that default would have bucketed a first-half market
+  // with a full-time one — a false arbitrage. The two tests in
+  // engine.test.mjs:108 and verification-regression.test.mjs:124 are the
+  // regressions for it; this one names the boundary directly.
+  //
+  // No live adapter emits `firsthalf` — the declared values across the 24 books
+  // are fulltime, unknown, half1, half2 and absent — so a census of the feeds
+  // could not have found this. The synthetic spelling is the whole reason this
+  // class of bug is testable at all.
+  const unnameable = (sourceId, id) => periodEvent(sourceId, 'k1', {
+    period: 'firsthalf', name: '', marketKey: 'TOTAL_GOALS',
+    selections: sourceId === 'a' ? [OVER_A, UNDER_A] : [OVER_B, UNDER_B],
+  });
+  // POSITIVE CONTROL, on the same line and the same prices, correctly named:
+  // this DOES pair, so the zero below is about the period and nothing else.
+  const named = (sourceId) => periodEvent(sourceId, 'k1', {
+    period: 'half1', name: 'Goluri prima repriza', marketKey: 'TOTAL_GOALS',
+    selections: sourceId === 'a' ? [OVER_A, UNDER_A] : [OVER_B, UNDER_B],
+  });
+  assert.equal(findArbitrage(groupByEvent([named('a'), named('b')])).length, 1,
+    'a nameable first-half line is tradable');
+  assert.equal(findArbitrage(groupByEvent([unnameable('a'), unnameable('b')])).length, 0,
+    'a period nobody can name must not be traded at all');
+});
+
+/**
+ * The legacy opaque-key fallback is currently dead, and this is what keeps that
+ * a measured fact rather than an assumption.
+ *
+ * findArbitrage keeps a defensive older path for a market `resolveContract`
+ * declines: if `supportedContractForMarket` recognises the key and
+ * `isMatchResultMarket` accepts the selection set, the market is treated as a
+ * full-time 1X2. That path hardcodes `period: 'fulltime'`, so it is the one
+ * place the declared-period gate still has to apply, and removing the gate there
+ * breaks no test — which is exactly what a mutation run reported.
+ *
+ * A mutation that no test can catch is normally a missing test. Here it is a
+ * dead branch, and this measures that instead of guessing it: for every key
+ * `supportedContractForMarket` can match, with both a three-way and a two-way
+ * selection set and every declared period, the branch is never taken, because
+ * `resolveContract` has already answered by the time it is considered.
+ *
+ * If a future contract family is added to `supportedContractForMarket` without
+ * being added to `resolveContract`, this fails and names the consequence: the
+ * branch goes live, and it is the one place a period cannot be derived.
+ */
+test('the legacy full-time fallback in findArbitrage is unreachable, and stays that way', async () => {
+  const { supportedContractForMarket, isMatchResultMarket } = await import('../src/scanner/market-contracts.mjs');
+  const { resolveContract } = await import('../src/scanner/market-contracts.mjs');
+
+  const threeWay = [{ name: '1', odds: 2.1 }, { name: 'X', odds: 3.3 }, { name: '2', odds: 3.4 }];
+  const twoWay = [{ name: 'Over 2.5', odds: 1.9 }, { name: 'Under 2.5', odds: 1.9 }];
+  const keys = ['MATCH_ODDS', '1X2', 'MRES', 'MR12', '547', '1', 'default', 'over_under_2_5', 'OVER_UNDER_1_5', 'over_under_9', 'ufo:mtyp:00-00', 'ufo:mtyp:0c-00', 'handicap', 'game_handicap', 'total_goals'];
+  const periods = ['fulltime', 'unknown', 'half1', 'firsthalf', undefined];
+
+  const reachable = [];
+  let checked = 0;
+  for (const key of keys) {
+    if (!supportedContractForMarket(key)) continue;
+    for (const selections of [threeWay, twoWay]) {
+      for (const period of periods) {
+        const market = { key, period, name: 'Meci', selections };
+        checked += 1;
+        if (!resolveContract(market) && isMatchResultMarket(market)) {
+          reachable.push(`key=${key} period=${String(period)} selections=${selections.length}`);
+        }
+      }
+    }
+  }
+  assert.equal(reachable.length, 0,
+    `the legacy branch went live (${reachable.join('; ')}) — it hardcodes period 'fulltime', so the declared-period gate is load-bearing again`);
+
+  // POSITIVE CONTROL: `isMatchResultMarket` must still be able to say yes, or
+  // the zero above would only be proving that the predicate is permanently
+  // false and would keep passing after the branch had become reachable.
+  assert.equal(isMatchResultMarket({ key: '547', period: 'fulltime', name: 'Meci', selections: threeWay }), true,
+    'the predicate still accepts a full-time 1/X/2 opaque key');
+  assert.ok(checked >= 30, `the sweep actually ran (${checked} combinations)`);
+});

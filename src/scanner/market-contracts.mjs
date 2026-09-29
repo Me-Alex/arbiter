@@ -277,7 +277,37 @@ export function canonicalPeriod(market = {}) {
   const p = String(market?.period || '').trim().toLowerCase();
   if (p === 'half1' || p === '1st_half' || p === 'first_half' || /prima\s*repriza|^repriza\s*1\b|[12](st|nd)?\s*half/.test(p)) return 'half1';
   if (p === 'half2' || p === '2nd_half' || p === 'second_half' || /a\s*doua\s*repriza|^repriza\s*2\b|^[2]\s*repriza/.test(p)) return 'half2';
-  return 'fulltime'; // safe default: prefer the most common emission
+  // An explicitly non-full-time period that names no half this function can read
+  // is NOT full-time, and it must not be defaulted into one.
+  //
+  // The safe default below used to be `fulltime`, and while findArbitrage also
+  // gated on `isFullTimeMarket` that was harmless twice over: the gate dropped
+  // these markets anyway, and a mislabelled contract never reached a bucket. Both
+  // assumptions were doing the same job, and the gate is now gone — the engine
+  // admits a resolved contract and lets `bucketKeyForContract` isolate periods,
+  // which is the right place for that job because the period travels WITH the
+  // contract instead of being re-derived from a field the adapter wrote.
+  //
+  // So the default had to change with it. Two tests pin this: one feeds a market
+  // declared `period: 'firsthalf'` with 1/X/2 legs next to a real full-time 1X2
+  // and requires no arbitrage, the other marks a whole fixture `firsthalf` and
+  // requires none either. `firsthalf` matches none of the half1 spellings above
+  // (they need `1st half`, `first_half` or a Romanian form), so with the old
+  // default it resolved as MATCH_ODDS/fulltime and paired with the genuine
+  // full-time result — a false arbitrage over two different settlement windows,
+  // which is the exact failure the surrounding comments describe.
+  //
+  // Measured on the 24 live books this changes nothing: the declared values there
+  // are 43757 fulltime, 4163 unknown, 2129 half1, 1047 half2 and 673 absent, and
+  // the first two take the branch above. It is a spelling no live adapter emits
+  // today and a synthetic one does, which is why a test found what a live
+  // census of the feeds could not.
+  //
+  // 'unknown' is the honest answer: the settlement window exists and is not
+  // full-time, but this function cannot name it. Callers treat it as not
+  // tradable rather than as the most common emission — see the period guard in
+  // scanner/engine.mjs and the same guard in scripts/market-coverage.mjs.
+  return 'unknown';
 }
 
 /**

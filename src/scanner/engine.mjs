@@ -134,13 +134,76 @@ export function findArbitrage(grouped, { minRoiPercent = 0 } = {}) {
         // here as a defensive older path so a future contract family addition
         // can't silently drop 1X2 if its key isn't in the resolver.
         let contract = resolveContract(m);
+        // Whether the contract came from the legacy opaque-key fallback below,
+        // which is the ONE path that hardcodes period 'fulltime' instead of
+        // deriving it. See the period gate a few lines down.
+        //
+        // Measured 2026-10-02: that branch is currently unreachable. Over every
+        // key `supportedContractForMarket` can match, crossed with a three-way and
+        // a two-way selection set and every declared period, it is never taken,
+        // because `resolveContract` has already answered by then — MATCH_ODDS and
+        // 1X2 resolve in section 1, and an OVER_UNDER_n key fails
+        // `isLiteral1x2SelectionSet` for want of three legs. The gate below is
+        // therefore insurance on a documented future risk rather than on a live
+        // path, and `test/engine.test.mjs` pins the unreachability so that a
+        // contract family added to `supportedContractForMarket` without being
+        // added to `resolveContract` fails loudly instead of quietly re-opening
+        // the one branch that cannot derive a period.
+        let viaLegacyFallback = false;
         if (!contract) {
           const legacy = supportedContractForMarket(m.key, ev.sport);
           if (legacy && isMatchResultMarket(m)) {
             contract = { family: 'MATCH_ODDS', period: 'fulltime', lineKey: '_', outcomes: legacy.outcomes };
+            viaLegacyFallback = true;
           }
         }
-        if (!contract || !isFullTimeMarket(m)) continue;
+        if (!contract) continue;
+        // The declared-period gate, and why it now applies to one path only.
+        // Settlement-period gate. A RESOLVED contract already carries the period
+        // `canonicalPeriod` derived for it, and that period is part of
+        // `bucketKeyForContract`, so a first-half total is already isolated from
+        // the full-time total of the same line by the key itself. Gating those
+        // contracts on `market.period` as well threw away a priced market on the
+        // strength of a field this codebase already documents as untrustworthy:
+        // "A declared `fulltime` period is only as trustworthy as the adapter
+        // that wrote it", and betano hardcodes `period: 'fulltime'` on every
+        // market it emits.
+        //
+        // That made the gate discriminate on the one signal it should not have
+        // used. Measured 2026-10-02 over all 24 books, 4746 grouped events and
+        // 51737 football markets: betano declares fulltime on its first-half
+        // goals totals, so those reached the engine as half1 contracts, while
+        // unibet and the everymatrix pair declare `half1` and were dropped — the
+        // same contract line, priced by three independent feeds, reachable from
+        // one of them. market-coverage.mjs then reported
+        // OVER_UNDER::half1::0.5/1.5/2.5 as betano-only while a gate-free count
+        // of the same lines found betano, unibet and getsbet+contibet.
+        //
+        // Admitting them is safe by measurement, not by argument: of the 2051
+        // markets this gate currently drops, every one resolves to half1 or
+        // half2 and NONE resolves to fulltime, so nothing that disagrees with
+        // its own declared period can be re-labelled as a full-time contract.
+        // The declared values behind that count are 43757 fulltime, 4163
+        // unknown, 2129 half1, 1047 half2 and 673 absent — the last two
+        // categories are the ones that change, and both are self-describing.
+        //
+        // The legacy fallback is why the gate survives at all: it hardcodes
+        // `period: 'fulltime'`, so a first-half 1/X/2 market that resolved
+        // through it would be bucketed with a genuine full-time result. That
+        // path keeps the declared-period check, and `isMatchResultMarket`
+        // applies the name-based half check on top of it.
+        if (viaLegacyFallback && !isFullTimeMarket(m)) continue;
+        // A resolved contract whose period is not one this engine trades is
+        // refused rather than bucketed. `canonicalPeriod` returns 'unknown' for a
+        // declared period that is explicitly not full-time and that it cannot
+        // name — 'firsthalf', 'ht', any future spelling — and the honest reading
+        // of that is "a settlement window exists and I cannot identify it", not
+        // "full-time, because that is the common case". Bucketing it as
+        // full-time would pair it with a genuine full-time market on the same
+        // line, which is the false arbitrage two tests exist to prevent; refusing
+        // it costs nothing, because such a market has no counterparty this
+        // engine could name.
+        if (contract.period !== 'fulltime' && contract.period !== 'half1' && contract.period !== 'half2') continue;
         // Skip families whose outcomes aren't mutually exclusive — the inverse-
         // sum < 1 test on them would either silently miss or invent arbs.
         // DOUBLE_CHANCE (1X/12/X2) is recognized but excluded here.

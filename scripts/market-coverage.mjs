@@ -45,7 +45,6 @@ import { isSharedFeed } from '../src/scanner/feed-groups.mjs';
 import { canonicalSport } from '../src/shared/text.mjs';
 import {
   resolveContract,
-  isFullTimeMarket,
   bucketKeyForContract,
 } from '../src/scanner/market-contracts.mjs';
 
@@ -92,10 +91,9 @@ const byId = new Map(cfg.jobs.map((j) => [j.id, j]));
  * the engine can arbitrate. It used to be `${family}/${lineKey}`, which folded
  * the settlement period away and applied no full-time guard: unibet publishes
  * "Total goluri" and "Total Goluri - Repriză a 1-a" under the same key `TOTAL`,
- * so a first-half 2.5 was reported as a second full-time publisher of 2.5 on a
- * line the engine refuses to trade (findArbitrage skips anything failing
- * isFullTimeMarket, and bucketKeyForContract keys on period). A row can now
- * only be filled by markets the scanner would actually pair.
+ * so a first-half 2.5 was reported as a second full-time publisher of 2.5. A row
+ * can now only be filled by markets the scanner would actually pair, because the
+ * period in the key is the one the engine buckets on.
  *
  * @returns {Promise<Map<string, {events: Set<string>, keys: Set<string>}>>}
  */
@@ -144,9 +142,23 @@ async function loadBook(id) {
       // flagged arbEligible:false (double chance) never is — both are counted
       // nowhere rather than in a row that suggests they might be.
       if (!contract || contract.arbEligible === false) continue;
-      // The same settlement guard the engine applies. Measuring a market the
-      // scanner would drop reports a pair that can never be booked.
-      if (!isFullTimeMarket(m)) continue;
+      // The settlement guard the engine applies — but on the CONTRACT's period,
+      // which is what `bucketKeyForContract` keys on, not on the market's declared
+      // `period` field. The row key below already carries the corrected period, so
+      // a first-half line is counted as a first-half line and cannot be confused
+      // with the full-time line of the same number.
+      //
+      // This used to apply `isFullTimeMarket` to the market, which dropped every
+      // first-half market and made the report say the scanner would refuse them —
+      // true at the time, and no longer. betano hardcodes `period: 'fulltime'` on
+      // every market it emits, so its first-half totals passed the guard on the
+      // strength of a field this codebase documents as untrustworthy, while
+      // unibet's and the everymatrix pair's first-half totals declared `half1` and
+      // were dropped. The report then showed OVER_UNDER::half1::0.5/1.5/2.5 as
+      // betano-only, 1 publisher and 0 pairs, on lines three independent feeds
+      // were quoting. The guard is now the engine's, so the report can only be
+      // filled by markets the scanner would actually pair.
+      if (contract.period !== 'fulltime' && contract.period !== 'half1' && contract.period !== 'half2') continue;
       // The engine's own key, with the (unused here) event component dropped:
       // this report pairs publishers across books, not within one event.
       const key = bucketKeyForContract('', contract).replace(/^::/, '');
