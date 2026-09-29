@@ -66,9 +66,13 @@ const TENANT_RESULT_MARKET = Object.freeze({
  *   maxbet                 totals 1547 "Total goluri"     BTTS 1709 "Ambele marchează"
  *                          AH 8 "Handicap Asiatic"
  *
- * `betmen` is intentionally absent: no capture in the repo establishes its
- * ids, and an unmeasured tenant that published nothing extra is correct,
- * whereas a guessed id is a mislabel.
+ * `betmen` is intentionally absent, and not merely unmeasured: its football
+ * events carry the result market and one half-time/full-time combined market
+ * ("Pauza sau Final", which spans periods and is not a full-time 1X2) and
+ * nothing else. There are no totals, no both-teams-to-score and no handicap
+ * markets on its projection to publish, so there is no id to go looking for —
+ * and a tenant that contributes the result market alone is correct, whereas a
+ * guessed id is a mislabel.
  *
  * The market NAME is recorded alongside the id and required on read, because a
  * marketId alone is not a contract. The same feed also serves, under other ids,
