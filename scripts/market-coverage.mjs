@@ -42,6 +42,7 @@ import { fileURLToPath } from 'node:url';
 
 import { instantiate } from '../src/scrapers/index.mjs';
 import { isSharedFeed } from '../src/scanner/feed-groups.mjs';
+import { canonicalSport } from '../src/shared/text.mjs';
 import {
   resolveContract,
   isFullTimeMarket,
@@ -112,7 +113,29 @@ async function loadBook(id) {
   // signal this report exists to show. Measuring the football path means
   // asking for football.
   const scraper = instantiate(id, { jobConfig: job, dataDir: join(ROOT, 'data'), maxEvents, sport: SPORT, timeoutMs: 60_000 });
-  const events = scraper.extractEvents(scraper.normalize(await scraper.fetchRaw()));
+  const allEvents = scraper.extractEvents(scraper.normalize(await scraper.fetchRaw()));
+  // Passing `sport` above is a REQUEST, not a filter, and only some adapters
+  // honour it: netbet drops to the one sport, but the FEG catalogue traversal
+  // walks every sport in the feed and betano/unibet answer with the whole
+  // site. Those events carry their own sport, so they resolve to perfectly
+  // good contracts — a basketball points total, a tennis games total, an ice
+  // hockey puck line — and the row key drops the event component on purpose
+  // (this report pairs publishers across books, not within one event), so they
+  // land in the same rows as the football markets they resemble.
+  //
+  // Measured 2026-09-29 at maxEvents 3000: betano returned 286 events of which
+  // 35 were football, and 69 of its 77 contract lines were another sport;
+  // fortuna 892/768 with 19 foreign lines, casa-pariurilor 894/770 with 19,
+  // unibet 989/738 with 4. betano was reading as the second largest book in
+  // this report on the strength of basketball and esports. None of it can pair —
+  // `eventKey` carries the sport, so a basketball total never meets a football
+  // one — so the pair counts were already right and the LINE counts were not.
+  // The engine never sees this because it groups by event first; a report that
+  // counts publishers by contract alone has to do the sport scoping itself.
+  const events = allEvents.filter((e) => canonicalSport(e.sport) === SPORT);
+  if (events.length !== allEvents.length) {
+    process.stdout.write(`  ${id.padEnd(16)} ${allEvents.length - events.length}/${allEvents.length} event(s) outside ${SPORT}\n`);
+  }
   const byMarket = new Map();
   for (const e of events) {
     for (const m of e.markets || []) {
