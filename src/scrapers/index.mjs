@@ -192,6 +192,7 @@ export function isKnownJob(jobId) {
 }
 
 export const ALL_SCRAPERS = Object.keys(DIRECT);
-export const ALL_ALTENAR_IDS = [...ALTENAR_IDS];
 // Compatibility export: no TinyFish jobs are available through this registry.
+// The routing test asserts this stays empty so TinyFish cannot come back by
+// accident.
 export const ALL_TINYFISH_IDS = [];

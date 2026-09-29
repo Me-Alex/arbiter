@@ -6,7 +6,7 @@
  * then feed to the extraction phase in parallel.
  */
 
-import { runSync, submit } from './client.mjs';
+import { runSync } from './client.mjs';
 import { discoverLinksViaBrowser } from './browser-discovery.mjs';
 
 const DEFAULT_DISCOVERY_GOAL = `
@@ -195,19 +195,3 @@ export async function discoverMatches({
   };
 }
 
-/**
- * Convenience for the orchestrator: kick off discovery and immediately start
- * extraction on the first batch. Returns both the discovery handle and the
- * list of matches so the caller can decide on parallelism.
- */
-export async function discoverAsync(args) {
-  const out = {
-    url: args.baseUrl,
-    goal: (args.goal || DEFAULT_DISCOVERY_GOAL).replace('{maxMatches}', String(args.maxMatches || 30)),
-    maxDurationSeconds: args.maxDurationSeconds || 180,
-    sessionId: args.sessionId,
-    browserProfile: args.browserProfile,
-  };
-  if (args.maxSteps !== null && args.maxSteps !== undefined) out.maxSteps = args.maxSteps;
-  return await submit(out);
-}

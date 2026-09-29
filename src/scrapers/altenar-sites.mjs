@@ -76,5 +76,3 @@ export function createAltenarTenant(jobId, opts = {}) {
   if (!cfg) return null;
   return new AltenarPublic(jobId, opts);
 }
-
-export const ALTENAR_JOB_ID = 'altenar-sites';

@@ -13,21 +13,6 @@ export const DATA_STATUS = Object.freeze({
 export const DEFAULT_PREMATCH_MAX_AGE_MS = 10 * MINUTE_MS;
 export const DEFAULT_LIVE_MAX_AGE_MS = 90 * 1000;
 
-export function dataStatusForResult(result = {}) {
-  if (result.status === 'cancelled') return DATA_STATUS.CANCELLED;
-  if (!result.valid || result.status === 'failed' || result.status === 'timeout') return DATA_STATUS.FAILED;
-
-  const discovered = Number(result.discovery?.count || 0);
-  const extracted = Number(result.extraction?.ok || 0);
-  const extractionFailed = Number(result.extraction?.failed || 0);
-  const events = Number(result.events || 0);
-
-  if (discovered > 0 && extracted === 0 && extractionFailed > 0) return DATA_STATUS.FAILED;
-  if (events === 0) return DATA_STATUS.EMPTY;
-  if (extractionFailed > 0) return DATA_STATUS.PARTIAL;
-  return DATA_STATUS.FRESH;
-}
-
 export function snapshotQuality(snapshot, {
   now = Date.now(),
   prematchMaxAgeMs = DEFAULT_PREMATCH_MAX_AGE_MS,
