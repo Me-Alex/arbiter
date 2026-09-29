@@ -9,6 +9,7 @@ import {
   isAsianHandicapMarket,
   canonicalOutcomeFor,
   bucketKeyForContract,
+  isFullTimeMarket,
 } from '../src/scanner/market-contracts.mjs';
 
 test('MATCH_ODDS family: explicit key, opaque 547 key, default key', () => {
@@ -118,6 +119,38 @@ test('bucket key isolates by period and line — critical for cross-book correct
     bucketKeyForContract('event1', ou35),
     'OVER 2.5 must never bucket with OVER 3.5 (the multi-line bug from older ufo:mtyp:00-0u)',
   );
+});
+
+test('a half-time total is refused by the full-time gate and buckets apart', () => {
+  // Measured live on unibet: one provider key (`TOTAL`) carries BOTH readings,
+  // and their line ranges overlap — "Total goluri" quoted 0.5–6.5 and "Total
+  // Goluri - Repriză a 1-a" quoted 0.5–3.5, so 2.5 exists at both periods on
+  // the same fixture. The family and the line are therefore identical and only
+  // the period separates them.
+  const ft = {
+    key: 'TOTAL', name: 'Total goluri', period: 'fulltime', line: '2.5',
+    selections: [{ name: 'Peste 2.5' }, { name: 'Sub 2.5' }],
+  };
+  const h1 = {
+    key: 'TOTAL', name: 'Total Goluri - Repriză a 1-a', period: 'half1', line: '2.5',
+    selections: [{ name: 'Peste 2.5' }, { name: 'Sub 2.5' }],
+  };
+
+  const cFt = resolveContract(ft);
+  const cH1 = resolveContract(h1);
+  assert.ok(cFt && cH1, 'both readings must resolve to a goals total');
+  assert.equal(cFt.lineKey, cH1.lineKey, 'the line really is the same on both periods');
+  assert.notEqual(
+    bucketKeyForContract('event1', cFt),
+    bucketKeyForContract('event1', cH1),
+    'a first-half 2.5 must not bucket with a full-time 2.5',
+  );
+
+  // The gate the engine applies before it will price a market at all, and the
+  // one scripts/market-coverage.mjs now applies so the report cannot count a
+  // pair the scanner would refuse to book.
+  assert.equal(isFullTimeMarket(ft), true);
+  assert.equal(isFullTimeMarket(h1), false);
 });
 
 test('canonicalOutcomeFor routes by family', () => {

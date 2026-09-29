@@ -340,6 +340,30 @@ test('classifyAndExtractLine: half-line AH half accepted', () => {
   assert.equal(result.lineKey, '-1.5/1.5');
 });
 
+test('classifyAndExtractLine: a total on a non-half line is refused', () => {
+  // The AH branch above already refused a whole line; the O/U branch did not,
+  // so a quarter total resolved to a contract. That is not a two-sided surebet:
+  // at exactly 2 goals, "Over 2.25" is half a push and "Under 2.25" is half a
+  // push, so the pair leaves the stake half-returned on the one score the line
+  // names. Measured live, the Altenar feed published Peste/Sub 2.25 on don and
+  // topbet and the coverage report listed it as an arbitrable line.
+  for (const line of ['2.25', '2', '3.75']) {
+    for (const kind of [{ kind: 'OU' }, {}]) {
+      const r = classifyAndExtractLine(
+        [{ name: `Peste ${line}` }, { name: `Sub ${line}` }],
+        kind,
+      );
+      assert.equal(r, null, `total ${line} (${kind.kind ?? 'auto'}) must not be a contract`);
+    }
+  }
+  // The half line it sits next to still resolves, so the rule bites on the line
+  // and not on the shape.
+  const ok = classifyAndExtractLine([{ name: 'Peste 2.5' }, { name: 'Sub 2.5' }]);
+  assert.ok(ok);
+  assert.equal(ok.family, 'OVER_UNDER');
+  assert.equal(ok.lineKey, '2.5');
+});
+
 test('a handicap buckets the same whichever order the provider lists its legs', () => {
   // The lineKey is the join key between two books, so it has to mean the same
   // thing on both sides. It used to be read off array position, so "1 -1.5"/

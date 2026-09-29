@@ -42,7 +42,11 @@ import { fileURLToPath } from 'node:url';
 
 import { instantiate } from '../src/scrapers/index.mjs';
 import { isSharedFeed } from '../src/scanner/feed-groups.mjs';
-import { resolveContract } from '../src/scanner/market-contracts.mjs';
+import {
+  resolveContract,
+  isFullTimeMarket,
+  bucketKeyForContract,
+} from '../src/scanner/market-contracts.mjs';
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url));
 
@@ -79,6 +83,15 @@ const byId = new Map(cfg.jobs.map((j) => [j.id, j]));
  * The provider keys that resolve to each contract are kept alongside it, so
  * the report still says which spellings are in play.
  *
+ * The row key is the engine's own bucket key, so the report counts exactly what
+ * the engine can arbitrate. It used to be `${family}/${lineKey}`, which folded
+ * the settlement period away and applied no full-time guard: unibet publishes
+ * "Total goluri" and "Total Goluri - Repriză a 1-a" under the same key `TOTAL`,
+ * so a first-half 2.5 was reported as a second full-time publisher of 2.5 on a
+ * line the engine refuses to trade (findArbitrage skips anything failing
+ * isFullTimeMarket, and bucketKeyForContract keys on period). A row can now
+ * only be filled by markets the scanner would actually pair.
+ *
  * @returns {Promise<Map<string, {events: Set<string>, keys: Set<string>}>>}
  */
 async function loadBook(id) {
@@ -94,7 +107,12 @@ async function loadBook(id) {
       // flagged arbEligible:false (double chance) never is — both are counted
       // nowhere rather than in a row that suggests they might be.
       if (!contract || contract.arbEligible === false) continue;
-      const key = `${contract.family}/${contract.lineKey ?? '_'}`;
+      // The same settlement guard the engine applies. Measuring a market the
+      // scanner would drop reports a pair that can never be booked.
+      if (!isFullTimeMarket(m)) continue;
+      // The engine's own key, with the (unused here) event component dropped:
+      // this report pairs publishers across books, not within one event.
+      const key = bucketKeyForContract('', contract).replace(/^::/, '');
       if (!byMarket.has(key)) byMarket.set(key, { events: new Set(), keys: new Set() });
       byMarket.get(key).events.add(e.eventKey);
       byMarket.get(key).keys.add(m.key);
@@ -166,7 +184,7 @@ for (const [key, publishers] of markets) {
 rows.sort((a, b) => b.pairs - a.pairs || b.books - a.books || a.key.localeCompare(b.key));
 
 console.log(`\nmarket coverage — ${books.size} book(s), ${rows.length} arbitrable contract line(s)\n`);
-console.log('  contract              books  independent pairs  provider keys / note');
+console.log('  contract                    books  independent pairs  provider keys / note');
 console.log('  ' + '-'.repeat(92));
 
 for (const r of rows) {
@@ -176,7 +194,7 @@ for (const r of rows) {
       ? `all ${r.books} share one feed (${r.groups.map((g) => g.join('+')).join(', ')})`
       : 'single book';
   console.log(
-    `  ${r.key.padEnd(22)} ${String(r.books).padStart(5)}  ${String(r.pairs).padStart(17)}  ${note}`,
+    `  ${r.key.padEnd(30)} ${String(r.books).padStart(5)}  ${String(r.pairs).padStart(17)}  ${note}`,
   );
 }
 
@@ -190,7 +208,7 @@ if (arbitrable.length === 0) {
   console.log('Present but un-arbitrable:');
   for (const r of rows.filter((x) => x.pairs === 0)) {
     const note = r.books > 1 ? `all ${r.books} share one feed` : 'single book';
-    console.log(`  ${r.key.padEnd(22)} ${r.ids.join(', ')} — ${note}`);
+    console.log(`  ${r.key.padEnd(30)} ${r.ids.join(', ')} — ${note}`);
   }
 }
 for (const f of failures) console.log(`\n  ${f.id} did not answer: ${f.error}`);

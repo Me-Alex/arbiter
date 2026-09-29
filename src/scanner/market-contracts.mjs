@@ -780,12 +780,25 @@ export function classifyAndExtractLine(selections, { kind } = {}) {
   // The one place an AH lineKey is built, so the two orderings below cannot
   // drift apart.
   const ah = () => ({ family: 'ASIAN_HANDICAP', lineKey: handicapLineKey(selections, a, b), outcomes: ['home', 'away'] });
+  // The one place an O/U lineKey is built, and it refuses a line that is not on
+  // the half. A total on a whole or quarter line is NOT a two-sided contract:
+  // at 2 goals, "Over 2.25" is half a push and "Under 2.25" is half a push, so
+  // the pair leaves money on the table exactly when the match lands on the
+  // line — and pricing it as exhaustive books a surebet that cannot be hedged.
+  // The AH branch above already refused those; this one did not, and the
+  // adapters that guard their own lines (unibet, everymatrix, nsoft, betano)
+  // were carrying a rule the router then re-opened for anyone else. Measured
+  // live: the Altenar feed publishes "Peste 2.25"/"Sub 2.25" under a shared key,
+  // and the report listed it as an arbitrable line where the engine's
+  // exhaustive-pair precondition does not hold. Half lines only.
+  const ou = () => (isHalf(aMag)
+    ? { family: 'OVER_UNDER', lineKey: normalizeLine(aMag), outcomes: ['over', 'under'] }
+    : null);
 
   // Force the user's hint when present (used by tests / explicit routing).
   if (kind === 'OU') {
-    if (aMag === bMag) return { family: 'OVER_UNDER', lineKey: normalizeLine(aMag), outcomes: ['over', 'under'] };
-    // Even with opposite signs, a /b with magnitudes that differ is bogus.
-    return null;
+    if (aMag !== bMag) return null; // a /b with differing magnitudes is bogus
+    return ou();
   }
   if (kind === 'AH') {
     if (a === -b && isHalf(aMag)) return ah();
@@ -794,8 +807,8 @@ export function classifyAndExtractLine(selections, { kind } = {}) {
 
   // Auto-detect. AH/O-U keywords win when present.
   if (ouKeyword.test(blob)) {
-    if (aMag === bMag) return { family: 'OVER_UNDER', lineKey: normalizeLine(aMag), outcomes: ['over', 'under'] };
-    return null;
+    if (aMag !== bMag) return null;
+    return ou();
   }
   if (ahKeyword.test(blob)) {
     if (a === -b && isHalf(aMag)) return ah();
@@ -813,7 +826,7 @@ export function classifyAndExtractLine(selections, { kind } = {}) {
   // Zero is excluded from the spread branch: a === -b is true for 0/0 in JS,
   // and a 0/0 pair is neither a spread nor a meaningful total.
   if (a !== 0 && a === -b) return ah();
-  if (aMag === bMag) return { family: 'OVER_UNDER', lineKey: normalizeLine(aMag), outcomes: ['over', 'under'] };
+  if (aMag === bMag) return ou();
   return null;
 }
 
