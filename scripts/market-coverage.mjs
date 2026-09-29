@@ -65,6 +65,10 @@ const DEFAULT_BOOKS = 'fortuna,casa-pariurilor,admiral,maxbet,excelbet,winboss,s
 const args = process.argv.slice(2);
 const wanted = (args[0] || DEFAULT_BOOKS).split(',').map((b) => b.trim()).filter(Boolean);
 const maxEvents = Number(args[1]) || 200;
+// The one sport this project has live, verified adapters for. Every enabled job
+// declares it, and the scrape service always supplies a sport — so it is the
+// only correct default for a report about football arbitrage.
+const SPORT = 'football';
 
 const cfg = JSON.parse(await fs.readFile(join(ROOT, 'config', 'scrapers.json'), 'utf8'));
 const byId = new Map(cfg.jobs.map((j) => [j.id, j]));
@@ -97,7 +101,17 @@ const byId = new Map(cfg.jobs.map((j) => [j.id, j]));
 async function loadBook(id) {
   const job = byId.get(id);
   if (!job || job.enabled === false) return null;
-  const scraper = instantiate(id, { jobConfig: job, dataDir: join(ROOT, 'data'), maxEvents, timeoutMs: 60_000 });
+  // `sport` mirrors what the scrape service passes in production
+  // (scraper-service.mjs:112) and what every enabled job declares in
+  // `supportedSports`. Omitting it did not merely widen the event count: netbet
+  // falls back to `ALL_SPORTS` when no sport is given, so this report was
+  // measuring basketball points totals, tennis game totals, baseball runs and
+  // American football points as football O/U lines — 84 of 132 rows in the
+  // 2026-09-29 run, all of them un-pairable. `eventKey` does contain the sport,
+  // so those could never form a false arbitrage; they only buried the football
+  // signal this report exists to show. Measuring the football path means
+  // asking for football.
+  const scraper = instantiate(id, { jobConfig: job, dataDir: join(ROOT, 'data'), maxEvents, sport: SPORT, timeoutMs: 60_000 });
   const events = scraper.extractEvents(scraper.normalize(await scraper.fetchRaw()));
   const byMarket = new Map();
   for (const e of events) {
