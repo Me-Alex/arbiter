@@ -242,14 +242,65 @@ function mapFavbetMarket(market) {
   const name = String(market.market_name || market.market_type_name || '').trim();
   const valid = market.outcomes
     .filter((s) => Number.isFinite(Number(s.outcome_coef)) && Number(s.outcome_coef) > 1)
-    .map((s) => ({ id: String(s.outcome_id), tag: String(s.outcome_tag ?? s.outcome_short_name ?? '').toLowerCase(), odds: Number(s.outcome_coef) }));
+    .map((s) => ({
+      id: String(s.outcome_id),
+      tag: String(s.outcome_tag ?? s.outcome_short_name ?? '').toLowerCase(),
+      // `outcome_tag` is a provider-internal index, not a side name, and it is
+      // NOT consistent across a market's windows: on the live feed template 779
+      // carried tag "1"/"2" for the full-time and first-half rows but null for
+      // the second-half row, where the side then came from the short name. So a
+      // matcher written against `tag` silently matched only whichever rows
+      // happened to omit it — favbet's 1H and full-time BTTS were never emitted
+      // at all, and the only BTTS that reached the engine was the second-half
+      // one, stamped `fulltime` by the name-derived period. That is what fed the
+      // 174 fabricated BTTS arbitrages. `outcome_name` is the provider's own
+      // text and is stable ("Da"/"Nu"), so the yes/no match uses it.
+      side: String(s.outcome_name ?? s.outcome_short_name ?? '').trim().toLowerCase(),
+      odds: Number(s.outcome_coef),
+    }));
 
   // A sub-settlement market must say so. `period` is what the engine reads to
   // keep a first-half price out of the full-time bucket, and an absent period
   // is treated as full-time — so a 1H market published without one was paired
   // against other books' full-time legs and reported as arbitrage.
+  //
+  // The settlement window is provider metadata, not part of the market name.
+  // Favbet publishes the SAME name at every window — event 43441222 carried
+  // "Ambele Marcheaza" and "Șansă dublă" three times each, differing only in
+  // `result_type_name` (Timp Regulamentar / Prima repriză / A doua repriză).
+  // Deriving the period from the name alone stamped `fulltime` on all of them,
+  // so the three collapsed into one bucket and the engine kept the best odds
+  // per side: Yes 5.25 (first half) against No 1.72 (full time), two different
+  // settlement windows paired as one contract. Measured on the live feed,
+  // that fabricated 174 BTTS arbitrages against other books at a ~25% median
+  // ROI. A name cannot disambiguate a name, so the provider field wins, and
+  // the name is only consulted when the feed does not declare one.
+  //
+  // The tokens are the canonical `fulltime` / `half1` / `half2` that
+  // canonicalPeriod() buckets on. Note `half1`, not `firsthalf`: the contracts
+  // layer normalizes the Romanian source text itself, but a bare `firsthalf`
+  // matches none of its patterns and would silently fall back to full-time.
+  const declaredPeriod = (() => {
+    const label = String(market.result_type_name || market.result_type_short_name || '').trim();
+    if (!label) return null;
+    if (/prima\s*repriz|\brepriz\s*1|1st\s*half|first\s*half|\b1\b\s*repriz/i.test(label)) return 'half1';
+    if (/a\s*doua\s*repriz|\brepriz\s*2|2nd\s*half|second\s*half|\b2\b\s*repriz/i.test(label)) return 'half2';
+    if (/timp\s*regulamentar|\btr\b|full\s*time|fulltime|match\s*time/i.test(label)) return 'fulltime';
+    return null; // an unrecognised window must not be guessed into fulltime
+  })();
+
   const isFirstHalf = (label) => /repriza\s*1|1st\s*half|prima\s*repriza/i.test(label);
-  const periodFor = (label) => (isFirstHalf(label) ? 'firsthalf' : 'fulltime');
+  const periodFor = (label) => declaredPeriod
+    ?? (isFirstHalf(label) ? 'half1' : 'fulltime');
+
+  // The contracts layer resolves a family from the EXACT key (`BOTH_TEAMS_SCORE`,
+  // `DOUBLE_CHANCE`, ...) and then buckets on `period` via
+  // bucketKeyForContract(eventKey, family, period, line). So the window is
+  // carried by `period` alone and the key stays the bare family name. A `_1H` /
+  // `_2H` suffix would look more explicit but makes the key unresolvable —
+  // resolveContract({ key: 'BOTH_TEAMS_SCORE_1H' }) returns null and the market
+  // silently leaves arbitrage entirely. Verified against the resolver.
+  const period = periodFor(name);
 
   /**
    * True only for the unqualified "both teams score" market.
@@ -270,17 +321,18 @@ function mapFavbetMarket(market) {
     && !/ambele\s+(?:reprize|in\s+ambele)/i.test(label)
     && !/penalty|penalt/i.test(label);
 
-  if (isFirstHalf(name) && /1x2|rezultat|winner|final/i.test(name)) {
+  if (period === 'half1' && /1x2|rezultat|winner|final/i.test(name)) {
     const byKind = new Map(valid.map((s) => [s.tag.toUpperCase(), s]));
     if (['1', 'X', '2'].every((k) => byKind.has(k))) {
-      return { key: 'MATCH_ODDS_1H', name, period: periodFor(name), selections: ['1', 'X', '2'].map((k) => ({ id: byKind.get(k).id, name: k, odds: byKind.get(k).odds, group: 'Main' })) };
+      // Bare key for the same reason as the families below: the resolver matches
+      // `MATCH_ODDS` exactly and buckets this apart on `period: 'half1'`.
+      return { key: 'MATCH_ODDS', name, period, selections: ['1', 'X', '2'].map((k) => ({ id: byKind.get(k).id, name: k, odds: byKind.get(k).odds, group: 'Main' })) };
     }
   }
   if (/fara\s*egal|draw\s*no\s*bet|dnb/i.test(name)) {
-    const is1H = isFirstHalf(name);
     const byKind = new Map(valid.map((s) => [s.tag.toUpperCase(), s]));
     if (['1', '2'].every((k) => byKind.has(k))) {
-      return { key: is1H ? 'DNB_1H' : 'DRAW_NO_BET', name, period: periodFor(name), selections: ['1', '2'].map((k) => ({ id: byKind.get(k).id, name: k, odds: byKind.get(k).odds, group: 'Main' })) };
+      return { key: 'DRAW_NO_BET', name, period, selections: ['1', '2'].map((k) => ({ id: byKind.get(k).id, name: k, odds: byKind.get(k).odds, group: 'Main' })) };
     }
   }
   const line = extractNumber(name);
@@ -289,16 +341,14 @@ function mapFavbetMarket(market) {
     const over = valid.find((s) => /^(over|peste)\b/i.test(s.tag));
     const under = valid.find((s) => /^(under|sub)\b/i.test(s.tag));
     if (!over || !under) return null;
-    const is1H = isFirstHalf(name);
-    return { key: `OVER_UNDER_${String(line).replace('.', '_')}${is1H ? '_1H' : ''}`, name, period: periodFor(name), selections: [
+    return { key: `OVER_UNDER_${String(line).replace('.', '_')}`, name, period, selections: [
       { id: over.id, name: 'Over', odds: over.odds, handicap: line, group: 'Main' },
       { id: under.id, name: 'Under', odds: under.odds, handicap: line, group: 'Main' },
     ] };
   }
   if (/ambele.*(?:[iî]nscriu|marcheaz|echipe)|both teams|btts|gg[\s/]*ng/iu.test(name)) {
-    const is1H = isFirstHalf(name);
-    const yes = valid.find((s) => /^(yes|da|gg)\b/i.test(s.tag));
-    const no = valid.find((s) => /^(no|nu|ng)\b/i.test(s.tag));
+    const yes = valid.find((s) => /^(yes|da|gg)$/.test(s.side) || /^(yes|da|gg)\b/i.test(s.tag));
+    const no = valid.find((s) => /^(no|nu|ng)$/.test(s.side) || /^(no|nu|ng)\b/i.test(s.tag));
     if (!yes || !no) return null;
     // Only the unqualified market is plain BTTS. This branch matches a whole
     // family of "Ambele ..." markets that are NOT plain BTTS, and they settle
@@ -322,7 +372,7 @@ function mapFavbetMarket(market) {
     // plain BTTS family at all. Returning null keeps it out of the comparison
     // rather than inventing a family for it.
     if (!isPlainBothTeamsScore(name)) return null;
-    return { key: is1H ? 'BOTH_TEAMS_SCORE_1H' : 'BOTH_TEAMS_SCORE', name, period: periodFor(name), selections: [
+    return { key: 'BOTH_TEAMS_SCORE', name, period, selections: [
       { id: yes.id, name: 'Yes', odds: yes.odds, group: 'Main' },
       { id: no.id, name: 'No', odds: no.odds, group: 'Main' },
     ] };
@@ -350,15 +400,14 @@ function mapFavbetMarket(market) {
       !/\d/.test(label)
       && !/cornere|corners|cartona|cards?|yellow|red|goluri|goals?|over|under|peste|sub/i.test(label);
     if (!isPlainDoubleChance(name)) return null;
-    const is1H = isFirstHalf(name);
     const combined = valid.filter((s) => /^(1x|x2|12)$/.test(s.tag));
     if (combined.length !== 3) return null;
-    return { key: is1H ? 'DOUBLE_CHANCE_1H' : 'DOUBLE_CHANCE', name, period: periodFor(name), selections: combined.map((s) => ({ id: s.id, name: s.tag.toUpperCase(), odds: s.odds, group: 'Main' })) };
+    return { key: 'DOUBLE_CHANCE', name, period, selections: combined.map((s) => ({ id: s.id, name: s.tag.toUpperCase(), odds: s.odds, group: 'Main' })) };
   }
   if (/handicap/i.test(name)) {
     if (line === null) return null;
     const threeWay = valid.some((s) => /^(x|draw|egal)$/.test(s.tag));
-    const key = threeWay ? `HANDICAP_${String(Math.abs(line)).replace('.', '_')}` : `AH_${String(Math.abs(line)).replace('.', '_')}`;
+    const key = `${threeWay ? 'HANDICAP' : 'AH'}_${String(Math.abs(line)).replace('.', '_')}`;
     const mapped = valid.map((s) => {
       let kind;
       if (/^(x|draw|egal)$/.test(s.tag)) kind = 'X';
@@ -371,7 +420,7 @@ function mapFavbetMarket(market) {
     const picked = {};
     for (const m of mapped) if (required.includes(m.name) && !picked[m.name]) picked[m.name] = m;
     if (!required.every((k) => picked[k])) return null;
-    return { key, name, period: periodFor(name), selections: required.map((k) => ({ ...picked[k], handicap: line })) };
+    return { key, name, period, selections: required.map((k) => ({ ...picked[k], handicap: line })) };
   }
   // Corners Over/Under
   if (/cornere|corners|corner/i.test(name)) {
@@ -379,7 +428,7 @@ function mapFavbetMarket(market) {
     const over = valid.find((s) => /^(over|peste)\b/i.test(s.tag));
     const under = valid.find((s) => /^(under|sub)\b/i.test(s.tag));
     if (!over || !under) return null;
-    return { key: `CORNERS_OVER_UNDER_${String(line).replace('.', '_')}`, name, period: periodFor(name), selections: [
+    return { key: `CORNERS_OVER_UNDER_${String(line).replace('.', '_')}`, name, period, selections: [
       { id: over.id, name: 'Over', odds: over.odds, handicap: line, group: 'Main' },
       { id: under.id, name: 'Under', odds: under.odds, handicap: line, group: 'Main' },
     ] };
@@ -390,7 +439,7 @@ function mapFavbetMarket(market) {
     const over = valid.find((s) => /^(over|peste)\b/i.test(s.tag));
     const under = valid.find((s) => /^(under|sub)\b/i.test(s.tag));
     if (!over || !under) return null;
-    return { key: `CARDS_OVER_UNDER_${String(line).replace('.', '_')}`, name, period: periodFor(name), selections: [
+    return { key: `CARDS_OVER_UNDER_${String(line).replace('.', '_')}`, name, period, selections: [
       { id: over.id, name: 'Over', odds: over.odds, handicap: line, group: 'Main' },
       { id: under.id, name: 'Under', odds: under.odds, handicap: line, group: 'Main' },
     ] };

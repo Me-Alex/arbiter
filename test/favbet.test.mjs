@@ -355,6 +355,180 @@ test('a qualified double chance (corners / cards) is withheld, not keyed as matc
   );
 });
 
+test('the same market name at three settlement windows yields three separate periods', (t) => {
+  // Favbet publishes ONE unqualified name per contract and repeats it at every
+  // window, with the window carried only in `result_type_name`. Event 43441222
+  // on the live feed carried all three of these, named identically:
+  //
+  //   "Ambele Marcheaza"  Timp Regulamentar  Da 2.08  Nu 1.72
+  //   "Ambele Marcheaza"  Prima repriză     Da 5.25  Nu 1.13
+  //   "Ambele Marcheaza"  A doua repriză    Da 4.02  Nu 1.21
+  //
+  // The adapter derived the period from the market NAME, which is the same in
+  // all three rows, so every one of them was stamped `fulltime` and collapsed
+  // into a single bucket. The engine keeps the best price per side per source,
+  // so it paired Yes 5.25 (first half) against No 1.72 (full time) — two
+  // different settlement windows presented as one contract. Measured across the
+  // stored captures that fabricated 174 BTTS arbitrages against other books at
+  // a ~25% median ROI, 159 of them the single pair favbet+unibet.
+  //
+  // A name cannot disambiguate a name, so the period has to come from the
+  // provider's own window field.
+  atPinnedNow(t);
+  const s = new Favbet({ windowHours: 72 });
+
+  let nextId = 700;
+  const window_ = (result_type_name, result_type_short_name, yesOdds, noOdds) => ({
+    bet_builder: false,
+    market_id: (nextId += 1),
+    market_name: 'Ambele Marcheaza',
+    market_suspend: false,
+    market_template_id: 779,
+    result_type_name,
+    result_type_short_name,
+    outcomes: [
+      { outcome_id: nextId * 10 + 1, outcome_name: 'Da', outcome_short_name: 'Da', outcome_tag: '1', outcome_coef: yesOdds, outcome_visible: true },
+      { outcome_id: nextId * 10 + 2, outcome_name: 'Nu', outcome_short_name: 'Nu', outcome_tag: '2', outcome_coef: noOdds, outcome_visible: true },
+    ],
+  });
+
+  const matchOdds = {
+    bet_builder: false, market_id: 699, market_name: '1 X 2', market_suspend: false, market_template_id: 1,
+    outcomes: [
+      { outcome_id: 1, outcome_name: 'Gazde', outcome_short_name: '1', outcome_tag: '1', outcome_coef: 2.1, outcome_visible: true },
+      { outcome_id: 2, outcome_name: 'Egal', outcome_short_name: 'X', outcome_tag: 'X', outcome_coef: 3.4, outcome_visible: true },
+      { outcome_id: 3, outcome_name: 'Oaspeți', outcome_short_name: '2', outcome_tag: '2', outcome_coef: 3.2, outcome_visible: true },
+    ],
+  };
+
+  const event = {
+    event_id: 3,
+    event_dt: Math.floor(Date.parse(PINNED_NOW) / 1000) + 86400,
+    participants: [
+      { participant_number: 1, participant_name: 'Gazde' },
+      { participant_number: 2, participant_name: 'Oaspeți' },
+    ],
+    category_name: 'Fotbal', tournament_name: 'Test', tournament_id: 'fotbal',
+    event_status_type: 'notstarted',
+  };
+
+  const markets = {
+    match_odds: matchOdds,
+    fulltime: window_('Timp Regulamentar', 'Tr', 2.08, 1.72),
+    first: window_('Prima repriză', 'Rp1', 5.25, 1.13),
+    second: window_('A doua repriză', 'Rp2', 4.02, 1.21),
+  };
+
+  const envelope = {
+    events: new Map([['3', event]]),
+    markets: [{ event, markets }],
+    sourceUrl: 'https://www.favbet.ro/service/lineout/frontend_api2/',
+    observedAt: PINNED_NOW,
+  };
+
+  const out = s.extractEvents(s.normalize(envelope));
+  const e = out.find((x) => String(x.id) === '3');
+  assert.ok(e, 'the synthetic event is published');
+  const btts = (e.markets || []).filter((m) => m.key === 'BOTH_TEAMS_SCORE');
+
+  assert.equal(btts.length, 3, 'all three windows are published, not collapsed into one');
+  assert.deepEqual(
+    btts.map((m) => m.period).sort(),
+    ['fulltime', 'half1', 'half2'],
+    'each window carries its own period',
+  );
+
+  // The decisive assertion: a leg may not mix windows. Each market's own Yes and
+  // No must sit in the same window, which is what an inverse sum below 1 across
+  // two windows would otherwise fake. The real prices are the ones above, so the
+  // full-time pair (2.08/1.72) must not appear carrying a half1/half2 period.
+  const byPeriod = new Map(btts.map((m) => [m.period, m]));
+  assert.deepEqual(
+    byPeriod.get('fulltime').selections.map((x) => `${x.name}@${x.odds}`),
+    ['Yes@2.08', 'No@1.72'],
+    'the full-time window keeps its own prices',
+  );
+  assert.deepEqual(
+    byPeriod.get('half1').selections.map((x) => `${x.name}@${x.odds}`),
+    ['Yes@5.25', 'No@1.13'],
+    'the first-half window keeps its own prices',
+  );
+  assert.deepEqual(
+    byPeriod.get('half2').selections.map((x) => `${x.name}@${x.odds}`),
+    ['Yes@4.02', 'No@1.21'],
+    'the second-half window keeps its own prices',
+  );
+});
+
+test('BTTS sides are matched by outcome name, not the inconsistent outcome_tag', (t) => {
+  // The provider's `outcome_tag` is an internal index, not a side name, and it
+  // is not consistent across a market's windows. On the live feed template 779
+  // carried tag "1"/"2" on the full-time and first-half rows but null on the
+  // second-half row, where the side then came from the short name.
+  //
+  // Matching on `tag` therefore found a side only on whichever rows happened to
+  // omit it, so favbet's first-half and full-time BTTS were silently dropped and
+  // the ONLY BTTS that reached the engine was the second-half one — stamped
+  // `fulltime` by the name-derived period. That is the leg behind the 174
+  // fabricated arbitrages. `outcome_name` ("Da"/"Nu") is stable across windows.
+  atPinnedNow(t);
+  const s = new Favbet({ windowHours: 72 });
+
+  const matchOdds = {
+    bet_builder: false, market_id: 799, market_name: '1 X 2', market_suspend: false, market_template_id: 1,
+    outcomes: [
+      { outcome_id: 1, outcome_name: 'Gazde', outcome_short_name: '1', outcome_tag: '1', outcome_coef: 2.1, outcome_visible: true },
+      { outcome_id: 2, outcome_name: 'Egal', outcome_short_name: 'X', outcome_tag: 'X', outcome_coef: 3.4, outcome_visible: true },
+      { outcome_id: 3, outcome_name: 'Oaspeți', outcome_short_name: '2', outcome_tag: '2', outcome_coef: 3.2, outcome_visible: true },
+    ],
+  };
+
+  // Both rows are named identically; they differ ONLY in the tag, which is the
+  // numeric "1"/"2" form that a name-based matcher cannot read.
+  const tagged = (id, tag, yesOdds, noOdds) => ({
+    bet_builder: false, market_id: id, market_name: 'Ambele Marcheaza', market_suspend: false,
+    market_template_id: 779, result_type_name: 'Timp Regulamentar', result_type_short_name: 'Tr',
+    outcomes: [
+      { outcome_id: id * 10 + 1, outcome_name: 'Da', outcome_short_name: 'Da', outcome_tag: tag[0], outcome_coef: yesOdds, outcome_visible: true },
+      { outcome_id: id * 10 + 2, outcome_name: 'Nu', outcome_short_name: 'Nu', outcome_tag: tag[1], outcome_coef: noOdds, outcome_visible: true },
+    ],
+  });
+
+  const event = {
+    event_id: 4,
+    event_dt: Math.floor(Date.parse(PINNED_NOW) / 1000) + 86400,
+    participants: [
+      { participant_number: 1, participant_name: 'Gazde' },
+      { participant_number: 2, participant_name: 'Oaspeți' },
+    ],
+    category_name: 'Fotbal', tournament_name: 'Test', tournament_id: 'fotbal',
+    event_status_type: 'notstarted',
+  };
+
+  // One row with numeric tags, one with null tags — the two real shapes.
+  const numericTag = tagged(801, ['1', '2'], 2.08, 1.72);
+  const nullTag = tagged(802, [null, null], 4.02, 1.21);
+  const markets = { match_odds: matchOdds, a: numericTag, b: nullTag };
+
+  const envelope = {
+    events: new Map([['4', event]]),
+    markets: [{ event, markets }],
+    sourceUrl: 'https://www.favbet.ro/service/lineout/frontend_api2/',
+    observedAt: PINNED_NOW,
+  };
+
+  const out = s.extractEvents(s.normalize(envelope));
+  const e = out.find((x) => String(x.id) === '4');
+  assert.ok(e, 'the synthetic event is published');
+  const btts = (e.markets || []).filter((m) => m.key === 'BOTH_TEAMS_SCORE');
+
+  // A tag-keyed matcher emits only the row whose tag is null. Both must survive,
+  // otherwise the feed silently loses a whole settlement window.
+  assert.equal(btts.length, 2, 'both rows are published regardless of their outcome_tag');
+  const prices = btts.map((m) => m.selections.map((x) => `${x.name}@${x.odds}`).join('/')).sort();
+  assert.deepEqual(prices, ['Yes@2.08/No@1.72', 'Yes@4.02/No@1.21'], 'each row keeps its own sides');
+});
+
 test('the adapter reports a missing or malformed envelope rather than an empty success', (t) => {
   atPinnedNow(t);
   const s = new Favbet({ windowHours: 72 });
