@@ -125,12 +125,14 @@ export default class ExcelBetScraper extends ScraperBase {
       // rather than re-mapped from unverified outcome semantics.
       //
       // This endpoint carries no totals and no both-teams-to-score, and that
-      // is a measured property of the feed, not a gap in this reader. Captured
-      // 2026-09-29 from all four tenants (excelbet, winboss, las-vegas,
-      // magnumbet) at 150 events each, the only market codes present were
-      // 3 "FINAL" (3 outcomes, ce 1/X/2) and 15/16/17 "DOUBLE CHANCE" (2
-      // outcomes each, reusing the same ce 1/2/3 result codes for the 1&2, 1&X
-      // and X&2 pairs). The idSport/idAggregata variants the tenant front end
+      // is a measured property of the feed, not a gap in this reader. Swept
+      // 2026-09-29 across all seven days and all four tenants (excelbet,
+      // winboss, las-vegas, magnumbet): 672 events and 2,631 prematch markets
+      // each, every one of them carrying exactly four market codes — 3 "FINAL"
+      // (3 outcomes, ce 1/X/2) and 15/16/17 "DOUBLE CHANCE" (2 outcomes each,
+      // reusing the same ce 1/2/3 result codes for the 1&2, 1&X and X&2 pairs).
+      // The four tenants return byte-identical counts, which is what groups
+      // them as one feed. The idSport/idAggregata variants the tenant front end
       // exposes answer HTTP 406, so the shape this adapter requests is the
       // working one. There is therefore no totals or BTTS contract to publish
       // here: extending these books means finding a different endpoint, not
