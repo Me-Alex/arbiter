@@ -525,6 +525,53 @@ export function resolveContract(market = {}) {
     return null;
   }
 
+  // ---- 5c. A PER-TEAM goal total is WITHHELD: same subject collision, other
+  // shape ----
+  //
+  // ufo:mtyp:00-10 "Echipa 1 Total goluri <line>" and ufo:mtyp:00-13 "Echipa 2
+  // Total goluri <line>" are ONE TEAM's own goals, not the match margin. The
+  // football vocabulary on this feed is closed — ten types, one name each — and
+  // these two are the only per-team totals in it. The real match handicap is
+  // 00-0b, whose legs carry the team names and which resolves correctly, so
+  // nothing else in the football branch is affected.
+  //
+  // Their legs are bare signed numbers with no team token at all: "+ 4.5" and
+  // "- 4.5". A signed pair is exactly the shape the generic resolver reads as a
+  // SPREAD, so these keys were resolving as ASIAN_HANDICAP — a match handicap
+  // priced off one team's goal count. Measured 2026-10-02 on the live Fortuna
+  // feed: 3 such markets across 763 football events, every one agreeing with its
+  // id, resolving to ASIAN_HANDICAP -4.5/4.5 (twice) and -2.5/2.5, period
+  // 'unknown'.
+  //
+  // The contract cannot carry the difference. ASIAN_HANDICAP buckets on
+  // (family, period, lineKey) and nothing in that tuple says whether the spread
+  // is the margin between two teams or the goals of one, so a team total lands in
+  // the same bucket as another book's match handicap on the same half line, and
+  // the engine pairs them. What the coverage report showed is that this id was
+  // carried as a provider key on four handicap lines, the widest being -0.5/0.5
+  // with 15 books and 95 pairs. Those 95 pairs are the shape of the problem and
+  // not, on their own, proof of a false pair: "15 books" is a book count, not a
+  // claim about what the other fourteen were quoting, and the withheld keys are
+  // 3 markets on 763 live football events today. It is the same subject
+  // collision already refused for superbet 535 "Total goluri <Team>", which is
+  // absent from DETAIL_MARKETS for the same reason, and that refusal did not
+  // wait for a live false arbitrage either.
+  //
+  // No live false arbitrage was observed for these, and the negative is worth
+  // stating precisely rather than as reassurance: the 2026-10-02 engine run over
+  // nine books and 3269 grouped events emitted one arbitrage, none of it
+  // involving these legs — but none of the three fixtures that carried these
+  // markets was offered by any other book that day, so there was no counterparty
+  // to pair with. The negative measures that day's fixture coverage, not the
+  // label. The same run did read the legs (6 indexed out of 64 338) and did
+  // emit an arbitrage, so the engine was live throughout. Authoritative, like
+  // 5b: a bare signed pair would otherwise be re-classified as a spread by the
+  // generic line-in-name resolver immediately below, and the withholding would
+  // be a no-op.
+  if (key === 'UFO:MTYP:00-10' || key === 'UFO:MTYP:00-13') {
+    return null;
+  }
+
   // ---- 6. Generic line-in-name resolver (handles any 2-outcome market whose
   // names encode the line) ----
   // netbet / betano / FEG emittă o piață cu doar două selecții ale căror nume
@@ -582,10 +629,12 @@ function fegRoute(rawKey, market) {
     // DRAW_NO_BET (arbEligible:false). It must not resolve as a 2-way match
     // winner: its 1/2 sides are not exhaustive because a draw refunds.
     if (mtype === '03') return null;
-    if (mtype === '10' || mtype === '13') {
-      const inline = classifyAndExtractLine(market.selections, { kind: 'AH' });
-      if (inline) return { family: 'ASIAN_HANDICAP', lineKey: inline.lineKey, outcomes: ['home', 'away'] };
-    }
+    // 00-10 "Echipa 1 Total goluri" and 00-13 "Echipa 2 Total goluri" are ONE
+    // TEAM's own goal total, not the match spread, and resolve to nothing —
+    // see the authoritative refusal in resolveContract for the measurement and
+    // for why a bare signed pair cannot be rescued by the generic resolver.
+    // The real match handicap on this feed is 00-0b, whose legs carry the team
+    // names; that one is routed above and is unaffected.
     if (mtype === '12') return twoWayFootball(); // To qualify
     return null;
   }

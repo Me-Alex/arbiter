@@ -70,12 +70,17 @@ test('superbet publishes the goals total and the handicap, and nothing else it m
 });
 
 test('a bare signed spread is labelled by sign, not left unlabelled', () => {
-  // Measured live on casa-pariurilor's FEG feed: ufo:mtyp:00-10 publishes
-  // "Echipa 1 Total goluri 1.5" as "+ 1.5" / "- 1.5" with no team or player
-  // token at all. Both candidates stripped to empty, so the contract resolved
-  // and neither leg found a side. In a two-way handicap the negative leg IS the
-  // home handicap — the same rule handicapLineKey orders the lineKey by.
-  const market = ev('ufo:mtyp:00-10', [
+  // A signed two-way pair with no side token still has to resolve, and the
+  // negative leg IS the home handicap — the same rule handicapLineKey orders
+  // the lineKey by. Both candidates strip to empty otherwise, the contract
+  // resolves and neither leg finds a side.
+  //
+  // The positive control is a market that really is a match spread: superbet's
+  // 200736 and betano's FHOT both publish exactly this shape. It is deliberately
+  // NOT a FEG key, because the FEG key that used to stand in here
+  // (ufo:mtyp:00-10) is a per-team goal total — see the refusal below, and the
+  // "00-0b" case in the football branch for the real FEG match handicap.
+  const market = ev('FHOT', [
     { name: '+ 1.5' }, { name: '- 1.5' },
   ]);
   const c = resolveContract(market);
@@ -90,6 +95,43 @@ test('a bare signed spread is labelled by sign, not left unlabelled', () => {
   assert.equal(resolveContract(ev('ufo:mtyp:14-02', [
     { name: '+ 1.5' }, { name: '- 1.5' },
   ])).family, 'OVER_UNDER', 'a signed total stays a total');
+});
+
+test('a per-team goal total is refused, not priced as a match spread', () => {
+  // ufo:mtyp:00-10 "Echipa 1 Total goluri <line>" and ufo:mtyp:00-13 "Echipa 2
+  // Total goluri <line>" are ONE TEAM's goals. Measured 2026-10-02 on the live
+  // Fortuna feed: 3 such markets across 763 football events, resolving to
+  // ASIAN_HANDICAP -4.5/4.5 (twice) and -2.5/2.5.
+  //
+  // They are refused rather than renamed, because ASIAN_HANDICAP buckets on
+  // (family, period, lineKey) and says nothing about WHICH quantity the line
+  // measures. Publishing one team's goals as a spread puts it in the same bucket
+  // as another book's match handicap on the same half line. The coverage report
+  // carried this id as a provider key on four handicap lines, the widest being
+  // -0.5/0.5 with 15 books and 95 pairs — the shape of the risk, not a
+  // measurement of a false pair: a book count says nothing about what the other
+  // fourteen were quoting.
+  for (const key of ['ufo:mtyp:00-10', 'ufo:mtyp:00-13']) {
+    assert.equal(resolveContract(ev(key, [
+      { name: '+ 4.5' }, { name: '- 4.5' },
+    ])), null, `${key} is a team total and must not resolve`);
+    // Case must not be the thing that decides it — the feed is not guaranteed
+    // to spell the id the way the census did.
+    assert.equal(resolveContract(ev(key.toUpperCase(), [
+      { name: '+ 4.5' }, { name: '- 4.5' },
+    ])), null, `${key} uppercased must not resolve either`);
+  }
+  // POSITIVE CONTROL, immediately beside the refusal: the real FEG match
+  // handicap is 00-0b and must still resolve, and so must the match-goals
+  // total 00-0u. A guard that took the football namespace down with it would
+  // pass this test's first half.
+  const spread = resolveContract(ev('ufo:mtyp:00-0b', [
+    { name: 'Dinamo -1.5' }, { name: 'Rapid +1.5' },
+  ]));
+  assert.equal(spread.family, 'ASIAN_HANDICAP', 'the real FEG match handicap still prices');
+  assert.equal(resolveContract(ev('ufo:mtyp:00-0u', [
+    { name: 'Peste 2.5' }, { name: 'Sub 2.5' },
+  ])).family, 'OVER_UNDER', 'the FEG match goals total still prices');
 });
 
 test('netbet game_handicap with line in name → ASIAN_HANDICAP', () => {

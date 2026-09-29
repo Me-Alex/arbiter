@@ -256,3 +256,74 @@ for (const { id, Cls } of BRANDS) {
     assert.equal(event.sport, 'Handball');
   });
 }
+
+/**
+ * A per-team goal total is not a match spread, and this feed publishes both.
+ *
+ * The football namespace `00` on the BFF catalogue holds exactly ten market
+ * types with one name each. Two of them — 00-10 "Echipa 1 Total goluri <line>"
+ * and 00-13 "Echipa 2 Total goluri <line>" — count ONE TEAM's goals, and their
+ * legs are bare signed numbers ("+ 4.5" / "- 4.5") with no team token. That is
+ * the single shape the engine's line resolver cannot decline: the markets
+ * resolved as ASIAN_HANDICAP, a match spread priced off one team's goal count.
+ *
+ * Measured 2026-10-02 on the live feed: 3 such markets across 763 live football
+ * events, every one agreeing with its id, resolving to -4.5/4.5 (twice) and
+ * -2.5/2.5. The coverage report then carried this id as a provider key on four
+ * handicap lines, the widest being -0.5/0.5 with 15 books and 95 pairs — the
+ * shape of the risk, not a measurement of a false pair, since a book count says
+ * nothing about what the other fourteen books were quoting.
+ */
+for (const { id, Cls } of BRANDS) {
+  test(`${id} does not publish a per-team goal total as a match spread`, () => {
+    // A fixture carrying a real match handicap AND a team goal total, plus a
+    // second fixture carrying the away-side total on its own. The totals must
+    // go; the handicap must stay.
+    const realSpread = (mid) => [{ id: `${mid}-a`, marketTypeId: 'ufo:mtyp:00-0b', name: 'Handicap asiatic', period: 'FT',
+      outcomes: [{ id: `${mid}-1`, name: 'Dinamo -1.5', odds: 1.95 }, { id: `${mid}-2`, name: 'Rapid +1.5', odds: 1.93 }] }];
+    const teamTotal = (mid, mtype, label) => [{ id: `${mid}-t`, marketTypeId: mtype, name: label, period: 'FT',
+      outcomes: [{ id: `${mid}-+`, name: '+ 4.5', odds: 1.87 }, { id: `${mid}--`, name: '- 4.5', odds: 1.91 }] }];
+
+    const mixed = fixture({ id: 'fx-mixed', sportId: 'ufo:sprt:00', treeSport: 'Football', home: 'Dinamo', away: 'Rapid', tournament: 'Liga 1' });
+    const onlyTotal = fixture({ id: 'fx-only', sportId: 'ufo:sprt:00', treeSport: 'Football', home: 'Needham', away: 'Stamfort', tournament: 'National League' });
+    const shouty = fixture({ id: 'fx-shouty', sportId: 'ufo:sprt:00', treeSport: 'Football', home: 'Boreham', away: 'Kidderminster', tournament: 'National League' });
+    const adapter = new Cls();
+    const events = adapter.extractEvents(adapter.normalize({
+      fixtures: [mixed, onlyTotal, shouty],
+      marketsByFixture: new Map([
+        ['fx-mixed', [...realSpread('m1'), ...teamTotal('m2', 'ufo:mtyp:00-10', 'Echipa 1 Total goluri 4.5')]],
+        ['fx-only', teamTotal('m3', 'ufo:mtyp:00-13', 'Echipa 2 Total goluri 4.5')],
+        // The same id shouted. The guard is a safety boundary, so it must not
+        // quietly stop withholding because the feed changed its spelling.
+        ['fx-shouty', teamTotal('m4', 'UFO:MTYP:00-10', 'Echipa 1 Total goluri 2.5')],
+      ]),
+    }));
+    const byId = new Map(events.map((e) => [e.id, e]));
+
+    assert.deepEqual(byId.get('fx-mixed').markets.map((m) => m.key), ['ufo:mtyp:00-0b'],
+      'the team total is dropped and the real match handicap is kept');
+    assert.equal(byId.has('fx-only'), false,
+      'a fixture whose only market is a team total is not published at all');
+    assert.equal(byId.has('fx-shouty'), false,
+      'the guard withholds by id regardless of the feed’s spelling');
+  });
+
+  test(`${id} still publishes the match total and the match result`, () => {
+    // POSITIVE CONTROL beside the refusal above: a guard that keyed on the
+    // football namespace instead of on the two withheld ids would pass the test
+    // above and silently delete this feed's whole priced surface.
+    const fx = fixture({ id: 'fx-ok', sportId: 'ufo:sprt:00', treeSport: 'Football', home: 'Dinamo', away: 'Rapid', tournament: 'Liga 1' });
+    const adapter = new Cls();
+    const [event] = adapter.extractEvents(adapter.normalize({
+      fixtures: [fx],
+      marketsByFixture: new Map([['fx-ok', [
+        { id: 'ok-1', marketTypeId: 'ufo:mtyp:00-00', name: 'Meci', period: 'FT',
+          outcomes: [{ id: 'o1', name: '1', odds: 2.1 }, { id: 'ox', name: 'X', odds: 3.3 }, { id: 'o2', name: '2', odds: 3.4 }] },
+        { id: 'ok-2', marketTypeId: 'ufo:mtyp:00-0u', name: 'Total goluri', period: 'FT',
+          outcomes: [{ id: 'g+', name: 'Peste 2.5', odds: 1.9 }, { id: 'g-', name: 'Sub 2.5', odds: 1.9 }] },
+      ]]]),
+    }));
+    assert.deepEqual(event.markets.map((m) => m.key), ['ufo:mtyp:00-00', 'ufo:mtyp:00-0u'],
+      'the match result and the match total both survive');
+  });
+}

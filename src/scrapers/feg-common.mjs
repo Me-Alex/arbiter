@@ -9,6 +9,46 @@ export const FEG_SPORT_NAMES = Object.freeze({
 });
 
 /**
+ * Market types this feed publishes that must not be published onward.
+ *
+ * A closed list, keyed on the provider's own market-type id rather than on the
+ * display name, because the name is a translation layer and the id is the
+ * vocabulary: the football namespace `00` on this feed holds exactly ten types
+ * with one name each, and a name test would go stale on a rename while an id
+ * test cannot.
+ *
+ * `ufo:mtyp:00-10` "Echipa 1 Total goluri <line>" and `ufo:mtyp:00-13` "Echipa 2
+ * Total goluri <line>" are ONE TEAM's own goal total. They resolve as
+ * ASIAN_HANDICAP — a match spread — because their legs are bare signed numbers
+ * ("+ 4.5" / "- 4.5"), and that is the one shape the engine's line resolver
+ * cannot decline. Neither ASIAN_HANDICAP nor OVER_UNDER carries a subject
+ * dimension, so a team's goals cannot be expressed through either: the market
+ * would bucket beside another book's match handicap on the same half line and
+ * settle on a different event. Measured 2026-10-02 on this feed: 3 such markets
+ * across 763 live football events, all agreeing with their id.
+ *
+ * The match handicap on this feed is `ufo:mtyp:00-0b`, whose legs carry the
+ * team names; it is unaffected. `scanner/market-contracts.mjs` refuses these two
+ * ids authoritatively as well, because this catalogue is not the only thing that
+ * can produce them.
+ *
+ * Measured on one live download on 2026-10-02, the withholding costs exactly
+ * the withheld rows and nothing else: four fixtures carried a team total and
+ * every one of them kept its other markets (00-00, 00-0u, 00-1c), so no fixture
+ * is lost and no priced line is thinned. All ten football market types walked
+ * unchanged — 00-00 762, 00-0u 233, 00-1c 23, 00-0b 1, 00-9b 1 — with 00-10
+ * going 3 -> 0 and 00-13 at 0 that day.
+ */
+const FEG_WITHHELD_MARKET_TYPES = Object.freeze(new Set([
+  'ufo:mtyp:00-10', // Echipa 1 Total goluri
+  'ufo:mtyp:00-13', // Echipa 2 Total goluri
+]));
+
+/** @param {string} marketTypeId @returns {boolean} */
+export const isFegMarketTypeWithheld = (marketTypeId) =>
+  FEG_WITHHELD_MARKET_TYPES.has(String(marketTypeId || '').toLowerCase());
+
+/**
  * The one line that says why a request failed.
  *
  * `fetch` wraps everything in a generic `TypeError: fetch failed` and hides
@@ -322,6 +362,7 @@ export class FegCatalogueScraper extends ScraperBase {
       seen.add(r.id);
 
       const markets = (r.markets || [])
+        .filter((m) => !isFegMarketTypeWithheld(m?.marketTypeId))
         .map(normalizeFegMarket)
         .filter(Boolean);
       if (markets.length === 0) continue;
