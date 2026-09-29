@@ -567,6 +567,10 @@ export function classifyAndExtractLine(selections, { kind } = {}) {
   const blob = selections.map((s) => String(s?.name || '').toLowerCase()).join(' | ');
   const ouKeyword = /\b(peste|sub|over|under|total|ma(i|î)\s*mult|pu(t|ț)in)\b/;
   const ahKeyword = /^[12]\s*(\(|\.|-)?|^\s*[+-]\s*\d|\b(handicap|asiatic|asiatic[ăa]|spread)\b/;
+  const isHalf = (x) => x % 1 !== 0 && x * 2 === Math.round(x * 2);
+  // The one place an AH lineKey is built, so the two orderings below cannot
+  // drift apart.
+  const ah = () => ({ family: 'ASIAN_HANDICAP', lineKey: handicapLineKey(selections, a, b), outcomes: ['home', 'away'] });
 
   // Force the user's hint when present (used by tests / explicit routing).
   if (kind === 'OU') {
@@ -575,8 +579,7 @@ export function classifyAndExtractLine(selections, { kind } = {}) {
     return null;
   }
   if (kind === 'AH') {
-    const isHalf = (x) => x % 1 !== 0 && x * 2 === Math.round(x * 2);
-    if (a === -b && isHalf(aMag)) return { family: 'ASIAN_HANDICAP', lineKey: `${normalizeLine(a)}/${normalizeLine(b)}`, outcomes: ['home', 'away'] };
+    if (a === -b && isHalf(aMag)) return ah();
     return null;
   }
 
@@ -586,14 +589,45 @@ export function classifyAndExtractLine(selections, { kind } = {}) {
     return null;
   }
   if (ahKeyword.test(blob)) {
-    const isHalf = (x) => x % 1 !== 0 && x * 2 === Math.round(x * 2);
-    if (a === -b && isHalf(aMag)) return { family: 'ASIAN_HANDICAP', lineKey: `${normalizeLine(a)}/${normalizeLine(b)}`, outcomes: ['home', 'away'] };
+    if (a === -b && isHalf(aMag)) return ah();
     return null;
   }
-  // Fallback heuristic: same magnitude ’ O/U; opposite sign ’ AH.
+  // Fallback heuristic: same magnitude → O/U; opposite sign → AH.
   if (aMag === bMag) return { family: 'OVER_UNDER', lineKey: normalizeLine(aMag), outcomes: ['over', 'under'] };
-  if (a === -b) return { family: 'ASIAN_HANDICAP', lineKey: `${normalizeLine(a)}/${normalizeLine(b)}`, outcomes: ['home', 'away'] };
+  if (a === -b) return ah();
   return null;
+}
+
+/**
+ * The bucket key for a two-way handicap, in home/away order rather than in
+ * whatever order the provider happened to list the two legs.
+ *
+ * The lineKey is what two books are matched on, so it has to mean the same
+ * thing on both sides of a comparison. Taking it from array position did not:
+ * "1 -1.5"/"2 1.5" and "2 1.5"/"1 -1.5" are the same contract — the engine
+ * already labels the sides by their "1"/"2" token, not by position — but the
+ * positional reading gave them "-1.5/1.5" and "1.5/-1.5", so two books that
+ * merely list the legs in the opposite order never paired, and a single book's
+ * own mirrored markets landed in different buckets.
+ *
+ * When neither leg names a side (a bare "- 6.5"/"+ 6.5" spread), there is
+ * nothing to order by and the line is kept as found rather than guessed at:
+ * an unordered key that is at least stable for one provider beats a
+ * confidently wrong one.
+ */
+function handicapLineKey(selections, a, b) {
+  const isHome = (name) => {
+    const s = String(name ?? '').trim();
+    if (/^1\b/.test(s) || /^home\b/i.test(s) || /^h1\b/i.test(s)) return true;
+    if (/^2\b/.test(s) || /^away\b/i.test(s) || /^h2\b/i.test(s)) return false;
+    return null;
+  };
+  const first = isHome(selections[0]?.name);
+  const second = isHome(selections[1]?.name);
+  if (first === null || second === null || first === second) {
+    return `${normalizeLine(a)}/${normalizeLine(b)}`;
+  }
+  return first ? `${normalizeLine(a)}/${normalizeLine(b)}` : `${normalizeLine(b)}/${normalizeLine(a)}`;
 }
 
 function extractLineFromName(name) {

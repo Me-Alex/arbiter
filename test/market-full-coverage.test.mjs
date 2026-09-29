@@ -169,6 +169,37 @@ test('classifyAndExtractLine: half-line AH half accepted', () => {
   assert.equal(result.lineKey, '-1.5/1.5');
 });
 
+test('a handicap buckets the same whichever order the provider lists its legs', () => {
+  // The lineKey is the join key between two books, so it has to mean the same
+  // thing on both sides. It used to be read off array position, so "1 -1.5"/
+  // "2 +1.5" and "2 +1.5"/"1 -1.5" — the same contract, and both live on the
+  // FEG feed — landed in different buckets and could never be paired. The
+  // engine already labels the sides by their own 1/2 token, so the key is
+  // ordered by side too.
+  const shapes = [
+    [[{ name: '1 -1.5' }, { name: '2 +1.5' }], '1 / 2 naming'],
+    [[{ name: '2 +1.5' }, { name: '1 -1.5' }], '2 / 1 naming'],
+    [[{ name: 'H1 -1.5' }, { name: 'H2 1.5' }], 'H1 / H2 naming'],
+    [[{ name: 'H2 1.5' }, { name: 'H1 -1.5' }], 'H2 / H1 naming'],
+    [[{ name: '1 (-1.5)' }, { name: '2 (1.5)' }], 'netbet parentheses'],
+    [[{ name: '2 (1.5)' }, { name: '1 (-1.5)' }], 'netbet reversed'],
+  ];
+  for (const [selections, what] of shapes) {
+    const r = classifyAndExtractLine(selections, { kind: 'AH' });
+    assert.ok(r, `${what}: must resolve`);
+    assert.equal(r.family, 'ASIAN_HANDICAP', `${what}: must stay a handicap`);
+    assert.equal(r.lineKey, '-1.5/1.5', `${what}: home/away order, not array order`);
+  }
+});
+
+test('a handicap with no side token keeps a stable key rather than a guessed one', () => {
+  // "- 6.5"/"+ 6.5" names no side, so there is nothing to order by. Stability
+  // for one provider is the point; inventing a home/away order is not.
+  const r = classifyAndExtractLine([{ name: '- 6.5' }, { name: '+ 6.5' }], { kind: 'AH' });
+  assert.ok(r);
+  assert.equal(r.lineKey, '-6.5/6.5');
+});
+
 test('classifyAndExtractLine: OU signed +/- converts to a single magnitude', () => {
   const result = classifyAndExtractLine(
     [{ name: '+ 17.5' }, { name: '- 17.5' }],
