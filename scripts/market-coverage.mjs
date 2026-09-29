@@ -38,11 +38,11 @@
 
 import { promises as fs } from 'node:fs';
 import { join } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
 import { instantiate } from '../src/scrapers/index.mjs';
 import { isSharedFeed } from '../src/scanner/feed-groups.mjs';
-import { canonicalSport } from '../src/shared/text.mjs';
+import { canonicalSport, eventIdentityKey } from '../src/shared/text.mjs';
 import {
   resolveContract,
   bucketKeyForContract,
@@ -74,26 +74,10 @@ const cfg = JSON.parse(await fs.readFile(join(ROOT, 'config', 'scrapers.json'), 
 const byId = new Map(cfg.jobs.map((j) => [j.id, j]));
 
 /**
- * Load one book and index, per CONTRACT, the events that carry it.
+ * Scrape one book and return its football events, indexed per CONTRACT.
  *
- * Indexed by the resolved contract (family + line), not by the provider's own
- * market key. Two books that spell the same market differently are the same
- * contract and must be counted together: grouping by raw key reported
- * ASIAN_HANDICAP as 3 books / 2 pairs when it is really 4 books and 7
- * pairable lines, because netbet calls it `game_handicap` and the FEG feed
- * calls it `ufo:mtyp:0c-02`. That understates the arbitrage exactly where it
- * matters — the number this script exists to produce.
- *
- * The provider keys that resolve to each contract are kept alongside it, so
- * the report still says which spellings are in play.
- *
- * The row key is the engine's own bucket key, so the report counts exactly what
- * the engine can arbitrate. It used to be `${family}/${lineKey}`, which folded
- * the settlement period away and applied no full-time guard: unibet publishes
- * "Total goluri" and "Total Goluri - Repriză a 1-a" under the same key `TOTAL`,
- * so a first-half 2.5 was reported as a second full-time publisher of 2.5. A row
- * can now only be filled by markets the scanner would actually pair, because the
- * period in the key is the one the engine buckets on.
+ * The indexing itself lives in indexEventsByContract below, where it can be
+ * tested; what stays here is the fetch and the sport filter.
  *
  * @returns {Promise<Map<string, {events: Set<string>, keys: Set<string>}>>}
  */
@@ -134,6 +118,40 @@ async function loadBook(id) {
   if (events.length !== allEvents.length) {
     process.stdout.write(`  ${id.padEnd(16)} ${allEvents.length - events.length}/${allEvents.length} event(s) outside ${SPORT}\n`);
   }
+  return indexEventsByContract(events);
+}
+
+/**
+ * Index one book's football events by CONTRACT, keeping the set of fixtures the
+ * contract was seen on.
+ *
+ * Indexed by the resolved contract (family + line), not by the provider's own
+ * market key. Two books that spell the same market differently are the same
+ * contract and must be counted together: grouping by raw key reported
+ * ASIAN_HANDICAP as 3 books / 2 pairs when it is really 4 books and 7
+ * pairable lines, because netbet calls it `game_handicap` and the FEG feed
+ * calls it `ufo:mtyp:0c-02`. That understates the arbitrage exactly where it
+ * matters — the number this script exists to produce.
+ *
+ * The provider keys that resolve to each contract are kept alongside it, so
+ * the report still says which spellings are in play.
+ *
+ * The row key is the engine's own bucket key, so the report counts exactly what
+ * the engine can arbitrate. It used to be `${family}/${lineKey}`, which folded
+ * the settlement period away and applied no full-time guard: unibet publishes
+ * "Total goluri" and "Total Goluri - Repriză a 1-a" under the same key `TOTAL`,
+ * so a first-half 2.5 was reported as a second full-time publisher of 2.5. A row
+ * can now only be filled by markets the scanner would actually pair, because the
+ * period in the key is the one the engine buckets on.
+ *
+ * Split out of loadBook and exported so it can be tested without a scrape: the
+ * choice of event key is the whole content of this function, and an untestable
+ * script is how the wrong key survived in the first place.
+ *
+ * @param {object[]} events football events of a single book
+ * @returns {Map<string, {events: Set<string>, keys: Set<string>}>}
+ */
+export function indexEventsByContract(events) {
   const byMarket = new Map();
   for (const e of events) {
     for (const m of e.markets || []) {
@@ -163,32 +181,34 @@ async function loadBook(id) {
       // this report pairs publishers across books, not within one event.
       const key = bucketKeyForContract('', contract).replace(/^::/, '');
       if (!byMarket.has(key)) byMarket.set(key, { events: new Set(), keys: new Set() });
-      byMarket.get(key).events.add(e.eventKey);
+      // The event is recorded under the SAME key the engine groups by, not under
+      // the adapter's own `eventKey`. This is what makes the `overlapping`
+      // column mean "these two books really quote this line on the same match".
+      //
+      // It used to add `e.eventKey`, and every adapter writes its own — so the
+      // column was measuring the wrong set twice over. Books that SHARE a feed
+      // (getsbet+contibet, fortuna+casa-pariurilor, the exalogic four) collide
+      // by construction and scored as overlapping, while the independent pairs
+      // the engine can actually arbitrage never collided and scored as not
+      // overlapping. Measured on one frozen 24-book download, 10540 events and
+      // 51799 markets: 535 pairs scored as overlapping on the adapter key
+      // against 1419 on the identity key, and among INDEPENDENT pairs 298
+      // against 1153 — a 3.9x undercount of exactly the pairs that are tradable.
+      // `MATCH_ODDS::fulltime::_` between superbet and excelbet shares no
+      // adapter eventKey at all, yet `groupByEvent` puts 182 fixtures of that
+      // pair in one bucket; the old column reported the pair as disjoint.
+      //
+      // The identity key is the engine's own (`shared/text.mjs`), so the report
+      // cannot drift from the grouping it is reporting on.
+      byMarket.get(key).events.add(eventIdentityKey(e));
       byMarket.get(key).keys.add(m.key);
     }
   }
   return byMarket;
 }
 
-const books = new Map();
-const failures = [];
-
-for (const id of wanted) {
-  const started = Date.now();
-  try {
-    const byMarket = await loadBook(id);
-    if (byMarket) {
-      books.set(id, byMarket);
-      process.stdout.write(`  ${id.padEnd(16)} ${(Date.now() - started) / 1000}s\n`);
-    }
-  } catch (err) {
-    failures.push({ id, error: String(err.message).slice(0, 90) });
-    process.stdout.write(`  ${id.padEnd(16)} failed: ${String(err.message).slice(0, 70)}\n`);
-  }
-}
-
 /** Books that publish a market, grouped so shared feeds are not counted twice. */
-function independentPairs(publishers) {
+export function independentPairs(publishers) {
   let pairs = 0;
   const groups = [];
   for (const a of publishers) {
@@ -204,37 +224,94 @@ function independentPairs(publishers) {
   return { pairs, groups };
 }
 
-// contract key -> book -> { events, keys }
-const markets = new Map();
-for (const [book, byMarket] of books) {
-  for (const [key, entry] of byMarket) {
-    if (!markets.has(key)) markets.set(key, new Map());
-    markets.get(key).set(book, entry);
-  }
-}
-
-const rows = [];
-for (const [key, publishers] of markets) {
-  const ids = [...publishers.keys()];
-  const { pairs, groups } = independentPairs(ids);
-  let overlapping = 0;
-  for (let i = 0; i < ids.length; i += 1) {
-    for (let k = i + 1; k < ids.length; k += 1) {
-      const a = publishers.get(ids[i]).events;
-      const b = publishers.get(ids[k]).events;
-      for (const ev of a) if (b.has(ev)) { overlapping += 1; break; }
+/**
+ * Turn per-book indexes into report rows.
+ *
+ * `pairs` counts every book pair that publishes the line, however many feeds
+ * they share. `overlapping` counts the subset that can actually be traded: two
+ * books on DIFFERENT feeds that quote the line on the SAME fixture. It used to
+ * count every book pair that shared an event key, shared feed or not, so a row
+ * could look covered by a pair the scanner is forbidden from pairing.
+ *
+ * Exported for the same reason as indexEventsByContract — this is a pure
+ * function over data a test can write by hand.
+ *
+ * @param {Map<string, Map<string, {events: Set<string>, keys: Set<string>}>>} books
+ * @returns {object[]}
+ */
+export function buildCoverageRows(books) {
+  // contract key -> book -> { events, keys }
+  const markets = new Map();
+  for (const [book, byMarket] of books) {
+    for (const [key, entry] of byMarket) {
+      if (!markets.has(key)) markets.set(key, new Map());
+      markets.get(key).set(book, entry);
     }
   }
-  const keys = new Set();
-  for (const entry of publishers.values()) for (const k of entry.keys) keys.add(k);
-  rows.push({ key, books: ids.length, ids, pairs, groups, overlapping, keys: [...keys].sort() });
+
+  const rows = [];
+  for (const [key, publishers] of markets) {
+    const ids = [...publishers.keys()];
+    const { pairs, groups } = independentPairs(ids);
+    let overlapping = 0;
+    for (let i = 0; i < ids.length; i += 1) {
+      for (let k = i + 1; k < ids.length; k += 1) {
+        // A pair inside one feed group cannot be arbitraged whatever it publishes,
+        // so it must not be counted here — that is the whole difference between
+        // "these two books overlap" and "this line has arbitrage".
+        if (isSharedFeed(ids[i], ids[k])) continue;
+        const a = publishers.get(ids[i]).events;
+        const b = publishers.get(ids[k]).events;
+        for (const ev of a) if (b.has(ev)) { overlapping += 1; break; }
+      }
+    }
+    const keys = new Set();
+    for (const entry of publishers.values()) for (const k of entry.keys) keys.add(k);
+    rows.push({ key, books: ids.length, ids, pairs, groups, overlapping, keys: [...keys].sort() });
+  }
+
+  // Ordered by the number of book pairs that actually meet on a fixture, not by
+  // the number of book pairs that exist. A line with 229 potential pairs and 34
+  // meetings is a smaller arbitrage surface than a line with 14 and 14, and
+  // sorting on the potential put the second one below the first — the report's
+  // job is to answer what can be traded, so the real count leads. `pairs` still
+  // breaks ties, because it is the wider measure when two lines meet equally.
+  rows.sort((a, b) => b.overlapping - a.overlapping || b.pairs - a.pairs
+    || b.books - a.books || a.key.localeCompare(b.key));
+  return rows;
 }
 
-rows.sort((a, b) => b.pairs - a.pairs || b.books - a.books || a.key.localeCompare(b.key));
+// The scrape and the report run only when this file is the entry point. Running
+// them on import made every line above untestable, because importing the module
+// fired 11 network requests; exporting the two pure functions above is what lets
+// the event-key choice be pinned by a test instead of by inspection.
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  const books = new Map();
+  const failures = [];
 
-console.log(`\nmarket coverage — ${books.size} book(s), ${rows.length} arbitrable contract line(s)\n`);
-console.log('  contract                    books  independent pairs  provider keys / note');
-console.log('  ' + '-'.repeat(92));
+  for (const id of wanted) {
+    const started = Date.now();
+    try {
+      const byMarket = await loadBook(id);
+      if (byMarket) {
+        books.set(id, byMarket);
+        process.stdout.write(`  ${id.padEnd(16)} ${(Date.now() - started) / 1000}s\n`);
+      }
+    } catch (err) {
+      failures.push({ id, error: String(err.message).slice(0, 90) });
+      process.stdout.write(`  ${id.padEnd(16)} failed: ${String(err.message).slice(0, 70)}\n`);
+    }
+  }
+
+  const rows = buildCoverageRows(books);
+
+  console.log(`\nmarket coverage — ${books.size} book(s), ${rows.length} arbitrable contract line(s)\n`);
+// `pairs` is a count of book pairs; `events-shared` is how many of those pairs
+// actually quote the line on the SAME fixture. The gap between the two columns
+// is the number of book pairs that cannot meet, and a row whose `events-shared`
+// is 0 has no arbitrage in it no matter how large `pairs` is.
+console.log('  contract                    books  independent pairs   events-shared  provider keys / note');
+console.log('  ' + '-'.repeat(104));
 
 for (const r of rows) {
   const note = r.pairs > 0
@@ -243,13 +320,22 @@ for (const r of rows) {
       ? `all ${r.books} share one feed (${r.groups.map((g) => g.join('+')).join(', ')})`
       : 'single book';
   console.log(
-    `  ${r.key.padEnd(30)} ${String(r.books).padStart(5)}  ${String(r.pairs).padStart(17)}  ${note}`,
+    `  ${r.key.padEnd(30)} ${String(r.books).padStart(5)}  ${String(r.pairs).padStart(17)}  ${String(r.overlapping).padStart(13)}  ${note}`,
   );
 }
 
 const arbitrable = rows.filter((r) => r.pairs > 0);
 console.log(`\n${arbitrable.length} of ${rows.length} contract line(s) can be paired across independent feeds.`);
-console.log(`${arbitrable.reduce((n, r) => n + r.pairs, 0)} independent pair(s) in total.`);
+console.log(`${arbitrable.reduce((n, r) => n + r.pairs, 0)} independent pair(s) in total, of which `
+  + `${arbitrable.reduce((n, r) => n + r.overlapping, 0)} quote the line on the same fixture.`);
+const met = arbitrable.filter((r) => r.overlapping > 0);
+if (met.length < arbitrable.length) {
+  console.log(`Present but never met: ${arbitrable.length - met.length} line(s) are published by two or more`);
+  console.log('independent books, yet no two of them quote the same line on the same match.');
+  for (const r of arbitrable.filter((x) => x.overlapping === 0)) {
+    console.log(`  ${r.key.padEnd(30)} ${r.ids.join(', ')}`);
+  }
+}
 if (arbitrable.length === 0) {
   console.log('None. Adding a market to the scanner would add rows but no arbitrage —');
   console.log('the missing ingredient is a second, independent feed carrying it.');
@@ -260,4 +346,5 @@ if (arbitrable.length === 0) {
     console.log(`  ${r.key.padEnd(30)} ${r.ids.join(', ')} — ${note}`);
   }
 }
-for (const f of failures) console.log(`\n  ${f.id} did not answer: ${f.error}`);
+  for (const f of failures) console.log(`\n  ${f.id} did not answer: ${f.error}`);
+}
