@@ -315,14 +315,35 @@ test('FEG degraded DC: 2 of 3 outcomes is catalogued but flagged', () => {
   assert.equal(c.arbEligible, false);
 });
 
-test('current_frame_winner (snooker frame 2-way) → MATCH_ODDS 2-way', () => {
-  // Defensive — explicit shape acceptance for snooker frame winner. The literal
-  // "1" / "2" labels make this a clean 2-way match winner regardless of key.
+test('current_frame_winner (snooker frame 2-way) resolves to nothing, not the match winner', () => {
+  // This test used to assert MATCH_ODDS 2-way here, on the reasoning that the
+  // literal "1" / "2" labels make it a clean 2-way winner regardless of key.
+  // That is the defect, not the defence: the shape says nothing about WHICH
+  // contest is being won, and netbet publishes "Frame 4 Castigator" and
+  // "Castigator Meci" on the same snooker event. Both resolve off "1"/"2" into
+  // MATCH_ODDS/_ with lineKey "_", so the frame price and the match price land
+  // in one bucket — measured on the 2026-09-29 capture, all 4 snooker events
+  // that carried both. findArbitrage refuses to pair one book with itself, so
+  // it reports nothing today, but against a second book quoting that match the
+  // engine would offer a frame price as a match price and book an arbitrage
+  // between two contracts that settle on different events.
+  //
+  // The key is therefore authoritative: it resolves to nothing at all, not to
+  // a 2-way match winner by shape.
   const c = resolveContract({
     key: 'current_frame_winner',
     period: 'fulltime',
     selections: [{ name: '1' }, { name: '2' }],
   });
-  assert.equal(c.family, 'MATCH_ODDS');
-  assert.deepEqual(c.outcomes, ['home', 'away']);
+  assert.equal(c, null, 'a frame winner must not resolve as the match winner');
+
+  // The guard must not over-reach: the match winner on the same event still
+  // resolves, and so does a plain 2-way market under an ordinary key.
+  const match = resolveContract({
+    key: 'default',
+    period: 'fulltime',
+    selections: [{ name: '1' }, { name: '2' }],
+  });
+  assert.equal(match.family, 'MATCH_ODDS');
+  assert.deepEqual(match.outcomes, ['home', 'away']);
 });

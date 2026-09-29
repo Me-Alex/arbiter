@@ -373,6 +373,43 @@ export function resolveContract(market = {}) {
     }
   }
 
+  // ---- 3c. netbet segment winners and secondary-subject totals: WITHHELD ----
+  //
+  // Sportify's taxonomy is complete enough to key on (the adapter reads the
+  // side from `kind` and the line from `handicap`), and two of its market
+  // codes are not the contract the engine would otherwise read them as.
+  // Measured 2026-09-29 over a 1,466-event inventory capture:
+  //
+  //   current_frame_winner "Frame 4 Castigator"  snooker  4 priced markets
+  //   leg_winner          "Castigator Leg-ul 1"  darts    1 unpriced market
+  //   total_180s          "Total 180-uri"        darts   13 priced markets
+  //
+  // The two winners resolve as MATCH_ODDS/_ off names of "1"/"2", which is the
+  // very bucket the match winner occupies: on all 4 snooker events that carry
+  // both, netbet's own "Frame 4 Castigator" price and its "Castigator Meci"
+  // price landed in one bucket. findArbitrage refuses to pair a book with
+  // itself, so nothing is reported today — but the moment a second book quotes
+  // that snooker match, the frame price is offered against the other book's
+  // MATCH price, and the engine books an arbitrage between two contracts that
+  // settle on different events. A frame winner and a match winner are not a
+  // market pair, and "which frame" is provider text, not an engine dimension.
+  //
+  // "Total 180-uri" counts 180s scored, which is not the match's scoring
+  // total. The OVER_UNDER contract is (family, period, lineKey) and carries no
+  // subject, so on a darts event that also publishes "Total Leg-uri" the two
+  // would share a bucket at any coinciding line, and no book publishes a
+  // "total 180s" that the engine can prove as a counterparty. Same call as
+  // betano's corners and cards totals.
+  //
+  // Authoritative, and placed before every fallback on purpose: returning null
+  // from the whitelists below would not be enough, because "Peste (0.5)"/
+  // "Sub (0.5)" is a valid equal-magnitude O/U shape that the generic
+  // line-in-name resolver would re-admit, and "1"/"2" is a valid 2-way shape
+  // the match-winner fallback would re-admit.
+  if (/^(CURRENT_FRAME_WINNER|LEG_WINNER|TOTAL_180S)$/.test(key)) {
+    return null;
+  }
+
   // ---- 4. OVER/UNDER and ASIAN_HANDICAP via provider whitelists ----
   // FEG routing table — sport-prefix in XX selects the family, market-suffix in
   // YY names the contract shape. This covers ALL FEG markets across football,
@@ -415,13 +452,25 @@ export function resolveContract(market = {}) {
   }
   if (key === 'GAME_HANDICAP' || key === 'GOALS_HANDICAP' || key === 'HANDICAP' || key === 'TGHC' || key === 'FAHC' || key === 'HCAP' || key === 'AHCP' || key === 'FHOT') {
     const inline = classifyAndExtractLine(market.selections, { kind: 'AH' });
-    if (inline) return { family: 'ASIAN_HANDICAP', period, lineKey: inline.lineKey, outcomes: inline.outcomes };
+    // Authoritative for the same reason ASIAN_HANDICAP above is, and the
+    // fall-through was not harmless. A whole line ("1 (-7)" / "2 (7)") fails
+    // isHalf, so this returned nothing and let the market keep travelling: the
+    // generic line-in-name resolver declines it too, and the last-resort 2-way
+    // match-winner path then accepts "1 (-7)"/"2 (7)" as MATCH_ODDS. That is a
+    // push-capable spread priced as a contract whose two sides cannot tie, so
+    // it pairs against another book's match winner and settles on a refund.
+    // netbet's own capture is half-line only (715 of 715 measured), but
+    // unibet and tinyfish also emit a bare HANDICAP key and neither is
+    // guaranteed to be half-line.
+    return inline ? { family: 'ASIAN_HANDICAP', period, lineKey: inline.lineKey, outcomes: inline.outcomes } : null;
   }
   // Goal totals (favbet/netbet style bundled keys + betano *GOT keys + FEG
   // *-0U/-02 totals) — line in name. Non-goal totals (corners, cards, points,
   // games) are deliberately absent: they are withheld by the guard below,
   // because the OVER_UNDER contract cannot express WHAT the line counts.
-  if (key === 'TOTAL_GOALS' || key === 'TOTAL' || key === 'TOTAL_180S' || /^H?CTG$/i.test(key) || /^T?GOT$/i.test(key) || /^OUH\d?$/i.test(key) || key === 'OVUN' || key === 'UFO:MTYP:00-0U' || key === 'UFO:MTYP:14-02' || key === 'UFO:MTYP:11-01' || key === 'UFO:MTYP:0C-03' || key === 'UFO:MTYP:35-01' || key === 'UFO:MTYP:02-06') {
+  // netbet's TOTAL_180S used to sit in this list; it is a darts 180 count, not
+  // a scoring total, and is withheld with the other segment markets in 3c.
+  if (key === 'TOTAL_GOALS' || key === 'TOTAL' || /^H?CTG$/i.test(key) || /^T?GOT$/i.test(key) || /^OUH\d?$/i.test(key) || key === 'OVUN' || key === 'UFO:MTYP:00-0U' || key === 'UFO:MTYP:14-02' || key === 'UFO:MTYP:11-01' || key === 'UFO:MTYP:0C-03' || key === 'UFO:MTYP:35-01' || key === 'UFO:MTYP:02-06') {
     const inline = classifyAndExtractLine(market.selections, { kind: 'OU' });
     if (inline) return { family: 'OVER_UNDER', period, lineKey: inline.lineKey, outcomes: ['over', 'under'] };
   }
@@ -707,9 +756,19 @@ export function classifyAndExtractLine(selections, { kind } = {}) {
     if (a === -b && isHalf(aMag)) return ah();
     return null;
   }
-  // Fallback heuristic: same magnitude → O/U; opposite sign → AH.
+  // Fallback heuristic. The SIGN is tested before the magnitude, and the order
+  // matters: a two-leg market whose lines are exact negations of each other is
+  // a SPREAD however equal their magnitudes look, and a total's two legs sit at
+  // the same value. Checking magnitude first read every spread as a total —
+  // netbet's baseball `run_line` ("P. Phillies (1.5)" / "A. Braves (-1.5)",
+  // the market the feed itself names "Handicap Puncte") resolved as
+  // OVER_UNDER 1.5, which is a run total. A book quoting a real total at 1.5
+  // on the same fixture would then have paired with it as a surebet between
+  // two contracts that settle on different events entirely.
+  // Zero is excluded from the spread branch: a === -b is true for 0/0 in JS,
+  // and a 0/0 pair is neither a spread nor a meaningful total.
+  if (a !== 0 && a === -b) return ah();
   if (aMag === bMag) return { family: 'OVER_UNDER', lineKey: normalizeLine(aMag), outcomes: ['over', 'under'] };
-  if (a === -b) return ah();
   return null;
 }
 

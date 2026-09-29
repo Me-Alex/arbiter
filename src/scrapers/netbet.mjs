@@ -63,6 +63,100 @@ const SPORT_SLUGS = {
 };
 
 /**
+ * Sportify names the SIDE of an outcome in `kind`, and the LINE in the
+ * `handicap` field. The adapter used to read neither and took the display
+ * string `o.name`, which is where 790 markets died.
+ *
+ * `kind` is a closed set of nine values, one pair per market_code, measured
+ * over a 1,466-event / 2,761-market inventory capture on 2026-09-29:
+ *
+ *   W1 | W2 | X                 default, current_frame_winner, leg_winner
+ *   Home | Away                 handicap, game_handicap, goals_handicap,
+ *                               run_line
+ *   Over | Under                total_goals, total_points, total_games,
+ *                               total_run, total_frame, ou_legs, total_180s
+ *   Yes | No                    btts
+ *
+ * `o.name` is the DISPLAY string and is where the fault was. It is the
+ * abbreviated competitor ("B. Celtics", "I. Colts", "F. Panthers") on any
+ * event whose market family renders team names, and the contract layer
+ * resolves a leg by comparing the selection against homeTeam/awayTeam or a
+ * leading "1"/"2" token — so "B. Celtics" matched neither "Boston Celtics"
+ * nor "1" and the leg routed to null. The market resolved and could never be
+ * priced: 398 two-way `default` markets, 221 `handicap`, 91
+ * `goals_handicap`, 76 `game_handicap` and all 4 `run_line` in that capture.
+ * `o.fullname` holds the unabbreviated competitor and would have fixed the
+ * name comparison, but `kind` is the better source: it is the provider's own
+ * taxonomy, it needs no team-name matching at all, and it is what makes the
+ * side independent of the `lang=ro` display language this adapter requests.
+ *
+ * The line is emitted INTO THE NAME because that is where the contract layer
+ * reads it — `extractLineFromName` is the single line parser, and adapters
+ * that publish the line only in a `handicap` field have their whole line
+ * dropped. Sign convention measured across all 715 priced handicaps: the home
+ * leg carries -(market.handicap) and the away leg carries +(market.handicap),
+ * and every leg's own `handicap` field agrees with the parenthesised line in
+ * its display name. Using the per-leg field means the two cannot disagree.
+ */
+const SIDE_BY_KIND = {
+  W1: '1', X: 'X', W2: '2',
+  Home: '1', Away: '2',
+  Over: 'Over', Under: 'Under',
+  Yes: 'Yes', No: 'No',
+};
+
+/**
+ * Canonical selection name for one outcome, built from the provider's side
+ * taxonomy and its own line field. Falls back to the display string when
+ * `kind` is absent or unknown, so a market this adapter has never seen is
+ * still emitted rather than silently dropped.
+ */
+function selectionNameFor(o) {
+  const side = SIDE_BY_KIND[String(o.kind || '').trim()];
+  if (!side) return String(o.label || o.name || '').trim() || null;
+  const line = Number(o.handicap);
+  const hasLine = Number.isFinite(line);
+  // Handicap legs: "1 (-7.5)" / "2 (7.5)" — the side token also tells
+  // handicapLineKey which leg is home, so the two books' mirrored markets
+  // still bucket together.
+  if (o.kind === 'Home' || o.kind === 'Away') return hasLine ? `${side} (${line})` : side;
+  // Total legs: "Over 171.5" / "Under 171.5". Magnitudes match, so
+  // classifyAndExtractLine reads OVER_UNDER and the magnitude becomes the
+  // lineKey.
+  if (o.kind === 'Over' || o.kind === 'Under') return hasLine ? `${side} ${line}` : side;
+  return side;
+}
+
+/**
+ * Settlement window for a market.
+ *
+ * The feed publishes no period field: a token sweep of the 2026-09-29 capture
+ * for `half` / `repriza` / `period` / `segment` / `1H` / `2H` / `HT` found
+ * none, and every one of the 16 market_codes in it is full-time. The market
+ * name is the only place a window could hide, so it is read rather than
+ * assumed — and anything unrecognised stays `fulltime`, which is the only
+ * window this feed has been observed to publish. The names that carry an
+ * explicit window all confirm the default rather than contradict it:
+ * "Rezultat Final", "Handicap (Timp Regulamentar)", "Castigator Meci
+ * (Inclusiv Prelungiri)" are the full result, regulation time, and the result
+ * including extra time. Inventing a half-time label the feed never sent would
+ * be worse than the hardcoded default: it would split a market into a bucket
+ * with no counterparty on the other side.
+ */
+const PERIOD_BY_NAME = [
+  [/\b(prima\s+repriza|primul\s+set|primul\s+sfert|1\s*h|half\s*time|halftime|1st\s+half)\b/i, 'half1'],
+  [/\b(a\s+doua\s+repriza|al\s+doilea\s+set|al\s+doilea\s+sfert|2\s*h|second\s+half|2nd\s+half)\b/i, 'half2'],
+];
+
+function periodFor(market) {
+  const label = `${market?.name || ''} ${market?.market_code || ''}`;
+  for (const [pattern, period] of PERIOD_BY_NAME) {
+    if (pattern.test(label)) return period;
+  }
+  return 'fulltime';
+}
+
+/**
  * NetBet scraper — Sportify public JSON inventory-events feed.
  *
  * Fetches one sport per request, bounded by `this.sports`, to maximise total
@@ -201,13 +295,19 @@ export default class NetBetScraper extends ScraperBase {
               const odds = Number(o.odds);
               if (!Number.isFinite(odds) || odds <= 1) return null;
               if (o.suspended) return null;
-              const name = String(o.label || o.name || '').trim();
+              const name = selectionNameFor(o);
               if (!name) return null;
+              // `handicap` stays null on the selection even though the outcome
+              // carries a line, and the line is already in the name. findMiddles
+              // pairs any two legs in one bucket whose handicaps differ, with
+              // no check that they are the same SIDE of the contract: filling
+              // this in would offer netbet's home leg at -7.5 against another
+              // book's away leg at +7.5 and call the 15-point gap a middle.
               return { id: String(o.id ?? ''), name, odds, handicap: null };
             })
             .filter(Boolean);
           if (selections.length < 2) return null;
-          return { key, name: m.name || key, period: 'fulltime', selections };
+          return { key, name: m.name || key, period: periodFor(m), selections };
         })
         .filter(Boolean);
       if (markets.length === 0) continue;
@@ -245,13 +345,16 @@ export default class NetBetScraper extends ScraperBase {
       sourceUrl: this.sourceUrl,
       transport: 'netbet-sportify-public-json',
       observedAt: this.observedAt,
-      // Verified 2026-09-29 against a live football inventory: each event
-      // carries `default` (Rezultat Final), `total_goals` (Total Goluri) and
-      // `btts` (Ambele Marcheaza) on all but a handful of fixtures, and the
-      // totals resolve to a real OVER_UNDER contract at the line named in the
-      // selection. This string said 1x2 only, which understated what the run
-      // actually collects and hid the two arbitrable families from the report.
-      coverage: { sports: this.sports.length, market: 'fulltime-1x2+tgoals+btts', live: false, maxEvents: this.maxEvents },
+      // Verified 2026-09-29 against a live all-sports inventory: 1,466 events
+      // carry 2,761 markets across 16 market_codes that resolve into four
+      // arbitrable families — `default` as MATCH_ODDS (3-way on the draw
+      // sports, 2-way on the draw-less ones), `handicap` / `game_handicap` /
+      // `goals_handicap` / `run_line` as ASIAN_HANDICAP, `total_goals` /
+      // `total_points` / `total_games` / `total_run` / `total_frame` /
+      // `ou_legs` as OVER_UNDER, and `btts` as BTTS. The earlier string said
+      // 1x2 only, which understated what the run collects and hid three of
+      // those four families from the report.
+      coverage: { sports: this.sports.length, market: 'fulltime-1x2+asian_handicap+totals+btts', live: false, maxEvents: this.maxEvents },
     };
   }
 }
