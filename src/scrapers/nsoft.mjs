@@ -90,6 +90,35 @@ const TENANT_RESULT_MARKET = Object.freeze({
  * measured on the projection contain none), so `ah` stays absent rather than
  * being borrowed from maxbet's id 8 — a tenant's ids are its own.
  *
+ * Re-measured 2026-09-29 over the full 72h window at maxEvents 3000: 1,247
+ * football events carry exactly 15 distinct `marketId|name` pairs, and all 15
+ * are accounted for — `6` Final and `4607` Ambele Marcheaza claimed; 3960,
+ * 4008, 3501, 2439 and 2442 are interval or per-team goal buckets; 2484, 3504,
+ * 2532 and 2259 are combined legs; 2445 and 398 are pause-or-final and
+ * pause/full pairings. None of the remaining 13 is a full-time exhaustive
+ * two-way contract, so the tenant's contribution is complete at two families.
+ *
+ * Two of them are worth naming because they LOOK claimable and are not:
+ *
+ *   betmen 2517 "Castiga minim o repriza"   1/2 on 1,040 events
+ *   betmen 4412 "Avantaj la 2 goluri"       1/2 on 50 events
+ *
+ * Both carry bare `1` and `2` legs and no `specialValues`, which is exactly the
+ * shape a two-way match winner has, so `resolveContract` answers MATCH_ODDS for
+ * both on shape alone. Neither is a match winner. 2517 settles on whether a
+ * team wins AT LEAST ONE HALF, and a 0-0 leaves both legs undecided, so the
+ * pair is not exhaustive; 4412 is a two-goal ADVANTAGE, a handicap on a whole
+ * line, where the level result pushes both legs. Publishing either would put a
+ * non-surebet in a MATCH_ODDS bucket beside books quoting the real thing.
+ *
+ * The names also carry the distinction the shape cannot: this feed's handicap
+ * markets are `524 "Handicap (incl. OT)"` and `530 "Total puncte (incl. OT)"`,
+ * on 1,123 and 1,415 events, and `524` has exactly the H1/H2 half-line shape
+ * `_asianHandicapMarkets` is built for. It is BASKETBALL — sport id 36, whose
+ * tournaments read "Grecia - A1", "PAOK v AO Mykonos" — and it settles including
+ * extra time, so it is neither the projection nor the window anyone else
+ * publishes. Measured 2026-09-29: 0 of the 1,247 football events carry it.
+ *
  * The market NAME is recorded alongside the id and required on read, because a
  * marketId alone is not a contract. The same feed also serves, under other ids,
  * markets that look similar but settle differently, and requiring the name is

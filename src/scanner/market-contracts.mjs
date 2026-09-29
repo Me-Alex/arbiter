@@ -412,8 +412,10 @@ export function resolveContract(market = {}) {
 
   // ---- 4. OVER/UNDER and ASIAN_HANDICAP via provider whitelists ----
   // FEG routing table — sport-prefix in XX selects the family, market-suffix in
-  // YY names the contract shape. This covers ALL FEG markets across football,
-  // eSports (CS / Dota), handball, MMA, chess, American football, etc.
+  // YY names the contract shape. This covers the football projection (`00`),
+  // its second market namespace (`0c`, see fegRoute), and the tennis, basketball,
+  // ice hockey, handball, darts, futsal, rugby and unnamed-id sports the same
+  // catalogue walks.
   const feg = fegRoute(rawKey, market);
   if (feg) return { ...feg, period };
 
@@ -547,12 +549,25 @@ export function resolveContract(market = {}) {
 }
 
 /**
- * FEG routing table. Keys are ufo:mtyp:XX-YY where XX is a sportId (00 football,
- * 02 Counter-Strike, 04 Dota 2, 0c American football, 11 handball, 14 MMA,
- * 27 chess) and YY is the market type. The doc and prior audit do not give an
- * authoritative key’sport map, so this is built from observed data; if a new
- * FEG-shape key appears, fall through to the generic 2-way or line-in-name
- * path.
+ * FEG routing table. Keys are ufo:mtyp:XX-YY where XX is a sportId and YY is
+ * the market type. Only `00` is football, and this function is reached for the
+ * rest, so the sport map is load-bearing rather than a caption.
+ *
+ * Measured 2026-09-29 from the live FEG catalogue, the same map
+ * `FEG_SPORT_NAMES` in scrapers/feg-common.mjs carries, which is fed by the
+ * dealer's own `ufo:sprt:XX` records:
+ *
+ *   00 football  01 tennis  02 basketball  03 ice hockey
+ *   04 handball  07 rugby   09 darts       11 futsal
+ *
+ * 26 and 27 also appear in the catalogue and have no friendly name, so they are
+ * left as bare ids rather than guessed. The routing below is deliberately
+ * per-sport-id and does not depend on what the sport is called: it reads the
+ * market type and the leg names, which is what an unlabelled sport can still
+ * prove. An earlier version of this comment named 02 as Counter-Strike and 04
+ * as Dota 2 and called the whole range "eSports", which is how basketball
+ * points totals ended up filed beside football goal totals in a report that
+ * claimed to be about football.
  */
 function fegRoute(rawKey, market) {
   const m = /^ufo:mtyp:([0-9a-z]{2})-([0-9a-z]{2})$/i.exec(rawKey);
@@ -575,7 +590,11 @@ function fegRoute(rawKey, market) {
     return null;
   }
 
-  // eSports + similar — match winner (team-vs-team) ’ MATCH_ODDS 2-way
+  // Every non-football sport FEG publishes. The routing does not branch on
+  // which one it is: a two-outcome match winner is a two-outcome match winner
+  // in darts as much as in handball, and the market type plus the leg names are
+  // what prove it. Basketball and ice hockey are here — measured 2026-09-29,
+  // 02-06 is a basketball points total and 03-03 an ice hockey handicap.
   if (sport === '02' || sport === '03' || sport === '04' || sport === '09' || sport === '11' || sport === '14' || sport === '26' || sport === '27' || sport === '35') {
     if (mtype === '06') {
       const inline = classifyAndExtractLine(market.selections, { kind: 'OU' });
@@ -601,7 +620,26 @@ function fegRoute(rawKey, market) {
       if (inline) return { family: 'ASIAN_HANDICAP', lineKey: inline.lineKey, outcomes: ['home', 'away'] };
     }
   }
-  // 0c American Football
+  // 0c — a SECOND football market namespace on this feed, not American
+  // football, which is what the comment here used to claim. Measured
+  // 2026-09-29 on the Fortuna projection: 8 events carry `0c` markets and
+  // none of them carries a `00` one, so this is not a duplicate spelling —
+  // it is the only place some of these fixtures are quoted. The families are
+  // football's own:
+  //
+  //   0c-00 "Meci"                          1/X/2, three-way match result
+  //   0c-02 "Handicap" / "Handicap asiatic"  "1 -1.5" / "2 +1.5"
+  //   0c-03 "Total goluri / ... asiatice"   "- 4.5" / "+ 4.5"
+  //   0c-01 "Meci - sansa dubla"            1X / X2 / 12, not arbitrable
+  //   0c-04 "prima repriza"                 1/X/2, first half
+  //
+  // Four of the eight sit in `esports-battle-liga-campionilor-2x4-min` and
+  // friends, which quote real clubs with player aliases ("Real Madrid
+  // (Krkula) v Atlético Madrid (llulle)"); the other four include a real
+  // fixture, `turcia-super-lig / Basaksehir v Fenerbahce`. The esports ones
+  // settle on a simulation, but their league slug is part of the event key,
+  // so they can never be paired against another book's real football — and
+  // nothing else publishes these leagues, so they simply sit unpaired.
   if (sport === '0c') {
     if (mtype === '02') {
       const inline = classifyAndExtractLine(market.selections, { kind: 'AH' });
