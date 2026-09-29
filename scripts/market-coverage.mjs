@@ -14,6 +14,16 @@
  * in the data and still useless — which is a fact worth stating rather than
  * leaving to be rediscovered.
  *
+ * Rows are the resolved contract (family + line), not the provider's market
+ * key, because that is the unit arbitrage is actually found on: netbet's
+ * `game_handicap` and the FEG feed's `ufo:mtyp:0c-02` are the same contract
+ * and pair with each other, but counting them as two separate rows reported
+ * the Asian handicap as 3 books / 2 pairs when it is 4 books and 7 pairable
+ * lines. The provider keys behind each row are still printed.
+ *
+ * Markets that resolve to no contract, and double chance, which is never a
+ * surebet, are excluded from the rows entirely rather than shown as thin.
+ *
  * It is deliberately a measurement and not a gate: a market that is
  * un-arbitrable today may become so the moment a new feed carries it, and the
  * next run will say so.
@@ -32,6 +42,7 @@ import { fileURLToPath } from 'node:url';
 
 import { instantiate } from '../src/scrapers/index.mjs';
 import { isSharedFeed } from '../src/scanner/feed-groups.mjs';
+import { resolveContract } from '../src/scanner/market-contracts.mjs';
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url));
 
@@ -45,8 +56,20 @@ const cfg = JSON.parse(await fs.readFile(join(ROOT, 'config', 'scrapers.json'), 
 const byId = new Map(cfg.jobs.map((j) => [j.id, j]));
 
 /**
- * Load one book and index, per market key, the events that carry it.
- * @returns {Promise<Map<string, Set<string>>>}
+ * Load one book and index, per CONTRACT, the events that carry it.
+ *
+ * Indexed by the resolved contract (family + line), not by the provider's own
+ * market key. Two books that spell the same market differently are the same
+ * contract and must be counted together: grouping by raw key reported
+ * ASIAN_HANDICAP as 3 books / 2 pairs when it is really 4 books and 7
+ * pairable lines, because netbet calls it `game_handicap` and the FEG feed
+ * calls it `ufo:mtyp:0c-02`. That understates the arbitrage exactly where it
+ * matters — the number this script exists to produce.
+ *
+ * The provider keys that resolve to each contract are kept alongside it, so
+ * the report still says which spellings are in play.
+ *
+ * @returns {Promise<Map<string, {events: Set<string>, keys: Set<string>}>>}
  */
 async function loadBook(id) {
   const job = byId.get(id);
@@ -56,8 +79,15 @@ async function loadBook(id) {
   const byMarket = new Map();
   for (const e of events) {
     for (const m of e.markets || []) {
-      if (!byMarket.has(m.key)) byMarket.set(m.key, new Set());
-      byMarket.get(m.key).add(e.eventKey);
+      const contract = resolveContract(m);
+      // A market that resolves to nothing is not arbitrable at all, and one
+      // flagged arbEligible:false (double chance) never is — both are counted
+      // nowhere rather than in a row that suggests they might be.
+      if (!contract || contract.arbEligible === false) continue;
+      const key = `${contract.family}/${contract.lineKey ?? '_'}`;
+      if (!byMarket.has(key)) byMarket.set(key, { events: new Set(), keys: new Set() });
+      byMarket.get(key).events.add(e.eventKey);
+      byMarket.get(key).keys.add(m.key);
     }
   }
   return byMarket;
@@ -97,12 +127,12 @@ function independentPairs(publishers) {
   return { pairs, groups };
 }
 
-// market key -> book -> event keys
+// contract key -> book -> { events, keys }
 const markets = new Map();
 for (const [book, byMarket] of books) {
-  for (const [key, events] of byMarket) {
+  for (const [key, entry] of byMarket) {
     if (!markets.has(key)) markets.set(key, new Map());
-    markets.get(key).set(book, events);
+    markets.get(key).set(book, entry);
   }
 }
 
@@ -113,41 +143,44 @@ for (const [key, publishers] of markets) {
   let overlapping = 0;
   for (let i = 0; i < ids.length; i += 1) {
     for (let k = i + 1; k < ids.length; k += 1) {
-      const a = publishers.get(ids[i]);
-      const b = publishers.get(ids[k]);
+      const a = publishers.get(ids[i]).events;
+      const b = publishers.get(ids[k]).events;
       for (const ev of a) if (b.has(ev)) { overlapping += 1; break; }
     }
   }
-  rows.push({ key, books: ids.length, ids, pairs, groups, overlapping });
+  const keys = new Set();
+  for (const entry of publishers.values()) for (const k of entry.keys) keys.add(k);
+  rows.push({ key, books: ids.length, ids, pairs, groups, overlapping, keys: [...keys].sort() });
 }
 
 rows.sort((a, b) => b.pairs - a.pairs || b.books - a.books || a.key.localeCompare(b.key));
 
-console.log(`\nmarket coverage — ${books.size} book(s), ${rows.length} distinct market(s)\n`);
-console.log('  market key            books  independent pairs  note');
-console.log('  ' + '-'.repeat(66));
+console.log(`\nmarket coverage — ${books.size} book(s), ${rows.length} arbitrable contract line(s)\n`);
+console.log('  contract              books  independent pairs  provider keys / note');
+console.log('  ' + '-'.repeat(92));
 
 for (const r of rows) {
   const note = r.pairs > 0
-    ? 'arbitrable'
+    ? r.keys.join(', ')
     : r.books > 1
       ? `all ${r.books} share one feed (${r.groups.map((g) => g.join('+')).join(', ')})`
       : 'single book';
   console.log(
-    `  ${r.key.padEnd(20)} ${String(r.books).padStart(5)}  ${String(r.pairs).padStart(17)}  ${note}`,
+    `  ${r.key.padEnd(22)} ${String(r.books).padStart(5)}  ${String(r.pairs).padStart(17)}  ${note}`,
   );
 }
 
 const arbitrable = rows.filter((r) => r.pairs > 0);
-console.log(`\n${arbitrable.length} of ${rows.length} market(s) can be paired across independent feeds.`);
+console.log(`\n${arbitrable.length} of ${rows.length} contract line(s) can be paired across independent feeds.`);
+console.log(`${arbitrable.reduce((n, r) => n + r.pairs, 0)} independent pair(s) in total.`);
 if (arbitrable.length === 0) {
   console.log('None. Adding a market to the scanner would add rows but no arbitrage —');
   console.log('the missing ingredient is a second, independent feed carrying it.');
 } else {
-  console.log('Markets present but un-arbitrable:');
+  console.log('Present but un-arbitrable:');
   for (const r of rows.filter((x) => x.pairs === 0)) {
     const note = r.books > 1 ? `all ${r.books} share one feed` : 'single book';
-    console.log(`  ${r.key.padEnd(20)} ${r.books} book(s) — ${note}`);
+    console.log(`  ${r.key.padEnd(22)} ${r.ids.join(', ')} — ${note}`);
   }
 }
 for (const f of failures) console.log(`\n  ${f.id} did not answer: ${f.error}`);
