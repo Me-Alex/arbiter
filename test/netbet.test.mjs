@@ -57,14 +57,23 @@ function rawMarket(marketCode, name, marketType, outcomes, extra = {}) {
   };
 }
 
-/** Run the real adapter over a one-event tree. */
-function extract(markets, competitors) {
+/**
+ * Run the real adapter over a one-event tree and return everything it emits,
+ * including nothing. Used by the tests that assert an event is *refused* —
+ * a helper that insisted on one survivor could not express that.
+ */
+function emitAll(markets, competitors) {
   const scraper = new NetBetScraper({ maxEvents: 10 });
   scraper.observedAt = '2026-09-29T12:33:00.000Z';
   const rawEvents = scraper.normalize({
     tree: [{ name: 'Baschet', competitions: [{ name: 'NBA', events: [rawEvent(markets, competitors)] }] }],
   });
-  const events = scraper.extractEvents(rawEvents);
+  return scraper.extractEvents(rawEvents);
+}
+
+/** Run the real adapter over a one-event tree. */
+function extract(markets, competitors) {
+  const events = emitAll(markets, competitors);
   assert.equal(events.length, 1, 'the fixture event must survive the adapter filters');
   return events[0];
 }
@@ -278,6 +287,88 @@ test('a whole-line spread is withheld rather than priced as a 2-way match winner
     ], { handicap: -7 }),
   ]);
   assert.equal(contractOf(event, 'handicap').contract, null);
+});
+
+test('a matchday statistics board is dropped: its two "competitors" are table columns', () => {
+  // netbet serves, under the competition "UEFA Champions League. Matchday
+  // Statistics", an event whose competitors are "Gazde (Goluri)" and
+  // "Oaspeți (Goluri)" — the home and away columns of a round's goal table —
+  // beside a goals total quoted at 30.5 / 29.5, because it counts every goal of
+  // the matchday rather than of a game. Measured live on 2026-10-02 at
+  // maxEvents 3000 the shape is netbet's alone: 75 football events, 2 of them
+  // this, and 0 across the other 23 books.
+  //
+  // Published as a fixture it reached the engine as OVER_UNDER::fulltime::30.5.
+  // Nothing else stopped it: two non-empty names, a real kickoff, a priced
+  // market, sport "Football". It was inert only because no other book quoted
+  // the same thing — a coincidence of the feed, not a property of the contract.
+  const markets = [
+    rawMarket('total_goals', 'Total Goluri', 5500, [
+      { kind: 'Over', name: 'Peste (30.5)', odds: 1.44, handicap: 30.5, handicap_abs: 30.5 },
+      { kind: 'Under', name: 'Sub (30.5)', odds: 2.55, handicap: 30.5, handicap_abs: 30.5 },
+    ], { handicap: 30.5 }),
+  ];
+
+  // The counterfactual that gives the assertion its meaning: this very market
+  // over two real clubs is a perfectly good 30.5-goal total. Nothing about the
+  // market is the problem — only who is playing it.
+  const played = extract(markets, [
+    { name: 'Arsenal', is_home: true },
+    { name: 'Real Madrid', is_home: false },
+  ]);
+  const { contract, routed } = contractOf(played, 'total_goals');
+  assert.equal(contract.family, 'OVER_UNDER');
+  assert.equal(contract.lineKey, '30.5');
+  assert.deepEqual(routed, ['over', 'under']);
+
+  assert.deepEqual(
+    emitAll(markets, [
+      { name: 'Gazde (Goluri)', is_home: true },
+      { name: 'Oaspeți (Goluri)', is_home: false },
+    ]),
+    [],
+    'a table is not a fixture and must not be published as one',
+  );
+});
+
+test('the role-word guard is anchored: a club whose name merely starts with one survives', () => {
+  // Home United is a real club (Nakasi, Fiji). A false positive here deletes a
+  // fixture outright, and deleting fixtures is the expensive direction, so the
+  // list is anchored to the whole name instead of "starts with a role word".
+  const event = extract([
+    rawMarket('default', 'Rezultat Final', 5498, [
+      { kind: 'W1', name: '1', fullname: 'Home United', odds: 2.4 },
+      { kind: 'X', name: 'X', fullname: 'X', odds: 3.3 },
+      { kind: 'W2', name: '2', fullname: 'Rewa', odds: 2.9 },
+    ]),
+  ], [
+    { name: 'Home United', is_home: true },
+    { name: 'Rewa', is_home: false },
+  ]);
+  assert.deepEqual(contractOf(event, 'default').routed, ['home', 'draw', 'away']);
+});
+
+test('a bare "Home" / "Away" column pair is caught too, in either slot', () => {
+  // The bare headers a matchday board writes, with and without the
+  // parenthetical, and with the home column in either position — the guard
+  // tests both competitors, so order cannot smuggle one through.
+  const markets = [
+    rawMarket('total_goals', 'Total Goluri', 5500, [
+      { kind: 'Over', name: 'Peste (29.5)', odds: 1.4, handicap: 29.5, handicap_abs: 29.5 },
+      { kind: 'Under', name: 'Sub (29.5)', odds: 2.7, handicap: 29.5, handicap_abs: 29.5 },
+    ], { handicap: 29.5 }),
+  ];
+  for (const pair of [
+    [{ name: 'Home', is_home: true }, { name: 'Away', is_home: false }],
+    [{ name: 'Gazde', is_home: true }, { name: 'Oaspeti', is_home: false }],
+    [{ name: 'Real Madrid', is_home: true }, { name: 'Away', is_home: false }],
+  ]) {
+    assert.deepEqual(
+      emitAll(markets, pair),
+      [],
+      `a role name in either slot must be refused: ${pair.map((c) => c.name).join(' v ')}`,
+    );
+  }
 });
 
 test('an unknown outcome kind falls back to the display name instead of dropping the market', () => {

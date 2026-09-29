@@ -384,6 +384,41 @@ test('the run reports the handicap it now covers', async () => {
   }
 });
 
+test('the coverage string reports only the families the run emitted', () => {
+  // It was the literal 'fulltime-1x2+tgoals+asian_handicap+btts' for all six
+  // tenants, which promised million, baumbet, powerbet and winbet a football
+  // handicap none of them serves — measured 2026-10-02, those four send three
+  // market shapes and no type-16 market at all, while don and topbet do. A
+  // coverage string that overstates is the same false claim as a wrong market
+  // mapping, in the one field an operator reads to judge whether a book is
+  // worth keeping.
+  //
+  // So the string is derived from the events this run produced. Two directions
+  // are asserted: a run with a handicap says so, and a run without one does not
+  // — the second is the case the hardcoded string got wrong.
+  const familiesOf = (id, events) => new A(id, { windowHours: 24 })
+    ._serializable(events, {}).coverage.market;
+
+  const withHandicap = parser('don');
+  const hcapEvents = withHandicap.extractEvents(withHandicap.normalize(structuredClone(fixtures.don)));
+  assert.ok(hcapEvents.some((e) => e.markets.some((m) => m.key === 'ASIAN_HANDICAP')),
+    'the don fixture really does carry handicap markets, or this test proves nothing');
+  assert.match(familiesOf('don', hcapEvents), /asian_handicap/);
+
+  // The same events with every handicap market removed: a tenant whose board
+  // stops quoting one must stop claiming it, with no code change.
+  const stripped = hcapEvents.map((e) => ({
+    ...e, markets: e.markets.filter((m) => m.key !== 'ASIAN_HANDICAP'),
+  }));
+  const market = familiesOf('million', stripped);
+  assert.doesNotMatch(market, /asian_handicap/);
+  assert.equal(market, 'fulltime-1x2+tgoals+btts',
+    'only the handicap is withdrawn, and the families the run did emit stay');
+
+  // An empty run claims nothing beyond the 1X2 it could not publish either.
+  assert.equal(familiesOf('winbet', []), 'fulltime-1x2');
+});
+
 test('a total without a line is dropped rather than published nameless', () => {
   // No line means the two selections collapse into a contract the engine cannot
   // bucket, which is worse than not publishing it. Only the totals are stripped

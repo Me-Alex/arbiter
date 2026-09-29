@@ -83,12 +83,19 @@ const SPORT_SLUGS = {
  * resolves a leg by comparing the selection against homeTeam/awayTeam or a
  * leading "1"/"2" token — so "B. Celtics" matched neither "Boston Celtics"
  * nor "1" and the leg routed to null. The market resolved and could never be
- * priced: 398 two-way `default` markets, 221 `handicap`, 91
- * `goals_handicap`, 76 `game_handicap` and all 4 `run_line` in that capture.
- * `o.fullname` holds the unabbreviated competitor and would have fixed the
- * name comparison, but `kind` is the better source: it is the provider's own
- * taxonomy, it needs no team-name matching at all, and it is what makes the
- * side independent of the `lang=ro` display language this adapter requests.
+ * priced: 398 two-way `default` markets, 221 `handicap`, 91 `goals_handicap`,
+ * 76 `game_handicap` and all 4 `run_line` in that capture.
+ *
+ * Read those five numbers as this adapter's reach across all sixteen sports,
+ * NOT as football. The same capture holds football under three codes only —
+ * `default`, `total_goals`, `btts` — and a football result already labels its
+ * sides "1"/"2", so the abbreviated-club loss above is almost entirely the
+ * other sports' handicaps. The football shapes the scanner arbitrates are the
+ * three named here, and for those `kind` is what makes the side independent of
+ * the `lang=ro` display language this adapter requests. It is also the
+ * provider's own taxonomy, so it needs no team-name matching at all — which is
+ * what `o.fullname`, the other way to repair the name comparison, would have
+ * required, and would have kept doing wrong for every abbreviation.
  *
  * The line is emitted INTO THE NAME because that is where the contract layer
  * reads it — `extractLineFromName` is the single line parser, and adapters
@@ -104,6 +111,23 @@ const SIDE_BY_KIND = {
   Over: 'Over', Under: 'Under',
   Yes: 'Yes', No: 'No',
 };
+
+/**
+ * True when a competitor name is a COLUMN of a statistics table rather than a
+ * club — "Gazde (Goluri)", "Oaspeți (Goluri)", or the bare "Gazde" / "Home" a
+ * matchday board writes in its two columns.
+ *
+ * Deliberately a closed list of role words, not a heuristic about "names that
+ * look like roles": a false positive here deletes a real fixture, and the cost of
+ * that is the whole book. The words are the ones the feed itself uses for the
+ * sides of a table, and the parenthetical is the tell — a competition is not
+ * called "Gazde (Goluri)" anywhere, a table column is.
+ */
+const ROLE_NAME = /^(gazde|oaspe[tț]i|oaspeti|home|away|gazde\s*\(\s*goluri\s*\)|oaspe[tț]i\s*\(\s*goluri\s*\))$/i;
+
+function isRoleName(name) {
+  return ROLE_NAME.test(String(name ?? '').trim());
+}
 
 /**
  * Canonical selection name for one outcome, built from the provider's side
@@ -282,6 +306,25 @@ export default class NetBetScraper extends ScraperBase {
       const home = competitors.find((c) => c.is_home);
       const away = competitors.find((c) => !c.is_home);
       if (!home?.name || !away?.name) continue;
+      // A statistics board, not a match. netbet serves "Gazde (Goluri) v Oaspeți
+      // (Goluri)" in the league "UEFA Champions League. Matchday Statistics": the
+      // two "competitors" are the home and away columns of a matchday table, and
+      // the goals total beside it is quoted at 29.5 or 30.5 because it counts
+      // every goal in the round rather than in a game. Published as a fixture it
+      // enters the engine's OVER_UNDER buckets as a football line, where 30.5
+      // goals reads as a typo rather than as the settlement it actually is.
+      //
+      // Nothing else catches it: both names are non-empty, the kickoff is a real
+      // timestamp, the market is priced, and the sport is served as "Football".
+      // It was inert only because no other book quotes the same thing, which is
+      // a coincidence of the feed rather than a property of the contract.
+      //
+      // The test is the participants, not the league: a fixture names two clubs,
+      // and these name the two sides of a table. Measured 2026-10-02 over all 24
+      // books at maxEvents 3000, this shape is netbet's alone — casa-pariurilor
+      // (777 events), winner (706) and fortuna (778) carry none, and the other
+      // 73 netbet football events all name real clubs.
+      if (isRoleName(home.name) || isRoleName(away.name)) continue;
       const kickoff = new Date(e.starts_at).toISOString();
       const compositeId = `${e._sportName || 'unknown'}:${e.id}`;
       if (seen.has(compositeId)) continue;

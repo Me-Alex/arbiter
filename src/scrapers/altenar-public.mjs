@@ -490,6 +490,21 @@ export default class AltenarPublic extends ScraperBase {
    * -1.5 x6, +1.5 x4, +2.5 x2), so this guard has not had to reject anything
    * from that feed — it is here so that a future line cannot be published on
    * the strength of that observation.
+   *
+   * FOUR OF THE SIX TENANTS PUBLISH NO FOOTBALL HANDICAP AT ALL. Measured
+   * 2026-10-02 over each tenant's whole board: don and topbet serve type 16 and
+   * reach five contract lines between them, while million (204 events),
+   * baumbet (205), powerbet (202) and winbet (202) serve three market shapes
+   * each — 1x2, totals and BTTS — and no handicap market on any of them. The
+   * adapter published everything those four feeds sent and withheld nothing, so
+   * the absence is the feed's, not this reader's.
+   *
+   * Those four also quote the SAME prices on the same markets, which is what
+   * groups them as one independent source in feed-groups.mjs: BTTS reads
+   * Da 1.6 / Nu 2.2 and the totals read Peste 2.5 1.7 / Sub 2.5 2.05 on all
+   * four. don and topbet are in the same group, so that grouping is about the
+   * platform, and a handicap appearing on two of the six does not make them
+   * independent of each other.
    */
   _handicapMarkets(e) {
     const t = this.tables;
@@ -554,10 +569,36 @@ export default class AltenarPublic extends ScraperBase {
     return byType;
   }
 
+  /**
+   * The families this run actually emitted, not the union this class can read.
+   *
+   * This used to be the literal 'fulltime-1x2+tgoals+asian_handicap+btts' for
+   * all six tenants, which promised million, baumbet, powerbet and winbet a
+   * football handicap that none of them serves — measured 2026-10-02, all four
+   * send three market shapes and no type-16 market on any of their 200+ events,
+   * while don and topbet do send it. nsoft.mjs records the identical defect
+   * being fixed for betmen, where a hardcoded union claimed totals and
+   * handicaps a tenant does not publish; a coverage string that overstates is
+   * the same wrong claim in a different field, and it is the field an operator
+   * reads to decide whether a book is worth keeping.
+   *
+   * Deriving it from the emitted events means the string cannot outrun the run:
+   * a tenant whose board carries no handicap reports no handicap, and the day it
+   * starts carrying one the string says so with no code change. A thin day
+   * understates rather than overstates, which is the right way to be wrong.
+   */
   _serializable(events, raw) {
+    const seen = new Set();
+    for (const e of events || []) {
+      for (const m of e.markets || []) seen.add(m.key);
+    }
+    const families = ['fulltime-1x2'];
+    if (seen.has('TOTAL_GOALS')) families.push('tgoals');
+    if (seen.has('ASIAN_HANDICAP')) families.push('asian_handicap');
+    if (seen.has('BTTS')) families.push('btts');
     return { ...super._serializable(events, raw), sourceUrl: this.sourceUrl, transport: TRANSPORT,
       observedAt: this.observedAt, integration: this.id, attributionStatus: 'public-integration-unverified-brand',
-      coverage: { sport: 'football', market: 'fulltime-1x2+tgoals+asian_handicap+btts', live: false, page: 1, exhaustive: false,
+      coverage: { sport: 'football', market: families.join('+'), live: false, page: 1, exhaustive: false,
         maxEvents: this.maxEvents, windowHours: this.windowHours, requiresCountryIso: true } };
   }
 }

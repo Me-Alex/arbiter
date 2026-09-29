@@ -24,6 +24,32 @@ const SPORT_IDS = ['FOOT', 'TENN', 'BASK', 'HANB', 'ICEH', 'VOLY', 'FUTS', 'DART
  * Only a market whose BOTH legs are bare, opposite-signed and on a half line is
  * rewritten. Anything else is passed through unchanged so resolveContract keeps
  * withholding a shape it cannot prove exhaustive.
+ *
+ * BETANO SERVES NO FOOTBALL HANDICAP, so none of the above reaches a football
+ * event — and that is worth stating here, at the one function a reader would
+ * otherwise assume is how betano's handicap is read.
+ *
+ * Measured 2026-09-29 over the whole board this feed exposes: betano answers 25
+ * to 43 events per sport id and football is 26 of 232, and NONE of those 26
+ * carries a handicap market. The feed's four handicap-typed markets are
+ * `FHOT "Handicap"` (29 rows), `HCAP` (12), `AHOT` (25) and `FAHC` (29, split
+ * between "Handicap" and "Handicap meci"), and every one of them sits on a
+ * non-football event: the samples read "Elverum -3.5 / Hammarby HB +3.5"
+ * (ice hockey), "Alejandro Tabilo -3.5 / Tommy Paul +3.5" (tennis), "FaZe Clan
+ * -1.5 / Nemiga +1.5" (esports), and a -8.5/+8.5 pair that is a set line and
+ * not a football handicap at any level.
+ *
+ * Football is nine shapes and no handicap: `MRES` result, `MR12` MegaCote
+ * result, `HCTG` total goals, `OUH1` first-half goals, `BTSC` both teams to
+ * score, `DBLC` double chance, `DNOB` draw no bet, `CNOU` corners, `TCOU`
+ * cards. Corners and cards are withheld because the engine has no family for
+ * them; double chance and draw-no-bet are catalogued and not arbitrable.
+ *
+ * So this rewrite is a guard, not the live football path: it is correct, it is
+ * tested, and it costs nothing, but the honest reading of the coverage table is
+ * that betano contributes two families on football and that the other seven are
+ * not on offer here. The same trap this documents is live at netbet, whose
+ * `handicap` / `goals_handicap` / `run_line` rows are likewise other sports.
  */
 const BARE_SPREAD_KEYS = new Set(['FHOT']);
 const BARE_SPREAD = /^\s*([+-])\s*(\d+(?:[.,]\d+)?)\s*$/;
