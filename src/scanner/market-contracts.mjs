@@ -948,10 +948,22 @@ export function canonicalOutcomeFor(selectionName, contract, ctx = {}) {
     const normSel = normalizeTeamName(stripped);
     if (home && normSel && normSel === home) return 'home';
     if (away && normSel && normSel === away) return 'away';
-    // For FEG ufo:02-06 / 0c-02 / 14-02 signs +/- -X.X and +X.X: the routing
-    // layer assigns sides by player / team prefix. The numeric sign doesn't
-    // tell us; if the name itself doesn't carry a side token we trust the
-    // outcome index assigned in the engine.
+    // Nothing but a signed line left — a bare spread. The sign is then the side,
+    // which is what a handicap without team or player names means: the negative
+    // leg is the home handicap. Measured live: casa-pariurilor's FEG feed
+    // publishes ufo:mtyp:00-10 ("Echipa 1 Total goluri 1.5") as "+ 1.5" / "- 1.5"
+    // and nothing else, so both candidates stripped to empty and neither leg
+    // found a side. handicapLineKey already orders this shape by sign; labelling
+    // it here by anything else would put the two halves of one contract out of
+    // step with each other.
+    //
+    // This replaces a comment claiming the opposite — that for these signs "the
+    // numeric sign doesn't tell us" and the side comes from the outcome index.
+    // The keys it cited (ufo:02-06, 0c-02, 14-02) are TOTALS: they route to
+    // OVER_UNDER above, where "+" is over and "-" is under, and they never reach
+    // this branch. Here the family is ASIAN_HANDICAP and the sign does tell us.
+    const bare = /^\s*([+-])\s*\d+(?:[.,]\d+)?\s*$/.exec(raw);
+    if (bare) return bare[1] === '-' ? 'home' : 'away';
     return null;
   }
 

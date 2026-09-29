@@ -10,6 +10,29 @@ function ev(key, selections) {
   return { key, period: 'fulltime', name: '', selections };
 }
 
+test('a bare signed spread is labelled by sign, not left unlabelled', () => {
+  // Measured live on casa-pariurilor's FEG feed: ufo:mtyp:00-10 publishes
+  // "Echipa 1 Total goluri 1.5" as "+ 1.5" / "- 1.5" with no team or player
+  // token at all. Both candidates stripped to empty, so the contract resolved
+  // and neither leg found a side. In a two-way handicap the negative leg IS the
+  // home handicap — the same rule handicapLineKey orders the lineKey by.
+  const market = ev('ufo:mtyp:00-10', [
+    { name: '+ 1.5' }, { name: '- 1.5' },
+  ]);
+  const c = resolveContract(market);
+  assert.equal(c.family, 'ASIAN_HANDICAP');
+  assert.equal(c.lineKey, '-1.5/1.5');
+  assert.deepEqual(
+    market.selections.map((s) => canonicalOutcomeFor(s.name, c, {})),
+    ['away', 'home'],
+  );
+  // The sign must not leak into OVER_UNDER, where "+" means over. The FEG total
+  // keys (ufo:02-06, 14-02) are routed as totals before they can get here.
+  assert.equal(resolveContract(ev('ufo:mtyp:14-02', [
+    { name: '+ 1.5' }, { name: '- 1.5' },
+  ])).family, 'OVER_UNDER', 'a signed total stays a total');
+});
+
 test('netbet game_handicap with line in name → ASIAN_HANDICAP', () => {
   const c = resolveContract(ev('game_handicap', [
     { name: '1 (-7.5)' }, { name: '2 (7.5)' },
