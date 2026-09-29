@@ -217,6 +217,87 @@
       "sn": "1.5",
       "id": 1742343671,
       "name": "Total goluri"
+    },
+    {
+      "oddIds": [
+        4564505380,
+        4564505381,
+        4564505382
+      ],
+      "typeId": 1,
+      "sportMarketId": 70472,
+      "id": 1752459543,
+      "name": "1x2"
+    },
+    {
+      "oddIds": [
+        4564505444,
+        4564505446,
+        4564505445
+      ],
+      "variant": 9,
+      "lines": [],
+      "typeId": 8,
+      "sportMarketId": 70491,
+      "sv": "1",
+      "sn": "Primul",
+      "id": 1752459566,
+      "name": "Golul 1"
+    },
+    {
+      "oddIds": [
+        4564505230,
+        4564505228,
+        4564505229
+      ],
+      "typeId": 10,
+      "sportMarketId": 70495,
+      "id": 1752459508,
+      "name": "Șansă dublă"
+    },
+    {
+      "oddIds": [
+        4564505267,
+        4564505268
+      ],
+      "typeId": 11,
+      "sportMarketId": 70500,
+      "id": 1752459516,
+      "name": "Egal - Pariul se rambursează"
+    },
+    {
+      "oddIds": [
+        4564505126,
+        4564505127
+      ],
+      "typeId": 16,
+      "sportMarketId": 70515,
+      "sv": "+1.5",
+      "sn": "+1.5",
+      "id": 1752459480,
+      "name": "Handicap Goluri"
+    },
+    {
+      "oddIds": [
+        4564505064,
+        4564505065
+      ],
+      "typeId": 18,
+      "sportMarketId": 70520,
+      "sv": "3.5",
+      "sn": "3.5",
+      "id": 1752459449,
+      "name": "Total goluri"
+    },
+    {
+      "oddIds": [
+        4564505166,
+        4564505167
+      ],
+      "typeId": 29,
+      "sportMarketId": 70545,
+      "id": 1752459500,
+      "name": "Ambele echipe să înscrie"
     }
   ],
   "odds": [
@@ -389,6 +470,167 @@
       "isDBB": true,
       "id": 4533191329,
       "name": "Sub 1.5"
+    },
+    {
+      "typeId": 1,
+      "price": 5.5,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 44155,
+      "isDBB": true,
+      "id": 4564505380,
+      "name": "Slough Town"
+    },
+    {
+      "typeId": 2,
+      "price": 4.3334,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4564505381,
+      "name": "X"
+    },
+    {
+      "typeId": 3,
+      "price": 1.48,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 46047,
+      "isDBB": true,
+      "id": 4564505382,
+      "name": "Ebbsfleet"
+    },
+    {
+      "typeId": 1,
+      "price": 2.75,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 44155,
+      "isDBB": true,
+      "id": 4564505444,
+      "name": "Slough Town"
+    },
+    {
+      "typeId": 7,
+      "price": 18,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4564505446,
+      "name": "Niciunul"
+    },
+    {
+      "typeId": 3,
+      "price": 1.3847,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 46047,
+      "isDBB": true,
+      "id": 4564505445,
+      "name": "Ebbsfleet"
+    },
+    {
+      "typeId": 9,
+      "price": 2.2223,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 44155,
+      "isDBB": true,
+      "id": 4564505230,
+      "name": "Slough Town sau egal"
+    },
+    {
+      "typeId": 10,
+      "price": 1.1667,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4564505228,
+      "name": "Slough Town sau Ebbsfleet"
+    },
+    {
+      "typeId": 11,
+      "price": 1.1429,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 46047,
+      "isDBB": true,
+      "id": 4564505229,
+      "name": "Egal sau Ebbsfleet"
+    },
+    {
+      "typeId": 1,
+      "price": 4,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 44155,
+      "id": 4564505267,
+      "name": "Slough Town"
+    },
+    {
+      "typeId": 3,
+      "price": 1.2,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 46047,
+      "id": 4564505268,
+      "name": "Ebbsfleet"
+    },
+    {
+      "typeId": 1714,
+      "price": 1.6,
+      "isMB": true,
+      "oddStatus": 0,
+      "competitorId": 44155,
+      "isDBB": true,
+      "id": 4564505126,
+      "name": "Slough Town (+1.5)"
+    },
+    {
+      "typeId": 1715,
+      "price": 2.2,
+      "isMB": true,
+      "oddStatus": 0,
+      "competitorId": 46047,
+      "isDBB": true,
+      "id": 4564505127,
+      "name": "Ebbsfleet (-1.5)"
+    },
+    {
+      "typeId": 12,
+      "price": 2.2858,
+      "isMB": true,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4564505064,
+      "name": "Peste 3.5"
+    },
+    {
+      "typeId": 13,
+      "price": 1.5556,
+      "isMB": true,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4564505065,
+      "name": "Sub 3.5"
+    },
+    {
+      "typeId": 74,
+      "price": 1.6667,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4564505166,
+      "name": "Da"
+    },
+    {
+      "typeId": 76,
+      "price": 2.1,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4564505167,
+      "name": "Nu"
     }
   ],
   "events": [
@@ -464,6 +706,44 @@
       "startDate": "2026-09-21T20:30:00Z",
       "id": 17723611,
       "name": "Bogotá FC vs. Barranquilla"
+    },
+    {
+      "marketIds": [
+        1752459543,
+        1752459566,
+        1752459508,
+        1752459516,
+        1752459480,
+        1752459449,
+        1752459500
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "code": 4564,
+      "hasStream": true,
+      "extId": "fp32_ar:match:665083",
+      "sc": 1568,
+      "mc": 189,
+      "rc": false,
+      "pId": 32,
+      "et": 0,
+      "hasStats": true,
+      "competitorIds": [
+        44155,
+        46047
+      ],
+      "sportId": 66,
+      "catId": 497,
+      "champId": 2959,
+      "status": 0,
+      "startDate": "2026-09-21T21:45:00Z",
+      "id": 17771099,
+      "name": "Slough Town vs. Ebbsfleet"
     }
   ],
   "sports": [
@@ -508,6 +788,15 @@
       "hasLiveEvents": false,
       "id": 797,
       "name": "Columbia"
+    },
+    {
+      "champIds": [
+        2959
+      ],
+      "iso": "ENG",
+      "hasLiveEvents": false,
+      "id": 497,
+      "name": "Anglia"
     }
   ],
   "champs": [
@@ -530,6 +819,16 @@
       "hasLiveEvents": false,
       "id": 4009,
       "name": "Turneul Postobon"
+    },
+    {
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "hasLiveEvents": false,
+      "id": 2959,
+      "name": "Conferinta de Sud"
     }
   ],
   "competitors": [
@@ -552,6 +851,16 @@
       "abbreviation": "BAR",
       "id": 59807,
       "name": "Barranquilla"
+    },
+    {
+      "abbreviation": "SLO",
+      "id": 44155,
+      "name": "Slough Town"
+    },
+    {
+      "abbreviation": "EBB",
+      "id": 46047,
+      "name": "Ebbsfleet"
     }
   ]
 }

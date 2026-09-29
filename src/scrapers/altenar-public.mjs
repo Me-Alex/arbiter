@@ -17,7 +17,25 @@ const UPCOMING_BASE = 'https://sb2frontend-altenar2.biahosted.com/api/widget/Get
  * Football sport id and the market families we publish. Verified against the
  * tenants' GetSportMenu response, where Fotbal is id 66 (68 = Tenis,
  * 67 = Baschet, …), and against captured GetUpcoming payloads from all six
- * tenants, which agree on these typeIds.
+ * tenants.
+ *
+ * The six do NOT serve the same catalogue, which the type list below now
+ * records per family rather than asserting as a block. Measured 2026-09-29 on
+ * the full paginated board of each:
+ *
+ *   typeId 1  1x2            all six
+ *   typeId 18 totals         all six, under two names — "Total goluri" on don
+ *                            and topbet (697 and 703 rows), "Total" on the
+ *                            other four (~700 each) plus a small "Total" on don
+ *                            and topbet (78 each). Same typeId, so one branch
+ *                            covers both.
+ *   typeId 29 BTTS           all six (434-465 rows)
+ *   typeId 16 goals spread   don and topbet ONLY — 465 and 451 rows. million,
+ *                            baumbet, powerbet and winbet serve none, so the
+ *                            mapping buys two of the six a family and the
+ *                            other four nothing. That is a catalogue
+ *                            difference, not a reader gap: it was re-measured
+ *                            per tenant rather than inferred from the two.
  */
 const FOOTBALL_SPORT_ID = 66;
 
@@ -41,6 +59,7 @@ const MAX_PAGES = 25;
  *   1  "1x2"                        full-time match result
  *   18 "Total" / "Total goluri"     goals over/under, line in `sv` ("2.5")
  *   29 "Ambele echipe să înscrie"   both teams to score
+ *   16 "Handicap Goluri" / "Handicap"  goals spread, home line in `sv` ("-0.5")
  *
  * Deliberately NOT published, and why — the feed serves them, but the engine
  * cannot price them as a surebet or must not treat them as a match result:
@@ -53,10 +72,16 @@ const MAX_PAGES = 25;
  *      Publishing it under that key would invent an arbitrage.
  *   8  "Golul primul" (first goal)   — first-goalscorer, outcome id 7 is
  *      "Niciunul"; no contract models it.
+ *   1  "1x2 - Cote Mărite"           — the same three-way result at a
+ *      promotional price, on 5 of 4,348 market rows. It is the same contract
+ *      as the 1X2 already published for that event, so both land in one bucket
+ *      with one event's two result markets in it. Left out rather than
+ *      reshaped; worth revisiting if the engine ever wants the best of a set.
  */
 const MATCH_ODDS_MARKET_TYPE = 1;
 const TOTALS_MARKET_TYPE = 18;
 const BTTS_MARKET_TYPE = 29;
+const HANDICAP_MARKET_TYPE = 16;
 
 /**
  * Outcome typeId → canonical selection label, per family.
@@ -84,6 +109,40 @@ const BTTS_LABELS = new Map([
   [74, 'yes'],
   [76, 'no'],
 ]);
+
+/**
+ * Outcome typeId → which side of the goals spread it prices.
+ *
+ * Measured 2026-09-29 over the whole paginated football board (770 events,
+ * 4,348 market rows): 412 handicap markets, every one with exactly the pair
+ * 1714/1715, and every one of those legs carrying a `competitorId` — 1714 is
+ * always the event's first competitor, 1715 the second. Nothing is inferred
+ * from leg order; the anchor is checked per leg below, so a tenant that swaps
+ * the two is refused rather than published mirrored.
+ */
+const HANDICAP_SIDES = new Map([
+  [1714, 'home'],
+  [1715, 'away'],
+]);
+
+/**
+ * The goals-spread line the feed quotes at, formatted with an explicit sign.
+ *
+ * `sv`/`sn` is the HOME line — at `+0.5` the home leg reads
+ * "Hitchin Town (+0.5)" and the away leg "Leighton Town (-0.5)", so the two
+ * legs are negations of each other and the engine's spread branch, which
+ * requires an exact negation, is the one that applies. `handicapLineKey` then
+ * orients the bucket from the "1"/"2" side tokens in the selection names, which
+ * is what keeps `-0.5/0.5` and `0.5/-0.5` in different buckets.
+ *
+ * @param {unknown} line
+ * @returns {string|null}
+ */
+function signedLine(line) {
+  const n = Number(line);
+  if (!Number.isFinite(n)) return null;
+  return n < 0 ? String(n) : `+${n}`;
+}
 
 export default class AltenarPublic extends ScraperBase {
   maxAttempts = 1;
@@ -312,6 +371,8 @@ export default class AltenarPublic extends ScraperBase {
     const out = [matchOdds];
     const totals = this._totalsMarkets(e);
     if (totals) out.push(...totals);
+    const handicap = this._handicapMarkets(e);
+    if (handicap) out.push(...handicap);
     const btts = this._bttsMarket(e);
     if (btts) out.push(btts);
     return out;
@@ -413,6 +474,67 @@ export default class AltenarPublic extends ScraperBase {
   }
 
   /**
+   * Every full-time goals handicap this event publishes, one market per line.
+   *
+   * Same shape as the totals and for the same reason: an event quotes several
+   * spreads (measured -0.5, +0.5, -1.5, +1.5, +2.5, +4.5, +5.5) as separate
+   * markets, and each is its own contract at its own line. Merging them would
+   * bucket home -0.5 with home -1.5.
+   *
+   * HALF LINES ONLY, and that is a settlement rule rather than a formatting
+   * one, the same rule the totals extractor and the router apply. At a whole
+   * line the level result pushes both legs; at a quarter line one leg wins half
+   * and the other pushes half. Neither is an exhaustive two-way contract, so an
+   * inverse sum below 1 is not a surebet. Measured 2026-10-02 on don, every one
+   * of the 53 handicap markets on the board is a half line (-0.5 x27, +0.5 x14,
+   * -1.5 x6, +1.5 x4, +2.5 x2), so this guard has not had to reject anything
+   * from that feed — it is here so that a future line cannot be published on
+   * the strength of that observation.
+   */
+  _handicapMarkets(e) {
+    const t = this.tables;
+    const out = [];
+    const [homeId, awayId] = e.competitorIds;
+    for (const m of e.marketIds.map((id) => t.markets.get(id))) {
+      if (!m || m.typeId !== HANDICAP_MARKET_TYPE) continue;
+      // The sign is part of the line, and the feed always writes it: "-0.5"
+      // when the home side gives goals, "+0.5" when it receives them. A guard
+      // that accepted only an optional minus would drop every market whose
+      // home side is the underdog — measured 2026-10-02 on don: 20 of the 53
+      // handicap markets on the board carry a leading "+".
+      const rawLine = String(m.sv ?? m.sn ?? '').trim();
+      if (!/^[+-]?\d+\.5$/.test(rawLine)) continue;
+      const homeLine = signedLine(rawLine);
+      if (homeLine === null) continue;
+      const awayLine = signedLine(-Number(homeLine));
+      if (awayLine === null) continue;
+      const byType = this._completePair(m, HANDICAP_SIDES);
+      if (!byType) continue;
+      // Each leg must be anchored to the side it claims to price. The feed
+      // labels its legs by competitor rather than by outcome type, so this is
+      // the only thing that keeps a mirrored tenant from being published with
+      // its two sides swapped.
+      if (byType.get(1714).competitorId !== homeId) continue;
+      if (byType.get(1715).competitorId !== awayId) continue;
+      const lines = { home: homeLine, away: awayLine };
+      // "1 (-0.5)" / "2 (+0.5)": the side token orients the bucket, and the
+      // signed line is what `classifyAndExtractLine` reads.
+      const selections = [1714, 1715].map((typeId) => {
+        const side = HANDICAP_SIDES.get(typeId);
+        return {
+          id: String(byType.get(typeId).id),
+          providerOutcomeId: typeId,
+          name: `${side === 'home' ? '1' : '2'} (${lines[side]})`,
+          odds: byType.get(typeId).price,
+          handicap: null,
+        };
+      });
+      out.push({ key: 'ASIAN_HANDICAP', providerMarketId: String(m.id), name: m.name, period: 'fulltime', line: homeLine, selections });
+    }
+    return out;
+  }
+
+  /**
    * Read a market's outcomes as a complete, live, priced pair — exactly one of
    * each type in `labels`, no duplicates, nothing suspended, every price > 1.
    * Returns null on any defect so a half-quoted market is never published.
@@ -435,7 +557,7 @@ export default class AltenarPublic extends ScraperBase {
   _serializable(events, raw) {
     return { ...super._serializable(events, raw), sourceUrl: this.sourceUrl, transport: TRANSPORT,
       observedAt: this.observedAt, integration: this.id, attributionStatus: 'public-integration-unverified-brand',
-      coverage: { sport: 'football', market: 'fulltime-1x2+tgoals+btts', live: false, page: 1, exhaustive: false,
+      coverage: { sport: 'football', market: 'fulltime-1x2+tgoals+asian_handicap+btts', live: false, page: 1, exhaustive: false,
         maxEvents: this.maxEvents, windowHours: this.windowHours, requiresCountryIso: true } };
   }
 }

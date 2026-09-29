@@ -65,7 +65,8 @@ test('the real capture yields a complete full-time 1X2 for football fixtures', (
   }
 });
 
-test('every published event carries a browseable favbet sourceUrl', () => {
+test('every published event carries a browseable favbet sourceUrl', (t) => {
+  atPinnedNow(t);
   // The persisted envelope's sourceUrl is the JSON-RPC endpoint, and the static
   // URL contract test regexes literals inside function bodies — so it cannot
   // catch a variable-sourced URL. This is the only place it is actually checked.
@@ -81,7 +82,8 @@ test('every published event carries a browseable favbet sourceUrl', () => {
   }
 });
 
-test('the event key is stable and does not depend on market ordering', () => {
+test('the event key is stable and does not depend on market ordering', (t) => {
+  atPinnedNow(t);
   const s = new Favbet({ windowHours: 72 });
   const first = s.extractEvents(s.normalize(raw()));
 
@@ -143,7 +145,8 @@ test('KNOWN DEFECT: markets are emitted more than once per event', (t) => {
   }
 });
 
-test('only the unqualified "both teams score" market may take the BTTS key', () => {
+test('only the unqualified "both teams score" market may take the BTTS key', (t) => {
+  atPinnedNow(t);
   // Favbet's feed carries several markets whose names all begin "Ambele echipe"
   // but which settle on different events:
   //

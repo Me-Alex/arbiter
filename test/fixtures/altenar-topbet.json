@@ -217,6 +217,87 @@
       "sn": "1.5",
       "id": 1742343671,
       "name": "Total goluri"
+    },
+    {
+      "oddIds": [
+        4556442742,
+        4556442743,
+        4556442744
+      ],
+      "typeId": 1,
+      "sportMarketId": 70472,
+      "id": 1749595157,
+      "name": "1x2"
+    },
+    {
+      "oddIds": [
+        4556442806,
+        4556442808,
+        4556442807
+      ],
+      "variant": 9,
+      "lines": [],
+      "typeId": 8,
+      "sportMarketId": 70491,
+      "sv": "1",
+      "sn": "Primul",
+      "id": 1749595180,
+      "name": "Golul 1"
+    },
+    {
+      "oddIds": [
+        4556442634,
+        4556442632,
+        4556442633
+      ],
+      "typeId": 10,
+      "sportMarketId": 70495,
+      "id": 1749595129,
+      "name": "Șansă dublă"
+    },
+    {
+      "oddIds": [
+        4556442659,
+        4556442660
+      ],
+      "typeId": 11,
+      "sportMarketId": 70500,
+      "id": 1749595135,
+      "name": "Egal - Pariul se rambursează"
+    },
+    {
+      "oddIds": [
+        4556442438,
+        4556442439
+      ],
+      "typeId": 16,
+      "sportMarketId": 70515,
+      "sv": "-0.5",
+      "sn": "-0.5",
+      "id": 1749595055,
+      "name": "Handicap Goluri"
+    },
+    {
+      "oddIds": [
+        4556442502,
+        4556442503
+      ],
+      "typeId": 18,
+      "sportMarketId": 70520,
+      "sv": "3.5",
+      "sn": "3.5",
+      "id": 1749595087,
+      "name": "Total goluri"
+    },
+    {
+      "oddIds": [
+        4556442570,
+        4556442571
+      ],
+      "typeId": 29,
+      "sportMarketId": 70545,
+      "id": 1749595121,
+      "name": "Ambele echipe să înscrie"
     }
   ],
   "odds": [
@@ -389,6 +470,167 @@
       "isDBB": true,
       "id": 4533191329,
       "name": "Sub 1.5"
+    },
+    {
+      "typeId": 1,
+      "price": 1.7143,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 43727,
+      "isDBB": true,
+      "id": 4556442742,
+      "name": "Forest Green Rovers"
+    },
+    {
+      "typeId": 2,
+      "price": 4,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4556442743,
+      "name": "X"
+    },
+    {
+      "typeId": 3,
+      "price": 4.2,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 44153,
+      "isDBB": true,
+      "id": 4556442744,
+      "name": "Wealdstone"
+    },
+    {
+      "typeId": 1,
+      "price": 1.5295,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 43727,
+      "isDBB": true,
+      "id": 4556442806,
+      "name": "Forest Green Rovers"
+    },
+    {
+      "typeId": 7,
+      "price": 21,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4556442808,
+      "name": "Niciunul"
+    },
+    {
+      "typeId": 3,
+      "price": 2.3334,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 44153,
+      "isDBB": true,
+      "id": 4556442807,
+      "name": "Wealdstone"
+    },
+    {
+      "typeId": 9,
+      "price": 1.2223,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 43727,
+      "isDBB": true,
+      "id": 4556442634,
+      "name": "Forest Green Rovers sau egal"
+    },
+    {
+      "typeId": 10,
+      "price": 1.2,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4556442632,
+      "name": "Forest Green Rovers sau Wealdstone"
+    },
+    {
+      "typeId": 11,
+      "price": 1.8889,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 44153,
+      "isDBB": true,
+      "id": 4556442633,
+      "name": "Egal sau Wealdstone"
+    },
+    {
+      "typeId": 1,
+      "price": 1.3077,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 43727,
+      "id": 4556442659,
+      "name": "Forest Green Rovers"
+    },
+    {
+      "typeId": 3,
+      "price": 3,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 44153,
+      "id": 4556442660,
+      "name": "Wealdstone"
+    },
+    {
+      "typeId": 1714,
+      "price": 1.6667,
+      "isMB": true,
+      "oddStatus": 0,
+      "competitorId": 43727,
+      "isDBB": true,
+      "id": 4556442438,
+      "name": "Forest Green Rovers (-0.5)"
+    },
+    {
+      "typeId": 1715,
+      "price": 2,
+      "isMB": true,
+      "oddStatus": 0,
+      "competitorId": 44153,
+      "isDBB": true,
+      "id": 4556442439,
+      "name": "Wealdstone (+0.5)"
+    },
+    {
+      "typeId": 12,
+      "price": 2.1667,
+      "isMB": true,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4556442502,
+      "name": "Peste 3.5"
+    },
+    {
+      "typeId": 13,
+      "price": 1.6154,
+      "isMB": true,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4556442503,
+      "name": "Sub 3.5"
+    },
+    {
+      "typeId": 74,
+      "price": 1.5,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4556442570,
+      "name": "Da"
+    },
+    {
+      "typeId": 76,
+      "price": 2.4,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4556442571,
+      "name": "Nu"
     }
   ],
   "events": [
@@ -464,6 +706,44 @@
       "startDate": "2026-09-21T20:30:00Z",
       "id": 17723611,
       "name": "Bogotá FC vs. Barranquilla"
+    },
+    {
+      "marketIds": [
+        1749595157,
+        1749595180,
+        1749595129,
+        1749595135,
+        1749595055,
+        1749595087,
+        1749595121
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "code": 4331,
+      "hasStream": false,
+      "extId": "fp32_ar:match:665079",
+      "sc": 1915,
+      "mc": 207,
+      "rc": false,
+      "pId": 32,
+      "et": 0,
+      "hasStats": true,
+      "competitorIds": [
+        43727,
+        44153
+      ],
+      "sportId": 66,
+      "catId": 497,
+      "champId": 3022,
+      "status": 0,
+      "startDate": "2026-09-21T21:45:00Z",
+      "id": 17185360,
+      "name": "Forest Green Rovers vs. Wealdstone"
     }
   ],
   "sports": [
@@ -508,6 +788,15 @@
       "hasLiveEvents": false,
       "id": 797,
       "name": "Columbia"
+    },
+    {
+      "champIds": [
+        3022
+      ],
+      "iso": "ENG",
+      "hasLiveEvents": false,
+      "id": 497,
+      "name": "Anglia"
     }
   ],
   "champs": [
@@ -530,6 +819,16 @@
       "hasLiveEvents": false,
       "id": 4009,
       "name": "Turneul Postobon"
+    },
+    {
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "hasLiveEvents": false,
+      "id": 3022,
+      "name": "National League"
     }
   ],
   "competitors": [
@@ -552,6 +851,16 @@
       "abbreviation": "BAR",
       "id": 59807,
       "name": "Barranquilla"
+    },
+    {
+      "abbreviation": "FGR",
+      "id": 43727,
+      "name": "Forest Green Rovers"
+    },
+    {
+      "abbreviation": "WEA",
+      "id": 44153,
+      "name": "Wealdstone"
     }
   ]
 }
