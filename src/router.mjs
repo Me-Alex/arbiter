@@ -154,7 +154,29 @@ export function buildRouter(ctx) {
       // verification verdicts back into the published scan.
       expireAutomaticConfirmations(baseScan);
       await writeJsonAtomic(join(dataDir, 'latest-scan.json'), baseScan);
-      return sendJson(null, 200, result);
+      // The four counters, and only those. `runVerificationPass` also returns
+      // `verifications` (one entry per target, each carrying the whole target)
+      // and `newScan` (the whole re-scan of every book the pass touched), and
+      // the route used to forward both verbatim.
+      //
+      // Nothing read them. The page formats these four numbers and then
+      // re-reads /api/scan (scanner.js:345), which is where the verdicts already
+      // are — the loop above writes `verification` onto every opportunity and
+      // `verificationSummary` onto the scan itself. Measured over the real
+      // route: 4 bytes of counters answered with 2207, 550x more than the page
+      // uses, and `newScan` grows with the whole scan while the payload the UI
+      // renders stays four integers.
+      //
+      // That is not a neutral trim either. The page's own comment above the call
+      // says "the response is the verdict counters, not the scan" — which was
+      // not true of the route it was describing, and the reason nothing caught
+      // it is that no test asserted the response shape either.
+      return sendJson(null, 200, {
+        confirmed: result.confirmed,
+        rejected: result.rejected,
+        expired: result.expired,
+        unconfirmed: result.unconfirmed,
+      });
     },
     'GET /api/scrapers': async () => {
       const cfg = await tryReadJson(configPath, { jobs: [] });
