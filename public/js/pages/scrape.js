@@ -106,14 +106,36 @@ function renderBookmakerChips() {
   byGroup.validated.sort(sortByName);
   byGroup.experimental.sort(sortByName);
 
+  // The tooltip is the only place a 26-item list can carry evidence without
+  // costing layout density, so it answers three questions about one book: what
+  // the adapter is, why it was accepted, and when the provider's endpoint was
+  // last checked against a real response.
+  //
+  // That third one is not decoration. `endpointVerifiedAt` is carried by 25 of
+  // 26 jobs and it is not uniform — 22 of them read 2026-09-01 while unibet,
+  // betmen, prowin and ultrabet were re-checked a month later. A book whose
+  // endpoint was last proven weeks before its siblings is making a quieter
+  // claim about how much the price can be trusted, and the page could not say
+  // so before: it showed the reason prose and never the date.
+  //
+  // `feedStatus` is deliberately not shown. All 26 wired jobs measure
+  // `verified` and none disagrees with its own `validationStatus`, so today it
+  // is a constant that would only add a word to every chip. It belongs here
+  // when it starts to vary — which is the moment it starts to mean something.
+  const chipTitle = (s, validated) => {
+    const t = window.arbiterI18n.t.bind(window.arbiterI18n);
+    const lines = [s.validationReason || (validated ? t('sourceValidated') : t('sourceExperimental'))];
+    if (s.endpointVerifiedAt) lines.push(`${t('endpointVerified')}: ${s.endpointVerifiedAt}`);
+    return lines.join('\n');
+  };
+
   const chip = (s) => {
     const validated = validatedIds.has(s.id);
     const status = s.validationStatus || 'experimental';
-    const reason = s.validationReason || (validated ? 'validated real-data source' : 'experimental source');
     const job = jobById.get(s.id);
     const dot = `<span class="dot ${statusDotClass(job)}"></span>`;
     const ev = `<span class="muted ev" ${job && job.events ? '' : 'hidden'}>${job && job.events ? job.events.toLocaleString() : ''} ev</span>`;
-    return `<label class="chip ${validated ? 'green' : ''}" title="${escapeHtml(reason)}" data-name="${escapeHtml((s.name || s.id).toLowerCase())}">
+    return `<label class="chip ${validated ? 'green' : ''}" title="${escapeHtml(chipTitle(s, validated))}" data-name="${escapeHtml((s.name || s.id).toLowerCase())}">
       <input type="checkbox" value="${escapeHtml(s.id)}" data-source="${escapeHtml(s.id)}" ${selectedIds.has(s.id) ? 'checked' : ''}>
       ${dot}
       <span class="name">${escapeHtml(s.name)} · ${escapeHtml(status)}</span>
