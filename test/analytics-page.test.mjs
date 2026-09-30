@@ -21,12 +21,31 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import vm from 'node:vm';
 import { buildMarketCatalog } from '../src/scanner/market-catalog.mjs';
+import { codeOnly, fieldReads, fieldsOn } from './helpers/code-only.mjs';
 
 const analyticsSource = readFileSync(new URL('../public/js/pages/analytics.js', import.meta.url), 'utf8');
 const commonSource = readFileSync(new URL('../public/js/pages/common.js', import.meta.url), 'utf8');
 const i18nSource = readFileSync(new URL('../public/js/i18n.js', import.meta.url), 'utf8');
 const serviceSource = readFileSync(new URL('../src/tracker-service.mjs', import.meta.url), 'utf8');
 const analyticsHtml = readFileSync(new URL('../public/admin/analytics.html', import.meta.url), 'utf8');
+
+/**
+ * The same two sources with their comments blanked.
+ *
+ * Every "does the page read this field" question below is answered against
+ * these, not against the text as written. A regex over raw source cannot tell a
+ * read from a mention, and the gap is not theoretical: `selection.group` is
+ * read by nobody in the whole frontend and the only trace of it anywhere is the
+ * word "group:" in a comment in dashboard.js. An instrument that counts
+ * comments would have called that field read — which is exactly the claim this
+ * file exists to check.
+ *
+ * Measured over the tree as it stands, blanking changes nothing at any of the
+ * three extractions below, so nothing rides on it today. It is here because the
+ * alternative is a census a one-line comment can switch off.
+ */
+const analyticsCode = codeOnly(analyticsSource, true);
+const serviceCode = codeOnly(serviceSource, true);
 
 /** The real dictionary, per language, loaded the way the page loads it. */
 function dictionaries() {
@@ -204,7 +223,9 @@ const EXPECTED_BET_FIELDS = [
 ];
 
 test('every field the service writes is read by the page', () => {
-  const body = serviceSource.slice(
+  // Bounds on the raw text, body from the blanked one: blanking keeps every
+  // offset, which is what makes that the same region rather than a similar one.
+  const body = serviceCode.slice(
     serviceSource.indexOf('function normalizeBet'),
     serviceSource.indexOf('function allowedBetPatch'),
   );
@@ -221,7 +242,14 @@ test('every field the service writes is read by the page', () => {
   // Nothing is exempt today. When something is, it goes here with its reason,
   // the way feedStatus went in the bookmaker chip's test.
   const EXEMPT = {};
-  const missing = EXPECTED_BET_FIELDS.filter((field) => !(field in EXEMPT) && !analyticsSource.includes(`b.${field}`));
+  // One extraction for the whole page, and a receiver boundary on it. The
+  // previous form asked `analyticsSource.includes('b.odds')` per field, which
+  // `tb.odds` also satisfies — and `analytics.js` has a `tb`, the table body
+  // element — so a field could be counted as read by an object that is not the
+  // bet. `b` is now the receiver actually bound at the map in renderTracker.
+  const readOnBets = fieldReads(analyticsSource, 'b');
+  assert.ok(readOnBets.length > 0, 'the receiver this test reads is not bound anywhere');
+  const missing = EXPECTED_BET_FIELDS.filter((field) => !(field in EXEMPT) && !readOnBets.includes(field));
   assert.deepEqual(missing, [], `the page never reads these: ${missing.join(', ')}`);
 });
 
@@ -582,18 +610,33 @@ const CATALOG_MARKET_FIELDS = ['eventCount', 'marketKey', 'marketName', 'selecti
 /**
  * The page's catalog unit, so `cat.` and `m.` mean one thing inside it.
  *
- * The harness cuts at the same marker, so this is the text the tests below are
- * actually about.
+ * The harness cuts at the same marker, so these are the bounds the tests below
+ * are actually about — found once on the raw text, and asserted once, because
+ * two copies of an `indexOf` pair is how a block quietly stops being the block.
  */
-const CATALOG_BLOCK = (() => {
+const CATALOG_BOUNDS = (() => {
   const from = analyticsSource.indexOf('// — market catalog —');
   const to = analyticsSource.indexOf('// — add-bet modal —');
   assert.ok(from !== -1 && to > from, 'the catalog block is gone — has the page been restructured?');
-  return analyticsSource.slice(from, to);
+  return { from, to };
 })();
 
-/** Every `<receiver>.<field>` the block reads, for a given receiver name. */
-const readsOn = (receiver) => [...new Set([...CATALOG_BLOCK.matchAll(new RegExp(`\\b${receiver}\\.(\\w+)`, 'g'))].map((m) => m[1]))];
+/** The same block with its comments blanked, so a slice of it is that region. */
+const CATALOG_CODE = analyticsCode.slice(CATALOG_BOUNDS.from, CATALOG_BOUNDS.to);
+
+/**
+ * Every `<receiver>.<field>` the block reads, for a given receiver name.
+ *
+ * Read off the blanked block, so a field named in a comment inside it is still
+ * reported as unread — which is the state the two tests below assert for
+ * `cat.events`, `cat.sources` and `cat.schemaVersion`. Those are the three a
+ * comment could most easily talk a census into believing, since all three are
+ * named in the prose of this very test file.
+ *
+ * Receivers are the page's own bindings: `cat` is the document, `m` a row. The
+ * boundary is what stops `mm.marketKey` from answering for `m.marketKey`.
+ */
+const readsOn = (receiver) => fieldsOn(CATALOG_CODE, receiver);
 
 /**
  * Published by the catalog, read by no page, with the reason it is allowed.

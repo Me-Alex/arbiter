@@ -28,9 +28,7 @@ import { join } from 'node:path';
 import { buildRouter } from '../src/router.mjs';
 import * as scanService from '../src/scan-service.mjs';
 import { RateLimiter } from '../src/shared/rate-limit.mjs';
-import { createRequire } from 'node:module';
-
-const { parse } = createRequire(import.meta.url)('espree');
+import { codeOnly } from './helpers/code-only.mjs';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const CONSUMERS = [
@@ -56,18 +54,11 @@ const UNREAD_WITH_REASON = new Map([
  * does not have. espree is what ESLint already runs over these files, so it is
  * asked the only question it cannot get wrong — which ranges are comments.
  *
- * `onComment` is ignored by espree; the ranges come back on `ast.comments`.
+ * That masker now lives in helpers/code-only.mjs. It was never this file's:
+ * four censuses in the tree decided readership from raw source text, each
+ * carrying its own version of the idea, and this was the fifth copy. One
+ * implementation means the next census starts from the honest one.
  */
-function codeOnly(src) {
-  const { comments } = parse(src, { ecmaVersion: 2023, sourceType: 'script', comment: true, loc: false, range: true });
-  let out = '';
-  let at = 0;
-  for (const c of comments) {
-    out += src.slice(at, c.range[0]);
-    at = c.range[1];
-  }
-  return out + src.slice(at);
-}
 
 /** Does any consumer read `name` off an object, or name it in an object literal? */
 function readersOf(name) {

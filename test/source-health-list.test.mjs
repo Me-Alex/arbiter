@@ -25,6 +25,7 @@ import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import vm from 'node:vm';
+import { codeOnly } from './helpers/code-only.mjs';
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url));
 const read = (rel) => readFileSync(join(ROOT, rel), 'utf8');
@@ -35,6 +36,23 @@ const indexHtml = read('public/index.html');
 const scannerSource = read('src/scanner/scanner.mjs');
 const dataQualitySource = read('src/shared/data-quality.mjs');
 const i18nSource = read('public/js/i18n.js');
+
+/**
+ * The same two files with their comments blanked, for every list this file
+ * lifts out of them.
+ *
+ * All four extractions here read the producer, not the page, so a comment here
+ * does not make an unread field look read — it makes a *published* field appear
+ * that the backend no longer writes. That direction fails loudly, which is
+ * better than the reader-side one and still wrong: the census would then be
+ * describing a commented-out line as a promise the code keeps, and the name on
+ * that promise would be in every message below.
+ *
+ * `dashboardSource` stays raw on purpose — it is executed by the harness below,
+ * and blanking it would hand the vm a file of whitespace where the logic is.
+ */
+const scannerCode = codeOnly(scannerSource, true);
+const dataQualityCode = codeOnly(dataQualitySource, true);
 
 /**
  * A top-level `function NAME(...) { ... }`, located by brace matching.
@@ -175,9 +193,9 @@ test('the panel is a scroller, which is why every book fits', () => {
  * exist, and the translations for two of them were never written.
  */
 const STATUSES = (() => {
-  const at = dataQualitySource.indexOf('export const DATA_STATUS = Object.freeze({');
+  const at = dataQualityCode.indexOf('export const DATA_STATUS = Object.freeze({');
   assert.notEqual(at, -1, 'DATA_STATUS is gone from data-quality.mjs');
-  const block = dataQualitySource.slice(at, dataQualitySource.indexOf('});', at));
+  const block = dataQualityCode.slice(at, dataQualityCode.indexOf('});', at));
   const values = [...block.matchAll(/^\s+(\w+):\s*'([^']+)'/gm)].map((m) => m[2]);
   assert.ok(values.includes('fresh') && values.includes('cancelled'), 'the constant did not parse');
   return values;
@@ -336,8 +354,8 @@ test('the row shows the feed note, and it truncates rather than pushing the row 
  */
 const REASON_CODES = (() => {
   const codes = [
-    ...[...dataQualitySource.matchAll(/reasonCode:\s*'([^']+)'/g)].map((m) => m[1]),
-    ...[...scannerSource.matchAll(/(?:dataReasonCode|reasonCode)\s*[:=]\s*'([^']+)'/g)].map((m) => m[1]),
+    ...[...dataQualityCode.matchAll(/reasonCode:\s*'([^']+)'/g)].map((m) => m[1]),
+    ...[...scannerCode.matchAll(/(?:dataReasonCode|reasonCode)\s*[:=]\s*'([^']+)'/g)].map((m) => m[1]),
   ];
   assert.ok(codes.length >= 8, `found only ${codes.length} reason codes; the scan is too narrow to believe`);
   return new Set(codes);
@@ -376,8 +394,8 @@ test('every placeholder in a reason message has a declared source, and every pub
   // What the backend actually publishes, in both the literal and the assignment
   // form, so the two lists below are checked against the code and not each other.
   const published = new Set([
-    ...[...dataQualitySource.matchAll(/reasonParams:\s*\{([^}]*)\}/g)],
-    ...[...scannerSource.matchAll(/dataReasonParams\s*=\s*\{([^}]*)\}/g)],
+    ...[...dataQualityCode.matchAll(/reasonParams:\s*\{([^}]*)\}/g)],
+    ...[...scannerCode.matchAll(/dataReasonParams\s*=\s*\{([^}]*)\}/g)],
   ].flatMap((m) => [...m[1].matchAll(/(\w+):/g)].map((k) => k[1])));
   assert.ok(published.has('limit') && published.has('checked'), 'the param scan found nothing');
 
@@ -411,7 +429,7 @@ test('every placeholder in a reason message has a declared source, and every pub
  * instrument whose silence means nothing.
  */
 const PRODUCED = (() => {
-  const body = extractFn('loadWorkspace', scannerSource);
+  const body = extractFn('loadWorkspace', scannerCode);
 
   // The literal: from `const source = {` to its matching brace, keys at line starts.
   const literalAt = body.indexOf('const source = {');
@@ -499,9 +517,17 @@ test('every field the scanner writes on a book is read by a page, or is named wi
   // `run.runId` — the run state, a different payload — and `.sourceUrl` matched
   // `ev.sourceUrl` on events. Both would have silently excused the same-named
   // fields of the source record. A name is not a field until you know its object.
+  //
+  // And the corpus is blanked file by file first, comments included. This is the
+  // reader half of the census, and the reader half is the half that fails
+  // silently: a comment naming `source.feedGroup` in any page would put the
+  // field on the "read" side of the line below, with the page still not reading
+  // it. The five of the ten excused names are exactly the kind of thing a
+  // sentence about a field mentions by name, which is why the excuse list itself
+  // is the best place for a census to be fooled.
   const corpus = readdirSync(join(ROOT, 'public'), { recursive: true })
     .filter((f) => f.endsWith('.js') || f.endsWith('.html'))
-    .map((f) => readFileSync(join(ROOT, 'public', f), 'utf8'))
+    .map((f) => codeOnly(readFileSync(join(ROOT, 'public', f), 'utf8'), f.endsWith('.js')))
     .join('\n');
   const readByAPage = (name) => new RegExp(`\\bsources?\\w*\\.${name}\\b`).test(corpus);
 

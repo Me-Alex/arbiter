@@ -26,9 +26,7 @@ import assert from 'node:assert/strict';
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { createRequire } from 'node:module';
-
-const { parse } = createRequire(import.meta.url)('espree');
+import { codeOnly } from './helpers/code-only.mjs';
 
 const ROOT = new URL('..', import.meta.url);
 // `new URL(...).pathname` is percent-encoded and gains a leading slash on
@@ -143,31 +141,12 @@ const CHANNELS = [
  * nothing currently rides on this. It is here because the alternative is a
  * check that a one-line comment can switch off.
  *
- * Offsets are preserved (only non-newline characters are blanked) so a match
- * index still maps to the right line. A hand-written scanner was tried first
- * and got a backtick wrong, swallowing the rest of dashboard.js from line 742
- * on; espree is what ESLint already runs over these files.
+ * The masker itself now lives in helpers/code-only.mjs, because this hole was
+ * not unique to this file: analytics-page.test.mjs and source-health-list.test.mjs
+ * decide readership the same way, in both directions — which fields the page
+ * reads, and which names the loader writes. One implementation, imported
+ * everywhere, so the next census in this tree does not reinvent the loose one.
  */
-function codeOnly(src, isJs) {
-  if (!isJs) return src.replace(/<!--[\s\S]*?-->/g, (c) => c.replace(/[^\n\r]/g, ' '));
-  let comments = null;
-  // Files under public/ are a mix of ES modules and plain scripts, so both
-  // source types are tried. A file that tokenizes as neither throws rather
-  // than falling back to its raw text: silently keeping the comments is the
-  // very false pass this is meant to remove.
-  for (const sourceType of ['module', 'script']) {
-    try {
-      comments = parse(src, { ecmaVersion: 2023, sourceType, comment: true, range: true }).comments;
-      break;
-    } catch { /* try the other source type */ }
-  }
-  if (!comments) throw new Error(`could not tokenize ${src.slice(0, 60).replace(/\n/g, ' ')}`);
-  const out = src.split('');
-  for (const c of comments) {
-    for (let i = c.range[0]; i < c.range[1]; i += 1) if (out[i] !== '\n' && out[i] !== '\r') out[i] = ' ';
-  }
-  return out.join('');
-}
 
 /** Every call in one file, with the line it sits on, comments excluded. */
 function extractConsumers(src, relPath, isJs) {
