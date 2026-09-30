@@ -1,5 +1,5 @@
 /* global structuredClone, Response */
-import test from 'node:test';
+import { test as nodeTest } from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import Egt, { matchesEgtConfig } from '../src/scrapers/egt.mjs';
@@ -38,6 +38,57 @@ function setup(id = 'prowin', opts = {}) {
   return { s, probed };
 }
 
+/**
+ * The clock this suite runs at.
+ *
+ * The lobby was captured on 2026-09-27 and every kickoff in it is in the past
+ * now — the latest is 43 hours old. The adapter's window belongs to a run:
+ * `fetchRaw` sets `from`/`to` from the clock, and `extractEvents` falls back to
+ * the same clock when a caller drives it directly. So a suite that measured a
+ * fixed capture against the wall clock went red the day after the capture and
+ * stayed red — 20 tests, none of them about EGT, all of them reporting the same
+ * thing: "the fixture must produce events". Nothing in the adapter was wrong.
+ *
+ * A suite that ages into permanent redness is worse than no suite: it teaches
+ * everyone to ignore it, and whatever it was checking stops being checked.
+ *
+ * So the fixture gets the run it was captured in — an hour before its first
+ * kickoff, which puts every kickoff inside the 24h window `setup` builds.
+ */
+const KICKOFFS = fixture.containers
+  .flatMap((c) => Object.values(c.events || {}))
+  .map((e) => Date.parse(e.startTime))
+  .filter(Number.isFinite)
+  .sort((a, b) => a - b);
+const FIXTURE_NOW = KICKOFFS[0] - 3600000;
+
+/**
+ * Every test in this file, on the fixture's clock.
+ *
+ * Shadowing the import rather than rewriting each call site: a run driven
+ * through `fetchRaw` and one driven straight into `extractEvents` need the same
+ * anchor, and a per-test opt-in is an opt-in someone forgets.
+ */
+function test(name, fn) {
+  return nodeTest(name, async (t) => {
+    const real = Date.now;
+    Date.now = () => FIXTURE_NOW;
+    t.after(() => { Date.now = real; });
+    return fn(t);
+  });
+}
+
+test('the fixture still fits the window this suite runs at', () => {
+  // If a later capture spans more than the window, every test above goes red
+  // for a reason no reader would guess. Fail here instead, and say why.
+  assert.ok(KICKOFFS.length > 0, 'the fixture must carry parseable kickoffs');
+  assert.ok(KICKOFFS[0] > FIXTURE_NOW, 'and no kickoff is already past the run');
+  assert.ok(
+    KICKOFFS[KICKOFFS.length - 1] <= FIXTURE_NOW + 24 * 3600000,
+    `the latest kickoff (${new Date(KICKOFFS[KICKOFFS.length - 1]).toISOString()}) falls outside the 24h window measured from ${new Date(FIXTURE_NOW).toISOString()}; move FIXTURE_NOW earlier or widen the window`
+  );
+});
+
 test('the live fixture yields only prematch events with a complete 1X2', () => {
   const { s } = setup();
   const raw = s.normalize({ containers: fixture.containers.map((c) => ({ containerId: c.containerId, url: 'u', status: 200, body: { events: c.events } })) });
@@ -63,7 +114,12 @@ test('live events are excluded, not published', () => {
   // The fixture deliberately includes live=true events (container 4155).
   const liveInFixture = Object.values(fixture.containers[0].events).filter((e) => e.live === true).length;
   assert.ok(liveInFixture > 0, 'fixture must contain live events for this to mean anything');
-  assert.ok(out.every((e) => e.isLive === false));
+  // `every` over an empty array is true, so this asserted nothing for as long
+  // as the suite was publishing nothing — and it was, which is how a live event
+  // with a future kickoff sat in the adapter unnoticed. A count states the same
+  // claim and cannot be satisfied by an empty list.
+  assert.ok(out.length > 0, 'and it must publish something for "excluded" to mean anything');
+  assert.equal(out.filter((e) => e.isLive).length, 0, 'no live event reaches the page');
 });
 
 test('a three-way lookalike market is never published as the result', () => {
@@ -75,6 +131,7 @@ test('a three-way lookalike market is never published as the result', () => {
   const goalMarketEvent = Object.values(fixture.containers[0].events)
     .find((e) => (e.markets || []).some((m) => /golul/i.test(m.marketTemplateName || m.marketTitle || '')));
   assert.ok(goalMarketEvent, 'fixture must include an event with a goals-in-X market');
+  assert.ok(out.length > 0, 'and must publish something, or the check below is vacuous');
   // That event either has no 1X2 market (so nothing is published for it) or has
   // one (so only that one is).
   const forEvent = out.filter((e) => String(e.id) === String(goalMarketEvent.sportEventId));

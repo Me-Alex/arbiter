@@ -182,19 +182,22 @@ export default class EgtScraper extends ScraperBase {
       if (ev.sportId !== FOOTBALL_SPORT_ID) continue;
       const time = Date.parse(ev.startTime);
       if (!Number.isFinite(time) || !ev.sportEventId) continue;
-      // The one live gate, and it reads as a single condition on purpose.
+      // Two gates that answer different questions, not one condition.
       //
-      // A live event's kickoff is already past, so the pre-match window below
-      // would drop it a second time — that is what made the flag unusable here,
-      // and it is why `includeLive` has to relax the window rather than merely
-      // be checked separately. Written the other way round, as an explicit
-      // `if (live && !this.includeLive) continue;` in front of this line, it was
-      // provably identical to it: a live event with the flag off is already
-      // dropped by the window, and with the flag on the window is skipped. Two
-      // gates, one behaviour, and the first one untestable — a mutation that
-      // removed it changed nothing, which is the honest signal that it was
-      // duplication and not insurance.
-      if ((!live || !this.includeLive) && (time <= (this.from ?? Date.now()) || time > (this.to ?? Date.now() + this.windowHours * 3600000))) continue;
+      // `live` is the provider's own boolean and this adapter honours it
+      // literally: with the flag off, a live event is refused whatever its
+      // kickoff says. Folding that into the window below looks like a tidy
+      // simplification and is not one — it rests on "a live event's kickoff is
+      // already past", and this feed breaks that. Measured 2026-09-27: fixture
+      // container 4155 carries two events flagged live whose kickoffs are 00:00
+      // and 02:00 the NEXT day. Folded, they pass the window and a live price
+      // is published with `includeLive: false`. The suite had been reporting
+      // "the fixture must produce events" for 20 tests and masking it; the
+      // `every` at the live-exclusion test passed on an empty array, which is
+      // what let it sit here unread.
+      if (live && !this.includeLive) continue;
+      // The pre-match window, for events the feed does not call live.
+      if (!live && (time <= (this.from ?? Date.now()) || time > (this.to ?? Date.now() + this.windowHours * 3600000))) continue;
       if (seen.has(ev.sportEventId)) continue;
 
       const home = String(ev.homeTeam || '').trim();
