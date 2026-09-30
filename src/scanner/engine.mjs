@@ -1,4 +1,4 @@
-import { eventIdentityKey, impliedProbability } from '../shared/text.mjs';
+import { eventIdentityKey, impliedProbability, teamsMatch, tokens } from '../shared/text.mjs';
 import { round2, round4 } from '../shared/math.mjs';
 import {
   canonicalOutcome,
@@ -82,13 +82,199 @@ export const SIGNAL_TYPES = Object.freeze({
 });
 
 /**
+ * True when two competition labels can stand for the same group.
+ *
+ * Both passes need this, and they must not disagree: if the loose pass were
+ * allowed to treat two labels as compatible that the strict pass deliberately
+ * separated, it would undo a decision that exists for a measured reason.
+ *
+ * The `a === b` arm is what makes two absent — or two identity-free, like "---"
+ * — labels count as one label, and `leaguesMatch` alone returns false for those.
+ * It is worth recording that no test can fail on it today: run the real capture
+ * through groupByEvent with the arm removed and the output is identical, because
+ * the loose pass reunites what the strict pass would have split. It is kept
+ * because it is the strict pass's own contract, and relying on a later pass to
+ * repair an earlier one is a coupling worth not having.
+ */
+function sameLeagueLabel(a, b) {
+  return a === b || leaguesMatch(a, b);
+}
+
+/**
+ * Coarse key for the loose pass: where to look, never a conclusion.
+ *
+ * It is a necessary condition and deliberately not a sufficient one. Two
+ * tokens that are equal, or where a single letter prefixes the other, always
+ * share their first letter and their position, so clubs that can match loosely
+ * always land in the same bucket. That is what keeps the pass affordable —
+ * 12 837 events would otherwise be compared pairwise. Insufficient on its own:
+ * "Sporting L." and "Sporting Lisboa" share a bucket, and only the exact rule
+ * below tells them apart.
+ *
+ * Both clubs go into the key, not just one, and no unit test can fail on the
+ * away half: the exact rule compares both sides anyway, so a wider bucket cannot
+ * produce a wrong merge, only more candidates. It is here because the candidates
+ * are not free — on the capture kept in the repo, dropping the away mark takes
+ * the exact rule from 81 598 comparisons to 1 038 118 and the largest bucket
+ * from 67 clusters to 470.
+ */
+function looseBucket(identity) {
+  const parts = identity.split('|');
+  return [parts[0], parts[1], clubMark(parts[2]), clubMark(parts[3])].join('|');
+}
+
+function clubMark(club) {
+  return tokens(club).map((token) => token[0]).join('');
+}
+
+/**
+ * The loose comparison itself, on two identities already known to share a
+ * bucket. Positions 0 and 1 are the sport and the day, equal by construction of
+ * the bucket, so only the two clubs are left to compare.
+ */
+function sameLooseEvent(a, b) {
+  const pa = a.split('|');
+  const pb = b.split('|');
+  return teamsMatch(pa[2], pb[2]) && teamsMatch(pa[3], pb[3]);
+}
+
+/**
+ * Whether a set of competition labels is free of any pair the strict pass would
+ * have kept apart.
+ *
+ * The check runs on the MERGED set, not on the two components being joined, and
+ * that distinction is the whole point:
+ *
+ *  - compatibility is not transitive. A group is built by admitting an event
+ *    whose label matches the first one, so it can already hold labels that do
+ *    not match each other. Checking only across the join would inherit that.
+ *  - merging is transitive too: A can join B on an initial and B can join C on
+ *    another, so comparing only adjacent pairs lets a component end up holding
+ *    "Cupa FA, Calificari" and "FA Cup" at once. The engine has no later stage
+ *    that would catch that, so this pass does not get to create it.
+ *
+ * A consequence worth stating: a group that already carries a contradictory
+ * pair of labels cannot be merged with anything, because every join would carry
+ * the contradiction along. That is stricter than necessary, and deliberately so
+ * — the cost is a merge, the alternative is a fixture that names two different
+ * competitions in one row.
+ *
+ * This check is also what protects the competition split the strict pass made.
+ * Two groups that share a base were split precisely because the first label of
+ * one is not compatible with the first label of the other — the strict pass
+ * opens no second group for a base until it has refused the label it was given —
+ * so the union of their label sets always contains that refusing pair. No
+ * separate "same base" guard is needed, and adding one would only restate it.
+ *
+ * @param {Iterable<string|null>} labels
+ * @returns {boolean}
+ */
+function labelSetConsistent(labels) {
+  const list = [...labels];
+  for (let i = 0; i < list.length; i++) {
+    for (let j = i + 1; j < list.length; j++) {
+      if (!sameLeagueLabel(list[i], list[j])) return false;
+    }
+  }
+  return true;
+}
+
+/**
+ * Second pass: reunite groups that the exact key kept apart because one book
+ * published an initial.
+ *
+ * It still has to agree on the competition, and it has to agree across the WHOLE
+ * component rather than across the pair being joined — see labelSetConsistent,
+ * which is also what keeps the competition split the strict pass made intact.
+ * Merging "Liga Natiunilor A" with "Liga Natiunilor C" would invent an arbitrage
+ * between two fixtures that are never played against each other, which is the
+ * exact failure the league-free identity key is documented to risk.
+ *
+ * The surviving key is the earliest base in the component, so the bare key still
+ * belongs to the group that was seen first and `#N` still numbers the splits
+ * that hang below it.
+ *
+ * @param {Map<string, {identity: string, groups: Array}>} byBase
+ * @returns {Array<{base: string, identity: string, events: Array}>}
+ */
+function mergeOnInitials(byBase) {
+  const clusters = [];
+  for (const [base, entry] of byBase) {
+    for (const group of entry.groups) {
+      clusters.push({
+        base,
+        identity: entry.identity,
+        events: group.events,
+        // The labels are the events' own, so a group that mixes two aliases of
+        // one competition starts with both and is judged on both.
+        leagues: new Set(group.events.map((e) => e.league ?? null)),
+      });
+    }
+  }
+
+  const parent = clusters.map((_, i) => i);
+  const find = (i) => {
+    while (parent[i] !== i) {
+      parent[i] = parent[parent[i]];
+      i = parent[i];
+    }
+    return i;
+  };
+
+  const buckets = new Map();
+  clusters.forEach((cluster, i) => {
+    const key = looseBucket(cluster.identity);
+    const bucket = buckets.get(key) || [];
+    bucket.push(i);
+    buckets.set(key, bucket);
+  });
+
+  for (const bucket of buckets.values()) {
+    for (let a = 0; a < bucket.length; a++) {
+      for (let b = a + 1; b < bucket.length; b++) {
+        const i = bucket[a];
+        const j = bucket[b];
+        const ri = find(i);
+        const rj = find(j);
+        const keep = ri < rj ? ri : rj;
+        const drop = ri < rj ? rj : ri;
+        const labels = new Set([...clusters[keep].leagues, ...clusters[drop].leagues]);
+        if (!labelSetConsistent(labels)) continue;
+        if (!sameLooseEvent(clusters[i].identity, clusters[j].identity)) continue;
+        parent[drop] = keep;
+        clusters[keep].leagues = labels;
+      }
+    }
+  }
+
+  const out = [];
+  for (let i = 0; i < clusters.length; i++) {
+    if (find(i) !== i) continue;
+    const head = clusters[i];
+    for (let j = i + 1; j < clusters.length; j++) {
+      if (find(j) === i) head.events = head.events.concat(clusters[j].events);
+    }
+    out.push(head);
+  }
+  return out;
+}
+
+/**
  * Group events by eventKey across all books.
+ *
+ * Two passes. The first is exact: events whose canonical identity is identical
+ * land together, and are then split back apart by competition. The second is
+ * loose, and only runs over what the first produced: groups whose club names
+ * differ by an initial are reunited, so a book that publishes "Bayern M." is
+ * not left describing a fixture no other book has. See teamsMatch for what a
+ * single letter is allowed to stand for, and mergeOnInitials for what the merge
+ * still has to agree on.
  *
  * @param {Array<{ sourceId: string, eventKey: string, markets: object[] }>} events
  * @returns {Map<string, Array>}
  */
 export function groupByEvent(events) {
-  // base key → array of leagues seen for it → events
+  // base key → the identity it was built from → groups split by competition
   const byBase = new Map();
   for (const e of events) {
     if (!e || !e.eventKey) continue;
@@ -99,24 +285,32 @@ export function groupByEvent(events) {
     // cross-book arbitrage is detectable at all), and same-named competitions
     // in different groups never merge (so a fictional arbitrage cannot be
     // invented between two different fixtures).
-    const base = eventIdentityKey(e) || e.eventKey;
-    let groups = byBase.get(base);
-    if (!groups) {
-      groups = [];
-      byBase.set(base, groups);
+    const identity = eventIdentityKey(e);
+    const base = identity || e.eventKey;
+    let entry = byBase.get(base);
+    if (!entry) {
+      entry = { identity, groups: [] };
+      byBase.set(base, entry);
     }
-    const group = groups.find((g) => g.league === e.league || leaguesMatch(g.league, e.league));
+    const group = entry.groups.find((g) => sameLeagueLabel(g.league, e.league));
     if (group) group.events.push(e);
-    else groups.push({ league: e.league, events: [e] });
+    else entry.groups.push({ league: e.league, events: [e] });
+  }
+
+  const bySurvivor = new Map();
+  for (const cluster of mergeOnInitials(byBase)) {
+    const siblings = bySurvivor.get(cluster.base);
+    if (siblings) siblings.push(cluster);
+    else bySurvivor.set(cluster.base, [cluster]);
   }
 
   const out = new Map();
-  for (const [base, groups] of byBase) {
-    groups.forEach((g, i) => {
+  for (const [base, clusters] of bySurvivor) {
+    clusters.forEach((cluster, i) => {
       // The first group keeps the bare base key, which is the value the
       // scrapers wrote into eventKey, so a leg can still be located in a
       // snapshot by that key. Only the additional splits get a suffix.
-      out.set(i === 0 ? base : `${base}#${i}`, g.events);
+      out.set(i === 0 ? base : `${base}#${i}`, cluster.events);
     });
   }
   return out;

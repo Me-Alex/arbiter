@@ -151,6 +151,49 @@ export function eventIdentityKey(e) {
   return parts.join('|');
 }
 
+/**
+ * Do two club names name the same club when a single letter is allowed to stand
+ * for the first letter of the other side's word?
+ *
+ * This is the loose rule, and it exists because some books publish an initial
+ * where the others publish the name: "Sporting L." for "Sporting Lisboa",
+ * "Bayern M." for "Bayern Munchen". The exact key never pairs those, so the
+ * fixture exists on one book and not on the other and no cross-book
+ * opportunity can be priced at all.
+ *
+ * Three conditions, each of which is load-bearing:
+ *
+ *  - the same number of tokens, so "Augsburg" cannot absorb "A. Augsburg";
+ *  - compared by position, so a merged first name is not accepted either;
+ *  - a difference is tolerated only when one of the two tokens is a single
+ *    letter that prefixes the other. "Munich" against "Munchen" is a spelling
+ *    difference rather than an initial and stays out of scope: across the
+ *    whole workspace, every single-letter token that ever matched was a
+ *    truncation of the same word.
+ *
+ * The result is a strict superset of exact equality — equal names give equal
+ * token lists — so this can never reject a pair the exact rule accepted. That
+ * is what makes it safe as a second pass over groups already built.
+ *
+ * @param {string} a
+ * @param {string} b
+ * @returns {boolean}
+ */
+export function teamsMatch(a, b) {
+  const ta = tokens(a);
+  const tb = tokens(b);
+  if (ta.length === 0 || ta.length !== tb.length) return false;
+  for (let i = 0; i < ta.length; i++) {
+    const x = ta[i];
+    const y = tb[i];
+    if (x === y) continue;
+    const short = x.length === 1 ? x : y;
+    const long = x.length === 1 ? y : x;
+    if (short.length !== 1 || !long.startsWith(short)) return false;
+  }
+  return true;
+}
+
 /** Levenshtein distance (small inputs only, not used for huge strings). */
 export function levenshtein(a, b) {
   if (a === b) return 0;
