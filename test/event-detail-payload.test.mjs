@@ -28,7 +28,7 @@ import { join } from 'node:path';
 import { buildRouter } from '../src/router.mjs';
 import * as scanService from '../src/scan-service.mjs';
 import { RateLimiter } from '../src/shared/rate-limit.mjs';
-import { codeOnly } from './helpers/code-only.mjs';
+import { codeOnly, fieldReads } from './helpers/code-only.mjs';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const CONSUMERS = [
@@ -44,6 +44,19 @@ const CONSUMERS = [
 const UNREAD_WITH_REASON = new Map([
   ['handicap', 'the modal renders the line itself from the market key (thresholdFromKey) in the market heading, so the numeric copy on the selection says nothing the heading has not said. The projection passes selection objects by reference, so the field is left on rather than narrowed on the strength of one capture.'],
   ['group', 'measured on data-market-run/workspace, 22 blobs / 24829 events / 93600 selections: every selection carries group, every one of them says "Main", and not one market in 31927 holds two selections that share a name in different groups, so the field separates nothing in any capture on disk. The modal keys its columns on name-or-id alone, so no screen is missing a distinction. Kept rather than stripped for the same reason as handicap: the projection passes selections by reference, and group is what a book would use to disambiguate same-named outcomes the day one emits them.'],
+
+  // The four below live one level deeper, inside the arbitrage plan attached as
+  // `m.arb`. They reached this table the same way the census found them: the
+  // walk stopped at the market, where `arb` is one more key on the row, so the
+  // interior of the plan was under the floor of the only census covering this
+  // route. Two of the plan's keys were copies of a fact already on the wire and
+  // are gone (see the DetailArb docstring); these four are not copies, they are
+  // simply unread — and each is kept for a reason that can be checked, not for
+  // the convenience of the publisher.
+  ['family', 'the canonical alias of the contract the market heading already names in the book\'s own words. The heading renders m.name on every market (event-detail-modal.js:217-219) and the plan only ever attaches to such a market, so the panel has nothing to add by showing the alias. Measured on data-market-run/workspace: 5166 fixtures carry two or more books, 3 of them produce a plan, and all 3 are family=BTTS — the capture contains no family the heading fails to name.'],
+  ['period', 'the settlement window the legs agree on. Measured on the same capture: all 3 plans are period=fulltime, so the field separates nothing on disk. The scope that does vary is live vs pre-match, and that is published as `live` and already rendered as the panel\'s live badge. Kept because the docstring claims the view must be able to say a plan expires in 90 seconds, and that claim is about this field — dropping it would quietly retire a promise the panel has not yet kept.'],
+  ['line', 'the canonical line. Measured on the same capture: null in all 3 plans, because all 3 are BTTS, a contract with no line. Where a line does exist the heading shows it, derived from the market key by thresholdFromKey — the same derivation the assertion below checks. The case this reason does NOT cover is an Asian-handicap plan: thresholdFromKey only matches /^OVER_UNDER_\\d+_\\d+$/, so an AH heading would show no line. That is a gap in the heading, and it is named here rather than used as a licence to publish the number twice.'],
+  ['inverseSum', 'the raw reconciliation before it is rescaled into the ROI the panel does render. No screen shows it, and that is the honest part: the reader is a backend contract assertion, test/event-detail-arb.test.mjs:86, which recomputes Σ(1/odds) from the legs and holds the published figure to it. That reader is what makes this a contract on the allocation rather than a leftover from it, and roiPercent cannot stand in for it — on the real capture the pair is 0.5042016806722689 against 98.33, the same number in two units, only one of which is on screen.'],
 ]);
 
 /**
@@ -70,6 +83,50 @@ function readersOf(name) {
   }
   return sites;
 }
+
+/**
+ * The key the plan hangs from, and therefore the receiver a plan field is read
+ * off. The level below reaches the plan through `m.arb`, so a plan reader is a
+ * read spelled `arb.<field>` or `m.arb.<field>` — the same trailing segment in
+ * both spellings, so one receiver-anchored search covers the panel's own
+ * parameter and every access through the market row.
+ */
+const PLAN_KEY = 'arb';
+
+/**
+ * Readers of a plan field, per file, in the same shape `readersOf` returns.
+ *
+ * This exists because the name-only search above over-covers, and the mutation
+ * run is what made that visible rather than argued: putting `marketKey` back
+ * into the plan literal left the census green, because dashboard.js reads
+ * `marketKey` — on an *opportunity*, from a different payload entirely, five
+ * times over. A same-named field on another route's object is not a reader of
+ * this route's object, and a name is the one thing this route cannot assume is
+ * unique. So at this level the reader has to be a read of that plan.
+ *
+ * The consequence is that this level is strict while the three above it are
+ * still name-only. That asymmetry is deliberate and worth stating plainly: the
+ * level opened by this lot is the one where a duplicate is most likely to carry
+ * a name the frontend already uses elsewhere, which is exactly the case the
+ * loose form waves through.
+ */
+const PLAN_READERS = (() => {
+  const byField = new Map();
+  for (const [file, src] of CONSUMERS) {
+    for (const f of fieldReads(src, PLAN_KEY, true)) {
+      if (!byField.has(f)) byField.set(f, []);
+      byField.get(f).push(file);
+    }
+  }
+  return byField;
+})();
+
+/** The reader set for one level. Levels other than the plan use the name search. */
+const readersForLevel = (level, key) => (
+  level === 'plan'
+    ? (PLAN_READERS.get(key) || [])
+    : readersOf(key)
+);
 
 /**
  * A workspace with two books quoting one event, priced so a cross-book
@@ -170,15 +227,25 @@ test('the payload publishes no field without a reader, and every excuse is named
     ['event', (e) => e],
     ['market', (e) => e.markets?.[0]],
     ['selection', (e) => e.markets?.[0]?.selections?.[0]],
+    ['plan', (e) => e.markets?.[0]?.arb],
   ]) {
     levels[level] = new Set();
     for (const e of events) for (const o of [of(e)].filter(Boolean)) Object.keys(o).forEach((k) => levels[level].add(k));
   }
 
+  // The plan level is the one that can pass vacuously. `arb` hangs off the first
+  // market of each event, and a fixture that stopped producing arbitrages would
+  // leave this level empty — a census over an empty object finds no orphans and
+  // reports nothing wrong. So the level has to be proven populated before it is
+  // allowed to pass as clean, which is what the arb's own reconciled ROI is for:
+  // it is a field the panel renders, so its presence is the control.
+  assert.ok(levels.plan.size >= 7, `the plan level has to be walked, got ${levels.plan.size} keys — if arbitrages stopped being produced the census below is vacuous`);
+  assert.ok(levels.plan.has('roiPercent'), 'the plan the census walked is the reconciled one the panel renders');
+
   const unread = [];
   for (const [level, keys] of Object.entries(levels)) {
     for (const key of keys) {
-      if (readersOf(key).length === 0 && !UNREAD_WITH_REASON.has(key)) unread.push(`${level}.${key}`);
+      if (readersForLevel(level, key).length === 0 && !UNREAD_WITH_REASON.has(key)) unread.push(`${level}.${key}`);
     }
   }
   assert.deepEqual(unread, [], `published with no reader and no recorded reason: ${unread.join(', ')}`);
@@ -195,6 +262,17 @@ test('the payload publishes no field without a reader, and every excuse is named
     `${modalName} no longer derives the market threshold from the market key; re-examine the handicap entry`);
   assert.match(modalCode, /market-threshold/,
     `${modalName} no longer renders the threshold in the market heading, so the handicap field is no longer a duplicate of anything on screen`);
+
+  // The same rule for the two plan excuses that are also claims about what the
+  // modal renders. `family` is excused because the heading names the contract
+  // in the book's own words, and `line` because the heading derives it from the
+  // key. An excuse whose subject could be deleted and leave the test green is
+  // not a reason, it is a rumour — so both subjects are asserted here, in the
+  // consumer, not in the publisher.
+  assert.match(modalCode, /escapeHtml\(\s*m\.name\s*\)/,
+    `${modalName} no longer names the market in its heading, so plan.family is no longer an alias of something already on screen`);
+  assert.match(modalCode, /market-threshold/,
+    `${modalName} no longer shows the line in the heading, so plan.line has no on-screen equivalent`);
 });
 
 test('the payload does not republish the arbitrage map it already attaches per market', async () => {
@@ -234,4 +312,20 @@ test('the reader search is sensitive, so an unread field is not a naming acciden
   // passed while the real orphan walked straight through it. A word in a
   // comment is not a read, and this assertion is what says so.
   assert.deepEqual(readersOf('group'), [], 'a name that appears only inside a comment was counted as a reader');
+
+  // The plan level's reader set, held to the same standard. A strict search that
+  // finds nothing is indistinguishable from a strict search pointed at the wrong
+  // receiver, and it is the one that would wave every future plan field through
+  // — so the set has to be shown to hold the fields the panel demonstrably
+  // renders, and to hold nothing beyond them.
+  assert.ok(PLAN_READERS.has('roiPercent'), 'the plan reader set lost roiPercent, which renderArbPanel renders — the receiver is wrong or renamed');
+  assert.ok(PLAN_READERS.has('totalStake'), 'the plan reader set lost totalStake, which the panel equation is built from');
+  assert.ok(PLAN_READERS.has('legs'), 'the plan reader set lost legs, the one field every other figure hangs off');
+  // And the case that motivated receiver-anchoring at all. `marketKey` is read
+  // five times in dashboard.js — on opportunities, a different payload — so the
+  // name search credits it a reader and the census waves it through. Put back
+  // into the plan, it is a second copy of the market's own key, and it has to
+  // be reported.
+  assert.ok(readersOf('marketKey').length > 0, 'the name search is supposed to over-cover marketKey — if it stops doing so, this control is measuring nothing');
+  assert.deepEqual(PLAN_READERS.get('marketKey'), undefined, 'marketKey is read on other payloads, not off the plan, and was credited with a reader it does not have');
 });

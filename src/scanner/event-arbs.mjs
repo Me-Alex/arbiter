@@ -28,7 +28,6 @@ export const DETAIL_BANKROLL = 100;
  * @property {string} family     canonical contract family (BTTS, OVER_UNDER, …)
  * @property {string} period     settlement window the legs agree on
  * @property {string|null} line  canonical line, null for markets without one
- * @property {string} marketKey  the market key the combination was found in
  * @property {Array<{sourceId:string, selection:string, odds:number, stake:number, payout:number}>} legs
  * @property {number} inverseSum
  * @property {number} roiPercent
@@ -37,6 +36,23 @@ export const DETAIL_BANKROLL = 100;
  * @property {number} guaranteedProfit
  * @property {boolean} roundingRisk
  * @property {boolean} live       the scope every leg in this plan was priced in
+ *
+ * Deliberately absent: `marketKey` and `bankroll`. Both were published and
+ * nothing read them, and both were copies of a fact already on the wire.
+ *
+ *   - `marketKey` is the Map key this plan is filed under, and the router
+ *     attaches a plan to a market *by* that key
+ *     (`arbs.get(String(market.key))`). So the only object that can hold a plan
+ *     is a market whose own `key` is that same string — measured on
+ *     data-market-run/workspace: 3 plans, plan.marketKey === market.key in 3/3.
+ *     Publishing it inside the value means a payload carries the same string
+ *     twice, and the one inside can disagree with the key it was reached by.
+ *   - `bankroll` was written as `allocation.totalStake`, the identical
+ *     expression already published as `totalStake` one line up — 3/3 equal on
+ *     the same capture. The bankroll an operator configured is an input to the
+ *     allocation; what comes out is the stake actually deployed, and that is
+ *     what `totalStake` already says. Same class as the flat `arbs` array the
+ *     route used to republish: a second copy of a fact the first copy keeps.
  */
 
 /**
@@ -90,7 +106,6 @@ export function findDetailArbitrages(instances, opts = {}) {
         family: arb.family,
         period: arb.period,
         line: arb.line ?? null,
-        marketKey: arb.marketKey,
         // Carried from the engine's own scope. findArbitrage already refuses to
         // pair a live leg with a pre-match one, so this is a single coherent
         // statement about every leg in the plan — and the view has to be able
@@ -110,7 +125,6 @@ export function findDetailArbitrages(instances, opts = {}) {
         worstCasePayout: allocation.worstCasePayout,
         guaranteedProfit: allocation.guaranteedProfit,
         roundingRisk: allocation.roundingRisk,
-        bankroll: allocation.totalStake,
       });
     }
   }
