@@ -1048,7 +1048,28 @@ function normalizeLine(n) {
  * OVER 2.5 can never pair with OVER 3.5 — both are real prior bugs.
  */
 export function bucketKeyForContract(eventKey, contract) {
-  return `${eventKey}::${contract.family}::${contract.period}::${contract.lineKey}`;
+  // The outcome set is part of the identity, not a detail of it. Family +
+  // period + lineKey alone let two genuinely different products collide:
+  // MATCH_ODDS resolves both to `MATCH_ODDS/fulltime/_` whether it came from a
+  // 3-way 1X2 ([home, draw, away]) or a 2-way result market ([home, away]) —
+  // netbet's `default`, FEG's `ufo:mtyp:00-05`. Measured on a live capture,
+  // one event carrying both shapes threw
+  // `TypeError: Cannot read properties of undefined (reading 'get')` on every
+  // scan for two days: the first market to arrive seeded `bucket.choices` from
+  // its own outcomes, and the second market's `draw` leg then indexed a map
+  // that had no `draw` key. One thrown TypeError aborts the whole scan, so the
+  // app published `dataHealth: "empty"` with zero opportunities while the
+  // books were being scraped normally.
+  //
+  // It was not only a crash. Merged the other way round — 3-way first, 2-way
+  // second — the 2-way legs landed in a bucket whose completeness test only
+  // demanded [home, away], which is satisfied, so the engine would have priced
+  // a two-leg "surebet" from a 3-way home win against a 2-way away selection
+  // that pushes on a draw. Different settlement, guaranteed profit that cannot
+  // be placed. Carrying the outcomes makes the two shapes distinct contracts
+  // and closes both failures at the key.
+  const outcomes = Array.isArray(contract.outcomes) ? contract.outcomes.join('+') : '';
+  return `${eventKey}::${contract.family}::${contract.period}::${contract.lineKey}::${outcomes}`;
 }
 
 /**

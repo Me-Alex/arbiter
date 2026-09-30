@@ -894,10 +894,10 @@ test('the two goals families survive the real router and land in exhaustive buck
   }
 
   // Both ladders are present and every bucket names a single line pair.
-  assert.ok(buckets.has('OVER_UNDER::fulltime::2.5'), 'the 2.5 total is arbitrable');
-  assert.ok(buckets.has('OVER_UNDER::fulltime::3.5'), 'the 3.5 total is arbitrable');
-  assert.ok(buckets.has('ASIAN_HANDICAP::fulltime::-1.5/1.5'), 'the -1.5 handicap is arbitrable');
-  assert.ok(buckets.has('ASIAN_HANDICAP::fulltime::1.5/-1.5'), 'the +1.5 handicap is a separate bucket');
+  assert.ok(buckets.has('OVER_UNDER::fulltime::2.5::over+under'), 'the 2.5 total is arbitrable');
+  assert.ok(buckets.has('OVER_UNDER::fulltime::3.5::over+under'), 'the 3.5 total is arbitrable');
+  assert.ok(buckets.has('ASIAN_HANDICAP::fulltime::-1.5/1.5::home+away'), 'the -1.5 handicap is arbitrable');
+  assert.ok(buckets.has('ASIAN_HANDICAP::fulltime::1.5/-1.5::home+away'), 'the +1.5 handicap is a separate bucket');
 
   for (const [bucket, n] of buckets) {
     assert.ok(n > 0, `${bucket} is populated`);

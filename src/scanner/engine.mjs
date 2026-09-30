@@ -266,6 +266,12 @@ export function findArbitrage(grouped, { minRoiPercent = 0 } = {}) {
           const odds = Number(s.odds);
           if (!Number.isFinite(odds) || odds <= 1) continue;
           const choices = bucket.choices.get(outcome);
+          // The bucket key now carries the outcome set, so this map is always
+          // present. It is still checked: the cost of being wrong here is the
+          // whole capture, because the exception propagates out of findArbitrage
+          // and the scan publishes zero opportunities instead of a partial one.
+          // One unrecognised market shape must cost one market, never the scan.
+          if (!choices) continue;
           const cur = choices.get(ev.sourceId);
           if (!cur || odds > cur.odds) {
             choices.set(ev.sourceId, {

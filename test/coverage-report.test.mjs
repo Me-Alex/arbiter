@@ -56,7 +56,8 @@ test('two books meet on a fixture even when their own event keys differ', () => 
   // record the adapter key, which made those pairs read as disjoint: measured on
   // one frozen 24-book download, 535 book pairs scored as overlapping against
   // 1419 on the identity key, and among INDEPENDENT pairs 298 against 1153.
-  // `MATCH_ODDS::fulltime::_` between superbet and excelbet shared no adapter
+  // `MATCH_ODDS::fulltime::_::home+draw+away` between superbet and excelbet
+  // shared no adapter
   // eventKey at all, yet `groupByEvent` puts 182 of their fixtures together.
   const superbet = [bookEvent({
     bookKey: 'sb:1001', home: 'Fulham', away: 'Arsenal', kickoff: '2026-10-03T14:00:00Z', selections: RESULT_1X2,
@@ -71,7 +72,7 @@ test('two books meet on a fixture even when their own event keys differ', () => 
   ]);
   const rows = buildCoverageRows(books);
   assert.equal(rows.length, 1, 'one contract line');
-  assert.equal(rows[0].key, 'MATCH_ODDS::fulltime::_');
+  assert.equal(rows[0].key, 'MATCH_ODDS::fulltime::_::home+draw+away');
   assert.equal(rows[0].overlapping, 1,
     'the two books quote 1/X/2 on the same fixture, so the pair must count as meeting');
   // The negative and the positive readings of this number are in the two tests
@@ -101,7 +102,7 @@ test('the report counts the engine\'s grouping, not the adapter\'s own key', () 
   // The identity key is what the report must be storing, and it is the engine's
   // own function, so the two cannot drift apart.
   assert.ok(row.keys.includes('default'), 'the provider spellings are still reported');
-  const stored = indexEventsByContract([a]).get('MATCH_ODDS::fulltime::_').events;
+  const stored = indexEventsByContract([a]).get('MATCH_ODDS::fulltime::_::home+draw+away').events;
   assert.deepEqual([...stored], [eventIdentityKey(a)]);
   assert.notEqual(eventIdentityKey(a), a.eventKey, 'and that key is not the adapter key');
 });
@@ -226,12 +227,12 @@ test('rows are ordered by the meetings they have, not by the pairs they could ha
   ]);
   const rows = buildCoverageRows(books);
   const byKey = new Map(rows.map((r) => [r.key, r]));
-  const totalsRow = byKey.get('OVER_UNDER::fulltime::2.5');
-  const resultRow = byKey.get('MATCH_ODDS::fulltime::_');
+  const totalsRow = byKey.get('OVER_UNDER::fulltime::2.5::over+under');
+  const resultRow = byKey.get('MATCH_ODDS::fulltime::_::home+draw+away');
   assert.equal(totalsRow.pairs, 3);
   assert.equal(totalsRow.overlapping, 0);
   assert.equal(resultRow.pairs, 1);
   assert.equal(resultRow.overlapping, 1);
-  assert.equal(rows[0].key, 'MATCH_ODDS::fulltime::_',
+  assert.equal(rows[0].key, 'MATCH_ODDS::fulltime::_::home+draw+away',
     'the line that meets on a fixture leads, whatever its potential');
 });
