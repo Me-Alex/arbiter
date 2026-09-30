@@ -374,6 +374,14 @@
       const health = scan.dataHealth || {};
       const healthStatus = health.status || 'empty';
       const noData = healthStatus !== 'fresh';
+      // Whether a scan has ever been published is a different question from how
+      // fresh the one on disk is, and only the route can answer it. The served
+      // document is the fallback scan when nothing is published, and that
+      // fallback mints a `scrapedAt` of now — so without this flag a fresh
+      // install shows the moment the page was opened as its "last updated",
+      // and the "no fresh data" box below reads as a verdict on stale odds
+      // rather than on the fact that nothing has ever run.
+      const published = scan.published !== false;
 
       // Update data-freshness banner (A4)
       if (window.arbiterConnectionStatus && window.arbiterConnectionStatus.setDataHealth) {
@@ -388,7 +396,9 @@
       // scan has ever published, so it silently fell through to the second and
       // showed the start of the pass as the age of the data.
       const capturedAt = scan.scrapedAt || scan.scanStartedAt;
-      $('scan-updated').textContent = capturedAt ? new Date(capturedAt).toLocaleString() : '—';
+      $('scan-updated').textContent = !published
+        ? t('neverRan')
+        : capturedAt ? new Date(capturedAt).toLocaleString() : '—';
       $('scan-events').textContent = `${Number(scan.eventCount || 0).toLocaleString()} events`;
       $('verification-mix').textContent = verificationMix(t, scan.verificationSummary);
       const windowNote = $('live-window-note');
@@ -397,7 +407,13 @@
       const emptyBox = $('scan-empty');
       if (noData && !(scan.opportunities || []).length && !(scan.middles || []).length && !(scan.positiveEv || []).length) {
         emptyBox.className = 'alert warn';
-        emptyBox.innerHTML = `${escapeHtml(t('noFreshData'))} <a href="/admin/scrape.html">${escapeHtml(t('runScrape'))}</a>`;
+        // Two different messages for two different facts. "No fresh data" is a
+        // verdict on odds that were captured and have since gone stale; on an
+        // install that has never scraped there are no odds to be stale, and
+        // telling the trader to wait for fresher data sends them nowhere.
+        emptyBox.innerHTML = published
+          ? `${escapeHtml(t('noFreshData'))} <a href="/admin/scrape.html">${escapeHtml(t('runScrape'))}</a>`
+          : `${escapeHtml(t('noPublishedScan'))} <a href="/admin/scrape.html">${escapeHtml(t('runScrape'))}</a>`;
       } else {
         emptyBox.className = 'hidden';
       }

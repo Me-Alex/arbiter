@@ -81,7 +81,17 @@ export function buildRouter(ctx) {
       const result = await orchestrator.cancel();
       return sendJson(null, result.cancelled ? 202 : 409, result);
     },
-    'GET /api/scan': async () => sendJson(null, 200, await scanService.readLatestScan(dataDir)), 
+    'GET /api/scan': async () => {
+      // `published` rides on the served document rather than wrapping it in an
+      // envelope like readAlertPayload does. There the page asks for the
+      // payload and knows the scan is inside it; here four pages read
+      // `scan.opportunities` and `scan.dataHealth` directly, and an envelope
+      // would hand every one of them `undefined` — which renders as 0, the
+      // exact lie the flag exists to stop. Flat, a consumer that never learns
+      // the flag exists still receives it.
+      const { scan, published } = await scanService.readPublishedScan(dataDir);
+      return sendJson(null, 200, { ...scan, published });
+    },
     'POST /api/scan': async (req) => {
       const body = await parseBody(req);
       const options = resolveScanRequest(body);

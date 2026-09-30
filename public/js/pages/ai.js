@@ -14,8 +14,21 @@ function renderHealth(scan) {
     .filter(([, count]) => Number(count) > 0)
     .map(([status, count]) => `<span class="chip ${status === 'fresh' ? 'green' : status === 'partial' || status === 'stale' ? 'yellow' : 'outline'}">${escapeHtml(status)}: ${Number(count)}</span>`)
     .join(' ');
-  $('scan-health').innerHTML = health.status
-    ? `<div class="ai-health-status"><span class="status ${escapeHtml(health.status)}">${escapeHtml(health.status)}</span><span class="muted text-sm">${escapeHtml(t('fromPublishedScan'))}</span></div><div class="row ai-source-chips">${sourceRows || `<span class="muted">${escapeHtml(t('noSources'))}</span>`}</div><div class="ai-health-meta muted text-sm"><span>${escapeHtml(t('actionableSources'))}: <strong>${Number(health.actionableSourceCount || 0)}</strong></span><span>${escapeHtml(t('runLabel'))}: <span class="mono">${escapeHtml(scan.scrapeRunId || t('manualPreview'))}</span></span></div>`
+  // This branch was gated on `health.status`, which is never falsy for a served
+  // scan: the fallback the route hands out when nothing has been published is
+  // built from the same envelope as a real scan, and its status is "empty".
+  // So the "no published scan" panel below could not render, and the run label
+  // fell through to "manual preview" — a claim that a trader ran a scan by
+  // hand, on an install that has never scraped at all. Only the route's flag
+  // says which of the two states this is.
+  const published = scan.published !== false;
+  // No `runLabel` for the never-ran panel: it names the run that produced a
+  // scan, and there was no run. A conditional here would be a branch the empty
+  // panel never reaches — which is how a label can be "handled" for a state
+  // that never renders it.
+  const runLabel = scan.scrapeRunId || t('manualPreview');
+  $('scan-health').innerHTML = published
+    ? `<div class="ai-health-status"><span class="status ${escapeHtml(health.status)}">${escapeHtml(health.status)}</span><span class="muted text-sm">${escapeHtml(t('fromPublishedScan'))}</span></div><div class="row ai-source-chips">${sourceRows || `<span class="muted">${escapeHtml(t('noSources'))}</span>`}</div><div class="ai-health-meta muted text-sm"><span>${escapeHtml(t('actionableSources'))}: <strong>${Number(health.actionableSourceCount || 0)}</strong></span><span>${escapeHtml(t('runLabel'))}: <span class="mono">${escapeHtml(runLabel)}</span></span></div>`
     : `<div class="empty">
         <div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
         <div>${escapeHtml(t('noPublishedScan'))}</div>
@@ -57,7 +70,10 @@ function renderInsights(scan) {
 }
 
 async function refresh() {
-  const scan = await arbiterApi.get('/api/scan').catch(() => ({}));
+  // A failed read used to land on the "no published scan" panel by way of an
+  // empty `health.status`, which was right by accident. With the flag it has to
+  // be stated: `{}` has no `published` at all, which now reads as "published".
+  const scan = await arbiterApi.get('/api/scan').catch(() => ({ published: false }));
   renderHealth(scan);
   renderInsights(scan);
   // Update data-freshness banner (A4)
