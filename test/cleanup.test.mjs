@@ -104,29 +104,40 @@ describe('cleanupWorkspace', () => {
     assert.strictEqual(deletedCount, 0);
   });
 
-  it('deletes workspace files older than an hour and keeps recent ones', async () => {
-    // The policy is age-based (1 hour), not count-based: a file still being
-    // written is kept regardless of how many siblings exist.
+  it('keeps every book snapshot and sweeps only non-snapshot leftovers', async () => {
+    // `<book>_events.json` is the CURRENT capture, not a leftover: one file per
+    // book, atomically overwritten by each successful scrape, and the only
+    // persisted copy of what the books were quoting (data/workspace is
+    // gitignored and unbacked up). The six-hourly regular cleanup deleted all
+    // 24 of them on 2026-09-30 and took the last real observations with it,
+    // because the guard that was supposed to spare them — `latest-*.json` — is
+    // a filename that does not exist in this directory.
+    //
+    // Age is not the test. A snapshot two hours old is exactly what a capture
+    // from the previous scrape cycle looks like, and it is still the data.
     const workspace = join(tempDir, 'workspace');
     await fs.mkdir(workspace, { recursive: true });
 
     const old = join(workspace, 'a_events.json');
     const fresh = join(workspace, 'b_events.json');
     const latest = join(workspace, 'latest-scan.json');
+    const leftover = join(workspace, 'scratch.tmp.json');
     await fs.writeFile(old, '{}');
     await fs.writeFile(fresh, '{}');
     await fs.writeFile(latest, '{}');
+    await fs.writeFile(leftover, '{}');
 
     const stale = new Date(Date.now() - 2 * 3600 * 1000);
     await fs.utimes(old, stale, stale);
-    // `latest-*` is skipped by name, so age it too and confirm it is safe.
     await fs.utimes(latest, stale, stale);
+    await fs.utimes(leftover, stale, stale);
 
     const deletedCount = await cleanupWorkspace(tempDir);
-    assert.strictEqual(deletedCount, 1);
-    await assert.rejects(() => fs.access(old), 'the stale snapshot is gone');
+    assert.strictEqual(deletedCount, 1, 'only the non-snapshot leftover is swept');
+    await fs.access(old); // a two-hour-old capture is still the current capture
     await fs.access(fresh);
     await fs.access(latest);
+    await assert.rejects(() => fs.access(leftover), 'the leftover is gone');
   });
 });
 

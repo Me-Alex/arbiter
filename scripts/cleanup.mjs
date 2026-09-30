@@ -196,29 +196,53 @@ async function cleanupTempFiles() {
 }
 
 /**
- * Clean up old workspace files (except latest ones)
+ * Clean up leftover files in the workspace directory.
+ *
+ * The `<book>_events.json` snapshots are EXEMPT and always were meant to be
+ * exempt — the guard that used to express that (`latest-*.json`) was checking a
+ * filename that does not exist in this directory, so nothing was ever spared.
+ *
+ * This was not a near miss. At 2026-09-30T05:52:55Z the six-hourly regular
+ * cleanup logged `Regular cleanup completed: {"staging":0,"temp":0,"workspace":24}`
+ * and deleted all 24 book snapshots — the only persisted copy of the capture.
+ * It had just finished doing so that the workspace measured a scan against no
+ * longer existed: `latest-scan.json` said `dataHealth: "empty"` with
+ * `eventCount: 0`, and the workspace held the last real observations the app
+ * had. Nothing is versioned (data/workspace is gitignored) and nothing is
+ * backed up, so the deletion was unrecoverable, and the UI's "no data" state
+ * became indistinguishable from a market with no opportunities in it.
+ *
+ * The directory holds exactly one file per book, atomically overwritten by
+ * `_promote` on each successful scrape (scrapers/base.mjs workspacePath), and
+ * the scanner reads nothing else (scanner.mjs loadWorkspace). Nothing
+ * accumulates there, so an age-based sweep had no garbage to collect — only the
+ * live capture to destroy. The sweep stays for any non-snapshot file a future
+ * layout might leave behind, and leaves the capture alone.
  */
 async function cleanupWorkspace(dataDir = DATA_DIR) {
   const workspaceDir = join(dataDir, 'workspace');
-  
+
   try {
     const files = await readdir(workspaceDir);
     const now = Date.now();
-    
+
     // Keep files that are actively being used (recently modified)
     const recentThresholdMs = 1 * 60 * 60 * 1000; // 1 hour
-    
+
     let deletedCount = 0;
-    
+    let spared = 0;
+
     for (const file of files) {
+      // The current capture. One per book, overwritten on each successful run.
+      if (file.endsWith('_events.json')) { spared += 1; continue; }
       // Don't delete latest-*.json files
       if (file.startsWith('latest-')) continue;
-      
+
       const filePath = join(workspaceDir, file);
-      
+
       try {
         const fileStat = await stat(filePath);
-        
+
         // Delete if older than 1 hour and not a latest file
         if (now - fileStat.mtimeMs > recentThresholdMs) {
           await unlink(filePath);
@@ -230,8 +254,8 @@ async function cleanupWorkspace(dataDir = DATA_DIR) {
         console.warn(`Could not delete workspace file ${file}:`, error.message);
       }
     }
-    
-    console.log(`Cleaned up ${deletedCount} old workspace files`);
+
+    console.log(`Cleaned up ${deletedCount} old workspace files (${spared} capture snapshots kept)`);
     return deletedCount;
   } catch (error) {
     if (error.code === 'ENOENT') {
