@@ -55,6 +55,61 @@ function sourceHealthRows(sources) {
   return (sources || []).slice().sort((a, b) => (b.count || 0) - (a.count || 0));
 }
 
+/**
+ * The badge text for a data status, in the page's language.
+ *
+ * This card rendered `source.dataStatus` raw, so a Romanian page showed
+ * "stale" and "partial" in English while the dictionary held the translations
+ * two hundred lines away. The key is assembled the way connection-status.js
+ * assembles it — `'status' + Capitalised` — so one rule covers every status and
+ * `statusFresh`, added alongside, repairs that page too: it builds the same key
+ * and was silently falling back to the English token because the key was absent.
+ *
+ * @param {string} [state] - A `DATA_STATUS` value from the scan.
+ * @param {(key: string) => string} t - The dictionary lookup.
+ * @returns {string} The translation, or the raw token when there is none.
+ */
+function sourceStatusLabel(state, t) {
+  const token = String(state || 'unknown');
+  const key = 'status' + token.charAt(0).toUpperCase() + token.slice(1);
+  const translated = t(key);
+  // t() hands back the key itself when a key is missing, so a truthy check here
+  // would print "statusCancelled" on the card instead of the word.
+  return translated === key ? token : translated;
+}
+
+/**
+ * Why this book is in the state it is in, in the page's language.
+ *
+ * The backend was publishing an English sentence in `dataReason` on every one
+ * of the capture's twenty-two books and no page read it. A sentence a page
+ * cannot translate is a sentence the page does not show, so `dataReasonCode`
+ * now names which failure this is and this translates it. The prose stays as
+ * the fallback for a code added to the backend after this page shipped: an
+ * unrecognised code shows the operator's sentence rather than nothing, which is
+ * the difference between a stale build and a blank card.
+ *
+ * @param {object} [source] - One record of the scan's `sources` array.
+ * @param {(key: string) => string} t - The dictionary lookup.
+ * @returns {string} Empty when the book needs no explanation — a fresh one.
+ */
+function sourceReasonText(source, t) {
+  const code = source && source.dataReasonCode;
+  if (!code) return '';
+  const key = 'reason' + code.charAt(0).toUpperCase() + code.slice(1);
+  let text = t(key);
+  if (text === key) return (source.dataReason || '');
+
+  const params = source.dataReasonParams || {};
+  // {status} is filled from the translated badge rather than the raw token, so
+  // a reason never quotes an English word inside a translated sentence.
+  if (text.includes('{status}')) text = text.replace('{status}', sourceStatusLabel(source.dataStatus, t));
+  if (text.includes('{minutes}')) text = text.replace('{minutes}', String(Math.round(Number(params.limit || 0) / 60000)));
+  if (text.includes('{count}')) text = text.replace('{count}', String(params.count ?? ''));
+  if (text.includes('{checked}')) text = text.replace('{checked}', String(params.checked ?? ''));
+  return text;
+}
+
 function fmtStake(n) {
   if (typeof window !== 'undefined' && window.arbiterFormat && window.arbiterFormat.fmtStake) {
     return window.arbiterFormat.fmtStake(n);
@@ -197,6 +252,7 @@ async function refresh() {
       const stateClass = state === 'fresh' ? 'completed' : state === 'failed' ? 'failed' : 'partial';
       const pal = paletteFor(source.sourceId);
       const initials = String(source.sourceId || '?').slice(0, 2);
+      const reason = sourceReasonText(source, t);
       // Freshness bar: 100% = fresh, decreasing with age
       const maxAge = 3600000; // 1h = fully stale
       const freshness = source.ageMs ? Math.max(0, Math.min(100, (1 - source.ageMs / maxAge) * 100)) : 100;
@@ -206,10 +262,11 @@ async function refresh() {
         <div style="min-width:0">
           <div class="source-name">${escapeHtml(source.sourceId || '—')}</div>
           <div class="source-meta">${Number(source.count || 0).toLocaleString()} ${t('events')}${source.ageMs ? ` · ${window.arbiterFormat?.timeAgo(source.ageMs) || '—'}` : ''}</div>
+          ${reason ? `<div class="source-reason">${escapeHtml(reason)}</div>` : ''}
         </div>
         <div class="freshness-bar" aria-hidden="true"><div class="fill ${freshClass}" style="width:${freshness.toFixed(0)}%"></div></div>
         <div class="source-stats">${Number(source.count || 0).toLocaleString()} <span class="muted">ev</span></div>
-        <span class="status ${stateClass}">${escapeHtml(state)}</span>
+        <span class="status ${stateClass}">${escapeHtml(sourceStatusLabel(state, t))}</span>
       </div>`;
     }).join('') : `<div class="empty">
       <div class="empty-icon">

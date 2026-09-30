@@ -114,6 +114,14 @@ background: var(--source-color, var(--accent));
   font: var(--fs-xs)/1.4 var(--font-mono);
   margin-top: 3px;
 }
+/* Why the book is in the state it is in, translated. Dimmer than the meta line
+   because it qualifies the badge rather than describing the book, and it wraps
+   instead of truncating: a reason cut off mid-sentence explains nothing. */
+.source-row .source-reason {
+  color: var(--text-muted);
+  font: var(--fs-xs)/1.4 var(--font-sans);
+  margin-top: 3px;
+}
 .source-row .source-stats {
   display: flex;
   align-items: center;

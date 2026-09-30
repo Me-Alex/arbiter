@@ -33,6 +33,8 @@ const dashboardSource = read('public/js/pages/dashboard.js');
 const dashboardCss = read('public/css/dashboard.css');
 const indexHtml = read('public/index.html');
 const scannerSource = read('src/scanner/scanner.mjs');
+const dataQualitySource = read('src/shared/data-quality.mjs');
+const i18nSource = read('public/js/i18n.js');
 
 /**
  * A top-level `function NAME(...) { ... }`, located by brace matching.
@@ -72,6 +74,36 @@ const sourceHealthRows = (() => {
   vm.runInContext(extractFn('sourceHealthRows', dashboardSource), context);
   return context.sourceHealthRows;
 })();
+
+/** All three page helpers in one realm, so one can call another. */
+const pageFns = (() => {
+  const context = {};
+  vm.createContext(context);
+  for (const name of ['sourceStatusLabel', 'sourceReasonText']) {
+    vm.runInContext(extractFn(name, dashboardSource), context);
+  }
+  return context;
+})();
+
+// The real dictionary, not a stand-in: the defect being pinned is a page
+// rendering a raw token that the dictionary could have translated, so a fake
+// dictionary would make every assertion here vacuous.
+const DICT = (() => {
+  const m = /const\s+dict\s*=\s*\{/.exec(i18nSource);
+  assert.ok(m, 'cannot find the dictionary');
+  let depth = 0;
+  let i = i18nSource.indexOf('{', m.index);
+  for (; i < i18nSource.length; i += 1) {
+    if (i18nSource[i] === '{') depth += 1;
+    else if (i18nSource[i] === '}' && --depth === 0) break;
+  }
+  return new Function(`${i18nSource.slice(m.index, i + 1)}; return dict;`)();
+})();
+
+/** The real lookup, including its "missing key comes back as the key" quirk. */
+const translator = (lang) => (key) => (DICT[lang] && DICT[lang][key]) || DICT.en[key] || key;
+const ro = translator('ro');
+const en = translator('en');
 
 /** The books a real capture holds, worst first. */
 const books = (n) => Array.from({ length: n }, (_, i) => ({
@@ -133,6 +165,179 @@ test('the panel is a scroller, which is why every book fits', () => {
   assert.match(indexHtml, /data-i18n="viewAllInScanner"/, 'and links somewhere that has the rest');
   assert.match(dashboardSource, /animateValue\('src-count', \(scan\.sources \|\| \[\]\)\.length\)/,
     'the source-health header counts every book');
+});
+
+/**
+ * The statuses the backend can put on a book, read out of the constant.
+ *
+ * A list typed here would rot the way the raw rendering did: the card showed
+ * `dataStatus` because nobody compared it against the set of statuses that
+ * exist, and the translations for two of them were never written.
+ */
+const STATUSES = (() => {
+  const at = dataQualitySource.indexOf('export const DATA_STATUS = Object.freeze({');
+  assert.notEqual(at, -1, 'DATA_STATUS is gone from data-quality.mjs');
+  const block = dataQualitySource.slice(at, dataQualitySource.indexOf('});', at));
+  const values = [...block.matchAll(/^\s+(\w+):\s*'([^']+)'/gm)].map((m) => m[2]);
+  assert.ok(values.includes('fresh') && values.includes('cancelled'), 'the constant did not parse');
+  return values;
+})();
+
+test('every status the backend can send has a Romanian label, and the card uses it', () => {
+  // The defect: the badge rendered `source.dataStatus` raw, so this page showed
+  // "stale" and "partial" to a Romanian reader while the dictionary held both.
+  for (const state of STATUSES) {
+    const label = pageFns.sourceStatusLabel(state, ro);
+    assert.notEqual(label, state, `${state} renders as its own English token`);
+    assert.ok(label.length > 1 && !label.startsWith('status'), `${state} has no label; got ${label}`);
+  }
+  // And the page is not merely capable of it — the row really calls the helper,
+  // rather than still escaping the raw token beside a translated one.
+  assert.match(dashboardSource, /escapeHtml\(sourceStatusLabel\(state, t\)\)/,
+    'the badge renders the raw status again');
+});
+
+test('every status has a message of its own in Romanian, not an English fallback', () => {
+  // Asking sourceStatusLabel for a Romanian label is not enough: t() falls back
+  // to the English block, and 'Cancelled' still differs from the token
+  // 'cancelled', so a status whose Romanian message was never written passes
+  // every check above while a Romanian reader gets the English word. The key
+  // has to exist in the block the page is actually reading.
+  const missing = [];
+  for (const state of STATUSES) {
+    const key = 'status' + state.charAt(0).toUpperCase() + state.slice(1);
+    for (const [lang, dict] of [['ro', DICT.ro], ['en', DICT.en]]) {
+      if (!dict || !dict[key]) missing.push(`${lang}:${key}`);
+    }
+  }
+  assert.deepEqual(missing.sort(), [], `a status has no message of its own: ${missing.join(', ')}`);
+});
+
+test('a stale book says why, in the page language, with the limit the backend sent', () => {
+  // Shaped like the real capture: 22 of its 22 books carry exactly this record.
+  const source = {
+    sourceId: 'admiral',
+    count: 314,
+    dataStatus: 'stale',
+    dataReasonCode: 'tooOld',
+    dataReason: 'snapshot age 2196786504ms exceeds 600000ms',
+    dataReasonParams: { limit: 600000 },
+    ageMs: 2196786504,
+  };
+  const text = pageFns.sourceReasonText(source, ro);
+  assert.ok(text.length > 0, 'the reason is never rendered');
+  assert.ok(!text.includes('snapshot age'), 'the English sentence reached the Romanian page');
+  assert.match(text, /10/, 'the limit the backend sent is not in the sentence');
+  // Same book, English page: a real translation, not one language with accents.
+  assert.notEqual(pageFns.sourceReasonText(source, en), text);
+});
+
+test('a reason never quotes an English status inside a translated sentence', () => {
+  const text = pageFns.sourceReasonText(
+    { dataStatus: 'failed', dataReasonCode: 'statusReported', dataReason: 'snapshot is failed', dataReasonParams: { status: 'failed' } },
+    ro,
+  );
+  assert.match(text, /Eșuat/, 'the status is not translated inside the reason');
+  assert.ok(!/\bfailed\b/.test(text), 'the raw token leaked into the sentence');
+});
+
+test('a fresh book explains nothing, and an unknown code falls back to the operator sentence', () => {
+  // Absent rather than empty: a fresh book has no failure to report, and the
+  // row leaves the line out entirely instead of rendering an empty box.
+  assert.equal(pageFns.sourceReasonText({ dataStatus: 'fresh', dataReasonCode: null }, ro), '');
+  assert.equal(pageFns.sourceReasonText({}, ro), '');
+  assert.equal(pageFns.sourceReasonText(null, ro), '');
+
+  // A code added to the backend after this page shipped must not blank the card
+  // or print "reasonSomethingNew" to a reader.
+  const unknown = pageFns.sourceReasonText(
+    { dataStatus: 'stale', dataReasonCode: 'somethingNew', dataReason: 'operator sentence' },
+    ro,
+  );
+  assert.equal(unknown, 'operator sentence');
+});
+
+test('the row puts the reason on the card, not only into a helper', () => {
+  // The defect this whole lot describes, at its smallest: a helper that computes
+  // the right thing and a page that never calls it. sourceReasonText is tested
+  // above directly, so nothing there would notice the row had stopped using it.
+  assert.match(dashboardSource, /const reason = sourceReasonText\(source, t\)/,
+    'the row no longer asks for the reason');
+  assert.match(dashboardSource, /class="source-reason"/,
+    'the reason has no element on the card');
+  // And it is the reason that drives that element, not a constant.
+  assert.match(dashboardSource, /\$\{reason \?/,
+    'the element is not driven by the computed reason');
+  assert.match(dashboardCss, /\.source-row \.source-reason\s*\{/, 'the reason has no style rule');
+});
+
+/**
+ * Every reason code the backend can put on a book, lifted from the producer.
+ *
+ * Both files that write one are read, in both the literal and the assignment
+ * form, so a code added to either is here rather than typed in.
+ */
+const REASON_CODES = (() => {
+  const codes = [
+    ...[...dataQualitySource.matchAll(/reasonCode:\s*'([^']+)'/g)].map((m) => m[1]),
+    ...[...scannerSource.matchAll(/(?:dataReasonCode|reasonCode)\s*[:=]\s*'([^']+)'/g)].map((m) => m[1]),
+  ];
+  assert.ok(codes.length >= 8, `found only ${codes.length} reason codes; the scan is too narrow to believe`);
+  return new Set(codes);
+})();
+
+test('every reason code the backend can write is translated in both languages', () => {
+  // The gap this closes is silent: a code with no message does not throw, it
+  // falls back to the English prose, and the page quietly goes back to the
+  // defect this lot removed. So the code list is the backend's, not a list here.
+  const missing = [];
+  for (const code of REASON_CODES) {
+    const key = 'reason' + code.charAt(0).toUpperCase() + code.slice(1);
+    for (const [lang, dict] of [['ro', DICT.ro], ['en', DICT.en]]) {
+      if (!dict || !dict[key]) missing.push(`${lang}:${key}`);
+    }
+  }
+  assert.deepEqual(missing.sort(), [], `a reason code has no message: ${missing.join(', ')}`);
+
+  // And each one is reachable: the page renders a message, not a key name.
+  for (const code of REASON_CODES) {
+    const text = pageFns.sourceReasonText({ dataStatus: 'stale', dataReasonCode: code }, ro);
+    assert.ok(!text.startsWith('reason'), `${code} rendered as ${text}`);
+  }
+});
+
+test('every placeholder in a reason message has a declared source, and every published param is used', () => {
+  const PLACEHOLDERS = {
+    // The badge, translated — not the raw token.
+    status: 'dataStatus',
+    // The limit travels in milliseconds and the message is in minutes, the
+    // same conversion freshnessLimit already uses.
+    minutes: 'dataReasonParams.limit',
+    count: 'dataReasonParams.count',
+    checked: 'dataReasonParams.checked',
+  };
+  // What the backend actually publishes, in both the literal and the assignment
+  // form, so the two lists below are checked against the code and not each other.
+  const published = new Set([
+    ...[...dataQualitySource.matchAll(/reasonParams:\s*\{([^}]*)\}/g)],
+    ...[...scannerSource.matchAll(/dataReasonParams\s*=\s*\{([^}]*)\}/g)],
+  ].flatMap((m) => [...m[1].matchAll(/(\w+):/g)].map((k) => k[1])));
+  assert.ok(published.has('limit') && published.has('checked'), 'the param scan found nothing');
+
+  const used = new Set();
+  for (const lang of ['ro', 'en']) {
+    for (const [key, value] of Object.entries(DICT[lang] || {})) {
+      if (!key.startsWith('reason')) continue;
+      for (const ph of String(value).matchAll(/\{(\w+)\}/g)) used.add(ph[1]);
+    }
+  }
+  const unsourced = [...used].filter((ph) => !(ph in PLACEHOLDERS)).sort();
+  assert.deepEqual(unsourced, [], `a message interpolates a placeholder nobody fills: ${unsourced.join(', ')}`);
+
+  // The inverse: a param on the payload that no message reads is the same gap
+  // this lot closed, reopened one level down.
+  const unused = [...published].filter((p) => !Object.values(PLACEHOLDERS).includes(`dataReasonParams.${p}`)).sort();
+  assert.deepEqual(unused, [], `the backend publishes a param no message can show: ${unused.join(', ')}`);
 });
 
 /**
@@ -199,12 +404,6 @@ const UNREAD_WITH_REASON = {
     'from fresh to partial (scanner.mjs:74), and that verdict is what this card shows.',
     'All 22 books of the capture carry one. The URL itself is an operator detail.',
   ].join(' '),
-  dataReason: [
-    'Prose authored in English by the backend ("snapshot age 2195484894ms exceeds',
-    '600000ms"). The page language is ro by default and everything this repo shows is',
-    'translated (scanner.js:72-78), so the sentence has no translated home. It needs a code',
-    'on the payload and a message in the dictionary, which is its own change.',
-  ].join(' '),
   transport: [
     'Provenance for an operator: which scraper produced the capture. Twenty-two distinct',
     'values across the twenty-two books of a real capture, which is the point — and the least',
@@ -260,12 +459,14 @@ test('every field the scanner writes on a book is read by a page, or is named wi
     .join('\n');
   const readByAPage = (name) => new RegExp(`\\bsources?\\w*\\.${name}\\b`).test(corpus);
 
-  for (const name of ['sourceId', 'count', 'ageMs', 'dataStatus']) {
+  // The four the card has always read, plus the three that turned a published
+  // English sentence into something the page can say out loud.
+  for (const name of ['sourceId', 'count', 'ageMs', 'dataStatus', 'dataReason', 'dataReasonCode', 'dataReasonParams']) {
     assert.equal(readByAPage(name), true, `${name} is read today; the search that must find it does not`);
   }
   for (const name of [
     'file', 'runId', 'sourceUrl', 'observedAt', 'capturedAt', 'transport', 'feedGroup', 'sharedFeedWith',
-    'dataReason', 'implausibleMarginCount', 'implausibleMarginRate', 'implausibleMarketCount',
+    'implausibleMarginCount', 'implausibleMarginRate', 'implausibleMarketCount',
     'duplicateFeedEvents',
   ]) {
     assert.equal(readByAPage(name), false, `${name} is named as unread but something reads it now`);

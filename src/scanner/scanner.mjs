@@ -49,6 +49,16 @@ export async function loadWorkspace(dataDir, qualityOptions = {}) {
     if (!blob || !Array.isArray(blob.events)) continue;
     const quality = snapshotQuality(blob, snapshotOptions);
     const runMismatch = expectedRunId && blob.runId !== expectedRunId;
+    // Verdict and explanation are chosen together. A run mismatch replaces
+    // both, so a source can never carry the reason for a judgement it is no
+    // longer making — which is what happens when the two are picked apart.
+    const verdict = runMismatch
+      ? {
+        status: DATA_STATUS.STALE,
+        reasonCode: 'wrongRun',
+        reason: `snapshot belongs to run ${blob.runId || 'unknown'}, not ${expectedRunId}`,
+      }
+      : { status: quality.status, reasonCode: quality.reasonCode, reason: quality.reason, params: quality.reasonParams };
     const source = {
       sourceId: blob.sourceId || file.replace('_events.json', ''),
       file,
@@ -58,10 +68,14 @@ export async function loadWorkspace(dataDir, qualityOptions = {}) {
       sourceUrl: blob.sourceUrl || null,
       transport: blob.transport || null,
       count: blob.events.length,
-      dataStatus: runMismatch ? DATA_STATUS.STALE : quality.status,
-      dataReason: runMismatch ? `snapshot belongs to run ${blob.runId || 'unknown'}, not ${expectedRunId}` : quality.reason,
+      dataStatus: verdict.status,
+      dataReasonCode: verdict.reasonCode || null,
+      dataReason: verdict.reason || null,
       ageMs: quality.ageMs,
     };
+    // Only written when this verdict carries numbers. Absent means "no numbers
+    // to show", which is not the same as an empty set of them.
+    if (verdict.params) source.dataReasonParams = verdict.params;
     sources.push(source);
     // Record the declared shared-feed group up front: an arbitrage needs legs
     // from feeds that can disagree, and a brand resold from one provider cannot
@@ -73,7 +87,13 @@ export async function loadWorkspace(dataDir, qualityOptions = {}) {
     }
     if (source.dataStatus !== DATA_STATUS.FRESH || !source.runId || !source.sourceUrl || !source.transport) {
       if (source.dataStatus === DATA_STATUS.FRESH) {
+        // No params to clear here, and that is not an oversight. `verdict.params`
+        // is set only by `tooOld`, which returns STALE, and this branch runs only
+        // when the verdict is FRESH — so a fresh verdict has no numbers and there
+        // is nothing for a null assignment to remove. Writing one would be a
+        // claim about the data that nothing supports.
         source.dataStatus = DATA_STATUS.PARTIAL;
+        source.dataReasonCode = 'missingProvenance';
         source.dataReason = 'snapshot is missing runId, sourceUrl, or transport provenance';
       }
       continue;
@@ -93,7 +113,9 @@ export async function loadWorkspace(dataDir, qualityOptions = {}) {
     if (margin.rate > 0) {
       source.implausibleMarginRate = margin.rate;
       source.implausibleMarginCount = margin.count;
+      source.dataReasonCode = 'belowBreakEven';
       source.dataReason = `${margin.count} of ${margin.checked} 1X2 markets are priced below break-even (${(margin.rate * 100).toFixed(0)}%)`;
+      source.dataReasonParams = { count: margin.count, checked: margin.checked };
     }
     for (const rawEvent of blob.events) {
       // Drop only the market that is priced below its own break-even, keeping
