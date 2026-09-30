@@ -328,22 +328,48 @@ function updateChipStatus(jobs) {
   }
 }
 
+/**
+ * The sport half of the orchestrator's promotion gate, copied from
+ * `src/scrape-orchestrator.mjs:110` clause for clause.
+ *
+ * The orchestrator runs a job when all three conditions hold — enabled,
+ * validated, and `jobMatchesSport` — and `resolveScanRequest` always supplies a
+ * sport, so the third clause is live on every run, not only when a filter is
+ * visibly set. The page pre-selected on the first two alone, so choosing a
+ * non-football sport ticked 24 books and POSTed a request the orchestrator
+ * reduced to one: HTTP 400, "no runnable bookmaker jobs selected", with every
+ * book on screen showing as checked.
+ *
+ * Absence is not refusal, and that is the clause easiest to get backwards: a
+ * job carrying no `supportedSports` (26 jobs in the registry, exactly one —
+ * `unibet`) has never stated a capability, which is not the same as declaring
+ * it cannot serve the sport. Excluding those instead would empty the selection
+ * again, which is the mistake the orchestrator comment at line 100 records
+ * having already been made once.
+ */
+function jobMatchesSport(job, sport) {
+  if (!sport) return true;
+  if (!Array.isArray(job.supportedSports) || job.supportedSports.length === 0) return true;
+  return job.supportedSports.includes(sport);
+}
+
+/** The chosen sport, normalised the way the orchestrator normalises it. */
+function currentSport() {
+  return String($('sport-filter')?.value || '').trim().toLowerCase();
+}
+
+/** All three orchestrator conditions, so the default cannot drift from them. */
+function passesPromotionGate(job, sport = currentSport()) {
+  return job.enabled !== false && validatedIds.has(job.id) && jobMatchesSport(job, sport);
+}
+
 async function init() {
   const t = window.arbiterI18n.t.bind(window.arbiterI18n);
   const scraperResponse = await arbiterApi.get('/api/scrapers');
   scrapers = scraperResponse.jobs || [];
   validatedIds = new Set((scraperResponse.validatedJobs || []).map((scraper) => scraper.id));
-  // Select only what the orchestrator will actually run.
-  //
-  // The promotion gate in src/scrape-orchestrator.mjs excludes a job whose
-  // validationStatus is not "validated", so selecting on `enabled` alone ticked
-  // jobs that were then dropped server-side. The run reported success over
-  // N-1 books with no notice — the same "reports an unavailable source as an
-  // empty one" failure the project's own rules refuse. Keep this predicate in
-  // step with the orchestrator's.
-  selectedIds = new Set(
-    scrapers.filter((s) => s.enabled !== false && validatedIds.has(s.id)).map((s) => s.id)
-  );
+  // The default selection is derived further down, once the sport filter
+  // exists — see the note at that derivation for why it cannot happen here.
   profiles = (await arbiterApi.get('/api/profiles')).profiles || [];
   const sel = $('profile');
   sel.innerHTML = profiles.map((p) => `<option value="${escapeHtml(p.id)}">${escapeHtml(profileLabel(p, t))}</option>`).join('');
@@ -355,8 +381,21 @@ async function init() {
   try {
     const sportsRes = await arbiterApi.get('/api/sports');
     createDropdown('sport-filter', [{value: '', text: arbiterI18n.t('allSports')}].concat(sportsRes.sports.map(s => ({value: s.id, text: s.name}))), {storageKey: 'arbiter.scrapeSportFilter'});
-    // No further handling needed; createDropdown restores value and persists changes.
+    // createDropdown restores the persisted value synchronously (common.js:34),
+    // so the operator's last sport is already in the form by the time this line
+    // returns. It persists on change but fires none for the restore itself, so
+    // the gate is applied once to the restored value below and again on every
+    // later change.
+    $('sport-filter')?.addEventListener('change', onSportFilterChange);
   } catch (_) { /* sport endpoint optional */ }
+
+  // Derived here, not above the dropdown, and that ordering is the point. The
+  // persisted sport lives in localStorage and only reaches the form when
+  // createDropdown runs; a derivation placed before it reads "" no matter what
+  // the operator last chose, and pre-selects the unfiltered set. If the sports
+  // route failed, the catch above left the form on its empty default, and "" is
+  // the correct filter for that — this is the safe side to land on.
+  selectedIds = new Set(scrapers.filter((s) => passesPromotionGate(s)).map((s) => s.id));
 
   if ($('max-events')) {
     $('max-events').addEventListener('change', () => { $('max-events').dataset.userSet = '1'; });
@@ -435,6 +474,37 @@ function onProfileChange() {
   renderSchedulerScan(lastScheduler && lastScheduler.scanOptions);
 }
 
+/**
+ * Drop ticked books the gate refuses under the newly chosen sport.
+ *
+ * Intersect, never re-derive. The gate is a constraint on the selection, not a
+ * new default for it: it may take books away, but it has no business putting
+ * any back. A book the operator unticked stays unticked, and a book they never
+ * asked for must not appear. Re-deriving the full default on every filter
+ * change would silently undo manual work each time the filter is touched;
+ * adding would tick books nobody selected. Both are worse than what is left
+ * here, and the operator can restore either with "Select validated" — an
+ * explicit act — rather than having it happen to them.
+ *
+ * An id with no job behind it is dropped too: the orchestrator would refuse it
+ * as "not in the registry", and a stale id here is exactly the state that
+ * produced a ticked book the server had never heard of.
+ */
+function onSportFilterChange() {
+  const sport = currentSport();
+  const kept = [...selectedIds].filter((id) => {
+    const source = scrapers.find((s) => s.id === id);
+    return !!source && passesPromotionGate(source, sport);
+  });
+  if (kept.length === selectedIds.size) return;
+  selectedIds = new Set(kept);
+  // The redraw is also what refreshes the count: renderBookmakerChips() ends
+  // by calling updateSelectionCounts() itself, so a second call here would be
+  // the same work twice and a mutation run proved it — dropping it changed
+  // nothing observable.
+  renderBookmakerChips();
+}
+
 function selectedMaxEvents() {
   const value = String($('max-events')?.value || 'all').trim().toLowerCase();
   if (value === 'all') return 'all';
@@ -462,7 +532,12 @@ function currentScanOptions() {
     includeLive: $('inc-live').checked,
     includePast: $('inc-past').checked,
     maxEvents: selectedMaxEvents(),
-    sport: $('sport-filter')?.value || undefined,
+    // One function answers "which sport is this" for both callers. The page used
+    // to send the raw form value here and normalise a second copy inside the
+    // gate, so a value that was not already a registry id could gate on one
+    // string and be run on another — the backend trims and lowercases whatever
+    // arrives, and nothing here did the same.
+    sport: currentSport() || undefined,
   };
 }
 

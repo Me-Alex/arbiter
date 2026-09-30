@@ -1199,3 +1199,240 @@ test('the seam refuses a selector the markup cannot match', () => {
   // And the positive beside it: the selector the page really uses resolves.
   assert.doesNotThrow(() => harness('en').run("document.querySelector('.sl-progress-track[role=\"progressbar\"]')"));
 });
+
+// ---- the promotion gate's sport clause ---------------------------------------
+
+/**
+ * A predicate lifted out of the real orchestrator source, not retyped.
+ *
+ * Re-typing it here would defeat the purpose: these checks exist to catch the
+ * page and the orchestrator drifting apart, and a hand-written stand-in agrees
+ * with the page for ever no matter what the orchestrator does. So the arrow
+ * function is cut out of `src/scrape-orchestrator.mjs` and evaluated as it
+ * stands, which also means an edit there breaks this file loudly instead of
+ * quietly making it vacuous.
+ */
+function liftFromOrchestrator(name) {
+  const source = readFileSync(new URL('../src/scrape-orchestrator.mjs', import.meta.url), 'utf8');
+  const head = `const ${name} = `;
+  const decl = source.indexOf(head);
+  assert.notEqual(decl, -1, `src/scrape-orchestrator.mjs no longer declares ${name}`);
+  // The value starts at the parameter list, which sits BEFORE the arrow — so
+  // the slice runs from there, not from the arrow itself.
+  const start = decl + head.length;
+  const arrow = source.indexOf('=>', decl);
+  const semi = source.indexOf(';', arrow);
+  const brace = source.indexOf('{', arrow);
+  // An expression-bodied predicate has no braces of its own before its `;`;
+  // a block-bodied one is matched out by depth so a brace inside cannot end it.
+  if (brace === -1 || brace > semi) return source.slice(start, semi).trim();
+  let depth = 0;
+  for (let i = brace; i < source.length; i += 1) {
+    if (source[i] === '{') depth += 1;
+    else if (source[i] === '}') {
+      depth -= 1;
+      if (depth === 0) return source.slice(start, i + 1).trim();
+    }
+  }
+  throw new Error(`unbalanced braces while lifting ${name} out of the orchestrator`);
+}
+
+/** Ask the page's own gate about one job, under one sport, in a fresh context. */
+const pageGate = (h, jobObj, sport, validated = [jobObj.id]) => h.run(
+  `scrapers = ${JSON.stringify([jobObj])};`
+  + `validatedIds = new Set(${JSON.stringify(validated)});`
+  + `passesPromotionGate(scrapers[0], ${JSON.stringify(sport)})`
+);
+
+test('the gate is three conditions, and removing any one of them lets a book through', () => {
+  const h = harness('en');
+  const ok = job({ id: 'admiral', name: 'Admiral', supportedSports: ['football'] });
+  // The positive every negative below is measured against.
+  assert.equal(pageGate(h, ok, 'football'), true, 'a book clearing all three runs');
+
+  assert.equal(pageGate(h, { ...ok, enabled: false }, 'football'), false, 'a disabled book is out');
+  assert.equal(pageGate(h, ok, 'football', []), false, 'a book that is not validated is out');
+  assert.equal(pageGate(h, ok, 'tennis'), false, 'a book that declares another sport is out');
+
+  // `enabled` is compared with `!== false`, so an absent flag means on — the
+  // same reading the orchestrator gives it. Pinned because turning this into
+  // `if (!job.enabled)` would silently disable every job that omits the key.
+  assert.equal(pageGate(h, { ...ok, enabled: undefined }, 'football'), true,
+    'a job that omits `enabled` is not disabled');
+});
+
+test('a book that declares no sport is not excluded, and a malformed one is not crashed on', () => {
+  const h = harness('en');
+  // 25 of the 26 real jobs declare `["football"]`; `unibet` declares nothing at
+  // all, and it is the single job that survives every filter the orchestrator
+  // applies. Absence is not a refusal, and the page has to read it the same way
+  // or it would empty the selection the moment any sport is chosen.
+  const undeclared = job({ id: 'unibet', name: 'Unibet' });
+  assert.equal(pageGate(h, undeclared, 'tennis'), true, 'no declaration at all still runs');
+  assert.equal(pageGate(h, { ...undeclared, supportedSports: [] }, 'tennis'), true,
+    'an empty list is the same claim, not a refusal of everything');
+  // Config written by hand can hold anything. None of these may throw, and none
+  // may read as a refusal.
+  assert.equal(pageGate(h, { ...undeclared, supportedSports: 'football' }, 'tennis'), true,
+    'a bare string is not an array and is treated as undeclared');
+  assert.equal(pageGate(h, { ...undeclared, supportedSports: null }, 'tennis'), true, 'nor is null');
+
+  // And beside all of those, a real declaration is still honoured in both
+  // directions — otherwise the four assertions above would pass just as well
+  // if the clause ignored `supportedSports` completely.
+  assert.equal(pageGate(h, { ...undeclared, supportedSports: ['tennis'] }, 'tennis'), true,
+    'a book declaring the chosen sport runs');
+  assert.equal(pageGate(h, { ...undeclared, supportedSports: ['football'] }, 'tennis'), false,
+    'a book declaring only another sport does not');
+
+  // No filter at all: the clause stands down, whatever the book declares.
+  assert.equal(pageGate(h, { ...undeclared, supportedSports: ['football'] }, ''), true,
+    'an empty filter runs a book that declares football');
+  assert.equal(pageGate(h, { ...undeclared, supportedSports: ['football'] }, null), true,
+    'and so does a null filter');
+});
+
+test('on the real registry the page and the orchestrator pick exactly the same books', () => {
+  const cfg = JSON.parse(readFileSync(new URL('../config/scrapers.json', import.meta.url), 'utf8'));
+  const jobs = cfg.jobs || [];
+  assert.ok(jobs.length > 0, 'the real registry is readable — a fixture instead would not prove drift');
+  const h = harness('en');
+  // Both lifted predicates, renamed so the page's own `jobMatchesSport` is not
+  // redeclared. The lifted body closes over `sportFilter`, which is set per
+  // iteration below — exactly the binding it has in the orchestrator.
+  h.run(`var orchJobMatchesSport = ${liftFromOrchestrator('jobMatchesSport')};`
+    + `var orchIsValidated = ${liftFromOrchestrator('isValidated')};`);
+  h.run(`scrapers = ${JSON.stringify(jobs)};`
+    + `validatedIds = new Set(${JSON.stringify(jobs.filter((j) => j.validationStatus === 'validated').map((j) => j.id))});`);
+
+  for (const sport of [null, '', 'football', 'tennis', 'basketball']) {
+    h.run(`sportFilter = ${JSON.stringify(sport)};`);
+    // The orchestrator's own filter line, with its own predicates in scope.
+    const backend = h.run('scrapers.filter((job) => job.enabled !== false'
+      + ' && orchIsValidated(job) && orchJobMatchesSport(job)).map((job) => job.id).sort().join(",")');
+    const frontend = h.run('scrapers.filter((job) => passesPromotionGate(job, sportFilter))'
+      + '.map((job) => job.id).sort().join(",")');
+    assert.equal(frontend, backend, `the two gates agree with sport=${sport}`);
+  }
+
+  // Not vacuous: the comparison above would also pass if both sides returned
+  // nothing, and it would have passed before the fix because the two predicates
+  // were compared rather than the two gates. So the old two-condition filter is
+  // run here and is required to DISAGREE on the sports the registry does not
+  // carry — which is the defect this closes, stated as a fact about the real
+  // config rather than about a fixture.
+  for (const sport of ['tennis', 'basketball']) {
+    h.run(`sportFilter = ${JSON.stringify(sport)};`);
+    const oldCount = h.run('scrapers.filter((job) => job.enabled !== false && validatedIds.has(job.id)).length');
+    const newCount = h.run('scrapers.filter((job) => passesPromotionGate(job, sportFilter)).length');
+    assert.ok(oldCount > newCount,
+      `with sport=${sport} the old filter really did over-select (${oldCount} -> ${newCount})`);
+  }
+  // The positive beside that negative: on the one sport the registry carries,
+  // the old filter and the gate agree, because there is nothing to disagree about.
+  h.run('sportFilter = "football";');
+  assert.equal(
+    h.run('scrapers.filter((job) => job.enabled !== false && validatedIds.has(job.id)).length'),
+    h.run('scrapers.filter((job) => passesPromotionGate(job, sportFilter)).length'),
+    'on football the gate changes nothing, which is why the defect stayed latent',
+  );
+});
+
+test('the default selection is derived after the sport filter exists', () => {
+  // `init()` needs five routes and a real dropdown, so — as with the profile
+  // listener above — the wiring is pinned as source. What is pinned here is an
+  // ORDER, and that is the part a "does the line exist" check cannot see:
+  // createDropdown writes the persisted sport into the form, so a derivation
+  // placed above it reads "" and pre-selects the unfiltered set whatever the
+  // operator last chose. Both lines existing proves nothing about this.
+  const dropdown = scrapeSource.indexOf("createDropdown('sport-filter'");
+  const derivation = scrapeSource.indexOf('selectedIds = new Set(scrapers.filter((s) => passesPromotionGate(s))');
+  assert.notEqual(dropdown, -1, 'the sport dropdown is still built');
+  assert.notEqual(derivation, -1, 'the default selection still comes from the promotion gate');
+  assert.ok(derivation > dropdown,
+    'and it is derived after the dropdown has applied the persisted sport');
+  // And it reads the live form rather than a sport written into the call. A
+  // hardcoded '' there is the same defect as the wrong ordering — both make the
+  // gate consult an empty filter — and an ordering check alone would not see it.
+  assert.doesNotMatch(scrapeSource, /passesPromotionGate\(\s*s\s*,\s*['"]['"]\s*\)/,
+    'the default selection is gated on the sport currently chosen');
+  // The two-condition filter it replaced is gone, not merely bypassed — otherwise
+  // the ordering above would be irrelevant.
+  assert.equal((scrapeSource.match(/s\.enabled !== false && validatedIds\.has\(s\.id\)/g) || []).length, 0);
+  assert.match(scrapeSource, /addEventListener\('change', onSportFilterChange\)/,
+    'and the gate is re-applied when the operator changes the filter');
+});
+
+test('the gate and the POST body read one sport, normalised the same way', () => {
+  // The orchestrator normalises whatever arrives on the wire —
+  // `String(scanOptions?.sport).trim().toLowerCase()` — so a form value that
+  // is not already a registry id has to be folded the same way here. The page
+  // used to have two answers: the gate normalised a copy of the form value and
+  // the payload shipped the raw one, so the page could gate on `football` while
+  // the backend ran whatever the operator actually typed.
+  const h = harness('en', { form: { 'sport-filter': { value: '  Football  ' } } });
+  assert.equal(h.run('var sport = currentSport(); sport'), 'football',
+    'the form value is trimmed and lowercased once');
+  assert.match(h.run('JSON.stringify(currentScanOptions())'), /"sport":"football"/,
+    'and the payload carries that same string rather than the raw form value');
+  // The positive the two normalisation mutants would break: a book declaring
+  // lowercase `football` still passes under the normalised value.
+  assert.equal(h.run(
+    `scrapers = ${JSON.stringify([job({ id: 'admiral', supportedSports: ['football'] })])};`
+    + 'validatedIds = new Set(["admiral"]); passesPromotionGate(scrapers[0], sport)'
+  ), true, 'so a book that declares football in lowercase still runs');
+
+  // The empty case still reads as "no filter" on both paths, which is what the
+  // scheduler comparison depends on.
+  const g = harness('en', { form: { 'sport-filter': { value: '' } } });
+  assert.equal(g.run('currentSport()'), '');
+  assert.equal('sport' in JSON.parse(g.run('JSON.stringify(currentScanOptions())')), false,
+    'an empty sport is absent from the payload, not sent as an empty string');
+});
+
+test('a sport change only ever removes books from the selection', () => {
+  const books = [
+    job({ id: 'admiral', name: 'Admiral', supportedSports: ['football'] }),
+    // The one real job with no declaration: it must survive the same change
+    // that drops the other two, or the page is applying a different rule than
+    // the orchestrator after all.
+    job({ id: 'unibet', name: 'Unibet', supportedSports: undefined }),
+    job({ id: 'winbet', name: 'Winbet', supportedSports: ['football'] }),
+  ];
+  // `ghost` has no job behind it at all: the orchestrator would refuse it as
+  // "not in the registry", so a stale id must not keep the run from starting.
+  const h = harness('en', { form: { 'sport-filter': { value: 'tennis' } } });
+  h.run(`scrapers = ${JSON.stringify(books)};`
+    + `validatedIds = new Set(["admiral", "unibet", "winbet"]);`
+    + `jobById = new Map(); selectedIds = new Set(["admiral", "unibet", "winbet", "ghost"]);`
+    + `renderBookmakerChips()`);
+  h.nodes.get('bookmaker-list').innerHTML = 'SENTINEL';
+  h.run('onSportFilterChange()');
+  const after = h.run('JSON.stringify([...selectedIds].sort())');
+  assert.deepEqual(JSON.parse(after), ['unibet'],
+    'the two football books and the id with no job are gone; the undeclared one stays');
+  // The removal reached the screen, so this is not a set that moved under a
+  // stale render. The redraw is what makes the count agree with the checkboxes.
+  assert.notEqual(h.list(), 'SENTINEL', 'and the chips were redrawn');
+  assert.doesNotMatch(h.list(), /data-source="admiral"\s+checked/, 'a dropped book is unticked on screen');
+  assert.match(h.list(), /data-source="unibet"\s+checked/, 'and a surviving book stays ticked');
+  // The stub keeps `textContent` as whatever was written, and the page writes
+  // a number here, so the comparison goes through String() rather than pinning
+  // a coercion the browser would have done for us.
+  assert.equal(String(h.nodes.get('bm-selected').textContent), '1', 'the count follows the selection');
+
+  // The other direction, which is the one that would destroy work: changing
+  // the filter must not put a book back that the operator had unticked.
+  const g = harness('en', { form: { 'sport-filter': { value: 'football' } } });
+  g.run(`scrapers = ${JSON.stringify(books)};`
+    + `validatedIds = new Set(["admiral", "unibet", "winbet"]);`
+    + `jobById = new Map(); selectedIds = new Set(["unibet"]);`
+    + `renderBookmakerChips()`);
+  g.nodes.get('bookmaker-list').innerHTML = 'SENTINEL';
+  const kept = g.run('onSportFilterChange(); JSON.stringify([...selectedIds].sort())');
+  assert.deepEqual(JSON.parse(kept), ['unibet'],
+    'every declared football book passes, and none of them is re-ticked');
+  // And a change that removes nothing leaves the DOM alone: no redraw, because
+  // there is nothing to redraw. The first test above is the positive for this.
+  assert.equal(g.list(), 'SENTINEL', 'a filter change that removes nothing does not redraw the chips');
+});
