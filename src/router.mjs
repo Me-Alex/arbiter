@@ -544,7 +544,15 @@ export async function readEventDetailRoute(res, parsedUrl, dataDir) {
     }
   }
 
-  return sendJson(res, 200, { events, arbs: [...arbs.values()] });
+  // Only `events`. The arbitrage map was also being published as a flat
+  // `arbs: [...arbs.values()]` array, and nothing read it: the modal reads the
+  // per-market `arb` this same map is attached to. Worse than unread, the flat
+  // form is the one that cannot be used — `findDetailArbitrages` keys its
+  // result by market key, and spreading the values drops the key, so a
+  // consumer holding that array has no way to tell which market a plan belongs
+  // to. Two copies of one fact, one of them lossy, and the lossy one is what
+  // the payload offers.
+  return sendJson(res, 200, { events });
 }
 
 function eventKeyTokensMatch(eventKey, normHome, normAway) {
