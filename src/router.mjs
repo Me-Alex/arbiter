@@ -379,9 +379,21 @@ async function readOddsRoute(res, parsedUrl, dataDir) {
         kickoff: event.kickoff,
         homeTeam: event.homeTeam,
         awayTeam: event.awayTeam,
+        // Kept for the same reason readEventDetailRoute keeps it, and on the
+        // same files: this projects `market.selections` out of the very same
+        // snapshots, so a price list that arrived here without the in-play flag
+        // would be marked the same way a pre-match one is — a different,
+        // calmer thing than the signal the reader just asked for. A diagnostic
+        // route is read fastest precisely when something looks wrong, which is
+        // the worst moment to lose the field that says the price is moving.
+        //
+        // Per market, not per event: the adapters mark each market from the
+        // provider's own field, and two books of one event can disagree.
+        live: event.live === true,
         market: {
           key: market.key,
           name: market.name || market.key,
+          live: market.live === true,
           selections: Array.isArray(market.selections) ? market.selections : [],
         },
       });

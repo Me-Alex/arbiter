@@ -315,6 +315,35 @@ All routes are loopback-only; mutations require the `x-arbiter-token` CSRF heade
 - `GET /api/alerts` · `POST /api/alerts` — alert preferences.
 - `GET /api/events` — SSE stream of pipeline + scan updates.
 
+### Diagnostic routes
+
+Two routes have no consumer in the dashboard and never did. They are not
+vestigial, and this paragraph is the reason that is written down:
+
+- `GET /api/snapshot/:sourceId` — one book's workspace snapshot verbatim, every
+  key included. This is the ground truth of what an adapter wrote.
+- `GET /api/odds/:sourceId` — the same file projected to
+  `{ eventKey, id, sport, league, kickoff, homeTeam, awayTeam, live, market }`,
+  with optional `?eventKey=`, `?marketKey=` (case-insensitive) and `?limit=`
+  (1–100, default 50). `market` carries `{ key, name, live, selections }`.
+
+`/api/event-detail` already shows the same selections to the dashboard, but it
+finds an event through a heuristic matcher — normalized club identity, an
+`eventKey`-token fallback, a ±5 minute kickoff window. When the matcher itself
+is what is under suspicion, a view built on the matcher cannot be the evidence;
+these two routes read one book with no matching at all. That is the job
+`docs/no-arbitrage-root-cause.md` used them for, and it is the reason they
+cannot be deleted as "redundant with the event page".
+
+`live` is projected per market, not per event, on both: the adapters mark each
+market from the provider's own field and two books of one event can disagree.
+A price list that arrives without it reads as a pre-match one.
+
+Both are loopback-only, accept a bare `[a-z0-9][a-z0-9-]*` source id (400
+`EBADID` otherwise), answer 404 `ENOTFOUND` for a book that has never run and
+500 `EINVALID` for a truncated file — never a bare empty list, which is
+indistinguishable from a book that had nothing to offer.
+
 ## Security model
 
 - `/api/*` accepts loopback only unless `PUBLIC_HOSTS` is set.
