@@ -48,12 +48,14 @@ const DICTS = dictionaries();
 const scrapeHtml = readFileSync(new URL('../public/admin/scrape.html', import.meta.url), 'utf8');
 const PAGE_IDS = new Set([...scrapeHtml.matchAll(/\bid="([^"]+)"/g)].map((m) => m[1]));
 
+/** Every class token the markup really carries, for the same job as PAGE_IDS. */
+const CLASS_TOKENS = new Set(
+  [...scrapeHtml.matchAll(/\bclass="([^"]+)"/g)].flatMap((m) => m[1].split(/\s+/)).filter(Boolean),
+);
+
 function harness(lang = 'ro', { api, form } = {}) {
   const nodes = new Map();
-  const node = (id) => {
-    if (!PAGE_IDS.has(id)) throw new Error(`scrape.html has no #${id} — the page and this test have drifted`);
-    if (!nodes.has(id)) {
-      nodes.set(id, {
+  const make = (id) => ({
         id,
         innerHTML: '',
         value: '',
@@ -62,17 +64,38 @@ function harness(lang = 'ro', { api, form } = {}) {
         hidden: false,
         className: '',
         attrs: {},
-        setAttribute(name, value) { this.attrs[name] = value; },
+        // The DOM stringifies attribute values, and the page passes a number here.
+        // Storing it raw would make the stub disagree with the browser about
+        // what it reads back.
+        setAttribute(name, value) { this.attrs[name] = String(value); },
         appendChild() {},
+        // The page toggles classes on real elements (the progress card hides
+        // itself when no run is in flight). A stub without this threw on the
+        // first classList use, which had been keeping renderState out of this
+        // file entirely.
+        classList: { add() {}, remove() {}, toggle() {}, contains: () => false },
+        // Same story for inline styles: the progress bar writes `style.right`
+        // and the ring writes `style.setProperty('--p', pct)`.
+        style: { setProperty() {} },
         querySelectorAll: () => [],
+        // Nothing is parsed, so a node's own descendants do not resolve. null is
+        // the honest answer and the page guards every one of these.
+        querySelector: () => null,
         // The form the page reads its scan options out of. Seeded from the
         // fixture rather than left blank, because `currentScanOptions()`
         // coerces with Number() and an all-empty form would compare equal to a
         // stored object of zeroes — a diff that can never fire.
         ...(form && form[id] ? form[id] : {}),
       });
-    }
+  const node = (id) => {
+    if (!PAGE_IDS.has(id)) throw new Error(`scrape.html has no #${id} — the page and this test have drifted`);
+    if (!nodes.has(id)) nodes.set(id, make(id));
     return nodes.get(id);
+  };
+  /** A node reached by selector rather than by id: memoised under the selector. */
+  const selNode = (selector) => {
+    if (!nodes.has(selector)) nodes.set(selector, make(selector));
+    return nodes.get(selector);
   };
   const document = {
     getElementById: node,
@@ -86,12 +109,37 @@ function harness(lang = 'ro', { api, form } = {}) {
     // so the seam has to resolve one. The id is checked against scrape.html,
     // which is what keeps a selector pointing at a removed element from
     // quietly returning a fresh empty node and passing.
-    querySelector: (selector) => node(String(selector).replace(/^#/, '')),
+    querySelector: (selector) => {
+      const sel = String(selector);
+      if (sel.startsWith('#')) return node(sel.slice(1));
+      // A class selector is checked the same way, by class token rather than by
+      // id: the markup's tokens are the ids for this purpose. This is not
+      // defensive scaffolding — `updateProgressCard` asks for
+      // `.progress[role="progressbar"]`, a class the markup does not have, and
+      // the `if (progressEl)` around the write hid it. A seam that hands back a
+      // node for a selector matching nothing cannot fail any assertion made
+      // against it, so it would have kept passing forever.
+      for (const [, cls] of sel.matchAll(/\.([A-Za-z_][\w-]*)/g)) {
+        if (!CLASS_TOKENS.has(cls)) {
+          throw new Error(`scrape.html has no element with class "${cls}" — "${sel}" matches nothing`);
+        }
+      }
+      return selNode(sel);
+    },
   };
   const context = vm.createContext({
     document,
     console,
     localStorage: { getItem: () => null, setItem() {} },
+    // renderState flashes the KPI cards through setTimeout on every update
+    // after the first. Stubbed to a no-op: nothing in this file asserts on the
+    // flash, and a real timer would keep the test process alive.
+    setTimeout() {},
+    // countUp animates a KPI toward its target unless the reader has asked for
+    // reduced motion, in which case it writes the value outright. Taking that
+    // path keeps every number in these tests the real target rather than
+    // whatever point of a 450ms animation the test happened to interrupt.
+    matchMedia: (query) => ({ matches: /prefers-reduced-motion/.test(query), media: query }),
     // The real api.js is an IIFE over fetch; only the scheduler readouts are
     // under test, so the seam is the one global it installs.
     ...(api ? { arbiterApi: api } : {}),
@@ -114,6 +162,8 @@ function harness(lang = 'ro', { api, form } = {}) {
     nodes,
     run: (code) => vm.runInContext(code, context),
     list: () => nodes.get('bookmaker-list').innerHTML,
+    /** The node a selector resolved to, for assertions on a selector write. */
+    sel: (selector) => nodes.get(selector),
   };
 }
 
@@ -863,7 +913,7 @@ test('every key the new readouts use exists in both languages', () => {
   // ones the script names outright, and the ones the script reaches through a
   // value the config supplies.
   const literal = ['profileScopePrematch', 'profileScopeLivePast', 'runId', 'started',
-    'finishedLabel', 'failedToLoadMsg'];
+    'finishedLabel', 'failedToLoadMsg', 'livePollPending', 'livePollLastSkip', 'schedulerResumed'];
   const inMarkup = ['scrapeProgressTrack', 'jobs', 'configuration', 'progress'];
   for (const key of literal) {
     assert.ok(scrapeSource.includes(`'${key}'`), `scrape.js should ask for ${key}`);
@@ -885,4 +935,267 @@ test('every key the new readouts use exists in both languages', () => {
         `${lang} is missing ${key} — t() would print the key itself`);
     }
   }
+});
+
+// ---- the live poll's own status line ---------------------------------------
+
+/**
+ * `/api/live` ships three fields the line never drew: `pending` (the poll this
+ * driver launched, not yet reported terminal), `lastSkippedAt`, and `resumed`.
+ *
+ * `pending` is the interesting one, because it cannot be printed as it stands.
+ * LiveService clears `_pending` at the top of the next tick, not when the run
+ * reports terminal, so it stays set for up to a full interval after the poll
+ * has finished. A line that rendered it directly would claim a poll was running
+ * for a minute after it completed — in the one direction that makes the readout
+ * wrong exactly when someone is watching it. So it is confirmed against the
+ * orchestrator state the page already holds, and every negative below sits next
+ * to a positive that differs only in that one condition.
+ */
+const LIVE_BASE = {
+  enabled: true,
+  active: true,
+  resumed: false,
+  intervalSeconds: 60,
+  liveMaxAgeMs: 90000,
+  bookIds: [],
+  scanningAllBooks: true,
+  scanOptions: { includeLive: true },
+  pending: null,
+  lastRun: null,
+  lastError: null,
+  skippedTicks: 0,
+  lastSkippedAt: null,
+};
+
+const live = (over = {}) => ({ ...LIVE_BASE, ...over });
+
+/** Draw the line with the real function, the real dictionary and the real node. */
+const liveLine = (lang, payload, state = null) => {
+  const h = harness(lang);
+  h.run(`lastState = ${JSON.stringify(state)}`);
+  h.run(`renderLiveMeasured(${JSON.stringify(payload)}, arbiterI18n.t.bind(arbiterI18n))`);
+  return h.nodes.get('live-measured').textContent;
+};
+
+const RUNNING = { status: 'running', runId: 'r7' };
+const PENDING = { runId: 'r7', startedAt: '2026-09-30T10:00:00.000Z' };
+
+test('a poll of this driver that is running right now is named on the line', () => {
+  const line = liveLine('en', live({ pending: PENDING }), RUNNING);
+  assert.match(line, /Live poll in flight since \d/,
+    'the start time must come from the real dictionary with {time} substituted');
+
+  // The control for this whole section: same payload, same page, one condition
+  // changed. The orchestrator says the run is over, so the poll is not running.
+  const settled = liveLine('en', live({ pending: PENDING }), { status: 'completed', runId: 'r7' });
+  assert.doesNotMatch(settled, /in flight/,
+    'a poll awaiting settlement on the next tick has already finished — saying otherwise is the lie this guards');
+  // And it must still have drawn its other halves, or the negative above would
+  // pass for the wrong reason.
+  assert.match(settled, /Polls every book/);
+});
+
+test('a run this driver did not launch is not reported as its poll', () => {
+  // Same running status, no pending: this is somebody's own scrape, and the
+  // positive above is the same line with pending restored.
+  const foreign = liveLine('en', live({ pending: null }), RUNNING);
+  assert.doesNotMatch(foreign, /in flight/);
+  assert.match(liveLine('en', live({ pending: PENDING }), RUNNING), /in flight/,
+    'the guard must be the pending field and not the running status');
+});
+
+test('a pending poll naming a different run is not reported as the run in progress', () => {
+  const line = liveLine('en', live({ pending: PENDING }), { status: 'running', runId: 'r9' });
+  assert.doesNotMatch(line, /in flight/,
+    'two concurrent runs exist; attributing the in-flight bit to the live driver would be a guess');
+  assert.match(liveLine('en', live({ pending: PENDING }), { status: 'running', runId: 'r7' }), /in flight/,
+    'the same run id must still be reported, so the guard is the id and not the status');
+});
+
+test('a missing run id on either side is not treated as a mismatch', () => {
+  // `lastRun.runId` is written as `state.runId ?? null`, so null is a real
+  // payload, not a fiction. Comparing it for equality would report "not running"
+  // for a poll that plainly is.
+  const noIds = liveLine('en', live({ pending: { runId: null, startedAt: PENDING.startedAt } }), { status: 'running', runId: null });
+  assert.match(noIds, /in flight/);
+  const oneSide = liveLine('en', live({ pending: PENDING }), { status: 'running', runId: null });
+  assert.match(oneSide, /in flight/);
+
+  // And the same for a payload that omits the field altogether, which is a
+  // different thing from null to `!==`: undefined !== null is true, so a guard
+  // written on the raw value calls an absent id a mismatch and the line goes
+  // quiet exactly while a poll is running.
+  const absentPending = liveLine('en', live({ pending: { startedAt: PENDING.startedAt } }), RUNNING);
+  assert.match(absentPending, /in flight/, 'a pending poll with no runId at all is still this driver\'s poll');
+  const absentBoth = liveLine('en', live({ pending: { startedAt: PENDING.startedAt } }), { status: 'running' });
+  assert.match(absentBoth, /in flight/, 'and with no runId on the run either');
+  const absentState = liveLine('en', live({ pending: PENDING }), { status: 'running' });
+  assert.match(absentState, /in flight/, 'a run with no runId does not contradict a pending one');
+});
+
+test('a poll with no start time cannot be placed in time and is not claimed as running', () => {
+  const line = liveLine('en', live({ pending: { runId: 'r7' } }), RUNNING);
+  assert.doesNotMatch(line, /in flight/,
+    'without a start time the line would have to print the dash, i.e. nothing about when');
+  assert.match(liveLine('en', live({ pending: { runId: 'r7', startedAt: PENDING.startedAt } }), RUNNING), /in flight/);
+});
+
+test('the skip count carries the time of the last skip', () => {
+  const withTime = liveLine('en', live({ skippedTicks: 4, lastSkippedAt: '2026-09-30T09:58:00.000Z' }));
+  assert.match(withTime, /4 skipped/);
+  assert.match(withTime, /last at \d/);
+
+  // The counter is still there without the timestamp; only the time is dropped.
+  const withoutTime = liveLine('en', live({ skippedTicks: 4, lastSkippedAt: null }));
+  assert.match(withoutTime, /4 skipped/);
+  assert.doesNotMatch(withoutTime, /last at/);
+  // And a live driver with no skips at all says nothing about skipping.
+  assert.doesNotMatch(liveLine('en', live({ skippedTicks: 0, lastSkippedAt: '2026-09-30T09:58:00.000Z' })), /skipped|last at/);
+});
+
+test('an unparseable last-skip time falls back to the dash rather than "Invalid Date"', () => {
+  const line = liveLine('en', live({ skippedTicks: 1, lastSkippedAt: 'not-a-date' }));
+  assert.match(line, /1 skipped/);
+  assert.doesNotMatch(line, /Invalid Date/);
+  assert.match(line, /last at —/);
+});
+
+test('a driver that was armed at startup says so, as the scheduler already does', () => {
+  assert.match(liveLine('en', live({ resumed: true })), /resumed at startup/);
+  assert.doesNotMatch(liveLine('en', live({ resumed: false })), /resumed at startup/);
+  assert.match(liveLine('ro', live({ resumed: true })), /reluat la pornire/);
+});
+
+test('the in-flight half follows the orchestrator without asking the backend again', async () => {
+  // The page deliberately does not poll /api/live on every scrape update — that
+  // would be a request per book per tick — and it equally deliberately skips
+  // refreshLive() while a run is in progress. Neither is allowed to cost the
+  // "running right now" bit, so the transition re-draws from the cached payload.
+  let calls = 0;
+  const api = {
+    async get(path) {
+      if (path === '/api/live') { calls += 1; return live({ pending: PENDING, skippedTicks: 2, lastSkippedAt: '2026-09-30T09:58:00.000Z' }); }
+      throw new Error(`unexpected GET ${path}`);
+    },
+  };
+  const h = harness('en', { api });
+  await h.run('refreshLive()');
+  assert.equal(calls, 1, 'one read of /api/live');
+  assert.doesNotMatch(h.nodes.get('live-measured').textContent, /in flight/,
+    'nothing is running yet, so nothing may claim to be');
+
+  // The same page, the same cached payload, one scrape-update later.
+  await h.run(`renderState(${JSON.stringify({ status: 'running', runId: 'r7', summary: {}, jobs: [], options: {} })})`);
+  assert.equal(calls, 1, 'the transition must not have re-read /api/live');
+  assert.match(h.nodes.get('live-measured').textContent, /Live poll in flight since \d/,
+    'this is the whole reason the cached payload exists');
+
+  // And it must go away again when the run ends, or it would stick.
+  await h.run(`renderState(${JSON.stringify({ status: 'completed', runId: 'r7', summary: {}, jobs: [], options: {} })})`);
+  assert.doesNotMatch(h.nodes.get('live-measured').textContent, /in flight/);
+  assert.match(h.nodes.get('live-measured').textContent, /2 skipped/,
+    'the rest of the line survives the transition');
+});
+
+test('a payload with none of the three new fields renders exactly the old line', () => {
+  // The regression control for the section: a driver mid-session with nothing
+  // pending, nothing skipped and nothing resumed must say no more than it did.
+  const line = liveLine('en', live({ lastRun: { durationMs: 70000, ok: true, at: '2026-09-30T09:00:00.000Z' } }));
+  assert.match(line, /^Polls every book · Live window: 90s · Last measured poll: /);
+  assert.doesNotMatch(line, /in flight|last at|resumed/);
+  // A disabled driver draws nothing at all, as before.
+  assert.equal(liveLine('en', live({ enabled: false, pending: PENDING })), '');
+});
+
+test('a null payload clears the line instead of throwing', () => {
+  // renderLiveMeasured is now also reachable from a scrape transition, which can
+  // land before the first /api/live answer.
+  const h = harness('en');
+  h.run(`renderLiveMeasured(null, arbiterI18n.t.bind(arbiterI18n))`);
+  assert.equal(h.nodes.get('live-measured').textContent, '');
+});
+
+test('the two new strings interpolate in both languages', () => {
+  // Each half is matched on its OWN segment, with its own clock time. Asserting
+  // "the line contains a time" would be satisfied by the in-flight half alone,
+  // and a dictionary that dropped `{time}` from the skip string would go
+  // unnoticed — which is exactly the mutation this section exists to catch.
+  const shapes = {
+    ro: { pending: /Rulare live în curs din \d{1,2}:\d\d/, skip: /\d+ saltate · ultima la \d{1,2}:\d\d/ },
+    en: { pending: /Live poll in flight since \d{1,2}:\d\d/, skip: /\d+ skipped · last at \d{1,2}:\d\d/ },
+  };
+  for (const lang of ['ro', 'en']) {
+    const line = liveLine(lang, live({ pending: PENDING, skippedTicks: 3, lastSkippedAt: '2026-09-30T09:58:00.000Z', resumed: true }), RUNNING);
+    assert.doesNotMatch(line, /\{(time|count)\}/, `${lang} left a placeholder unexpanded`);
+    assert.doesNotMatch(line, /\b(livePoll|liveWindow|scheduler)\w*/, `${lang} printed a key name`);
+    assert.match(line, shapes[lang].pending, `${lang} in-flight string lost its time`);
+    assert.match(line, shapes[lang].skip, `${lang} skip string lost its time`);
+  }
+});
+
+// ---- the announced progress value -----------------------------------------
+
+/**
+ * Four jobs, one finished: the page's own arithmetic gives 25%.
+ */
+const quarterRun = {
+  status: 'running',
+  runId: 'r7',
+  summary: { completed: 1, failed: 0, events: 10 },
+  jobs: [
+    { id: 'a', status: 'ok' },
+    { id: 'b', status: 'running' },
+    { id: 'c', status: 'running' },
+    { id: 'd', status: 'running' },
+  ],
+  options: {},
+};
+
+test('the progress value a screen reader is given moves while the run does', async () => {
+  const h = harness('en');
+  await h.run(`renderState(${JSON.stringify(quarterRun)})`);
+
+  // The visible number and the announced one are written from the same `pct`,
+  // so they are asserted together: a fix that moved one and not the other would
+  // still be a fix that lies to somebody.
+  assert.equal(h.nodes.get('progress-pct').textContent, '25%');
+  assert.equal(h.sel('.sl-progress-track[role="progressbar"]').attrs['aria-valuenow'], '25',
+    'aria-valuenow never moved off the 0 scrape.html ships, because the selector named a class the page does not have');
+
+  // The control: the other role="progressbar" on this page is the ring, which is
+  // aria-hidden and driven from its own id. If the selector were loose enough to
+  // catch it, the announced track would be the wrong element.
+  assert.equal(h.nodes.get('progress-ring').attrs['aria-valuenow'], undefined,
+    'the ring is aria-hidden and must not receive the announced value');
+  assert.equal(h.nodes.get('progress-ring-pct').textContent, '25%',
+    'and the ring still shows the same number by its own route');
+});
+
+test('the announced value follows the run to the end', async () => {
+  const finished = {
+    ...quarterRun,
+    status: 'completed',
+    jobs: quarterRun.jobs.map((j) => ({ ...j, status: 'ok' })),
+  };
+  const h = harness('en');
+  await h.run(`renderState(${JSON.stringify(quarterRun)})`);
+  assert.equal(h.sel('.sl-progress-track[role="progressbar"]').attrs['aria-valuenow'], '25');
+  await h.run(`renderState(${JSON.stringify(finished)})`);
+  assert.equal(h.sel('.sl-progress-track[role="progressbar"]').attrs['aria-valuenow'], '100',
+    'a completed run must be announced as complete, not left at a quarter');
+  assert.equal(h.nodes.get('progress-pct').textContent, '100%',
+    'and the visible number must agree with the announced one');
+});
+
+test('the seam refuses a selector the markup cannot match', () => {
+  // The guard that caught the `.progress` selector in the first place. If this
+  // ever goes quiet, the harness has stopped being able to see that class of
+  // defect, and the assertion above would pass against a node nobody has.
+  assert.throws(
+    () => harness('en').run("document.querySelector('.progress[role=\"progressbar\"]')"),
+    /no element with class "progress"/,
+  );
+  // And the positive beside it: the selector the page really uses resolves.
+  assert.doesNotThrow(() => harness('en').run("document.querySelector('.sl-progress-track[role=\"progressbar\"]')"));
 });

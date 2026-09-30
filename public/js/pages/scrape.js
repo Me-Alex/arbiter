@@ -30,6 +30,13 @@ const log = (line, level = 'info', tag = null) => {
 };
 
 let lastState = null;
+// The last `/api/live` payload, kept so the poll's status line can be re-rendered
+// from an orchestrator transition without asking again. `refreshLive()` is
+// deliberately not called on every scrape update (that would be a request per
+// book per tick), which is correct for the measured duration — a number that
+// only changes when a poll ends — and wrong for "a poll is running right now",
+// which changes when one starts. One cached payload serves both.
+let lastLive = null;
 let scrapers = [];
 let profiles = [];
 let validatedIds = new Set();
@@ -539,7 +546,15 @@ function updateProgressCard(state, _t) {
   $('progress-pct').textContent = `${pct}%`;
   $('progress-activity').textContent = state.currentActivity || '—';
   // Update ARIA progressbar + ring
-  const progressEl = document.querySelector('.progress[role="progressbar"]');
+  // The announced one is the track. The ring carries role="progressbar" too, but
+  // it is aria-hidden and is updated separately below, from its own id.
+  //
+  // This asked for `.progress[role="progressbar"]` for as long as the page
+  // existed, and the markup has never had a class called `progress` — the track
+  // is `sl-progress-track`. querySelector returned null, the `if` below swallowed
+  // it, and `aria-valuenow` sat at the value scrape.html ships while the bar
+  // moved: a screen reader was told the run was at 0% for its whole length.
+  const progressEl = document.querySelector('.sl-progress-track[role="progressbar"]');
   if (progressEl) progressEl.setAttribute('aria-valuenow', pct);
   const ring = $('progress-ring');
   if (ring) {
@@ -697,6 +712,13 @@ function renderState(state) {
   const jobs = state.jobs || [];
   updateChipStatus(jobs);
   refreshJobRows();
+
+  // The poll's "running right now" half is decided by this transition, and this
+  // is the only place it is observable without a request per book per tick.
+  // Drawn from the cached payload, so a scrape started elsewhere costs nothing;
+  // before the first one arrives there is nothing to draw and renderLiveMeasured
+  // clears the line rather than throwing on it.
+  renderLiveMeasured(lastLive, window.arbiterI18n.t.bind(window.arbiterI18n));
 
   // Flash effect on KPI cards (skip first load)
   if (!_isFirstScrapeLoad && status !== 'idle') {
@@ -900,6 +922,9 @@ async function refreshScheduler() {
 function renderLiveMeasured(l, t) {
   const el = $('live-measured');
   if (!el) return;
+  // A re-render driven by an orchestrator transition can land before the first
+  // /api/live answer arrives; there is nothing to draw from yet.
+  if (!l) { el.textContent = ''; return; }
   if (!l.enabled) { el.textContent = ''; return; }
   const bits = [];
   if (l.scanningAllBooks) {
@@ -923,10 +948,64 @@ function renderLiveMeasured(l, t) {
     const overWindow = Number(l.liveMaxAgeMs) > 0 && Number(last.durationMs) > Number(l.liveMaxAgeMs);
     bits.push(`${t('livePollLastDuration')}: ${measured}${overWindow ? ` · ${t('livePollOverWindow')}` : ''}`);
   }
-  if (Number(l.skippedTicks) > 0) {
-    bits.push(t('livePollSkipped').replace('{count}', String(l.skippedTicks)));
+  if (livePollInFlight(l)) {
+    bits.push(t('livePollPending').replace('{time}', fmtClock(l.pending.startedAt)));
   }
+  if (Number(l.skippedTicks) > 0) {
+    // The count alone cannot be acted on. At this cadence skips are the normal
+    // case — a batch measured at 55-118s on a 60s interval skips by design — so
+    // "12 skipped" says nothing about whether the driver is stuck now or was
+    // merely unlucky an hour ago. `lastSkippedAt` is in the same payload and was
+    // rendered nowhere.
+    const skipped = t('livePollSkipped').replace('{count}', String(l.skippedTicks));
+    bits.push(l.lastSkippedAt
+      ? `${skipped} · ${t('livePollLastSkip').replace('{time}', fmtClock(l.lastSkippedAt))}`
+      : skipped);
+  }
+  // Same field, same meaning, same treatment as the scheduler's readout above:
+  // the driver was already armed when this process started, so nothing on this
+  // page did it.
+  if (l.resumed) bits.push(t('schedulerResumed'));
   el.textContent = bits.join(' · ');
+}
+
+/**
+ * Is a poll of THIS driver running right now?
+ *
+ * `pending` is not that on its own, and printing it as if it were would be a
+ * lie in the one direction that matters. LiveService clears `_pending` on the
+ * next tick (`_settlePending()` runs at the top of `_tick`), not when the run
+ * reports terminal, so between a poll finishing and the following tick the field
+ * is still set while nothing is running. The page would show "poll in flight"
+ * for a finished poll, for up to one interval, right after it completed.
+ *
+ * So it is confirmed against the orchestrator state the page already holds. Both
+ * halves are required and neither is sufficient alone: `pending` without a
+ * running status is a finished poll awaiting settlement, and a running status
+ * without `pending` is somebody's own scrape. When both name the same run the
+ * answer is unambiguous.
+ *
+ * The runId comparison is skipped rather than failed when either side lacks one
+ * — `lastRun.runId` is written as `state.runId ?? null`, so a payload can carry
+ * null on either side, and demanding equality against a null would report "not
+ * running" for a poll that plainly is.
+ */
+function livePollInFlight(l) {
+  const pending = l && l.pending;
+  if (!pending || !pending.startedAt) return false;
+  if (!['running', 'cancelling'].includes(lastState?.status)) return false;
+  // Normalised so the comparison below can test for null rather than for
+  // "not defined", which `!==` reports as a difference.
+  const pendingRunId = pending.runId ?? null;
+  const currentRunId = lastState.runId ?? null;
+  if (pendingRunId !== null && currentRunId !== null && pendingRunId !== currentRunId) return false;
+  return true;
+}
+
+/** A wall-clock time for the status line, or the dash the page uses for absent values. */
+function fmtClock(value) {
+  const d = new Date(value);
+  return Number.isFinite(d.getTime()) ? d.toLocaleTimeString() : '—';
 }
 
 async function refreshLive() {
@@ -937,6 +1016,7 @@ async function refreshLive() {
     $('live-interval').value = l.intervalSeconds || 60;
     $('live-last').textContent = l.lastRun ? schedulerLastRunText(l, t) : t('neverRan');
     if (l.lastError) $('live-last').textContent += ` · ${t('lastError')}: ${l.lastError.message}`;
+    lastLive = l;
     renderLiveMeasured(l, t);
   } catch (_e) { /* ignore */ }
 }
