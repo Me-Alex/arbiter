@@ -28,7 +28,7 @@ import { join } from 'node:path';
 import { buildRouter } from '../src/router.mjs';
 import * as scanService from '../src/scan-service.mjs';
 import { RateLimiter } from '../src/shared/rate-limit.mjs';
-import { codeOnly, fieldReads } from './helpers/code-only.mjs';
+import { codeOnly, fieldReads, fieldsOn } from './helpers/code-only.mjs';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const CONSUMERS = [
@@ -40,10 +40,17 @@ const CONSUMERS = [
 /**
  * Fields published with no reader, and why that is not a defect. Adding a key
  * here is a claim about the code and has to survive review like any other.
+ *
+ * Keyed `level.field`, and that is the fix of a hole this lot found rather than
+ * style. It was keyed by field name alone, so an excuse written for one level
+ * silently excused the same name on every other level: publish `family` on the
+ * event object as well as inside the plan, and the census waved it through on
+ * `family`'s plan excuse, because `family` was in the table. The excuse is a
+ * claim about *where* nothing reads the field, and a name does not carry a level.
  */
 const UNREAD_WITH_REASON = new Map([
-  ['handicap', 'the modal renders the line itself from the market key (thresholdFromKey) in the market heading, so the numeric copy on the selection says nothing the heading has not said. Kept on DETAIL_SELECTION_FIELDS, which now names every field this projection publishes: the reason is a decision with a reason attached, which is what it was not when the route forwarded selection objects by reference.'],
-  ['group', 'measured on data-market-run/workspace, 22 blobs / 24829 events / 93600 selections: every selection carries group, every one of them says "Main", and not one market in 31927 holds two selections that share a name in different groups, so the field separates nothing in any capture on disk. The modal keys its columns on name-or-id alone, so no screen is missing a distinction. Kept for the same reason as handicap — it is on the named list — because group is what a book would use to disambiguate same-named outcomes the day one emits them.'],
+  ['selection.handicap', 'the modal renders the line itself from the market key (thresholdFromKey) in the market heading, so the numeric copy on the selection says nothing the heading has not said. Kept on DETAIL_SELECTION_FIELDS, which now names every field this projection publishes: the reason is a decision with a reason attached, which is what it was not when the route forwarded selection objects by reference.'],
+  ['selection.group', 'measured on data-market-run/workspace, 22 blobs / 24829 events / 93600 selections: every selection carries group, every one of them says "Main", and not one market in 31927 holds two selections that share a name in different groups, so the field separates nothing in any capture on disk. The modal keys its columns on name-or-id alone, so no screen is missing a distinction. Kept for the same reason as handicap — it is on the named list — because group is what a book would use to disambiguate same-named outcomes the day one emits them.'],
 
   // The four below live one level deeper, inside the arbitrage plan attached as
   // `m.arb`. They reached this table the same way the census found them: the
@@ -53,10 +60,10 @@ const UNREAD_WITH_REASON = new Map([
   // are gone (see the DetailArb docstring); these four are not copies, they are
   // simply unread — and each is kept for a reason that can be checked, not for
   // the convenience of the publisher.
-  ['family', 'the canonical alias of the contract the market heading already names in the book\'s own words. The heading renders m.name on every market (event-detail-modal.js:217-219) and the plan only ever attaches to such a market, so the panel has nothing to add by showing the alias. Measured on data-market-run/workspace: 5166 fixtures carry two or more books, 3 of them produce a plan, and all 3 are family=BTTS — the capture contains no family the heading fails to name.'],
-  ['period', 'the settlement window the legs agree on. Measured on the same capture: all 3 plans are period=fulltime, so the field separates nothing on disk. The scope that does vary is live vs pre-match, and that is published as `live` and already rendered as the panel\'s live badge. Kept because the docstring claims the view must be able to say a plan expires in 90 seconds, and that claim is about this field — dropping it would quietly retire a promise the panel has not yet kept.'],
-  ['line', 'the canonical line. Measured on the same capture: null in all 3 plans, because all 3 are BTTS, a contract with no line. Where a line does exist the heading shows it, derived from the market key by thresholdFromKey — the same derivation the assertion below checks. The case this reason does NOT cover is an Asian-handicap plan: thresholdFromKey only matches /^OVER_UNDER_\\d+_\\d+$/, so an AH heading would show no line. That is a gap in the heading, and it is named here rather than used as a licence to publish the number twice.'],
-  ['inverseSum', 'the raw reconciliation before it is rescaled into the ROI the panel does render. No screen shows it, and that is the honest part: the reader is a backend contract assertion, test/event-detail-arb.test.mjs:86, which recomputes Σ(1/odds) from the legs and holds the published figure to it. That reader is what makes this a contract on the allocation rather than a leftover from it, and roiPercent cannot stand in for it — on the real capture the pair is 0.5042016806722689 against 98.33, the same number in two units, only one of which is on screen.'],
+  ['plan.family', 'the canonical alias of the contract the market heading already names in the book\'s own words. The heading renders m.name on every market (event-detail-modal.js:217-219) and the plan only ever attaches to such a market, so the panel has nothing to add by showing the alias. Measured on data-market-run/workspace: 5166 fixtures carry two or more books, 3 of them produce a plan, and all 3 are family=BTTS — the capture contains no family the heading fails to name.'],
+  ['plan.period', 'the settlement window the legs agree on. Measured on the same capture: all 3 plans are period=fulltime, so the field separates nothing on disk. The scope that does vary is live vs pre-match, and that is published as `live` and already rendered as the panel\'s live badge. Kept because the docstring claims the view must be able to say a plan expires in 90 seconds, and that claim is about this field — dropping it would quietly retire a promise the panel has not yet kept.'],
+  ['plan.line', 'the canonical line. Measured on the same capture: null in all 3 plans, because all 3 are BTTS, a contract with no line. Where a line does exist the heading shows it, derived from the market key by thresholdFromKey — the same derivation the assertion below checks. The case this reason does NOT cover is an Asian-handicap plan: thresholdFromKey only matches /^OVER_UNDER_\\d+_\\d+$/, so an AH heading would show no line. That is a gap in the heading, and it is named here rather than used as a licence to publish the number twice.'],
+  ['plan.inverseSum', 'the raw reconciliation before it is rescaled into the ROI the panel does render. No screen shows it, and that is the honest part: the reader is a backend contract assertion, test/event-detail-arb.test.mjs:86, which recomputes Σ(1/odds) from the legs and holds the published figure to it. That reader is what makes this a contract on the allocation rather than a leftover from it, and roiPercent cannot stand in for it — on the real capture the pair is 0.5042016806722689 against 98.33, the same number in two units, only one of which is on screen.'],
 ]);
 
 /**
@@ -146,9 +153,65 @@ const EVENT_READERS = (() => {
   return byField;
 })();
 
-/** The reader set for one level. The other levels use the name search. */
+/**
+ * The bindings that hold selections, found by proof rather than by name.
+ *
+ * This level was written as name-only, on the recorded claim that `s` is
+ * ambiguous and cannot be anchored: in dashboard.js `s` is a source, in
+ * event-detail-modal.js `s` is a selection. The claim about the name is true and
+ * it does not survive contact with a measurement — the ambiguity is between
+ * files, and a binding can be proven to be a selection without being told so.
+ *
+ * The proof: the panel computes each book's overround from a selection's odds and
+ * renders the column (event-detail-modal.js:242, `match.odds > 1`), so a binding
+ * that reads `odds` holds something the panel prices. Requiring one of `name` or
+ * `id` beside it keeps the arbitrage legs out — measured over the three consumers
+ * (scratch/probe-selection-receivers.mjs), six bindings read `.odds`:
+ *
+ *   event-detail-modal.js:match  id, name, odds            — a selection
+ *   dashboard.js:e               altKey, ctrlKey, legs...  — an arb leg
+ *   dashboard.js:l               eventUrl, payout, stake... — a leg
+ *
+ * and exactly one survives both conditions. `s` in dashboard.js never appears:
+ * it reads `dataStatus` and `ageMs`, never `odds`, which is the whole reason the
+ * name search could have credited it a selection field.
+ *
+ * So the level is anchored after all, and the hole that made it name-only —
+ * a selection field called `dataStatus` would have been waved through on
+ * dashboard.js's *source* read — is closed. The assertion pairing below keeps
+ * both sides visible: `readersOf('dataStatus')` is non-empty and
+ * `SELECTION_READERS` has no `dataStatus`, which is that hole, measured.
+ */
+const SELECTION_BINDINGS = (() => {
+  const found = [];
+  for (const [file, src] of CONSUMERS) {
+    const text = codeOnly(src);
+    for (const [, receiver] of text.matchAll(/\b([A-Za-z_$][\w$]*)\.odds\b/g)) {
+      const fields = fieldsOn(text, receiver);
+      if (!fields.includes('name') && !fields.includes('id')) continue;
+      if (found.some((b) => b.file === file && b.receiver === receiver)) continue;
+      found.push({ file, receiver, fields });
+    }
+  }
+  return found;
+})();
+
+const SELECTION_READERS = (() => {
+  const byField = new Map();
+  for (const b of SELECTION_BINDINGS) {
+    for (const f of b.fields) {
+      if (!byField.has(f)) byField.set(f, []);
+      byField.get(f).push(`${b.file}:${b.receiver}`);
+    }
+  }
+  return byField;
+})();
+
+/** The reader set for one level. The payload and market levels use the name search. */
 const readersForLevel = (level, key) => {
-  const anchored = level === 'plan' ? PLAN_READERS : level === 'event' ? EVENT_READERS : null;
+  const anchored = level === 'plan' ? PLAN_READERS
+    : level === 'event' ? EVENT_READERS
+      : level === 'selection' ? SELECTION_READERS : null;
   return anchored ? (anchored.get(key) || []) : readersOf(key);
 };
 
@@ -281,7 +344,7 @@ test('the payload publishes no field without a reader, and every excuse is named
   const unread = [];
   for (const [level, keys] of Object.entries(levels)) {
     for (const key of keys) {
-      if (readersForLevel(level, key).length === 0 && !UNREAD_WITH_REASON.has(key)) unread.push(`${level}.${key}`);
+      if (readersForLevel(level, key).length === 0 && !UNREAD_WITH_REASON.has(`${level}.${key}`)) unread.push(`${level}.${key}`);
     }
   }
   assert.deepEqual(unread, [], `published with no reader and no recorded reason: ${unread.join(', ')}`);
@@ -433,5 +496,24 @@ test('the reader search is sensitive, so an unread field is not a naming acciden
   assert.ok(EVENT_READERS.has('homeTeam'), 'the event reader set lost homeTeam, which the page names the event with');
   assert.ok(EVENT_READERS.has('league'), 'the event reader set lost league, which the page shows in its meta line');
   assert.ok(EVENT_READERS.has('live'), 'the event reader set lost live, which the page badges from');
+
+  // And the same pair, one level down, on the case that made this level look
+  // unanchorable. `dataStatus` is read twice in dashboard.js — on `s`, which there
+  // is a SOURCE — so the name search credits it to a selection that has no
+  // dataStatus and never will. A strict search that came back empty here would be
+  // equally wrong: it would be a strict search pointed at nothing.
+  assert.ok(readersOf('dataStatus').length > 0,
+    'the name search is supposed to over-cover dataStatus, a source field — if it stops doing so, this control measures nothing');
+  assert.deepEqual(SELECTION_READERS.get('dataStatus'), undefined,
+    'dataStatus is read off a source in dashboard.js, not off a selection, and was credited with a reader it does not have');
+  // The binding set is one entry today and it is checkable by eye. An empty one
+  // would be indistinguishable from a set built by a search that matches nothing,
+  // so it is held to the fields the panel demonstrably prices and renders.
+  assert.ok(SELECTION_BINDINGS.length >= 1, 'no binding was proven to hold a selection — the level is vacuously clean');
+  assert.ok(SELECTION_READERS.has('odds'), 'the selection reader set lost odds, which the overround column is computed from');
+  assert.ok(SELECTION_READERS.has('name'), 'the selection reader set lost name, which keys the matrix columns');
+  assert.ok(SELECTION_READERS.has('id'), 'the selection reader set lost id, the fallback keying name is absent');
+  assert.deepEqual([...SELECTION_READERS.keys()].sort(), ['id', 'name', 'odds'],
+    `the selection reader set is not the panel's own: ${[...SELECTION_READERS.keys()].sort().join(', ')}`);
   assert.ok(EVENT_READERS.has('sourceId'), 'the event reader set lost sourceId, which the modal keys its books on');
 });
