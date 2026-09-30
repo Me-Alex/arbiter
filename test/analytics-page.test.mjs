@@ -16,7 +16,11 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
+import { mkdtemp, rm, mkdir, writeFile } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import vm from 'node:vm';
+import { buildMarketCatalog } from '../src/scanner/market-catalog.mjs';
 
 const analyticsSource = readFileSync(new URL('../public/js/pages/analytics.js', import.meta.url), 'utf8');
 const commonSource = readFileSync(new URL('../public/js/pages/common.js', import.meta.url), 'utf8');
@@ -530,4 +534,271 @@ test('a bet that was refused is not toasted as one', async () => {
   assert.deepEqual(blank.h.toasts, [], 'and nothing was toasted');
   assert.equal(blank.h.node('#add-bet-error').textContent, blank.h.text('requiredFieldsError'),
     'the form says what is missing instead');
+});
+
+// — market catalog —
+
+/**
+ * A catalog the real builder produced, so the field lists below are the
+ * producer's and not a transcription of it.
+ *
+ * Two books, one of them with a name the key does not spell: `BTSC` is
+ * "Ambele echipe înscriu", which is the case this section is about.
+ */
+async function realCatalog() {
+  const dir = await mkdtemp(join(tmpdir(), 'arbiter-catalog-ui-'));
+  try {
+    await mkdir(join(dir, 'workspace'), { recursive: true });
+    const betano = {
+      eventKey: 'football|liga-1|2030-01-01|fcsb|cfr',
+      sport: 'Football', league: 'Liga 1', kickoff: '2030-01-01T00:00:00Z',
+      homeTeam: 'FCSB', awayTeam: 'CFR',
+      markets: [{ key: 'BTSC', name: 'Ambele echipe înscriu', selections: [{ name: 'Da' }, { name: 'Nu' }] }],
+    };
+    const admiral = {
+      ...betano,
+      markets: [{ key: '1x2', name: 'Rezultat Final', selections: [{ name: '1' }, { name: 'X' }, { name: '2' }] }],
+    };
+    await writeFile(join(dir, 'workspace', 'betano_events.json'),
+      JSON.stringify({ sourceId: 'betano', capturedAt: 'x', events: [betano] }));
+    await writeFile(join(dir, 'workspace', 'admiral_events.json'),
+      JSON.stringify({ sourceId: 'admiral', capturedAt: 'x', events: [admiral] }));
+    return await buildMarketCatalog(dir, {
+      scrapeRunId: 'scrape-2026-09-28T18-53-05-091Z',
+      sources: [
+        { sourceId: 'betano', file: 'betano_events.json', capturedAt: 'x', count: 1 },
+        { sourceId: 'admiral', file: 'admiral_events.json', capturedAt: 'x', count: 1 },
+      ],
+    });
+  } finally {
+    await rm(dir, { recursive: true, force: true });
+  }
+}
+
+/** What the builder writes, named rather than derived, and checked against it below. */
+const CATALOG_TOP_FIELDS = ['builtAt', 'events', 'markets', 'scrapeRunId', 'schemaVersion', 'sources'];
+const CATALOG_MARKET_FIELDS = ['eventCount', 'marketKey', 'marketName', 'selectionCount', 'sourceId'];
+
+/**
+ * The page's catalog unit, so `cat.` and `m.` mean one thing inside it.
+ *
+ * The harness cuts at the same marker, so this is the text the tests below are
+ * actually about.
+ */
+const CATALOG_BLOCK = (() => {
+  const from = analyticsSource.indexOf('// — market catalog —');
+  const to = analyticsSource.indexOf('// — add-bet modal —');
+  assert.ok(from !== -1 && to > from, 'the catalog block is gone — has the page been restructured?');
+  return analyticsSource.slice(from, to);
+})();
+
+/** Every `<receiver>.<field>` the block reads, for a given receiver name. */
+const readsOn = (receiver) => [...new Set([...CATALOG_BLOCK.matchAll(new RegExp(`\\b${receiver}\\.(\\w+)`, 'g'))].map((m) => m[1]))];
+
+/**
+ * Published by the catalog, read by no page, with the reason it is allowed.
+ *
+ * When a name is removed from here the test says why it stopped being allowed,
+ * and if the reason was the code's own docstring, the docstring is in the test.
+ */
+const UNREAD_BY_DESIGN = {
+  events: [
+    'The event index: 845 KB of 866 KB in a real capture, 2 770 rows, and no page reads it.',
+    'It is a coverage census of every event x book, not a signal list, so it is not the',
+    '`middles` the scanner already shows. buildMarketCatalog promises it is "Browsable from',
+    '/admin/analytics#catalog" and only the markets half of that promise was ever built.',
+    "Shipping a UI nobody asked for is not this lot's call — so it stays published,",
+    'unread, and named here. Deleting the docstring sentence above is what makes this fail.',
+  ].join(' '),
+  sources: [
+    'A verbatim copy of scan.sources, which /api/scan already delivers to the same page',
+    'and which dashboard.js and ai.js already read. Its field list belongs to the scan,',
+    'not to this builder, so it is exempt as a collection and checked where the scan is',
+    'rendered instead.',
+  ].join(' '),
+  schemaVersion: 'A version marker for the stored file. No page reads it and none should.',
+};
+
+test('every field the catalog publishes is read by the page, or is named above with a reason', async () => {
+  const cat = await realCatalog();
+  // The lists are compared to what the builder really wrote, so a field added to
+  // the builder fails here instead of quietly becoming one more unread thing.
+  assert.deepEqual(Object.keys(cat).sort(), [...CATALOG_TOP_FIELDS].sort(),
+    'the catalog document gained or lost a top-level field');
+  assert.deepEqual(Object.keys(cat.markets[0]).sort(), [...CATALOG_MARKET_FIELDS].sort(),
+    'a catalog row gained or lost a field');
+
+  // Receivers named as the page binds them: `cat` is the document, `m` a row.
+  // Renaming either is expected to fail here, which is the canary.
+  const unreadTop = CATALOG_TOP_FIELDS
+    .filter((f) => !(f in UNREAD_BY_DESIGN) && !readsOn('cat').includes(f));
+  assert.deepEqual(unreadTop, [], `the page never reads these: ${unreadTop.join(', ')}`);
+
+  const unreadMarkets = CATALOG_MARKET_FIELDS.filter((f) => !readsOn('m').includes(f));
+  assert.deepEqual(unreadMarkets, [], `the page never reads these off a row: ${unreadMarkets.join(', ')}`);
+});
+
+test('the catalog card reads only fields the builder actually writes', async () => {
+  // The other direction, and the one a field list cannot give on its own. A page
+  // that reaches past the document for a neighbouring field is asserting a shape
+  // the route has never served: `scrapedAt` belongs to /api/scan, so a catalog
+  // card dated by it would be reading a field that is always undefined and
+  // falling through to something else — the exact failure the run stamp exists
+  // to prevent, reintroduced one layer down.
+  //
+  // This invariant is also what makes the equivalent mutant catchable: a
+  // `cat.builtAt || cat.scrapedAt` chain behaves identically on every document
+  // the tests feed it, because none of them carries a `scrapedAt`. Removing the
+  // surface is the fix; the field list alone would have left it in place.
+  const cat = await realCatalog();
+  const readTop = readsOn('cat');
+  const inventedTop = readTop.filter((f) => !CATALOG_TOP_FIELDS.includes(f));
+  assert.deepEqual(inventedTop, [],
+    `the card reads fields the catalog does not publish: ${inventedTop.join(', ')}`);
+
+  const inventedRow = readsOn('m').filter((f) => !CATALOG_MARKET_FIELDS.includes(f));
+  assert.deepEqual(inventedRow, [],
+    `and row fields the catalog does not publish: ${inventedRow.join(', ')}`);
+
+  // Not vacuous: the two receivers really are read, and the control below is the
+  // published document those reads are checked against.
+  assert.ok(readTop.length > 0 && readsOn('m').length > 0, 'the block reads something at all');
+  assert.ok(CATALOG_TOP_FIELDS.every((f) => f in cat), 'the control document really carries the top-level fields');
+  assert.ok(CATALOG_MARKET_FIELDS.every((f) => f in cat.markets[0]), 'and the row fields');
+  assert.equal(cat.scrapedAt, undefined, 'the catalog itself never carries the scan\'s stamp');
+});
+
+test('the card never reaches for the event index or the copied source list', () => {
+  // Both are on the exempt list above, which is a statement about today, not a
+  // licence: reading either is how a 845 KB download starts arriving by accident.
+  for (const field of ['events', 'sources', 'schemaVersion']) {
+    assert.equal(readsOn('cat').includes(field), false,
+      `the card reads cat.${field}; remove it from UNREAD_BY_DESIGN and say why in the same commit`);
+  }
+});
+
+test('a market is shown by the name its book gives it, with the key kept', async () => {
+  const cat = await realCatalog();
+  const h = harness('en');
+  h.run(`initCatalog(${JSON.stringify(cat)}, arbiterI18n.t.bind(arbiterI18n));`);
+
+  const rows = h.node('#catalog-table tbody').innerHTML;
+  // The key alone is what this cell used to render, and 70 of the 76 rows in a
+  // real catalog carried a readable name that only the key hid.
+  assert.match(rows, /Ambele echipe înscriu/, "the book's own name reaches the table");
+  assert.match(rows, /BTSC/, 'and the key is still there — the filter searches it, and it is how a market is identified across books');
+  assert.match(rows, /Rezultat Final/);
+  assert.match(rows, /1x2/);
+});
+
+test('a row whose book gives no name falls back to the key, once', () => {
+  const h = harness('en');
+  // `marketName` is written as `m.name || m.key`, so a book that sends no name
+  // yields the key — and a payload that lost the field entirely has to render.
+  for (const row of [{ sourceId: 'x', marketKey: 'MATCH_ODDS' },
+    { sourceId: 'x', marketKey: 'MATCH_ODDS', marketName: 'MATCH_ODDS' }]) {
+    h.run(`renderCatalog([${JSON.stringify(row)}]);`);
+    const cell = h.node('#catalog-table tbody').innerHTML;
+    assert.equal(cell.match(/MATCH_ODDS/g).length, 1, `the key is not printed twice: ${cell}`);
+  }
+});
+
+test('the filter finds a row by the name it displays', async () => {
+  const cat = await realCatalog();
+  const h = harness('en');
+  h.run(`initCatalog(${JSON.stringify(cat)}, arbiterI18n.t.bind(arbiterI18n));`);
+  const body = () => h.node('#catalog-table tbody').innerHTML;
+
+  // The control: an unfiltered render has both books in it.
+  assert.match(body(), /BTSC/);
+  assert.match(body(), /1x2/);
+
+  // The case that was broken: the name is on screen and the box ignores it, so
+  // a user who reads "Ambele echipe înscriu" and types it gets nothing.
+  await h.fire('#cat-search', 'input', { target: { value: 'ambele' } });
+  assert.match(body(), /BTSC/, 'the visible name is searchable');
+  assert.doesNotMatch(body(), /1x2/, 'and the other book is still filtered out');
+
+  // The key, the book, and a query that matches nothing.
+  await h.fire('#cat-search', 'input', { target: { value: 'btSC' } });
+  assert.match(body(), /BTSC/, 'the key still matches, case-insensitively');
+  await h.fire('#cat-search', 'input', { target: { value: 'betano' } });
+  assert.match(body(), /BTSC/);
+  assert.doesNotMatch(body(), /1x2/);
+  await h.fire('#cat-search', 'input', { target: { value: 'nothing-here' } });
+  assert.doesNotMatch(body(), /BTSC/, 'a query that matches nothing empties the table');
+  assert.ok(body().includes(h.text('noMarkets')), 'into the empty state, not a blank body');
+});
+
+// Two runs an hour and two days apart. The catalog is a stored artifact rebuilt
+// only by a scrape; the four KPI cards above the catalog are read from the live
+// scan. In a real data directory those were two days apart and both rendered as
+// plain fact, because `builtAt` and `scrapeRunId` were published for exactly
+// this and read by nobody.
+const CAT_BUILT = '2026-09-28T18:40:00.000Z';
+const SCAN_AT = '2026-09-30T10:00:00.000Z';
+const RUN_ID = 'scrape-2026-09-28T18-53-05-091Z';
+
+test('the card names the run that built the catalog', () => {
+  const h = harness('en');
+  h.run(`initCatalog(${JSON.stringify({ builtAt: CAT_BUILT, scrapeRunId: RUN_ID, markets: [] })}, arbiterI18n.t.bind(arbiterI18n));`);
+  const stamp = h.node('#catalog-run').textContent;
+  assert.ok(stamp.includes(new Date(CAT_BUILT).toLocaleString()),
+    `the build time is on screen, got: ${stamp}`);
+  assert.ok(stamp.includes(RUN_ID), `and the run it came from, got: ${stamp}`);
+});
+
+test('the stamp follows the catalog, and ignores the scan rendered above it', () => {
+  const h = harness('en');
+  const at = (doc) => {
+    h.run(`initCatalog(${JSON.stringify(doc)}, arbiterI18n.t.bind(arbiterI18n));`);
+    return h.node('#catalog-run').textContent;
+  };
+  const LATER = '2026-09-29T06:15:00.000Z';
+
+  // Both stamps are present in the document, so the assertion is about which one
+  // the card chose. A page that read `scrapedAt` — the scan's own field, and one
+  // the catalog has never carried — would print SCAN_AT here.
+  const first = at({ builtAt: CAT_BUILT, scrapeRunId: RUN_ID, scrapedAt: SCAN_AT, markets: [] });
+  assert.equal(first.includes(new Date(SCAN_AT).toLocaleString()), false,
+    'the card is not dated by the scan beside it');
+
+  // Positive control: move the catalog's own build time, the stamp must follow.
+  const second = at({ builtAt: LATER, scrapeRunId: RUN_ID, scrapedAt: SCAN_AT, markets: [] });
+  assert.notEqual(first, second, 'and it does follow the run that built it');
+  assert.ok(second.includes(new Date(LATER).toLocaleString()), `got: ${second}`);
+
+  // Negative control: move only the scan's stamp, the card must not notice.
+  const third = at({ builtAt: LATER, scrapeRunId: RUN_ID, scrapedAt: '2026-10-05T22:00:00.000Z', markets: [] });
+  assert.equal(second, third, 'a change in the scan leaves the catalog card alone');
+});
+
+test("a catalog that was never built says so, in the page's language", () => {
+  // The route answers `{}` when there is nothing on disk, and a catalog document
+  // from before the stamp existed has markets but no builtAt. Both are "not
+  // built", and neither may print a date.
+  for (const lang of ['ro', 'en']) {
+    const h = harness(lang);
+    for (const doc of [{}, { markets: [] }, { builtAt: 'not a date', markets: [] }, { builtAt: null }]) {
+      h.run(`initCatalog(${JSON.stringify(doc)}, arbiterI18n.t.bind(arbiterI18n));`);
+      const stamp = h.node('#catalog-run').textContent;
+      assert.equal(stamp, h.text('neverRan'), `${lang}: ${JSON.stringify(doc)}`);
+      assert.doesNotMatch(stamp, /\d{4}/, `${lang}: no invented date for ${JSON.stringify(doc)}`);
+    }
+  }
+  assert.notEqual(harness('ro').text('neverRan'), harness('en').text('neverRan'),
+    'and it is a translation, not one English string on a Romanian page');
+});
+
+test('the run stamp has an element, and the page is its only writer', () => {
+  // The markup is half the wiring. The stamp must NOT carry data-i18n: i18n.apply()
+  // runs on DOMContentLoaded and on every language switch and would overwrite the
+  // run with whatever the dictionary holds — the defect the two spans in the h3
+  // exist to avoid.
+  assert.match(analyticsHtml, /id="catalog-run"/, 'the card has somewhere to write the run');
+  const el = analyticsHtml.match(/<span[^>]*id="catalog-run"[^>]*>/);
+  assert.ok(el, 'the stamp exists in the markup');
+  assert.ok(!el[0].includes('data-i18n'), 'the page is the only writer of the stamp');
+  const meta = analyticsHtml.match(/<span class="h3-meta"><span data-i18n="discoveredMarkets"/);
+  assert.ok(meta, 'the translated label and the dynamic stamp are siblings, not the same element');
 });

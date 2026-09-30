@@ -85,27 +85,7 @@ arbiterApp.mount('analytics');
       }
       _isFirstAnalyticsLoad = false;
 
-      const cat = await arbiterApi.get('/api/catalog').catch(() => ({}));
-      const tb = document.querySelector('#catalog-table tbody');
-      const all = (cat.markets || []).slice().sort((a, b) => b.eventCount - a.eventCount);
-      const renderCatalog = (rows) => {
-        tb.innerHTML = rows.length ? rows.map((m) => `
-          <tr>
-            <td class="mono accent">${escapeHtml(m.sourceId)}</td>
-            <td class="mono">${escapeHtml(m.marketKey)}</td>
-            <td class="num tabnum">${Number(m.eventCount || 0).toLocaleString()}</td>
-            <td class="num tabnum">${Number(m.selectionCount || 0).toLocaleString()}</td>
-          </tr>`).join('') : `<tr><td colspan="4"><div class="empty">
-            <div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="12" width="4" height="9" rx="1"/><rect x="10" y="7" width="4" height="14" rx="1"/><rect x="17" y="3" width="4" height="18" rx="1"/></svg></div>
-            <div>${escapeHtml(t('noMarkets'))}</div>
-            <div class="empty-actions"><a class="btn primary" href="/admin/scrape.html">${escapeHtml(t('runScrape'))}</a></div>
-          </div></td></tr>`;
-      };
-      renderCatalog(all);
-      $('cat-search').addEventListener('input', (e) => {
-        const q = e.target.value.toLowerCase();
-        renderCatalog(all.filter((m) => m.sourceId.toLowerCase().includes(q) || m.marketKey.toLowerCase().includes(q)));
-      });
+      initCatalog(await arbiterApi.get('/api/catalog').catch(() => ({})), t);
 
       const tracker = await arbiterApi.get('/api/tracker');
       renderTracker(tracker);
@@ -171,6 +151,112 @@ arbiterApp.mount('analytics');
             console.warn('tracker update failed', err);
           }
         });
+      });
+    }
+
+    // — market catalog —
+
+    /**
+     * The catalog rows, widest coverage first.
+     * @param {object} cat - The /api/catalog document, possibly `{}`.
+     * @returns {object[]}
+     */
+    function catalogRows(cat) {
+      return (cat.markets || []).slice().sort((a, b) => b.eventCount - a.eventCount);
+    }
+
+    /**
+     * Which run the table below was built from.
+     *
+     * The catalog is a stored artifact rebuilt only by a scrape, while the four
+     * KPI cards above it are read from the live scan. Those are two different
+     * runs and nothing on screen said so: in a real data directory the catalog
+     * was two days older than the scan beside it, and both rendered as plain
+     * fact. `builtAt` and `scrapeRunId` are published for exactly this and were
+     * read by nobody.
+     *
+     * A missing document and an unparseable date both answer "never ran", the
+     * same word the scrape page uses, because a catalog that has never been
+     * built is what the route sends when there is nothing on disk.
+     *
+     * @param {object} cat - The /api/catalog document, possibly `{}`.
+     * @param {Function} t - The translation lookup.
+     * @returns {string}
+     */
+    function catalogRunText(cat, t) {
+      if (!cat || !cat.builtAt) return t('neverRan');
+      const at = new Date(cat.builtAt);
+      if (!Number.isFinite(at.getTime())) return t('neverRan');
+      const parts = [fmtWhen(cat.builtAt)];
+      if (cat.scrapeRunId) parts.push(String(cat.scrapeRunId));
+      return parts.join(' · ');
+    }
+
+    /**
+     * Does a row answer the filter box?
+     *
+     * `marketName` is searched because the table now shows it: rendering a label
+     * the box ignores is a filter that silently drops what the user can read.
+     * @param {object} m - One catalog row.
+     * @param {string} q - The lower-cased query.
+     * @returns {boolean}
+     */
+    function matchesCatalogQuery(m, q) {
+      return !q
+        || String(m.sourceId || '').toLowerCase().includes(q)
+        || String(m.marketKey || '').toLowerCase().includes(q)
+        || String(m.marketName || '').toLowerCase().includes(q);
+    }
+
+    /**
+     * Draw the catalog table.
+     *
+     * The market cell shows the book's own name with the key under it. The name
+     * is the bookmaker's wording, in its own language — `BTSC` is "Ambele echipe
+     * înscriu" at betano and `4191` is "Câștigător" — so 70 of the 76 rows in a
+     * real catalog carried a readable label that the key-only cell threw away.
+     * The key stays visible because the filter searches it and because it is
+     * what identifies the market across books.
+     *
+     * @param {object[]} rows - Rows to draw, already filtered and sorted.
+     */
+    function renderCatalog(rows) {
+      const t = arbiterI18n.t.bind(arbiterI18n);
+      const tb = document.querySelector('#catalog-table tbody');
+      tb.innerHTML = rows.length ? rows.map((m) => `
+          <tr>
+            <td class="mono accent">${escapeHtml(m.sourceId)}</td>
+            <td><div>${escapeHtml(m.marketName || m.marketKey)}</div>${
+              m.marketName && m.marketName !== m.marketKey
+                ? `<span class="muted text-xs mono">${escapeHtml(m.marketKey)}</span>`
+                : ''
+            }</td>
+            <td class="num tabnum">${Number(m.eventCount || 0).toLocaleString()}</td>
+            <td class="num tabnum">${Number(m.selectionCount || 0).toLocaleString()}</td>
+          </tr>`).join('') : `<tr><td colspan="4"><div class="empty">
+            <div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="12" width="4" height="9" rx="1"/><rect x="10" y="7" width="4" height="14" rx="1"/><rect x="17" y="3" width="4" height="18" rx="1"/></svg></div>
+            <div>${escapeHtml(t('noMarkets'))}</div>
+            <div class="empty-actions"><a class="btn primary" href="/admin/scrape.html">${escapeHtml(t('runScrape'))}</a></div>
+          </div></td></tr>`;
+    }
+
+    /**
+     * Draw the catalog card and wire its filter, from the document the route
+     * answered with.
+     *
+     * Top level on purpose, like renderTracker: the card is a page unit, and a
+     * unit that only exists inside init() cannot be handed a document by a test
+     * — which is how the run stamp below stayed unread for a long time.
+     *
+     * @param {object} cat - The /api/catalog document, possibly `{}`.
+     * @param {Function} t - The translation lookup.
+     */
+    function initCatalog(cat, t) {
+      const all = catalogRows(cat);
+      $('catalog-run').textContent = catalogRunText(cat, t);
+      renderCatalog(all);
+      $('cat-search').addEventListener('input', (e) => {
+        renderCatalog(all.filter((m) => matchesCatalogQuery(m, e.target.value.toLowerCase())));
       });
     }
 

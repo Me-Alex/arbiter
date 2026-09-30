@@ -82,7 +82,11 @@
       <div class="card">
         <h3>
           <span data-i18n="marketCatalog">Market catalog</span>
-          <span class="h3-meta" data-i18n="discoveredMarkets">discovered markets across all books</span>
+          <!-- Two spans, not one: i18n.apply() rewrites the textContent of every
+               [data-i18n] element on DOMContentLoaded and on every language
+               switch, so the run the table was built from has to sit in a
+               sibling the page owns. -->
+          <span class="h3-meta"><span data-i18n="discoveredMarkets">discovered markets across all books</span> · <span id="catalog-run">—</span></span>
         </h3>
         <div class="row mb-7">
           <div class="field flex-1 m-0 max-w-320">
