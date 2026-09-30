@@ -46,10 +46,12 @@ function decideStateTransition(prev, next, now, lastChange) {
  * ({ status, actionableSourceCount }).
  *
  * @param {object} health - The dataHealth payload.
- * @returns {{visible: boolean, className: string, status: string, actionable: number, empty: boolean}}
+ * @returns {{visible: boolean, className: string, status: string, actionable: number, empty: boolean, maxAgeMs: number|null}}
  *   `className` is the full banner class when visible, empty otherwise.
  *   `status`/`actionable`/`empty` are the raw inputs the caller needs to
  *   compose a translated, escaped message (i18n is an effect, not a decision).
+ *   `maxAgeMs` is the window the verdict was produced with, or null when the
+ *   scan does not say.
  */
 function decideHealthBanner(health) {
   // Only known statuses may reach the HTML sink; anything else — including
@@ -60,13 +62,21 @@ function decideHealthBanner(health) {
   const actionable = Number(health && health.actionableSourceCount) || 0;
 
   if (status === 'fresh' || status === 'unknown') {
-    return { visible: false, className: '', status, actionable: 0, empty: false };
+    return { visible: false, className: '', status, actionable: 0, empty: false, maxAgeMs: null };
   }
 
   const isStale = status === 'stale' || status === 'partial';
   const className = 'data-freshness-banner visible' + (isStale ? '' : ' info');
 
-  return { visible: true, className, status, actionable, empty: status === 'empty' };
+  // The window this verdict was judged against, or null when the scan does not
+  // carry one. Only stale/partial are age verdicts, so `empty` — "the source
+  // observed no usable events", which is not about age at all — never names a
+  // threshold. Null rather than a default: a scan published before the field
+  // existed must read as "not known", not as the value it probably had.
+  const windowMs = Number(health && health.prematchMaxAgeMs);
+  const maxAgeMs = isStale && Number.isFinite(windowMs) && windowMs > 0 ? windowMs : null;
+
+  return { visible: true, className, status, actionable, empty: status === 'empty', maxAgeMs };
 }
 
 /**
@@ -367,9 +377,18 @@ function decideHealthChip(health) {
     const statusKey = 'status' + decision.status.charAt(0).toUpperCase() + decision.status.slice(1);
     const translated = t(statusKey);
     const statusLabel = translated === statusKey ? decision.status : translated;
+    // The threshold the verdict was reached with, so "stale" is a number the
+    // reader can argue with rather than a bare adjective. Omitted entirely when
+    // the scan does not carry the window: this module must not substitute a
+    // default of its own, because a wrong constant here would be a claim about
+    // freshness that no backend value supports — the exact fault the scanner
+    // page's live-window note was rewritten to stop making.
+    const limit = decision.maxAgeMs
+      ? ` · ${t('freshnessLimit').replace('{minutes}', String(Math.round(decision.maxAgeMs / 60000)))}`
+      : '';
     const message = decision.empty
       ? t('noFreshData')
-      : `${t('dataHealth')}: ${statusLabel}${decision.actionable ? ` (${decision.actionable} ${t('freshSources')})` : ''}`;
+      : `${t('dataHealth')}: ${statusLabel}${decision.actionable ? ` (${decision.actionable} ${t('freshSources')})` : ''}${limit}`;
     const link = `<a href="/admin/scrape.html">${t('runScrape')}</a>`;
 
     const iconSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>';

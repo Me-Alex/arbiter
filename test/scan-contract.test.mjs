@@ -21,7 +21,7 @@ import { mkdtemp, rm, mkdir, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
-import { scanWorkspace } from '../src/scanner/scanner.mjs';
+import { scanEnvelope, scanWorkspace } from '../src/scanner/scanner.mjs';
 import { emptyScan, readLatestScan } from '../src/scan-service.mjs';
 import { DEFAULT_LIVE_MAX_AGE_MS, DEFAULT_PREMATCH_MAX_AGE_MS, DATA_STATUS } from '../src/shared/data-quality.mjs';
 
@@ -188,6 +188,54 @@ test('an explicit freshness window is recorded as given, not as the default', as
     assert.equal(onDisk.options.liveMaxAgeMs, 5000);
     assert.equal(onDisk.options.prematchMaxAgeMs, 1000);
   });
+});
+
+test('dataHealth publishes the window the freshness verdict was reached with', async () => {
+  await withTempDir(async (dir) => {
+    const scan = await scanWorkspace({ dataDir: dir });
+    const onDisk = JSON.parse(JSON.stringify(scan));
+    // `stale` is a comparison against this window, and the banner is the only
+    // surface that renders the verdict. Read off the same `options` object the
+    // scan publishes rather than re-defaulted, so the two cannot disagree.
+    assert.equal(onDisk.dataHealth.prematchMaxAgeMs, DEFAULT_PREMATCH_MAX_AGE_MS);
+    assert.equal(onDisk.dataHealth.prematchMaxAgeMs, onDisk.options.prematchMaxAgeMs,
+      'the health window IS the published option, not a second copy of it');
+    assert.equal(onDisk.dataHealth.liveMaxAgeMs, onDisk.options.liveMaxAgeMs);
+    // The JSON round-trip is part of the assertion. `undefined` keys are dropped
+    // by JSON.stringify, which is how these two windows once failed to reach
+    // latest-scan.json at all while the UI spelled the number out by hand.
+    assert.ok('prematchMaxAgeMs' in onDisk.dataHealth, 'the key survives the round-trip to disk');
+    assert.ok('liveMaxAgeMs' in onDisk.dataHealth, 'and so does its sibling');
+  });
+});
+
+test('an explicit window is the one dataHealth reports', async () => {
+  // The counterweight to the default case above: reading the value off `options`
+  // has to follow an override, not just the default. A fixture that only ever
+  // checks the default would pass against a hardcoded constant.
+  await withTempDir(async (dir) => {
+    const scan = await scanWorkspace({ dataDir: dir, prematchMaxAgeMs: 1000 });
+    const onDisk = JSON.parse(JSON.stringify(scan));
+    assert.equal(onDisk.dataHealth.prematchMaxAgeMs, 1000);
+    assert.notEqual(onDisk.dataHealth.prematchMaxAgeMs, DEFAULT_PREMATCH_MAX_AGE_MS);
+  });
+});
+
+test('a scan that carries no window does not get one invented for it', () => {
+  // The negative beside both tests above. An envelope built with options that
+  // predate the field must publish no threshold at all — the consumer renders
+  // "not known" rather than the default the current build would have used. A
+  // backend that filled this in would be asserting a value about a scan it
+  // never measured, which is the fault this whole path exists to remove.
+  const envelope = scanEnvelope({ sources: [], eventCount: 0, options: { bankroll: 1000 } });
+  const onDisk = JSON.parse(JSON.stringify(envelope));
+  assert.ok(!('prematchMaxAgeMs' in onDisk.dataHealth), 'no window is invented for a scan that carries none');
+  assert.ok(!('liveMaxAgeMs' in onDisk.dataHealth), 'and neither is its sibling');
+  // The positive beside it: the same envelope with the field present publishes
+  // it, so the assertion above is about the missing value and not about the
+  // key never being written.
+  const withWindow = scanEnvelope({ sources: [], eventCount: 0, options: { bankroll: 1000, prematchMaxAgeMs: 1000 } });
+  assert.equal(JSON.parse(JSON.stringify(withWindow)).dataHealth.prematchMaxAgeMs, 1000);
 });
 
 test('an empty scan still reports the empty banner state', async () => {

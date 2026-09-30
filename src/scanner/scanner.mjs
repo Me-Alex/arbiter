@@ -304,11 +304,22 @@ export function scanEnvelope({
      * - `sources`: per-source quality summary, keyed by status and always
      *   carrying every DATA_STATUS at 0 so the count is stable for consumers
      *   that read a key without checking it first.
+     * - `prematchMaxAgeMs` / `liveMaxAgeMs`: the windows this verdict was
+     *   produced with, read off the same `options` object published below
+     *   rather than re-defaulted here, so the banner and the scan can never
+     *   quote different thresholds. `status: 'stale'` is a comparison against
+     *   one of them, and without them the banner could only say "stale" — a
+     *   verdict whose basis the reader cannot see and so cannot weigh against
+     *   its own "Run scrape" call to action. Both are `undefined` on a scan
+     *   published before the fields existed, which is the honest answer: the
+     *   consumer says it does not know rather than guessing a default.
      */
     dataHealth: {
       actionableSourceCount: sources.filter((source) => source.dataStatus === DATA_STATUS.FRESH).length,
       sources: sourceHealthSummary(sources),
       status: worstSourceStatus(sources),
+      prematchMaxAgeMs: options?.prematchMaxAgeMs,
+      liveMaxAgeMs: options?.liveMaxAgeMs,
     },
     options,
     sources,

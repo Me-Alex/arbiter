@@ -192,6 +192,52 @@ describe('decideHealthBanner', () => {
     assert.equal(r.visible, false);
     assert.equal(r.status, 'unknown');
   });
+
+  // ---- the window the verdict was reached with ----------------------------
+  //
+  // These are on the DECISION, not on the rendered banner, and that level is
+  // the point. A rendering-level assertion cannot see the guards: a negative
+  // window renders "limita: -100 min", which no `includes(freshnessLimit)`
+  // check matches, because that check looks for the template with its
+  // placeholder still in it. Reading the returned value sees every branch.
+
+  it('carries the window an age verdict was reached with', () => {
+    assert.equal(decideHealthBanner({ status: 'stale', prematchMaxAgeMs: 600000 }).maxAgeMs, 600000);
+    assert.equal(decideHealthBanner({ status: 'partial', prematchMaxAgeMs: 600000 }).maxAgeMs, 600000);
+    // A sub-minute window is still carried as sent — rounding belongs to the
+    // renderer, and a decision that rounded would be a second place holding a
+    // number derived from the same millisecond count.
+    assert.equal(decideHealthBanner({ status: 'stale', prematchMaxAgeMs: 90_000 }).maxAgeMs, 90_000);
+  });
+
+  it('resolves no window for an empty verdict, even when the scan carries one', () => {
+    // `empty` is "the source observed no usable events" — not an age verdict at
+    // all. A window on it would describe a comparison that never happened.
+    assert.equal(decideHealthBanner({ status: 'empty', prematchMaxAgeMs: 600000 }).maxAgeMs, null);
+  });
+
+  it('resolves no window it cannot stand behind', () => {
+    const cases = [
+      ['absent', {}],
+      ['null', { prematchMaxAgeMs: null }],
+      ['zero', { prematchMaxAgeMs: 0 }],
+      ['negative', { prematchMaxAgeMs: -600000 }],
+      ['not a number', { prematchMaxAgeMs: 'soon' }],
+      ['NaN', { prematchMaxAgeMs: Number.NaN }],
+      ['Infinity', { prematchMaxAgeMs: Number.POSITIVE_INFINITY }],
+    ];
+    for (const [label, extra] of cases) {
+      assert.equal(decideHealthBanner({ status: 'stale', ...extra }).maxAgeMs, null,
+        `a ${label} window must resolve to null, not to a number the banner would print`);
+    }
+  });
+
+  it('resolves no window for a hidden banner', () => {
+    // The early return names the key explicitly so a stale copy of this object
+    // cannot carry a window on a decision nothing reads.
+    assert.equal(decideHealthBanner({ status: 'fresh', prematchMaxAgeMs: 600000 }).maxAgeMs, null);
+    assert.equal(decideHealthBanner({ status: 'unknown', prematchMaxAgeMs: 600000 }).maxAgeMs, null);
+  });
 });
 
 describe('formatUptime', () => {
@@ -455,6 +501,101 @@ describe('connection-status IIFE plumbing', () => {
     // real dictionary, so reading the value makes that class of drift impossible.
     assert.ok(bannerEl.innerHTML.includes(REAL_RO.runScrape), 'banner must carry the dictionary runScrape text');
     assert.ok(!toasts.length);
+  });
+
+  it('the banner names the window the stale verdict was reached with', () => {
+    const { api, bannerEl } = runModuleSandbox();
+    api.setDataHealth({ status: 'stale', actionableSourceCount: 2, prematchMaxAgeMs: 600000 });
+    // Read the phrase from the dictionary rather than typing it, for the same
+    // reason the runScrape assertion above does.
+    const limit = REAL_RO.freshnessLimit.replace('{minutes}', '10');
+    assert.ok(bannerEl.innerHTML.includes(limit), `banner names the 10-minute window: ${limit}`);
+    // And it is part of the same sentence as the verdict, not a second element
+    // bolted on: "stale" with no threshold is a verdict the reader cannot weigh
+    // against the "Run scrape" call to action sitting next to it.
+    assert.match(bannerEl.innerHTML, /Starea datelor: învechit \(2 surse actuale\)/);
+    // The rounding is seconds → whole minutes, so a window that is not a round
+    // number of minutes still reads as the number of minutes it is.
+    const g = runModuleSandbox();
+    g.api.setDataHealth({ status: 'stale', prematchMaxAgeMs: 90_000 });
+    assert.ok(g.bannerEl.innerHTML.includes(REAL_RO.freshnessLimit.replace('{minutes}', '2')),
+      'a 90s window is shown as the 2 minutes it rounds to');
+  });
+
+  it('a scan that does not carry a window is not given one', () => {
+    // The control for the assertion above, and the more important of the two.
+    // `stale` is produced by comparing a source age against this window, so a
+    // scan published before the field existed cannot say how stale is too
+    // stale — and this module must not answer with a constant of its own. That
+    // is precisely the fault the scanner page's live-window note was rewritten
+    // to stop making: a UI asserting a backend constant it cannot observe.
+    const cases = [
+      ['absent', { status: 'stale', actionableSourceCount: 2 }],
+      ['undefined', { status: 'stale', actionableSourceCount: 2, prematchMaxAgeMs: undefined }],
+      ['zero', { status: 'stale', prematchMaxAgeMs: 0 }],
+      ['negative', { status: 'stale', prematchMaxAgeMs: -600000 }],
+      ['not a number', { status: 'stale', prematchMaxAgeMs: 'soon' }],
+      ['NaN', { status: 'stale', prematchMaxAgeMs: Number.NaN }],
+    ];
+    // The literal text BEFORE the placeholder, not the whole phrase. Checking
+    // for `freshnessLimit` itself would never match rendered output — the
+    // placeholder is gone by then — so a banner printing "limita: -100 min"
+    // would have passed. Mutation showed exactly that, and this line is the
+    // repair; the decision-level tests above pin the same branch from the other
+    // side.
+    const prefix = REAL_RO.freshnessLimit.split('{')[0];
+    assert.ok(prefix.length > 0, 'the phrase must have literal text before the placeholder');
+    for (const [label, health] of cases) {
+      const { api, bannerEl } = runModuleSandbox();
+      api.setDataHealth(health);
+      assert.ok(!bannerEl.innerHTML.includes(prefix),
+        `a ${label} window must not be rendered as a threshold`);
+      // The verdict itself still renders — omitting the threshold must not
+      // take the banner down with it.
+      assert.match(bannerEl.innerHTML, /Starea datelor: învechit/, `the verdict still shows for ${label}`);
+    }
+  });
+
+  it('only an age verdict names a window', () => {
+    // `empty` means "the source observed no usable events", which has nothing
+    // to do with age. A 10-minute pre-match limit printed beside it would be a
+    // claim about a cause the verdict does not have.
+    const { api, bannerEl } = runModuleSandbox();
+    api.setDataHealth({ status: 'empty', prematchMaxAgeMs: 600000 });
+    assert.match(bannerEl.innerHTML, /Nu există date proaspete/);
+    assert.ok(!bannerEl.innerHTML.includes(REAL_RO.freshnessLimit),
+      'an empty verdict is not an age verdict and names no window');
+    // The positive beside that negative: `partial` is reached by the same age
+    // comparison as `stale`, so it does name the window. Without this the
+    // assertion above would pass just as well if the limit were never printed.
+    const g = runModuleSandbox();
+    g.api.setDataHealth({ status: 'partial', actionableSourceCount: 1, prematchMaxAgeMs: 600000 });
+    assert.ok(g.bannerEl.innerHTML.includes(REAL_RO.freshnessLimit.replace('{minutes}', '10')),
+      'partial is an age verdict too and does name the window');
+    // And a window on a hidden banner changes nothing, because nothing renders.
+    const f = runModuleSandbox();
+    f.api.setDataHealth({ status: 'fresh', prematchMaxAgeMs: 600000 });
+    assert.ok(!f.bannerEl.className.includes('visible'));
+  });
+
+  it('the threshold phrase exists in both languages', () => {
+    // A key missing from one dictionary does not throw here — t() hands back the
+    // key itself — so the banner would silently print "freshnessLimit" to a
+    // reader. That is the failure this pins.
+    for (const [lang, dict] of [['ro', REAL_RO], ['en', REAL_EN]]) {
+      assert.notEqual(dict.freshnessLimit, 'freshnessLimit', `${lang} is missing freshnessLimit`);
+      assert.match(dict.freshnessLimit, /\{minutes\}/, `${lang} interpolates the number`);
+    }
+    // And the two are not the same string left untranslated, which is the
+    // other way this key goes wrong.
+    assert.notEqual(REAL_EN.freshnessLimit, REAL_RO.freshnessLimit);
+    // The unit is part of the claim, not decoration: "limita: 10" is a bare
+    // figure and "limita: 10 h" would be a different verdict entirely. Nothing
+    // else in this file reads the rendered unit, so without this line the
+    // phrase could lose it silently.
+    assert.match(REAL_RO.freshnessLimit.replace('{minutes}', '10'), /10 min$/,
+      'the substituted phrase still carries its unit');
+    assert.match(REAL_EN.freshnessLimit.replace('{minutes}', '10'), /10 min$/);
   });
 
   it('setDataHealth hides the banner for fresh data', () => {
