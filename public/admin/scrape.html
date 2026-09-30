@@ -37,7 +37,7 @@
          Everything needed to start a run on one row. Nine stacked fields made
          the settings look like a form to fill in before you could read what
          the last run actually did. -->
-    <section class="sl-runbar" aria-label="Configurare și pornire">
+    <section class="sl-runbar" data-i18n-aria-label="configuration">
       <div class="sl-runbar-fields">
         <label class="sl-field">
           <span data-i18n="profile">Profil</span>
@@ -144,22 +144,22 @@
     <!-- ══ Progress ═══════════════════════════════════════════════════
          Rendered only while a run is in flight. The stage track lives in the
          pipeline panel below, so this is just the measure and the activity. -->
-    <section class="sl-panel sl-progress hidden" id="progress-card" aria-label="Progres">
+    <section class="sl-panel sl-progress hidden" id="progress-card" data-i18n-aria-label="progress">
       <div class="sl-progress-top">
         <span class="sl-progress-pct" id="progress-pct">0%</span>
         <div class="sl-progress-mid">
-          <div class="sl-progress-track" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-label="Progres răzuire">
+          <div class="sl-progress-track" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" data-i18n-aria-label="scrapeProgressTrack">
             <div class="sl-progress-fill" id="progress-bar"></div>
           </div>
           <div class="sl-progress-meta">
             <span id="progress-activity">—</span>
-            <span id="progress-eta" data-i18n="eta">—</span>
+            <span id="progress-eta" data-i18n="etaLabel">—</span>
           </div>
         </div>
         <!-- Kept in the DOM and kept accurate, though no longer the thing you
              look at: the value is announced, and dropping it would change what
              a screen reader says mid-run. -->
-        <div class="sl-ring" id="progress-ring" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-label="Progres răzuire" aria-hidden="true">
+        <div class="sl-ring" id="progress-ring" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" data-i18n-aria-label="scrapeProgressTrack" aria-hidden="true">
           <span id="progress-ring-pct">0%</span>
         </div>
       </div>
@@ -200,9 +200,9 @@
     <!-- ══ Jobs ════════════════════════════════════════════════════════
          The live queue. 26 rows, so: a numeric column that lines up, and a
          state that never relies on colour alone. -->
-    <section class="sl-panel" aria-label="Joburi">
+    <section class="sl-panel" data-i18n-aria-label="jobs">
       <header class="sl-panel-head">
-        <h2 class="sl-panel-title" data-i18n="jobResult">Joburi</h2>
+        <h2 class="sl-panel-title" data-i18n="jobs">Joburi</h2>
         <span class="sl-panel-note" id="act-duration-note"></span>
       </header>
       <div class="sl-table-wrap">
@@ -237,13 +237,14 @@
       <section class="sl-panel">
         <header class="sl-panel-head">
           <h2 class="sl-panel-title" data-i18n="lastScrapeRun">Ultima rulare</h2>
+          <span class="sl-panel-note" id="last-run-when"></span>
         </header>
         <div class="sl-table-wrap">
           <table class="sl-table">
             <caption class="visually-hidden">Rezultate ultimei rulări</caption>
             <thead>
               <tr>
-                <th scope="col">ID</th>
+                <th scope="col" data-i18n="runId">Run ID</th>
                 <th scope="col" class="sl-num" data-i18n="events">Evenimente</th>
                 <th scope="col" class="sl-num">Ms</th>
                 <th scope="col" data-i18n="status">Stare</th>

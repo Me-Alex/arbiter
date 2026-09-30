@@ -61,6 +61,8 @@ function harness(lang = 'ro', { api, form } = {}) {
         dataset: {},
         hidden: false,
         className: '',
+        attrs: {},
+        setAttribute(name, value) { this.attrs[name] = value; },
         appendChild() {},
         querySelectorAll: () => [],
         // The form the page reads its scan options out of. Seeded from the
@@ -80,6 +82,11 @@ function harness(lang = 'ro', { api, form } = {}) {
     // the assertions are on the markup this function produced, which is
     // captured on `bookmaker-list` before any of this runs.
     querySelectorAll: () => [],
+    // refreshLastRun writes into the table body by selector rather than by id,
+    // so the seam has to resolve one. The id is checked against scrape.html,
+    // which is what keeps a selector pointing at a removed element from
+    // quietly returning a fresh empty node and passing.
+    querySelector: (selector) => node(String(selector).replace(/^#/, '')),
   };
   const context = vm.createContext({
     document,
@@ -620,4 +627,262 @@ test('a saved scheduler is re-read, so the comparison cannot survive a stale sav
   h.run(`document.getElementById('profile').value = 'review-live'; onProfileChange()`);
   assert.match(h.nodes.get('sched-scan').textContent, /Bankroll 1000 → 500/,
     'the line answers about the profile on screen now, not the one it booted with');
+});
+
+// ---- the scan profile dropdown -----------------------------------------------
+
+/**
+ * config/scan-profiles.json, read rather than copied.
+ *
+ * Read so that a third profile — or a third scope — makes the tests below fail
+ * rather than quietly go untested, which is the case the derived half of
+ * profileLabel exists to handle.
+ */
+const PROFILES = JSON.parse(
+  readFileSync(new URL('../config/scan-profiles.json', import.meta.url), 'utf8'),
+).profiles;
+
+const labelOf = (lang, profile) => harness(lang).run(
+  `profileLabel(${JSON.stringify(profile)}, window.arbiterI18n.t.bind(window.arbiterI18n))`,
+);
+
+test('the profile dropdown names each profile in the reader\'s language', () => {
+  // The dropdown printed `p.label` straight out of the config file, so a
+  // Romanian operator was choosing between "Trusted · Prematch" and
+  // "Review · Live + Past" in English. The two keys that name those modes,
+  // `trusted` and `review`, were in the dictionary in both languages and
+  // translated nothing.
+  const [trusted, review] = PROFILES;
+  assert.equal(labelOf('ro', trusted), 'De încredere · Pre-match');
+  assert.equal(labelOf('en', trusted), 'Trusted · Pre-match');
+  assert.equal(labelOf('ro', review), 'De revizuit · Live + istoric');
+  assert.equal(labelOf('en', review), 'Review · Live + history');
+
+  // The separator and the order are pinned whole rather than by /Pre-match/:
+  // telling the two rows apart is the dropdown's whole job, and the config's
+  // own string used to do that job.
+  for (const p of PROFILES) {
+    assert.notEqual(labelOf('ro', p), p.label,
+      `${p.id}: the config's English label is no longer what the page shows`);
+  }
+  for (const lang of ['ro', 'en']) {
+    assert.notEqual(labelOf(lang, PROFILES[0]), labelOf(lang, PROFILES[1]),
+      `in ${lang} the two profiles do not collapse into one option`);
+  }
+});
+
+test('the scope half is derived from the defaults, so a new scope needs no new key', () => {
+  // Only the two real modes are in the dictionary. A third scope added to the
+  // config would, if the scope came from a key too, produce an option reading
+  // "De încredere · profileScopeFoosball" — t()'s own answer for a key it does
+  // not have, which is what the mode fallback is for and what the scope must
+  // not be.
+  const base = PROFILES[0];
+  const scopeOf = (defaults) => labelOf('ro', { ...base, defaults: { ...base.defaults, ...defaults } });
+  assert.equal(scopeOf({ includeLive: false, includePast: false }), 'De încredere · Pre-match');
+  assert.equal(scopeOf({ includeLive: true, includePast: false }), 'De încredere · Live + istoric');
+  assert.equal(scopeOf({ includeLive: false, includePast: true }), 'De încredere · Live + istoric',
+    'either flag puts the profile over a live or historical window');
+  // The control for that `||`: a profile carrying no defaults at all still gets
+  // a scope, and an `&&` would have reached the same answer by accident rather
+  // than because the defaults say so.
+  assert.equal(labelOf('en', { ...base, defaults: {} }), 'Trusted · Pre-match',
+    'a profile with no defaults is pre-match because nothing widens it');
+});
+
+test('a profile the dictionary cannot name still produces a selectable option', () => {
+  // Three shapes the config could grow into. Each has to produce text: an
+  // <option> with an empty label is a blank row the operator cannot tell from
+  // anything, and the profile is their main control over what the run will do.
+  const base = PROFILES[0];
+
+  // A mode t() has never heard of comes back as its own name. That is the right
+  // answer for it — a word the operator can read — and it beats a blank.
+  assert.equal(labelOf('en', { ...base, mode: 'experimental-batch' }), 'experimental-batch · Pre-match',
+    'an untranslated mode is shown as itself, not as a lookup key and not blank');
+
+  // A profile with no mode at all falls back to the string the config gave it,
+  // rather than to a label with a hole where the mode was.
+  assert.equal(labelOf('en', { ...base, mode: undefined }), base.label,
+    'a mode-less profile keeps the config\'s own label');
+  assert.equal(labelOf('en', { ...base, mode: '', label: 'Custom' }), 'Custom');
+
+  // And the last resort: nothing to say at all stays empty rather than becoming
+  // the string "undefined" — which is what a bare template literal would do.
+  assert.equal(labelOf('en', { id: 'x' }), '');
+  assert.equal(labelOf('en', { id: 'x', mode: null, label: null }), '');
+});
+
+test('the option markup is escaped, because the mode comes off a file on disk', () => {
+  // profileLabel returns a plain string; the escaping happens where the option
+  // is built, and init() wants five routes and a real dropdown before it gets
+  // there, so the call site is pinned as source. It is escaped there or it is
+  // not escaped anywhere.
+  assert.match(scrapeSource, /escapeHtml\(profileLabel\(p, t\)\)/,
+    'the label goes through the escaper on its way into the option');
+  // And the control, so the line above is load-bearing rather than decorative: a
+  // mode really can carry a quote, because mode is a field in a JSON file that
+  // anybody editing config/scan-profiles.json can set to anything.
+  assert.equal(labelOf('en', { ...PROFILES[0], mode: 'a"b' }), 'a"b · Pre-match');
+});
+
+// ---- the last-run panel note -----------------------------------------------
+
+/**
+ * `GET /api/scrape-run`'s payload, copied off data/latest-scrape-run.json.
+ *
+ * `jobs` is left empty on purpose: the job rows are not what these tests are
+ * about, and an empty list keeps the table from being twenty-four lines of
+ * fixture per assertion.
+ */
+const RUN = {
+  runId: '2026-09-30T01:08:05.940Z',
+  startedAt: '2026-09-30T01:08:05.980Z',
+  finishedAt: '2026-09-30T01:09:40.180Z',
+  status: 'ok',
+  jobs: [],
+  opportunitiesCount: 0,
+};
+
+const whenLine = async (lang, run) => {
+  const h = harness(lang, { api: { get: async () => run } });
+  await h.run('refreshLastRun()');
+  return h.nodes.get('last-run-when').textContent;
+};
+
+test('the last-run panel says which run it is showing, and when it ran', async () => {
+  // runId, startedAt and finishedAt were in this payload from the start and
+  // were rendered by nothing: a table under the heading "the last run" that
+  // could not name the run, nor say whether it was a minute or a week old.
+  const note = await whenLine('en', RUN);
+  assert.match(note, /^Run ID: 2026-09-30T01:08:05\.940Z · /, 'the run is named');
+  assert.match(note, / · Started: \S/, 'and when it started');
+  assert.match(note, / · Finished: \S/, 'and when it ended');
+  assert.equal(note.split(' · ').length, 3, 'three values and no empty part between them');
+  assert.doesNotMatch(note, /undefined|NaN|Invalid Date/, 'and nothing undefined reaches the note');
+
+  // The labels are the reader's, not the dictionary's keys: a panel note that
+  // reads "runId" is the same defect as a profile reading "review".
+  assert.doesNotMatch(note, /runId|startedAt|finishedAt/);
+  const roNote = await whenLine('ro', RUN);
+  assert.match(roNote, /^ID rulare: /);
+  assert.doesNotMatch(roNote, /Run ID|Started:|Finished:/,
+    'and the Romanian note is Romanian, not the English one');
+});
+
+test('a run that has not finished does not claim that it has', async () => {
+  // The orchestrator writes `finishedAt: null` for the whole life of the run
+  // and fills it in only at the end (src/scrape-orchestrator.mjs:170, :355).
+  // The page re-reads this payload on every job-complete, so the in-flight
+  // shape is what is on screen for most of a scrape — and "Finished: Invalid
+  // Date" next to a run that is still going is the opposite of the truth.
+  const note = await whenLine('en', { ...RUN, finishedAt: null });
+  assert.match(note, /Run ID: /, 'the run is still named');
+  assert.match(note, /Started: \S/, 'and still dated');
+  assert.doesNotMatch(note, /Finished|Invalid Date/, 'but no finish is claimed, and no stand-in for one');
+  assert.doesNotMatch(note, /·\s*$/, 'and no separator left dangling at the end');
+});
+
+test('a machine that has never scraped gets an empty note, not one full of undefined', async () => {
+  // The route's own fallback (src/router.mjs:63): no run file means
+  // `{ jobs: [], opportunitiesCount: 0 }` — no runId, no startedAt, no
+  // finishedAt. Three unguarded template literals would print "Run ID:
+  // undefined · Started: undefined · Finished: undefined" on a fresh install.
+  assert.equal(await whenLine('ro', { jobs: [], opportunitiesCount: 0 }), '');
+  // And the same for a payload that is not there at all, which is what
+  // readLatestScrapeRun hands the route before its own fallback runs.
+  assert.equal(await whenLine('ro', null), '');
+});
+
+test('the note shows the run id itself, because a Text node is not an HTML parser', async () => {
+  // Measured rather than assumed. In a real browser (playwright's chromium,
+  // with common.js:23's escaper copied verbatim) `textContent =
+  // escapeHtml('run&7')` reads back as the six characters `run&amp;7`, while
+  // `innerHTML = escapeHtml('run&7')` reads back as `run&7`: a Text node's data
+  // is literal and only the parser decodes entities. Escaping on the way to a
+  // textContent sink therefore puts markup in front of the reader, and this was
+  // the only such call in public/js — every other escapeHtml feeds innerHTML.
+  const note = await whenLine('en', { ...RUN, runId: 'run&7' });
+  assert.match(note, /Run ID: run&7 · /, 'the id reaches the note as it is');
+  assert.doesNotMatch(note, /&amp;|&lt;|&gt;|&quot;|&#39;/, 'and is not escaped a second time');
+
+  // The control, so the assertion above is about the sink and not about a
+  // harness that has lost the escaper: the real escaper is present and does
+  // rewrite that ampersand.
+  assert.equal(harness('en').run("escapeHtml('run&7')"), 'run&amp;7',
+    'the escaper this page shares is live and would have escaped it');
+});
+
+// ---- the banner when the page cannot load its configuration ------------------
+
+/**
+ * `init().catch(...)`, loaded the way the page loads it.
+ *
+ * It sits past the point every other test in this file cuts at, and before it
+ * is the SSE wiring, which wants an EventSource. So the tail is loaded on its
+ * own with `init` replaced by a rejection — the real handler, the real string,
+ * the real `$`.
+ */
+const initFailure = async (lang, message) => {
+  const h = harness(lang);
+  const start = scrapeSource.indexOf('init().catch(');
+  assert.ok(start !== -1, 'scrape.js must still guard init() with a catch');
+  h.run(`init = () => Promise.reject(new Error(${JSON.stringify(message)}));`);
+  await h.run(scrapeSource.slice(start));
+  return h.nodes.get('bookmaker-list');
+};
+
+test('the failure banner asks the dictionary, so it follows the language', async () => {
+  // This was the one place on the page that chose its language by reading
+  // arbiterI18n.lang itself instead of asking for a string — so it could not
+  // follow a language switch, and it duplicated a sentence the dictionary
+  // already carried. The dictionary's own failedToLoadMsg said "Eroare la
+  // încărcare" and "Error loading": a shorter, different sentence, translated
+  // into two languages for nothing.
+  const ro = await initFailure('ro', 'load failed');
+  const en = await initFailure('en', 'load failed');
+  assert.equal(ro.textContent, `${DICTS.ro.t('failedToLoadMsg')} load failed`);
+  assert.equal(en.textContent, `${DICTS.en.t('failedToLoadMsg')} load failed`);
+  assert.notEqual(ro.textContent, en.textContent, 'the banner is not one sentence in both languages');
+  assert.doesNotMatch(ro.textContent, /failedToLoadMsg|Unable to load configuration/,
+    'the Romanian page does not print the English sentence');
+  assert.doesNotMatch(en.textContent, /Configurarea/, 'nor the English page the Romanian one');
+
+  // The structural half: the comparison that made this un-switchable is gone,
+  // so a third language cannot fall through to English by accident.
+  assert.doesNotMatch(scrapeSource, /arbiterI18n\.lang\s*===|arbiterI18n\.lang\s*!==/,
+    'this page no longer compares the language itself anywhere');
+
+  // The banner has to be announced, or a screen reader passes over the one
+  // message that says the page is broken.
+  assert.equal(ro.attrs.role, 'alert');
+});
+
+test('every key the new readouts use exists in both languages', () => {
+  // Two kinds of key on this page, checked against two different sources: the
+  // ones the script names outright, and the ones the script reaches through a
+  // value the config supplies.
+  const literal = ['profileScopePrematch', 'profileScopeLivePast', 'runId', 'started',
+    'finishedLabel', 'failedToLoadMsg'];
+  const inMarkup = ['scrapeProgressTrack', 'jobs', 'configuration', 'progress'];
+  for (const key of literal) {
+    assert.ok(scrapeSource.includes(`'${key}'`), `scrape.js should ask for ${key}`);
+  }
+  for (const key of inMarkup) {
+    assert.ok(scrapeHtml.includes(`"${key}"`), `scrape.html should carry ${key}`);
+  }
+
+  // The mode half, which is the one that cannot be read off the source: the
+  // script calls t(profile.mode) and the key is whatever config/scan-profiles.json
+  // happens to say. Checked against the config, so a fourth mode added there
+  // without a dictionary entry fails here.
+  for (const p of PROFILES) {
+    assert.ok(p.mode, `${p.id} has no mode — profileLabel would fall back to its label`);
+  }
+  for (const key of [...literal, ...inMarkup, ...PROFILES.map((p) => p.mode)]) {
+    for (const lang of ['ro', 'en']) {
+      assert.notEqual(DICTS[lang].t(key), key,
+        `${lang} is missing ${key} — t() would print the key itself`);
+    }
+  }
 });

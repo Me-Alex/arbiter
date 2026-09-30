@@ -50,6 +50,54 @@ const EN = DICT.en;
 
 const LANGS = ['ro', 'en'];
 
+/**
+ * One language's block, as the text that was written.
+ *
+ * The object built above cannot answer a question about duplicates: by the time
+ * a literal has been evaluated the second `finished` has already overwritten
+ * the first, and both look like one correct entry. So the block is cut out of
+ * the source again and read as text.
+ */
+function langBlock(lang) {
+  const dict = extractConst('dict', i18nSource);
+  const m = new RegExp(`\\b${lang}\\s*:\\s*\\{`).exec(dict);
+  assert.ok(m, `cannot find the ${lang} block`);
+  let depth = 0;
+  let i = dict.indexOf('{', m.index);
+  for (; i < dict.length; i++) {
+    if (dict[i] === '{') depth++;
+    else if (dict[i] === '}' && --depth === 0) break;
+  }
+  return dict.slice(m.index, i + 1);
+}
+
+/** The key names as written, in order, repeats included. */
+const keysAsWritten = (lang) => [...langBlock(lang).matchAll(/^ {6}([A-Za-z_$][\w$]*):/gm)].map((m) => m[1]);
+
+test('no key is defined twice in one language', () => {
+  // A repeated key in an object literal is not a syntax error: the last one
+  // wins and the first is dead text that reads like a real entry. `finished`
+  // was written a second time for the last-run panel note while the job band
+  // already owned it, with a different capitalisation — so the note silently
+  // rendered the caption's lowercase word and the new entry was unreachable.
+  // The count comparison in the first test cannot see that, because by then the
+  // object has one `finished` and no trace of the argument.
+  for (const lang of LANGS) {
+    const written = keysAsWritten(lang);
+    const dupes = [...new Set(written.filter((k, i) => written.indexOf(k) !== i))];
+    assert.deepEqual(dupes, [], `${lang} defines these keys more than once: ${dupes.join(', ')}`);
+  }
+
+  // The control beside it: the extractor really does see the keys. A duplicate
+  // check that found nothing because it had read nothing would pass the line
+  // above, so the text count is compared against the object built from the same
+  // literal — and any duplicate makes the two disagree.
+  for (const lang of LANGS) {
+    assert.equal(keysAsWritten(lang).length, Object.keys(DICT[lang]).length,
+      `${lang}: the block as written and the object built from it hold different numbers of keys`);
+  }
+});
+
 test('both languages define the same keys', () => {
   // t() falls back to English and then to the key name, so a key present in
   // one language only is not an error at runtime — it is a Romanian user
@@ -62,7 +110,16 @@ test('both languages define the same keys', () => {
     Object.keys(EN).filter((k) => !(k in RO)).sort(), [],
     'defined in en but not ro',
   );
-  assert.ok(Object.keys(RO).length > 300, 'the dictionaries were not cut short by the extractor');
+  // Was `> 300`, and it failed for the right reason: this batch deleted 24
+  // keys per language, so the honest floor moved. A number that only ever goes
+  // one way is a number that will be deleted or ignored, so the real check is
+  // against the text — the same equality the duplicate test leans on — and this
+  // is only there so that an extractor and a regex that both see nothing cannot
+  // pass together.
+  assert.equal(Object.keys(RO).length, keysAsWritten('ro').length,
+    'the ro object holds a different number of keys than the ro block has written — the extractor is wrong');
+  assert.ok(Object.keys(RO).length > 250,
+    `the dictionaries were not cut short by the extractor: only ${Object.keys(RO).length} keys`);
 });
 
 test('no key translates to nothing', () => {
@@ -166,18 +223,25 @@ const isUsed = (key) => CORPUS.some(([, body]) =>
  * is a to-do, and a count would let a new dead key hide behind an old one
  * being fixed. Delete an entry when the key is deleted or when the thing it
  * labels is actually rendered.
+ *
+ * It was thirty-five entries. Every one of them is now either rendered or gone,
+ * and the list is down to the one that cannot be without a product decision:
+ *
+ *   - `systemHealth` is the label for `GET /api/health` (src/router.mjs:54),
+ *     which returns `{ok, uptimeSeconds, timestamp}` and is read by the README,
+ *     by server.mjs and by scripts/smoke.mjs — and by no page. Where an
+ *     uptime chip should sit is a question about the product, not about this
+ *     dictionary, so the key waits.
+ *
+ * What the thirty-five had in common is the shape of the rot: a key written for
+ * a panel that was designed, cut, or renamed, and never re-examined. Six of
+ * them turned out to be constants rather than fields — `feedStatus`, `active`,
+ * `provenanceLabel` and three more — and a field that is constant is not worth
+ * rendering; those were dropped rather than wired up, and the two tests that
+ * pin the decision live next to the page they belong to.
  */
 const KNOWN_DEAD = new Set([
-  'admin', 'password', 'enter',
-  'lastScan', 'jobs', 'progress', 'payout',
-  'autoVerified', 'nearMiss', 'middleReview', 'trusted', 'review',
-  'enable', 'disable',
-  'aiTitle', 'askAi',
-  'sources_count', 'liveLabel', 'etaLabel', 'andMore', 'liveEvery15s',
-  'loadingDataHealth', 'failedToLoadMsg',
-  'configuration', 'sourcesSelected', 'recentScanHistory', 'runId', 'started',
-  'toastBetTracked', 'detailUnavailable', 'allOddsForEvent',
-  'systemHealth', 'engineActive', 'arbNoLive', 'arbNoLiveHint',
+  'systemHealth',
 ]);
 
 test('no key is translated and then never read', () => {

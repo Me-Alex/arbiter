@@ -74,6 +74,32 @@ function countUp(el, to, locale = false) {
   requestAnimationFrame(step);
 }
 
+/**
+ * The scan profile's name, in the page's language.
+ *
+ * The label came out of config/scan-profiles.json verbatim, so a Romanian
+ * operator was picking between "Trusted · Prematch" and "Review · Live + Past"
+ * in English — the two keys that name those modes, `trusted` and `review`, were
+ * already in the dictionary and already translated, translated nothing.
+ *
+ * The mode is translated; the scope is derived from the profile's own defaults,
+ * because a third scope in the config should not need a third key to say which
+ * one it is. A mode the dictionary has never heard of comes back from t() as
+ * its own name, which is the right answer for it, and the whole label falls
+ * back to the config's own string rather than to a blank option.
+ *
+ * @param {object} profile - one entry of GET /api/profiles
+ * @param {function(string):string} t
+ * @returns {string}
+ */
+function profileLabel(profile, t) {
+  const mode = profile.mode ? t(profile.mode) : '';
+  if (!mode) return profile.label || '';
+  const d = profile.defaults || {};
+  const scope = d.includeLive || d.includePast ? t('profileScopeLivePast') : t('profileScopePrematch');
+  return scope ? `${mode} · ${scope}` : mode;
+}
+
 function fmtDuration(ms) {
   if (!Number.isFinite(ms) || ms < 0) return '';
   const s = Math.round(ms / 1000);
@@ -296,6 +322,7 @@ function updateChipStatus(jobs) {
 }
 
 async function init() {
+  const t = window.arbiterI18n.t.bind(window.arbiterI18n);
   const scraperResponse = await arbiterApi.get('/api/scrapers');
   scrapers = scraperResponse.jobs || [];
   validatedIds = new Set((scraperResponse.validatedJobs || []).map((scraper) => scraper.id));
@@ -312,7 +339,7 @@ async function init() {
   );
   profiles = (await arbiterApi.get('/api/profiles')).profiles || [];
   const sel = $('profile');
-  sel.innerHTML = profiles.map((p) => `<option value="${escapeHtml(p.id)}">${escapeHtml(p.label)}</option>`).join('');
+  sel.innerHTML = profiles.map((p) => `<option value="${escapeHtml(p.id)}">${escapeHtml(profileLabel(p, t))}</option>`).join('');
   sel.value = profiles[0]?.id || '';
   sel.addEventListener('change', () => onProfileChange());
   applyProfile();
@@ -685,6 +712,39 @@ async function refreshLastRun() {
     const t = window.arbiterI18n.t.bind(window.arbiterI18n);
     const run = await arbiterApi.get('/api/scrape-run');
     const tbody = document.querySelector('#last-run-table');
+    // Which run, and when it ran. runId, startedAt and finishedAt are in this
+    // same payload and were rendered by nothing: a panel titled "the last run"
+    // whose table could not say which run it was, or whether the run it is
+    // showing is a day old. It is a note in the panel head rather than two more
+    // columns, because these three values are properties of the run and not of
+    // each of the 24 job rows — as columns they would repeat the same instant
+    // down the whole table.
+    //
+    // `finishedLabel` and not `finished`: that key already exists, and it is a
+    // caption under a capitalised stat label at line 514 — lowercase on
+    // purpose. A second `finished` here would have been a duplicate key in the
+    // dictionary object, where the later one silently wins and the first is
+    // dead. Same reason `etaLabel` exists next to `eta`.
+    //
+    // No escapeHtml here, and that is not an oversight. This is a textContent
+    // write, and a Text node's data is literal — only the HTML parser decodes
+    // entities. Measured in a browser (playwright chromium, the escaper copied
+    // from common.js:23): `textContent = escapeHtml('run&7')` reads back as the
+    // six characters `run&amp;7`, while `innerHTML = escapeHtml('run&7')` reads
+    // back as `run&7`. Escaping here would put `&amp;` on the page in front of
+    // the reader, on the one sink in the repo that does not want it; every other
+    // escapeHtml call in public/js feeds an innerHTML template.
+    const when = $('last-run-when');
+    if (when) {
+      const fmt = (value) => (value ? new Date(value).toLocaleString() : null);
+      const parts = [];
+      if (run && run.runId) parts.push(`${t('runId')}: ${run.runId}`);
+      const started = run && fmt(run.startedAt);
+      if (started) parts.push(`${t('started')}: ${started}`);
+      const finished = run && fmt(run.finishedAt);
+      if (finished) parts.push(`${t('finishedLabel')}: ${finished}`);
+      when.textContent = parts.join(' · ');
+    }
     if (!run || !run.jobs) {
       tbody.innerHTML = `<tr><td colspan="4" class="muted">${escapeHtml(t('noRunYet'))}</td></tr>`;
       return;
@@ -902,9 +962,11 @@ window.addEventListener('beforeunload', () => {
 window.arbiterApp.mount('scrape');
 init().catch((err) => {
   console.error('Scrape initialization failed', err);
-  const message = arbiterI18n.lang === 'ro'
-    ? 'Configurarea nu a putut fi încărcată. Reîncarcă pagina pentru a încerca din nou.'
-    : 'Unable to load configuration. Reload the page to try again.';
+  // This was a hardcoded bilingual pair, the one place on this page that chose
+  // its language by reading arbiterI18n.lang itself instead of asking for a
+  // string — so it could not follow a language switch, and the dictionary's own
+  // failedToLoadMsg was translated in two languages for this exact sentence.
+  const message = window.arbiterI18n.t('failedToLoadMsg');
   const list = $('bookmaker-list');
   if (list) {
     list.setAttribute('role', 'alert');

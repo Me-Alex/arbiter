@@ -207,6 +207,11 @@ arbiterApp.mount('analytics');
         await arbiterApi.post('/api/tracker', { selection, odds, stake, sourceId, marketKey, status: 'pending', provenance: 'manual' });
         addBetDialog.close();
         renderTracker(await arbiterApi.get('/api/tracker'));
+        // The import below toasts what it did; adding a bet did not, so the
+        // one action on this page with a form said nothing at all on success
+        // and the only feedback was the dialog disappearing. Same channel,
+        // same guard — a page that has no showToast is still not broken.
+        if (typeof window.showToast === 'function') window.showToast(t('toastBetTracked'), 'success');
       } catch (err) {
         addBetError.textContent = err.message || t('failedAddBet');
         addBetError.classList.remove('hidden');

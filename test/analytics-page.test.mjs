@@ -73,6 +73,11 @@ function harness(lang = 'ro', opts = {}) {
         showModal() {},
         close() {},
         reset() {},
+        // The form's own inputs, for the one handler that reads them through a
+        // FormData (analytics.js:195). Merged in rather than declared here so a
+        // test names the five fields it means to submit, and the page still
+        // finds the form node it is looking at.
+        ...(opts.form && opts.form[key] ? opts.form[key] : {}),
         addEventListener(type, fn) {
           const at = `${key}:${type}`;
           if (!listeners.has(at)) listeners.set(at, []);
@@ -119,6 +124,20 @@ function harness(lang = 'ro', opts = {}) {
   // The page's own toast, recorded instead of shown. It is the channel the
   // import result reaches the user through, so it is part of what is under test.
   context.showToast = (message, type) => { toasts.push({ message, type }); };
+
+  // The add-bet handler reads its five fields with a FormData over its own form
+  // (analytics.js:195). Node's FormData wants a real HTMLFormElement and this
+  // document has none, so the seam answers get() from the form node's `fields`
+  // — the same names analytics.html declares. get() is the only method the page
+  // calls on it, and a stub that answered more would be a test of the stub.
+  context.FormData = class {
+    constructor(form) { this.form = form; }
+    get(name) {
+      const field = this.form && this.form.fields ? this.form.fields[name] : null;
+      if (!field) return null;
+      return field.checked === undefined ? field.value : (field.checked ? 'on' : null);
+    }
+  };
 
   const marker = opts.cut || '// — add-bet modal —';
   const cut = analyticsSource.indexOf(marker);
@@ -417,4 +436,98 @@ test('every key the tracker readout uses exists in both languages', () => {
       assert.notEqual(value, key, `${lang} is missing ${key} — t() would print the key itself`);
     }
   }
+});
+
+// ---- the add-bet form -------------------------------------------------------
+
+/** The five inputs the form declares in analytics.html, as a FormData sees them. */
+const ADD_BET_FORM = {
+  selection: { value: 'Home win' },
+  odds: { value: '2.35' },
+  stake: { value: '100' },
+  sourceId: { value: 'favbet' },
+  marketKey: { value: 'MATCH_ODDS' },
+};
+
+/**
+ * The page with the add-bet handler loaded and the form filled in.
+ *
+ * `cut: 'arbiterSse.connect'` puts the cut past the handler, which is where the
+ * import test already cuts to reach the import handler. The POST is recorded
+ * whether or not an override throws, so "the route was never asked" stays a
+ * real assertion in the case where the page's own validation stops the submit.
+ */
+const addBet = (lang, { form = ADD_BET_FORM, post } = {}) => {
+  const calls = { post: [], get: 0 };
+  const h = harness(lang, {
+    cut: 'arbiterSse.connect',
+    form: { '#add-bet-form': { fields: form } },
+    api: {
+      post: async (url, body) => {
+        calls.post.push([url, body]);
+        return post ? post(url, body) : { ok: true };
+      },
+      get: async () => {
+        calls.get += 1;
+        return { schemaVersion: 1, updatedAt: null, items: [fullBet()] };
+      },
+    },
+  });
+  return { h, calls };
+};
+
+test('adding a bet says so, the way importing one does', async () => {
+  // The import handler toasts what it did. The add-bet handler did not, so the
+  // one action on this page with a form said nothing at all on success — the
+  // only feedback was the dialog disappearing. A POST that worked and a page
+  // that looked unchanged is the kind of thing people do twice.
+  for (const lang of ['ro', 'en']) {
+    const { h, calls } = addBet(lang);
+    await h.fire('#add-bet-form', 'submit');
+    assert.deepEqual(calls.post.map(([url]) => url), ['/api/tracker'], `the bet went to the tracker in ${lang}`);
+    // Through JSON: the body is built inside the vm realm, so its prototype is
+    // that realm's Object.prototype and deepStrictEqual would fail on the
+    // prototype rather than on the fields.
+    assert.deepEqual(JSON.parse(JSON.stringify(calls.post[0][1])), {
+      selection: 'Home win', odds: 2.35, stake: 100, sourceId: 'favbet',
+      marketKey: 'MATCH_ODDS', status: 'pending', provenance: 'manual',
+    }, `and carried the fields the service normalises, in ${lang}`);
+    assert.deepEqual(h.toasts, [{ message: h.text('toastBetTracked'), type: 'success' }],
+      `the user is told, in ${lang}`);
+    assert.ok(calls.get >= 1, `and the table was re-read so the new row is on screen, in ${lang}`);
+  }
+});
+
+test('the toast is translated, not one English string on a Romanian page', async () => {
+  // The channel is shared with the import, so a literal here would have shown up
+  // in Romanian with no way for the reader to tell it was not a translation bug.
+  const ro = addBet('ro');
+  await ro.h.fire('#add-bet-form', 'submit');
+  const en = addBet('en');
+  await en.h.fire('#add-bet-form', 'submit');
+  assert.notEqual(ro.h.toasts[0].message, en.h.toasts[0].message);
+  assert.doesNotMatch(ro.h.toasts[0].message, /Bet added|toastBetTracked/);
+  assert.doesNotMatch(en.h.toasts[0].message, /Pariu adăugat/);
+});
+
+test('a bet that was refused is not toasted as one', async () => {
+  // A success toast on a rejected POST tells the user their bet is in the
+  // ledger when it is not. This page already has that exact test for the
+  // import — "a malformed answer from the route does not become success" — and
+  // the toast added here has to sit on the same side of it.
+  const { h } = addBet('en', { post: async () => { throw new Error('tracker refused'); } });
+  await h.fire('#add-bet-form', 'submit');
+  assert.deepEqual(h.toasts, [], 'a refused bet is not toasted');
+  assert.match(h.node('#add-bet-error').textContent, /tracker refused/,
+    'and the refusal is shown where the operator is still looking');
+
+  // The third shape: the page's own validation stops the submit before the
+  // route is asked at all. A success message here would be a bet that is not in
+  // the ledger, reported as one that is.
+  const blank = addBet('en', { form: { ...ADD_BET_FORM, stake: { value: '0' } } });
+  await blank.h.fire('#add-bet-form', 'submit');
+  assert.equal(blank.calls.post.length, 0, 'the route was never asked');
+  assert.deepEqual(blank.h.toasts, [], 'and nothing was toasted');
+  assert.equal(blank.h.node('#add-bet-error').textContent, blank.h.text('requiredFieldsError'),
+    'the form says what is missing instead');
 });

@@ -314,8 +314,14 @@ export function verifySignal(target, confirmationScan, { index, tolerance = RECH
 const SETTLEMENT_GRACE_MS = 2 * 60 * 60 * 1000;
 
 /**
- * Demote previously-confirmed targets to nearMisses/middleReviews when their
- * confirmation has expired (event started, market closed, etc).
+ * Demote previously-confirmed targets to 'expired' when their confirmation
+ * has run out (event started, market closed, etc).
+ *
+ * It used to say "nearMisses/middleReviews" here, which is not a status this
+ * function has ever written — the dictionaries still carried a key for each,
+ * translated into two languages, read by nothing. A comment that names a
+ * value the code does not produce is how those keys got into the dictionary
+ * in the first place.
  *
  * Covers both signal families: `runVerificationPass` writes confirmations
  * onto opportunities and middles, so expiring only opportunities left confirmed
