@@ -26,6 +26,9 @@ import assert from 'node:assert/strict';
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { createRequire } from 'node:module';
+
+const { parse } = createRequire(import.meta.url)('espree');
 
 const ROOT = new URL('..', import.meta.url);
 // `new URL(...).pathname` is percent-encoded and gains a leading slash on
@@ -124,26 +127,76 @@ const CHANNELS = [
   { name: 'location', re: /\blocation\.href\s*=\s*(['"`])([^'"`]+)\1/g, verb: () => 'GET' },
 ];
 
+/**
+ * Blank the ranges the tokenizer calls comments, so a route NAMED in a comment
+ * does not read as a route that is called.
+ *
+ * This is the same hole the event-detail census walked into: `selection.group`
+ * is read by nobody in the whole frontend, and the only mention of it is the
+ * word "group:" inside a comment. A search that counts comments credits a
+ * comment with a read. Here it would credit a comment with a consumer, and the
+ * closure check would report a route as reachable when no page ever asks for
+ * it — the precise failure this file exists to prevent, arriving through the
+ * file that was supposed to prevent it.
+ *
+ * Measured on the tree as it stands: stripping comments changes nothing, so
+ * nothing currently rides on this. It is here because the alternative is a
+ * check that a one-line comment can switch off.
+ *
+ * Offsets are preserved (only non-newline characters are blanked) so a match
+ * index still maps to the right line. A hand-written scanner was tried first
+ * and got a backtick wrong, swallowing the rest of dashboard.js from line 742
+ * on; espree is what ESLint already runs over these files.
+ */
+function codeOnly(src, isJs) {
+  if (!isJs) return src.replace(/<!--[\s\S]*?-->/g, (c) => c.replace(/[^\n\r]/g, ' '));
+  let comments = null;
+  // Files under public/ are a mix of ES modules and plain scripts, so both
+  // source types are tried. A file that tokenizes as neither throws rather
+  // than falling back to its raw text: silently keeping the comments is the
+  // very false pass this is meant to remove.
+  for (const sourceType of ['module', 'script']) {
+    try {
+      comments = parse(src, { ecmaVersion: 2023, sourceType, comment: true, range: true }).comments;
+      break;
+    } catch { /* try the other source type */ }
+  }
+  if (!comments) throw new Error(`could not tokenize ${src.slice(0, 60).replace(/\n/g, ' ')}`);
+  const out = src.split('');
+  for (const c of comments) {
+    for (let i = c.range[0]; i < c.range[1]; i += 1) if (out[i] !== '\n' && out[i] !== '\r') out[i] = ' ';
+  }
+  return out.join('');
+}
+
+/** Every call in one file, with the line it sits on, comments excluded. */
+function extractConsumers(src, relPath, isJs) {
+  const found = [];
+  const text = codeOnly(src, isJs);
+  const lines = src.split(/\r?\n/);
+  for (const channel of CHANNELS) {
+    for (const m of text.matchAll(channel.re)) {
+      found.push({
+        verb: channel.verb(m),
+        path: normalize(m[channel.name === 'arbiterApi' ? 3 : 2]),
+        file: relPath,
+        line: lines[0, src.slice(0, m.index).split(/\r?\n/).length - 1],
+        channel: channel.name,
+      });
+    }
+  }
+  return found;
+}
+
 const sources = [...walk(join(ROOT_DIR, 'public')), ...walk(join(ROOT_DIR, 'electron'))];
 
 /** path -> [{ file, line, channel }] */
 const consumers = new Map();
 for (const file of sources) {
-  const src = readFileSync(file, 'utf8');
-  const lines = src.split(/\r?\n/);
-  for (const channel of CHANNELS) {
-    channel.re.lastIndex = 0;
-    for (const m of src.matchAll(channel.re)) {
-      const path = normalize(m[channel.name === 'arbiterApi' ? 3 : 2]);
-      const at = lines[0, src.slice(0, m.index).split(/\r?\n/).length - 1];
-      if (!consumers.has(path)) consumers.set(path, []);
-      consumers.get(path).push({
-        verb: channel.verb(m),
-        file: relative(ROOT_DIR, file).replace(/\\/g, '/'),
-        line: at,
-        channel: channel.name,
-      });
-    }
+  const rel = relative(ROOT_DIR, file).replace(/\\/g, '/');
+  for (const c of extractConsumers(readFileSync(file, 'utf8'), rel, /\.(js|mjs)$/.test(file))) {
+    if (!consumers.has(c.path)) consumers.set(c.path, []);
+    consumers.get(c.path).push(c);
   }
 }
 
@@ -226,13 +279,45 @@ test('every table entry is extracted, whatever line it sits on', () => {
   assert.deepEqual(missed, [], `table entries the extractor skipped: ${missed.join(', ')}`);
 });
 
+test('a route named in a comment is not a consumer', () => {
+  // The negative control for the comment-blindness this file just fixed. Both
+  // channels are checked, because a route can be named in a comment in either
+  // kind of file: `fetch(...)` in a script, an href in markup. If either one
+  // still matched inside a comment, the closure check above could be satisfied
+  // by a sentence.
+  const inJsComment = extractConsumers(
+    "// the page used to call fetch('/api/ghost') here\nconst x = 1;\n",
+    'probe.js', true,
+  );
+  assert.deepEqual(inJsComment, [], 'a fetch() named only inside a JS comment was counted as a consumer');
+
+  const inHtmlComment = extractConsumers(
+    "<!-- <a href=\"/api/ghost\">old</a> -->\n<p>hi</p>\n",
+    'probe.html', false,
+  );
+  assert.deepEqual(inHtmlComment, [], 'an href named only inside an HTML comment was counted as a consumer');
+
+  // The same calls, uncommented, must still be found. Without this the two
+  // assertions above would also pass on an extractor that simply finds nothing.
+  const live = extractConsumers("fetch('/api/real');\n", 'probe.js', true);
+  assert.deepEqual(live.map((c) => c.path), ['/api/real'], 'a real call stopped being detected');
+  const liveHtml = extractConsumers('<a href="/api/real">x</a>\n', 'probe.html', false);
+  assert.deepEqual(liveHtml.map((c) => c.path), ['/api/real'], 'a real href stopped being detected');
+});
+
 test('the scan and tracker CSV exports are reachable from a page, not only from a script', () => {
   // The two exports are the classic case of a backend capability that exists,
   // is tested, is documented — and has no control in the UI. Assert the control
   // exists in the shipped markup, by path, rather than trusting a comment.
-  const files = sources.filter((f) => f.endsWith('.html') || f.endsWith('.js'));
-  const scanExport = files.filter((f) => /\/api\/scan\/export\.csv/.test(readFileSync(f, 'utf8')));
-  const trackerExport = files.filter((f) => /\/api\/tracker\/export\.csv/.test(readFileSync(f, 'utf8')));
-  assert.ok(scanExport.length > 0, 'no frontend file references /api/scan/export.csv');
-  assert.ok(trackerExport.length > 0, 'no frontend file references /api/tracker/export.csv');
+  //
+  // Which is what this now actually does. It used to grep the raw text, so the
+  // sentence right above it could have been the thing that satisfied it — a
+  // comment saying the path is enough to make the assertion pass with no
+  // control in the page at all.
+  const files = sources.filter((f) => /\.(html|js|mjs)$/.test(f));
+  const has = (needle) => files.filter((f) => needle.test(codeOnly(readFileSync(f, 'utf8'), /\.(js|mjs)$/.test(f))));
+  const scanExport = has(/\/api\/scan\/export\.csv/);
+  const trackerExport = has(/\/api\/tracker\/export\.csv/);
+  assert.ok(scanExport.length > 0, 'no frontend file references /api/scan/export.csv outside a comment');
+  assert.ok(trackerExport.length > 0, 'no frontend file references /api/tracker/export.csv outside a comment');
 });
