@@ -19,6 +19,30 @@ const read = path => readFileSync(new URL(`../${path}`, import.meta.url), 'utf8'
 const source = read('public/js/pages/scanner.js');
 const escapeHtml = value => String(value ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 
+/**
+ * The AI page, loaded whole. It renders one card per confirmed opportunity, so
+ * it is the last surface where a live price could be shown next to a pre-match
+ * one with nothing to tell them apart.
+ */
+function aiPage() {
+  const nodes = new Map();
+  const get = (id) => {
+    if (!nodes.has(id)) nodes.set(id, { textContent: '', innerHTML: '' });
+    return nodes.get(id);
+  };
+  const context = {
+    document: { getElementById: get },
+    window: { arbiterConnectionStatus: null },
+    escapeHtml,
+    arbiterApp: { mount() {} },
+    arbiterI18n: { lang: 'en', t: key => key },
+    arbiterApi: { async get() { return { dataHealth: {}, opportunities: [] }; } },
+    arbiterSse: { connect() {} },
+  };
+  vm.runInNewContext(read('public/js/pages/ai.js'), context);
+  return { context, get };
+}
+
 /** The badge on its own: it is the one piece of live logic with no DOM around it. */
 function badge() {
   const context = { escapeHtml, arbiterI18n: { lang: 'en', t: key => key } };
@@ -159,10 +183,10 @@ test('the page carries the controls its own code drives', () => {
 });
 
 /**
- * The badge is emitted on two pages, so its rule cannot live in one page's own
- * stylesheet. It sat in scanner.css, which public/index.html does not load, so
- * the dashboard rendered an unstyled span — invisible in the sense that matters,
- * since a trader learns within a day to ignore a mark that carries no weight.
+ * The badge is emitted on several pages, so its rule cannot live in one page's
+ * own stylesheet. It sat in scanner.css, which public/index.html does not load,
+ * so the dashboard rendered an unstyled span — invisible in the sense that
+ * matters, since a trader learns within a day to ignore a mark with no weight.
  *
  * The assertion is reachability, not placement: for each page whose script emits
  * the badge, at least one stylesheet that page actually links must define it.
@@ -177,6 +201,7 @@ test('every page that renders the badge also loads the rule for it', () => {
     // /event.html loads the same modal standalone, so both must reach the rule.
     { html: 'public/index.html', script: 'public/js/pages/event-detail-modal.js' },
     { html: 'public/event.html', script: 'public/js/pages/event-detail-modal.js' },
+    { html: 'public/admin/ai.html', script: 'public/js/pages/ai.js' },
   ];
   for (const { html, script } of pages.filter(p => emitsBadge(p.script))) {
     const sheets = stylesheetsOf(html);
@@ -188,4 +213,35 @@ test('every page that renders the badge also loads the rule for it', () => {
     const styled = sheets.filter(sheet => defines.test(read(`public/css/${sheet}`)));
     assert.ok(styled.length > 0, `${html} renders the badge but loads no stylesheet defining .live-badge (links: ${sheets.join(', ')})`);
   }
+});
+
+test('the AI page marks an in-play opportunity and leaves the others alone', () => {
+  const { context, get } = aiPage();
+  const card = (live) => ({ sport: 'Football', homeTeam: 'A', awayTeam: 'B', marketKey: 'MATCH_ODDS', roiPercent: 3, live,
+    verification: { status: 'confirmed' } });
+  const render = (opps) => {
+    context.renderInsights({ opportunities: opps });
+    return get('ai-insights').innerHTML;
+  };
+  const badges = (html) => (html.match(/live-badge/g) || []).length;
+
+  const mixed = render([card(true), card(false)]);
+  assert.equal(badges(mixed), 1, 'only the in-play card is badged');
+  assert.match(mixed, /class="chip red live-badge"/);
+  assert.match(mixed, /title="liveTooltip"/);
+
+  // The page already filters to verified opportunities, so an unverified card is
+  // not rendered at all and must not contribute a badge either.
+  const unverified = render([{ ...card(true), verification: { status: 'pending' } }]);
+  assert.equal(badges(unverified), 0, 'an unverified card is not rendered at all');
+
+  const prematch = render([card(false)]);
+  assert.equal(badges(prematch), 0, 'a pre-match card is not badged');
+
+  const unmeasured = render([{ marketKey: 'MATCH_ODDS', verification: { status: 'confirmed' } }]);
+  assert.equal(badges(unmeasured), 0, 'a card with no measured scope is not badged');
+
+  // A kickoff in the past is stale, not running: the verdict never reads it.
+  const staleKickoff = render([{ ...card(false), kickoff: '2000-01-01T00:00:00.000Z' }]);
+  assert.equal(badges(staleKickoff), 0, 'a past kickoff does not badge the card');
 });

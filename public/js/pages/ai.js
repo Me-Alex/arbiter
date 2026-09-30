@@ -27,6 +27,13 @@ function renderInsights(scan) {
   const t = arbiterI18n.t.bind(arbiterI18n);
   const opportunities = scan.opportunities || [];
   const list = opportunities.filter((opportunity) => opportunity.verification?.status === 'confirmed');
+  // Same mark as the scanner and the dashboard, for the same reason: a card of
+  // "verified opportunities" that renders a live price and a pre-match price
+  // identically is a card a trader reads as the calm one. It never reads the
+  // kickoff — a pre-match price whose kickoff has passed is stale, not running.
+  const liveBadge = (item) => item.live === true
+    ? `<span class="chip red live-badge" title="${escapeHtml(t('liveTooltip'))}">${escapeHtml(t('live'))}</span>`
+    : '';
   $('insights-count').textContent = list.length
     ? `${list.length} ${t(list.length === 1 ? 'verifiedOpp' : 'verifiedOpps')}`
     : t('noneVerified');
@@ -36,7 +43,7 @@ function renderInsights(scan) {
         <div class="head">
           <div style="flex:1;min-width:0">
             <div class="match">${escapeHtml(item.homeTeam)} <span class="muted">${t('vs')}</span> ${escapeHtml(item.awayTeam)}</div>
-            <div class="match-meta"><span class="chip green">${escapeHtml(t('confirmedLabel'))}</span><span>${escapeHtml(item.marketKey)}</span></div>
+            <div class="match-meta"><span class="chip green">${escapeHtml(t('confirmedLabel'))}</span>${liveBadge(item)}<span>${escapeHtml(item.marketKey)}</span></div>
           </div>
           <div class="roi-wrap"><div class="roi" style="font-size:18px">+${Number(item.roiPercent || 0).toFixed(2)}%</div></div>
         </div>
