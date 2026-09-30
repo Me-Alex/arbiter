@@ -66,6 +66,10 @@ const node = (id = '') => ({
 const ALERT_PAYLOAD = {
   schemaVersion: 1,
   published: true,
+  // The two stamps are deliberately hours apart. An old scan re-evaluated
+  // against freshly saved preferences is the ordinary case, not an exotic one,
+  // and a fixture where they coincide makes every assertion about which one the
+  // page dates the list by pass regardless of the answer.
   scan: { id: 'scan-1', scrapedAt: '2026-10-01T10:00:00.000Z', eventCount: 4 },
   preferences: {
     minRoiPercent: 1, minMiddleRoiPercent: 25, includeLive: false,
@@ -86,7 +90,7 @@ const ALERT_PAYLOAD = {
   truncated: { arbitrages: 0, middles: 0 },
   thresholds: { minRoiPercent: 1, minMiddleRoiPercent: 25, includeLive: false },
   quietNow: false,
-  evaluatedAt: '2026-10-01T10:00:00.000Z',
+  evaluatedAt: '2026-10-01T14:05:00.000Z',
 };
 
 /** The page, with recording stubs for both API routes. */
@@ -314,6 +318,35 @@ test('a truncated list says how much it is hiding', async () => {
   const { context: plain, get: plainGet } = page();
   await plain.refreshAlerts();
   assert.equal(plainGet('alerts-note').textContent, langs.en.t('alertsSinceScan').replace('{when}', new Date(ALERT_PAYLOAD.scan.scrapedAt).toLocaleString()));
+});
+
+test('the list is dated by the scan it came from, not by when the server evaluated it', async () => {
+  const langs = dictionaries();
+  const sinceScan = (when) => langs.en.t('alertsSinceScan').replace('{when}', new Date(when).toLocaleString());
+
+  const { context, get } = page();
+  await context.refreshAlerts();
+  const note = get('alerts-note').textContent;
+
+  // `evaluateAlerts` builds the list out of the scan's own signals, which were
+  // captured at `scrapedAt`; `now` reaches only `quietNow` and the stamp itself.
+  // Dating the list by the evaluation would claim the odds are as fresh as the
+  // evaluation, and a scan re-evaluated an hour later is exactly the case where
+  // that claim is false and most tempting.
+  assert.equal(note, sinceScan(ALERT_PAYLOAD.scan.scrapedAt), 'the note carries the scan time');
+  assert.notEqual(note, sinceScan(ALERT_PAYLOAD.evaluatedAt), 'and never the evaluation time');
+
+  // The control, so the assertion above is a claim about which field the page
+  // reads rather than about a constant string: move the scan, and it follows.
+  const LATER = '2026-10-01T16:45:00.000Z';
+  const rescanned = page({ alerts: { ...ALERT_PAYLOAD, scan: { ...ALERT_PAYLOAD.scan, scrapedAt: LATER } } });
+  await rescanned.context.refreshAlerts();
+  assert.equal(rescanned.get('alerts-note').textContent, sinceScan(LATER));
+
+  // ...while moving only the evaluation time leaves it exactly where it was.
+  const reevaluated = page({ alerts: { ...ALERT_PAYLOAD, evaluatedAt: '2026-10-01T22:00:00.000Z' } });
+  await reevaluated.context.refreshAlerts();
+  assert.equal(reevaluated.get('alerts-note').textContent, sinceScan(ALERT_PAYLOAD.scan.scrapedAt));
 });
 
 test('quiet hours are stated on screen even though the list still renders', async () => {
