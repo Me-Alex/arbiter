@@ -55,7 +55,26 @@ export async function runScan(args) {
 export async function readLatestScan(dataDir) {
   // Before this called emptyScan, the two disagreed with each other on
   // `scrapeRunId` and with a real scan on five more keys.
-  return await readJson(join(dataDir, 'latest-scan.json'), null) || emptyScan();
+  return (await readPublishedScan(dataDir)).scan;
+}
+
+/**
+ * The latest scan plus whether one has ever been published.
+ *
+ * The two questions have to be answered from a single read, and the second
+ * one cannot be answered from the scan itself: `emptyScan()` still mints an
+ * `id` of `scan-<timestamp>` and a `scrapedAt` of now, because it is handed
+ * straight to the verification pass as a real target. So "no scan exists yet"
+ * and "a scan ran and found nothing above the threshold" produce byte-identical
+ * documents — a page that reads only the findings would sit on an honest empty
+ * list forever and claim the market was quiet when it had simply never run.
+ *
+ * @param {string} dataDir
+ * @returns {Promise<{scan: object, published: boolean}>}
+ */
+export async function readPublishedScan(dataDir) {
+  const stored = await readJson(join(dataDir, 'latest-scan.json'), null);
+  return { scan: stored || emptyScan(), published: stored !== null };
 }
 
 export async function readLatestCatalog(dataDir) {

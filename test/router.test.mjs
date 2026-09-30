@@ -10,6 +10,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import http from 'node:http';
 import { buildRouter } from '../src/router.mjs';
+import { emptyScan } from '../src/scan-service.mjs';
 import { RateLimiter } from '../src/shared/rate-limit.mjs';
 import { csrfToken, rotateCsrf } from '../src/shared/security.mjs';
 
@@ -53,11 +54,15 @@ function stubServices() {
     },
     broadcaster: fakeBroadcaster(),
     scanService: {
-      async readLatestScan() { return { opportunities: [], middles: [] }; },
+      // Delegates to the real factory rather than hand-writing `{opportunities,
+      // middles}`: the last time a stub spelled out the scan's keys by hand it
+      // was missing five of the fourteen, and a route that reads `scan.id` or
+      // `scan.eventCount` then "worked" in every test and in no real run.
+      async readPublishedScan() { const s = emptyScan(); return { scan: s, published: true }; },
+      async readLatestScan() { return (await this.readPublishedScan()).scan; },
       async readLatestCatalog() { return { markets: [] }; },
-      async runScan() { return { opportunities: [], middles: [] }; },
+      async runScan() { return emptyScan(); },
     },
-    aiService: null,
     logger: () => {},
   };
 }
@@ -300,6 +305,26 @@ test('rejects invalid JSON with 400', async () => {
   } finally { await closeServer(server); }
 });
 
+// ---- the removed insights route stays removed ------------------------------
+
+test('GET /api/ai/insights is gone, not merely unused', async () => {
+  // It read a service that no call site ever constructed: there is no
+  // src/ai-service.mjs in the tree, so the handler could only ever have
+  // answered `{ insights: [] }`. The AI page says in its own subtitle that its
+  // summaries are scan-derived and deterministic, so the route was a leftover
+  // of a design that was replaced rather than a feature awaiting a caller.
+  //
+  // Removed rather than left dormant: a route that can only return an empty
+  // array looks like surface somebody is relying on.
+  const { route } = makeServer();
+  const server = await startServer(route);
+  try {
+    const res = await fetchOnce(server, '/api/ai/insights');
+    assert.equal(res.status, 404);
+    assert.equal(JSON.parse(res.body).error.code, 'ENOTFOUND');
+  } finally { await closeServer(server); }
+});
+
 // ---- unknown route falls through to static serving -----------------------
 
 test('unknown path returns 404 JSON', async () => {
@@ -391,5 +416,159 @@ test('returns empty scrape state', async () => {
     assert.equal(res.status, 200);
     const body = JSON.parse(res.body);
     assert.equal(body.state.status, 'idle');
+  } finally { await closeServer(server); }
+});
+
+// ---- /api/alerts -----------------------------------------------------------
+
+/** A scan service that publishes `findings`, or nothing at all. */
+function withScan(findings, { published = true } = {}) {
+  const services = stubServices();
+  return {
+    ...services,
+    scanService: {
+      ...services.scanService,
+      async readPublishedScan() {
+        return { scan: { ...emptyScan(), ...findings }, published };
+      },
+    },
+  };
+}
+
+function alertOpportunity(overrides = {}) {
+  return {
+    sport: 'fotbal',
+    league: 'Superliga',
+    kickoff: '2026-05-01T18:00:00.000Z',
+    homeTeam: 'FCSB',
+    awayTeam: 'Dinamo',
+    marketKey: '1x2',
+    eventKey: 'fotbal:superliga:fcsb-dinamo',
+    live: false,
+    roiPercent: 4,
+    totalStake: 100,
+    guaranteedProfit: 4,
+    riskPercent: 0,
+    verification: { status: 'confirmed' },
+    legs: [{ sourceId: 'betano' }, { sourceId: 'fortuna' }],
+    ...overrides,
+  };
+}
+
+async function getAlerts(services) {
+  const route = buildRouter({ ...services, rateLimiter: new RateLimiter({ capacity: 20, refillPerSec: 10 }) });
+  const server = await startServer(route);
+  try {
+    const res = await fetchOnce(server, '/api/alerts');
+    return { status: res.status, body: JSON.parse(res.body) };
+  } finally { await closeServer(server); }
+}
+
+test('GET /api/alerts returns the settings and the signals they select', async () => {
+  const { status, body } = await getAlerts(withScan({ opportunities: [alertOpportunity()] }));
+  assert.equal(status, 200);
+  // The settings are what the page renders its controls from, and the signals
+  // are what it renders the list from. A route that returned only the settings
+  // was what this route used to do: a control screen with nothing behind it.
+  assert.ok(body.preferences, 'the preferences the page draws its controls from');
+  assert.equal(typeof body.preferences.minRoiPercent, 'number');
+  assert.ok(Array.isArray(body.alerts.arbitrages), '...and the alerts those settings select');
+  assert.ok(Array.isArray(body.alerts.middles));
+  assert.equal(body.counts.arbitrages, 1, 'the 4% signal clears the default 1% threshold');
+  assert.equal(body.alerts.arbitrages[0].key, 'fotbal:superliga:fcsb-dinamo::1x2::arb');
+  assert.equal(body.alerts.arbitrages[0].verified, 'confirmed');
+  // Which run the list came from, so the page can date it.
+  assert.equal(body.scan.eventCount, 0);
+  assert.ok(body.scan.scrapedAt);
+  assert.ok(body.evaluatedAt);
+  assert.equal(body.schemaVersion, 1);
+});
+
+test('the route normalizes the settings it hands back', async () => {
+  // The stub service returns `{}` — raw, un-normalized, exactly what a
+  // hand-edited settings file or an older stored schema amounts to. The page
+  // builds its input boxes out of this object, so an undefined threshold here
+  // is an empty box that saves an empty box.
+  const { body } = await getAlerts(withScan({}));
+  assert.equal(typeof body.preferences.minRoiPercent, 'number');
+  assert.equal(typeof body.preferences.cooldownSeconds, 'number');
+  assert.deepEqual(body.preferences.channels, { desktop: true, sound: false });
+  assert.equal(body.preferences.quietHours.from, '23:00');
+  // ...and the thresholds the engine used are the same ones that came back.
+  assert.equal(body.thresholds.minRoiPercent, body.preferences.minRoiPercent);
+  assert.equal(body.thresholds.minMiddleRoiPercent, body.preferences.minMiddleRoiPercent);
+  assert.equal(body.thresholds.includeLive, body.preferences.includeLive);
+});
+
+test('the threshold is applied to the scan, not just echoed back', async () => {
+  const { body } = await getAlerts(withScan({
+    opportunities: [alertOpportunity({ roiPercent: 0.5 })],
+  }));
+  // 0.5% is under the default 1%, so it is not an alert...
+  assert.equal(body.counts.arbitrages, 0);
+  assert.equal(body.thresholds.minRoiPercent, 1);
+  // ...and the signal is still in the scan, it simply did not qualify. The
+  // negative above only means something next to this one.
+  const raised = await getAlerts(withScan({ opportunities: [alertOpportunity({ roiPercent: 1 })] }));
+  assert.equal(raised.body.counts.arbitrages, 1, 'the same signal, exactly on the line');
+});
+
+test('an unpublished scan is reported as such, not as a quiet market', async () => {
+  const { body } = await getAlerts(withScan({}, { published: false }));
+  // An empty list with no explanation reads as "nothing worth your time right
+  // now", which is a claim about the market. With no scan ever run there is no
+  // such claim to make.
+  assert.equal(body.published, false);
+  assert.deepEqual(body.alerts.arbitrages, []);
+  // The control: the same empty findings, with a scan behind them, is published.
+  const scanned = await getAlerts(withScan({}));
+  assert.equal(scanned.body.published, true);
+  assert.deepEqual(scanned.body.alerts.arbitrages, [], '...and an honest empty list');
+});
+
+test('POST /api/alerts persists the settings and answers under them', async () => {
+  const saved = [];
+  const services = withScan({ opportunities: [alertOpportunity({ roiPercent: 4 })] });
+  services.tracker = {
+    ...services.tracker,
+    async loadAlerts() { return { preferences: saved.length ? saved[saved.length - 1] : {} }; },
+    async saveAlerts(p) { saved.push(p); return { preferences: p }; },
+  };
+  const route = buildRouter({ ...services, rateLimiter: new RateLimiter({ capacity: 20, refillPerSec: 10 }) });
+  const server = await startServer(route);
+  try {
+    const res = await fetchOnce(server, '/api/alerts', {
+      method: 'POST',
+      headers: { Host: '127.0.0.1', 'x-arbiter-token': csrfToken() },
+      body: JSON.stringify({ preferences: { minRoiPercent: 10, cooldownSeconds: 30 } }),
+    });
+    assert.equal(res.status, 200);
+    const body = JSON.parse(res.body);
+    assert.equal(saved.length, 1, 'the settings reached storage');
+    assert.equal(saved[0].minRoiPercent, 10);
+    // The answer is evaluated under the settings just written, so the page does
+    // not have to ask again to learn what it just set — and cannot render a
+    // list computed under thresholds it is no longer showing.
+    assert.equal(body.preferences.minRoiPercent, 10);
+    assert.equal(body.thresholds.minRoiPercent, 10);
+    assert.equal(body.counts.arbitrages, 0, 'a 4% signal no longer qualifies at 10%');
+    // The bare-body form is accepted too, since that is what the client posts.
+    const bare = await fetchOnce(server, '/api/alerts', {
+      method: 'POST',
+      headers: { Host: '127.0.0.1', 'x-arbiter-token': csrfToken() },
+      body: JSON.stringify({ minMiddleRoiPercent: 40 }),
+    });
+    assert.equal(bare.status, 200);
+    assert.equal(JSON.parse(bare.body).preferences.minMiddleRoiPercent, 40);
+  } finally { await closeServer(server); }
+});
+
+test('POST /api/alerts is behind the same CSRF guard as every other mutation', async () => {
+  const { route } = makeServer();
+  const server = await startServer(route);
+  try {
+    const res = await fetchOnce(server, '/api/alerts', { method: 'POST', body: '{}' });
+    assert.equal(res.status, 403);
+    assert.equal(JSON.parse(res.body).error.code, 'ECSRF');
   } finally { await closeServer(server); }
 });

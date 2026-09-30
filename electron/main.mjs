@@ -1,8 +1,9 @@
-import { app, BrowserWindow, BrowserView, Menu, ipcMain, shell, dialog } from 'electron';
+import { app, BrowserWindow, BrowserView, Menu, ipcMain, shell, dialog, Notification } from 'electron';
 import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { initAutoUpdater, checkForUpdates, installUpdate, getVersion } from './auto-update.mjs';
+import { normalizeNotification } from './notification.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, '..');
@@ -186,6 +187,56 @@ ipcMain.handle('arbiter:installUpdate', () => {
 ipcMain.handle('arbiter:getVersion', () => {
   return { version: getVersion() };
 });
+
+/**
+ * Desktop notifications, asked for by the alert client in the renderer.
+ *
+ * The renderer cannot raise one on its own here: the page runs in a BrowserView
+ * with contextIsolation on, and rather than reaching for the web Notification
+ * API — which would need a permission round trip and still does not exist in a
+ * plain browser tab on Linux — the page asks the main process, which can.
+ *
+ * `shown` exists because Electron's Notification has no tag: without it a
+ * re-alerted opportunity stacks a second identical toast behind the first, and
+ * by the fifth the trader has stopped reading them. Same tag replaces.
+ */
+const shownNotifications = new Map();
+
+ipcMain.handle('arbiter:notify', (_e, payload) => {
+  const note = normalizeNotification(payload);
+  if (!note) return { ok: false, reason: 'empty' };
+  if (!Notification.isSupported()) return { ok: false, reason: 'unsupported' };
+
+  // An untagged notification is a one-off, so it must not evict a real alert
+  // that is still on screen and be evicted by the next one.
+  if (note.tag && shownNotifications.has(note.tag)) {
+    shownNotifications.get(note.tag).close();
+    shownNotifications.delete(note.tag);
+  }
+  // Bound the map even when every notification is untagged and nothing is ever
+  // replaced: a long session must not grow a Map of dead objects forever.
+  if (shownNotifications.size >= MAX_TRACKED_NOTIFICATIONS) {
+    const oldest = shownNotifications.keys().next().value;
+    if (oldest !== undefined) shownNotifications.delete(oldest);
+  }
+
+  const notification = new Notification({ title: note.title, body: note.body, silent: note.silent });
+  notification.on('click', () => {
+    if (!mainWindow) return;
+    if (mainWindow.isMinimized()) mainWindow.restore();
+    mainWindow.show();
+    mainWindow.focus();
+  });
+  notification.on('close', () => {
+    if (note.tag && shownNotifications.get(note.tag) === notification) shownNotifications.delete(note.tag);
+  });
+  notification.show();
+  if (note.tag) shownNotifications.set(note.tag, notification);
+  return { ok: true, tagged: Boolean(note.tag) };
+});
+
+/** A ceiling on the replacement map, not on notifications shown — those are the user's to see. */
+const MAX_TRACKED_NOTIFICATIONS = 50;
 
 app.whenReady().then(async () => {
   Menu.setApplicationMenu(null);

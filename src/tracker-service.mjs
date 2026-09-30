@@ -2,6 +2,8 @@ import { join } from 'node:path';
 import { readJson, writeJsonAtomic } from './shared/atomic-write.mjs';
 import { csvRow, parseCsvLine } from './shared/csv.mjs';
 
+import { ALERT_SCHEMA, normalizeAlertPreferences } from './alert-engine.mjs';
+
 /**
  * tracker-service.mjs — bet tracker + alert preferences + CSV import/export.
  *
@@ -10,10 +12,17 @@ import { csvRow, parseCsvLine } from './shared/csv.mjs';
  *   data/alert-preferences.json
  *
  * Schema versioning lets us migrate without crashing older dashboards.
+ *
+ * The alert defaults used to be written out here as a second copy of what
+ * alert-engine.mjs needs, and the two had already drifted — this one said 1%
+ * and 25% while the scanner computed from 0% and 20%, and nothing read either.
+ * They are read from the engine now, and normalized on the way in and out, so
+ * a hand-edited settings file is repaired rather than passed through: a
+ * threshold that arrived as NaN would compare false against everything and
+ * quietly alert on nothing.
  */
 
 const TRACKER_SCHEMA = 1;
-const ALERT_SCHEMA = 1;
 
 export class TrackerService {
   constructor({ dataDir, logger = () => {} }) {
@@ -27,8 +36,22 @@ export class TrackerService {
     return await readJson(this.trackerPath, { schemaVersion: TRACKER_SCHEMA, updatedAt: null, items: [] });
   }
 
+  /**
+   * The stored alert settings, normalized on the way out.
+   *
+   * The file is hand-editable and outlives schema changes, so whatever is on
+   * disk is treated as a suggestion: a field that is missing, null, NaN or
+   * "23h00" comes back as its default while the fields the user did set are
+   * kept. Returning the raw object instead would hand a `minRoiPercent` of
+   * undefined straight to the engine, where it compares false against every
+   * number and the page raises no alerts at all — silently, with no error.
+   */
   async loadAlerts() {
-    return await readJson(this.alertsPath, { schemaVersion: ALERT_SCHEMA, preferences: defaultAlertPreferences() });
+    const stored = await readJson(this.alertsPath, null);
+    return {
+      schemaVersion: ALERT_SCHEMA,
+      preferences: normalizeAlertPreferences(stored?.preferences),
+    };
   }
 
   async saveTracker(t) {
@@ -103,10 +126,19 @@ export class TrackerService {
     return { imported };
   }
 
+  /**
+   * Persist alert settings, normalized on the way in.
+   *
+   * Same rule as the read: a POST that omits a field resets it to the default
+   * rather than inheriting whatever was on disk. The previous spread-merge
+   * kept stale nested keys too — posting `channels: { desktop: false }` left
+   * `sound` at whatever it was, so a client could never turn a channel back
+   * off after turning it on.
+   */
   async saveAlerts(prefs) {
     const merged = {
       schemaVersion: ALERT_SCHEMA,
-      preferences: { ...defaultAlertPreferences(), ...(prefs || {}) },
+      preferences: normalizeAlertPreferences(prefs),
     };
     await writeJsonAtomic(this.alertsPath, merged);
     return merged;
@@ -159,15 +191,4 @@ function allowedBetPatch(patch) {
 function cleanText(value, maxLength) {
   // eslint-disable-next-line no-control-regex
   return String(value ?? '').replace(/[\u0000-\u001f\u007f]/g, ' ').trim().slice(0, maxLength);
-}
-
-function defaultAlertPreferences() {
-  return {
-    minRoiPercent: 1,
-    minMiddleRoiPercent: 25,
-    includeLive: false,
-    channels: { desktop: true, sound: false },
-    quietHours: { from: '23:00', to: '07:00', enabled: false },
-    cooldownSeconds: 60,
-  };
 }

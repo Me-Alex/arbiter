@@ -4,6 +4,179 @@
     let _sportsData = [];
     let _isFirstScanLoad = true;
 
+    let _alertWatcher = null;
+
+    /**
+     * The alert settings, read out of the form.
+     *
+     * Read as strings and posted as they are: the server owns the coercion, and
+     * a second implementation of "what is a valid threshold" in the page is a
+     * second thing to keep in step. The checkboxes are the exception — the
+     * browser already holds a real boolean there.
+     */
+    function readAlertForm() {
+      return {
+        minRoiPercent: ($('alert-min-roi') || {}).value,
+        minMiddleRoiPercent: ($('alert-mid-roi') || {}).value,
+        cooldownSeconds: ($('alert-cooldown') || {}).value,
+        includeLive: Boolean($('alert-live') && $('alert-live').checked),
+        channels: {
+          desktop: Boolean($('alert-desktop') && $('alert-desktop').checked),
+          sound: Boolean($('alert-sound') && $('alert-sound').checked),
+        },
+        quietHours: {
+          from: ($('alert-quiet-from') || {}).value,
+          to: ($('alert-quiet-to') || {}).value,
+          enabled: Boolean($('alert-quiet-enabled') && $('alert-quiet-enabled').checked),
+        },
+      };
+    }
+
+    /**
+     * Fill the form from the server's settings.
+     *
+     * Skips whichever field the user is currently in. A scan-update arrives on
+     * its own schedule, and one landing mid-edit is the kind of thing that
+     * silently throws away half-typed input.
+     */
+    function fillAlertForm(prefs) {
+      const set = (id, value) => {
+        const el = $(id);
+        if (!el || el === document.activeElement) return;
+        if (el.type === 'checkbox') el.checked = value === true;
+        else el.value = value === null || value === undefined ? '' : String(value);
+      };
+      set('alert-min-roi', prefs.minRoiPercent);
+      set('alert-mid-roi', prefs.minMiddleRoiPercent);
+      set('alert-cooldown', prefs.cooldownSeconds);
+      set('alert-live', prefs.includeLive);
+      set('alert-desktop', prefs.channels.desktop);
+      set('alert-sound', prefs.channels.sound);
+      set('alert-quiet-enabled', prefs.quietHours.enabled);
+      set('alert-quiet-from', prefs.quietHours.from);
+      set('alert-quiet-to', prefs.quietHours.to);
+    }
+
+    function renderAlerts(payload) {
+      const t = arbiterI18n.t.bind(arbiterI18n);
+      const counts = payload.counts || { arbitrages: 0, middles: 0 };
+      const shown = (payload.alerts.arbitrages || []).concat(payload.alerts.middles || []);
+      $('alerts-count').textContent = payload.published
+        ? `${counts.arbitrages} ${t('alertsArb')} · ${counts.middles} ${t('alertsMiddle')}`
+        : t('alertsNoScan');
+
+      // Where "nothing has been scanned" is told apart from "nothing cleared
+      // the thresholds". Without this an empty list reads as a claim about the
+      // market, which on a fresh install it is not.
+      const truncated = ((payload.truncated || {}).arbitrages || 0) + ((payload.truncated || {}).middles || 0);
+      $('alerts-note').textContent = !payload.published
+        ? t('alertsNoScanNote')
+        : truncated > 0
+          ? t('alertsTruncated').replace('{n}', String(truncated))
+          : payload.quietNow
+            ? t('alertsQuietNow')
+            : t('alertsSinceScan').replace('{when}', new Date(payload.scan.scrapedAt).toLocaleString());
+
+      const body = document.querySelector('#alerts-table tbody');
+      if (!shown.length) {
+        body.innerHTML = `<tr><td colspan="6" class="empty">${escapeHtml(payload.published ? t('alertsNone') : t('alertsNoScan'))}</td></tr>`;
+        return;
+      }
+      body.innerHTML = shown.map((a) => `
+        <tr>
+          <td><div class="strong">${escapeHtml(a.homeTeam)} <span class="muted">${t('vs')}</span> ${escapeHtml(a.awayTeam)}</div><div class="secondary"><span class="chip chip-sport">${escapeHtml(a.sport || 'Football')}</span> ${liveBadge(t, a)} ${escapeHtml(a.league || '')}</div></td>
+          <td><div class="mono text-xs">${escapeHtml(a.marketKey || '—')}</div><div class="secondary mono text-xs">${escapeHtml(a.type)}</div></td>
+          <td class="num tabnum"><span class="strong ${a.type === 'middle' ? 'purple' : 'green'}">+${(a.roiPercent || 0).toFixed(2)}</span></td>
+          <td class="num tabnum">${a.type === 'middle' ? `<span class="yellow">${(a.riskPercent || 0).toFixed(2)}</span>` : '—'}</td>
+          <td><div class="secondary">${escapeHtml((a.sourceIds || []).join(' · '))}</div><div class="secondary">${a.totalStake === null || a.totalStake === undefined ? '' : escapeHtml(`${t('alertStake')} ${Math.round(a.totalStake)}`)}</div></td>
+          <td>${verificationCell(t, { verification: a.verified ? { status: a.verified } : null })}</td>
+        </tr>
+      `).join('');
+    }
+
+    /**
+     * Ask the browser for permission the first time the desktop channel is used.
+     *
+     * Only from a click, because a permission prompt raised unprompted is one
+     * users dismiss without reading and then never get offered again. A refusal
+     * is not an error — the banner still runs, and the checkbox now describes
+     * what will actually happen.
+     */
+    async function ensureNotificationPermission() {
+      if (!window.Notification || window.Notification.permission !== 'default') return;
+      try {
+        await window.Notification.requestPermission();
+      } catch (err) {
+        console.warn('notification permission request failed', err);
+      }
+    }
+
+    async function saveAlerts() {
+      const t = arbiterI18n.t.bind(arbiterI18n);
+      const button = $('alerts-save');
+      const wanted = readAlertForm();
+      if (wanted.channels.desktop) await ensureNotificationPermission();
+      if (button) button.disabled = true;
+      try {
+        // The route answers with the alerts evaluated under the settings just
+        // saved, so this one call both persists and re-renders — and cannot
+        // render a list computed under thresholds the form no longer shows.
+        const payload = await arbiterApi.post('/api/alerts', { preferences: wanted });
+        fillAlertForm(payload.preferences);
+        renderAlerts(payload);
+        if (window.showToast) window.showToast(t('alertsSaved'), 'success');
+      } catch (err) {
+        console.warn('saving alert settings failed', err);
+        if (window.showToast) window.showToast(err.message || t('failedToLoad'), 'error');
+      } finally {
+        if (button) button.disabled = false;
+      }
+    }
+
+    /**
+     * The notification watcher, if alerts.js made it onto the page.
+     *
+     * Optional on purpose: the list and the settings form are the feature, and
+     * the interruption is an extra. A page that renders nothing because a
+     * second script failed to load has traded the useful part for the
+     * optional one.
+     */
+    function alertWatcher() {
+      if (_alertWatcher !== null) return _alertWatcher;
+      if (!window.arbiterAlerts || typeof window.arbiterAlerts.createAlertWatcher !== 'function') return null;
+      _alertWatcher = window.arbiterAlerts.createAlertWatcher({
+        deliver: (p) => window.arbiterAlerts.deliverNotification(p, {
+          bridge: window.arbiter,
+          NotificationApi: window.Notification,
+          banner: (x) => window.showToast && window.showToast(`${x.title} — ${x.body}`, 'warning'),
+        }),
+      });
+      return _alertWatcher;
+    }
+
+    async function refreshAlerts() {
+      const t = arbiterI18n.t.bind(arbiterI18n);
+      try {
+        const payload = await arbiterApi.get('/api/alerts');
+        fillAlertForm(payload.preferences);
+        renderAlerts(payload);
+        const watcher = alertWatcher();
+        if (watcher) {
+          watcher.setCooldownSeconds(payload.preferences.cooldownSeconds);
+          await watcher.ingest(payload, {
+            quiet: payload.quietNow,
+            channels: payload.preferences.channels,
+          });
+        }
+      } catch (err) {
+        console.warn('alerts unavailable', err);
+        $('alerts-note').textContent = err.message || t('failedToLoad');
+        $('alerts-count').textContent = '—';
+        const body = document.querySelector('#alerts-table tbody');
+        if (body) body.innerHTML = `<tr><td colspan="6" class="empty scanner-error">${escapeHtml(err.message || t('failedToLoad'))}</td></tr>`;
+      }
+    }
+
     function evMatchLabel(eventKey) {
       const parts = String(eventKey || '').split('|').slice(-2);
       const vs = arbiterI18n.t.bind(arbiterI18n)('vs');
@@ -90,7 +263,7 @@
         if (d.maxMiddleRiskPercent !== null && d.maxMiddleRiskPercent !== undefined) $('mid-risk').value = d.maxMiddleRiskPercent;
         if (d.minMiddleRoiPercent !== null && d.minMiddleRoiPercent !== undefined) $('mid-roi').value = d.minMiddleRoiPercent;
       });
-      await refreshPublished();
+      await Promise.all([refreshPublished(), refreshAlerts()]);
     }
 
     function setTableState(message, className = 'empty') {
@@ -143,6 +316,50 @@
       } finally {
         button.disabled = false;
         button.classList.remove('pulse');
+      }
+    }
+
+    /**
+     * Re-run verification against the published scan.
+     *
+     * Verification otherwise only ever runs as step 2 of a full scrape, so a
+     * confirmation on screen can be hours old — and an arbitrage whose event
+     * has since started is no longer an arbitrage. The route re-reads the
+     * books for the legs in the published scan, writes the verdicts back into
+     * it, and retires confirmations whose event has settled.
+     *
+     * The response is the verdict counters, not the scan, so the page re-reads
+     * /api/scan afterwards rather than rendering what came back. This does not
+     * broadcast a scan-update, so the refresh is explicit.
+     */
+    async function reverifyPublished() {
+      const button = $('reverify');
+      const t = arbiterI18n.t.bind(arbiterI18n);
+      if (!button || button.disabled) return;
+      button.disabled = true;
+      button.classList.add('pulse');
+      const label = button.textContent;
+      button.textContent = t('reverifyRunning');
+      try {
+        const result = await arbiterApi.post('/api/verify', {});
+        await refreshPublished();
+        const counts = [
+          [t('confirmed'), result.confirmed],
+          [t('rejected'), result.rejected],
+          [t('expired'), result.expired],
+          [t('unverified'), result.unconfirmed],
+        ].map(([name, n]) => `${name} ${Number(n || 0)}`).join(' · ');
+        if (window.showToast) window.showToast(counts, 'success');
+      } catch (err) {
+        // ENOSCAN is the route saying there is nothing published to verify,
+        // which is a state the trader can act on rather than a fault.
+        const message = err.code === 'ENOSCAN' ? t('reverifyNoScan') : (err.message || t('reverifyFailed'));
+        if (window.showToast) window.showToast(message, 'warning');
+        else setTableState(message, 'scanner-error');
+      } finally {
+        button.disabled = false;
+        button.classList.remove('pulse');
+        button.textContent = label;
       }
     }
 
@@ -284,6 +501,8 @@
     }
 
     $('rescan').addEventListener('click', previewScan);
+    $('reverify').addEventListener('click', reverifyPublished);
+    $('alerts-save').addEventListener('click', saveAlerts);
 
     // Arb table: click to expand/collapse per-leg detail
     document.addEventListener('click', (e) => {
@@ -296,6 +515,18 @@
         next.style.display = expanded ? 'none' : '';
       }
     });
-    arbiterSse.connect((type) => { if (type === 'scan-update' || type === 'scrape-update') refreshPublished(); });
+    // A `scan-update` is the only event that can change what clears the alert
+    // thresholds, so that is the one that re-reads them. `scrape-update` fires
+    // on every book as a run progresses, and re-reading the alerts on each of
+    // those would be forty identical requests for a scan that has not been
+    // published yet.
+    arbiterSse.connect((type) => {
+      if (type === 'scan-update') {
+        refreshPublished();
+        refreshAlerts();
+      } else if (type === 'scrape-update') {
+        refreshPublished();
+      }
+    });
     window.arbiterApp.mount('scanner');
     init();

@@ -21,6 +21,12 @@ contextBridge.exposeInMainWorld('arbiter', {
   onUpdateError: (callback) => ipcRenderer.on('update-error', (event, data) => callback(data)),
   onUpdateProgress: (callback) => ipcRenderer.on('update-progress', (event, data) => callback(data)),
   onUpdateChecking: (callback) => ipcRenderer.on('update-checking', () => callback()),
+  /**
+   * Show a desktop notification. Returns `{ ok, reason? }`; the client falls
+   * back to the browser Notification API and then to an in-page banner, so a
+   * false here is a downgrade and not a failure.
+   */
+  notify: (payload) => ipcRenderer.invoke('arbiter:notify', payload),
 });
 
 ipcRenderer.on('arbiter:noop', () => {});

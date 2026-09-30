@@ -6,6 +6,7 @@ import { RateLimiter, rateLimitMiddleware } from './shared/rate-limit.mjs';
 import { tryReadJson, readJson, writeJsonAtomic } from './shared/atomic-write.mjs';
 import { resolveScanRequest } from './scrape-orchestrator.mjs';
 import { sportOptions, getSport } from './sports/registry.mjs';
+import { ALERT_SCHEMA, evaluateAlerts, normalizeAlertPreferences } from './alert-engine.mjs';
 
 /**
  * router.mjs — pure HTTP dispatch. All routes are co-located here so the
@@ -32,7 +33,6 @@ export function buildRouter(ctx) {
     tracker,
     broadcaster,
     scanService,
-    aiService = null,
     logger = () => {},
     rateLimiter = new RateLimiter({ capacity: 30, refillPerSec: 10 }),
   } = ctx;
@@ -187,12 +187,17 @@ export function buildRouter(ctx) {
       const body = await parseBody(req);
       return sendJson(null, 200, await tracker.importCsv(body.csv || ''));
     },
-    'GET /api/alerts': async () => sendJson(null, 200, await tracker.loadAlerts()),
+    'GET /api/alerts': async () => sendJson(null, 200, await readAlertPayload()),
     'POST /api/alerts': async (req) => {
       const body = await parseBody(req);
-      return sendJson(null, 200, await tracker.saveAlerts(body.preferences || body));
+      await tracker.saveAlerts(body.preferences || body);
+      // Answer with the freshly evaluated set rather than the settings that
+      // were just written. The page has to render the effect of the change it
+      // just made, and making it re-read to learn its own thresholds is a
+      // second round trip that can straddle a scan update and show numbers
+      // that were computed under the old settings.
+      return sendJson(null, 200, await readAlertPayload());
     },
-    'GET /api/ai/insights': async () => sendJson(null, 200, { insights: aiService ? await aiService.generate() : [] }),
     'GET /api/events': (_req, res) => {
       if (!broadcaster) {
         return sendJson(res, 503, { error: { name: 'Unavailable', message: 'sse disabled', code: 'ENOSSE' } });
@@ -201,6 +206,39 @@ export function buildRouter(ctx) {
       return null;
     },
   };
+
+  /**
+   * Settings + the signals those settings select out of the published scan.
+   *
+   * One payload for both alert routes, and one scan read per call: the two
+   * halves have to describe the same instant, or the page renders a list
+   * computed under thresholds it is no longer showing.
+   *
+   * `scan` is a reference, not the scan — the page needs to say which run a
+   * list came from, and shipping several hundred opportunities again to
+   * annotate a count would double the payload of the most-polled endpoint in
+   * the app for no gain.
+   *
+   * The preferences are normalized here rather than echoed as the service
+   * returned them. TrackerService already normalizes, but a route whose
+   * contract holds only because of something a collaborator happens to do is a
+   * contract nothing tests: the page builds its inputs out of this object, and
+   * an undefined threshold there renders an empty box that saves an empty box.
+   */
+  async function readAlertPayload() {
+    const { scan, published } = await scanService.readPublishedScan(dataDir);
+    const stored = await tracker.loadAlerts();
+    const preferences = normalizeAlertPreferences(stored?.preferences);
+    return {
+      schemaVersion: ALERT_SCHEMA,
+      // False means the list below is empty because nothing has been scraped
+      // yet, not because the market was quiet. The page must not conflate them.
+      published,
+      scan: { id: scan.id, scrapedAt: scan.scrapedAt, eventCount: scan.eventCount },
+      preferences,
+      ...evaluateAlerts(scan, preferences),
+    };
+  }
 
   return async function route(req, res, parsedUrl) {
     try {
