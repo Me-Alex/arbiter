@@ -17,6 +17,43 @@
     }
 
     /**
+     * The four verification counters, as one line.
+     *
+     * These are the aggregate the per-row status cannot show. A rejected or
+     * expired opportunity is not greyed out in these tables — it is gone, so
+     * the list only ever shows the ones that survived. Without the counts a
+     * trader cannot tell "the run found three good ones" from "the run found
+     * three good ones and threw away twenty".
+     *
+     * `at` is the field that separates the two zeroes: four counters with no
+     * `at` mean verification never ran, which is not the same claim as a pass
+     * that ran and confirmed nothing.
+     */
+    function verificationMix(t, summary) {
+      const s = summary || {};
+      if (!s.at) return t('notVerifiedYet');
+      const n = (v) => Number(v || 0).toLocaleString();
+      return [t('confirmed'), t('rejected'), t('expired'), t('unverified')]
+        .map((label, i) => `${label} ${n([s.confirmed, s.rejected, s.expired, s.unconfirmed][i])}`)
+        .join(' · ');
+    }
+
+    /**
+     * The in-play price window, read from the scan rather than written out.
+     *
+     * It used to be the literal "90s" in a translation string, which meant the
+     * UI asserted a backend constant it had no way to observe. `options` now
+     * carries the window the scan actually applied, so changing
+     * DEFAULT_LIVE_MAX_AGE_MS changes this line too — and a scan published
+     * before the field existed says so instead of guessing.
+     */
+    function liveWindowNote(t, scan) {
+      const ms = Number((scan.options || {}).liveMaxAgeMs);
+      if (!Number.isFinite(ms) || ms <= 0) return t('liveWindowUnknown');
+      return t('livePreviewNote').replace('{seconds}', String(Math.round(ms / 1000)));
+    }
+
+    /**
      * The in-play marker.
      *
      * It reads the signal's own `live`, which the engine takes from the market
@@ -129,8 +166,16 @@
       $('health-state').textContent = healthLabel;
       $('health-state').className = `health-${escapeHtml(healthStatus)}`;
       $('health-detail').textContent = `${Number(health.actionableSourceCount || 0)} ${t('freshSources')}`;
-      $('scan-updated').textContent = scan.scannedAt || scan.scanStartedAt ? new Date(scan.scannedAt || scan.scanStartedAt).toLocaleString() : '—';
+      // `scrapedAt` is when the observations were captured; `scanStartedAt` is
+      // when the scan began reading them. This asked for `scannedAt`, which no
+      // scan has ever published, so it silently fell through to the second and
+      // showed the start of the pass as the age of the data.
+      const capturedAt = scan.scrapedAt || scan.scanStartedAt;
+      $('scan-updated').textContent = capturedAt ? new Date(capturedAt).toLocaleString() : '—';
       $('scan-events').textContent = `${Number(scan.eventCount || 0).toLocaleString()} events`;
+      $('verification-mix').textContent = verificationMix(t, scan.verificationSummary);
+      const windowNote = $('live-window-note');
+      if (windowNote) windowNote.textContent = liveWindowNote(t, scan);
 
       const emptyBox = $('scan-empty');
       if (noData && !(scan.opportunities || []).length && !(scan.middles || []).length && !(scan.positiveEv || []).length) {

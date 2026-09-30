@@ -144,6 +144,56 @@ window.applyDesignTokens = function (theme) {
 
 
 /**
+ * The header language button (`<button data-lang-toggle>`).
+ *
+ * It ships in the markup of ai, analytics, scanner and scrape, and it is
+ * styled as a normal control — but nothing wired it. Only login.html loads
+ * pages/login.js, which is the one place that ever bound this selector, so on
+ * the other four pages the button rendered, took focus, and did nothing at
+ * all. The sidebar switcher (injected by app.js) is the one that worked, and
+ * it lives inside a drawer that is closed on a phone.
+ *
+ * common.js is loaded on exactly those four pages and not on login.html, so
+ * binding here fixes them without double-binding the one that already works.
+ * Switching reloads, like the sidebar does, so anything already rendered from
+ * a fetch is rebuilt in the new language.
+ */
+(function () {
+  function wire() {
+    const buttons = document.querySelectorAll('[data-lang-toggle]');
+    if (!buttons.length || !window.arbiterI18n) return;
+    const target = () => (window.arbiterI18n.lang === 'ro' ? 'en' : 'ro');
+    const label = (code) => (code === 'ro' ? 'RO' : 'EN');
+    buttons.forEach((btn) => {
+      // Show the language you would land in, not the one you are already in.
+      btn.textContent = label(target());
+      btn.setAttribute('aria-label', window.arbiterI18n.t('language'));
+      if (btn.dataset.langToggleWired === '1') return;
+      btn.dataset.langToggleWired = '1';
+      btn.addEventListener('click', () => {
+        // The disabled attribute alone would be enough — a browser will not
+        // deliver a click to a disabled button — but the guard is repeated
+        // here so the handler is idempotent on its own terms rather than
+        // leaning on that.
+        if (btn.disabled) return;
+        const next = target();
+        if (next === window.arbiterI18n.lang) return;
+        btn.disabled = true;
+        window.arbiterI18n.setLang(next);
+        document.documentElement.lang = next;
+        location.reload();
+      });
+    });
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', wire);
+  } else {
+    wire();
+  }
+})();
+
+
+/**
  * Shared number formatting utilities for consistent display across all pages.
  *
  * All financial/betting values should use these formatters instead of

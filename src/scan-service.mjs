@@ -1,5 +1,5 @@
 import { join } from 'node:path';
-import { scanWorkspace } from './scanner/scanner.mjs';
+import { scanWorkspace, scanEnvelope, scanOptionsPayload } from './scanner/scanner.mjs';
 import { readJson } from './shared/atomic-write.mjs';
 import { csvRow } from './shared/csv.mjs';
 
@@ -9,20 +9,42 @@ import { csvRow } from './shared/csv.mjs';
  */
 
 /**
- * Return an empty scan result with the correct schema shape.
- * @param {{ scrapeRunId?: string }} opts
+ * The finding families and verification counters that sit on top of the
+ * envelope. An empty scan is a real scan that found nothing, not a different
+ * kind of object — it must carry every key a populated scan carries so a
+ * consumer can read a field without first checking whether the scan ran.
+ *
+ * A factory, not a shared frozen literal: the orchestrator hands this scan on
+ * to verification, which rewrites the families, and a frozen array shared
+ * between every empty scan would make one caller's mutation land on the next
+ * caller's object.
  */
-export function emptyScan({ scrapeRunId = null } = {}) {
+const emptyFindings = () => ({
+  opportunities: [],
+  middles: [],
+  positiveEv: [],
+  lowHold: [],
+  verificationSummary: { confirmed: 0, rejected: 0, expired: 0, unconfirmed: 0 },
+});
+
+/**
+ * A scan shaped exactly like a real one, with no findings in it.
+ *
+ * This used to be a hand-written 9-key object living beside a second
+ * hand-written 8-key copy in readLatestScan, and neither matched the 14 keys
+ * scanWorkspace actually writes: `id`, `options`, `scrapedAt`, `scanStartedAt`
+ * and `verificationSummary` were missing, so a dashboard that hit a failed run
+ * read `undefined` for the settings the scan was made under and for when the
+ * data was captured. The orchestrator publishes this on every failed or
+ * cancelled scrape, so that is the common case, not the rare one.
+ *
+ * @param {{ scrapeRunId?: string|null, options?: object|null }} [args]
+ * @returns {object} A scan in the full published shape.
+ */
+export function emptyScan({ scrapeRunId = null, options = null } = {}) {
   return {
-    schemaVersion: 2,
-    scrapeRunId,
-    dataHealth: { status: 'empty', actionableSourceCount: 0, sources: {} },
-    opportunities: [],
-    middles: [],
-    positiveEv: [],
-    lowHold: [],
-    sources: [],
-    eventCount: 0,
+    ...scanEnvelope({ scrapeRunId, sources: [], eventCount: 0, options: options || scanOptionsPayload() }),
+    ...emptyFindings(),
   };
 }
 
@@ -31,18 +53,9 @@ export async function runScan(args) {
 }
 
 export async function readLatestScan(dataDir) {
-  const scan = await readJson(join(dataDir, 'latest-scan.json'), null);
-  if (scan) return scan;
-  return {
-    schemaVersion: 2,
-    dataHealth: { status: 'empty', actionableSourceCount: 0, sources: {} },
-    opportunities: [],
-    middles: [],
-    positiveEv: [],
-    lowHold: [],
-    sources: [],
-    eventCount: 0,
-  };
+  // Before this called emptyScan, the two disagreed with each other on
+  // `scrapeRunId` and with a real scan on five more keys.
+  return await readJson(join(dataDir, 'latest-scan.json'), null) || emptyScan();
 }
 
 export async function readLatestCatalog(dataDir) {

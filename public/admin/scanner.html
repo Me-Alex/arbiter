@@ -27,6 +27,7 @@
       <div class="summary-item"><span class="summary-label" data-i18n="lastUpdated">Last updated</span><strong id="scan-updated">—</strong><span id="scan-events" class="summary-detail">—</span></div>
       <div class="summary-item"><span class="summary-label" data-i18n="signalMix">Signal mix</span><strong id="signal-mix">—</strong><span class="summary-detail" data-i18n="sortedByRoi">ROI-sorted opportunities</span></div>
       <div class="summary-item"><span class="summary-label" data-i18n="liveSignals">In-play signals</span><strong id="live-count">—</strong><span class="summary-detail" data-i18n="liveSignalsNote">Settle on the score as it stands</span></div>
+      <div class="summary-item"><span class="summary-label" data-i18n="verificationTotals">Verification</span><strong id="verification-mix" aria-live="polite">—</strong><span class="summary-detail" data-i18n="verificationTotalsNote">Rejected and expired rows are dropped from the tables below</span></div>
     </section>
 
     <div id="scan-sport-indicator" class="hidden mb-3"></div>
@@ -50,7 +51,7 @@
         <label class="checkbox" title="In-play events settle on the score as it stands, and their prices expire in 90 seconds">
           <input type="checkbox" id="inc-live"><span data-i18n="includeLive">include live</span>
         </label>
-        <span class="muted text-xs" data-i18n="livePreviewNote">Prices older than 90s are dropped from in-play results</span>
+        <span class="muted text-xs" id="live-window-note">—</span>
       </div>
     </div>
 

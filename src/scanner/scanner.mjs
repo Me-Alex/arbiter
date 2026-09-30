@@ -2,7 +2,7 @@ import { join } from 'node:path';
 import { promises as fs } from 'node:fs';
 import { groupByEvent, findArbitrage, findMiddles, findPositiveEV, findLowHold, buildSelectionIndex } from './engine.mjs';
 import { roundedArbitrageAllocation } from './market-contracts.mjs';
-import { DATA_STATUS, isActionableKickoff, snapshotQuality, sourceHealthSummary } from '../shared/data-quality.mjs';
+import { DATA_STATUS, isActionableKickoff, snapshotQuality, sourceHealthSummary, DEFAULT_PREMATCH_MAX_AGE_MS, DEFAULT_LIVE_MAX_AGE_MS } from '../shared/data-quality.mjs';
 import { feedGroupOf, sharedFeedPeers } from './feed-groups.mjs';
 import { round2 } from '../shared/math.mjs';
 import { tryReadJson, writeJsonAtomic } from '../shared/atomic-write.mjs';
@@ -213,6 +213,110 @@ export const DEFAULT_SCAN_OPTIONS = Object.freeze({
 });
 
 /**
+ * The `options` block every published scan carries, with the defaults filled in.
+ *
+ * The key list is the contract: the frontend reads `options.includeLive` to
+ * label a scan, and verification re-derives the whole scan from these values.
+ * Writing the list out at each call site is what let the two "empty scan"
+ * shapes in scan-service.mjs drift into objects missing five of these keys —
+ * a caller could not tell an empty result from a failed one, because the
+ * fields that would have said so were simply absent.
+ *
+ * @param {object} [overrides] Resolved values from a real scan call site.
+ * @returns {object} The options block, defaults applied.
+ */
+export function scanOptionsPayload(overrides = {}) {
+  return {
+    bankroll: DEFAULT_SCAN_OPTIONS.bankroll,
+    minRoiPercent: DEFAULT_SCAN_OPTIONS.minRoiPercent,
+    minEvPercent: DEFAULT_SCAN_OPTIONS.minEvPercent,
+    maxMiddleRiskPercent: DEFAULT_SCAN_OPTIONS.maxMiddleRiskPercent,
+    minMiddleRoiPercent: DEFAULT_SCAN_OPTIONS.minMiddleRoiPercent,
+    includeLive: DEFAULT_SCAN_OPTIONS.includeLive,
+    includePast: DEFAULT_SCAN_OPTIONS.includePast,
+    sourceIds: null,
+    sport: null,
+    // Resolved rather than left undefined. These were recorded as bare
+    // undefined, and `JSON.stringify` drops undefined keys — so the freshness
+    // windows a scan actually applied never reached latest-scan.json at all,
+    // while the UI spelled "90s" out by hand. A scan that records its own
+    // windows is the one that can be read back.
+    prematchMaxAgeMs: DEFAULT_PREMATCH_MAX_AGE_MS,
+    liveMaxAgeMs: DEFAULT_LIVE_MAX_AGE_MS,
+    ...overrides,
+  };
+}
+
+/**
+ * The per-source health verdict shown in the freshness banner.
+ *
+ * FRESH wins only when at least one source is fresh; otherwise the worst
+ * remaining status wins. CANCELLED/UNKNOWN sources degrade to EMPTY ("no
+ * usable data") rather than surfacing as a banner state.
+ *
+ * @param {object[]} sources
+ * @returns {string} A DATA_STATUS value.
+ */
+export function worstSourceStatus(sources = []) {
+  if (sources.some((source) => source.dataStatus === DATA_STATUS.FRESH)) return DATA_STATUS.FRESH;
+  if (sources.some((source) => source.dataStatus === DATA_STATUS.STALE)) return DATA_STATUS.STALE;
+  if (sources.some((source) => source.dataStatus === DATA_STATUS.PARTIAL)) return DATA_STATUS.PARTIAL;
+  if (sources.some((source) => source.dataStatus === DATA_STATUS.FAILED)) return DATA_STATUS.FAILED;
+  return DATA_STATUS.EMPTY;
+}
+
+/**
+ * The envelope every scan — full, empty, or failed — shares.
+ *
+ * The finding families and the verification summary are appended by the caller
+ * on top of this. Nothing that reaches the frontend may be shaped any other
+ * way: `emptyScan()` and the "no scan on disk" fallback in scan-service.mjs
+ * both build their answer from here, which is the only reason they cannot
+ * drift from a real scan again. test/scan-contract.test.mjs pins that.
+ *
+ * @param {object} [args]
+ * @param {string} [args.capturedAt] When the underlying observations were taken.
+ * @param {string|null} [args.scrapeRunId]
+ * @param {object[]} [args.sources]
+ * @param {number} [args.eventCount]
+ * @param {object} [args.options] Already resolved; see scanOptionsPayload.
+ * @returns {object} The shared envelope.
+ */
+export function scanEnvelope({
+  capturedAt = new Date().toISOString(),
+  scrapeRunId = null,
+  sources = [],
+  eventCount = 0,
+  options = scanOptionsPayload(),
+} = {}) {
+  return {
+    schemaVersion: 2,
+    id: `scan-${Date.now()}`,
+    scrapedAt: capturedAt,
+    scanStartedAt: new Date().toISOString(),
+    scrapeRunId,
+    /**
+     * Top-level data health contract:
+     * - `actionableSourceCount`: number of sources with status FRESH.
+     * - `status`: the worst per-source health (see worstSourceStatus). This is
+     *   what the frontend freshness banner consumes — it differs from
+     *   per-source `dataStatus` (which lives on each snapshot source).
+     * - `sources`: per-source quality summary, keyed by status and always
+     *   carrying every DATA_STATUS at 0 so the count is stable for consumers
+     *   that read a key without checking it first.
+     */
+    dataHealth: {
+      actionableSourceCount: sources.filter((source) => source.dataStatus === DATA_STATUS.FRESH).length,
+      sources: sourceHealthSummary(sources),
+      status: worstSourceStatus(sources),
+    },
+    options,
+    sources,
+    eventCount,
+  };
+}
+
+/**
  * @param {object} args
  * @param {string} args.dataDir
  * @param {string[]} [args.sourceIds]
@@ -242,8 +346,12 @@ export async function scanWorkspace(args) {
     includeLive = DEFAULT_SCAN_OPTIONS.includeLive,
     includePast = DEFAULT_SCAN_OPTIONS.includePast,
     publish = true,
-    prematchMaxAgeMs,
-    liveMaxAgeMs,
+    // Named explicitly rather than left undefined, so the windows this scan
+    // applied are the ones it also records in `options`. They match
+    // snapshotQuality's own defaults, so this states the existing behaviour
+    // instead of changing it.
+    prematchMaxAgeMs = DEFAULT_PREMATCH_MAX_AGE_MS,
+    liveMaxAgeMs = DEFAULT_LIVE_MAX_AGE_MS,
     sport = null,
   } = args;
 
@@ -276,53 +384,27 @@ export async function scanWorkspace(args) {
   const middles = findMiddles(grouped, { maxMiddleRiskPercent, minMiddleRoiPercent }).map((opportunity) => withBankroll(opportunity, bankroll));
   const positiveEv = findPositiveEV(grouped, { minEvPercent }).map((opportunity) => withBankroll(opportunity, bankroll));
   const lowHold = findLowHold(grouped);
-  const quality = sourceHealthSummary(sources);
 
   const scan = {
-    schemaVersion: 2,
-    id: `scan-${Date.now()}`,
-    scrapedAt: capturedAt,
-    scanStartedAt: new Date().toISOString(),
-    scrapeRunId: scrapeRunId || commonRunId(sources),
-    /**
-     * Top-level data health contract:
-     * - `actionableSourceCount`: number of sources with status FRESH.
-     * - `status`: derives the WORST per-source health (FRESH wins only when
-     *   >=1 source is fresh, then STALE > PARTIAL > FAILED > EMPTY). This is
-     *   what the frontend freshness banner consumes — it differs from
-     *   per-source `dataStatus` (which lives on each snapshot source).
-     *   CANCELLED/UNKNOWN sources intentionally degrade to EMPTY ("no usable
-     *   data") rather than surfacing as a banner state.
-     * - `sources`: per-source quality summary (see `quality` above).
-     */
-    dataHealth: {
-      actionableSourceCount: sources.filter((source) => source.dataStatus === DATA_STATUS.FRESH).length,
-      sources: quality,
-      status: sources.some((source) => source.dataStatus === DATA_STATUS.FRESH)
-        ? DATA_STATUS.FRESH
-        : sources.some((source) => source.dataStatus === DATA_STATUS.STALE)
-          ? DATA_STATUS.STALE
-          : sources.some((source) => source.dataStatus === DATA_STATUS.PARTIAL)
-            ? DATA_STATUS.PARTIAL
-            : sources.some((source) => source.dataStatus === DATA_STATUS.FAILED)
-              ? DATA_STATUS.FAILED
-              : DATA_STATUS.EMPTY,
-    },
-    options: {
-      bankroll,
-      minRoiPercent,
-      minEvPercent,
-      maxMiddleRiskPercent,
-      minMiddleRoiPercent,
-      includeLive,
-      includePast,
-      sourceIds: sourceIds || null,
-      sport,
-      prematchMaxAgeMs,
-      liveMaxAgeMs,
-    },
-    sources,
-    eventCount: filtered.length,
+    ...scanEnvelope({
+      capturedAt,
+      scrapeRunId: scrapeRunId || commonRunId(sources),
+      sources,
+      eventCount: filtered.length,
+      options: scanOptionsPayload({
+        bankroll,
+        minRoiPercent,
+        minEvPercent,
+        maxMiddleRiskPercent,
+        minMiddleRoiPercent,
+        includeLive,
+        includePast,
+        sourceIds: sourceIds || null,
+        sport,
+        prematchMaxAgeMs,
+        liveMaxAgeMs,
+      }),
+    }),
     opportunities,
     middles,
     positiveEv,
