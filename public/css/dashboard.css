@@ -114,6 +114,18 @@ background: var(--source-color, var(--accent));
   font: var(--fs-xs)/1.4 var(--font-mono);
   margin-top: 3px;
 }
+/* Which books this one cannot be paired against. Sits on the name line so the
+   rows stay one line tall; the peers list runs long — winbet has five — so it
+   truncates and the full list stays in the title. min-width is what lets a flex
+   child shrink at all, without which the name column pushes the bar off-screen. */
+.source-row .source-feed {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 10.5px;
+  color: var(--text-muted);
+}
 /* Why the book is in the state it is in, translated. Dimmer than the meta line
    because it qualifies the badge rather than describing the book, and it wraps
    instead of truncating: a reason cut off mid-sentence explains nothing. */

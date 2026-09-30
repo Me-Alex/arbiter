@@ -56,6 +56,42 @@ function sourceHealthRows(sources) {
 }
 
 /**
+ * Which other books this one cannot be paired against, and why.
+ *
+ * `sharedFeedPeers` is annotated onto every source for exactly this purpose —
+ * "so the UI can say why a pairing was not considered" (feed-groups.mjs:114) —
+ * and no page said it. The annotation cannot live on an opportunity either: a
+ * shared-feed pair is absent from every list by construction, so there is no
+ * leg row to hang it on. A book list is the only place a reader ever meets it.
+ *
+ * It is not a rare case. Over the capture, with 22 books fresh, the engine
+ * refused 178,660 pairings across 24 distinct book pairs, the largest being
+ * casa-pariurilor/fortuna at 14,262. A reader who sees thousands of +EV rows and
+ * no arbitrage between two brands has no other way to learn the answer.
+ *
+ * The group slug is deliberately not shown. `feedGroup` reads `nsoft-company`,
+ * `exalogic-xsport`, `everymatrix-wamp` — operator identifiers, the same
+ * mistake the market key was on the catalog page. What a reader needs is which
+ * books, and `sharedFeedWith` is already that list.
+ *
+ * @param {object} [source] - One record of the scan's `sources` array.
+ * @param {(key: string) => string} t - The dictionary lookup.
+ * @returns {string} Empty for a book that stands alone.
+ */
+function sourceFeedNote(source, t) {
+  const clones = Number((source && source.duplicateFeedEvents) || 0);
+  const peers = Array.isArray(source && source.sharedFeedWith)
+    ? source.sharedFeedWith.filter(Boolean)
+    : [];
+  const parts = [];
+  // Clones first: a book whose feed was caught out at runtime is a stronger
+  // statement than one whose group was declared up front.
+  if (clones > 0) parts.push(t('droppedClones').replace('{count}', String(clones)));
+  if (peers.length) parts.push(`${t('sameFeedAs')}: ${peers.join(', ')}`);
+  return parts.join(' · ');
+}
+
+/**
  * The badge text for a data status, in the page's language.
  *
  * This card rendered `source.dataStatus` raw, so a Romanian page showed
@@ -253,6 +289,7 @@ async function refresh() {
       const pal = paletteFor(source.sourceId);
       const initials = String(source.sourceId || '?').slice(0, 2);
       const reason = sourceReasonText(source, t);
+      const feedNote = sourceFeedNote(source, t);
       // Freshness bar: 100% = fresh, decreasing with age
       const maxAge = 3600000; // 1h = fully stale
       const freshness = source.ageMs ? Math.max(0, Math.min(100, (1 - source.ageMs / maxAge) * 100)) : 100;
@@ -260,7 +297,7 @@ async function refresh() {
       return `<div class="source-row" style="--source-color:${pal.color};--source-bg:${pal.bg};--source-border:${pal.border};">
         <div class="source-avatar" aria-hidden="true">${escapeHtml(initials)}</div>
         <div style="min-width:0">
-          <div class="source-name">${escapeHtml(source.sourceId || '—')}</div>
+          <div class="source-name">${escapeHtml(source.sourceId || '—')}${feedNote ? `<span class="chip source-feed" title="${escapeHtml(feedNote)}">${escapeHtml(feedNote)}</span>` : ''}</div>
           <div class="source-meta">${Number(source.count || 0).toLocaleString()} ${t('events')}${source.ageMs ? ` · ${window.arbiterFormat?.timeAgo(source.ageMs) || '—'}` : ''}</div>
           ${reason ? `<div class="source-reason">${escapeHtml(reason)}</div>` : ''}
         </div>

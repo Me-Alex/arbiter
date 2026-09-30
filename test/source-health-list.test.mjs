@@ -79,7 +79,7 @@ const sourceHealthRows = (() => {
 const pageFns = (() => {
   const context = {};
   vm.createContext(context);
-  for (const name of ['sourceStatusLabel', 'sourceReasonText']) {
+  for (const name of ['sourceStatusLabel', 'sourceReasonText', 'sourceFeedNote']) {
     vm.runInContext(extractFn(name, dashboardSource), context);
   }
   return context;
@@ -271,6 +271,63 @@ test('the row puts the reason on the card, not only into a helper', () => {
   assert.match(dashboardCss, /\.source-row \.source-reason\s*\{/, 'the reason has no style rule');
 });
 
+test('a book names the others it cannot be paired against', () => {
+  // Measured over the capture: 16 of 22 books stand in six groups, and winbet
+  // carries five peers. Without a name the reader cannot tell an absent pairing
+  // from an absent opportunity.
+  const note = pageFns.sourceFeedNote({ sourceId: 'winbet', sharedFeedWith: ['don', 'topbet', 'million', 'powerbet', 'baumbet'] }, ro);
+  assert.match(note, /don/, 'the peers are not named');
+  assert.equal(['don', 'topbet', 'million', 'powerbet', 'baumbet'].filter((p) => note.includes(p)).length, 5,
+    'every peer is named, not a sample of them');
+  assert.ok(!note.includes('altenar-tenancy'), 'the operator slug reached the reader');
+  assert.notEqual(pageFns.sourceFeedNote({ sourceId: 'winbet', sharedFeedWith: ['don'] }, en), note,
+    'the note is not translated');
+
+  // The negative control beside it: a book that stands alone gets nothing. A
+  // chip on every row would be wallpaper, and the census would be satisfied by
+  // a note that says nothing.
+  assert.equal(pageFns.sourceFeedNote({ sourceId: 'admiral2', sharedFeedWith: [] }, ro), '');
+  assert.equal(pageFns.sourceFeedNote({ sourceId: 'admiral2' }, ro), '');
+  assert.equal(pageFns.sourceFeedNote({}, ro), '');
+  assert.equal(pageFns.sourceFeedNote(null, ro), '');
+});
+
+test('a feed caught out at runtime says so, and the two halves stay distinguishable', () => {
+  // duplicateFeedEvents is the measured proof that a feed was shared, where
+  // sharedFeedWith is the declared group. Zero across this capture, and proven
+  // reachable — test/altenar-public.test.mjs:166 asserts a book at 2.
+  const note = pageFns.sourceFeedNote(
+    { sourceId: 'winbet', sharedFeedWith: ['don'], duplicateFeedEvents: 2 },
+    ro,
+  );
+  assert.match(note, /2/, 'the dropped count is not shown');
+  assert.match(note, /don/, 'and the declared peers are not shown either');
+  // Zero must not print "0 events", which would be a claim about the scan.
+  assert.ok(!/^0/.test(note), `a book with no clones still carries a note: ${note}`);
+  assert.equal(pageFns.sourceFeedNote({ sourceId: 'x', duplicateFeedEvents: 0 }, ro), '');
+});
+
+test('the row shows the feed note, and it truncates rather than pushing the row apart', () => {
+  // Same trap as the reason: a helper nobody calls. And a list five names long
+  // has to degrade, since the bar and the badge sit on the same row.
+  assert.match(dashboardSource, /const feedNote = sourceFeedNote\(source, t\)/,
+    'the row no longer asks for the feed note');
+  assert.match(dashboardSource, /class="chip source-feed"/, 'the note has no element on the card');
+  assert.match(dashboardSource, /title="\$\{escapeHtml\(feedNote\)\}"/,
+    'the full list is not available once the chip truncates');
+
+  // Scoped to the rule's own body. A lazy `[\s\S]*?` past the closing brace
+  // matched `text-overflow: ellipsis` belonging to two unrelated rules further
+  // down the file, so the mutant that deleted it from this one still passed:
+  // an assertion that can be satisfied by a stranger's declaration is not an
+  // assertion about this rule.
+  const rule = /\.source-row \.source-feed\s*\{([^}]*)\}/.exec(dashboardCss);
+  assert.ok(rule, '.source-feed has no rule');
+  assert.match(rule[1], /text-overflow:\s*ellipsis/, 'a long peer list would push the row apart instead of truncating');
+  assert.match(rule[1], /min-width:\s*0/, 'a flex child without min-width cannot shrink at all');
+  assert.match(rule[1], /overflow:\s*hidden/, 'and without overflow the ellipsis never appears');
+});
+
 /**
  * Every reason code the backend can put on a book, lifted from the producer.
  *
@@ -410,22 +467,11 @@ const UNREAD_WITH_REASON = {
     'useful thing to put on a card whose question is which books are fresh.',
   ].join(' '),
   feedGroup: [
-    'The engine already refuses shared-feed pairings (engine.mjs:502, 590, 632, 721 through',
-    'isSharedFeed), so no opportunity on screen is built from a clone of the same feed.',
-    'feed-groups.mjs:114-117 does say the UI is meant to explain an absent pairing, and that',
-    'is a real missing surface — but it is an absent one, not a field this card mis-renders.',
-    'Sixteen of the twenty-two books are in a group, in six groups.',
-  ].join(' '),
-  sharedFeedWith: [
-    'With feedGroup, and the nearest thing to a defect here: the peers list is measured data',
-    '(admiral -> [stanleybet], winbet -> five peers) and no page shows it. Same reason, and',
-    'the same missing surface the feed-groups comment already describes.',
-  ].join(' '),
-  duplicateFeedEvents: [
-    'The runtime evidence behind sharedFeedWith: events dropped as byte-identical to another',
-    "book's feed (scanner.mjs:119). Zero across the twenty-two books of this capture, and",
-    'proven reachable — test/altenar-public.test.mjs:166 asserts a book at 2. Nothing on',
-    'screen is built from them, for the same reason as the group it discovers.',
+    'The identity behind sharedFeedWith, and deliberately not rendered: its values read',
+    'nsoft-company, exalogic-xsport and everymatrix-wamp, which are operator slugs — the',
+    'same mistake the market key was on the catalog page. What a reader needs is which',
+    'books, and sharedFeedWith is already that list, so showing the slug would add an',
+    'identifier and remove nothing.',
   ].join(' '),
   observedAt: 'The card shows the derived age next to each book; the exact instant is a log detail.',
   capturedAt: 'With observedAt, and the two differ by sixty-one milliseconds on this capture.',
@@ -460,14 +506,17 @@ test('every field the scanner writes on a book is read by a page, or is named wi
   const readByAPage = (name) => new RegExp(`\\bsources?\\w*\\.${name}\\b`).test(corpus);
 
   // The four the card has always read, plus the three that turned a published
-  // English sentence into something the page can say out loud.
-  for (const name of ['sourceId', 'count', 'ageMs', 'dataStatus', 'dataReason', 'dataReasonCode', 'dataReasonParams']) {
+  // English sentence into something the page can say out loud, plus the peers a
+  // reader needs to understand an absent pairing.
+  for (const name of [
+    'sourceId', 'count', 'ageMs', 'dataStatus', 'dataReason', 'dataReasonCode', 'dataReasonParams',
+    'sharedFeedWith', 'duplicateFeedEvents',
+  ]) {
     assert.equal(readByAPage(name), true, `${name} is read today; the search that must find it does not`);
   }
   for (const name of [
-    'file', 'runId', 'sourceUrl', 'observedAt', 'capturedAt', 'transport', 'feedGroup', 'sharedFeedWith',
+    'file', 'runId', 'sourceUrl', 'observedAt', 'capturedAt', 'transport', 'feedGroup',
     'implausibleMarginCount', 'implausibleMarginRate', 'implausibleMarketCount',
-    'duplicateFeedEvents',
   ]) {
     assert.equal(readByAPage(name), false, `${name} is named as unread but something reads it now`);
   }
