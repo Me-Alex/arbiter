@@ -14,3 +14,20 @@ dialog.arbiter-modal {
     dialog.arbiter-modal .grid { display:grid; grid-template-columns:1fr 1fr; gap:var(--s-4); }
     dialog.arbiter-modal .field span { font-size:11px; color:var(--text-muted); display:block; margin-bottom:4px; }
     dialog.arbiter-modal input, dialog.arbiter-modal select { width:100%; }
+
+/* Tracker: the two fields the backend stores per bet and the table did not
+   show. The note is free text up to 1000 characters and the origin is one
+   word, so both ride under the cell they belong to as a clamped second line
+   rather than as two more columns on a table that is already nine wide. The
+   full note stays in the title, because a note the reader has to guess at is
+   not shown at all. */
+#tracker-table td .bet-note,
+#tracker-table td .bet-origin {
+  display: block;
+  max-width: 26ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+#tracker-table td .bet-origin { color: var(--text-muted); font-size: 11px; }
+#tracker-table td .bet-when-updated { color: var(--text-muted); font-size: 11px; white-space: nowrap; }

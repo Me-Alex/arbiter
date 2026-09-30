@@ -4,6 +4,11 @@ arbiterApp.mount('analytics');
 
     // Skeleton loading states for tables while data loads
     const TABLE_SKELETON_ROWS = 4;
+    // The tracker table's real width. It was 8 while the header row had 8
+    // <th>s; adding the placed-at column means the loading state and the empty
+    // state have to move with it or a slow /api/tracker paints one wide cell
+    // across a nine-column table.
+    const TRACKER_COLS = 9;
     function skeletonRow(cols) {
       return `<tr class="loading-row"><td colspan="${cols}"><div class="skeleton skeleton-line" style="width:${60 + Math.random() * 30}%"></div></td></tr>`;
     }
@@ -13,13 +18,49 @@ arbiterApp.mount('analytics');
     }
 
     // Show skeleton loading immediately
-    showTableSkeleton('tracker-table', 8);
+    showTableSkeleton('tracker-table', TRACKER_COLS);
     showTableSkeleton('catalog-table', 4);
 
     function eventLabel(value) {
       const parts = String(value || '').split('|').slice(-2);
       const vs = arbiterI18n.t.bind(arbiterI18n)('vs');
       return parts.map(escapeHtml).join(` <span class="muted">${vs}</span> `);
+    }
+
+    /**
+     * A stored timestamp, or an em dash when there is not one.
+     *
+     * `createdAt` is written by the service on every bet and `updatedAt` only
+     * once a row has been settled, so the second is genuinely optional. The
+     * falsy check is the load-bearing part: `new Date(null)` is the epoch and
+     * `new Date(0)` is too, so without it a bet with no date at all is stamped
+     * 1 January 1970 and reads as a fact about the bet rather than as a gap in
+     * the record. The service writes an ISO string, so a falsy number arriving
+     * here is an uninitialised field, not a placement in 1970.
+     */
+    function fmtWhen(value) {
+      if (!value) return '—';
+      const parsed = new Date(value);
+      return Number.isFinite(parsed.getTime()) ? parsed.toLocaleString() : '—';
+    }
+
+    /**
+     * What to say about an import the route has just run.
+     *
+     * The route counts what it skipped, and the answer used to be thrown away:
+     * a file whose rows were mostly unusable closed the dialog and re-rendered
+     * a shorter table, which is exactly what a clean import looks like. Three
+     * answers, because "nothing happened" and "something happened and here is
+     * what was lost" are the two cases a silent re-render folds into one.
+     */
+    function importSummary(result, t) {
+      const imported = Number(result?.imported) || 0;
+      const skipped = Number(result?.skipped) || 0;
+      if (!imported && !skipped) return { message: t('toastImportEmpty'), type: 'warning' };
+      if (skipped) {
+        return { message: t('toastImportPartial').replace('{n}', String(imported)).replace('{skipped}', String(skipped)), type: 'warning' };
+      }
+      return { message: t('toastImportDone').replace('{n}', String(imported)), type: 'success' };
     }
 
     async function init() {
@@ -77,10 +118,22 @@ arbiterApp.mount('analytics');
       $('tracker-count').textContent = `${items.length} ${t(items.length === 1 ? 'item' : 'items')}`;
       tb.innerHTML = items.length ? items.map((b) => `
         <tr class="${b.status === 'won' ? 'row-confirmed' : b.status === 'lost' ? 'row-rejected' : ''}">
+          <td><div>${escapeHtml(fmtWhen(b.createdAt))}</div>${
+            b.updatedAt ? `<div class="bet-when-updated">${escapeHtml(t('betUpdated'))} ${escapeHtml(fmtWhen(b.updatedAt))}</div>` : ''
+          }</td>
           <td><div class="strong">${eventLabel(b.eventKey)}</div></td>
           <td class="mono text-xs">${escapeHtml(b.marketKey || '')}</td>
-          <td>${escapeHtml(b.selection || '')}</td>
-          <td class="mono accent">${escapeHtml(b.sourceId || '')}</td>
+          <td><div>${escapeHtml(b.selection || '')}</div>${
+            // The note is the one field on this bet the table had no place for
+            // at all, and the only way one gets in is the CSV import this page
+            // offers — so an imported bet's own annotation was unreadable after
+            // the import that carried it. Clamped, with the full text on the
+            // title, because 1000 characters of free prose is not a column.
+            b.notes ? `<span class="bet-note muted text-xs" title="${escapeHtml(b.notes)}">${escapeHtml(b.notes)}</span>` : ''
+          }</td>
+          <td><div class="mono accent">${escapeHtml(b.sourceId || '')}</div>${
+            b.provenance ? `<span class="bet-origin">${escapeHtml(b.provenance)}</span>` : ''
+          }</td>
           <td class="num tabnum">${(b.odds || 0).toFixed(2)}</td>
           <td class="num tabnum">${(b.stake || 0).toFixed(2)}</td>
           <td><span class="status ${escapeHtml(b.status || 'pending')}">${escapeHtml(b.status || 'pending')}</span></td>
@@ -98,7 +151,7 @@ arbiterApp.mount('analytics');
             </div>
           </td>
         </tr>
-      `).join('') : `<tr><td colspan="8"><div class="empty">
+      `).join('') : `<tr><td colspan="${TRACKER_COLS}"><div class="empty">
             <div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
             <div>${escapeHtml(t('noBets'))}</div>
           </div></td></tr>`;
@@ -183,9 +236,13 @@ arbiterApp.mount('analytics');
         return;
       }
       try {
-        await arbiterApi.post('/api/tracker/import', { csv });
+        const result = await arbiterApi.post('/api/tracker/import', { csv });
         importCsvDialog.close();
         renderTracker(await arbiterApi.get('/api/tracker'));
+        if (typeof window.showToast === 'function') {
+          const summary = importSummary(result, t);
+          window.showToast(summary.message, summary.type);
+        }
       } catch (err) {
         importCsvError.textContent = err.message || t('failedImport');
         importCsvError.classList.remove('hidden');

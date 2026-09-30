@@ -64,11 +64,15 @@ export class TrackerService {
     return out;
   }
 
-  async addBet(item) {
+  /**
+   * Add a bet. The second argument is internal — the HTTP route never passes
+   * it, so a client still cannot choose its own placed-at date.
+   */
+  async addBet(item, { createdAt } = {}) {
     const t = await this.loadTracker();
     const entry = normalizeBet(item, {
       id: `bet-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-      createdAt: new Date().toISOString(),
+      createdAt: createdAt || new Date().toISOString(),
     });
     t.items.push(entry);
     t.updatedAt = new Date().toISOString();
@@ -108,22 +112,57 @@ export class TrackerService {
     return rows.join('\n');
   }
 
+  /**
+   * Import rows from a pasted CSV, and say what happened to every one of them.
+   *
+   * Two things were wrong here and they are the same thing seen from two ends.
+   *
+   * The gate was a second opinion of the service's own validation, and it
+   * disagreed: it required an `eventKey`, which nothing in this app ever
+   * produces. Every bet typed into the add-bet form on the analytics page has
+   * an empty one, so exporting your own file and importing it back dropped
+   * every bet you had entered by hand — silently, since the count was
+   * discarded. normalizeBet is the authority on what a usable bet is; a row it
+   * rejects is skipped and counted, a row it accepts is imported.
+   *
+   * And `skipped` did not exist at all, so a file where most rows were
+   * unusable closed the dialog and re-rendered a shorter table, which is
+   * indistinguishable from a clean import.
+   */
   async importCsv(csv) {
     const lines = String(csv || '').split(/\r?\n/).filter(Boolean);
-    if (lines.length === 0) return { imported: 0 };
+    if (lines.length === 0) return { imported: 0, skipped: 0 };
     const headers = parseCsvLine(lines[0]);
     let imported = 0;
+    let skipped = 0;
     for (let i = 1; i < lines.length; i++) {
       const cells = parseCsvLine(lines[i]);
       const row = {};
       headers.forEach((h, idx) => { row[h] = cells[idx] ?? ''; });
-      if (!row.eventKey || !row.selection) continue;
-      if (Number.isFinite(Number(row.odds))) row.odds = Number(row.odds);
-      if (Number.isFinite(Number(row.stake))) row.stake = Number(row.stake);
-      await this.addBet({ ...row, provenance: 'import' });
-      imported++;
+      // No numeric coercion here. It used to sit next to this loop, converting
+      // the odds and stake cells before normalizeBet saw them — and
+      // normalizeBet runs `Number()` on both itself and rejects anything not
+      // finite, so the conversion changed nothing that the gate did not
+      // already decide. Two lines that looked like a contract and were a copy
+      // of the one below.
+      //
+      // `provenance` is re-labelled on purpose and is not in the export: the
+      // file does not record where this app learned a bet from, only the bet.
+      // The id stays fresh too — see addBet — but the placed-at date is data
+      // the user can see and correct, so a re-imported bet keeps the date it
+      // was placed rather than the date the import ran.
+      try {
+        await this.addBet({ ...row, provenance: 'import' }, { createdAt: usableTimestamp(row.createdAt) });
+        imported++;
+      } catch (err) {
+        // Only bad input is a skip. Anything else — a disk that will not take
+        // the write — is the operator's problem to hear about, not a row to
+        // quietly drop and report as a clean import.
+        if (err?.code !== 'EBADINPUT') throw err;
+        skipped++;
+      }
     }
-    return { imported };
+    return { imported, skipped };
   }
 
   /**
@@ -191,4 +230,19 @@ function allowedBetPatch(patch) {
 function cleanText(value, maxLength) {
   // eslint-disable-next-line no-control-regex
   return String(value ?? '').replace(/[\u0000-\u001f\u007f]/g, ' ').trim().slice(0, maxLength);
+}
+
+/**
+ * The placed-at date a CSV row carries, when it is a date at all.
+ *
+ * The export writes `createdAt`, so a file the user edits and re-imports is
+ * meant to bring the original date back. Before this, every re-imported bet
+ * claimed it had been placed at the moment of the import — a ledger rewriting
+ * its own history, with the original date sitting in the file the user was
+ * looking at. Anything unparseable comes back null and the caller stamps now.
+ */
+function usableTimestamp(value) {
+  const raw = String(value ?? '').trim();
+  if (!raw || !Number.isFinite(Date.parse(raw))) return null;
+  return new Date(raw).toISOString();
 }
