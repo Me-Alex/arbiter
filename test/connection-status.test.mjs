@@ -10,6 +10,9 @@ import assert from 'node:assert/strict';
 
 const src = readFileSync(join(import.meta.dirname, '..', 'public/js/connection-status.js'), 'utf8');
 const i18nSrc = readFileSync(join(import.meta.dirname, '..', 'public/js/i18n.js'), 'utf8');
+// The chip paints itself with class names, and nothing else in this file can
+// see whether the stylesheet defines them — see the "classes it writes" suite.
+const themeCss = readFileSync(join(import.meta.dirname, '..', 'public/css/theme.css'), 'utf8');
 
 // Extract the `const dict = { ro: {...}, en: {...} };` literal from i18n.js by
 // brace matching, then evaluate it so the sandbox uses the REAL dictionary.
@@ -80,8 +83,10 @@ function extractFn(name, from = src) {
 
 const fnSrc = `${extractFn('decideStateTransition')}
 ${extractFn('decideHealthBanner')}
-return { decideStateTransition, decideHealthBanner };`;
-const { decideStateTransition, decideHealthBanner } = new Function(fnSrc)();
+${extractFn('formatUptime')}
+${extractFn('decideHealthChip')}
+return { decideStateTransition, decideHealthBanner, formatUptime, decideHealthChip };`;
+const { decideStateTransition, decideHealthBanner, formatUptime, decideHealthChip } = new Function(fnSrc)();
 
 const T0 = 1_000_000;
 
@@ -189,19 +194,120 @@ describe('decideHealthBanner', () => {
   });
 });
 
-// ── IIFE plumbing integration ──────────────────────────────────────────────
-// Evaluate the WHOLE module in a sandbox with a DOM shim, then drive the
+describe('formatUptime', () => {
+  it('renders sub-minute uptimes in seconds', () => {
+    assert.equal(formatUptime(0), '0s');
+    assert.equal(formatUptime(1), '1s');
+    assert.equal(formatUptime(45), '45s');
+    assert.equal(formatUptime(59), '59s');
+  });
+
+  it('switches to minutes at 60 and drops the seconds that follow', () => {
+    // Seconds are printed only when no larger unit exists, so a chip reading
+    // '5h 12m' ticks once a minute instead of changing on every 30s poll.
+    // (This caught the first implementation, which returned '1m 30s' for 90 —
+    // the code and its own comment disagreed, and the comment was the intent.)
+    assert.equal(formatUptime(60), '1m');
+    assert.equal(formatUptime(90), '1m');
+    assert.equal(formatUptime(3599), '59m');
+    assert.equal(formatUptime(3600), '1h');
+  });
+
+  it('keeps at most two units, largest first', () => {
+    assert.equal(formatUptime(3661), '1h 1m');
+    assert.equal(formatUptime(90061), '1d 1h'); // 1d 1h 1m 1s → the tail is dropped
+    assert.equal(formatUptime(93784), '1d 2h');
+    assert.equal(formatUptime(172800), '2d');
+    // The one that separates truncation from rounding: 86399/86400 is 0.99998,
+    // which rounds up to a whole day and would print '1d' for 23h 59m of
+    // uptime. It is also what pins the floor() inside the loop.
+    assert.equal(formatUptime(86399), '23h 59m');
+  });
+
+  it('truncates a fractional input', () => {
+    assert.equal(formatUptime(90061.9), '1d 1h');
+    assert.equal(formatUptime(59.9), '59s');
+    assert.equal(formatUptime(86399.9), '23h 59m');
+  });
+
+  it('refuses anything that is not a usable number', () => {
+    // The trap this guards: Number(null), Number('') and Number([]) are all 0,
+    // so a coerced read would print '0s' for a value the server never sent —
+    // a chip claiming a process that has been up for zero seconds.
+    for (const bad of [null, undefined, '', '90061', [], {}, NaN, Infinity, -Infinity, -1]) {
+      assert.equal(formatUptime(bad), '', `formatUptime(${JSON.stringify(bad) ?? String(bad)}) must not invent a value`);
+    }
+  });
+});
+
+describe('decideHealthChip', () => {
+  it('is unreachable when there is no payload at all', () => {
+    const r = decideHealthChip(null);
+    assert.equal(r.state, 'unreachable');
+    assert.equal(r.className, 'chip red');
+    assert.equal(r.uptimeText, '');
+  });
+
+  it('is ok with the uptime when the payload carries one', () => {
+    const r = decideHealthChip({ ok: true, uptimeSeconds: 90061, timestamp: 'x' });
+    assert.equal(r.state, 'ok');
+    assert.equal(r.className, 'chip green');
+    assert.equal(r.uptimeSeconds, 90061);
+    assert.equal(r.uptimeText, '1d 1h');
+  });
+
+  it('treats a just-started process as ok, not as unknown', () => {
+    // 0 is a real reading, and the only one that would be flattened to ''
+    // by a truthiness test.
+    const r = decideHealthChip({ uptimeSeconds: 0 });
+    assert.equal(r.state, 'ok');
+    assert.equal(r.uptimeText, '0s');
+  });
+
+  it('floors the uptime it reports', () => {
+    assert.equal(decideHealthChip({ uptimeSeconds: 90061.9 }).uptimeSeconds, 90061);
+  });
+
+  it('does not read the payload\'s own ok flag', () => {
+    // src/router.mjs hardcodes ok: true, so a constant is not a signal.
+    // Pinned here so nobody "fixes" this into a trust-the-flag check.
+    const r = decideHealthChip({ ok: false, uptimeSeconds: 90061 });
+    assert.equal(r.state, 'ok');
+  });
+
+  it('is unknown — not unreachable — when the body is not the payload', () => {
+    // The route answered 200 with something this chip cannot read. Painting
+    // that red would report an outage that is not happening.
+    for (const payload of [{}, { uptimeSeconds: null }, { uptimeSeconds: 'x' }, { uptimeSeconds: -5 }, { uptimeSeconds: NaN }, { uptimeSeconds: Infinity }]) {
+      const r = decideHealthChip(payload);
+      assert.equal(r.state, 'unknown', `${JSON.stringify(payload)} must not read as ok`);
+      assert.equal(r.className, 'chip yellow');
+      assert.equal(r.uptimeText, '');
+    }
+  });
+});
+
+// ── IIFE plumbing integration ──────────────────────────────────────────────// Evaluate the WHOLE module in a sandbox with a DOM shim, then drive the
 // exported window.arbiterConnectionStatus.setDataHealth / setState to verify
 // the full path (decision fn → DOM effect), not just the pure functions.
 
+// A DOM shim just large enough for this module: children, because the
+// health chip is BUILT here (three nested spans) and inserted after the
+// connection chip; textContent, kept as its own property from innerHTML so a
+// test can prove which of the two the module writes to.
 function el(tag) {
   const node = {
     tagName: tag,
     id: '',
     className: '',
     innerHTML: '',
+    textContent: '',
+    title: '',
     _removed: false,
     _listeners: {},
+    _children: [],
+    parentNode: null,
+    nextSibling: null,
     classList: {
       _s: new Set(),
       add(...c) { c.forEach((x) => this._s.add(x)); this._sync(); },
@@ -213,27 +319,62 @@ function el(tag) {
     getAttribute(k) { return this[k] ?? null; },
     addEventListener(ev, fn) { (this._listeners[ev] ||= []).push(fn); },
     remove() { this._removed = true; },
-    insertBefore(child) { this._firstChild = child; },
+    insertBefore(child, ref) { this._firstChild = child; },
+    appendChild(child) { child.parentNode = node; node._children.push(child); return child; },
+    querySelector(sel) {
+      if (sel === '.dot') return node._children.find((c) => /(^|\s)dot(\s|$)/.test(c.className)) || null;
+      if (sel === 'span:last-child') {
+        const last = node._children[node._children.length - 1];
+        return last && last.tagName === 'span' ? last : null;
+      }
+      return null;
+    },
   };
   return node;
 }
 
-function runModuleSandbox({ noMain = false, withApi = false } = {}) {
+function runModuleSandbox({ noMain = false, withApi = false, noAnchor = false, health } = {}) {
   // Fresh DOM shim per invocation so tests are isolated.
   const mainEl = el('main');
   const bannerEl = el('div');
   let created = 0;
 
+  // The header: the connection chip, and the container the health chip is
+  // inserted into. `noAnchor` models a page that has no #sse-status.
+  const headerEl = el('div');
+  const sseEl = el('span');
+  sseEl.id = 'sse-status';
+  sseEl.className = 'sse-status chip green';
+  if (!noAnchor) {
+    headerEl.appendChild(sseEl);
+    headerEl.insertBefore = (child, ref) => {
+      const at = ref ? headerEl._children.indexOf(ref) : headerEl._children.length;
+      child.parentNode = headerEl;
+      child.nextSibling = headerEl._children[at + 1] || null;
+      headerEl._children.splice(at < 0 ? headerEl._children.length : at, 0, child);
+      return child;
+    };
+  }
+
+  // The health chip, as the page ends up with it.
+  const healthChip = () => headerEl._children.find((c) => c.id === 'health-status') || null;
+  const healthText = () => {
+    const chip = healthChip();
+    return chip ? chip.querySelector('span:last-child') : null;
+  };
+
   const documentShim = {
     readyState: 'complete',
     createElement: (tag) => { if (tag === 'div' && created === 0) { created++; return bannerEl; } return el(tag); },
-    getElementById: (id) => (id === 'data-freshness-banner' ? createdBanner() : null),
+    getElementById: (id) => {
+      if (id === 'data-freshness-banner') return created > 0 ? bannerEl : null;
+      if (id === 'sse-status' && !noAnchor) return sseEl;
+      return null;
+    },
     querySelector: (sel) => (sel === 'main' ? (noMain ? null : mainEl) : null),
     querySelectorAll: () => [],
     addEventListener() {},
   };
-  function createdBanner() { return created > 0 ? bannerEl : null; }
-  documentShim.getElementById = (id) => (id === 'data-freshness-banner' ? createdBanner() : null);
 
   const toasts = [];
   // Monotonic fake clock: returns the last-set "now" so tests can control time.
@@ -254,6 +395,18 @@ function runModuleSandbox({ noMain = false, withApi = false } = {}) {
       }
     : undefined;
 
+  // The /api/health stub. `health` is swapped per test; it is a function so
+  // a test can replace the whole transport (reject, 500, non-JSON body)
+  // without rebuilding the sandbox.
+  const fetchCalls = [];
+  const HEALTHY = { ok: true, uptimeSeconds: 90061, timestamp: '2026-05-06T08:00:00.000Z' };
+  let healthImpl = health || (async () => ({ ok: true, json: async () => HEALTHY }));
+  const fetchStub = (...args) => { fetchCalls.push(args); return healthImpl(...args); };
+
+  // Interval capture, so a test can fire the poll without waiting 30s of
+  // wall clock — and assert the period the module actually asked for.
+  const intervals = [];
+
   const sandbox = {
     window: {
       showToast: (msg, type, opts = {}) => { toasts.push({ msg, type, opts }); },
@@ -264,6 +417,9 @@ function runModuleSandbox({ noMain = false, withApi = false } = {}) {
       document: documentShim,
       setTimeout: (fn) => { fn(); return 1; },
       clearTimeout: () => {},
+      setInterval: (fn, ms) => { intervals.push({ fn, ms }); return intervals.length; },
+      clearInterval: () => {},
+      fetch: fetchStub,
     },
     document: documentShim,
     console,
@@ -277,7 +433,12 @@ function runModuleSandbox({ noMain = false, withApi = false } = {}) {
     `${src}\nreturn window.arbiterConnectionStatus;`);
   const escape = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const api = fn(sandbox.window, documentShim, console, FakeDate, Math, Number, escape);
-  return { api, bannerEl, mainEl, toasts, documentShim, apiStub, advance: (ms) => FakeDate._advance(ms) };
+  return {
+    api, bannerEl, mainEl, toasts, documentShim, apiStub,
+    advance: (ms) => FakeDate._advance(ms),
+    headerEl, sseEl, healthChip, healthText, intervals, fetchCalls,
+    setHealth: (impl) => { healthImpl = impl; },
+  };
 }
 
 describe('connection-status IIFE plumbing', () => {
@@ -430,5 +591,183 @@ describe('connection-status IIFE plumbing', () => {
     const { api, bannerEl } = runModuleSandbox();
     api.setDataHealth({ status: 'partial', actionableSourceCount: 1 });
     assert.match(bannerEl.innerHTML, /Starea datelor: parțial \(1 surse actuale\)/);
+  });
+});
+
+// ── the GET /api/health chip ───────────────────────────────────────────────
+// A liveness panel, so the header answers two different questions: the SSE
+// chip says the socket is open, this one says the API still answers. They
+// fail independently, which is the whole reason both are there.
+
+const flush = () => new Promise((r) => setImmediate(r));
+
+describe('health chip: creation and the first paint', () => {
+  it('inserts itself after the connection chip, not before it', () => {
+    const { headerEl, sseEl, healthChip } = runModuleSandbox();
+    const chip = healthChip();
+    assert.ok(chip, 'the chip must exist after init');
+    assert.equal(headerEl._children[0], sseEl, 'the SSE chip stays where the page put it');
+    assert.equal(headerEl._children[1], chip, 'the health chip is inserted after it');
+    assert.equal(chip.nextSibling, null);
+  });
+
+  it('is neutral until the first answer arrives — never green', () => {
+    // A chip that claims a healthy server before it has asked is a lie the
+    // user reads as data.
+    const { healthChip } = runModuleSandbox({ health: () => new Promise(() => {}) });
+    const chip = healthChip();
+    assert.equal(chip.className, 'chip outline');
+    assert.equal(chip.getAttribute('role'), 'status');
+  });
+
+  it('never builds a second chip, however many times it paints', async () => {
+    const { headerEl, api, setHealth } = runModuleSandbox();
+    await flush();
+    setHealth(async () => ({ ok: true, json: async () => ({ uptimeSeconds: 10 }) }));
+    await api.refreshHealth();
+    await api.refreshHealth();
+    assert.equal(headerEl._children.length, 2, 'SSE chip + exactly one health chip');
+  });
+
+  it('does nothing on a page with no #sse-status anchor, and does not throw', async () => {
+    const { api, healthChip } = runModuleSandbox({ noAnchor: true });
+    assert.equal(healthChip(), null);
+    await api.refreshHealth();
+    assert.equal(healthChip(), null);
+  });
+});
+
+describe('health chip: the three states', () => {
+  it('paints green with the uptime and a named tooltip when the route answers', async () => {
+    const { api, healthChip, healthText, fetchCalls } = runModuleSandbox();
+    await api.refreshHealth();
+    const chip = healthChip();
+    assert.equal(chip.className, 'chip green');
+    assert.equal(chip.querySelector('.dot').className, 'dot ok');
+    assert.equal(healthText().textContent, '1d 1h');
+    // The tooltip names the field, so a bare uptime is not read as a level.
+    assert.equal(chip.title, `${REAL_RO.systemHealth}: 1d 1h`);
+    // A liveness probe must not be served from cache: a stale 200 would hide
+    // the outage this chip exists to show.
+    assert.equal(fetchCalls.at(-1)[0], '/api/health');
+    assert.deepEqual(fetchCalls.at(-1)[1], { cache: 'no-store' });
+  });
+
+  it('paints red with the real RO label when the request fails, and stays quiet', async () => {
+    const { api, healthChip, healthText, toasts } = runModuleSandbox({
+      health: async () => { throw new Error('connection refused'); },
+    });
+    await api.refreshHealth();
+    const chip = healthChip();
+    assert.equal(chip.className, 'chip red');
+    assert.equal(chip.querySelector('.dot').className, 'dot error');
+    assert.equal(healthText().textContent, REAL_RO.healthUnreachable);
+    // The control on the biggest risk in this feature: the chip goes through
+    // window.fetch precisely so wrapApiForToasts cannot turn a 30s probe into
+    // a 30s error toast.
+    assert.equal(toasts.length, 0, 'a failing liveness probe must not toast');
+  });
+
+  it('paints red when the route answers with an error status', async () => {
+    const { api, healthChip, healthText } = runModuleSandbox({
+      health: async () => ({ ok: false, status: 502, json: async () => ({}) }),
+    });
+    await api.refreshHealth();
+    assert.equal(healthChip().className, 'chip red');
+    assert.equal(healthText().textContent, REAL_RO.healthUnreachable);
+  });
+
+  it('paints yellow with the plain label when the body is not JSON', async () => {
+    // Reached the route, cannot read the answer: a state of its own, because
+    // red here would be a false outage report.
+    const { api, healthChip, healthText, toasts } = runModuleSandbox({
+      health: async () => ({ ok: true, json: async () => { throw new SyntaxError('<html>'); } }),
+    });
+    await api.refreshHealth();
+    const chip = healthChip();
+    assert.equal(chip.className, 'chip yellow');
+    assert.equal(chip.querySelector('.dot').className, 'dot warn');
+    assert.equal(healthText().textContent, REAL_RO.systemHealth);
+    assert.equal(toasts.length, 0);
+  });
+
+  it('recovers to green on the next good poll', async () => {
+    const { api, healthChip, setHealth } = runModuleSandbox({
+      health: async () => { throw new Error('down'); },
+    });
+    await api.refreshHealth();
+    assert.equal(healthChip().className, 'chip red');
+    setHealth(async () => ({ ok: true, json: async () => ({ uptimeSeconds: 61 }) }));
+    await api.refreshHealth();
+    assert.equal(healthChip().className, 'chip green');
+  });
+});
+
+describe('health chip: the text sink', () => {
+  it('writes textContent and never innerHTML', async () => {
+    // Measured in a real browser last batch: escapeHtml('run&7') is
+    // 'run&amp;7', and textContent renders that literally. So this chip must
+    // write textContent raw — pre-escaping it here would double-encode.
+    const { api, healthText, healthChip } = runModuleSandbox();
+    await api.refreshHealth();
+    const span = healthText();
+    assert.equal(span.textContent, '1d 1h');
+    assert.equal(span.innerHTML, '', 'the label must not go through the HTML parser');
+    assert.equal(healthChip().innerHTML, '');
+  });
+});
+
+describe('health chip: the poll', () => {
+  it('polls once on init, without waiting for the first interval', async () => {
+    const { fetchCalls } = runModuleSandbox();
+    await flush();
+    assert.equal(fetchCalls.length, 1, 'init must paint the first answer on its own');
+  });
+
+  it('registers exactly one 30s interval, and firing it re-polls', async () => {
+    const { intervals, fetchCalls, healthChip, setHealth } = runModuleSandbox();
+    await flush();
+    assert.equal(intervals.length, 1, 'one timer, not one per render');
+    assert.equal(intervals[0].ms, 30_000);
+
+    setHealth(async () => ({ ok: true, json: async () => ({ uptimeSeconds: 7200 }) }));
+    await intervals[0].fn();
+    assert.equal(fetchCalls.length, 2);
+    assert.equal(healthChip().querySelector('span:last-child').textContent, '2h');
+  });
+
+  it('keeps a rejected poll from escaping as an unhandled rejection', async () => {
+    const { intervals, setHealth } = runModuleSandbox();
+    await flush();
+    setHealth(async () => { throw new Error('socket hang up'); });
+    // The interval callback is invoked bare, exactly as the browser does it:
+    // a rejection here would surface as an unhandled rejection in the page.
+    await assert.doesNotReject(Promise.resolve(intervals[0].fn()));
+  });
+});
+
+describe('health chip: the classes it writes are defined in the stylesheet', () => {
+  // The module writes class names into the DOM and no JavaScript assertion can
+  // see whether the stylesheet defines them. Dropping `.dot.ok` renders a grey
+  // dot on a green chip — a chip that claims the server is fine while showing
+  // the neutral colour — and the whole suite would stay green. So the contract
+  // between the two files is asserted here, one selector at a time.
+  const SELECTORS = [
+    '.dot.ok', '.dot.error', '.dot.warn',
+    '.chip.green', '.chip.red', '.chip.yellow', '.chip.outline',
+  ];
+  for (const selector of SELECTORS) {
+    it(`${selector} is defined in theme.css`, () => {
+      const escaped = selector.replace(/\./g, '\\.');
+      assert.ok(new RegExp(`${escaped}\\s*[,{]`).test(themeCss),
+        `connection-status.js writes ${selector} but theme.css defines no rule for it`);
+    });
+  }
+
+  // The control beside those seven: a selector that is NOT written by the
+  // module must not pass the same check, or the assertion is a tautology that
+  // matches anything containing a dot.
+  it('the check is not satisfied by a class that does not exist', () => {
+    assert.ok(!new RegExp('\\.dot\\.nope\\s*[,{]').test(themeCss));
   });
 });

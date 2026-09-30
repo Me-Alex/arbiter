@@ -679,6 +679,17 @@ main > section + section { margin-top: var(--s-6); }
 .dot.warn { background: var(--yellow); }
 .dot.error { background: var(--red); }
 
+/*
+ * A static green, for dots that report a steady state rather than a change.
+ *
+ * The health chip beside the connection chip cannot borrow `.dot.live`: that
+ * pulse already means "the socket is reconnecting" on the chip next to it, and
+ * two pulsing dots in one header bar read as a single signal. So the health
+ * chip takes a still green, and keeps `.dot.warn` / `.dot.error` for its other
+ * two states, which are still as well.
+ */
+.dot.ok { background: var(--green); }
+
 @keyframes ping {
   0%   { box-shadow: 0 0 0 0 var(--green-glow); }
   70%  { box-shadow: 0 0 0 8px rgba(52, 211, 153, 0); }

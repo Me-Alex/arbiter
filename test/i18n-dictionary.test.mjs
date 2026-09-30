@@ -225,13 +225,15 @@ const isUsed = (key) => CORPUS.some(([, body]) =>
  * labels is actually rendered.
  *
  * It was thirty-five entries. Every one of them is now either rendered or gone,
- * and the list is down to the one that cannot be without a product decision:
+ * and the list is **empty**:
  *
- *   - `systemHealth` is the label for `GET /api/health` (src/router.mjs:54),
- *     which returns `{ok, uptimeSeconds, timestamp}` and is read by the README,
- *     by server.mjs and by scripts/smoke.mjs — and by no page. Where an
- *     uptime chip should sit is a question about the product, not about this
- *     dictionary, so the key waits.
+ *   - the last one, `systemHealth`, waited on a product decision — where a
+ *     `GET /api/health` (src/router.mjs:54, `{ok, uptimeSeconds, timestamp}`)
+ *     panel belongs. It sits in the header beside the SSE chip, because the
+ *     two answer different questions: the SSE chip says the socket is open,
+ *     the health chip says the route is still answering, and they fail
+ *     independently. `systemHealth` is its tooltip and its label for a payload
+ *     it cannot read; `healthUnreachable` is its failure text.
  *
  * What the thirty-five had in common is the shape of the rot: a key written for
  * a panel that was designed, cut, or renamed, and never re-examined. Six of
@@ -239,9 +241,12 @@ const isUsed = (key) => CORPUS.some(([, body]) =>
  * `provenanceLabel` and three more — and a field that is constant is not worth
  * rendering; those were dropped rather than wired up, and the two tests that
  * pin the decision live next to the page they belong to.
+ *
+ * The list is kept as an empty set rather than deleted, because the assertion
+ * below reports an unlisted dead key by name and a reader has to be able to see
+ * that the list is checked, not merely absent.
  */
 const KNOWN_DEAD = new Set([
-  'systemHealth',
 ]);
 
 test('no key is translated and then never read', () => {
@@ -253,7 +258,15 @@ test('no key is translated and then never read', () => {
   // And the control beside the negative: the keys this file's own assertions
   // depend on, and keys known to be live, must not be reported dead. A
   // detector that finds nothing wrong finds nothing wrong.
-  for (const key of ['toastImportDone', 'betUpdated', 'placed', 'markWon', 'noBets', 'dataHealth', 'runScrape']) {
+  //
+  // `systemHealth` is in that list deliberately: it was the one key the
+  // detector had to be able to name, and it is here to prove the detector can
+  // still see a live key it once reported dead. The negative half of that
+  // claim — that the detector can still see a DEAD one — is the control in
+  // scratch/control-dead-key.mjs, which swaps this module's t('healthUnreachable')
+  // for the identical literal and shows this very assertion going red on it,
+  // and nothing else.
+  for (const key of ['toastImportDone', 'betUpdated', 'placed', 'markWon', 'noBets', 'dataHealth', 'runScrape', 'systemHealth', 'healthUnreachable']) {
     assert.ok(isUsed(key), `the detector lost a key that is demonstrably live: ${key}`);
   }
 });
