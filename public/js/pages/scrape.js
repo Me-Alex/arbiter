@@ -36,6 +36,10 @@ let validatedIds = new Set();
 let selectedIds = new Set();
 let jobById = new Map();
 let launchPending = false;
+// The last /api/scheduler payload, kept so the stored-vs-form comparison can be
+// re-run when the form changes under it (a profile switch rewrites six of the
+// nine fields without touching the page's scheduler block at all).
+let lastScheduler = null;
 
 function isFailedJob(job) {
   return !['pending', 'running', 'skipped', 'cancelled'].includes(job.status)
@@ -310,7 +314,7 @@ async function init() {
   const sel = $('profile');
   sel.innerHTML = profiles.map((p) => `<option value="${escapeHtml(p.id)}">${escapeHtml(p.label)}</option>`).join('');
   sel.value = profiles[0]?.id || '';
-  sel.addEventListener('change', () => applyProfile());
+  sel.addEventListener('change', () => onProfileChange());
   applyProfile();
 
   // Populate sport filter dropdown using common helper
@@ -382,11 +386,49 @@ function applyProfile() {
   }
 }
 
+/**
+ * Switch profile, then re-run the stored-vs-form comparison.
+ *
+ * Kept out of applyProfile() on purpose: applying a profile is writing nine
+ * inputs, and the comparison is a readout that needs the i18n dictionary and
+ * the scheduler payload. Folding the second into the first made a function that
+ * only ever touched the form depend on two globals it has no business knowing
+ * about, and made it unusable from anywhere that lacked them.
+ */
+function onProfileChange() {
+  applyProfile();
+  renderSchedulerScan(lastScheduler && lastScheduler.scanOptions);
+}
+
 function selectedMaxEvents() {
   const value = String($('max-events')?.value || 'all').trim().toLowerCase();
   if (value === 'all') return 'all';
   const number = Number(value);
   return Number.isInteger(number) && number > 0 ? number : 'all';
+}
+
+/**
+ * The scan configuration exactly as the form currently reads it.
+ *
+ * This was the same nine-line object literal written out twice — once for a
+ * manual run, once for the scheduler — and the scheduler copy is what gets
+ * persisted to disk and replayed on every tick for the next 24 hours. Two
+ * copies of a payload that must not drift is how the stored copy ends up
+ * describing a form nobody is looking at any more, and there is one function
+ * of it now so the thing that is compared, shown and saved is the same object.
+ */
+function currentScanOptions() {
+  return {
+    bankroll: Number($('bankroll').value),
+    minRoiPercent: Number($('min-roi').value),
+    minEvPercent: Number($('min-ev').value),
+    maxMiddleRiskPercent: Number($('mid-risk').value),
+    minMiddleRoiPercent: Number($('mid-roi').value),
+    includeLive: $('inc-live').checked,
+    includePast: $('inc-past').checked,
+    maxEvents: selectedMaxEvents(),
+    sport: $('sport-filter')?.value || undefined,
+  };
 }
 
 // Intentionally no setDataHealth() here: unlike dashboard/scanner/analytics/AI,
@@ -665,15 +707,119 @@ async function refreshLastRun() {
   } catch (_err) { /* ignore */ }
 }
 
+/**
+ * What to print for the scheduler's last tick.
+ *
+ * The backend writes `lastRun` in three distinct shapes and the middle one is
+ * not a failure: a tick that finds a scrape already in flight records
+ * `{ ok: false, skipped: true, reason }`, because the work it wanted started is
+ * already running and starting it twice would be the bug. Reading `ok` alone
+ * calls that "failed", which is the same mistake the job table above refuses to
+ * make — and worse here, because a 15-minute scheduler ticking into a scrape
+ * that takes longer than 15 minutes would sit permanently red while the app was
+ * in fact working.
+ *
+ * `reason` is the backend's own English sentence, printed as-is for the same
+ * reason `lastError.message` is: it is diagnostic text, not chrome, and
+ * translating one string while leaving its neighbours raw would be a half
+ * measure that reads as a bug.
+ */
+function schedulerLastRunText(s, t) {
+  if (!s.lastRun) return t('neverRan');
+  const at = new Date(s.lastRun.at).toLocaleString();
+  const verdict = s.lastRun.skipped ? t('skippedShort') : s.lastRun.ok ? t('okShort') : t('failedShort');
+  const why = s.lastRun.skipped && s.lastRun.reason ? ` — ${s.lastRun.reason}` : '';
+  return `${t('lastRun')}: ${at} (${verdict})${why}`;
+}
+
+/**
+ * Which books the scheduler will actually run.
+ *
+ * The scheduler keeps its own list, restored from disk at boot, and it is not
+ * the chip selection: the page defaults the chips from the bookmaker registry,
+ * so after a restart the two can describe different sets without the user ever
+ * having touched anything. Saving writes the chips over the scheduler, which
+ * means changing the interval quietly also changes which books run — so the
+ * list that is actually in force is shown rather than implied by a checkbox.
+ *
+ * Names, not ids: the chips are labelled by name, and a line of raw ids next to
+ * a list of names would be unreadable rather than informative.
+ */
+function renderSchedulerBooks(s) {
+  const el = $('sched-books');
+  if (!el) return;
+  const t = window.arbiterI18n.t.bind(window.arbiterI18n);
+  const ids = Array.isArray(s.bookIds) ? s.bookIds : [];
+  if (!s.enabled && !ids.length) { el.textContent = ''; return; }
+  const names = ids.map((id) => scrapers.find((b) => b.id === id)?.name || id);
+  el.textContent = `${t('schedulerBooks')}: ${names.length ? names.join(', ') : '—'}`
+    + (s.resumed ? ` · ${t('schedulerResumed')}` : '');
+}
+
+/**
+ * The nine scan fields, each with the label the form already shows for it.
+ *
+ * Order is the order the form reads them in, and the keys are the ones the
+ * backend stores — the comparison is a named field list, not a deep equality,
+ * because the stored object is allowed to carry fields the form does not have
+ * and a `JSON.stringify` comparison would call that a difference on every load.
+ */
+const SCHEDULER_SCAN_FIELDS = [
+  ['bankroll', 'bankroll'],
+  ['minRoiPercent', 'minRoi'],
+  ['minEvPercent', 'minEv'],
+  ['maxMiddleRiskPercent', 'maxMiddleRisk'],
+  ['minMiddleRoiPercent', 'minMiddleRoi'],
+  ['includeLive', 'includeLive'],
+  ['includePast', 'includePast'],
+  ['maxEvents', 'eventCollection'],
+  ['sport', 'sport'],
+];
+
+/**
+ * Which stored scan options no longer match the form.
+ *
+ * This is the same defect as the book list above, one level down, and on this
+ * machine it is one profile switch away: `data/scheduler-state.json` holds
+ * bankroll 1000 / ROI 0 / risk 15 / middle 20 with live and past off, which is
+ * profile 1 (`trusted-prematch`) — and switching the form to profile 2
+ * (`review-live`, bankroll 500 / ROI 1 / risk 10 / middle 30, live and past on)
+ * changes what a manual run scans without changing what the scheduler will scan
+ * at the next tick, silently, because the form is the only place the two were
+ * ever visible and it shows one of them.
+ *
+ * A field the stored copy does not carry is not a difference. The state file
+ * predates `maxEvents` and `sport` being sent, and reporting `undefined → all`
+ * for them would be a difference the operator cannot act on.
+ */
+function schedulerScanDiff(saved, current) {
+  if (!saved || typeof saved !== 'object') return [];
+  return SCHEDULER_SCAN_FIELDS
+    .filter(([field]) => saved[field] !== undefined && saved[field] !== current[field])
+    .map(([field, labelKey]) => ({ field, labelKey, theirs: saved[field], ours: current[field] }));
+}
+
+function renderSchedulerScan(saved) {
+  const el = $('sched-scan');
+  if (!el) return;
+  const t = window.arbiterI18n.t.bind(window.arbiterI18n);
+  const show = (value) => (typeof value === 'boolean' ? t(value ? 'yesShort' : 'noShort') : String(value));
+  const diff = schedulerScanDiff(saved, currentScanOptions());
+  el.textContent = diff.length
+    ? `${t('schedulerScanDiffers')}: ${diff.map((d) => `${t(d.labelKey)} ${show(d.theirs)} → ${show(d.ours)}`).join(', ')}`
+    : '';
+}
+
 async function refreshScheduler() {
   try {
     const t = window.arbiterI18n.t.bind(window.arbiterI18n);
     const s = await arbiterApi.get('/api/scheduler');
+    lastScheduler = s;
     $('sched-enabled').checked = !!s.enabled;
     $('sched-interval').value = s.intervalMinutes || 15;
-    $('sched-last').textContent = s.lastRun
-      ? `${t('lastRun')}: ${new Date(s.lastRun.at).toLocaleString()} (${s.lastRun.ok ? t('okShort') : t('failedShort')})`
-      : t('neverRan');
+    renderSchedulerBooks(s);
+    renderSchedulerScan(s.scanOptions);
+    $('sched-last').textContent = schedulerLastRunText(s, t);
     if (s.lastError) $('sched-last').textContent += ` · ${t('lastError')}: ${s.lastError.message}`;
   } catch (_e) { /* ignore */ }
 }
@@ -683,17 +829,7 @@ $('run-btn').addEventListener('click', async () => {
   if (!bookIds.length || launchPending || ['running', 'cancelling'].includes(lastState?.status)) return;
   launchPending = true;
   updateRunControls();
-  const scanOptions = {
-    bankroll: Number($('bankroll').value),
-    minRoiPercent: Number($('min-roi').value),
-    minEvPercent: Number($('min-ev').value),
-    maxMiddleRiskPercent: Number($('mid-risk').value),
-    minMiddleRoiPercent: Number($('mid-roi').value),
-    includeLive: $('inc-live').checked,
-    includePast: $('inc-past').checked,
-    maxEvents: selectedMaxEvents(),
-    sport: $('sport-filter')?.value || undefined,
-  };
+  const scanOptions = currentScanOptions();
   try {
     log(`starting scrape: ${bookIds.length} books, max events=${scanOptions.maxEvents}${scanOptions.sport ? `, sport=${scanOptions.sport}` : ''}`, 'info', 'orchestrator');
     const result = await arbiterApi.post('/api/scrape', { bookIds, scanOptions });
@@ -731,17 +867,7 @@ $('sched-save').addEventListener('click', async () => {
   if (enabled && !selectedIds.size) { log(window.arbiterI18n.t('noBookmakersSelected'), 'warn'); return; }
   const intervalMinutes = Number($('sched-interval').value);
   const bookIds = [...document.querySelectorAll('#bookmaker-list input[data-source]:checked')].map((checkbox) => checkbox.value);
-  const scanOptions = {
-    bankroll: Number($('bankroll').value),
-    minRoiPercent: Number($('min-roi').value),
-    minEvPercent: Number($('min-ev').value),
-    maxMiddleRiskPercent: Number($('mid-risk').value),
-    minMiddleRoiPercent: Number($('mid-roi').value),
-    includeLive: $('inc-live').checked,
-    includePast: $('inc-past').checked,
-    maxEvents: selectedMaxEvents(),
-    sport: $('sport-filter')?.value || undefined,
-  };
+  const scanOptions = currentScanOptions();
   try {
     await arbiterApi.post('/api/scheduler', { enabled, intervalMinutes, bookIds, scanOptions });
     log(`scheduler ${enabled ? 'enabled' : 'disabled'} (${intervalMinutes}m)`, 'success', 'scheduler');

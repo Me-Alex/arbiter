@@ -233,6 +233,12 @@
   color: var(--sl-text-faint);
 }
 
+/* The one hint that reports a state instead of a caption: the scheduler's
+   stored scan options no longer matching the form above them. It is the only
+   line on this page that asks for a decision, so it is the only one that gets
+   colour. */
+.sl-hint.sl-warn { color: var(--sl-warn); }
+
 /* ── Panels ────────────────────────────────────────────────────────────── */
 
 .sl-panel {
