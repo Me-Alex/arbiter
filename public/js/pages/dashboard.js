@@ -32,6 +32,29 @@ function paletteFor(id) {
   return { color: '#f472b6', bg: 'rgba(244,114,182,0.12)', border: 'rgba(244,114,182,0.30)' };
 }
 
+/**
+ * The books the source-health card lists, largest first.
+ *
+ * This used to end in `.slice(0, 8)` while the card's own header counted all
+ * of them, so a scan over 22 books announced 22 and showed 8. The cap protected
+ * nothing: `.source-health` is `max-height: 420px; overflow-y: auto`
+ * (dashboard.css), a panel built to scroll. The fourteen books that a cap
+ * omitted were not summarised anywhere else — the quick bar says "0/22 fresh"
+ * and the scrape page lists no per-book data at all — so the one question this
+ * card exists to answer, "which of my books is not contributing", had an
+ * answer that named only the eight busiest.
+ *
+ * Every book is listed now. The order is unchanged: a book that failed with
+ * zero events still sorts last, which is a judgement call about what this card
+ * is for and not a fact about the data, so it is left to stand.
+ *
+ * @param {Array<object>} [sources] - The scan's `sources` array.
+ * @returns {Array<object>} A new array; the scan's own is not sorted in place.
+ */
+function sourceHealthRows(sources) {
+  return (sources || []).slice().sort((a, b) => (b.count || 0) - (a.count || 0));
+}
+
 function fmtStake(n) {
   if (typeof window !== 'undefined' && window.arbiterFormat && window.arbiterFormat.fmtStake) {
     return window.arbiterFormat.fmtStake(n);
@@ -168,7 +191,7 @@ async function refresh() {
 
     // Source health
     sourceHealthList.setAttribute('aria-busy', 'false');
-    const sourceRows = (scan.sources || []).slice().sort((a, b) => (b.count || 0) - (a.count || 0)).slice(0, 8);
+    const sourceRows = sourceHealthRows(scan.sources);
     sourceHealthList.innerHTML = sourceRows.length ? sourceRows.map((source) => {
       const state = source.dataStatus || 'unknown';
       const stateClass = state === 'fresh' ? 'completed' : state === 'failed' ? 'failed' : 'partial';
