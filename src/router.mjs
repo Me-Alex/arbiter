@@ -30,6 +30,7 @@ export function buildRouter(ctx) {
     profilesPath,
     orchestrator,
     scheduler,
+    live,
     tracker,
     broadcaster,
     scanService,
@@ -168,6 +169,16 @@ export function buildRouter(ctx) {
         bookIds: Array.isArray(body.bookIds) ? body.bookIds : [],
         scanOptions: resolveScanRequest(body.scanOptions || {}),
         intervalMinutes: body.intervalMinutes,
+      }));
+    },
+    'GET /api/live': async () => sendJson(null, 200, await live.status()),
+    'POST /api/live': async (req) => {
+      const body = await parseBody(req);
+      if (body.enabled === false) return sendJson(null, 200, await live.disable());
+      return sendJson(null, 200, await live.enable({
+        bookIds: Array.isArray(body.bookIds) ? body.bookIds : [],
+        scanOptions: resolveScanRequest(body.scanOptions || {}),
+        intervalSeconds: body.intervalSeconds,
       }));
     },
     'GET /api/tracker': async () => sendJson(null, 200, await tracker.loadTracker()),

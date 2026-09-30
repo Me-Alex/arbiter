@@ -16,7 +16,8 @@ Binds to `127.0.0.1` and stores all application state locally. Bookmaker discove
 **One server entrypoint** -- `src/server.mjs` (`npm start`) constructs the
 services and hands every request to `router.mjs`, which owns the route table.
 The services it wires (`scrape-orchestrator.mjs`, `scan-service.mjs`,
-`scheduler-service.mjs`, `tracker-service.mjs`, `state-broadcaster.mjs`) are
+`scheduler-service.mjs`, `live-service.mjs`, `tracker-service.mjs`,
+`state-broadcaster.mjs`) are
 each independently testable. There used to be a second entrypoint,
 `server-modular.mjs`, carrying a duplicate route table that drifted from the
 router's; it was removed so a fix cannot land in one copy and miss the other.
@@ -89,6 +90,7 @@ arbiter/
 │   ├── scrape-orchestrator.mjs   # scrape + verify lifecycle
 │   ├── scan-service.mjs          # workspace scan persistence
 │   ├── scheduler-service.mjs     # recurring cycles
+│   ├── live-service.mjs          # in-play poll on the live clock
 │   ├── tracker-service.mjs       # bet tracker, CSV import/export, alerts
 │   ├── state-broadcaster.mjs     # SSE clients + heartbeat
 │   ├── scraper-service.mjs       # runs ScraperBase child processes
@@ -299,6 +301,41 @@ config, disabled, as the placeholders for when real adapters land.
   live + past markets. Bankroll 500 RON, ROI ≥ 1%, middle risk ≤ 10%, middle ROI ≥ 30%.
   Always verify prices before staking.
 
+## The live poll
+
+`includeLive` has been plumbed end to end for a while: the per-feed predicates in
+`src/scrapers/live-status.mjs`, the flag from the router through the orchestrator
+into every adapter, the 90-second freshness window in
+`src/shared/data-quality.mjs`, the pairing scope in `src/scanner/engine.mjs`, and
+the in-play badge and counter in the UI. What was missing was anything that
+*collected* on a live cadence, so `src/live-service.mjs` drives it. Off by
+default; enable it from the scrape page or `POST /api/live`.
+
+**It polls every runnable book, not a live-capable subset.** Two reasons agree.
+A partial poll would leave the untouched books on the previous run's `runId`,
+and `loadWorkspace` forces STALE on any snapshot whose `runId` is not the scan's
+own (`scanner.mjs:51,61,74-80`) — measured, a poll covering 3 of 8 books dropped
+the other 5. And 19 of the 24 books have `scope: null` in `LIVE_EVIDENCE`, which
+is a measurement rather than a verdict, so polling all of them is what lets a
+book that starts publishing in-play be picked up without a code change. The cost
+is real: while enabled, the whole bookmaker set is scraped continuously.
+
+**It skips the verification pass and the market catalog per tick.** The
+verification pass re-quotes every leg by re-scraping the books those legs came
+from — measured medians: unibet 53.9s, getsbet 34.4s, contibet 31.3s — which
+roughly doubles the work and pushes the pipeline past the 90s window the poll
+exists to serve. The scrape that just ran is the freshest statement of the
+price. An ordinary scrape still does both; `pipeline.verify` / `pipeline.catalog`
+default to `true`.
+
+**Read `lastRun.durationMs`, not the configured interval.** A full 24-book batch
+was measured at 55.1s min / 63.9s median / 117.9s max wall clock over nine real
+runs, so at a 60s interval roughly half of all ticks find the previous poll still
+running. Those ticks are counted in `skippedTicks` and timestamped in
+`lastSkippedAt`; they deliberately do *not* overwrite `lastRun`, because a skip
+lands precisely when the poll is overrunning and that is when its duration is
+worth reading. `lastRun.keepingUp` is computed from the measurement.
+
 ## HTTP API
 
 All routes are loopback-only; mutations require the `x-arbiter-token` CSRF header (fetch `GET /api/csrf` first).
@@ -311,6 +348,7 @@ All routes are loopback-only; mutations require the `x-arbiter-token` CSRF heade
 - `GET /api/scrape/state` · `POST /api/scrape` · `POST /api/scrape/cancel` — scrape pipeline control.
 - `GET /api/scrapers` — bookmaker registry (jobs, enabled, validated).
 - `GET /api/scheduler` · `POST /api/scheduler` — recurring cycle config.
+- `GET /api/live` · `POST /api/live` — in-play poll config and measured status. See below.
 - `GET /api/tracker` · `POST /api/tracker` · `PUT/DELETE /api/tracker/:id` — bet tracker; `GET /api/tracker/export.csv` and `POST /api/tracker/import` for CSV round-trips.
 - `GET /api/alerts` · `POST /api/alerts` — alert preferences.
 - `GET /api/events` — SSE stream of pipeline + scan updates.

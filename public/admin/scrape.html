@@ -274,6 +274,33 @@
         <p class="sl-hint" id="sched-last">—</p>
       </section>
     </div>
+
+    <!-- ══ Live poll ═══════════════════════════════════════════════════════
+         A separate driver from the scheduler above, because they have
+         different clocks. The scheduler runs whole captures on a human
+         cadence; a live price expires in 90s, so this one polls on that
+         window and reports its own measured latency rather than the
+         configured interval. -->
+    <div class="sl-cols">
+      <section class="sl-panel">
+        <header class="sl-panel-head">
+          <h2 class="sl-panel-title" data-i18n="livePoll">Rulare live</h2>
+          <span class="sl-panel-note" id="live-last">—</span>
+        </header>
+        <div class="sl-sched">
+          <label class="sl-check">
+            <input type="checkbox" id="live-enabled"><span data-i18n="enabled">activ</span>
+          </label>
+          <label class="sl-field sl-field-narrow">
+            <span data-i18n="livePollInterval">Interval (s)</span>
+            <input type="number" id="live-interval" value="60" min="30" max="600">
+          </label>
+          <button class="sl-ghost" id="live-save" data-i18n="save">Salvează</button>
+        </div>
+        <p class="sl-hint" id="live-books">—</p>
+        <p class="sl-hint" id="live-measured">—</p>
+      </section>
+    </div>
   </main>
 
   <script src="/js/api.js"></script>

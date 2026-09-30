@@ -397,6 +397,7 @@ async function init() {
   refreshJobRows();
   refreshLastRun();
   refreshScheduler();
+  refreshLive();
 }
 
 function applyProfile() {
@@ -884,6 +885,62 @@ async function refreshScheduler() {
   } catch (_e) { /* ignore */ }
 }
 
+/**
+ * The live poll's own status line.
+ *
+ * The number that matters here is the MEASURED duration of the last completed
+ * poll, not the configured interval. At this cadence the two differ by design:
+ * a full 24-book batch was measured at 55-118s wall clock, so a poll configured
+ * at 60s routinely takes longer than its own interval and the next tick finds
+ * the previous one still running. Showing the configured number alone would
+ * report a 60s cadence while the app was actually refreshing every ~64s, and
+ * showing only green would report that the 90s live window is being met when
+ * the worst measured batch (117.9s) is not.
+ */
+function renderLiveMeasured(l, t) {
+  const el = $('live-measured');
+  if (!el) return;
+  if (!l.enabled) { el.textContent = ''; return; }
+  const bits = [];
+  if (l.scanningAllBooks) {
+    bits.push(t('livePollAllBooks'));
+  } else {
+    const ids = Array.isArray(l.bookIds) ? l.bookIds : [];
+    const names = ids.map((id) => scrapers.find((b) => b.id === id)?.name || id);
+    bits.push(`${t('schedulerBooks')}: ${names.length ? names.join(', ') : '—'}`);
+  }
+  // The window this driver exists to serve, read from the backend rather than
+  // spelled out here, so a change to DEFAULT_LIVE_MAX_AGE_MS shows up.
+  if (Number.isFinite(Number(l.liveMaxAgeMs)) && Number(l.liveMaxAgeMs) > 0) {
+    bits.push(t('liveWindowSeconds').replace('{seconds}', String(Math.round(Number(l.liveMaxAgeMs) / 1000))));
+  }
+  const last = l.lastRun;
+  if (last && Number.isFinite(Number(last.durationMs))) {
+    const measured = fmtDuration(Number(last.durationMs)) || '—';
+    // A poll slower than the live window cannot produce a price a trader can
+    // still place, and that is a fact about the measurement, not a warning to
+    // dress up. It is stated plainly.
+    const overWindow = Number(l.liveMaxAgeMs) > 0 && Number(last.durationMs) > Number(l.liveMaxAgeMs);
+    bits.push(`${t('livePollLastDuration')}: ${measured}${overWindow ? ` · ${t('livePollOverWindow')}` : ''}`);
+  }
+  if (Number(l.skippedTicks) > 0) {
+    bits.push(t('livePollSkipped').replace('{count}', String(l.skippedTicks)));
+  }
+  el.textContent = bits.join(' · ');
+}
+
+async function refreshLive() {
+  try {
+    const t = window.arbiterI18n.t.bind(window.arbiterI18n);
+    const l = await arbiterApi.get('/api/live');
+    $('live-enabled').checked = !!l.enabled;
+    $('live-interval').value = l.intervalSeconds || 60;
+    $('live-last').textContent = l.lastRun ? schedulerLastRunText(l, t) : t('neverRan');
+    if (l.lastError) $('live-last').textContent += ` · ${t('lastError')}: ${l.lastError.message}`;
+    renderLiveMeasured(l, t);
+  } catch (_e) { /* ignore */ }
+}
+
 $('run-btn').addEventListener('click', async () => {
   const bookIds = [...selectedIds];
   if (!bookIds.length || launchPending || ['running', 'cancelling'].includes(lastState?.status)) return;
@@ -939,9 +996,41 @@ $('sched-save').addEventListener('click', async () => {
   }
 });
 
+$('live-save').addEventListener('click', async () => {
+  const enabled = $('live-enabled').checked;
+  const intervalSeconds = Number($('live-interval').value);
+  // Deliberately NOT the chip selection, and not currentScanOptions() either.
+  //
+  // The chips describe the manual scrape. Inheriting them here would make a
+  // toggle labelled "live" quietly re-scope which books it polls, and the
+  // poll's own job is to run every runnable book: a subset would leave the
+  // untouched books on the previous run's runId, which the scanner's
+  // expectedRunId check drops as stale. So the poll sends an empty book list,
+  // which the service reads as "all", and only the risk thresholds with
+  // includeLive forced on.
+  try {
+    await arbiterApi.post('/api/live', {
+      enabled,
+      intervalSeconds,
+      bookIds: [],
+      scanOptions: { ...currentScanOptions(), includeLive: true },
+    });
+    log(`live poll ${enabled ? 'enabled' : 'disabled'} (${intervalSeconds}s)`, 'success', 'live');
+    const t = window.arbiterI18n.t.bind(window.arbiterI18n);
+    if (typeof window.showToast === 'function') window.showToast(t('toastLiveSaved'), 'success');
+    refreshLive();
+  } catch (err) {
+    log(err.message || 'unable to save live poll', 'error', 'live');
+  }
+});
+
 _sse = arbiterSse.connect((type, payload) => {
   if (type === 'scrape-update') {
     renderState(payload);
+    // A poll shows up here as an ordinary scrape, so the live panel's measured
+    // latency only updates when a run actually ends. Polling /api/live on every
+    // job event would be a request per book per tick.
+    if (!['running', 'cancelling'].includes(payload?.status)) refreshLive();
   } else if (type === 'job-complete') {
     const r = payload.result || {};
     log(`${r.id} ${r.valid ? 'ok' : 'failed'} (${r.events || 0} events, ${r.durationMs || 0}ms)`, r.valid ? 'success' : 'warn', r.id);

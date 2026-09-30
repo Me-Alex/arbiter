@@ -28,6 +28,7 @@ import { StateBroadcaster } from './state-broadcaster.mjs';
 import { ScrapeOrchestrator } from './scrape-orchestrator.mjs';
 import { TrackerService } from './tracker-service.mjs';
 import { SchedulerService } from './scheduler-service.mjs';
+import { LiveService } from './live-service.mjs';
 import { CronService } from './cron-service.mjs';
 import * as ScanService from './scan-service.mjs';
 
@@ -73,6 +74,16 @@ const scheduler = new SchedulerService({
 });
 await scheduler.loadState();
 
+// Live collection on the live clock. Disabled by default like the scheduler:
+// enabling it runs every bookmaker continuously on a short interval.
+const live = new LiveService({
+  dataDir: DATA_DIR,
+  configPath: CONFIG_PATH,
+  orchestrator,
+  logger,
+});
+await live.loadState();
+
 const cronService = new CronService({ logger });
 cronService.start();
 
@@ -83,6 +94,7 @@ const ctx = {
   profilesPath: PROFILES_PATH,
   orchestrator,
   scheduler,
+  live,
   tracker,
   broadcaster,
   scanService: ScanService,
@@ -118,6 +130,7 @@ installShutdown({
   logger,
   tasks: [
     async () => { await scheduler.disable(); },
+    async () => { await live.disable(); },
     () => broadcaster.stop(),
     () => cronService.stop(),
   ],

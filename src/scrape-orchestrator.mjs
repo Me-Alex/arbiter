@@ -71,9 +71,13 @@ export class ScrapeOrchestrator {
    *     maxEvents?: number|'all',
    *     sport?: string,
    *   },
+   *   pipeline?: {
+   *     verify?: boolean,
+   *     catalog?: boolean,
+   *   },
    * }} args
    */
-  async launch({ bookIds, scanOptions = {} } = {}) {
+  async launch({ bookIds, scanOptions = {}, pipeline = {} } = {}) {
     if (this.isRunning()) {
       const err = new Error('scrape already in progress');
       err.code = 'EBUSY';
@@ -179,7 +183,7 @@ export class ScrapeOrchestrator {
 
     this._abortController = new AbortController();
     // Run in background. Errors here are encoded into scrapeState.
-    this._pipeline = this._runPipeline(selected, scanOptions, runId, this._abortController.signal)
+    this._pipeline = this._runPipeline(selected, scanOptions, runId, this._abortController.signal, pipeline)
       .catch((err) => {
         if (this._abortController?.signal.aborted || err?.code === 'ECANCELLED') {
           return this._finishCancelled(runId);
@@ -221,7 +225,34 @@ export class ScrapeOrchestrator {
     return { cancelled: true, state: this.scrapeState };
   }
 
-  async _runPipeline(books, scanOptions, runId, signal) {
+  /**
+   * @param {string[]} books
+   * @param {object} scanOptions
+   * @param {string} runId
+   * @param {AbortSignal} signal
+   * @param {{ verify?: boolean, catalog?: boolean }} [pipeline]
+   *
+   * `verify` and `catalog` exist because the live poll runs this same pipeline
+   * on a ~60s cadence (src/live-service.mjs), and both of these steps are
+   * priced against the scrape itself, not against the clock:
+   *
+   *   - The verification pass re-quotes every leg by re-scraping the books the
+   *     legs came from. Measured medians over nine real runs: unibet 53.9s,
+   *     getsbet 34.4s, contibet 31.3s. Adding it to a poll roughly doubles the
+   *     work per tick and pushes the pipeline past the 90s live window it was
+   *     built to serve — the re-quote would be confirming a price that expired
+   *     while it was being confirmed. On a poll the scrape that just ran IS the
+   *     freshest statement of the price, so the pass is skipped by request.
+   *
+   *   - The catalog is a 1.2MB derived artifact rebuilt from the whole
+   *     workspace. It is analysis of a capture, not part of pricing one, and
+   *     rewriting it every 60s buys nothing a trader reads.
+   *
+   * Both default to true, so an ordinary scrape is unchanged.
+   */
+  async _runPipeline(books, scanOptions, runId, signal, pipeline = {}) {
+    const verify = pipeline.verify !== false;
+    const catalog = pipeline.catalog !== false;
     const throwIfAborted = () => {
       if (signal?.aborted) {
         const err = new Error('scrape cancelled');
@@ -311,7 +342,7 @@ export class ScrapeOrchestrator {
 
     throwIfAborted();
     let verifyFailed = false;
-    if (scan && scan.opportunities.length) {
+    if (verify && scan && scan.opportunities.length) {
       this._setStep('Verifying', 2);
       try {
         await runVerificationPass(
@@ -340,7 +371,7 @@ export class ScrapeOrchestrator {
     await writeJsonAtomic(join(this.dataDir, 'latest-scan.json'), scan || emptyScan({ scrapeRunId: runId }));
 
     this._setStep('Cataloging', 3);
-    if (scan) {
+    if (catalog && scan) {
       try {
         throwIfAborted();
         await buildMarketCatalog(this.dataDir, scan);
