@@ -522,15 +522,24 @@ export async function readEventDetailRoute(res, parsedUrl, dataDir) {
       events.push({
         sourceId,
         sourceUrl: ev.sourceUrl || null,
-        eventUrl: ev.sourceUrl || null,
+        // No `eventUrl` here. It was written as `ev.sourceUrl || null` two lines
+        // under this one — the same expression, so the same value, always — and
+        // nothing read it: the only `eventUrl` reads in the frontend are on a
+        // plan's legs, which carry their own. Measured over the real route on
+        // data-market-run/workspace: 12 two-book fixtures, 26 events served,
+        // eventUrl === sourceUrl in 26 of 26. A second name for a value the
+        // first name already carries, on the object a consumer is holding.
         sport: ev.sport,
         league: ev.league || '',
         kickoff: ev.kickoff,
         homeTeam: ev.homeTeam,
         awayTeam: ev.awayTeam,
-        // Kept, not dropped: the dashboard marks an in-play row and this page is
-        // where that row is opened, so a price list that arrives unmarked reads
-        // as a different, calmer thing than the signal the trader just clicked.
+        // The bookmarkable event page builds its heading, its meta line and its
+        // in-play badge from this event rather than from the query string it was
+        // opened with. The dashboard marks the row the trader clicked and this
+        // page is where that row opens, so a price list arriving unmarked reads
+        // as a different, calmer thing than the signal that was clicked; the
+        // event the route matched is the authority on that, not the URL.
         live: ev.live === true,
         markets: Array.isArray(ev.markets) ? ev.markets.map((m) => ({
           key: m.key,

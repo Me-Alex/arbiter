@@ -11,6 +11,11 @@
   <main class="event-detail-page">
     <a id="event-back" class="workflow-link" href="/">Înapoi la dashboard</a>
     <h1 id="event-heading">Eveniment</h1>
+    <!-- The in-play badge for the whole event, as opposed to the per-market ones
+         the panel renders. Empty and hidden in the markup on purpose: the label
+         and the tooltip are translations, so the controller fills both once the
+         route says the event it matched is live. -->
+    <span id="event-live" class="chip red live-badge" hidden></span>
     <p id="event-meta" class="muted"></p>
     <p id="event-status" role="status" aria-live="polite"></p>
     <button id="event-retry" class="btn ghost" type="button" hidden>Reîncearcă</button>

@@ -97,12 +97,72 @@ test('dedicated controller handles success, empty, error and invalid context', a
     assert.equal(node('event-markets').attrs['aria-busy'], 'false');
     if (mode === 'success') {
       assert.equal(rendered.opts.target, node('event-markets'));
+      // The query is the fallback, and it stays one: the fixture's event carries
+      // no identity at all, so the heading is still what the URL said. The
+      // payload-wins case is the test below; this is the control that the
+      // fallback is not a casualty of it.
       assert.equal(node('event-heading').textContent, '<img> vs B');
+      assert.equal(node('event-live').hidden, true, 'no event, no in-play badge');
     }
     if (mode === 'empty') assert.equal(node('event-status').textContent, 'noOddsFound');
     if (mode === 'error') { assert.equal(node('event-retry').hidden, false); assert.match(node('event-status').textContent, /Could not load/); }
     if (mode === 'invalid') { assert.equal(calls, 0); assert.match(node('event-status').textContent, /incomplete/); }
   }
+});
+
+test('the page names the event the route matched, not the query it was opened with', async () => {
+  // The route matches on a normalized club identity, so the URL's spelling and
+  // the book's need not agree — and the league and the in-play flag are not in
+  // the URL at all. Reading the identity from the payload is what makes those
+  // six published fields readers instead of weight on the wire.
+  // Each case gets its own context. Re-pointing the stub's `get` and the
+  // location does not re-run anything: the page calls `load()` once at load, and
+  // the stub's `addEventListener` is a no-op, so a second payload handed to the
+  // same context would never be fetched and the assertions after it would be
+  // reading the first render.
+  const renderPage = async (search, payload) => {
+    const nodes = new Map();
+    const node = id => {
+      if (!nodes.has(id)) nodes.set(id, { textContent: '', title: '', hidden: false, attrs: {}, setAttribute(k, v) { this.attrs[k] = v; }, replaceChildren() {}, addEventListener() {} });
+      return nodes.get(id);
+    };
+    const window = {
+      location: { search },
+      escapeHtml,
+      arbiterFormat: { formatKickoff: (v) => (v ? `kickoff(${v})` : '') },
+      EventDetailModal: { init() {}, renderEventDetail() {} },
+    };
+    const context = { window, URLSearchParams, document: { getElementById: node }, arbiterApp: { mount() {} }, arbiterI18n: { lang: 'ro', t: key => key },
+      arbiterApi: { async get() { return payload; } } };
+    vm.runInNewContext(read('public/js/pages/event-detail.js'), context);
+    await new Promise(resolve => setImmediate(resolve));
+    return node;
+  };
+
+  // Two books quote the one fixture, so the route returns two events; the second
+  // is the one that carries the identity. Picking the first blindly would leave
+  // the header on the query, which is the failure this is here to catch.
+  const node = await renderPage('?sport=Basketball&home=Steaua&away=Dinamo&kickoff=2026-09-20T21%3A00%3A00%2B03%3A00', { events: [
+    { sourceId: 'alpha', markets: [] },
+    { sourceId: 'beta', sport: 'Fotbal', league: 'Liga I', homeTeam: 'FCSB', awayTeam: 'Dinamo', kickoff: '2026-10-01T18:00:00.000Z', live: true, markets: [{ key: 'A' }] },
+  ] });
+
+  assert.equal(node('event-heading').textContent, 'FCSB vs Dinamo', 'the heading is the matched event, not the query');
+  assert.match(node('event-meta').textContent, /Fotbal/, 'the sport comes from the event');
+  assert.match(node('event-meta').textContent, /Liga I/, 'the league is shown at all — it is not in the URL');
+  assert.equal(node('event-live').hidden, false, 'an in-play event is badged on the page itself');
+  assert.equal(node('event-live').textContent, 'live');
+  assert.equal(node('event-live').title, 'liveTooltip');
+
+  // The page's standing property: nothing from the payload or the URL is ever
+  // parsed as HTML. The event's own names go through textContent, so a book
+  // that publishes a team called `<img>` cannot inject markup.
+  const hostile = await renderPage('?sport=F&home=%3Cimg%20src%3Dx%3E&away=B', { events: [
+    { sport: 'F', homeTeam: '<img src=x onerror=boom>', awayTeam: 'B', league: '<b>L</b>', live: false, markets: [{ key: 'A' }] },
+  ] });
+  assert.equal(hostile('event-heading').textContent, '<img src=x onerror=boom> vs B', 'a hostile team name stays text');
+  assert.match(hostile('event-meta').textContent, /<b>L<\/b>/, 'a hostile league stays text');
+  assert.equal(hostile('event-live').hidden, true, 'a pre-match event carries no badge');
 });
 
 test('page loads shared renderer and the router owns the detail handler', () => {

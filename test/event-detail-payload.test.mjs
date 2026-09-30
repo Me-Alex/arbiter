@@ -121,12 +121,36 @@ const PLAN_READERS = (() => {
   return byField;
 })();
 
-/** The reader set for one level. Levels other than the plan use the name search. */
-const readersForLevel = (level, key) => (
-  level === 'plan'
-    ? (PLAN_READERS.get(key) || [])
-    : readersOf(key)
-);
+/**
+ * Readers of an event field, per file, in the same shape `readersOf` returns.
+ *
+ * The event level needed this for the same reason the plan level did, and the
+ * measurement is what says so rather than a hunch. The route publishes ten
+ * fields per event; over data-market-run/workspace, through the real route, its
+ * three consumers read three of them — `markets`, `sourceId`, `sourceUrl`. The
+ * other seven were credited a reader because dashboard.js reads identically-named
+ * fields on *opportunities*: `o.sport`, `o.homeTeam`, `o.league`, `o.kickoff`,
+ * `o.live`, all on a payload this route never serves. Five of them have been
+ * connected to the bookmarkable event page since, and one was deleted as an
+ * alias, so today all seven are read — but the census could not have told that
+ * from the collision, which is the point.
+ */
+const EVENT_READERS = (() => {
+  const byField = new Map();
+  for (const [file, src] of CONSUMERS) {
+    for (const f of fieldReads(src, 'ev', true)) {
+      if (!byField.has(f)) byField.set(f, []);
+      byField.get(f).push(file);
+    }
+  }
+  return byField;
+})();
+
+/** The reader set for one level. The other levels use the name search. */
+const readersForLevel = (level, key) => {
+  const anchored = level === 'plan' ? PLAN_READERS : level === 'event' ? EVENT_READERS : null;
+  return anchored ? (anchored.get(key) || []) : readersOf(key);
+};
 
 /**
  * A workspace with two books quoting one event, priced so a cross-book
@@ -328,4 +352,18 @@ test('the reader search is sensitive, so an unread field is not a naming acciden
   // be reported.
   assert.ok(readersOf('marketKey').length > 0, 'the name search is supposed to over-cover marketKey — if it stops doing so, this control is measuring nothing');
   assert.deepEqual(PLAN_READERS.get('marketKey'), undefined, 'marketKey is read on other payloads, not off the plan, and was credited with a reader it does not have');
+
+  // The same pair, one level up, on a field the name search credits to the
+  // opportunity payload. `roiPercent` is read five times over in dashboard.js —
+  // every opportunity's headline — and not once off an event. Publish it on an
+  // event tomorrow and the name search waves it through; this is the assertion
+  // that says the two searches are not the same search.
+  assert.ok(readersOf('roiPercent').length > 0, 'the name search is supposed to over-cover roiPercent, an opportunity field');
+  assert.deepEqual(EVENT_READERS.get('roiPercent'), undefined, 'roiPercent is read on opportunities, not off an event');
+  // And the event reader set has to be the real one, or the strictness is a
+  // search pointed at nothing. The page's own reads are the proof.
+  assert.ok(EVENT_READERS.has('homeTeam'), 'the event reader set lost homeTeam, which the page names the event with');
+  assert.ok(EVENT_READERS.has('league'), 'the event reader set lost league, which the page shows in its meta line');
+  assert.ok(EVENT_READERS.has('live'), 'the event reader set lost live, which the page badges from');
+  assert.ok(EVENT_READERS.has('sourceId'), 'the event reader set lost sourceId, which the modal keys its books on');
 });
