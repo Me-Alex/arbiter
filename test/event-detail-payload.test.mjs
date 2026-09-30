@@ -42,8 +42,8 @@ const CONSUMERS = [
  * here is a claim about the code and has to survive review like any other.
  */
 const UNREAD_WITH_REASON = new Map([
-  ['handicap', 'the modal renders the line itself from the market key (thresholdFromKey) in the market heading, so the numeric copy on the selection says nothing the heading has not said. The projection passes selection objects by reference, so the field is left on rather than narrowed on the strength of one capture.'],
-  ['group', 'measured on data-market-run/workspace, 22 blobs / 24829 events / 93600 selections: every selection carries group, every one of them says "Main", and not one market in 31927 holds two selections that share a name in different groups, so the field separates nothing in any capture on disk. The modal keys its columns on name-or-id alone, so no screen is missing a distinction. Kept rather than stripped for the same reason as handicap: the projection passes selections by reference, and group is what a book would use to disambiguate same-named outcomes the day one emits them.'],
+  ['handicap', 'the modal renders the line itself from the market key (thresholdFromKey) in the market heading, so the numeric copy on the selection says nothing the heading has not said. Kept on DETAIL_SELECTION_FIELDS, which now names every field this projection publishes: the reason is a decision with a reason attached, which is what it was not when the route forwarded selection objects by reference.'],
+  ['group', 'measured on data-market-run/workspace, 22 blobs / 24829 events / 93600 selections: every selection carries group, every one of them says "Main", and not one market in 31927 holds two selections that share a name in different groups, so the field separates nothing in any capture on disk. The modal keys its columns on name-or-id alone, so no screen is missing a distinction. Kept for the same reason as handicap — it is on the named list — because group is what a book would use to disambiguate same-named outcomes the day one emits them.'],
 
   // The four below live one level deeper, inside the arbitrage plan attached as
   // `m.arb`. They reached this table the same way the census found them: the
@@ -166,6 +166,14 @@ function seedWorkspace(dir) {
   const workspace = join(dir, 'workspace');
   mkdirSync(workspace, { recursive: true });
   const now = new Date().toISOString();
+  // Every selection carries the provider bookkeeping that nsoft.mjs:497 and
+  // altenar-public.mjs leave on their own — deliberately, so the payload has
+  // something it must NOT publish. A fixture that only carried the five fields
+  // the route publishes would pass against a projection that forwards
+  // selections by reference, which is exactly the leak this closes.
+  const bookmaker = (id, name, odds, extra = {}) => ({
+    id: `${id}-${name}`, name, odds, group: 'Main', providerOutcomeId: `${id}-out-${name}`, providerName: id, ...extra,
+  });
   const event = (sourceId) => ({
     id: `${sourceId}-1`,
     sourceId,
@@ -182,8 +190,12 @@ function seedWorkspace(dir) {
         key: 'BOTH_TEAMS_SCORE',
         name: 'Both teams to score',
         selections: [
-          { id: `${sourceId}-yes`, name: 'Yes', odds: sourceId === 'alpha' ? 2.84 : 1.9, group: 'Main' },
-          { id: `${sourceId}-no`, name: 'No', odds: sourceId === 'alpha' ? 1.55 : 2.55, group: 'Main' },
+          // A market with no line, which is the majority case in the capture and
+          // the one a truthiness test would lose: 29286 selections carry a line
+          // there, 28278 carry `handicap: null`. BTTS is quoted without a line, so
+          // these two arrive with the key present and empty.
+          bookmaker(sourceId, 'Yes', sourceId === 'alpha' ? 2.84 : 1.9, { handicap: null }),
+          bookmaker(sourceId, 'No', sourceId === 'alpha' ? 1.55 : 2.55, { handicap: null }),
         ],
       },
       {
@@ -196,8 +208,8 @@ function seedWorkspace(dir) {
         key: 'OVER_UNDER_2_5',
         name: 'Total goluri Peste/Sub',
         selections: [
-          { id: `${sourceId}-over`, name: 'Peste 2.5', odds: 1.9, group: 'Main', handicap: '2.5' },
-          { id: `${sourceId}-under`, name: 'Sub 2.5', odds: 2.05, group: 'Main', handicap: '2.5' },
+          bookmaker(sourceId, 'Peste 2.5', 1.9, { handicap: '2.5' }),
+          bookmaker(sourceId, 'Sub 2.5', 2.05, { handicap: '2.5' }),
         ],
       },
     ],
@@ -324,6 +336,62 @@ test('the payload does not republish the arbitrage map it already attaches per m
   assert.ok((byKey.get(noArbKey) || []).length >= 2, `the control market has to reach the payload from both books, got ${(byKey.get(noArbKey) || []).length}`);
   const claimed = (byKey.get(noArbKey) || []).filter((m) => m.arb);
   assert.deepEqual(claimed, [], `a market with no arbitrage was given a money plan: ${JSON.stringify(claimed[0]?.arb || null)}`);
+});
+
+test('the projection publishes the five named selection fields and nothing else', async () => {
+  const payload = await fetchPayload();
+  const selections = (payload.events || []).flatMap((e) => (e.markets || []).flatMap((m) => m.selections || []));
+  assert.ok(selections.length >= 4, `the fixture has to reach selections, got ${selections.length}`);
+
+  // What the fixture put on the wire, measured from the fixture rather than
+  // asserted from memory: the capture objects carry the provider bookkeeping
+  // nsoft.mjs and altenar-public.mjs leave behind.
+  const onDisk = new Set();
+  for (const entry of selections) for (const k of Object.keys(entry)) onDisk.add(k);
+  assert.ok([...onDisk].includes('id') && [...onDisk].includes('name') && [...onDisk].includes('odds'),
+    `the payload's own selections carry the three read fields, got ${[...onDisk].join(', ')}`);
+
+  // The leak itself. `providerOutcomeId` and `providerName` are on the
+  // selection objects three adapters write, nothing on this route reads either,
+  // and the projection used to forward them by reference. A capture exists that
+  // would have carried them: 22 of 30 adapters are represented in
+  // data-market-run/workspace and neither nsoft nor altenar-public is among
+  // them, so the day one of them scrapes, they would have gone out on the wire
+  // for every selection of every market on the page.
+  //
+  // Checked before the controls below, so a projection that forwarded by
+  // reference fails here and names the leak rather than tripping over whatever
+  // else that same projection happens to lose on the way.
+  const leaked = selections.filter((s) => 'providerOutcomeId' in s || 'providerName' in s);
+  assert.deepEqual(leaked, [],
+    `provider bookkeeping reached the payload: ${JSON.stringify(leaked[0] || null)} — the projection is forwarding selections by reference again`);
+
+  // The controls: the two fields that are unread but kept on purpose really are
+  // kept, and kept with their presence. A narrowing that quietly dropped them
+  // would pass the leak assertion above while quietly losing the fields the
+  // census excuses by name.
+  const withLine = selections.filter((s) => s.handicap === '2.5');
+  assert.ok(withLine.length >= 2, `handicap is on the published list, so the line has to survive: ${withLine.length} selections carry 2.5`);
+  // Presence, not truthiness — the router's own claim, checked against the
+  // majority case in the capture. A copy that kept a real line and dropped the
+  // empty one would keep `odds`, keep `name`, leak nothing, and pass every
+  // other assertion here while re-shaping a third of the wire: `handicap: null`
+  // says the market has no line, and dropping the key says nothing about it.
+  const noLine = selections.filter((s) => 'handicap' in s);
+  assert.ok(noLine.length >= withLine.length + 2,
+    `a null line is a present line and has to stay one: ${noLine.length} selections carry the key, ${withLine.length} carry a value`);
+  assert.ok(noLine.some((s) => s.handicap === null),
+    'the fixture has to reach the route with handicap: null, or this control tests nothing — check seedWorkspace');
+  assert.ok(selections.every((s) => 'group' in s), 'group is on the published list too');
+
+  // And the named list is a list, not a widening: every field on the wire is
+  // one the route declares. A stray key would be a second copy of something,
+  // which is the whole class this lot is about.
+  const declared = ['id', 'name', 'odds', 'group', 'handicap'];
+  const published = [...new Set(selections.flatMap((s) => Object.keys(s)))].sort();
+  assert.deepEqual(published, ['group', 'handicap', 'id', 'name', 'odds'],
+    `the published selection fields drifted from DETAIL_SELECTION_FIELDS: ${published.join(', ')}`);
+  assert.deepEqual(declared.slice().sort(), published, 'and the list the route declares is the list the wire carries');
 });
 
 test('the reader search is sensitive, so an unread field is not a naming accident', () => {

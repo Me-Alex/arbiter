@@ -470,6 +470,69 @@ async function loadEventDetailSnapshots(dataDir) {
   return snapshots;
 }
 
+/**
+ * The selection fields this route publishes, and the only ones.
+ *
+ * Selections used to be forwarded by reference — `selections: m.selections` —
+ * which made the published field set whatever each adapter happened to leave on
+ * a selection object. Measured over `src/scrapers/*.mjs`: thirty adapters build
+ * their own selections, there is no shared constructor, and three of them leave
+ * provider bookkeeping behind. `nsoft.mjs:497` publishes `providerOutcomeId` and
+ * `providerName` and says so in its own comment; `altenar-public.mjs` publishes
+ * `providerOutcomeId`. Nothing on this route reads either name.
+ *
+ * That leak is latent rather than observed, and that is exactly what made it
+ * worth closing rather than documenting: over data-market-run/workspace, 22 of
+ * the 30 adapters are represented, nsoft and altenar-public are not among them,
+ * and none of the 93600 selections in the capture carries a `provider*` field.
+ * The same walk shows the capture's selection field set is exactly the five
+ * below — id, name, odds and group on all 93600 selections, handicap on 29286
+ * and absent on the rest — so this list is the adapters' own field set rather
+ * than an invention of the route.
+ * The payload census could not have caught it either, because the census walks a
+ * hand-written fixture — it sees the five keys that fixture happens to carry.
+ *
+ * The engine is fed from the un-narrowed event above, before this projection
+ * exists, because findArbitrage buckets by eventKey and reads selection objects
+ * the way the scrapers emitted them. That was an assurance; measured
+ * (scratch/probe-engine-narrowing.mjs over data-market-run/workspace, 22 blobs /
+ * 24829 events / 5166 two-book fixtures, control: the engine finds 3 plans
+ * un-narrowed), it is stronger than an assurance and worth stating plainly:
+ *
+ *   - dropping `name` or `odds` from a selection takes every plan to 0/3. Those
+ *     are the only two fields the engine reads off a selection, and both are on
+ *     the list above;
+ *   - dropping or corrupting `id`, `group`, `handicap`, `providerOutcomeId`,
+ *     `providerName` or a field the engine never heard of leaves all 3 plans
+ *     standing, byte for byte — a nonsense field and the real provider fields
+ *     behave identically, which is what says the sweep can see the difference.
+ *
+ * So narrowing the engine's copy would change no plan either, and could not break
+ * nsoft or altenar-public the day they start scraping. The split is kept anyway:
+ * it is one line, it keeps the wire and the engine independently adjustable, and
+ * it costs nothing now. What is NOT kept is the assurance — this comment is the
+ * measurement, and the payload census cannot see this path at all, since it only
+ * ever reads the wire.
+ *
+ * `group` and `handicap` are unread by the panel today and are on the list
+ * anyway — each with a recorded reason in the payload census, both measured over
+ * the capture. Keeping them here is a decision with a reason attached, which is
+ * what it was not when the projection passed the object straight through.
+ */
+const DETAIL_SELECTION_FIELDS = ['id', 'name', 'odds', 'group', 'handicap'];
+
+/** One selection, reduced to the published fields, keeping which ones are present. */
+function narrowSelection(selection) {
+  const out = {};
+  for (const field of DETAIL_SELECTION_FIELDS) {
+    // Presence, not truthiness: `handicap: null` is a statement about a market
+    // that has no line, and a copy that dropped the key would be a different
+    // object to every consumer that asks whether it is there.
+    if (field in selection) out[field] = selection[field];
+  }
+  return out;
+}
+
 export async function readEventDetailRoute(res, parsedUrl, dataDir) {
   const { normalizeClubIdentity, normalizeTeamName } = await import('./shared/text.mjs');
 
@@ -547,7 +610,8 @@ export async function readEventDetailRoute(res, parsedUrl, dataDir) {
           // Per-market, not per-event: the adapters mark each market from the
           // provider's own field, and two books of one event can disagree.
           live: m.live === true,
-          selections: Array.isArray(m.selections) ? m.selections : [],
+          // Narrowed, not forwarded: see DETAIL_SELECTION_FIELDS above.
+          selections: Array.isArray(m.selections) ? m.selections.map(narrowSelection) : [],
         })) : [],
       });
     }
