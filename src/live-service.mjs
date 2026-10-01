@@ -133,7 +133,15 @@ export class LiveService {
     if (Array.isArray(bookIds)) this.bookIds = [...new Set(bookIds.map(String))];
     if (scanOptions && typeof scanOptions === 'object') this.scanOptions = { ...scanOptions };
     this.intervalSeconds = clampInterval(intervalSeconds, this.intervalSeconds);
-    if (this._timer) clearInterval(this._timer);
+    if (this._timer) {
+      clearInterval(this._timer);
+      // Same reason as SchedulerService.enable(): `_startTimer()` bails on a
+      // truthy `_timer`, so a handle left behind by clearInterval turns this
+      // re-arm into a no-op. The page posts `enabled` on every `live-save`,
+      // so ticking the interval and saving again used to stop the poll for
+      // good while the panel kept reading "enabled".
+      this._timer = null;
+    }
     this.enabled = true;
     this.resumed = false;
     this._startTimer();

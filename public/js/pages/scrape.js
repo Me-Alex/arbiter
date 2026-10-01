@@ -1258,15 +1258,52 @@ function schedulerScanDiff(saved, current) {
     .map(([field, labelKey]) => ({ field, labelKey, theirs: saved[field], ours: current[field] }));
 }
 
+/**
+ * A stored-vs-form difference, as one line.
+ *
+ * `includeLive` is the one field the live poll does not take from the form:
+ * LiveService.status() forces it on, so comparing the stored copy against the
+ * form's own box would report a difference on every poll whose form has live
+ * off — and one the operator cannot act on, since the poll ignores that box
+ * either way. So the caller passes the form's values with includeLive already
+ * set to what the driver will actually use, and the field never shows up.
+ */
+function scanDiffLine(saved, current, headlineKey) {
+  const t = window.arbiterI18n.t.bind(window.arbiterI18n);
+  const show = (value) => (typeof value === 'boolean' ? t(value ? 'yesShort' : 'noShort') : String(value));
+  const diff = schedulerScanDiff(saved, current);
+  return diff.length
+    ? `${t(headlineKey)}: ${diff.map((d) => `${t(d.labelKey)} ${show(d.theirs)} → ${show(d.ours)}`).join(', ')}`
+    : '';
+}
+
 function renderSchedulerScan(saved) {
   const el = $('sched-scan');
   if (!el) return;
-  const t = window.arbiterI18n.t.bind(window.arbiterI18n);
-  const show = (value) => (typeof value === 'boolean' ? t(value ? 'yesShort' : 'noShort') : String(value));
-  const diff = schedulerScanDiff(saved, currentScanOptions());
-  el.textContent = diff.length
-    ? `${t('schedulerScanDiffers')}: ${diff.map((d) => `${t(d.labelKey)} ${show(d.theirs)} → ${show(d.ours)}`).join(', ')}`
-    : '';
+  el.textContent = scanDiffLine(saved, currentScanOptions(), 'schedulerScanDiffers');
+}
+
+/**
+ * The same defect as `sched-scan`, one panel over, and the live poll has it
+ * for the same measured reason: `live-save` posts the form's own scan options
+ * with includeLive forced on (scrape.js, live-save handler), the service stores
+ * them, and the next tick replays that stored copy for as long as the poll
+ * stays armed. Switching the scrape form to another profile rewrites those
+ * values without touching the live panel, so a profile switch silently
+ * re-scopes what the poll collects at the next tick — and `live-state.json` is
+ * the only record of what it will actually use.
+ *
+ * Without this line the payload's `scanOptions` had no reader at all on this
+ * page: the books and the measured duration were drawn, the thresholds the poll
+ * will actually apply were not.
+ */
+function renderLiveScan(l) {
+  const el = $('live-scan');
+  if (!el) return;
+  // Same guard as the measured line above: nothing has drawn yet on the first
+  // render, and an absent payload is not a configuration to compare.
+  if (!l) { el.textContent = ''; return; }
+  el.textContent = scanDiffLine(l.scanOptions, { ...currentScanOptions(), includeLive: true }, 'liveScanDiffers');
 }
 
 async function refreshScheduler() {
@@ -1323,6 +1360,15 @@ function renderLiveMeasured(l, t) {
     // dress up. It is stated plainly.
     const overWindow = Number(l.liveMaxAgeMs) > 0 && Number(last.durationMs) > Number(l.liveMaxAgeMs);
     bits.push(`${t('livePollLastDuration')}: ${measured}${overWindow ? ` · ${t('livePollOverWindow')}` : ''}`);
+    // The service's own verdict, and a different question from the line above.
+    // It compares the measured duration with the poll's own interval — is the
+    // driver falling behind its cadence — where `overWindow` compares it with
+    // the 90s live window. At the 60s default a 75s poll is over its interval and
+    // still inside the window, so the page's own arithmetic would have called
+    // it fine. `keepingUp` is the backend answering the question it was written
+    // to answer (live-service.mjs, header item 3), and it was computed and
+    // published on every settled poll without anything reading it.
+    if (last.keepingUp === false) bits.push(t('livePollBehind'));
   }
   if (livePollInFlight(l)) {
     bits.push(t('livePollPending').replace('{time}', fmtClock(l.pending.startedAt)));
@@ -1394,6 +1440,7 @@ async function refreshLive() {
     if (l.lastError) $('live-last').textContent += ` · ${t('lastError')}: ${l.lastError.message}`;
     lastLive = l;
     renderLiveMeasured(l, t);
+    renderLiveScan(l);
   } catch (_e) { /* ignore */ }
 }
 

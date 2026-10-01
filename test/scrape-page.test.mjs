@@ -24,9 +24,22 @@ const commonSource = readFileSync(new URL('../public/js/pages/common.js', import
 const i18nSource = readFileSync(new URL('../public/js/i18n.js', import.meta.url), 'utf8');
 const formatSource = readFileSync(new URL('../public/js/format.js', import.meta.url), 'utf8');
 
+/** Each language's own table, taken out of the loaded dictionary. See dictionaries(). */
+const TABLES = {};
+
 /** The real dictionary, per language, loaded the way the page loads it. */
 function dictionaries() {
   const out = {};
+  // `t()` answers `(dict[lang] && dict[lang][key]) || (dict.en[key]) || key`, so
+  // asking it whether a key exists in Romanian passes just as happily when the
+  // Romanian string is gone and the English one answers. The fallback is right
+  // for a reader and the wrong oracle for the "exists in both languages" checks
+  // below, so the table is read directly — the IIFE is opened at the tail,
+  // because it is the only way to reach a const the module does not export.
+  const tail = '})();';
+  const at = i18nSource.lastIndexOf(tail);
+  assert.notEqual(at, -1, 'i18n.js must still end in an IIFE call — reading the table hangs on it');
+  const opened = `${i18nSource.slice(0, at)}  globalThis.arbiterTables = dict;\n${i18nSource.slice(at)}`;
   for (const lang of ['ro', 'en']) {
     const context = vm.createContext({
       document: { addEventListener() {}, documentElement: {}, querySelectorAll: () => [] },
@@ -37,13 +50,34 @@ function dictionaries() {
       console,
     });
     context.window = context;
-    vm.runInContext(i18nSource, context);
+    vm.runInContext(opened, context);
     assert.equal(context.arbiterI18n.lang, lang, 'the dictionary really loaded in the language under test');
+    assert.ok(context.arbiterTables && context.arbiterTables[lang],
+      `the ${lang} table came out of the module — the key checks read it`);
+    TABLES[lang] = context.arbiterTables[lang];
     out[lang] = context.arbiterI18n;
   }
   return out;
 }
 const DICTS = dictionaries();
+
+/**
+ * "This key exists in this language" — asked of that language's own table.
+ *
+ * `t()` falls back to English, so `t(key) !== key` is satisfied by the *other*
+ * language answering: a deleted Romanian string would have left every "exists
+ * in both languages" test in this file green, with English text quietly printed
+ * and nothing reported. A table check cannot be satisfied that way. The second
+ * assertion is the wiring the first one cannot see — the page's own lookup has
+ * to hand back this language's string, not fall through to the other one.
+ */
+function assertTranslated(lang, key) {
+  const own = TABLES[lang][key];
+  assert.equal(typeof own, 'string',
+    `${lang} is missing ${key} — t() would answer in ${lang === 'ro' ? 'English' : 'Romanian'} instead`);
+  assert.ok(own.trim().length > 0, `${lang} has an empty string for ${key}`);
+  assert.equal(DICTS[lang].t(key), own, `${lang} reads ${key} in its own words, not the fallback`);
+}
 
 /** The markup's own id set, so a missing element is a failure, not a silent pass. */
 const scrapeHtml = readFileSync(new URL('../public/admin/scrape.html', import.meta.url), 'utf8');
@@ -809,10 +843,7 @@ test('every key the chip tooltip uses exists in both languages', () => {
   const source = scrapeSource;
   for (const key of ['sourceValidated', 'sourceExperimental', 'endpointVerified']) {
     assert.ok(source.includes(`'${key}'`), `scrape.js should ask for ${key}`);
-    for (const lang of ['ro', 'en']) {
-      const value = DICTS[lang].t(key);
-      assert.notEqual(value, key, `${lang} is missing the ${key} key — t() would print the key itself`);
-    }
+    for (const lang of ['ro', 'en']) assertTranslated(lang, key);
   }
 });
 
@@ -988,13 +1019,13 @@ test('the scheduler block in the page still carries every id the script binds', 
   }
 });
 
-test('every key the scheduler readout uses exists in both languages', () => {
+test('every key the scheduler and live readouts use exists in both languages', () => {
+  // Both panels draw their stored-vs-form line from the same label keys, and
+  // each has its own headline: `schedulerScanDiffers` and `liveScanDiffers`.
   for (const key of ['skippedShort', 'schedulerBooks', 'schedulerResumed', 'schedulerScanDiffers',
+    'liveScanDiffers',
     'yesShort', 'noShort', 'okShort', 'failedShort', 'neverRan', 'lastRun']) {
-    for (const lang of ['ro', 'en']) {
-      const value = DICTS[lang].t(key);
-      assert.notEqual(value, key, `${lang} is missing ${key} — t() would print the key itself`);
-    }
+    for (const lang of ['ro', 'en']) assertTranslated(lang, key);
   }
 });
 
@@ -1158,6 +1189,107 @@ test('the scheduler block does not read `active`, because it cannot differ from 
   // fails and this line stops being an omission and starts being a gap.
   assert.doesNotMatch(scrapeSource, /\bs\.active\b/, 'the scheduler payload\'s `active` is not read');
   assert.doesNotMatch(scrapeSource, /\blastScheduler\.active\b/, 'nor the cached copy of it');
+});
+
+// ---- the live poll's stored thresholds --------------------------------------
+
+/**
+ * `GET /api/live` as the page receives it: LiveService.status() forces
+ * `includeLive: true` into the copy it returns, so the payload's own live flag
+ * is always true whatever the state file says.
+ */
+const LIVE_STORED_SCAN = { ...STORED_SCAN, includeLive: true };
+
+const liveScanLine = (lang, form, stored = LIVE_STORED_SCAN) => {
+  const h = harness(lang, { form });
+  h.run(`renderLiveScan({ scanOptions: ${JSON.stringify(stored)} })`);
+  return h.nodes.get('live-scan').textContent;
+};
+
+test('the live poll shows the thresholds it will actually use', () => {
+  // Same defect the scheduler block reports one panel up, reached by the same
+  // line of code: `live-save` posts currentScanOptions() to /api/live, the
+  // service stores it, and the next tick replays that stored copy. Switching the
+  // scrape form to another profile rewrites those values without touching the
+  // live panel, so the poll's thresholds drift away from the form silently.
+  // Before this line existed, the payload's `scanOptions` had no reader on the
+  // page at all: the books and the measured duration were drawn, the thresholds
+  // were not.
+  assert.equal(liveScanLine('en', PROFILE_ONE_FORM), '', 'a poll that agrees with the form says nothing');
+  assert.equal(liveScanLine('ro', PROFILE_ONE_FORM), '');
+
+  const en = liveScanLine('en', PROFILE_TWO_FORM);
+  assert.equal(en,
+    'The live poll uses values other than the form: Bankroll 1000 → 500, Min ROI % 0 → 1, '
+    + 'Max middle risk % 15 → 10, Min middle ROI % 20 → 30, include past no → yes');
+  const ro = liveScanLine('ro', PROFILE_TWO_FORM);
+  assert.equal(ro,
+    'Rularea live folosește valori diferite de formular: Bankroll 1000 → 500, ROI minim % 0 → 1, '
+    + 'Risc middle maxim % 15 → 10, ROI middle minim % 20 → 30, include trecut nu → da');
+  assert.doesNotMatch(en, /include live/, 'the poll forces includeLive, so the form\'s box is not a difference');
+  assert.doesNotMatch(en, /Min positive EV/, 'an unchanged field is not reported');
+
+  // The control for that suppression: the same form and the same stored numbers,
+  // compared the scheduler's way, DOES report the live box — which is correct
+  // there, because the scheduler really does take includeLive from the form. So
+  // the difference between the two lines is the forcing and not the fixture.
+  assert.match(scanLine('en', PROFILE_ONE_FORM, LIVE_STORED_SCAN), /include live yes → no/);
+});
+
+test('refreshLive writes the live scan line from one real payload', async () => {
+  // The call, not the function. Every other test in this section runs
+  // renderLiveScan() directly, so all of them would pass on a page where the
+  // refresh never called it and the line stayed empty forever — a page that
+  // draws the books and the measured duration and says nothing about the
+  // thresholds. This is the wiring the field census reads as evidence, so it is
+  // pinned as behaviour rather than assumed from the function existing.
+  const seen = [];
+  const payload = {
+    enabled: true, active: true, resumed: false, intervalSeconds: 60,
+    liveMaxAgeMs: 90000, bookIds: [], scanningAllBooks: true,
+    scanOptions: LIVE_STORED_SCAN, pending: null,
+    lastRun: { at: AT, ok: true, runId: 'r7', status: 'completed', durationMs: 42000, keepingUp: true },
+    lastError: null, skippedTicks: 0, lastSkippedAt: null,
+  };
+  const h = harness('en', {
+    form: PROFILE_TWO_FORM,
+    api: { get: async (url) => { seen.push(url); return payload; } },
+  });
+
+  await h.run('refreshLive()');
+
+  assert.deepEqual(seen, ['/api/live'], 'one route, one read');
+  assert.equal(h.nodes.get('live-enabled').checked, true, 'the payload drives the checkbox');
+  assert.equal(h.nodes.get('live-interval').value, 60);
+  // Touched the way the page touches it, so a page that never drew into this
+  // element fails on the CONTENT below rather than on a node this harness never
+  // had to create.
+  h.run("$('live-scan')");
+  assert.equal(h.nodes.get('live-scan').textContent,
+    'The live poll uses values other than the form: Bankroll 1000 → 500, Min ROI % 0 → 1, '
+    + 'Max middle risk % 15 → 10, Min middle ROI % 20 → 30, include past no → yes',
+    "the route's own scanOptions reached the line, compared against the form as it stands");
+
+  // The measured duration came from the same payload, so the two lines really are
+  // two drawings of one answer.
+  assert.match(h.nodes.get('live-measured').textContent, /Last measured poll: /);
+  assert.doesNotMatch(h.nodes.get('live-measured').textContent, /not keeping up/,
+    'a poll that kept up says nothing about falling behind');
+});
+
+test('a live payload with nothing to compare leaves the line empty', () => {
+  // The poll has never run: `status()` returns the empty options object, and a
+  // field the stored copy does not carry is not a difference.
+  assert.equal(liveScanLine('en', PROFILE_TWO_FORM, {}), '');
+  assert.equal(liveScanLine('en', PROFILE_TWO_FORM, 'not-an-object'), '');
+  const h = harness('en', { form: PROFILE_TWO_FORM });
+  h.run('renderLiveScan()');
+  assert.equal(h.nodes.get('live-scan').textContent, '', 'and no payload at all is not a configuration');
+});
+
+test('the live block does not read `active`, for the same reason the scheduler does', () => {
+  assert.doesNotMatch(scrapeSource, /\bl\.active\b/, 'the live payload\'s `active` is not read');
+  assert.doesNotMatch(scrapeSource, /\blastLive\.active\b/, 'nor the cached copy of it');
 });
 
 test('refreshScheduler writes all three readouts from one real payload', async () => {
@@ -1531,10 +1663,7 @@ test('every key the new readouts use exists in both languages', () => {
     assert.ok(p.mode, `${p.id} has no mode — profileLabel would fall back to its label`);
   }
   for (const key of [...literal, ...inMarkup, ...PROFILES.map((p) => p.mode)]) {
-    for (const lang of ['ro', 'en']) {
-      assert.notEqual(DICTS[lang].t(key), key,
-        `${lang} is missing ${key} — t() would print the key itself`);
-    }
+    for (const lang of ['ro', 'en']) assertTranslated(lang, key);
   }
 });
 
@@ -1707,6 +1836,37 @@ test('a payload with none of the three new fields renders exactly the old line',
   assert.doesNotMatch(line, /in flight|last at|resumed/);
   // A disabled driver draws nothing at all, as before.
   assert.equal(liveLine('en', live({ enabled: false, pending: PENDING })), '');
+});
+
+test('the poll says whether it is keeping up, in the service\'s own words', () => {
+  // The two warnings on this line answer different questions and the page used
+  // to be able to raise only one of them. `over the live window` compares the
+  // measured poll with the 90s window a price lives in; `keepingUp` is the
+  // service comparing it with the poll's own interval — the question its header
+  // says it exists to answer, and it was computed on every settled poll and
+  // published on this route with nothing reading it.
+  //
+  // The case that separates them: at the 60s default, a 75s poll is over its
+  // interval and still inside the window. The page's own arithmetic called that
+  // fine.
+  const behind = liveLine('en', live({ lastRun: { durationMs: 75000, keepingUp: false, ok: true, at: '2026-09-30T09:00:00.000Z' } }));
+  assert.match(behind, /Last measured poll: /);
+  assert.match(behind, /not keeping up with its interval/);
+  assert.doesNotMatch(behind, /over the live window/,
+    '75s is inside the 90s window, so that warning is the one that does not apply');
+
+  // Both at once, when the poll is over both: the duration first, then the two
+  // verdicts in the order the line builds them.
+  const both = liveLine('en', live({ lastRun: { durationMs: 95000, keepingUp: false, ok: true, at: '2026-09-30T09:00:00.000Z' } }));
+  assert.match(both, /Last measured poll: [^·]*· over the live window · not keeping up with its interval/);
+
+  // A poll that did keep up says neither, however long the window.
+  const onTime = liveLine('en', live({ intervalSeconds: 120, lastRun: { durationMs: 85000, keepingUp: true, ok: true, at: '2026-09-30T09:00:00.000Z' } }));
+  assert.doesNotMatch(onTime, /keeping up|over the live window/);
+
+  // And the string is translated, not English in both dictionaries.
+  assert.match(liveLine('ro', live({ lastRun: { durationMs: 75000, keepingUp: false, ok: true, at: '2026-09-30T09:00:00.000Z' } })),
+    /nu ține pasul cu intervalul/);
 });
 
 test('a null payload clears the line instead of throwing', () => {

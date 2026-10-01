@@ -56,7 +56,20 @@ export class SchedulerService {
       err.code = 'EBADINPUT';
       throw err;
     }
-    if (this._timer) clearInterval(this._timer);
+    if (this._timer) {
+      clearInterval(this._timer);
+      // Not cosmetic. `_startTimer()` opens with `if (this._timer || !this.enabled)
+      // return`, so a handle left behind by clearInterval is truthy and the re-arm
+      // below becomes a no-op: the interval is cleared, nothing replaces it, and
+      // status() still reports `enabled: true` and `active: true` — a scheduler
+      // that is not running and says it is.
+      //
+      // The page reaches that path on its own: `sched-save` posts `enabled`
+      // again every time it is pressed, so enabling, changing the interval and
+      // saving again used to stop the schedule permanently. disable() already
+      // took this step; enable() did not.
+      this._timer = null;
+    }
     this.bookIds = [...new Set(bookIds.map(String))];
     this.scanOptions = scanOptions && typeof scanOptions === 'object' ? scanOptions : {};
     this.intervalMinutes = clampInterval(intervalMinutes, this.intervalMinutes);

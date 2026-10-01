@@ -5,6 +5,7 @@ import { readFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { setImmediate as tickLoop } from 'node:timers/promises';
 import { LiveService } from '../src/live-service.mjs';
 import { DEFAULT_SCAN_OPTIONS } from '../src/scanner/scanner.mjs';
 import { DEFAULT_LIVE_MAX_AGE_MS } from '../src/shared/data-quality.mjs';
@@ -346,5 +347,54 @@ test('the live window the service reports is the one the scanner enforces', asyn
   const status = await service.status();
   assert.equal(status.liveMaxAgeMs, DEFAULT_LIVE_MAX_AGE_MS);
   assert.equal(status.liveMaxAgeMs, 90_000);
+  await rm(dataDir, { recursive: true, force: true });
+});
+
+test('saving the live poll twice leaves it polling, not enabled and idle', async () => {
+  // Same defect, same trigger as the scheduler's: `live-save` posts `enabled`
+  // every time it is pressed, so changing the interval of a running poll and
+  // saving again calls enable() on an already-enabled service.
+  //
+  // enable() cleared the interval but left the cleared handle in `_timer`, and
+  // `_startTimer()` opens with `if (this._timer || !this.enabled) return`, so
+  // the re-arm did nothing. The poll stopped collecting entirely while
+  // status() still reported `enabled: true` and `active: true` — `active` is
+  // `Boolean(this._timer)`, and a cleared handle is truthy. On a 90-second live
+  // window a poll that silently stops is the worst failure this app has.
+  //
+  // Counted through a wrapped setInterval, not through `active` — that is the
+  // field that was lying.
+  const dataDir = await tmp();
+  const service = new LiveService({ dataDir, configPath: 'unused', orchestrator: orchestrator() });
+  let ticks = 0;
+  service._tick = () => { ticks += 1; return Promise.resolve(); };
+
+  const armed = [];
+  const realSetInterval = globalThis.setInterval;
+  const realClearInterval = globalThis.clearInterval;
+  globalThis.setInterval = (fn, ms) => {
+    const handle = realSetInterval(fn, ms);
+    armed.push({ handle, fn });
+    return handle;
+  };
+  try {
+    await service.enable({ intervalSeconds: 45 });
+    await service.enable({ intervalSeconds: 45 });
+  } finally {
+    globalThis.setInterval = realSetInterval;
+  }
+
+  assert.equal(armed.length, 2, 'the second enable arms a replacement interval');
+  assert.equal((await service.status()).active, true, 'and the payload agrees it is armed');
+
+  // The control: a counted arm that never fired would mean the wrapper counted
+  // something inert, and the count above would prove nothing.
+  const before = ticks;
+  armed[armed.length - 1].fn();
+  await tickLoop();
+  assert.equal(ticks - before, 1, 'the interval armed by the second enable actually fires');
+
+  await service.disable();
+  for (const { handle } of armed) realClearInterval(handle);
   await rm(dataDir, { recursive: true, force: true });
 });

@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { setImmediate as tickLoop } from 'node:timers/promises';
 import { SchedulerService } from '../src/scheduler-service.mjs';
 
 function orchestrator() {
@@ -158,5 +159,57 @@ test('`active` never differs from `enabled`, which is why the page does not show
   assert.notEqual(armed.lastRun, null, 'and the run above recorded a lastRun, so the instance was live');
 
   await service.disable();
+  await rm(dataDir, { recursive: true, force: true });
+});
+
+test('saving the scheduler twice leaves it running, not enabled and idle', async () => {
+  // The page's own write path reaches this. `sched-save` posts `enabled` on
+  // every press, so enabling, changing the interval and saving again calls
+  // enable() on a service that is already enabled.
+  //
+  // enable() used to clear the interval and then leave the cleared handle in
+  // `_timer`, and `_startTimer()` opens with `if (this._timer || !this.enabled)
+  // return` — so the re-arm was a no-op. Nothing replaced the interval, and
+  // status() went on reporting `enabled: true` and `active: true`, because
+  // `active` is `Boolean(this._timer)` and a cleared handle is still truthy.
+  // The schedule stopped until the process restarted, and the panel said it was
+  // running the whole time.
+  //
+  // Counted through a wrapped setInterval rather than through `active`, which is
+  // the very field that was lying: `active === enabled` held perfectly well
+  // while no timer was scheduled.
+  const dataDir = await mkdtemp(join(tmpdir(), 'arbiter-scheduler-'));
+  const service = new SchedulerService({ dataDir, configPath: 'unused', orchestrator: orchestrator() });
+  let ticks = 0;
+  service._tick = () => { ticks += 1; return Promise.resolve(); };
+
+  const armed = [];
+  const realSetInterval = globalThis.setInterval;
+  const realClearInterval = globalThis.clearInterval;
+  globalThis.setInterval = (fn, ms) => {
+    const handle = realSetInterval(fn, ms);
+    armed.push({ handle, fn });
+    return handle;
+  };
+  try {
+    await service.enable({ bookIds: ['a'], intervalMinutes: 15 });
+    await service.enable({ bookIds: ['a'], intervalMinutes: 15 });
+  } finally {
+    globalThis.setInterval = realSetInterval;
+  }
+
+  assert.equal(armed.length, 2, 'the second enable arms a replacement interval');
+  assert.equal((await service.status()).active, true, 'and the payload agrees it is armed');
+
+  // The control that gives the count above its meaning: a recorded arm that
+  // never fired would mean the wrapper counted something inert. This is the
+  // callback the second enable installed, and it is the one that must run.
+  const before = ticks;
+  armed[armed.length - 1].fn();
+  await tickLoop();
+  assert.equal(ticks - before, 1, 'the interval armed by the second enable actually fires');
+
+  await service.disable();
+  for (const { handle } of armed) realClearInterval(handle);
   await rm(dataDir, { recursive: true, force: true });
 });
