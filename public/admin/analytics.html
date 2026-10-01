@@ -109,6 +109,40 @@
         </div>
       </div>
     </section>
+
+    <!-- Event coverage: the other half of the catalog, and the half
+         buildMarketCatalog promised when it wrote "Browsable from
+         /admin/analytics#catalog". A real capture holds 2 770 rows and 842 KB of
+         them, so the table is a search over the whole set rather than a page of
+         it, and the count above says which of the 2 770 are on screen — a
+         truncated list that does not say it is truncated is a list that lies. -->
+    <section id="event-coverage">
+      <div class="card">
+        <h3>
+          <span data-i18n="eventCoverage">Event coverage</span>
+          <span class="h3-meta"><span data-i18n="coveredEvents">events covered across all books</span> · <span id="event-coverage-count">—</span></span>
+        </h3>
+        <div class="row mb-7">
+          <div class="field flex-1 m-0 max-w-320">
+            <label class="sr-only" for="event-search" data-i18n="eventFilterPlaceholder">Filter team / league...</label>
+            <input type="text" id="event-search" data-i18n-placeholder="eventFilterPlaceholder" placeholder="Filter team / league..." autocomplete="off" aria-describedby="event-coverage-help">
+          <div id="event-coverage-help" class="muted text-xs">How many books quote each event, and on how many markets.</div>
+          </div>
+        </div>
+        <div class="table-wrap table-clean">
+          <table class="compact" id="event-coverage-table">
+            <caption class="sr-only">Event coverage across books</caption>
+            <thead><tr>
+              <th scope="col" data-i18n="event">Event</th>
+              <th scope="col" class="num" data-i18n="books">Books</th>
+              <th scope="col" class="num" data-i18n="market">Market</th>
+              <th scope="col" class="num" data-i18n="selections">Selections</th>
+            </tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
   </main>
 
   <link rel="stylesheet" href="/css/analytics.css">

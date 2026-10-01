@@ -606,53 +606,75 @@ async function realCatalog() {
 /** What the builder writes, named rather than derived, and checked against it below. */
 const CATALOG_TOP_FIELDS = ['builtAt', 'events', 'markets', 'scrapeRunId', 'schemaVersion', 'sources'];
 const CATALOG_MARKET_FIELDS = ['eventCount', 'marketKey', 'marketName', 'selectionCount', 'sourceId'];
+const CATALOG_EVENT_FIELDS = ['awayTeam', 'eventKey', 'homeTeam', 'kickoff', 'league', 'marketKeys', 'selectionCount', 'sources', 'sport'];
 
 /**
  * The page's catalog unit, so `cat.` and `m.` mean one thing inside it.
  *
- * The harness cuts at the same marker, so these are the bounds the tests below
+ * The harness cuts at the same markers, so these are the bounds the tests below
  * are actually about — found once on the raw text, and asserted once, because
  * two copies of an `indexOf` pair is how a block quietly stops being the block.
+ *
+ * Two regions, not one, and the seam is the point. The block above the marker is
+ * the market card and the block below it is the event card; they are two cards in
+ * the page now, over one document. Collapsing them back into a single region
+ * would make "the market card must not reach for cat.events" impossible to state
+ * — it would go false the moment the event card below it reads it. So the seam is
+ * cut where the card boundary is and each side is held to what it may read.
  */
 const CATALOG_BOUNDS = (() => {
   const from = analyticsSource.indexOf('// — market catalog —');
+  const mid = analyticsSource.indexOf('// — event coverage —');
   const to = analyticsSource.indexOf('// — add-bet modal —');
-  assert.ok(from !== -1 && to > from, 'the catalog block is gone — has the page been restructured?');
-  return { from, to };
+  assert.ok(from !== -1 && mid > from && to > mid,
+    'the catalog regions are gone or out of order — has the page been restructured?');
+  return { from, mid, to };
 })();
 
-/** The same block with its comments blanked, so a slice of it is that region. */
-const CATALOG_CODE = analyticsCode.slice(CATALOG_BOUNDS.from, CATALOG_BOUNDS.to);
+/** The same regions with their comments blanked, so a slice of one is that region. */
+const CATALOG_CODE = analyticsCode.slice(CATALOG_BOUNDS.from, CATALOG_BOUNDS.mid);
+const COVERAGE_CODE = analyticsCode.slice(CATALOG_BOUNDS.mid, CATALOG_BOUNDS.to);
 
 /**
- * Every `<receiver>.<field>` the block reads, for a given receiver name.
+ * Every `<receiver>.<field>` a region reads, for a given receiver name.
  *
- * Read off the blanked block, so a field named in a comment inside it is still
- * reported as unread — which is the state the two tests below assert for
- * `cat.events`, `cat.sources` and `cat.schemaVersion`. Those are the three a
- * comment could most easily talk a census into believing, since all three are
- * named in the prose of this very test file.
+ * Read off the blanked region, so a field named in a comment inside it is still
+ * reported as unread — which is the state the tests below assert for
+ * `cat.sources` and `cat.schemaVersion`. Those are the two a comment could most
+ * easily talk a census into believing, since both are named in the prose of this
+ * very test file.
  *
- * Receivers are the page's own bindings: `cat` is the document, `m` a row. The
- * boundary is what stops `mm.marketKey` from answering for `m.marketKey`.
+ * Receivers are the page's own bindings: `cat` is the document, `m` a market row,
+ * `ev` an event row. The boundary is what stops `mm.marketKey` from answering for
+ * `m.marketKey`, and what keeps the event card's `ev.league` from being counted
+ * as a market field.
  */
-const readsOn = (receiver) => fieldsOn(CATALOG_CODE, receiver);
+const readsOn = (receiver, code = CATALOG_CODE) => fieldsOn(code, receiver);
+
+/**
+ * What the two cards read off the document, which is the union of both regions.
+ *
+ * `cat` is the document as a whole — one fetch feeds two cards — so a top-level
+ * field is read if either card reads it. The per-card statements are made
+ * separately, where they mean something: see the test that splits them.
+ */
+const topLevelReads = [...new Set([...readsOn('cat'), ...readsOn('cat', COVERAGE_CODE)])];
 
 /**
  * Published by the catalog, read by no page, with the reason it is allowed.
  *
  * When a name is removed from here the test says why it stopped being allowed,
  * and if the reason was the code's own docstring, the docstring is in the test.
+ *
+ * `events` is not on this list any more, and its absence is this lot's result. It
+ * was here with a reason that said the promise was unfulfilled — buildMarketCatalog
+ * writes "Browsable from /admin/analytics#catalog" and only the markets half was
+ * ever built — and the decision taken on that was to build the missing half rather
+ * than to stop publishing it. The event card is that half, and the absence of
+ * `events` from this table is what says it arrived: put the name back here and
+ * the test will demand the same reason again.
  */
 const UNREAD_BY_DESIGN = {
-  events: [
-    'The event index: 845 KB of 866 KB in a real capture, 2 770 rows, and no page reads it.',
-    'It is a coverage census of every event x book, not a signal list, so it is not the',
-    '`middles` the scanner already shows. buildMarketCatalog promises it is "Browsable from',
-    '/admin/analytics#catalog" and only the markets half of that promise was ever built.',
-    "Shipping a UI nobody asked for is not this lot's call — so it stays published,",
-    'unread, and named here. Deleting the docstring sentence above is what makes this fail.',
-  ].join(' '),
   sources: [
     'A verbatim copy of scan.sources, which /api/scan already delivers to the same page',
     'and which dashboard.js and ai.js already read. Its field list belongs to the scan,',
@@ -674,11 +696,47 @@ test('every field the catalog publishes is read by the page, or is named above w
   // Receivers named as the page binds them: `cat` is the document, `m` a row.
   // Renaming either is expected to fail here, which is the canary.
   const unreadTop = CATALOG_TOP_FIELDS
-    .filter((f) => !(f in UNREAD_BY_DESIGN) && !readsOn('cat').includes(f));
+    .filter((f) => !(f in UNREAD_BY_DESIGN) && !topLevelReads.includes(f));
   assert.deepEqual(unreadTop, [], `the page never reads these: ${unreadTop.join(', ')}`);
 
   const unreadMarkets = CATALOG_MARKET_FIELDS.filter((f) => !readsOn('m').includes(f));
   assert.deepEqual(unreadMarkets, [], `the page never reads these off a row: ${unreadMarkets.join(', ')}`);
+
+  // The event half, held to the same three questions: every field the builder
+  // writes is read, the row receiver is really read, and no field is invented.
+  // Measured on the real catalog: 2 770 rows, 842 KB, and the nine fields below
+  // are the complete key set of every one of them — no row is missing any of
+  // them, so a page that reads all nine is reading all the shape there is.
+  const eventReads = readsOn('ev', COVERAGE_CODE);
+  const unreadEvents = CATALOG_EVENT_FIELDS.filter((f) => !eventReads.includes(f));
+  assert.deepEqual(unreadEvents, [], `the event card never reads these off a row: ${unreadEvents.join(', ')}`);
+  const inventedEvents = eventReads.filter((f) => !CATALOG_EVENT_FIELDS.includes(f));
+  assert.deepEqual(inventedEvents, [], `and it reads fields the builder does not write: ${inventedEvents.join(', ')}`);
+
+  // And the controls, because both halves above can pass vacuously: a region
+  // that reads nothing would report every field unread and every invented field
+  // absent, and the real document is what the field lists are checked against.
+  assert.ok(topLevelReads.length > 0 && readsOn('m').length > 0 && eventReads.length > 0,
+    'both cards read something at all');
+});
+
+test('the two cards split the document between them, and neither reaches past it', async () => {
+  // `events` used to be on the exempt list, which was a statement that no card
+  // read it. It is read now, by the event card, so the assertion cannot stay
+  // "no card reads it" — it has to become "the market card does not, the event
+  // card does, and neither of them touches the other two exemptions". That is
+  // only stateable because the block is cut in two; as one region this test
+  // would have been unable to say which card did what.
+  assert.equal(readsOn('cat').includes('events'), false,
+    'the market card reads cat.events — the 845 KB index belongs to the event card alone');
+  assert.equal(readsOn('cat', COVERAGE_CODE).includes('events'), true,
+    'the event card does not read cat.events, and the whole point of it is that it does');
+
+  for (const field of ['sources', 'schemaVersion']) {
+    assert.equal(readsOn('cat').includes(field), false, `the market card reads cat.${field}`);
+    assert.equal(readsOn('cat', COVERAGE_CODE).includes(field), false,
+      `the event card reads cat.${field}; remove it from UNREAD_BY_DESIGN and say why in the same commit`);
+  }
 });
 
 test('the catalog card reads only fields the builder actually writes', async () => {
@@ -694,14 +752,14 @@ test('the catalog card reads only fields the builder actually writes', async () 
   // the tests feed it, because none of them carries a `scrapedAt`. Removing the
   // surface is the fix; the field list alone would have left it in place.
   const cat = await realCatalog();
-  const readTop = readsOn('cat');
+  const readTop = topLevelReads;
   const inventedTop = readTop.filter((f) => !CATALOG_TOP_FIELDS.includes(f));
   assert.deepEqual(inventedTop, [],
-    `the card reads fields the catalog does not publish: ${inventedTop.join(', ')}`);
+    `the cards read fields the catalog does not publish: ${inventedTop.join(', ')}`);
 
   const inventedRow = readsOn('m').filter((f) => !CATALOG_MARKET_FIELDS.includes(f));
   assert.deepEqual(inventedRow, [],
-    `and row fields the catalog does not publish: ${inventedRow.join(', ')}`);
+    `and market row fields the catalog does not publish: ${inventedRow.join(', ')}`);
 
   // Not vacuous: the two receivers really are read, and the control below is the
   // published document those reads are checked against.
@@ -709,15 +767,6 @@ test('the catalog card reads only fields the builder actually writes', async () 
   assert.ok(CATALOG_TOP_FIELDS.every((f) => f in cat), 'the control document really carries the top-level fields');
   assert.ok(CATALOG_MARKET_FIELDS.every((f) => f in cat.markets[0]), 'and the row fields');
   assert.equal(cat.scrapedAt, undefined, 'the catalog itself never carries the scan\'s stamp');
-});
-
-test('the card never reaches for the event index or the copied source list', () => {
-  // Both are on the exempt list above, which is a statement about today, not a
-  // licence: reading either is how a 845 KB download starts arriving by accident.
-  for (const field of ['events', 'sources', 'schemaVersion']) {
-    assert.equal(readsOn('cat').includes(field), false,
-      `the card reads cat.${field}; remove it from UNREAD_BY_DESIGN and say why in the same commit`);
-  }
 });
 
 test('a market is shown by the name its book gives it, with the key kept', async () => {
@@ -771,6 +820,169 @@ test('the filter finds a row by the name it displays', async () => {
   await h.fire('#cat-search', 'input', { target: { value: 'nothing-here' } });
   assert.doesNotMatch(body(), /BTSC/, 'a query that matches nothing empties the table');
   assert.ok(body().includes(h.text('noMarkets')), 'into the empty state, not a blank body');
+});
+
+// — event coverage card —
+
+/**
+ * Rows in the shape buildMarketCatalog writes, for the tests that need more of
+ * them than a real two-book catalog has.
+ *
+ * Shaped by hand, so the key set is asserted against the real builder's output
+ * before anything is rendered: a helper that drifted into a shape no builder
+ * produces would render happily and prove nothing.
+ *
+ * The index is padded because these rows are searched as substrings, and
+ * "FCSB 7" is a prefix of "FCSB 70". An unpadded fixture made the first draft of
+ * the truncation test ask for one row and get 111, which was the fixture talking
+ * and not the page.
+ *
+ * The eventKey carries an `l1` league token rather than the league's own text,
+ * which is deliberate and was not the first draft. Adapters build the key as
+ * sport|league|... , so a fixture whose key spells out "Liga 1" makes every
+ * league search match through the key instead, and the test cannot tell a search
+ * that reads the league from one that does not. With the token kept distinct, a
+ * term found by the league field can only be found by the league field.
+ */
+function eventRows(n) {
+  return Array.from({ length: n }, (_, i) => ({
+    eventKey: `football|l1|2030-01-${String((i % 28) + 1).padStart(2, '0')}|fcsb-${i}|cfr-${i}`,
+    sport: 'Football',
+    league: 'Liga 1',
+    kickoff: '2030-01-01T00:00:00.000Z',
+    homeTeam: `FCSB ${String(i).padStart(4, '0')}`,
+    awayTeam: `CFR ${String(i).padStart(4, '0')}`,
+    sources: i % 2 === 0 ? ['betano', 'admiral'] : ['betano'],
+    marketKeys: ['BTSC', '1x2'],
+    selectionCount: 3,
+  }));
+}
+
+test('the page asks for the catalog once, and feeds both cards from it', () => {
+  // One fetch feeds two cards now, and the second card is the reason the first
+  // one reads an 866 KB document at all. Two calls would download it twice, so
+  // this is a statement about the source rather than a runtime count — init() is
+  // cut short by the harness long before it reaches these calls, so a behavioural
+  // count here would pass on a page that fetched twice.
+  const calls = [...analyticsCode.matchAll(/arbiterApi\.get\(\s*'\/api\/catalog'/g)];
+  assert.equal(calls.length, 1,
+    `the page fetches /api/catalog ${calls.length} times; two cards, one document, one download`);
+  assert.match(analyticsCode, /initCatalog\(catalog, t\)/, 'and the market card is fed that document');
+  assert.match(analyticsCode, /initEventCoverage\(catalog, t\)/, 'and so is the event card');
+});
+
+test('an event row shows the fixture, the books and how widely it is covered', async () => {
+  const cat = await realCatalog();
+  // The shape check first, on the builder's own output: the row below is a real
+  // catalog event, not a transcription of what the builder was believed to write.
+  assert.deepEqual(Object.keys(cat.events[0]).sort(), CATALOG_EVENT_FIELDS,
+    'the builder wrote a different event row than the page is tested against');
+
+  const h = harness('en');
+  h.run(`initEventCoverage(${JSON.stringify(cat)}, arbiterI18n.t.bind(arbiterI18n));`);
+  const body = h.node('#event-coverage-table tbody').innerHTML;
+
+  assert.match(body, /FCSB/, 'the home team is on screen');
+  assert.match(body, /CFR/, 'and the away team');
+  assert.match(body, /Liga 1/, 'the league is what the book called it');
+  // Coverage, which is the whole reason this index exists: one event, two books,
+  // two different markets. A one-book event is the finding, not the exception.
+  assert.match(body, /betano, admiral/, 'which books quote it, by name');
+  assert.match(body, /2<\/td>/, 'and how many');
+  assert.equal(h.node('#event-coverage-count').textContent, '1', 'one event is on screen and the count says one');
+});
+
+test('the event search narrows by everything the row shows', async () => {
+  const h = harness('en');
+  const cat = { events: eventRows(6) };
+  h.run(`initEventCoverage(${JSON.stringify(cat)}, arbiterI18n.t.bind(arbiterI18n));`);
+  const body = () => h.node('#event-coverage-table tbody').innerHTML;
+
+  // The control: unfiltered, every row is there. 0 through 5 is enough to see
+  // and specific enough to be wrong about.
+  assert.match(body(), /FCSB 0000/);
+  assert.match(body(), /FCSB 0005/);
+
+  await h.fire('#event-search', 'input', { target: { value: 'fcsb 0003' } });
+  assert.match(body(), /FCSB 0003/, 'the home team is searchable');
+  assert.doesNotMatch(body(), /FCSB 0004/, 'and the others are filtered out');
+  assert.equal(h.node('#event-coverage-count').textContent, '1 / 6', 'the count says one of six');
+
+  await h.fire('#event-search', 'input', { target: { value: 'liga' } });
+  assert.match(body(), /FCSB 0005/, 'the league is searchable too — it is on the row, so the box reads it');
+  assert.equal(h.node('#event-coverage-count').textContent, '6', 'all six answer it and all six fit, so the count is the total');
+
+  // And the eventKey, which is the string the scanner buckets by, so it is what
+  // a report quoting an event will carry.
+  await h.fire('#event-search', 'input', { target: { value: 'cfr-2' } });
+  assert.match(body(), /FCSB 0002/);
+  assert.doesNotMatch(body(), /FCSB 0000/);
+});
+
+test('a list longer than the cap says it is longer', async () => {
+  // 2 770 rows on a real capture and 200 on screen is a truncation, and a list
+  // that does not say so is a list that lies about its own completeness.
+  const h = harness('en');
+  h.run(`initEventCoverage(${JSON.stringify({ events: eventRows(2770) })}, arbiterI18n.t.bind(arbiterI18n));`);
+
+  assert.equal(h.node('#event-coverage-count').textContent, '200 / 2,770',
+    'unfiltered, the count says the screen holds 200 of 2 770 — not "2,770", which is what the table does not show');
+  assert.equal((h.node('#event-coverage-table tbody').innerHTML.match(/<tr>/g) || []).length, 200,
+    'and the table holds the cap');
+
+  // The case the cap hides best: a query that matches every single row. The
+  // result is still 2 770 and the screen is still 200, so a count keyed on
+  // "did the filter change anything" would read as the whole set here.
+  await h.fire('#event-search', 'input', { target: { value: 'liga' } });
+  assert.equal(h.node('#event-coverage-count').textContent, '200 / 2,770',
+    'a query matching all 2 770 rows still says how many are drawn');
+
+  // And narrowed under the cap, where the two numbers mean something different:
+  // now everything that matched is on screen.
+  await h.fire('#event-search', 'input', { target: { value: 'fcsb 0007' } });
+  assert.equal(h.node('#event-coverage-count').textContent, '1 / 2,770',
+    'one match out of the whole document says one of 2 770');
+  assert.equal((h.node('#event-coverage-table tbody').innerHTML.match(/<tr>/g) || []).length, 1);
+});
+
+test('no catalog and no match are different empty states', async () => {
+  // A harness per case, not one harness for both: `addEventListener` is a
+  // no-op stub here, so a second init on the same context stacks a second
+  // handler on the same input and the first fire() throws rather than testing
+  // anything about the page.
+  const empty = harness('en');
+  empty.run(`initEventCoverage(${JSON.stringify({})}, arbiterI18n.t.bind(arbiterI18n));`);
+  const noCatalog = empty.node('#event-coverage-table tbody').innerHTML;
+  assert.ok(noCatalog.includes(empty.text('noEvents')), 'a catalog that was never built says so');
+  assert.match(noCatalog, /scrape\.html/, 'and offers the scrape that would build one');
+
+  const filtered = harness('en');
+  filtered.run(`initEventCoverage(${JSON.stringify({ events: eventRows(3) })}, arbiterI18n.t.bind(arbiterI18n));`);
+  await filtered.fire('#event-search', 'input', { target: { value: 'nothing-here' } });
+  const noMatch = filtered.node('#event-coverage-table tbody').innerHTML;
+  assert.ok(noMatch.includes(filtered.text('noEventsFound')), 'a filter that matches nothing says that instead');
+  assert.doesNotMatch(noMatch, /scrape\.html/,
+    'and does not offer a scrape — the catalog exists, the query is what found nothing');
+});
+
+test('a team name is text on the event rows, like every other name on the page', async () => {
+  const h = harness('en');
+  const rows = eventRows(1).map((r) => ({
+    ...r, homeTeam: '<img src=x onerror=boom>', awayTeam: '<script>boom()</script>',
+  }));
+  h.run(`initEventCoverage(${JSON.stringify({ events: rows })}, arbiterI18n.t.bind(arbiterI18n));`);
+  const body = h.node('#event-coverage-table tbody').innerHTML;
+
+  assert.match(body, /&lt;img src=x onerror=boom&gt;/, 'the name is escaped text');
+  assert.doesNotMatch(body, /<img/, 'no element was created from it');
+  assert.doesNotMatch(body, /<script>/, 'and no script either');
+
+  // Escaping must not cost the row its searchability, or the fix would have
+  // traded a rendering bug for a filter that silently skips hostile-looking rows.
+  await h.fire('#event-search', 'input', { target: { value: 'onerror=boom' } });
+  const found = h.node('#event-coverage-table tbody').innerHTML;
+  assert.match(found, /&lt;img src=x onerror=boom&gt;/, 'and it is still findable by the text it shows');
+  assert.equal(h.node('#event-coverage-count').textContent, '1', 'as one matching row');
 });
 
 // Two runs an hour and two days apart. The catalog is a stored artifact rebuilt

@@ -85,7 +85,11 @@ arbiterApp.mount('analytics');
       }
       _isFirstAnalyticsLoad = false;
 
-      initCatalog(await arbiterApi.get('/api/catalog').catch(() => ({})), t);
+      // One fetch, two cards. Asking the route twice would download 866 KB twice,
+      // which is the thing the event half was unreadable for in the first place.
+      const catalog = await arbiterApi.get('/api/catalog').catch(() => ({}));
+      initCatalog(catalog, t);
+      initEventCoverage(catalog, t);
 
       const tracker = await arbiterApi.get('/api/tracker');
       renderTracker(tracker);
@@ -257,6 +261,124 @@ arbiterApp.mount('analytics');
       renderCatalog(all);
       $('cat-search').addEventListener('input', (e) => {
         renderCatalog(all.filter((m) => matchesCatalogQuery(m, e.target.value.toLowerCase())));
+      });
+    }
+
+    // — event coverage —
+    /**
+     * The event half of the catalog, as rows, widest coverage first.
+     *
+     * The same order as the market table above, and for the same reason: the
+     * question this index answers is "how widely is this quoted", so the widest
+     * rows are the ones worth seeing first. Measured on the stored catalog:
+     * 2 770 events, 842 KB, no field missing or empty on any row; 1 281 of them
+     * are quoted by exactly one book and the widest is quoted by 17.
+     *
+     * @param {object} cat - The /api/catalog document, possibly `{}`.
+     * @returns {object[]}
+     */
+    function eventCoverageRows(cat) {
+      return (cat.events || []).slice().sort((a, b) =>
+        (b.sources || []).length - (a.sources || []).length
+        || Number(b.selectionCount || 0) - Number(a.selectionCount || 0));
+    }
+
+    /**
+     * Does an event answer the filter box?
+     *
+     * Everything the row prints is searched, because a filter that ignores what
+     * the user can read silently drops rows they can see. `eventKey` is in it
+     * too: it is the string the scanner buckets by, so it is what a report
+     * quoting one will carry.
+     *
+     * @param {object} ev - One catalog event row.
+     * @param {string} q - The lower-cased query.
+     * @returns {boolean}
+     */
+    function matchesEventQuery(ev, q) {
+      return !q
+        || String(ev.homeTeam || '').toLowerCase().includes(q)
+        || String(ev.awayTeam || '').toLowerCase().includes(q)
+        || String(ev.league || '').toLowerCase().includes(q)
+        || String(ev.sport || '').toLowerCase().includes(q)
+        || String(ev.eventKey || '').toLowerCase().includes(q);
+    }
+
+    /**
+     * How many event rows go into the table at once.
+     *
+     * The whole set is 2 770 rows on a real capture and the search runs over all
+     * of them, but painting all of them on an empty query is a page that takes a
+     * second to answer a question a search box answers instantly. The cap is only
+     * acceptable because the count above it says which slice is on screen —
+     * 2770 unfiltered, `200 / 2770` once a filter narrows past the cap.
+     */
+    const EVENT_ROW_LIMIT = 200;
+
+    /**
+     * Draw the event coverage table and say how much of it is on screen.
+     *
+     * Two empty states, because they answer different questions. No rows at all
+     * means no catalog has been built and the way out is a scrape; rows the
+     * filter rejected means the catalog is fine and the query is the problem,
+     * which a "Run scrape" button would answer wrongly.
+     *
+     * @param {object[]} rows - Event rows to draw, already filtered and sorted.
+     * @param {number} total - How many rows the document holds, unfiltered.
+     * @param {Function} t - The translation lookup.
+     */
+    function renderEventCoverage(rows, total, t) {
+      const tb = document.querySelector('#event-coverage-table tbody');
+      const shown = rows.slice(0, EVENT_ROW_LIMIT);
+      const fmt = (n) => Number(n || 0).toLocaleString();
+      // Both numbers whenever the screen holds fewer than the document does, and
+      // the document's own count when it holds all of them. Keying this on
+      // "is a filter active" instead would hide the cap exactly when the cap is
+      // the only thing that matters: a query that matches all 2 770 rows still
+      // draws 200 of them, and a count reading "2,770" would be claiming the
+      // table below shows what it does not.
+      $('event-coverage-count').textContent = shown.length === total
+        ? fmt(total)
+        : `${fmt(shown.length)} / ${fmt(total)}`;
+      const empty = (message, action) => `<tr><td colspan="4"><div class="empty">
+            <div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg></div>
+            <div>${escapeHtml(message)}</div>
+            ${action ? `<div class="empty-actions"><a class="btn primary" href="/admin/scrape.html">${escapeHtml(t('runScrape'))}</a></div>` : ''}
+          </div></td></tr>`;
+      tb.innerHTML = shown.length ? shown.map((ev) => {
+        const sources = ev.sources || [];
+        const markets = ev.marketKeys || [];
+        const meta = [ev.league, ev.kickoff ? fmtWhen(ev.kickoff) : ''].filter(Boolean).join(' · ');
+        return `
+          <tr>
+            <td>
+              <div>${escapeHtml(ev.homeTeam || '')} <span class="muted">—</span> ${escapeHtml(ev.awayTeam || '')}</div>
+              <span class="muted text-xs">${escapeHtml(meta)}</span>
+              <span class="muted text-xs mono">${escapeHtml(sources.join(', '))}</span>
+            </td>
+            <td class="num tabnum">${fmt(sources.length)}</td>
+            <td class="num tabnum" title="${escapeHtml(markets.join(', '))}">${fmt(markets.length)}</td>
+            <td class="num tabnum">${fmt(ev.selectionCount)}</td>
+          </tr>`;
+      }).join('') : empty(total === 0 ? t('noEvents') : t('noEventsFound'), total === 0);
+    }
+
+    /**
+     * Draw the event coverage card and wire its filter, from the same document
+     * the market table above is drawn from.
+     *
+     * One fetch, two cards: `init` already asks the route for /api/catalog and
+     * the index it returns is 866 KB, which is exactly why asking twice would be
+     * the wrong way to build the half that reads it.
+     *
+     * @param {object} cat - The /api/catalog document, possibly `{}`.
+     * @param {Function} t - The translation lookup.
+     */
+    function initEventCoverage(cat, t) {
+      const all = eventCoverageRows(cat);
+      renderEventCoverage(all, all.length, t);
+      $('event-search').addEventListener('input', (e) => {
+        renderEventCoverage(all.filter((ev) => matchesEventQuery(ev, e.target.value.toLowerCase())), all.length, t);
       });
     }
 
