@@ -301,10 +301,68 @@
         <p class="sl-hint" id="live-measured">—</p>
       </section>
     </div>
+
+    <!-- ══ Book price board ═══════════════════════════════════════════════
+         GET /api/odds/:book answered "what is this book quoting right now",
+         filterable by event and market, and nothing under public/ called it.
+         It is the only per-book price feed the app has: the scanner compares
+         books against each other, the event view shows one event across books,
+         and nothing showed one board.
+
+         Measured over data-market-run/workspace before this markup existed:
+         22 of the 26 registered jobs have a capture, 24.829 events, 31.927
+         markets, 93.600 selections, 12 distinct market keys of which
+         MATCH_ODDS is on all 22 and the other 11 on one to four books each.
+         Two of the four without a capture (unibet, betmen) are enabled and
+         validated, so the selector offers every job the backend registers and
+         a book with no capture is a sentence on screen, not a failed panel. -->
+    <section class="sl-panel" data-i18n-aria-label="bookPrices">
+      <header class="sl-panel-head">
+        <h2 class="sl-panel-title" data-i18n="bookPrices">Prețuri pe casă</h2>
+        <div class="sl-panel-tools">
+          <label class="sl-field">
+            <span data-i18n="bookmaker">Casă</span>
+            <select id="odds-book"></select>
+          </label>
+          <label class="sl-field">
+            <span data-i18n="market">Piață</span>
+            <input type="text" id="odds-market" list="odds-market-keys" data-i18n-placeholder="marketFilterHint" placeholder="toate piețele">
+          </label>
+          <datalist id="odds-market-keys"></datalist>
+          <label class="sl-field">
+            <span data-i18n="event">Eveniment</span>
+            <input type="text" id="odds-event" list="odds-event-keys" data-i18n-placeholder="eventFilterHint" placeholder="toate evenimentele">
+          </label>
+          <datalist id="odds-event-keys"></datalist>
+          <label class="sl-field sl-field-narrow">
+            <span data-i18n="limit">Limită</span>
+            <select id="odds-limit">
+              <option value="25">25</option>
+              <option value="50" selected>50</option>
+              <option value="100">100</option>
+            </select>
+          </label>
+        </div>
+      </header>
+      <div class="sl-table-wrap">
+        <table class="sl-table" id="odds-table">
+          <thead>
+            <tr>
+              <th scope="col" data-i18n="event">Eveniment</th>
+              <th scope="col" data-i18n="market">Piață</th>
+              <th scope="col" data-i18n="odds">Cote</th>
+            </tr>
+          </thead>
+          <tbody id="odds-rows" role="list" aria-live="polite"></tbody>
+        </table>
+      </div>
+      <p class="sl-hint" id="odds-note"></p>
+    </section>
   </main>
 
   <script src="/js/api.js"></script>
   <script src="/js/i18n.js"></script>
+  <script src="/js/format.js"></script>
   <script src="/js/sse.js"></script>
   <script src="/js/app.js"></script>
   <script src="/js/pages/common.js"></script>

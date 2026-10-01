@@ -22,6 +22,7 @@ import vm from 'node:vm';
 const scrapeSource = readFileSync(new URL('../public/js/pages/scrape.js', import.meta.url), 'utf8');
 const commonSource = readFileSync(new URL('../public/js/pages/common.js', import.meta.url), 'utf8');
 const i18nSource = readFileSync(new URL('../public/js/i18n.js', import.meta.url), 'utf8');
+const formatSource = readFileSync(new URL('../public/js/format.js', import.meta.url), 'utf8');
 
 /** The real dictionary, per language, loaded the way the page loads it. */
 function dictionaries() {
@@ -53,40 +54,81 @@ const CLASS_TOKENS = new Set(
   [...scrapeHtml.matchAll(/\bclass="([^"]+)"/g)].flatMap((m) => m[1].split(/\s+/)).filter(Boolean),
 );
 
+/**
+ * The controls the markup really gives to a <select>, read out of the markup
+ * for the same reason PAGE_IDS is: a hand-written list would keep asserting
+ * select behaviour after the control stopped being a select.
+ */
+const SELECT_IDS = new Set(
+  [...scrapeHtml.matchAll(/<select\b[^>]*\bid="([^"]+)"/g)].map((m) => m[1]),
+);
+
 function harness(lang = 'ro', { api, form } = {}) {
   const nodes = new Map();
-  const make = (id) => ({
-        id,
-        innerHTML: '',
-        value: '',
-        checked: false,
-        dataset: {},
-        hidden: false,
-        className: '',
-        attrs: {},
-        // The DOM stringifies attribute values, and the page passes a number here.
-        // Storing it raw would make the stub disagree with the browser about
-        // what it reads back.
-        setAttribute(name, value) { this.attrs[name] = String(value); },
-        appendChild() {},
-        // The page toggles classes on real elements (the progress card hides
-        // itself when no run is in flight). A stub without this threw on the
-        // first classList use, which had been keeping renderState out of this
-        // file entirely.
-        classList: { add() {}, remove() {}, toggle() {}, contains: () => false },
-        // Same story for inline styles: the progress bar writes `style.right`
-        // and the ring writes `style.setProperty('--p', pct)`.
-        style: { setProperty() {} },
-        querySelectorAll: () => [],
-        // Nothing is parsed, so a node's own descendants do not resolve. null is
-        // the honest answer and the page guards every one of these.
-        querySelector: () => null,
-        // The form the page reads its scan options out of. Seeded from the
-        // fixture rather than left blank, because `currentScanOptions()`
-        // coerces with Number() and an all-empty form would compare equal to a
-        // stored object of zeroes — a diff that can never fire.
-        ...(form && form[id] ? form[id] : {}),
+  const make = (id) => {
+    const stub = {
+      id,
+      innerHTML: '',
+      value: '',
+      checked: false,
+      dataset: {},
+      hidden: false,
+      className: '',
+      attrs: {},
+      // The DOM stringifies attribute values, and the page passes a number here.
+      // Storing it raw would make the stub disagree with the browser about
+      // what it reads back.
+      setAttribute(name, value) { this.attrs[name] = String(value); },
+      appendChild() {},
+      // The page toggles classes on real elements (the progress card hides
+      // itself when no run is in flight). A stub without this threw on the
+      // first classList use, which had been keeping renderState out of this
+      // file entirely.
+      classList: { add() {}, remove() {}, toggle() {}, contains: () => false },
+      // Same story for inline styles: the progress bar writes `style.right`
+      // and the ring writes `style.setProperty('--p', pct)`.
+      style: { setProperty() {} },
+      querySelectorAll: () => [],
+      // Nothing is parsed, so a node's own descendants do not resolve. null is
+      // the honest answer and the page guards every one of these.
+      querySelector: () => null,
+      // The form the page reads its scan options out of. Seeded from the
+      // fixture rather than left blank, because `currentScanOptions()`
+      // coerces with Number() and an all-empty form would compare equal to a
+      // stored object of zeroes — a diff that can never fire.
+      ...(form && form[id] ? form[id] : {}),
+    };
+    if (SELECT_IDS.has(id)) {
+      // A <select> does not keep a value across a rewrite of its options:
+      // writing innerHTML destroys the option children, and the value then
+      // falls to the option carrying `selected`, or to the first one when none
+      // does (HTML "ask for a reset" on the selectedness setter).
+      //
+      // This was the one behaviour the stub was missing, and its absence made
+      // a test unable to fail: `renderPriceBookOptions` restores the operator's
+      // book by assigning `sel.value` after the rewrite, and on a plain object
+      // — where nothing ever loses a value — that assignment is unobservable,
+      // so deleting it from the page left the assertion green.
+      let html = '';
+      Object.defineProperty(stub, 'innerHTML', {
+        get: () => html,
+        set(markup) {
+          html = String(markup);
+          const options = [...html.matchAll(/<option\b[^>]*>/g)].map((m) => m[0]).map((tag) => ({
+            // The browser reads the decoded attribute; ids in this markup are
+            // plain slugs, so the raw text is the decoded text.
+            value: (tag.match(/\bvalue="([^"]*)"/) || [null, ''])[1],
+            selected: /\bselected\b/.test(tag),
+          }));
+          const picked = options.find((o) => o.selected) || options[0];
+          stub.value = picked ? picked.value : '';
+        },
+        enumerable: true,
+        configurable: true,
       });
+    }
+    return stub;
+  };
   const node = (id) => {
     if (!PAGE_IDS.has(id)) throw new Error(`scrape.html has no #${id} — the page and this test have drifted`);
     if (!nodes.has(id)) nodes.set(id, make(id));
@@ -143,6 +185,10 @@ function harness(lang = 'ro', { api, form } = {}) {
     // The real api.js is an IIFE over fetch; only the scheduler readouts are
     // under test, so the seam is the one global it installs.
     ...(api ? { arbiterApi: api } : {}),
+    // A browser global the price board builds its query with. This context is
+    // not a browser, so it has to be handed over explicitly — the alternative
+    // would be a page that builds URLs by hand for the sake of being testable.
+    URLSearchParams,
   });
   context.window = context;
   // The real escaper, cut to its own definition so common.js's DOM wiring does
@@ -157,6 +203,13 @@ function harness(lang = 'ro', { api, form } = {}) {
   vm.runInContext(escaperLines.slice(escaperStart, escaperEnd + 1).join('\n'), context);
   assert.equal(typeof context.escapeHtml, 'function', 'the real escaper is what the page will call');
   context.arbiterI18n = DICTS[lang];
+  // The real shared formatter, whole, because the price board renders odds
+  // through it and a stub would make "1.95" and "1.95" indistinguishable from a
+  // page that formats odds its own way. scrape.html now loads format.js for
+  // this; loading it here keeps the two in step rather than trusting the
+  // markup to keep telling the truth.
+  vm.runInContext(formatSource, context);
+  assert.equal(typeof context.arbiterFormat.fmtOdds, 'function', 'the real formatter is what the page will call');
   vm.runInContext(scrapeSource.slice(0, scrapeSource.indexOf("$('run-btn').addEventListener")), context);
   return {
     nodes,
@@ -369,6 +422,258 @@ test('a payload with no liveCapability renders exactly what it did before', () =
     'the tooltip is byte-for-byte the one this page produced before the route gained a field',
   );
   assert.doesNotMatch(html, /undefined|null|NaN/, 'nothing undefined leaks into the attribute');
+});
+
+/* ── Book price board ──────────────────────────────────────────────────────
+ * GET /api/odds/:book is the only per-book price feed the backend publishes
+ * and nothing under public/ called it. This block drives the panel's own
+ * functions over the real route payload shape, measured over
+ * data-market-run/workspace: 12 distinct market keys, selections shaped
+ * {id, name, odds, group}, and a `live` boolean on both the event and the
+ * market.
+ */
+
+const oddsResult = (over = {}) => ({
+  eventKey: 'football|liga|2026-09-05T10:00:00.000Z|cfr cluj|csic m',
+  id: 'e-1',
+  sport: 'Football',
+  league: 'Liga',
+  kickoff: '2026-09-05T10:00:00.000Z',
+  homeTeam: 'CFR Cluj',
+  awayTeam: 'CSIC M',
+  live: false,
+  market: {
+    key: 'MATCH_ODDS',
+    name: 'Rezultat final',
+    live: false,
+    selections: [
+      { id: '1', name: '1', odds: 2.63, group: 'Main' },
+      { id: 'X', name: 'X', odds: 2.1, group: 'Main' },
+      { id: '2', name: '2', odds: 2.12, group: 'Main' },
+    ],
+  },
+  ...over,
+});
+
+const boardHtml = (h) => h.nodes.get('odds-rows').innerHTML;
+const boardNote = (h) => h.nodes.get('odds-note').textContent;
+
+test('the board asks the route about the book it is showing, and nothing else', async () => {
+  const seen = [];
+  const h = harness('en', {
+    form: { 'odds-book': { value: 'winner' }, 'odds-limit': { value: '50' } },
+    api: {
+      get: async (url) => {
+        seen.push(url);
+        return { sourceId: 'winner', capturedAt: '2026-09-28T10:00:00.000Z', results: [oddsResult()] };
+      },
+    },
+  });
+  await h.run('loadPriceBoard()');
+  // Not `?marketKey=&eventKey=`: the route filters on
+  // `String(market.key).toUpperCase() !== marketKey`, so an empty parameter is
+  // not "no filter" — it matches nothing and empties the board.
+  assert.deepEqual(seen, ['/api/odds/winner?limit=50'],
+    'an unset filter is left off the query, not sent blank');
+
+  const html = boardHtml(h);
+  assert.match(html, /CFR Cluj – CSIC M/, 'the two clubs are what identifies the row');
+  assert.match(html, /Liga · 2026-09-05T10:00:00\.000Z/, 'and the league and kickoff travel with them');
+  assert.match(html, /Rezultat final/, 'the market is labelled with the provider’s own name');
+  assert.match(html, /1 @ 2\.63/, 'each selection reads as name @ odds');
+  // 2.1 is not 2.1 on this page: it goes through the shared formatter, which is
+  // the whole reason scrape.html now loads format.js.
+  assert.match(html, /X @ 2\.10/, 'odds are formatted by the shared formatter, not by the page');
+  assert.match(boardNote(h), /1 markets · Captured: 2026-09-28T10:00:00\.000Z/,
+    'the note carries the row count and when the capture was taken');
+});
+
+test('the board sends both filters, and uppercases the market the way the route compares it', async () => {
+  const seen = [];
+  const h = harness('en', {
+    form: {
+      'odds-book': { value: 'casa-pariurilor' },
+      'odds-market': { value: 'over_under_2_5' },
+      'odds-event': { value: 'football|liga|2026-09-05|cfr cluj|csic m' },
+      'odds-limit': { value: '25' },
+    },
+    api: { get: async (url) => { seen.push(url); return { results: [] }; } },
+  });
+  await h.run('loadPriceBoard()');
+  assert.equal(seen.length, 1, 'one request per control change, not one per control');
+  assert.match(seen[0], /^\/api\/odds\/casa-pariurilor\?/, 'the book is the path');
+  const q = new URLSearchParams(seen[0].split('?')[1]);
+  assert.equal(q.get('marketKey'), 'OVER_UNDER_2_5', 'the market key is uppercased before it is sent');
+  assert.equal(q.get('eventKey'), 'football|liga|2026-09-05|cfr cluj|csic m', 'the event key is the route’s own token, untouched');
+  assert.equal(q.get('limit'), '25', 'the limit is the one the operator chose');
+  assert.match(boardHtml(h), /No market matches this filter\./, 'an empty result is a sentence, not a blank table');
+});
+
+test('a row is marked live from either the event or the market', async () => {
+  const h = harness('en', {
+    form: { 'odds-book': { value: 'winner' } },
+    api: {
+      get: async () => ({
+        capturedAt: '2026-09-28T10:00:00.000Z',
+        results: [
+          oddsResult(),
+          oddsResult({ live: true }),
+          oddsResult({ market: { ...oddsResult().market, live: true } }),
+        ],
+      }),
+    },
+  });
+  await h.run('loadPriceBoard()');
+  // Counted on the class, not the word: the marker is the dictionary's own
+  // `live`, which is capitalised in both languages and restyled by CSS, so
+  // matching the text would be matching a string this test invented.
+  const pills = boardHtml(h).match(/<span class="status ok">[^<]*<\/span>/g) || [];
+  assert.equal(pills.length, 2, 'the event flag and the market flag each mark their own row');
+  assert.ok(pills.every((p) => p.includes(`>${DICTS.en.t('live')}<`)),
+    `and the marker is the translated word, ${DICTS.en.t('live')}`);
+  assert.match(boardNote(h), /2 live/, 'and the note counts them');
+  // The other half of the same decision: a row that is not in-play says so by
+  // saying nothing. "pre-match" would be a claim about the capture, and the
+  // capture is the last one the operator ran.
+  assert.doesNotMatch(boardHtml(h), /pre-?match|prematch/i, 'a row that is not in-play is not labelled');
+});
+
+test('the note says when the board is cut short, and when it is not', async () => {
+  const capped = harness('en', {
+    form: { 'odds-book': { value: 'winner' }, 'odds-limit': { value: '2' } },
+    api: { get: async () => ({ results: [oddsResult(), oddsResult()] }) },
+  });
+  await capped.run('loadPriceBoard()');
+  assert.match(boardNote(capped), /first 2, the capture is larger/,
+    'a full page of results is also the only signal that more exist');
+
+  const whole = harness('en', {
+    form: { 'odds-book': { value: 'winner' }, 'odds-limit': { value: '50' } },
+    api: { get: async () => ({ results: [oddsResult()] }) },
+  });
+  await whole.run('loadPriceBoard()');
+  assert.doesNotMatch(boardNote(whole), /the capture is larger/,
+    'and a short page does not claim the board was cut');
+});
+
+test('a book with no capture gets its own sentence, not a failed request', async () => {
+  // Two of the 26 registered jobs are enabled and validated and still have no
+  // snapshot on disk, so this is the second thing the panel will ever show.
+  const h = harness('en', {
+    form: { 'odds-book': { value: 'unibet' } },
+    api: {
+      get: async () => {
+        const err = new Error('snapshot not found');
+        err.status = 404;
+        throw err;
+      },
+    },
+  });
+  await h.run('loadPriceBoard()');
+  assert.match(boardHtml(h), /This book has no saved capture\./, 'the 404 says what it is');
+  assert.doesNotMatch(boardHtml(h), /could not be read/, 'a book with no capture is not a request to retry');
+  assert.equal(boardNote(h), '', 'and the note does not add a second opinion');
+
+  const broken = harness('en', {
+    form: { 'odds-book': { value: 'winner' } },
+    api: {
+      get: async () => {
+        const err = new Error('socket hang up');
+        err.status = 500;
+        throw err;
+      },
+    },
+  });
+  await broken.run('loadPriceBoard()');
+  assert.match(boardHtml(broken), /The prices could not be read: socket hang up/,
+    'any other failure keeps the backend’s own words');
+});
+
+test('the book selector offers every registered job and keeps the one already chosen', () => {
+  const three = [
+    job({ id: 'unibet', name: 'Unibet' }),
+    job({ id: 'betmen', name: 'Betmen' }),
+    job({ id: 'winner', name: 'Winner' }),
+  ];
+  const h = harness('en');
+  h.run(`scrapers = ${JSON.stringify(three)}`);
+  h.run('renderPriceBookOptions()');
+  const html = h.nodes.get('odds-book').innerHTML;
+  for (const [id, name] of [['unibet', 'Unibet'], ['betmen', 'Betmen'], ['winner', 'Winner']]) {
+    assert.ok(html.includes(`value="${id}"`), `${id} is offered — no route says which books have a capture`);
+    assert.ok(html.includes(name), `${name} is spelled out, not its id`);
+  }
+  // The jobs are re-fetched on a timer, so this rewrite happens with a book
+  // already chosen. A <select> drops its value when its options are replaced,
+  // which is why the page reads the value back before it rewrites.
+  h.nodes.get('odds-book').value = 'betmen';
+  h.run('renderPriceBookOptions()');
+  assert.equal(h.nodes.get('odds-book').value, 'betmen',
+    'a book the operator already chose survives a re-render of the list');
+
+  // The other half of the same decision: a book that has left the registry
+  // between two fetches is not restored. The list no longer offers it, and
+  // asking a select for a value it has no option for clears the select — so
+  // restoring it would leave the panel showing a book the backend has dropped.
+  h.run(`scrapers = ${JSON.stringify(three.filter((s) => s.id !== 'betmen'))}`);
+  h.run('renderPriceBookOptions()');
+  assert.notEqual(h.nodes.get('odds-book').value, 'betmen',
+    'a book the registry no longer lists is not restored into the select');
+  assert.equal(h.nodes.get('odds-book').value, 'unibet',
+    'and the select falls to a book the list really has');
+});
+
+test('with no book chosen the panel asks nothing at all', async () => {
+  const seen = [];
+  const h = harness('en', {
+    form: { 'odds-book': { value: '' } },
+    api: { get: async (url) => { seen.push(url); return { results: [] }; } },
+  });
+  await h.run('loadPriceBoard()');
+  assert.deepEqual(seen, [], 'an empty source id would ask the route about a book named ""');
+  assert.match(boardHtml(h), /Pick a book/, 'and it says why the table is empty');
+});
+
+test('the board is translated, note and empty row alike', async () => {
+  const notes = {};
+  const rows = {};
+  for (const lang of ['ro', 'en']) {
+    const empty = harness(lang, {
+      form: { 'odds-book': { value: 'unibet' } },
+      api: { get: async () => ({ results: [] }) },
+    });
+    await empty.run('loadPriceBoard()');
+    notes[lang] = boardNote(empty);
+    rows[lang] = boardHtml(empty);
+
+    const none = harness(lang, { form: { 'odds-book': { value: '' } }, api: { get: async () => ({}) } });
+    await none.run('loadPriceBoard()');
+    rows[lang] += boardHtml(none);
+
+    // The fourth sentence the panel can print: the 404. A book with no capture
+    // is one of the four the selector offers, so this is a sentence an operator
+    // reads on a healthy install, not an edge case.
+    const missing = harness(lang, {
+      form: { 'odds-book': { value: 'unibet' } },
+      api: { get: async () => { const e = new Error('snapshot not found'); e.status = 404; throw e; } },
+    });
+    await missing.run('loadPriceBoard()');
+    rows[lang] += boardHtml(missing);
+  }
+  assert.notEqual(notes.ro, notes.en, 'the row count is not one string in both languages');
+  assert.doesNotMatch(notes.ro, /markets|Captured/, 'no English leaked into Romanian');
+  assert.doesNotMatch(rows.ro, /No market matches|Pick a book|no saved capture/, 'nor into the empty rows');
+  assert.doesNotMatch(rows.en, /piețe|Alege o casă|Nicio piață|captură salvată/, 'nor Romanian into English');
+});
+
+test('scrape.html loads the formatter the board renders odds through', () => {
+  // The one failure this file cannot catch from the vm: remove the script tag
+  // and every test above still passes, because the harness loads format.js
+  // itself. Only the markup knows the page does.
+  assert.ok(scrapeHtml.includes('src="/js/format.js"'),
+    'scrape.html must load format.js — the board calls arbiterFormat.fmtOdds');
+  assert.ok(scrapeHtml.includes('id="odds-book"') && scrapeHtml.includes('id="odds-rows"'),
+    'and the controls the controller reaches for by id are still in the markup');
 });
 
 test('the tooltip falls back to a translated line, not a hardcoded English one', () => {
@@ -1068,8 +1373,11 @@ test('every key the new readouts use exists in both languages', () => {
   const literal = ['profileScopePrematch', 'profileScopeLivePast', 'runId', 'started',
     'finishedLabel', 'failedToLoadMsg', 'livePollPending', 'livePollLastSkip', 'schedulerResumed',
     'liveCapable', 'liveCapableShort', 'liveScopeMarket', 'liveScopeEvent',
-    'liveStartedCount', 'liveStartedNone', 'liveNoField', 'liveNotMeasured'];
-  const inMarkup = ['scrapeProgressTrack', 'jobs', 'configuration', 'progress'];
+    'liveStartedCount', 'liveStartedNone', 'liveNoField', 'liveNotMeasured',
+    'capturedAt', 'pricesCount', 'pricesTruncated', 'pricesLiveCount', 'pricesPickBook',
+    'pricesNoneForFilter', 'pricesNoCapture', 'pricesError', 'pricesLoading'];
+  const inMarkup = ['scrapeProgressTrack', 'jobs', 'configuration', 'progress',
+    'bookPrices', 'limit', 'marketFilterHint', 'eventFilterHint'];
   for (const key of literal) {
     assert.ok(scrapeSource.includes(`'${key}'`), `scrape.js should ask for ${key}`);
   }

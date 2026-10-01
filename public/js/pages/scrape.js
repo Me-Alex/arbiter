@@ -368,6 +368,163 @@ function updateChipStatus(jobs) {
   }
 }
 
+// ══ Book price board ══════════════════════════════════════════════════════
+// GET /api/odds/:book is the only per-book price feed the app publishes, and
+// until this panel existed nothing under public/ called it. The scanner
+// compares books against one another, the event view shows one event across
+// books, and nothing showed one book's own board.
+//
+// Measured over data-market-run/workspace before this was written: 22 of the
+// 26 registered jobs carry a capture (24.829 events, 31.927 markets, 93.600
+// selections) and four do not — unibet and betmen among them, both enabled and
+// both validated. So the selector lists every job the backend registers and a
+// 404 becomes a sentence on screen. Guessing which books have a capture would
+// need a route that says so, and adding one to answer a question this panel
+// already asks out loud is the wrong trade.
+
+/** Market and event keys seen on the board, offered back as suggestions. */
+const priceSuggestions = { markets: new Set(), events: new Set() };
+
+/**
+ * The URL this panel asks for.
+ *
+ * Every parameter the route accepts is here, and the empty ones are left off
+ * rather than sent blank: the route filters on
+ * `String(market.key).toUpperCase() !== marketKey`, so `?marketKey=` would
+ * match nothing and turn "no filter" into an empty board.
+ *
+ * `marketKey` is uppercased client-side to match the route's own comparison,
+ * so a reader who types `over_under_2_5` gets that market and not an empty
+ * table — the route already uppercases, and doing it here makes the request
+ * readable in a log line rather than hiding the work in the server.
+ *
+ * @returns {string} '' when no book is chosen — the panel has nothing to ask.
+ */
+function priceBoardUrl() {
+  const book = String($('odds-book')?.value || '').trim();
+  if (!book) return '';
+  const params = new URLSearchParams();
+  const market = String($('odds-market')?.value || '').trim().toUpperCase();
+  if (market) params.set('marketKey', market);
+  const eventKey = String($('odds-event')?.value || '').trim();
+  if (eventKey) params.set('eventKey', eventKey);
+  const limit = Number.parseInt(String($('odds-limit')?.value || ''), 10);
+  params.set('limit', String(Number.isFinite(limit) && limit > 0 ? limit : 50));
+  return `/api/odds/${encodeURIComponent(book)}?${params}`;
+}
+
+/**
+ * One row of the board.
+ *
+ * `live` is a marker and never a word: the route publishes a boolean on both
+ * the event and the market, so a row can be in-play at either level and the
+ * two are shown from the same pill. Nothing is written for a row that is not
+ * in-play — "pre-match" is a claim about the capture, and the capture this
+ * panel reads is the one the operator last ran.
+ */
+function priceRow(r, t) {
+  const market = r.market || {};
+  const live = r.live === true || market.live === true;
+  const name = market.name || market.key || '—';
+  const odds = (Array.isArray(market.selections) ? market.selections : [])
+    .map((s) => `<span class="sl-num">${escapeHtml(s.name)} @ ${escapeHtml(window.arbiterFormat.fmtOdds(s.odds))}</span>`)
+    .join(' · ');
+  const teams = `${r.homeTeam || ''} – ${r.awayTeam || ''}`.trim();
+  return `<tr>
+      <td>${escapeHtml(teams)}<div class="sl-stat-foot">${escapeHtml(r.league || '')} · ${escapeHtml(r.kickoff || '')}</div></td>
+      <td>${escapeHtml(name)}${live ? ` <span class="status ok">${escapeHtml(t('live'))}</span>` : ''}</td>
+      <td>${odds}</td>
+    </tr>`;
+}
+
+/**
+ * Render a board payload, and say what is not in it.
+ *
+ * The note carries three facts the table cannot: when the capture was taken
+ * (a price without a timestamp is not a price you can act on), how many rows
+ * came back, and whether the row count hit the limit — which is the only
+ * signal the route offers that the capture is larger than what is on screen.
+ */
+function renderPriceBoard(payload, t) {
+  const rows = $('odds-rows');
+  const note = $('odds-note');
+  if (!rows || !note) return;
+  const results = Array.isArray(payload?.results) ? payload.results : [];
+
+  for (const r of results) {
+    if (r?.market?.key) priceSuggestions.markets.add(String(r.market.key).toUpperCase());
+    if (r?.eventKey) priceSuggestions.events.add(String(r.eventKey));
+  }
+  const fill = (el, values) => {
+    if (!el) return;
+    el.innerHTML = [...values].sort().map((v) => `<option value="${escapeHtml(v)}"></option>`).join('');
+  };
+  fill($('odds-market-keys'), priceSuggestions.markets);
+  fill($('odds-event-keys'), priceSuggestions.events);
+
+  rows.innerHTML = results.length
+    ? results.map((r) => priceRow(r, t)).join('')
+    : `<tr><td class="sl-empty" colspan="3">${escapeHtml(t('pricesNoneForFilter'))}</td></tr>`;
+
+  const bits = [t('pricesCount').replace('{count}', String(results.length))];
+  const limit = Number.parseInt(String($('odds-limit')?.value || ''), 10);
+  if (results.length && Number.isFinite(limit) && results.length >= limit) {
+    bits.push(t('pricesTruncated').replace('{count}', String(results.length)));
+  }
+  const liveCount = results.filter((r) => r.live === true || r?.market?.live === true).length;
+  if (liveCount) bits.push(t('pricesLiveCount').replace('{count}', String(liveCount)));
+  if (payload?.capturedAt) {
+    bits.push(`${t('capturedAt')}: ${payload.capturedAt}`);
+  }
+  note.textContent = bits.join(' · ');
+}
+
+/** The selector: every registered job, because the backend cannot say which have a capture. */
+function renderPriceBookOptions() {
+  const sel = $('odds-book');
+  if (!sel) return;
+  const keep = sel.value;
+  sel.innerHTML = scrapers
+    .map((s) => `<option value="${escapeHtml(s.id)}">${escapeHtml(s.name || s.id)}</option>`)
+    .join('');
+  if (keep && scrapers.some((s) => s.id === keep)) sel.value = keep;
+}
+
+/**
+ * Read the board for whatever the three controls currently say.
+ *
+ * The panel is a viewer, not a control surface for the run: it never posts, it
+ * never changes the chip selection, and a book with no capture leaves the rest
+ * of the page exactly as it found it.
+ */
+async function loadPriceBoard() {
+  const note = $('odds-note');
+  const t = window.arbiterI18n.t.bind(window.arbiterI18n);
+  const url = priceBoardUrl();
+  if (!url) {
+    if (note) note.textContent = '';
+    const rows = $('odds-rows');
+    if (rows) rows.innerHTML = `<tr><td class="sl-empty" colspan="3">${escapeHtml(t('pricesPickBook'))}</td></tr>`;
+    return;
+  }
+  if (note) note.textContent = t('pricesLoading');
+  try {
+    renderPriceBoard(await arbiterApi.get(url), t);
+  } catch (err) {
+    // ENOTFOUND is the route's own answer for "this book has no capture" and
+    // it is the common case here: two enabled, validated jobs have none. It
+    // gets its own sentence, because "could not be read" would tell the
+    // operator to retry something that will never succeed on its own.
+    const rows = $('odds-rows');
+    if (rows) {
+      rows.innerHTML = `<tr><td class="sl-empty" colspan="3">${
+        escapeHtml(err.status === 404 ? t('pricesNoCapture') : `${t('pricesError')}: ${err.message || ''}`)
+      }</td></tr>`;
+    }
+    if (note) note.textContent = '';
+  }
+}
+
 /**
  * The sport half of the orchestrator's promotion gate, copied from
  * `src/scrape-orchestrator.mjs:110` clause for clause.
@@ -484,6 +641,17 @@ async function init() {
   refreshLastRun();
   refreshScheduler();
   refreshLive();
+
+  // Last, because the book list is what fills it. The board is a viewer over
+  // the captures this page's own run produces, so it reads the first book once
+  // and again whenever one of its four controls changes. Nothing here touches
+  // the chip selection above — reading one book's prices is not choosing it
+  // for the next run.
+  renderPriceBookOptions();
+  for (const id of ['odds-book', 'odds-market', 'odds-event', 'odds-limit']) {
+    $(id)?.addEventListener('change', () => { loadPriceBoard(); });
+  }
+  loadPriceBoard();
 }
 
 function applyProfile() {
