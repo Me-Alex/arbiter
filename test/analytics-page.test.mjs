@@ -28,6 +28,13 @@ const commonSource = readFileSync(new URL('../public/js/pages/common.js', import
 const i18nSource = readFileSync(new URL('../public/js/i18n.js', import.meta.url), 'utf8');
 const serviceSource = readFileSync(new URL('../src/tracker-service.mjs', import.meta.url), 'utf8');
 const analyticsHtml = readFileSync(new URL('../public/admin/analytics.html', import.meta.url), 'utf8');
+// The two files the `sources` exemption below names. An exemption that says
+// "another page already reads this" is a claim about code that can change under
+// it, so the claim is made against these sources and checked below rather than
+// left as prose: a reason that names a page which stopped reading is worse than
+// no reason, because it reads as coverage.
+const dashboardSource = readFileSync(new URL('../public/js/pages/dashboard.js', import.meta.url), 'utf8');
+const sourceCensusSource = readFileSync(new URL('./source-health-list.test.mjs', import.meta.url), 'utf8');
 
 /**
  * The same two sources with their comments blanked.
@@ -676,12 +683,32 @@ const topLevelReads = [...new Set([...readsOn('cat'), ...readsOn('cat', COVERAGE
  */
 const UNREAD_BY_DESIGN = {
   sources: [
-    'A verbatim copy of scan.sources, which /api/scan already delivers to the same page',
-    'and which dashboard.js and ai.js already read. Its field list belongs to the scan,',
-    'not to this builder, so it is exempt as a collection and checked where the scan is',
-    'rendered instead.',
+    'A verbatim copy of scan.sources, which /api/scan already delivers and which',
+    'dashboard.js reads on its own source-health card: dataStatus, ageMs, count,',
+    'sourceId, duplicateFeedEvents, sharedFeedWith and dataReason, over the 24 books',
+    'of the stored catalog. The array is 11 964 B of the 866 KB the route serves —',
+    "1.4% — and the 17 names on a source are censused against that card in",
+    'test/source-health-list.test.mjs, which lifts them out of the producer rather',
+    'than out of a list, so the field set cannot drift past the page that draws it.',
+    'This exemption is a collection, not a blank cheque: the promise is checked',
+    'below, and the near-miss is recorded because it is why the old reason looked',
+    'true — ai.js reads scan.dataHealth.sources, a status -> count map, and',
+    'legs[].sourceId, an id on a leg. Neither is a field of what this route',
+    'republishes, and the reason used to credit ai.js with both.',
   ].join(' '),
-  schemaVersion: 'A version marker for the stored file. No page reads it and none should.',
+  schemaVersion: [
+    'A version marker, and the only one of its kind in the tree whose value',
+    'nothing pinned. Measured across the whole tree: six builders write one',
+    '(src/router.mjs:294, src/alert-engine.mjs, src/tracker-service.mjs,',
+    'src/scanner/scanner.mjs, src/scanner/market-catalog.mjs, src/scrapers/base.mjs)',
+    'and no page reads any of them. The siblings are pinned in test/router.test.mjs:492,',
+    'test/tracker-service.test.mjs:274 and test/endpoints-registry.test.mjs:24; this',
+    'one was not, so the constant the builder writes was free to change with the suite green.',
+    'It is pinned here instead, against the literal in the builder, so a version',
+    'bump fails this file rather than a reader discovering two document shapes',
+    'under one name. Exempt as a marker, not as a value: the test below asserts',
+    'both halves — the number, and that no card reads it.',
+  ].join(' '),
 };
 
 test('every field the catalog publishes is read by the page, or is named above with a reason', async () => {
@@ -737,6 +764,62 @@ test('the two cards split the document between them, and neither reaches past it
     assert.equal(readsOn('cat', COVERAGE_CODE).includes(field), false,
       `the event card reads cat.${field}; remove it from UNREAD_BY_DESIGN and say why in the same commit`);
   }
+});
+
+test('the sources exemption names a page that really reads a source record', () => {
+  // "Another page already reads this" is a claim about code that lives outside
+  // this file and can change under it. The reason used to name ai.js, which
+  // reads `scan.dataHealth.sources` — a status -> count map — and
+  // `legs[].sourceId`, an id on a leg. Neither is a field of a source record, so
+  // the claim was false, and nothing above could have caught it: the census says
+  // which of the two cards read what, and no card reads `cat.sources` either way.
+  // A reason that credits a page with reading a field it does not read is worse
+  // than no reason, because it reads as coverage.
+  const dashboardCode = codeOnly(dashboardSource, true);
+  const onASource = new Set([...fieldsOn(dashboardCode, 'source'), ...fieldsOn(dashboardCode, 's')]);
+  for (const name of ['dataStatus', 'ageMs', 'count', 'sourceId', 'duplicateFeedEvents',
+    'sharedFeedWith', 'dataReason']) {
+    assert.ok(onASource.has(name),
+      `the sources reason credits dashboard.js with reading ${name}, and dashboard.js does not`);
+  }
+  // The ai.js half is pinned the other way round, because the near-miss is the
+  // reason the old sentence looked true: if that page ever starts reading a
+  // source record, the reason is stale in the direction that matters.
+  const aiCode = codeOnly(readFileSync(new URL('../public/js/pages/ai.js', import.meta.url), 'utf8'), true);
+  assert.equal(/\bsource\.(ageMs|dataReason|sharedFeedWith)\b/.test(aiCode), false,
+    'ai.js now reads source records, so the reason has to say so rather than go on crediting it');
+
+  // And the census the reason defers to has to still be there. A promise with no
+  // file behind it is a wish, and the reason points at a test by name.
+  assert.match(sourceCensusSource, /names\.size >= 17/,
+    'test/source-health-list.test.mjs no longer lifts the source names out of the producer');
+  assert.match(sourceCensusSource, /every field the scanner writes on a book is read by a page/,
+    'and it no longer censuses them against the card that draws them');
+});
+
+test('the catalog pins its schema version against the builder, so the marker cannot drift', async () => {
+  // Exempt as a marker, not as a value. The alerts census says the same of its
+  // own and pins ALERT_SCHEMA; the router, the tracker and the endpoints
+  // registry pin theirs, which left this document the one marker in the tree
+  // whose number a change could move with the suite green.
+  //
+  // The constant is read out of the builder rather than copied here: a copy
+  // would be a second number to keep in step, which is the thing the pin is for.
+  const builderCode = codeOnly(readFileSync(new URL('../src/scanner/market-catalog.mjs', import.meta.url), 'utf8'), true);
+  const literals = [...builderCode.matchAll(/schemaVersion:\s*(\d+)/g)].map((m) => Number(m[1]));
+  assert.deepEqual(literals, [1], `the builder writes one schemaVersion literal; this scan found ${literals.join(', ')}`);
+
+  const cat = await realCatalog();
+  assert.equal(cat.schemaVersion, literals[0], 'the document carries the version the builder writes');
+  // "No page reads it and none should" is a preference, and it was this file's
+  // reason until this lot measured one. The number is checked before the length,
+  // because a measurement is the standard and the length is only the floor under
+  // it — a long sentence with no number in it is still an opinion, and the old
+  // reason was one at 68 characters.
+  assert.match(UNREAD_BY_DESIGN.schemaVersion, /\d/,
+    'the exemption carries a measurement, not a preference');
+  assert.ok(UNREAD_BY_DESIGN.schemaVersion.length > 80,
+    'and the exemption still says what was measured, rather than "none should"');
 });
 
 test('the catalog card reads only fields the builder actually writes', async () => {

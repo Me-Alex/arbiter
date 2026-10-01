@@ -28,6 +28,7 @@ import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { SchedulerService } from '../src/scheduler-service.mjs';
 import { LiveService } from '../src/live-service.mjs';
+import { codeOnly } from './helpers/code-only.mjs';
 
 const ROOT = join(fileURLToPath(new URL('.', import.meta.url)), '..');
 const read = (rel) => readFileSync(join(ROOT, rel), 'utf8');
@@ -38,19 +39,17 @@ const liveSource = read('src/live-service.mjs');
 
 /* ── the page's own source, minus its prose ───────────────────────────────── */
 
-/**
- * Strip comments so a field named in a comment is not counted as read.
- *
- * Both block and line comments, and the string/regex edge is handled by not
- * pretending to: a `//` inside a string literal would cut the rest of a line,
- * which can only shorten what a search can find, never invent a match that the
- * code does not contain — except if a string literal contained something like
- * ` s.active `, which is why the inverse assertion below pins the shape.
- */
-const codeOnly = (src) => src
-  .replace(/\/\*[\s\S]*?\*\//g, ' ')
-  .replace(/(^|[^:])\/\/.*$/gm, '$1 ');
-
+// The shared masker, not a fourth copy of one. test/helpers/code-only.mjs
+// exists because three instruments in this tree answered "is this field read?"
+// with their own regex over raw text, and raw text cannot tell a read from a
+// mention — `selection.group` is read by nobody and its only trace in the
+// frontend is the word "group:" inside a comment. This file wrote a fifth, and
+// the pair it used had the other failure mode the helper's own test pins:
+// `(^|[^:])\/\/.*$` cuts a line at a `//` inside a string literal, which can only
+// shorten what a search finds — so a real read would have been reported absent
+// and pushed into UNREAD_BY_DESIGN. Measured against the helper on scrape.js, the
+// two agree on every field name in the file today, so no exemption here is wrong;
+// that is a fact about this snapshot, not a property of the regex.
 const pageCode = codeOnly(scrapeSource);
 
 /** Every `.name` occurrence in the page's code, as `receiver.name` pairs. */
