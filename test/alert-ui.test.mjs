@@ -12,9 +12,14 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import vm from 'node:vm';
+import { codeOnly } from './helpers/code-only.mjs';
 
 const read = (path) => readFileSync(new URL(`../${path}`, import.meta.url), 'utf8');
 const scannerSource = read('public/js/pages/scanner.js');
+// Comments blanked, so a field named in prose is not counted as read. The helper
+// is the tree's shared one for exactly this, and this file's census is the
+// reason it exists.
+const scannerCode = codeOnly(scannerSource, true);
 const alertsSource = read('public/js/alerts.js');
 const i18nSource = read('public/js/i18n.js');
 const scannerHtml = read('public/admin/scanner.html');
@@ -91,6 +96,22 @@ const ALERT_PAYLOAD = {
   thresholds: { minRoiPercent: 1, minMiddleRoiPercent: 25, includeLive: false },
   quietNow: false,
   evaluatedAt: '2026-10-01T14:05:00.000Z',
+};
+
+/**
+ * The note the page should print for a payload scanned at `when`.
+ *
+ * The page's substitution list lives here rather than being copied into each
+ * test. Two tests built their expected string as `t('alertsSinceScan').replace(
+ * '{when}', …)` — a hand-copy that did not know about `{count}`, so adding the
+ * event count made both of them expect a literal `{count}` in the interface and
+ * fail against a page that was right. One builder is the fix; three hand-copies
+ * would have been the bug waiting for the next placeholder.
+ */
+const sinceScanNote = (alerts = ALERT_PAYLOAD, when = alerts.scan.scrapedAt) => {
+  return dictionaries().en.t('alertsSinceScan')
+    .replace('{when}', new Date(when).toLocaleString())
+    .replace('{count}', Number(alerts.scan.eventCount || 0).toLocaleString());
 };
 
 /** The page, with recording stubs for both API routes. */
@@ -199,10 +220,188 @@ test('the notification templates really carry their placeholders', () => {
     assert.ok(i18n.t('alertMiddleRoi').includes('{roi}') && i18n.t('alertMiddleRoi').includes('{risk}'), `alertMiddleRoi/${lang}`);
     assert.ok(i18n.t('alertsTruncated').includes('{n}'), `alertsTruncated/${lang} has no {n}`);
     assert.ok(i18n.t('alertsSinceScan').includes('{when}'), `alertsSinceScan/${lang} has no {when}`);
+    assert.ok(i18n.t('alertsSinceScan').includes('{count}'), `alertsSinceScan/${lang} has no {count}`);
   }
   // ...and the bare noun the table uses is a separate key, so shortening one
   // cannot silently break the other.
   assert.notEqual(langs.en.t('alertStake'), langs.en.t('alertStakeValue'));
+});
+
+// ---- the payload's own fields ----------------------------------------------
+
+/**
+ * Every field `GET /api/alerts` publishes, read off the builders rather than off
+ * a list written here.
+ *
+ * The payload is assembled in three places — the route's own four literals, the
+ * normalised preferences, and the spread of `evaluateAlerts` — so the first two
+ * are *run* (they are pure, and this file already imports nothing from src/ but
+ * that is the point: a hand-written key list is a copy that stops being true
+ * quietly) and the route's literals are read out of the router's source. The
+ * comparison against ALERT_PAYLOAD below is the control that says the fixture in
+ * this file still holds the real shape.
+ */
+const routerCode = read('src/router.mjs');
+const alertEngine = await import('../src/alert-engine.mjs');
+
+/** `scan: { id: …, scrapedAt: …, eventCount: … }` as the route writes it. */
+const SCAN_REFERENCE = /scan:\s*\{([^}]*)\}/.exec(routerCode)?.[1] || '';
+const SCAN_FIELDS = [...SCAN_REFERENCE.matchAll(/(\w+):/g)].map((m) => m[1]).sort();
+
+/** Dot paths down to the leaves, because a census of `counts` alone is not one. */
+function leafPaths(value, prefix = '') {
+  if (value === null || typeof value !== 'object') return [prefix];
+  if (Array.isArray(value)) return [prefix];
+  return Object.entries(value).flatMap(([k, v]) => leafPaths(v, prefix ? `${prefix}.${k}` : k));
+}
+
+const PUBLISHED = [
+  ...leafPaths(alertEngine.evaluateAlerts({}, {})),
+  ...leafPaths(alertEngine.normalizeAlertPreferences({})).map((p) => `preferences.${p}`),
+  ...SCAN_FIELDS.map((f) => `scan.${f}`),
+  'schemaVersion',
+  'published',
+].sort();
+
+/**
+ * Published by the route, read by no page, with the reason it is allowed.
+ *
+ * Every reason names a measurement, and the measurement is re-checked by the
+ * controls at the foot of this file rather than left as prose.
+ */
+const UNREAD_BY_DESIGN = {
+  schemaVersion: [
+    'A version marker. Measured across the whole tree: six builders write one',
+    '(src/router.mjs:294, src/alert-engine.mjs, src/tracker-service.mjs,',
+    'src/scanner/scanner.mjs, src/scanner/market-catalog.mjs, src/scrapers/base.mjs) and',
+    'no page reads any of them. Three of the sibling documents have a test that',
+    'pins their value — test/router.test.mjs:492, test/tracker-service.test.mjs:274,',
+    'test/endpoints-registry.test.mjs:24 — and this one does not, so the marker here',
+    'is carried and checked by nothing. It is exempt as a marker, not as a value:',
+    'ALERT_SCHEMA is asserted below so the number cannot drift without the file',
+    'noticing.',
+  ].join(' '),
+  'scan.id': [
+    'The other two thirds of the run reference. Measured: the page reads',
+    '`scrapedAt` and `eventCount` off this object and never `id`, and no page',
+    'fetches GET /api/scrape-run to follow a run id — the one consumer of that',
+    'route is the scrape page\'s own run table, which reads the document it asks',
+    'for. The id is the join key between this payload and the raw run file, and',
+    'the reference was published to say which run a list came from, which the',
+    'timestamp already answers for a reader.',
+  ].join(' '),
+  thresholds: [
+    'A second copy of three fields `preferences` already carries, with the same',
+    'values from the same object: `evaluateAlerts` normalises once into `prefs`',
+    '(src/alert-engine.mjs:131) and then publishes `prefs.minRoiPercent`,',
+    '`prefs.minMiddleRoiPercent` and `prefs.includeLive` again under this name',
+    '(:152-156), while the route publishes the same normalised object as',
+    '`preferences` (src/router.mjs:292). The page fills its form from',
+    '`payload.preferences` and shows nothing from `thresholds`, so the duplicate',
+    'is a second name for one number and the two can never disagree — which is',
+    'the only argument for keeping it that it can never be the wrong one.',
+  ].join(' '),
+  evaluatedAt: [
+    'The moment the list was computed, and the route recomputes on every call',
+    '(`...evaluateAlerts(scan, preferences)` inside readAlertPayload,',
+    'src/router.mjs:300), so its value is the moment the request arrived. A page',
+    'rendering it would display the time the reader pressed refresh. The date the',
+    'list is actually good for is `scan.scrapedAt`, which the note already prints',
+    '— and the difference between the two is the reason',
+    'test "the list is dated by the scan it came from" exists.',
+  ].join(' '),
+};
+
+/**
+ * `const counts = payload.counts`, read again as `counts.arbitrages`.
+ *
+ * @type {Map<string, string>} local name → the payload path it stands for
+ */
+const ALIASES = new Map([...scannerCode.matchAll(/const\s+(\w+)\s*=\s*payload\.(\w+)/g)]
+  .map((m) => [m[1], `payload.${m[2]}`]));
+
+/**
+ * Whether the page reaches `path`, and the two shapes it uses to reach a field
+ * two steps down.
+ *
+ * `const counts = payload.counts` and then `counts.arbitrages` is a read of
+ * `payload.counts.arbitrages` through a local name, and
+ * `((payload.truncated || {}).arbitrages || 0)` dereferences straight off the
+ * fallback. Neither contains the literal dotted path, and the first version of
+ * this census reported five unread fields that the page renders two lines above
+ * the table — an instrument that fails on what it was built to find is worse
+ * than one that has no opinion.
+ *
+ * Both forms are resolved, and nothing else is. A leaf name merely appearing
+ * somewhere in the file is deliberately NOT counted as a read: that would
+ * approve any field whose name occurs once, and the census could then never fail
+ * on the thing it exists to catch. The window cannot cross a `;`, so a match
+ * stays inside one statement.
+ */
+const isRead = (path) => {
+  if (path.startsWith('preferences.')) {
+    return scannerCode.includes(`prefs.${path.slice('preferences.'.length)}`);
+  }
+  if (scannerCode.includes(`payload.${path}`)) return true;
+  const [head, ...rest] = path.split('.');
+  const tail = rest.join('.');
+  for (const [name, base] of ALIASES) {
+    if (base === `payload.${head}` && scannerCode.includes(`${name}.${tail}`)) return true;
+  }
+  return new RegExp(`payload\\.${head}\\b[^;]{0,60}?\\.${tail}\\b`).test(scannerCode);
+};
+
+test('every field the alerts route publishes is read by the page, or has a measured reason', () => {
+  // A key covers itself and everything under it, so `thresholds` covers its three
+  // leaves without a list that says the same thing three times.
+  const exempt = (path) => {
+    const parts = path.split('.');
+    return parts.some((_, i) => parts.slice(0, i + 1).join('.') in UNREAD_BY_DESIGN);
+  };
+  const unread = PUBLISHED.filter((p) => !isRead(p) && !exempt(p));
+  assert.deepEqual(unread, [],
+    `the page never reads these, and they carry no reason above: ${unread.join(', ')}`);
+
+  // The canary: a field added to any of the three builders fails here rather than
+  // becoming one more thing nobody sees.
+  assert.deepEqual(Object.keys(ALERT_PAYLOAD).sort(), [...new Set(PUBLISHED.map((p) => p.split('.')[0]))].sort(),
+    'the fixture in this file no longer holds the real payload shape');
+});
+
+test('no exemption names a field the page reads', () => {
+  for (const [field, reason] of Object.entries(UNREAD_BY_DESIGN)) {
+    assert.ok(reason.length > 80, `${field} has no recorded reason`);
+    // Only the field that is named, not its siblings. `scan.id` is exempt while
+    // `scan.scrapedAt` and `scan.eventCount` are read two lines apart, and a
+    // check that walked the whole parent would have demanded the exemption be
+    // deleted for the sake of two fields the page really does use.
+    const covered = PUBLISHED.filter((p) => p === field || p.startsWith(`${field}.`));
+    assert.ok(covered.length > 0, `${field} is exempt but the route publishes no such field`);
+    assert.ok(!covered.some(isRead),
+      `${field} is exempt, but the page reads it — remove the entry and say why in the same commit`);
+  }
+});
+
+test('the census instruments are the ones they claim to be', () => {
+  // A census whose instrument reads nothing passes everything, so the search has
+  // to be shown working in both directions.
+  assert.ok(PUBLISHED.length === 25, `expected 25 published paths, measured ${PUBLISHED.length}`);
+  assert.ok(PUBLISHED.includes('preferences.quietHours.from') && PUBLISHED.includes('truncated.arbitrages'),
+    'the walk descends to the leaves instead of stopping at the objects');
+  assert.ok(isRead('scan.scrapedAt') && isRead('published'),
+    'the search finds the paths the page really dereferences');
+  assert.ok(!isRead('scan.runId') && !isRead('counts.nope'),
+    'and it does not invent a read for a field nobody publishes');
+  // Both resolution forms, shown working. Without these the census could pass by
+  // having quietly stopped resolving them.
+  assert.ok(ALIASES.get('counts') === 'payload.counts' && isRead('counts.middles'),
+    'a field reached through a local name is read');
+  assert.ok(isRead('truncated.arbitrages'),
+    'and one reached straight off a `|| {}` fallback');
+  // Comments are blanked first, so a field named in prose is not counted as read.
+  assert.ok(!scannerCode.includes('thresholds'), 'the page never mentions thresholds outside a comment');
+  assert.equal(alertEngine.ALERT_SCHEMA, ALERT_PAYLOAD.schemaVersion,
+    'the fixture still carries the schema version the engine publishes');
 });
 
 // ---- the flow --------------------------------------------------------------
@@ -216,6 +415,24 @@ test('the page reads the alerts and renders what cleared the thresholds', async 
   assert.ok(rows.includes('FCSB'), 'the matching signal is on screen');
   assert.ok(rows.includes('betano'), 'with the books to place with');
   assert.ok(rows.includes('confirmed'), 'and its verification verdict');
+});
+
+test('the counts are drawn against the scan they came from, not on their own', async () => {
+  const { context, get } = page();
+  await context.refreshAlerts();
+  const note = get('alerts-note').textContent;
+  // The note dates the list and says how much was scanned. Without the second
+  // half a count is unreadable: one arbitrage out of four events and one out of
+  // forty thousand are the same sentence.
+  assert.ok(note.includes('4'), `the event count is missing from the note: ${note}`);
+  assert.ok(/\d{1,2}:\d{2}/.test(note) || note.includes('2026'), `the scan time is missing: ${note}`);
+
+  // A large scan is formatted, not printed raw — the same treatment the count
+  // above the table already gets.
+  const big = page({ alerts: { ...ALERT_PAYLOAD, scan: { ...ALERT_PAYLOAD.scan, eventCount: 40120 } } });
+  await big.context.refreshAlerts();
+  assert.ok(big.get('alerts-note').textContent.includes('40,120'),
+    `a five-digit event count was not formatted: ${big.get('alerts-note').textContent}`);
 });
 
 test('the settings form is filled from what the server stored', async () => {
@@ -317,12 +534,11 @@ test('a truncated list says how much it is hiding', async () => {
   // The control: nothing hidden, so nothing claimed.
   const { context: plain, get: plainGet } = page();
   await plain.refreshAlerts();
-  assert.equal(plainGet('alerts-note').textContent, langs.en.t('alertsSinceScan').replace('{when}', new Date(ALERT_PAYLOAD.scan.scrapedAt).toLocaleString()));
+  assert.equal(plainGet('alerts-note').textContent, sinceScanNote());
 });
 
 test('the list is dated by the scan it came from, not by when the server evaluated it', async () => {
-  const langs = dictionaries();
-  const sinceScan = (when) => langs.en.t('alertsSinceScan').replace('{when}', new Date(when).toLocaleString());
+  const sinceScan = (when) => sinceScanNote(ALERT_PAYLOAD, when);
 
   const { context, get } = page();
   await context.refreshAlerts();

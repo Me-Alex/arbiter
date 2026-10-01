@@ -75,7 +75,14 @@
           ? t('alertsTruncated').replace('{n}', String(truncated))
           : payload.quietNow
             ? t('alertsQuietNow')
-            : t('alertsSinceScan').replace('{when}', new Date(payload.scan.scrapedAt).toLocaleString());
+            // The event count is the denominator the counts above need. The route
+            // published it beside the scan's timestamp for exactly this — see the
+            // note at src/router.mjs:278 — and it was the one field of that
+            // reference nothing read, so "12 arbitrages" stood alone with nothing
+            // to say whether that was a lot or a trickle out of 4 events or 40 000.
+            : t('alertsSinceScan')
+              .replace('{when}', new Date(payload.scan.scrapedAt).toLocaleString())
+              .replace('{count}', Number(payload.scan.eventCount || 0).toLocaleString());
 
       const body = document.querySelector('#alerts-table tbody');
       if (!shown.length) {
