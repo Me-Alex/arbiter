@@ -13,6 +13,14 @@ import { buildRouter } from '../src/router.mjs';
 import { emptyScan } from '../src/scan-service.mjs';
 import { RateLimiter } from '../src/shared/rate-limit.mjs';
 import { csrfToken, rotateCsrf } from '../src/shared/security.mjs';
+import { fileURLToPath } from 'node:url';
+import { LIVE_EVIDENCE } from '../src/scrapers/live-status.mjs';
+
+// The real registry, not a fixture. A hand-written config here would be a
+// config the join was never measured against, which is the mistake this whole
+// surface is about: the evidence table has 24 rows and the registry has 26 jobs,
+// and only the real file shows which two fall outside it.
+const REAL_CONFIG = fileURLToPath(new URL('../config/scrapers.json', import.meta.url));
 
 const TMP = `.tmp-router-test-${process.pid}`;
 
@@ -571,4 +579,86 @@ test('POST /api/alerts is behind the same CSRF guard as every other mutation', a
     assert.equal(res.status, 403);
     assert.equal(JSON.parse(res.body).error.code, 'ECSRF');
   } finally { await closeServer(server); }
+});
+
+/**
+ * GET /api/scrapers carries each book's measured live capability.
+ *
+ * The route already published the book list the scrape page draws, and it
+ * published none of this. LIVE_EVIDENCE holds a verdict for 24 of the 26
+ * registered jobs, 11 adapters already computed it and spread it into a
+ * `coverage` object — and that object only ever became a log string, so the one
+ * per-book fact that says whether a book can quote an in-play price at all
+ * stopped there.
+ *
+ * Checked against the real config, because the join is the thing under test:
+ * 26 jobs against a 24-row table, joined on job id, leaving exactly two jobs
+ * with no evidence row. A fixture with three hand-written jobs could not have
+ * produced that number, and could not have shown that both of the two are
+ * disabled experiments.
+ */
+async function getScrapers() {
+  const services = { ...stubServices(), configPath: REAL_CONFIG };
+  const route = buildRouter({ ...services, rateLimiter: new RateLimiter({ capacity: 20, refillPerSec: 10 }) });
+  const server = await startServer(route);
+  try {
+    const res = await fetchOnce(server, '/api/scrapers');
+    return { status: res.status, body: JSON.parse(res.body) };
+  } finally { await closeServer(server); }
+}
+
+test('GET /api/scrapers publishes a measured live capability per book', async () => {
+  const { status, body } = await getScrapers();
+  assert.equal(status, 200);
+  const jobs = body.jobs;
+  assert.ok(jobs.length >= 26, `the real registry should reach the route, got ${jobs.length}`);
+
+  for (const job of jobs) {
+    const c = job.liveCapability;
+    assert.ok(c, `${job.id} has no liveCapability — the join dropped a book`);
+    assert.equal(typeof c.measured, 'boolean', `${job.id}.measured is not a boolean`);
+    assert.equal(typeof c.live, 'boolean', `${job.id}.live is not a boolean`);
+    assert.equal(c.live, c.scope !== null, `${job.id}: live and scope disagree`);
+    assert.equal(typeof c.started, 'number', `${job.id}.started is not a number`);
+  }
+
+  // The join, asserted against the evidence table rather than against a count:
+  // a book with a row must come back measured, and one without must not.
+  const withRow = jobs.filter((j) => Object.hasOwn(LIVE_EVIDENCE, j.id));
+  const withoutRow = jobs.filter((j) => !Object.hasOwn(LIVE_EVIDENCE, j.id));
+  assert.ok(withRow.length > 0, 'the control is empty: no job matched the evidence table');
+  for (const j of withRow) assert.equal(j.liveCapability.measured, true, `${j.id} has a row but reads unmeasured`);
+  for (const j of withoutRow) assert.equal(j.liveCapability.measured, false, `${j.id} has no row but reads measured`);
+  for (const j of withRow) {
+    assert.equal(j.liveCapability.field, LIVE_EVIDENCE[j.id].field, `${j.id}: the published field is not the measured one`);
+    assert.equal(j.liveCapability.started, LIVE_EVIDENCE[j.id].started, `${j.id}: the published count is not the measured one`);
+  }
+
+  // The positive control for the whole surface: at least one book must actually
+  // publish in-play, or the assertion above could pass over a table of nulls.
+  const capable = jobs.filter((j) => j.liveCapability.live);
+  assert.ok(capable.length >= 5, `expected the 5 measured books, got ${capable.length}: ${capable.map((j) => j.id).join(', ')}`);
+  for (const j of capable) {
+    assert.equal(typeof j.liveCapability.field, 'string', `${j.id} claims to go live without naming the field`);
+    assert.ok(j.liveCapability.field.length > 0);
+  }
+});
+
+test('the four filtered lists stay consistent once the capability is attached', async () => {
+  const { body } = await getScrapers();
+  const { jobs, enabledJobs, validatedJobs, experimentalJobs } = body;
+  assert.equal(validatedJobs.length + experimentalJobs.length, jobs.length, 'the two groups no longer partition the list');
+  for (const list of [enabledJobs, validatedJobs, experimentalJobs]) {
+    for (const j of list) assert.ok(j.liveCapability, `a filtered list lost the capability on ${j.id}`);
+  }
+  assert.deepEqual(
+    enabledJobs.map((j) => j.id).sort(),
+    jobs.filter((j) => j.enabled !== false).map((j) => j.id).sort(),
+    'enabledJobs is no longer the enabled subset',
+  );
+  assert.deepEqual(
+    validatedJobs.map((j) => j.id).sort(),
+    jobs.filter((j) => j.validationStatus === 'validated').map((j) => j.id).sort(),
+    'validatedJobs is no longer the validated subset',
+  );
 });

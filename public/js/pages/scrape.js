@@ -163,8 +163,40 @@ function renderBookmakerChips() {
     const t = window.arbiterI18n.t.bind(window.arbiterI18n);
     const lines = [s.validationReason || (validated ? t('sourceValidated') : t('sourceExperimental'))];
     if (s.endpointVerifiedAt) lines.push(`${t('endpointVerified')}: ${s.endpointVerifiedAt}`);
+    const live = liveEvidenceLine(s, t);
+    if (live) lines.push(live);
     return lines.join('\n');
   };
+
+  /**
+   * Whether this book can quote an in-play price at all, as measured on the
+   * provider's own field — and if not, whether anyone looked.
+   *
+   * This is the per-book half of the live feature, and until the route carried
+   * it the answer existed only inside the adapters' coverage strings. Measured
+   * over the real registry: 26 jobs, 24 of them with a row in LIVE_EVIDENCE,
+   * and exactly 5 that can actually publish in-play — fortuna and
+   * casa-pariurilor off `market.kind`, unibet off `contest.status`, superbet and
+   * winner off their own live clock. The other 19 were measured and have no such
+   * field; the last 2 (prowin, ultrabet) are disabled experiments nobody has
+   * ever collected, which is a different sentence and is rendered as one.
+   *
+   * `started` is reported rather than implied. It is how many in-play events
+   * that book published inside the measurement window, so `0` is a fact about
+   * that hour — not a verdict on the feed — and two of the five capable books
+   * read 0. A tooltip that printed "0 in-play events" next to "can go live"
+   * would read as a contradiction.
+   */
+  function liveEvidenceLine(s, t) {
+    const c = s && s.liveCapability;
+    if (!c) return '';
+    if (!c.live) return c.measured === true ? t('liveNoField') : t('liveNotMeasured');
+    const scope = c.scope === 'market' ? t('liveScopeMarket') : t('liveScopeEvent');
+    const seen = Number(c.started) > 0
+      ? t('liveStartedCount').replace('{started}', String(c.started))
+      : t('liveStartedNone');
+    return `${t('liveCapable')} · ${scope} · ${c.field || '—'} · ${seen}`;
+  }
 
   const chip = (s) => {
     const validated = validatedIds.has(s.id);
@@ -172,10 +204,18 @@ function renderBookmakerChips() {
     const job = jobById.get(s.id);
     const dot = `<span class="dot ${statusDotClass(job)}"></span>`;
     const ev = `<span class="muted ev" ${job && job.events ? '' : 'hidden'}>${job && job.events ? job.events.toLocaleString() : ''} ev</span>`;
+    // The one word that answers "can this book be part of a live trade" without
+    // opening anything. It reuses the `.muted` chip styling, so a 26-book list
+    // keeps its density and nothing here needs a stylesheet of its own; the
+    // measured field, scope and window count are in the tooltip beside it.
+    const cap = s.liveCapability && s.liveCapability.live
+      ? `<span class="muted live-cap">${escapeHtml(window.arbiterI18n.t('liveCapableShort'))}</span>`
+      : '';
     return `<label class="chip ${validated ? 'green' : ''}" title="${escapeHtml(chipTitle(s, validated))}" data-name="${escapeHtml((s.name || s.id).toLowerCase())}">
       <input type="checkbox" value="${escapeHtml(s.id)}" data-source="${escapeHtml(s.id)}" ${selectedIds.has(s.id) ? 'checked' : ''}>
       ${dot}
       <span class="name">${escapeHtml(s.name)} · ${escapeHtml(status)}</span>
+      ${cap}
       ${ev}
     </label>`;
   };

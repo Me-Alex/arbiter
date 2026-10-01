@@ -218,6 +218,159 @@ test('the date is the one the job carries, not a constant', () => {
   assert.notEqual(older, newer, 'two books verified weeks apart must not read identically');
 });
 
+/**
+ * The per-book live capability: which of these 26 books can quote an in-play
+ * price at all, on which provider field, and whether anyone ever looked.
+ *
+ * The answer existed for every book and reached nothing. LIVE_EVIDENCE carries a
+ * measured verdict for 24 of the 26 registered jobs, 11 adapters already spread
+ * it into a `coverage` object, and that object only ever became a log string —
+ * so the page drawing this very list could not tell a trader which books are
+ * part of a live trade at all. GET /api/scrapers now carries it per job.
+ *
+ * The measured shape over the real registry: 5 books can publish in-play
+ * (fortuna and casa-pariurilor off `market.kind`, unibet off `contest.status`,
+ * superbet and winner off their own live clock), 19 were measured and have no
+ * such field, and 2 — prowin and ultrabet, both disabled experiments — were
+ * never collected at all. That last group is the one worth testing hardest: it
+ * shares `live: false` with the 19, and only `measured` separates a property of
+ * the feed from a gap in our own work.
+ */
+
+/** A live capability exactly as the route publishes it. */
+const liveCap = (over = {}) => ({ measured: true, live: true, scope: 'event', field: 'contest.status === "InPlay"', started: 13, ...over });
+const noField = (over = {}) => liveCap({ live: false, scope: null, field: null, started: 0, ...over });
+const neverMeasured = () => ({ measured: false, live: false, scope: null, field: null, started: 0 });
+
+const markerOf = (html, id) => {
+  const label = html.split('<label').find((chunk) => chunk.includes(`value="${id}"`));
+  assert.ok(label, `no chip rendered for ${id}`);
+  const m = /<span class="muted live-cap">([^<]*)<\/span>/.exec(label);
+  return m ? m[1] : null;
+};
+
+test('a book that can go live says which field proved it', () => {
+  const h = harness('en');
+  const html = render(h, [
+    job({ id: 'unibet', name: 'Unibet', liveCapability: liveCap() }),
+    job({ id: 'fortuna', name: 'Fortuna', liveCapability: liveCap({ scope: 'market', field: 'market.kind === "LIVE"', started: 14 }) }),
+  ]);
+
+  // The point of the whole line: the operator can see WHICH field of WHICH
+  // provider answered, so "this book goes live" is checkable rather than a claim.
+  const unibet = titleOf(html, 'unibet');
+  assert.match(unibet, /contest\.status === "InPlay"/, 'the measured field is on the chip');
+  assert.match(unibet, /signalled per event/, 'and so is where the provider puts the signal');
+
+  const fortuna = titleOf(html, 'fortuna');
+  assert.match(fortuna, /market\.kind === "LIVE"/);
+  assert.match(fortuna, /signalled per market/, 'a per-market feed is not described as per-event');
+
+  // Two books, two different answers. A line that printed one constant for
+  // every book would pass a test that only checked that "live" appears.
+  assert.notEqual(unibet, fortuna, 'two books must not read identically');
+
+  assert.equal(markerOf(html, 'unibet'), 'live', 'a book that can go live is marked on the chip');
+  assert.equal(markerOf(html, 'fortuna'), 'live', 'and so is the other one — the marker is not a one-off');
+});
+
+test('the window count is reported, and a zero is not a contradiction', () => {
+  const h = harness('en');
+  // Two of the five capable books measured 0 — superbet and winner published
+  // 1133 future fixtures and no started one in that hour. The evidence file is
+  // explicit that a zero is a fact about the window, not about the feed, so
+  // "can go live" and "0 in-play events" must not be rendered as a clash.
+  const html = render(h, [
+    job({ id: 'fortuna', liveCapability: liveCap({ scope: 'market', field: 'market.kind === "LIVE"', started: 14 }) }),
+    job({ id: 'superbet', liveCapability: liveCap({ scope: 'event', field: 'inplay_stats_metadata.status', started: 0 }) }),
+  ]);
+  assert.match(titleOf(html, 'fortuna'), /14 in-play events in the measurement window/, 'a book that did start in-play reports the number');
+  assert.match(titleOf(html, 'superbet'), /no in-play event in the measurement window/, 'a book measured at zero reports the zero in words');
+  assert.doesNotMatch(titleOf(html, 'superbet'), /0 in-play events/, 'a zero is spelled, not printed as a count');
+  // Both are still marked capable — the marker is the capability, not the count.
+  assert.equal(markerOf(html, 'fortuna'), 'live', 'the marker follows the capability, not the count');
+  assert.equal(markerOf(html, 'superbet'), 'live', 'and a zero window does not cost the book its marker');
+});
+
+test('a book that cannot go live is not marked, and is told why', () => {
+  const h = harness('en');
+  const html = render(h, [job({ id: 'favbet', liveCapability: noField() })]);
+  assert.equal(markerOf(html, 'favbet'), null, 'a book with no in-play field carries no live marker');
+  assert.match(titleOf(html, 'favbet'), /no in-play field measured in this feed/, 'and it is told the feed was measured and the field was not found');
+});
+
+test('never measured is a different sentence from measured and found nothing', () => {
+  // The distinction the whole `measured` flag exists for. Both books answer
+  // `live: false`, and collapsing them would tell an operator that a disabled
+  // experiment we have never collected has the same feed property as a book we
+  // downloaded and searched.
+  const h = harness('en');
+  const html = render(h, [
+    job({ id: 'favbet', liveCapability: noField() }),
+    job({ id: 'prowin', validationStatus: 'experimental', liveCapability: neverMeasured() }),
+  ]);
+  const measured = titleOf(html, 'favbet');
+  const unmeasured = titleOf(html, 'prowin');
+  assert.match(measured, /no in-play field measured in this feed/);
+  assert.match(unmeasured, /in-play feed never measured/);
+  assert.notEqual(measured, unmeasured, 'the two must not read the same');
+});
+
+test('the live evidence line is translated, like the rest of the tooltip', () => {
+  // All three branches, not just the capable one. The two sentences that answer
+  // "we looked and there was nothing" and "nobody ever looked" are the ones a
+  // Romanian operator would read most often — 19 of 26 books get the first — and
+  // they are also the ones a hardcoded English string would sit in unnoticed.
+  const books = [
+    job({ id: 'unibet', liveCapability: liveCap() }),
+    job({ id: 'favbet', liveCapability: noField() }),
+    job({ id: 'prowin', validationStatus: 'experimental', liveCapability: neverMeasured() }),
+  ];
+  const ro = render(harness('ro'), books);
+  const en = render(harness('en'), books);
+  for (const id of ['unibet', 'favbet', 'prowin']) {
+    assert.notEqual(titleOf(ro, id), titleOf(en, id), `the ${id} chip must not read as the English one`);
+  }
+  assert.doesNotMatch(ro, /signalled per|In-play feed|measurement window|measured in this feed/, 'no English leaked into Romanian');
+  assert.doesNotMatch(en, /semnal pe|fereastra|niciun|nem[ăa]surat|Feed live/, 'nor Romanian into English');
+  // The provider's own field name is data, not copy, so it survives translation.
+  assert.match(titleOf(ro, 'unibet'), /contest\.status/);
+});
+
+test('a provider field cannot break out of the chip tooltip', () => {
+  const h = harness('en');
+  const hostile = 'x" onmouseover="boom';
+  const html = render(h, [job({ id: 'evil', liveCapability: liveCap({ field: hostile }) })]);
+  const label = html.split('<label').find((c) => c.includes('value="evil"'));
+  const attr = label.match(/title="([^"]*)"/)[1];
+  // The entity is the evidence, not a search for the payload: a reader that
+  // stops at the first quote cannot see the breakout. With the escaper gone it
+  // would return `...· x`, every "is onmouseover inside the title?" check would
+  // pass on a label that really does carry the attribute, and the injection
+  // would only show up in a browser. `&quot;` can be in the attribute value
+  // only if the quote was escaped, and an escaped quote cannot end it.
+  assert.match(attr, /&quot;/, 'the field is escaped inside the attribute');
+  assert.match(titleOf(html, 'evil'), /x" onmouseover="boom/, 'and it still reads back as the text it was');
+});
+
+test('a payload with no liveCapability renders exactly what it did before', () => {
+  // The route gained a field; an older or stubbed payload must not gain a line,
+  // a marker, or a stray "undefined" — the same contract the endpointVerifiedAt
+  // test pins for the line above it.
+  const h = harness('en');
+  const html = render(h, [job({ id: 'favbet' })]);
+  assert.equal(markerOf(html, 'favbet'), null);
+  // Spelled from the dictionary rather than typed here, so the claim is "the two
+  // lines that were already there and nothing else" and not a string I can get
+  // wrong by hand.
+  assert.equal(
+    titleOf(html, 'favbet'),
+    `Public JSON feed smoke-validated on 2026-09-01.\n${DICTS.en.t('endpointVerified')}: 2026-09-01`,
+    'the tooltip is byte-for-byte the one this page produced before the route gained a field',
+  );
+  assert.doesNotMatch(html, /undefined|null|NaN/, 'nothing undefined leaks into the attribute');
+});
+
 test('the tooltip falls back to a translated line, not a hardcoded English one', () => {
   // These two strings were literals in the page. The rest of the surface is
   // translated, so a Romanian operator reading a chip with no reason on the
@@ -913,7 +1066,9 @@ test('every key the new readouts use exists in both languages', () => {
   // ones the script names outright, and the ones the script reaches through a
   // value the config supplies.
   const literal = ['profileScopePrematch', 'profileScopeLivePast', 'runId', 'started',
-    'finishedLabel', 'failedToLoadMsg', 'livePollPending', 'livePollLastSkip', 'schedulerResumed'];
+    'finishedLabel', 'failedToLoadMsg', 'livePollPending', 'livePollLastSkip', 'schedulerResumed',
+    'liveCapable', 'liveCapableShort', 'liveScopeMarket', 'liveScopeEvent',
+    'liveStartedCount', 'liveStartedNone', 'liveNoField', 'liveNotMeasured'];
   const inMarkup = ['scrapeProgressTrack', 'jobs', 'configuration', 'progress'];
   for (const key of literal) {
     assert.ok(scrapeSource.includes(`'${key}'`), `scrape.js should ask for ${key}`);

@@ -211,3 +211,33 @@ export function liveCoverageFor(sourceId) {
     started: evidence.started,
   };
 }
+
+/**
+ * The same verdict, plus the one thing `liveCoverageFor` cannot say.
+ *
+ * `measured` is the difference between "we downloaded this book and no field
+ * separates a running match from a future one" and "this book was never looked
+ * at". Both come back as `live: false`, and for a trader the two are not the
+ * same statement: the first is a property of the feed, the second is a gap in
+ * our own work. The evidence table is keyed per book, so whether a key exists
+ * at all is the honest answer — and 2 of the 26 registered jobs (`prowin`,
+ * `ultrabet`) have no row, because both are disabled experimental jobs that no
+ * measurement run has ever collected.
+ *
+ * Kept separate from `liveCoverageFor` rather than folded into it: that one is
+ * spread into every adapter's coverage string, and test/live.test.mjs pins its
+ * exact four-field shape. What gets PUBLISHED is not what gets logged.
+ *
+ * @param {string} sourceId
+ * @returns {{ measured: boolean, live: boolean, scope: 'event'|'market'|null, field: string|null, started: number }}
+ */
+export function liveCapabilityFor(sourceId) {
+  const { live, scope, field, started } = liveCoverageFor(sourceId);
+  return {
+    measured: Object.hasOwn(LIVE_EVIDENCE, sourceId),
+    live,
+    scope,
+    field,
+    started,
+  };
+}

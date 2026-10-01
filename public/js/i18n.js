@@ -326,6 +326,16 @@
       roundingRisk: 'Atenție la rotunjire',
       roundingRiskHint: 'Sumele rotunjite pot reduce profitul garantat.',
       livePrice: 'Cota live',
+      // Per-book live capability, measured on each provider's own field and
+      // published by GET /api/scrapers. See src/scrapers/live-status.mjs.
+      liveCapable: 'Feed live',
+      liveCapableShort: 'live',
+      liveScopeMarket: 'semnal pe piață',
+      liveScopeEvent: 'semnal pe eveniment',
+      liveStartedCount: '{started} evenimente live în fereastra de măsurătoare',
+      liveStartedNone: 'niciun eveniment live în fereastra de măsurătoare',
+      liveNoField: 'niciun câmp live găsit în acest feed',
+      liveNotMeasured: 'feed live nemăsurat niciodată',
       // The dedicated event view (public/event.html + pages/event-detail.js).
       // These six used to live in a private bilingual literal inside the page,
       // which the dictionary could not see and apply() could not rewrite.
@@ -661,6 +671,14 @@
       roundingRisk: 'Rounding risk',
       roundingRiskHint: 'Cent-rounded stakes can reduce the guaranteed profit.',
       livePrice: 'Live price',
+      liveCapable: 'In-play feed',
+      liveCapableShort: 'live',
+      liveScopeMarket: 'signalled per market',
+      liveScopeEvent: 'signalled per event',
+      liveStartedCount: '{started} in-play events in the measurement window',
+      liveStartedNone: 'no in-play event in the measurement window',
+      liveNoField: 'no in-play field measured in this feed',
+      liveNotMeasured: 'in-play feed never measured',
       eventBack: 'Back to dashboard',
       eventDetailsTitle: 'Event details',
       eventLoading: 'Loading markets and odds…',

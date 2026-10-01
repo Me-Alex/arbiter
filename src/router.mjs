@@ -181,10 +181,28 @@ export function buildRouter(ctx) {
     'GET /api/scrapers': async () => {
       const cfg = await tryReadJson(configPath, { jobs: [] });
       const jobs = Array.isArray(cfg.jobs) ? cfg.jobs : [];
-      const enabledJobs = jobs.filter((job) => job.enabled !== false);
-      const validatedJobs = jobs.filter((job) => job.validationStatus === 'validated');
-      const experimentalJobs = jobs.filter((job) => job.validationStatus !== 'validated');
-      return sendJson(null, 200, { jobs, enabledJobs, validatedJobs, experimentalJobs });
+      // Per-book live capability, measured once per feed and carried here rather
+      // than left in the adapters' coverage strings.
+      //
+      // Measured before this line existed: LIVE_EVIDENCE holds a verdict for 24
+      // of the 26 registered jobs, joined on job id — and the route published
+      // none of it. 11 adapters already computed it, spread it into a `coverage`
+      // object and that object became a human-readable log string, so the one
+      // per-book fact that tells a trader which books can quote an in-play
+      // price at all stopped at the log. Nothing downstream of this route could
+      // see it, including the page that draws this very list.
+      //
+      // `liveCapabilityFor` and not `liveCoverageFor`: the latter is spread into
+      // every adapter's coverage string and its exact four-field shape is pinned
+      // by test/live.test.mjs. This is the published shape, not the logged one.
+      const { liveCapabilityFor } = await import('./scrapers/live-status.mjs');
+      const withCapability = jobs.map((job) => ({ ...job, liveCapability: liveCapabilityFor(job.id) }));
+      return sendJson(null, 200, {
+        jobs: withCapability,
+        enabledJobs: withCapability.filter((job) => job.enabled !== false),
+        validatedJobs: withCapability.filter((job) => job.validationStatus === 'validated'),
+        experimentalJobs: withCapability.filter((job) => job.validationStatus !== 'validated'),
+      });
     },
     'GET /api/sports': () => {
       return sendJson(null, 200, { sports: sportOptions() });
