@@ -47,12 +47,16 @@ const read = (rel) => readFileSync(join(ROOT_DIR, rel), 'utf8');
 const BACKEND_ONLY = [
   {
     route: 'GET /api/snapshot/',
-    reason: 'Diagnostic: one book\'s workspace snapshot verbatim, no matching involved. README "Diagnostic routes".',
+    reason: 'Diagnostic: one book\'s workspace snapshot verbatim, no matching involved. README "Diagnostic routes". Measured over the 22 captures in data-market-run: `events` is 99.9% of each document (1.56 MB for favbet, 3.3 MB the largest), while the metadata beside it is at most 1.8 KB — a page reading this route for the provenance would pull 400 times the bytes it displays. The 4 keys nothing else publishes are `discovery` (real on 5 of 22, null on 11, absent on 6), `extraction` (null or absent on all 22), `scrapeLimits` (`maxEvents` the constant "all" on every capture that has it) and `marketDiagnostics` (16 of 22, and already on the scrape state).',
   },
-  {
-    route: 'GET /api/odds/',
-    reason: 'Diagnostic: the same file projected to prices with the per-market `live` flag. When /api/event-detail\'s heuristic matcher is itself under suspicion, a view built on that matcher cannot be the evidence. README "Diagnostic routes".',
-  },
+  // `GET /api/odds/` used to sit here: "the same file projected to prices …
+  // when /api/event-detail's heuristic matcher is itself under suspicion, a
+  // view built on that matcher cannot be the evidence." That was true when the
+  // list was written and stopped being true when the price board shipped. The
+  // excuse kept passing, because an excuse is skipped rather than checked —
+  // the file reported full closure while its own record of why a route had no
+  // UI was wrong. It is removed so the closure check verifies the consumer
+  // instead of taking the word of a comment.
 ];
 
 function walk(dir, out = []) {
@@ -126,6 +130,92 @@ const CHANNELS = [
 ];
 
 /**
+ * A call whose argument is a local binding instead of a literal.
+ *
+ * Measured before this existed: the price board asks for `/api/odds/:book` and
+ * the closure check could not see it. `loadPriceBoard` reads
+ * `const url = priceBoardUrl();` and calls `arbiterApi.get(url)`, so the regexes
+ * above — which want a quoted path at the call site — matched nothing, and the
+ * route was only holding because a hand-written excuse covered it. That is the
+ * mirror image of the hole `every table entry is extracted` closes on the route
+ * side: there, a route added mid-line was invisible; here, a consumer that
+ * composes its own URL is invisible. Both let the check report closure over
+ * something it did not actually read.
+ */
+const CHANNELS_BY_BINDING = [
+  { name: 'arbiterApi', re: /arbiterApi\.(get|post|put|del|patch)\(\s*([A-Za-z_$][\w$]*)\s*\)/g, verb: (m) => VERB[m[1]], at: 2 },
+];
+
+/**
+ * The source of one function declaration, bounded by its own closing brace.
+ *
+ * Bounded because the alternative is wrong in a way that looks like an absence
+ * of consumers: scanning from the declaration to the end of the file collects
+ * the `return` of every function written after it. Measured on scrape.js, that
+ * is 23 returns across 30 later functions, so "the literal this function
+ * returns" can never be a single value and every such call resolves to nothing.
+ *
+ * The bound is the codebase's own shape rather than a parser: 70 of 70
+ * top-level declarations in public/js and electron close with a `}` in column
+ * 0, none of them contains a nested declaration, and
+ * `function bodies are bounded by their own brace` below fails if that ever
+ * stops being true.
+ */
+function functionWindow(text, name) {
+  const lines = text.split(/\r?\n/);
+  const start = lines.findIndex((l) => new RegExp(`^function\\s+${name}\\s*\\(`).test(l));
+  if (start === -1) return null;
+  const end = lines.findIndex((l, j) => j > start
+    && (l === '}' || /^function\s+[A-Za-z_$][\w$]*\s*\(/.test(l)));
+  return end === -1 ? null : lines.slice(start, end + 1).join('\n');
+}
+
+/**
+ * The path literal behind an expression, followed through local `const`
+ * bindings and one function call.
+ *
+ * Deliberately narrow, and narrow in the direction that fails safe. It reads
+ * `const NAME = <expr>` and never `let`/`var`, because a reassigned binding is
+ * not a constant and a value that cannot be pinned down is not evidence; for a
+ * call it accepts a function only when every string it can return normalises
+ * to one and the same route; and every step that finds nothing returns null,
+ * which leaves the route reading as uncovered rather than covered. A resolver
+ * that guessed would turn this file's purpose — noticing a capability nobody
+ * wired — into a machine for not noticing it.
+ */
+function literalBehind(text, expr, depth = 0) {
+  if (depth > 3) return null;
+  const trimmed = expr.trim();
+  const literal = /^(['"`])([\s\S]*)\1$/.exec(trimmed);
+  if (literal) return literal[2];
+
+  const binding = /^([A-Za-z_$][\w$]*)$/.exec(trimmed);
+  if (binding) {
+    const decl = new RegExp(`^\\s*const\\s+${binding[1]}\\s*=\\s*([^;]+);`, 'm').exec(text);
+    return decl ? literalBehind(text, decl[1], depth + 1) : null;
+  }
+
+  const call = /^([A-Za-z_$][\w$]*)\s*\(/.exec(trimmed);
+  if (call) {
+    const body = functionWindow(text, call[1]);
+    if (body === null) return null;
+    // Every string this function can return, and only a single non-empty one
+    // counts. `priceBoardUrl` opens with `if (!book) return '';` and closes with
+    // the route template, so "the first literal it returns" is the empty one and
+    // resolves to nothing at all. Two different routes on two branches is a
+    // function whose consumer cannot be read, and that reads as uncovered.
+    const returned = [...body.matchAll(/return\s+([^;]+);/g)]
+      .map((m) => literalBehind(text, m[1], depth + 1))
+      .filter((v) => v !== null)
+      .map((v) => normalize(v))
+      .filter(Boolean);
+    const distinct = [...new Set(returned)];
+    return distinct.length === 1 ? distinct[0] : null;
+  }
+  return null;
+}
+
+/**
  * Blank the ranges the tokenizer calls comments, so a route NAMED in a comment
  * does not read as a route that is called.
  *
@@ -153,14 +243,33 @@ function extractConsumers(src, relPath, isJs) {
   const found = [];
   const text = codeOnly(src, isJs);
   const lines = src.split(/\r?\n/);
+  const at = (m) => lines[0, src.slice(0, m.index).split(/\r?\n/).length - 1];
   for (const channel of CHANNELS) {
     for (const m of text.matchAll(channel.re)) {
       found.push({
         verb: channel.verb(m),
         path: normalize(m[channel.name === 'arbiterApi' ? 3 : 2]),
         file: relPath,
-        line: lines[0, src.slice(0, m.index).split(/\r?\n/).length - 1],
+        line: at(m),
         channel: channel.name,
+        via: 'literal',
+      });
+    }
+  }
+  // A consumer that composes its own URL is only a consumer if the composition
+  // can be read. When it cannot, the call is not recorded at all — the route
+  // then reads as uncovered, which is the answer that sends someone to look.
+  for (const channel of CHANNELS_BY_BINDING) {
+    for (const m of text.matchAll(channel.re)) {
+      const literal = literalBehind(text, m[channel.at]);
+      if (literal === null) continue;
+      found.push({
+        verb: channel.verb(m),
+        path: normalize(literal),
+        file: relPath,
+        line: at(m),
+        channel: channel.name,
+        via: `resolved from \`${m[channel.at]}\``,
       });
     }
   }
@@ -197,7 +306,7 @@ function isCovered(servedRoute, calledPath) {
   return false;
 }
 
-test('every route the backend serves has a consumer on the frontend', () => {
+test('every route the backend serves has a consumer on the frontend, and no excuse covers one that does', () => {
   const orphans = [];
   for (const route of served.keys()) {
     if (BACKEND_ONLY.some((b) => b.route.startsWith(route) || route.startsWith(b.route))) continue;
@@ -209,11 +318,151 @@ test('every route the backend serves has a consumer on the frontend', () => {
     if (matched.length === 0) orphans.push({ route, verb, path, called: [...consumers.keys()] });
   }
 
+  // The same claim read from the other side, in this test rather than beside
+  // it. An entry in BACKEND_ONLY asserts that nothing calls the route, and that
+  // assertion is as checkable as the orphan list — the excuse is a statement
+  // about the frontend, so it gets compared against the frontend. Kept inside
+  // this test rather than as a second one on purpose: when the price board
+  // shipped and started calling `GET /api/odds/`, the excuse stayed, the reason
+  // stayed, and the file reported full closure over a record that had stopped
+  // being true. A check that can be switched off without the audit going red is
+  // not part of the audit.
+  const stale = [];
+  for (const { route } of BACKEND_ONLY) {
+    const [verb] = route.split(' ');
+    const matched = [...consumers.entries()]
+      .filter(([called]) => isCovered(route, called))
+      .flatMap(([, list]) => list.filter((c) => c.verb === verb));
+    if (matched.length) stale.push(`${route} — ${matched[0].file}:${matched[0].line} calls it, so the excuse is not true`);
+  }
+
   const detail = orphans.map(({ route, called }) => {
     const near = called.filter((c) => c.includes(route.split(' ')[1].split('/').pop()));
     return `  ${route}  (frontend paths seen: ${called.length}${near.length ? `, closest: ${near.join(', ')}` : ''})`;
   });
   assert.deepEqual(orphans.map((o) => o.route), [], `routes with no frontend consumer:\n${detail.join('\n')}`);
+  assert.deepEqual(stale, [], `excuses over routes the frontend calls:\n  ${stale.join('\n  ')}`);
+});
+
+test('a consumer that builds its own URL is found, and one that cannot is not', () => {
+  // The live case, in the shape the price board actually has it: a `const`
+  // bound to a helper call, the helper opening with `return ''` and closing
+  // with the route template. Before the resolver existed this call matched no
+  // channel at all, which is why `GET /api/odds/` sat in BACKEND_ONLY with a
+  // reason that had stopped being true.
+  const composed = [
+    'function priceBoardUrl() {',
+    "  if (!book) return '';",
+    '  return `/api/odds/${encodeURIComponent(book)}?${params}`;',
+    '}',
+    'async function load() {',
+    '  const url = priceBoardUrl();',
+    '  return arbiterApi.get(url);',
+    '}',
+  ].join('\n');
+  const found = extractConsumers(composed, 'probe.js', true);
+  assert.deepEqual(found.map((c) => c.path), ['/api/odds'],
+    'a URL assembled in a helper is the consumer it is');
+  assert.equal(found[0].verb, 'GET', 'and the verb comes from the call, not from the literal');
+  assert.match(found[0].via, /resolved/, 'the record says it was resolved, so it is not mistaken for a literal');
+
+  // The controls, each of which must read as NO consumer. A resolver that
+  // guessed would turn this file's purpose into a machine for not noticing a
+  // capability nobody wired, so every ambiguous shape has to fail closed.
+  const controls = {
+    'two routes on two branches': [
+      'function pick() {',
+      "  if (a) return '/api/one';",
+      "  return '/api/two';",
+      '}',
+      'async function load() {',
+      '  const url = pick();',
+      '  return arbiterApi.get(url);',
+      '}',
+    ].join('\n'),
+    'a let binding, which can be reassigned': [
+      'async function load() {',
+      "  let url = '/api/here';",
+      '  url = somewhereElse(url);',
+      '  return arbiterApi.get(url);',
+      '}',
+    ].join('\n'),
+    'a helper that is not in this file': [
+      'async function load() {',
+      '  const url = buildFromConfig();',
+      '  return arbiterApi.get(url);',
+      '}',
+    ].join('\n'),
+    'a helper that returns nothing but a number': [
+      'function size() {',
+      '  return 42;',
+      '}',
+      'async function load() {',
+      '  const n = size();',
+      '  return arbiterApi.get(n);',
+      '}',
+    ].join('\n'),
+  };
+  for (const [what, src] of Object.entries(controls)) {
+    assert.deepEqual(extractConsumers(src, 'probe.js', true).map((c) => c.path), [],
+      `${what} must not be counted as a consumer of anything`);
+  }
+
+  // And the last control is the one that keeps the controls honest: the same
+  // shape with a single returned route does resolve, so the four above are
+  // refused for their own reasons and not because the resolver finds nothing.
+  const single = [
+    'function pick() {',
+    "  return '/api/one';",
+    '}',
+    'async function load() {',
+    '  const url = pick();',
+    '  return arbiterApi.get(url);',
+    '}',
+  ].join('\n');
+  assert.deepEqual(extractConsumers(single, 'probe.js', true).map((c) => c.path), ['/api/one'],
+    'a helper with one returned route does resolve');
+});
+
+test('function bodies are bounded by their own brace, as the resolver assumes', () => {
+  // The resolver reads a function's returns out of the lines between its
+  // declaration and the next `}` in column 0. Measured over public/js and
+  // electron: 70 of 70 top-level declarations close that way, with no nested
+  // declaration inside any of them. This is the check that makes the bound a
+  // fact about the tree rather than a hope — a nested declaration would
+  // truncate the window, and the truncation must be visible here rather than
+  // showing up later as a route that mysteriously lost its consumer.
+  const offenders = [];
+  for (const file of [...walk(join(ROOT_DIR, 'public', 'js')), ...walk(join(ROOT_DIR, 'electron'))]) {
+    const rel = relative(ROOT_DIR, file).replace(/\\/g, '/');
+    const lines = codeOnly(readFileSync(file, 'utf8'), true).split(/\r?\n/);
+    for (let i = 0; i < lines.length; i += 1) {
+      if (!/^function\s+[A-Za-z_$][\w$]*\s*\(/.test(lines[i])) continue;
+      const end = lines.findIndex((l, j) => j > i && (l === '}' || /^function\s+[A-Za-z_$][\w$]*\s*\(/.test(l)));
+      if (end === -1) offenders.push(`${rel}:${i + 1} never closes`);
+      else if (lines[end] !== '}') offenders.push(`${rel}:${i + 1} holds a nested declaration at line ${end + 1}`);
+    }
+  }
+  assert.deepEqual(offenders, [], `functions the resolver would misread:\n  ${offenders.join('\n  ')}`);
+});
+
+test('the price board is what keeps the odds route covered, and the check sees it', () => {
+  // The reason `GET /api/odds/` left BACKEND_ONLY. The closure check only
+  // verifies a consumer if it can read one, so this asserts both halves: the
+  // route has no literal call anywhere in the frontend, and it is covered
+  // anyway through the URL the page composes. If the page ever stops composing
+  // it, the first assertion here stops being true and this is the test that
+  // says so, rather than the route quietly returning to an excuse nobody
+  // re-reads.
+  const literalOdds = [...consumers.entries()].filter(([path, list]) => path === '/api/odds'
+    && list.some((c) => c.via === 'literal'));
+  assert.deepEqual(literalOdds, [], 'no page calls the odds route with a literal — it is composed, not written out');
+
+  const composedOdds = [...consumers.entries()].filter(([path, list]) => path === '/api/odds'
+    && list.some((c) => c.via.startsWith('resolved')));
+  assert.deepEqual(composedOdds.map(([, list]) => list.map((c) => c.file)), [['public/js/pages/scrape.js']],
+    'and the price board is the page that reaches it');
+  assert.ok(served.has('GET /api/odds/'), 'the odds route is in the served set it is being checked against');
 });
 
 test('every backend-only route still carries the reason it has no UI', () => {
