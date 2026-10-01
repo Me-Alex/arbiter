@@ -326,6 +326,15 @@
       roundingRisk: 'Atenție la rotunjire',
       roundingRiskHint: 'Sumele rotunjite pot reduce profitul garantat.',
       livePrice: 'Cota live',
+      // The dedicated event view (public/event.html + pages/event-detail.js).
+      // These six used to live in a private bilingual literal inside the page,
+      // which the dictionary could not see and apply() could not rewrite.
+      eventBack: 'Înapoi la dashboard',
+      eventDetailsTitle: 'Detalii eveniment',
+      eventLoading: 'Se încarcă piețele și cotele…',
+      eventLoadError: 'Cotele nu au putut fi încărcate. Încearcă din nou.',
+      eventRetry: 'Reîncearcă',
+      eventInvalidLink: 'Linkul evenimentului este incomplet. Revino la dashboard și selectează un eveniment.',
     },
     en: {
       dashboard: 'Dashboard',
@@ -652,6 +661,12 @@
       roundingRisk: 'Rounding risk',
       roundingRiskHint: 'Cent-rounded stakes can reduce the guaranteed profit.',
       livePrice: 'Live price',
+      eventBack: 'Back to dashboard',
+      eventDetailsTitle: 'Event details',
+      eventLoading: 'Loading markets and odds…',
+      eventLoadError: 'Could not load event odds. Please try again.',
+      eventRetry: 'Retry',
+      eventInvalidLink: 'This event link is incomplete. Return to the dashboard and select an event.',
     },
   };
 

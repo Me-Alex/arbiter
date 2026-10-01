@@ -2,16 +2,24 @@
 (function () {
   'use strict';
   arbiterApp.mount('dashboard');
-  const en = arbiterI18n.lang === 'en';
-  const copy = en ? {
-    back: 'Back to dashboard', title: 'Event details', loading: 'Loading markets and odds…',
-    error: 'Could not load event odds. Please try again.', retry: 'Retry',
-    invalid: 'This event link is incomplete. Return to the dashboard and select an event.',
-  } : {
-    back: 'Înapoi la dashboard', title: 'Detalii eveniment', loading: 'Se încarcă piețele și cotele…',
-    error: 'Cotele nu au putut fi încărcate. Încearcă din nou.', retry: 'Reîncearcă',
-    invalid: 'Linkul evenimentului este incomplet. Revino la dashboard și selectează un eveniment.',
-  };
+  // Every string below is resolved through t() at the moment it is written, not
+  // captured once at load. The page used to carry a private bilingual literal —
+  // `const en = arbiterI18n.lang === 'en'` and a `copy` object — which had two
+  // costs the dictionary made visible: none of the six texts had a key, so no
+  // translation surface could reach them, and three of them were duplicated a
+  // second time in event.html as plain Romanian literals.
+  //
+  // The frozen capture was measured, not assumed: driving this real controller
+  // over the real i18n.js, switching language and re-rendering through the page's
+  // own retry click, the empty path's status — t('noOddsFound'), written inside
+  // load() — followed the switch while the error path's status did not. Same
+  // context, same trigger, same switch; only the expression differed.
+  //
+  // It was not user-reachable, and that is stated rather than glossed: both
+  // language switches in the app reload the page (app.js:168, common.js:184), so
+  // the captured copy could not go stale under a real click. It was a private
+  // second source of truth that the dictionary's own dead-key and both-languages
+  // checks could not see, which is the property worth removing.
   const input = new URLSearchParams(window.location.search);
   const params = new URLSearchParams();
   for (const key of ['sport', 'home', 'away', 'kickoff']) params.set(key, input.get(key) || '');
@@ -19,8 +27,8 @@
   const status = document.getElementById('event-status');
   const retry = document.getElementById('event-retry');
   const liveBadge = document.getElementById('event-live');
-  document.getElementById('event-back').textContent = copy.back;
-  retry.textContent = copy.retry;
+  document.getElementById('event-back').textContent = arbiterI18n.t('eventBack');
+  retry.textContent = arbiterI18n.t('eventRetry');
   const headingNode = document.getElementById('event-heading');
   const metaNode = document.getElementById('event-meta');
 
@@ -35,7 +43,7 @@
   function paintIdentity() {
     const home = (ev && ev.homeTeam) || params.get('home') || '';
     const away = (ev && ev.awayTeam) || params.get('away') || '';
-    const heading = home && away ? `${home} ${arbiterI18n.t('vs')} ${away}` : copy.title;
+    const heading = home && away ? `${home} ${arbiterI18n.t('vs')} ${away}` : arbiterI18n.t('eventDetailsTitle');
     headingNode.textContent = heading;
     document.title = `Arbiter — ${heading}`;
     metaNode.textContent = [
@@ -59,9 +67,9 @@
     retry.hidden = true;
     body.replaceChildren();
     body.setAttribute('aria-busy', 'true');
-    status.textContent = copy.loading;
+    status.textContent = arbiterI18n.t('eventLoading');
     if (!params.get('sport') || !params.get('home') || !params.get('away')) {
-      status.textContent = copy.invalid;
+      status.textContent = arbiterI18n.t('eventInvalidLink');
       body.setAttribute('aria-busy', 'false');
       return;
     }
@@ -77,7 +85,7 @@
       paintIdentity();
       status.textContent = events.some(e => e.markets && e.markets.length) ? '' : arbiterI18n.t('noOddsFound');
     } catch {
-      status.textContent = copy.error;
+      status.textContent = arbiterI18n.t('eventLoadError');
       retry.hidden = false;
     } finally {
       body.setAttribute('aria-busy', 'false');

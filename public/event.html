@@ -9,8 +9,12 @@
 </head>
 <body>
   <main class="event-detail-page">
-    <a id="event-back" class="workflow-link" href="/">Înapoi la dashboard</a>
-    <h1 id="event-heading">Eveniment</h1>
+    <!-- The three labels below are marked so i18n.apply() owns them: it rewrites
+         [data-i18n] and nothing else, so an unmarked literal stays Romanian until
+         the controller happens to overwrite it — and the controller only reaches
+         these nodes on its own render, which a failed script never gets to. -->
+    <a id="event-back" class="workflow-link" href="/" data-i18n="eventBack">Înapoi la dashboard</a>
+    <h1 id="event-heading" data-i18n="eventDetailsTitle">Eveniment</h1>
     <!-- The in-play badge for the whole event, as opposed to the per-market ones
          the panel renders. Empty and hidden in the markup on purpose: the label
          and the tooltip are translations, so the controller fills both once the
@@ -18,7 +22,7 @@
     <span id="event-live" class="chip red live-badge" hidden></span>
     <p id="event-meta" class="muted"></p>
     <p id="event-status" role="status" aria-live="polite"></p>
-    <button id="event-retry" class="btn ghost" type="button" hidden>Reîncearcă</button>
+    <button id="event-retry" class="btn ghost" type="button" hidden data-i18n="eventRetry">Reîncearcă</button>
     <section id="event-markets" aria-labelledby="event-heading" aria-busy="true"></section>
   </main>
   <script src="/js/api.js"></script>
