@@ -79,6 +79,15 @@ function harness(lang = 'ro', { api, form } = {}) {
       // Storing it raw would make the stub disagree with the browser about
       // what it reads back.
       setAttribute(name, value) { this.attrs[name] = String(value); },
+      removeAttribute(name) { delete this.attrs[name]; },
+      getAttribute(name) { return Object.prototype.hasOwnProperty.call(this.attrs, name) ? this.attrs[name] : null; },
+      // `title` is an attribute, so the property and the attribute have to be two
+      // views of one thing rather than two unrelated fields. `applyProfileHint`
+      // writes `sel.title = …` on one path and `removeAttribute` on the other, and
+      // a stub where those are independent would let a page clear a stale hint and
+      // still appear to have one — or the reverse, with no way to tell which.
+      get title() { return this.attrs.title || ''; },
+      set title(value) { this.attrs.title = String(value); },
       appendChild() {},
       // The page toggles classes on real elements (the progress card hides
       // itself when no run is in flight). A stub without this threw on the
@@ -422,6 +431,94 @@ test('a payload with no liveCapability renders exactly what it did before', () =
     'the tooltip is byte-for-byte the one this page produced before the route gained a field',
   );
   assert.doesNotMatch(html, /undefined|null|NaN/, 'nothing undefined leaks into the attribute');
+});
+
+/* ── The adapter behind a book ────────────────────────────────────────────────
+ * GET /api/scrapers publishes a job's `engine`, `script`, `fullMarkets`,
+ * `detailLimit` and `minEvents`, and before this block no page read any of the
+ * five. The values used below are transcribed from config/scrapers.json, which
+ * is the document the route serves verbatim — so if the config changes shape the
+ * expectations here are the ones that have to be re-measured, and they say so.
+ */
+
+test('the chip names the adapter that collects the book', () => {
+  const h = harness('en');
+  const html = render(h, [job({ engine: 'exelogic-xsport', script: 'excelbet.mjs' })]);
+  const title = titleOf(html, 'favbet');
+  assert.match(title, /exelogic-xsport/, 'the integration family reaches the chip');
+  assert.match(title, /excelbet\.mjs/, 'and the file underneath it');
+  // Both halves on one line, not two: the tooltip is three lines already and a
+  // 26-item list pays for its density. The separator is the one the rest of the
+  // page uses to join a compound value, so the assertion is on that too.
+  assert.match(title, new RegExp(`${DICTS.en.t('feedAdapter')}: exelogic-xsport · excelbet\\.mjs`),
+    'the two halves read as one labelled value');
+});
+
+test('the adapter line is the book\'s own, and script is the finer grain', () => {
+  const h = harness('en');
+  // Measured on config/scrapers.json: excelbet, winboss, las-vegas and magnumbet
+  // all run on the `exalogic-xsport` engine, behind four different adapter
+  // files. Printing the engine alone would call those four books the same book,
+  // which is the failure this line exists to avoid.
+  const four = ['excelbet', 'winboss', 'las-vegas', 'magnumbet'];
+  const titles = four.map((id, i) => titleOf(render(h, [job({
+    id,
+    engine: 'exalogic-xsport',
+    script: `${id}.mjs`,
+    name: id,
+  })]), id));
+  const engines = new Set(titles.map((t) => /exalogic-xsport/.test(t)));
+  assert.equal(engines.size, 1, 'all four really do share one engine — the control');
+  assert.equal(new Set(titles).size, 4, 'and each must still be distinguishable from the others');
+  assert.notEqual(titles[0], titles[1], 'two books behind one engine are not the same book');
+});
+
+test('deep mode says what it costs, and only on the books that pay it', () => {
+  const h = harness('en');
+  // Both jobs that set `fullMarkets` spend one detail request per event and cap
+  // it; the other 24 never make the second request, so for them the line would
+  // be a claim about a cost they do not have.
+  const deep = titleOf(render(h, [job({ engine: 'superbet-offer', script: 'superbet.mjs', fullMarkets: true, detailLimit: 100 })]), 'favbet');
+  assert.match(deep, new RegExp(DICTS.en.t('feedDeepMode')), 'the deep mode reaches the chip');
+  assert.match(deep, /100/, 'and the cap, which is 100 for superbet and 700 for unibet');
+  assert.notEqual(deep, titleOf(render(h, [job({
+    engine: 'superbet-offer', script: 'superbet.mjs', fullMarkets: true, detailLimit: 700,
+  })]), 'favbet'), 'two books with different caps must not read identically');
+
+  const shallow = titleOf(render(h, [job({ engine: 'nsoft-public-json', script: 'nsoft.mjs' })]), 'favbet');
+  assert.doesNotMatch(shallow, new RegExp(DICTS.en.t('feedDeepMode')),
+    'a book that never reads detail markets gets no deep-mode line');
+  assert.doesNotMatch(shallow, /undefined|null|NaN/, 'and no dangling marker in its place');
+});
+
+test('the smoke floor is the number that job declares', () => {
+  const h = harness('en');
+  // betmen declares 20 and scripts/smoke-live.mjs:116 overrides its global floor
+  // with it, so the number on the chip is the same one the smoke script holds
+  // the book to — not a copy typed into the page.
+  const floored = titleOf(render(h, [job({ engine: 'nsoft-public-json', script: 'nsoft.mjs', minEvents: 20 })]), 'favbet');
+  assert.match(floored, /20/, 'the declared floor reaches the chip');
+  const other = titleOf(render(h, [job({ engine: 'nsoft-public-json', script: 'nsoft.mjs', minEvents: 5 })]), 'favbet');
+  assert.notEqual(floored, other, 'two floors must not read identically');
+  const none = titleOf(render(h, [job({ engine: 'nsoft-public-json', script: 'nsoft.mjs' })]), 'favbet');
+  assert.doesNotMatch(none, new RegExp(DICTS.en.t('feedSmokeFloor')),
+    'the other 25 jobs declare no floor and get no line');
+});
+
+test('a payload with none of the new fields gains nothing', () => {
+  // The byte-for-byte control the liveCapability block already sets, extended to
+  // the three fields added since: a payload from before this route carried them
+  // must render exactly the tooltip it rendered before, with no empty line where
+  // one of the new builders used to be.
+  const h = harness('en');
+  const title = titleOf(render(h, [job()]), 'favbet');
+  assert.equal(
+    title,
+    `Public JSON feed smoke-validated on 2026-09-01.\n${DICTS.en.t('endpointVerified')}: 2026-09-01`,
+    'the tooltip is byte-for-byte the one this page produced before the route gained these fields',
+  );
+  assert.equal(title.split('\n').length, 2, 'and it is still two lines, not five with three empty ones');
+  assert.doesNotMatch(title, /undefined|null|NaN| {2}$/m, 'nothing empty or undefined leaks into the attribute');
 });
 
 /* ── Book price board ──────────────────────────────────────────────────────
@@ -1221,6 +1318,46 @@ test('a profile the dictionary cannot name still produces a selectable option', 
   assert.equal(labelOf('en', { id: 'x', mode: null, label: null }), '');
 });
 
+test('the profile dropdown carries the sentence the config wrote about it', () => {
+  // `description` is the one field of GET /api/profiles that said what a profile
+  // is *for*. profileLabel builds its option text from `mode` and the defaults
+  // and never looked at it, so both shipped profiles described themselves to
+  // nobody — while the mode translated to a single word and the scope was two
+  // booleans. The prose is read off the config rather than typed here, so a third
+  // profile fails this test instead of arriving unmentioned.
+  const h = harness('en');
+  h.run(`profiles = ${JSON.stringify(PROFILES)}`);
+  for (const p of PROFILES) {
+    assert.ok(p.description, `${p.id} has no description to show`);
+    h.run(`document.getElementById('profile').value = ${JSON.stringify(p.id)}; applyProfileHint()`);
+    assert.equal(h.nodes.get('profile').title, p.description,
+      `${p.id} carries its own sentence on the select`);
+  }
+});
+
+test('the hint follows the selection and leaves nothing behind', () => {
+  const h = harness('en');
+  h.run(`profiles = ${JSON.stringify(PROFILES)}`);
+  // Reached through the document, not through `nodes`: the harness memoises a
+  // stub the first time getElementById is asked for it, so reading `nodes` first
+  // would hand back undefined and the test would fail on its own setup.
+  const sel = h.run("document.getElementById('profile')");
+
+  // The control, and the reason the clear path exists: a profile with no
+  // description must not inherit the previous one's sentence. Two of the two
+  // shipped profiles have one, so without this the clear branch is unreachable
+  // and could be deleted without a test noticing.
+  h.run(`document.getElementById('profile').value = ${JSON.stringify(PROFILES[0].id)}; applyProfileHint()`);
+  assert.equal(sel.title, PROFILES[0].description);
+  h.run(`profiles = [${JSON.stringify({ id: PROFILES[0].id })}]; applyProfileHint()`);
+  assert.equal(sel.getAttribute('title'), null, 'a profile with no description leaves no stale hint');
+
+  // And a selection that is not in the list at all, which is what a config file
+  // edited under a running page produces.
+  h.run(`profiles = ${JSON.stringify(PROFILES)}; document.getElementById('profile').value = 'removed-profile'; applyProfileHint()`);
+  assert.equal(sel.getAttribute('title'), null, 'a selection with no profile behind it carries no hint');
+});
+
 test('the option markup is escaped, because the mode comes off a file on disk', () => {
   // profileLabel returns a plain string; the escaping happens where the option
   // is built, and init() wants five routes and a real dropdown before it gets
@@ -1375,7 +1512,8 @@ test('every key the new readouts use exists in both languages', () => {
     'liveCapable', 'liveCapableShort', 'liveScopeMarket', 'liveScopeEvent',
     'liveStartedCount', 'liveStartedNone', 'liveNoField', 'liveNotMeasured',
     'capturedAt', 'pricesCount', 'pricesTruncated', 'pricesLiveCount', 'pricesPickBook',
-    'pricesNoneForFilter', 'pricesNoCapture', 'pricesError', 'pricesLoading'];
+    'pricesNoneForFilter', 'pricesNoCapture', 'pricesError', 'pricesLoading',
+    'feedAdapter', 'feedDeepMode', 'feedDeepLimit', 'feedSmokeFloor'];
   const inMarkup = ['scrapeProgressTrack', 'jobs', 'configuration', 'progress',
     'bookPrices', 'limit', 'marketFilterHint', 'eventFilterHint'];
   for (const key of literal) {

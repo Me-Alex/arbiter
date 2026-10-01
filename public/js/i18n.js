@@ -80,6 +80,14 @@
       sourceValidated: 'sursă validată pe date reale',
       sourceExperimental: 'sursă experimentală',
       endpointVerified: 'Endpoint verificat',
+      // Ce adaptor adună o carte și cât costă modul profund, citite de
+      // tooltip-ul cipului din GET /api/scrapers. Măsurat pe config/scrapers.json:
+      // `engine` are 13 valori pe 26 de joburi, iar `script` este grana mai fină
+      // — patru cărți împart engine-ul `exalogic-xsport` prin patru fișiere.
+      feedAdapter: 'Adaptor',
+      feedDeepMode: 'mod profund',
+      feedDeepLimit: 'până la {limit} evenimente cu citire de detaliu',
+      feedSmokeFloor: 'minim {events} evenimente la testul live',
       opportunities: 'Oportunități',
       evBets: 'Pariuri +EV',
       topOpportunities: 'Top oportunități',
@@ -439,6 +447,12 @@
       sourceValidated: 'validated real-data source',
       sourceExperimental: 'experimental source',
       endpointVerified: 'Endpoint verified',
+      // Which adapter collects a book, and what its deep mode costs. Measured on
+      // config/scrapers.json — see the chip tooltip in public/js/pages/scrape.js.
+      feedAdapter: 'Adapter',
+      feedDeepMode: 'deep mode',
+      feedDeepLimit: 'up to {limit} events get the detail read',
+      feedSmokeFloor: 'live smoke floor of {events} events',
       opportunities: 'Opportunities',
       evBets: '+EV bets',
       topOpportunities: 'Top opportunities',

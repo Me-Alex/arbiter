@@ -107,6 +107,34 @@ function profileLabel(profile, t) {
   return scope ? `${mode} · ${scope}` : mode;
 }
 
+/**
+ * The selected profile's own sentence, hung on the select as its hint.
+ *
+ * `profileLabel` above builds the option's text from `mode` and the defaults and
+ * never reads `description`, which left one field of GET /api/profiles with no
+ * place on the page. Measured over config/scan-profiles.json that field is the
+ * only one carrying what a profile is *for*: "Independent feeds with plausibility
+ * checks" and "Lower-confidence feeds — verify prices before placing stakes" say
+ * what each mode costs the operator, where the mode itself translates to a single
+ * word and the scope is derived from booleans.
+ *
+ * The prose is shown as the config wrote it, untranslated, because that is what
+ * the tooltip already does with `validationReason` — a string the operator's own
+ * config file carries is not a string this page owns, and translating it here
+ * would put two languages in one file.
+ *
+ * A `title` rather than a line of text: the runbar is a dense row of nine fields
+ * and `max-events` already carries its hint exactly this way.
+ */
+function applyProfileHint() {
+  const sel = $('profile');
+  if (!sel) return;
+  const found = (profiles || []).find((p) => p.id === sel.value);
+  const description = found && found.description;
+  if (description) sel.title = description;
+  else sel.removeAttribute('title');
+}
+
 function fmtDuration(ms) {
   if (!Number.isFinite(ms) || ms < 0) return '';
   const s = Math.round(ms / 1000);
@@ -163,10 +191,69 @@ function renderBookmakerChips() {
     const t = window.arbiterI18n.t.bind(window.arbiterI18n);
     const lines = [s.validationReason || (validated ? t('sourceValidated') : t('sourceExperimental'))];
     if (s.endpointVerifiedAt) lines.push(`${t('endpointVerified')}: ${s.endpointVerifiedAt}`);
+    const adapter = adapterLine(s, t);
+    if (adapter) lines.push(adapter);
+    const deep = deepModeLine(s, t);
+    if (deep) lines.push(deep);
+    const floor = smokeFloorLine(s, t);
+    if (floor) lines.push(floor);
     const live = liveEvidenceLine(s, t);
     if (live) lines.push(live);
     return lines.join('\n');
   };
+
+  /**
+   * The adapter behind a book: which integration family collects it, and which
+   * file does the work.
+   *
+   * The tooltip above already answers "what is this adapter" — in prose, from
+   * the validation reason. The machine-readable answer was in this route's
+   * payload the whole time and read by no page. Measured over config/scrapers.json:
+   * `engine` takes 13 distinct values across the 26 jobs, and `script` is the
+   * finer grain beneath it, because excelbet, winboss, las-vegas and magnumbet
+   * share the `exalogic-xsport` engine behind four different adapter files.
+   * `engine` alone would call those four books the same book; an operator
+   * comparing two books that both went quiet needs the file, not the family.
+   */
+  function adapterLine(s, t) {
+    const parts = [s.engine, s.script].filter(Boolean);
+    return parts.length ? `${t('feedAdapter')}: ${parts.join(' · ')}` : '';
+  }
+
+  /**
+   * What deep mode costs this book, which is the reason a run of the same
+   * events can take minutes.
+   *
+   * Both adapters that set `fullMarkets` spend one extra detail request per
+   * event, and that request is what turns a 1X2-only preview into goals
+   * totals, BTTS and handicaps (src/scrapers/unibet.mjs:46, superbet.mjs:210).
+   * `detailLimit` caps how many events get it: 100 for Superbet, 700 for
+   * Unibet, whose football crawl is that large — without the cap a deep run
+   * issues a detail call for every contest the feed advertises. Two of 26 jobs
+   * carry the pair, so two chips gain a line and the other 24 do not.
+   */
+  function deepModeLine(s, t) {
+    if (!s.fullMarkets) return '';
+    const deep = t('feedDeepMode');
+    return Number.isInteger(s.detailLimit) && s.detailLimit > 0
+      ? `${deep} · ${t('feedDeepLimit').replace('{limit}', String(s.detailLimit))}`
+      : deep;
+  }
+
+  /**
+   * The floor the live smoke script holds this book to.
+   *
+   * `minEvents` is the one job-scoped key on this route with a consumer
+   * outside the app: scripts/smoke-live.mjs:116 overrides its global floor with
+   * it, and betmen declares 20 because its coverage is legitimately small
+   * rather than collapsed. The page could not say so, so a book failing that
+   * smoke looked like any other failing book.
+   */
+  function smokeFloorLine(s, t) {
+    return Number.isInteger(s.minEvents) && s.minEvents > 0
+      ? t('feedSmokeFloor').replace('{events}', String(s.minEvents))
+      : '';
+  }
 
   /**
    * Whether this book can quote an in-play price at all, as measured on the
@@ -571,6 +658,11 @@ async function init() {
   const sel = $('profile');
   sel.innerHTML = profiles.map((p) => `<option value="${escapeHtml(p.id)}">${escapeHtml(profileLabel(p, t))}</option>`).join('');
   sel.value = profiles[0]?.id || '';
+  applyProfileHint();
+  // The hint is refreshed from inside onProfileChange rather than from a second
+  // listener here: one registration, one place that reacts to the operator
+  // having chosen a different profile, and the shape of this line is pinned by
+  // test/scrape-page.test.mjs as the proof that switching re-runs the comparison.
   sel.addEventListener('change', () => onProfileChange());
   applyProfile();
 
@@ -678,6 +770,7 @@ function applyProfile() {
  * about, and made it unusable from anywhere that lacked them.
  */
 function onProfileChange() {
+  applyProfileHint();
   applyProfile();
   renderSchedulerScan(lastScheduler && lastScheduler.scanOptions);
 }
