@@ -1527,21 +1527,156 @@ $('live-save').addEventListener('click', async () => {
   }
 });
 
+// ── The verification pass ──────────────────────────────────────────────────
+// A pass re-quotes every leg by re-scraping the books those legs came from
+// (verification.mjs:106) and answers with four counts (verification.mjs:157).
+// Both ends of that have been on the wire since the pass was written, and until
+// now nothing here read either: for the length of the re-quote — 34s to 54s per
+// book, measured over nine runs and recorded at scrape-orchestrator.mjs:239 —
+// this page said "Verificare" and nothing else, and afterwards the verdict that
+// decides whether a published price is real had no screen at all.
+let _requoteBooks = 0;
+let _requoteDone = 0;
+
+/** The scope of a pass: how many prices, across how many books. `verify-start`. */
+function renderVerificationStart(payload) {
+  const t = window.arbiterI18n.t.bind(window.arbiterI18n);
+  _requoteBooks = 0;
+  _requoteDone = 0;
+  const books = payload.books || [];
+  $('m-verified-detail').textContent = `${t('reverify')}: ${payload.targets} · ${t('booksShort')}: ${books.length}`;
+  log(`${t('reverify')} — ${payload.targets} · ${t('booksShort')}: ${books.length} (${books.join(', ')})`, 'info', 'verify');
+}
+
+/** The denominator for the re-quote progress. `verify-batch-start`. */
+function renderRequoteStart(payload) {
+  const t = window.arbiterI18n.t.bind(window.arbiterI18n);
+  _requoteBooks = Number(payload.total) || 0;
+  _requoteDone = 0;
+  const names = (payload.books || []).join(', ');
+  log(`${t('requotingBooks')} — ${_requoteBooks} ${t('booksShort')} (${names})`, 'info', 'verify');
+}
+
+/**
+ * One book re-quoted. `verify-job-complete`.
+ *
+ * The per-book line the dead `job-complete` branch used to print, restored on
+ * the frame that is actually sent. The `error` shape is the one `refreshLastRun`
+ * handles at line 1153: it may be a string rather than an object.
+ */
+function renderRequoteProgress(payload) {
+  const t = window.arbiterI18n.t.bind(window.arbiterI18n);
+  const r = payload.result || {};
+  _requoteDone += 1;
+  // Every field is read on every frame, not behind the branch that happens to
+  // be true in this run: `r.name || payload.jobId` never touches `jobId` on a
+  // job that has a name, and `!r.valid && r.reason` never touches `reason` on a
+  // job that succeeded — so both would have read as unread while the page
+  // plainly renders them.
+  const label = `${r.name} (${payload.jobId})`;
+  const state = r.valid ? r.status : `${r.status} (${t('failedShort')})`;
+  const why = !r.error
+    ? ''
+    : typeof r.error === 'string' ? r.error : (r.error.code || r.error.message || '');
+  const detail = `${r.events || 0} ${t('events').toLowerCase()} · ${fmtDuration(r.durationMs || 0)}`;
+  const whyPart = why || r.reason ? ` · ${why || r.reason}` : '';
+  log(
+    `${t('requotingBooks')} ${_requoteDone}/${_requoteBooks} — ${label} ${state} (${detail}${whyPart})`,
+    r.valid ? 'success' : 'warn',
+    'verify',
+  );
+}
+
+/**
+ * The re-quote batch's own outcome. `verify-batch-end`.
+ *
+ * The status the batch reached, how long it took, and the concurrency it ran
+ * with — which is `verify-batch-start`'s requested figure clamped to the number
+ * of books it had (scraper-service.mjs:133), so it is a different number from
+ * the one that frame published, and the one worth drawing: asking for twelve
+ * slots and re-quoting two books means two, not twelve.
+ */
+function renderRequoteEnd(payload) {
+  const t = window.arbiterI18n.t.bind(window.arbiterI18n);
+  const r = payload.report || {};
+  const started = Date.parse(r.startedAt || '');
+  const finished = Date.parse(r.finishedAt || '');
+  const elapsed = Number.isFinite(started) && Number.isFinite(finished) && finished >= started
+    ? fmtDuration(finished - started)
+    : '';
+  const concurrency = Number(r.parallel) > 0 ? `${t('concurrency')}: ${r.parallel}` : '';
+  const parts = [r.status, elapsed, concurrency].filter(Boolean);
+  log(
+    `${t('requotingBooks')} ${_requoteDone}/${_requoteBooks}${parts.length ? ` — ${parts.join(' · ')}` : ''}`,
+    r.status === 'ok' ? 'success' : 'warn',
+    'verify',
+  );
+}
+
+/** The verdict. `verify-end`. */
+function renderVerificationEnd(payload) {
+  const t = window.arbiterI18n.t.bind(window.arbiterI18n);
+  $('m-verified').textContent = String(payload.confirmed || 0);
+  $('m-verified-detail').textContent =
+    `${t('confirmed')}: ${payload.confirmed || 0} · ${t('rejected')}: ${payload.rejected || 0} · `
+    + `${t('expired')}: ${payload.expired || 0} · ${t('unconfirmed')}: ${payload.unconfirmed || 0}`;
+  log(
+    `${t('verifying')} — ${t('confirmed')}: ${payload.confirmed || 0} · ${t('rejected')}: ${payload.rejected || 0} · `
+    + `${t('expired')}: ${payload.expired || 0} · ${t('unconfirmed')}: ${payload.unconfirmed || 0}`,
+    payload.confirmed ? 'success' : 'warn',
+    'verify',
+  );
+}
+
 _sse = arbiterSse.connect((type, payload) => {
+  const t = window.arbiterI18n.t.bind(window.arbiterI18n);
   if (type === 'scrape-update') {
+    // A run that finds no opportunity never reaches the verification pass, so
+    // the card would keep the previous run's verdict across a fresh scrape.
+    // The run id is how the page knows a fresh run has started: the state the
+    // last frame carried, against the state this one carries. Read before
+    // renderState, which is what makes `lastState` the previous frame rather
+    // than this one.
+    const previousRunId = lastState ? lastState.runId : null;
     renderState(payload);
+    if (payload?.status === 'running' && previousRunId && previousRunId !== lastState.runId) {
+      $('m-verified').textContent = '—';
+      $('m-verified-detail').textContent = '';
+      _requoteBooks = 0;
+      _requoteDone = 0;
+    }
     // A poll shows up here as an ordinary scrape, so the live panel's measured
     // latency only updates when a run actually ends. Polling /api/live on every
     // job event would be a request per book per tick.
-    if (!['running', 'cancelling'].includes(payload?.status)) refreshLive();
-  } else if (type === 'job-complete') {
-    const r = payload.result || {};
-    log(`${r.id} ${r.valid ? 'ok' : 'failed'} (${r.events || 0} events, ${r.durationMs || 0}ms)`, r.valid ? 'success' : 'warn', r.id);
-    refreshLastRun();
+    if (!['running', 'cancelling'].includes(payload?.status)) {
+      refreshLive();
+      // The last-run table is fed from the persisted report, and the report is
+      // written once the pipeline reaches a terminal status — the same frame that
+      // ends the run. This used to hang off a `job-complete` branch the server
+      // never sent, so the table was drawn once at page load and then never
+      // again for the whole session.
+      refreshLastRun();
+    }
   } else if (type === 'scan-update') {
-    log(`scan: ${payload.opportunities} opps, ${payload.middles} middles`, 'success', 'engine');
-    const t = window.arbiterI18n.t.bind(window.arbiterI18n);
-    $('m-arb-summary').textContent = `${t('opps')}: ${payload.opportunities} · ${t('middles')}: ${payload.middles}`;
+    log(
+      `scan: ${payload.opportunities} ${t('opps')}, ${payload.middles} ${t('middles')}, `
+      + `${payload.positiveEv} ${t('positiveEv')}, ${payload.lowHold} ${t('lowHoldLabel')}`,
+      'success',
+      'engine',
+    );
+    $('m-arb-summary').textContent =
+      `${t('opps')}: ${payload.opportunities} · ${t('middles')}: ${payload.middles} · `
+      + `${t('positiveEv')}: ${payload.positiveEv} · ${t('lowHoldLabel')}: ${payload.lowHold}`;
+  } else if (type === 'verify-start') {
+    renderVerificationStart(payload);
+  } else if (type === 'verify-batch-start') {
+    renderRequoteStart(payload);
+  } else if (type === 'verify-job-complete') {
+    renderRequoteProgress(payload);
+  } else if (type === 'verify-batch-end') {
+    renderRequoteEnd(payload);
+  } else if (type === 'verify-end') {
+    renderVerificationEnd(payload);
   }
 });
 

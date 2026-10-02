@@ -137,6 +137,17 @@
         <span class="sl-stat-value" id="m-events">—</span>
         <span class="sl-stat-foot" id="m-arb-summary"></span>
       </div>
+      <!-- The verification pass re-quotes every leg by scraping the books the
+           legs came from, and answers with four counts. The server has computed
+           and broadcast that verdict since the pass was written; nothing on this
+           page drew it, so the numbers existed only on the wire. The band is a
+           grid of auto-fit cells, so a fifth card reflows rather than needing a
+           column-count change. -->
+      <div class="sl-stat">
+        <span class="sl-stat-label" data-i18n="verificationTotals">Verificare</span>
+        <span class="sl-stat-value" id="m-verified">—</span>
+        <span class="sl-stat-foot" id="m-verified-detail"></span>
+      </div>
     </section>
 
     <div id="error-box" class="sl-alert hidden" role="alert" aria-live="assertive"></div>
