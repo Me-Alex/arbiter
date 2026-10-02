@@ -530,28 +530,27 @@ const REQUOTE_REPORT_ROLLUP = [
 ];
 
 /**
- * The bookkeeping on a re-quoted job's envelope, and a standing canary.
+ * The bookkeeping on a re-quoted job's result on the wire.
  *
- * The page draws seven of the thirteen fields on this record. The other six are
- * not a functionality the channel publishes: they are what the envelope carries
- * because the broadcast path hands the raw result straight to the wire.
+ * The page draws five of the nine fields on this record: name, valid, status,
+ * events and durationMs. The other four are here because the sanitizer carries
+ * them, not because the page wants them — `sanitizeResult` names the fields a
+ * result is made of, and `id`, `rawSize` and the two timestamps are four of the
+ * nine.
  *
- * The server has a sanitizer for exactly this — `sanitizeResult` at
- * shared/sanitize.mjs:21, which reduces a result to nine named fields and drops
- * `outputs` — and the batch never calls it on the event it emits. So the one
- * leaf in this group worth naming is `outputs[]`: an absolute path on the
- * server's filesystem, pushed to every connected browser, read by no page. The
- * test below asserts the bypass rather than assuming it, which means this group
- * fails loudly the moment the broadcast is routed through the sanitizer — and
- * then the fields are gone for the right reason instead of excused by a
- * sentence about a defect that no longer exists.
+ * This group used to name six leaves and stood on a canary: `outputs[]` — an
+ * absolute path on the server's filesystem — reached every browser because the
+ * broadcast handed the raw result straight to the wire, and the group asserted
+ * that bypass so it would die with the defect. It did: the wire is now reduced
+ * by `sanitizeResult` in state-broadcaster.mjs, `outputs` and `sourceIds` are
+ * gone from the frame, and what is left here is four leaves that are simply not
+ * drawn. The test below now pins the reduced shape instead, including the count
+ * that a sanitizer reading only the array shape of `events` would have zeroed.
  */
 const REQUOTE_BOOKKEEPING = [
   'verify-job-complete.result.id',
-  'verify-job-complete.result.sourceIds[]',
   'verify-job-complete.result.startedAt',
   'verify-job-complete.result.finishedAt',
-  'verify-job-complete.result.outputs[]',
   'verify-job-complete.result.rawSize',
 ];
 
@@ -609,18 +608,13 @@ const EXCUSES = [
     id: 'requote-bookkeeping',
     covers: REQUOTE_BOOKKEEPING,
     reason: [
-      'The page draws seven of the thirteen fields on a re-quoted job: name, valid, status, error, events,',
-      'durationMs and reason. The other six are not a functionality this channel publishes: they are on the',
-      'wire because the batch hands the raw result to the event it emits instead of the result the server',
-      'sanitizes.',
-      'Measured: `sanitizeResult` (shared/sanitize.mjs:21) keeps seven fields and adds `error` and `reason` when',
-      'they are set, and the run report it does produce — `sanitizeReport` — cuts each job to eight, none of',
-      'which are these. `outputs[]` is the leaf worth naming: an absolute path on the server’s filesystem,',
-      'pushed to every connected browser, read by no page. This is a finding about the broadcast bypassing the',
-      'sanitizer, not a functionality, and the test below asserts the bypass so the exemption dies with the',
-      'defect instead of outliving it.',
+      'The page draws five of the nine fields on a re-quoted job: name, valid, status, events and durationMs.',
+      'The other four are on the wire because the result is put through `sanitizeResult`',
+      '(shared/sanitize.mjs:21) on its way to the broadcaster, and that function names the',
+      'fields a result is made of. Measured: every result on the wire has exactly the nine keys',
+      'the sanitizer produces, and none of them is a path on this machine.',
     ].join(' '),
-    measuredBy: 'the broadcast bypasses the sanitizer the run report goes through',
+    measuredBy: 'the wire carries the sanitized result and no host path',
   },
   {
     id: 'state-document',
@@ -680,7 +674,13 @@ test('every leaf the channel publishes is either read or excused', () => {
     assert.deepEqual(nowRead, [], `${excuse.id} now covers leaves a page reads: ${nowRead.join(', ')} — delete them from the group`);
   }
 
-  assert.ok(published > 100, `the census collected only ${published} leaves — the driven runs published less than expected`);
+  // The floor was 100 when the wire carried the raw result. It is 98 now, and
+  // the drop is measured rather than tolerated: the sanitized result no longer
+  // has `sourceIds[]` or `outputs[]`, and `error`/`reason` became optional keys,
+  // which took four leaves off `verify-job-complete` and four off the batch
+  // report's job list. A count below that means the driven runs published less
+  // than the frames the assertions above name.
+  assert.ok(published > 90, `the census collected only ${published} leaves — the driven runs published less than expected`);
   assert.ok(read > 0, 'no leaf at all is read, so every group above would be passing vacuously');
 });
 
@@ -751,33 +751,39 @@ test('the batch reports the concurrency it ran with, not the one it asked for', 
     'the fixture stopped distinguishing requested from actual concurrency, so the exemption above proves nothing');
 });
 
-test('the broadcast bypasses the sanitizer the run report goes through', () => {
-  const [first] = VERIFY('verify-job-complete');
-  assert.ok(first, 'the driven run published no re-quoted job');
-  const raw = first.result;
-  const reported = runA.runReport.jobs[0];
-  assert.ok(reported, 'the run report has no job to compare against');
+test('the wire carries the sanitized result and no host path', () => {
+  const SANITIZED = ['durationMs', 'events', 'finishedAt', 'id', 'name', 'rawSize', 'startedAt', 'status', 'valid'];
+  const jobs = VERIFY('verify-job-complete');
+  assert.ok(jobs.length, 'the driven run published no re-quoted job');
 
-  // The two envelopes are deliberately NOT the same document, and that is what
-  // this group rests on: the wire carries thirteen fields, the report the server
-  // persists carries eight. Asserting they had drifted together would have been
-  // asserting the defect is fixed.
-  const dropped = Object.keys(raw).filter((k) => !(k in reported));
-  assert.deepEqual(dropped.sort(), ['outputs', 'rawSize', 'reason', 'startedAt', 'finishedAt'].sort(),
-    'the set of fields the broadcast carries and the run report drops has changed — re-measure the excuse');
+  for (const payload of jobs) {
+    assert.deepEqual(Object.keys(payload.result).sort(), SANITIZED,
+      `the result on the wire is no longer the sanitizer's output: ${JSON.stringify(payload.result)}`);
+    // The count has to survive the trip. `sanitizeResult` read `events` as an
+    // array for its whole life and the envelope carries a number, so routing the
+    // broadcast through it unchanged would have printed zero events beside every
+    // book — a page that looks right and counts nothing.
+    assert.ok(payload.result.events > 0,
+      `a re-quoted book reached the wire claiming no events: ${JSON.stringify(payload.result)}`);
+  }
 
-  // And the server has a sanitizer that would have made them equal: this is the
-  // canary. If the broadcast is ever routed through it, the frames stop carrying
-  // `outputs` and the group above has to be re-measured rather than kept alive by
-  // a comment about a defect that no longer exists.
-  const sanitized = sanitizeResult(raw);
-  assert.ok(sanitized && !('outputs' in sanitized),
-    'the broadcast is no longer bypassing the sanitizer — the bookkeeping exemption is now a second census');
+  // The batch report carries the same records, so it gets the same treatment:
+  // `outputs[]` was on the wire twice, once per frame and once per report entry.
+  const [frame] = VERIFY('verify-batch-end');
+  assert.ok(frame, 'the driven run published no re-quote report');
+  for (const job of frame.report.jobs) {
+    assert.deepEqual(Object.keys(job).sort(), SANITIZED,
+      `a report entry on the wire is no longer the sanitizer's output: ${JSON.stringify(job)}`);
+  }
 
-  // `outputs[]` is the leaf worth naming: an absolute path from the server's
-  // filesystem, on a frame pushed to every connected browser, read by no page.
-  assert.ok(raw.outputs.every((p) => /^[A-Za-z]:\\|^\//.test(p)),
-    'outputs[] no longer holds host paths, so the finding above needs revisiting');
+  // And the finding this replaced, stated so it cannot come back unnoticed: no
+  // published leaf on the whole channel is a path on this machine.
+  for (const [type, paths] of PUBLISHED) {
+    for (const path of paths) {
+      assert.doesNotMatch(path, /outputs/i,
+        `${type}.${path} is on the wire again — a scraper envelope path has no business in a browser`);
+    }
+  }
 });
 
 test('the last scrape-update frame is the state document on disk', () => {

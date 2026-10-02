@@ -18,12 +18,28 @@ export function sanitizeLogLine(input) {
 // eslint-disable-next-line no-control-regex
 const CONTROL_CHARS = /[\u0000-\u001f\u007f]/g;
 
+/**
+ * A scraper result, reduced to what a client can be shown.
+ *
+ * `events` is a count in both shapes this has to survive, and reading only one
+ * of them was why nothing routed through this function: the scraper envelope
+ * carries a number (base.mjs:215) and `Array.isArray` was false for every real
+ * result, so each one came out of here claiming zero events — the count the page
+ * prints beside every book. A caller still holding the raw selections passes an
+ * array, so both are accepted.
+ *
+ * `id` and `name` are kept because a result without them is not attributable to
+ * a book, and both are scalars on the envelope. `outputs[]` is not: it is a path
+ * on the machine that ran the scrape, and a client has no use for it.
+ */
 export function sanitizeResult(result) {
   if (!result || typeof result !== 'object') return null;
   const out = {
+    id: String(result.id ?? ''),
+    name: String(result.name ?? ''),
     valid: Boolean(result.valid),
     status: result.status || (result.valid ? 'ok' : 'failed'),
-    events: Array.isArray(result.events) ? result.events.length : 0,
+    events: Array.isArray(result.events) ? result.events.length : Number.isFinite(result.events) ? result.events : 0,
     rawSize: Number.isFinite(result.rawSize) ? result.rawSize : 0,
     durationMs: Number.isFinite(result.durationMs) ? result.durationMs : 0,
     startedAt: result.startedAt || null,
