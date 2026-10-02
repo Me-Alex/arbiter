@@ -274,6 +274,7 @@ const READ_FORMS = {
     'lastRun.skipped': ['lastRun.skipped'],
     'lastRun.reason': ['lastRun.reason'],
     lastError: ['s.lastError'],
+    'lastError.at': ['lastError.at'],
     'lastError.message': ['lastError.message'],
   },
   [R_LIVE]: {
@@ -292,6 +293,7 @@ const READ_FORMS = {
     'lastRun.durationMs': ['last.durationMs'],
     'lastRun.keepingUp': ['last.keepingUp'],
     lastError: ['l.lastError'],
+    'lastError.at': ['lastError.at'],
     'lastError.message': ['lastError.message'],
     skippedTicks: ['l.skippedTicks'],
     lastSkippedAt: ['l.lastSkippedAt'],
@@ -347,17 +349,6 @@ const WHY = {
     'The panel prints the verdict from `ok`, so the flag carries no information',
     'it does not already have.',
   ].join(' '),
-  lastErrorAt: [
-    '`message` and `at` are always written together — measured by driving the',
-    'failure branch, and by the source, where every site that records one records',
-    'the other. The panel prints the message verbatim beside the run timestamp',
-    'on the same line, and the only sites that record `lastError` without a run',
-    'beside it are the two interval callbacks, whose rejection can only come from',
-    'outside the launch (the launch is inside a try/catch that catches it first):',
-    'a persistence failure, which is a failure with no run to timestamp. On that',
-    'path the run time on the line is the previous tick\'s, which this entry',
-    'records as a known coarsening rather than as parity.',
-  ].join(' '),
   lastRunId: [
     'The page reads four run ids and this is not one of them — pinned below.',
     'Two are the live panel\'s own in-flight check, `pending.runId` matched against',
@@ -380,15 +371,22 @@ const WHY = {
 
 /**
  * Published, unread, with the reason it is allowed. Route-scoped: `active` is on
- * both routes, `lastError.at` on both, and `lastRun`'s leaves differ because the
- * two `_tick` implementations write different objects.
+ * both routes, and `lastRun`'s leaves differ because the two `_tick`
+ * implementations write different objects.
+ *
+ * `lastError.at` was on this list until the panel started reading it, and the
+ * entry has a shape worth naming: it agreed with itself — every site that records
+ * the message records the time — and still excused the field on the strength of
+ * the run timestamp printed beside it, while naming the very case where that
+ * timestamp belongs to the previous tick. An exemption that describes the defect
+ * it is excusing is a decision not to draw the field, not a reason it cannot be
+ * drawn. The panel now dates an error that no run dates, which is why the field
+ * is read on both routes.
  */
 const UNREAD_BY_DESIGN = {
   [`${R_SCHED} › active`]: WHY.active,
   [`${R_SCHED} › lastRun.launched`]: WHY.launched,
-  [`${R_SCHED} › lastError.at`]: WHY.lastErrorAt,
   [`${R_LIVE} › active`]: WHY.active,
-  [`${R_LIVE} › lastError.at`]: WHY.lastErrorAt,
   [`${R_LIVE} › lastRun.runId`]: WHY.lastRunId,
   [`${R_LIVE} › lastRun.status`]: WHY.lastRunStatus,
 };

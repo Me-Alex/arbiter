@@ -1192,6 +1192,34 @@ function schedulerLastRunText(s, t) {
 }
 
 /**
+ * The error the service recorded, and when.
+ *
+ * On the tick path both services write the error beside the run it came from —
+ * `lastRun = { ok: false }` and `lastError = { message, at }` in the same catch
+ * (scheduler-service.mjs:127-128, live-service.mjs:234-235) — so the run
+ * timestamp already on the line dates that failure and printing the moment twice
+ * would be noise.
+ *
+ * The two interval callbacks are the exception: they record the error and no run
+ * (scheduler-service.mjs:109, live-service.mjs:184), because their rejection
+ * comes from outside the launch, which has its own catch. On that path the run on
+ * the line is the previous tick's and a reader has no way to tell the error is
+ * newer than the run printed beside it. `lastRun.ok` settles it without
+ * comparing clocks: an error recorded by a tick always sits beside a run with
+ * `ok: false`, so a run that is not a failure is not the run this error came
+ * from — and neither is a panel that has never run.
+ *
+ * `at` is read before the branch decides, so the field is read on every error
+ * rather than only on the ones this run happens to have.
+ */
+function lastErrorSegment(s, t) {
+  const stamp = s.lastError.at ? new Date(s.lastError.at).toLocaleString() : '';
+  const undated = !s.lastRun || s.lastRun.ok !== false;
+  const when = undated && stamp ? ` ${stamp}:` : ':';
+  return ` · ${t('lastError')}${when} ${s.lastError.message}`;
+}
+
+/**
  * Which books the scheduler will actually run.
  *
  * The scheduler keeps its own list, restored from disk at boot, and it is not
@@ -1316,7 +1344,7 @@ async function refreshScheduler() {
     renderSchedulerBooks(s);
     renderSchedulerScan(s.scanOptions);
     $('sched-last').textContent = schedulerLastRunText(s, t);
-    if (s.lastError) $('sched-last').textContent += ` · ${t('lastError')}: ${s.lastError.message}`;
+    if (s.lastError) $('sched-last').textContent += lastErrorSegment(s, t);
   } catch (_e) { /* ignore */ }
 }
 
@@ -1437,7 +1465,7 @@ async function refreshLive() {
     $('live-enabled').checked = !!l.enabled;
     $('live-interval').value = l.intervalSeconds || 60;
     $('live-last').textContent = l.lastRun ? schedulerLastRunText(l, t) : t('neverRan');
-    if (l.lastError) $('live-last').textContent += ` · ${t('lastError')}: ${l.lastError.message}`;
+    if (l.lastError) $('live-last').textContent += lastErrorSegment(l, t);
     lastLive = l;
     renderLiveMeasured(l, t);
     renderLiveScan(l);

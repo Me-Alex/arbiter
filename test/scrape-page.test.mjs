@@ -1347,6 +1347,48 @@ test('refreshScheduler writes all three readouts from one real payload', async (
     'the verdict comes first and the reason is appended, verbatim as the backend wrote it');
 });
 
+test('an error no run dates is dated by the error itself', async () => {
+  // Three states, because the panel has to tell them apart and a test that only
+  // drove one would pass against a page that dated every error or none.
+  const AT_LATER = '2026-10-01T10:07:00.000Z';
+  const stamp = new Date(AT_LATER).toLocaleString();
+  const runStamp = new Date(AT).toLocaleString();
+  const base = {
+    enabled: true, active: true, resumed: false, intervalMinutes: 20,
+    bookIds: ['favbet'], scanOptions: STORED_SCAN,
+  };
+  const line = async (lastRun, lastError) => {
+    const h = harness('en', { form: PROFILE_ONE_FORM, api: { get: async () => ({ ...base, lastRun, lastError }) } });
+    await h.run('refreshScheduler()');
+    return h.nodes.get('sched-last').textContent;
+  };
+
+  // The interval callbacks record the error and no run (scheduler-service.mjs:109),
+  // so the run printed beside it is the previous tick's. `ok: true` is how the page
+  // knows: an error a tick recorded always sits beside a run with `ok: false`.
+  const besideOkRun = await line({ at: AT, ok: true }, { message: 'state file gone', at: AT_LATER });
+  assert.ok(besideOkRun.includes(stamp),
+    `an error beside a run that is not its own failure is not dated: ${besideOkRun}`);
+
+  // Beside the failing run, that run's own timestamp already dates the error, so
+  // the line prints one moment rather than the same moment twice.
+  const besideFail = await line({ at: AT, ok: false }, { message: 'state file gone', at: AT_LATER });
+  assert.ok(!besideFail.includes(stamp),
+    `the error is stamped beside the run that already carries its moment: ${besideFail}`);
+  assert.equal(besideFail.split(runStamp).length - 1, 1,
+    `the run is stamped once, not once per record: ${besideFail}`);
+
+  // A panel that has never run has no run to date anything with.
+  const neverRan = await line(null, { message: 'state file gone', at: AT_LATER });
+  assert.ok(neverRan.includes(stamp),
+    `an error on a panel that never ran is not dated: ${neverRan}`);
+
+  // Both panels render through one helper, so the live block cannot quietly keep
+  // the older shape while the scheduler block moved on.
+  const sites = (scrapeSource.match(/\+= lastErrorSegment\(/g) || []).length;
+  assert.equal(sites, 2, 'both panels append their error through the one helper — a missing call site is a panel still drawing its own');
+});
+
 test('a saved scheduler is re-read, so the comparison cannot survive a stale save', async () => {
   // The save handler calls refreshScheduler() after POSTing, and the profile
   // handler re-runs the comparison — the line is not a one-shot at load.
