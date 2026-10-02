@@ -731,6 +731,7 @@ async function init() {
   renderState(state);
   refreshJobRows();
   refreshLastRun();
+  refreshScanSummary();
   refreshScheduler();
   refreshLive();
 
@@ -1106,6 +1107,70 @@ function renderState(state) {
   _isFirstScrapeLoad = false;
 }
 
+/**
+ * The scan summary under the events card, in one place.
+ *
+ * Two writers used to fight over this line. The `scan-update` frame wrote the
+ * four real counts; `refreshLastRun()` wrote `Opps: ${run.opportunitiesCount ||
+ * 0}` over the top of them, and no run report carries that field. The writer
+ * that had no data behind it also won every time, because the terminal
+ * `scrape-update` that triggers it arrives after the `scan-update` of the same
+ * run — see the note in `refreshLastRun`. The card read "Opps: 0" seconds after
+ * the log said "scan: 12 opps, 3 middles".
+ *
+ * Both sources are the same scan, and they spell it differently: the SSE frame
+ * publishes four numbers (`scan.opportunities.length` and its three siblings,
+ * scrape-orchestrator.mjs:331) while `GET /api/scan` publishes the four arrays
+ * themselves. Counting both shapes here is what lets the card be drawn from a
+ * live frame and from the stored document without printing `undefined` in one
+ * of them.
+ *
+ * @param {object} scan a `scan-update` payload or a `GET /api/scan` document
+ * @param {Function} t the translation lookup
+ * @returns {string}
+ */
+function scanSummaryText(scan, t) {
+  const n = (value) => (Array.isArray(value) ? value.length : (Number.isFinite(Number(value)) ? Number(value) : 0));
+  return `${t('opps')}: ${n(scan.opportunities)} · ${t('middles')}: ${n(scan.middles)} · `
+    + `${t('positiveEv')}: ${n(scan.positiveEv)} · ${t('lowHoldLabel')}: ${n(scan.lowHold)}`;
+}
+
+/**
+ * Write the summary card.
+ *
+ * `published` is the only thing separating "a scan found nothing" from "no
+ * scan has run": `readPublishedScan` answers an empty document — real keys,
+ * zero findings, a fresh id — in both cases, and says so only through the flag
+ * the route rides on the served scan (router.mjs:93). A card that counted the
+ * empty document would report a quiet market on a machine that has never
+ * scraped anything, which is the same claim `neverRan` is here to refuse.
+ *
+ * @param {object} scan
+ * @param {Function} t
+ * @param {boolean} [published] true for a live frame — it exists only because a
+ *   scan just ran — and for a stored document only when the route says so.
+ */
+function renderScanSummary(scan, t, published = true) {
+  $('m-arb-summary').textContent = published && scan ? scanSummaryText(scan, t) : t('neverRan');
+}
+
+/**
+ * Put the last scan's counts back on screen after a reload.
+ *
+ * `scan-update` is a live frame: it arrives once per run and is gone when the
+ * tab is reloaded. `GET /api/scan` serves the document the same pass persisted
+ * (scrape-orchestrator.mjs:371 writes `latest-scan.json` after the scan and any
+ * verification pass), so the card says what it said before the refresh instead
+ * of staying blank until the next run.
+ */
+async function refreshScanSummary() {
+  try {
+    const t = window.arbiterI18n.t.bind(window.arbiterI18n);
+    const scan = await arbiterApi.get('/api/scan');
+    renderScanSummary(scan, t, Boolean(scan && scan.published));
+  } catch (_e) { /* ignore */ }
+}
+
 async function refreshLastRun() {
   try {
     const t = window.arbiterI18n.t.bind(window.arbiterI18n);
@@ -1161,8 +1226,24 @@ async function refreshLastRun() {
         <td><span class="status ${escapeHtml(j.status)}">${escapeHtml(j.status)}</span>${errCode ? ` <span class="muted mono">${escapeHtml(errCode)}</span>` : ''}</td>
       </tr>`;
     }).join('');
-    const opps = run.opportunitiesCount || 0;
-    $('m-arb-summary').textContent = `${t('opps')}: ${opps}`;
+    // This panel does not write the scan summary card, and the reason is a
+    // measurement rather than a preference. It used to, as
+    // `Opps: ${run.opportunitiesCount || 0}`, and that field is in no run
+    // report: `persistRunReport` persists `sanitizeReport(report)`, whose top
+    // level is runId, startedAt, finishedAt, status, parallel, books and jobs.
+    // The stored copy on this machine measures five keys — runId, startedAt,
+    // finishedAt, status, jobs — and `opportunitiesCount` is not among them.
+    // Its only writer anywhere was the route's own fallback for a machine with
+    // no report file at all, which is exactly the case in which there are no
+    // opportunities to count.
+    //
+    // So the writer was harmless-looking and wrong every time: it ran on the
+    // terminal `scrape-update`, which arrives AFTER the `scan-update` of the
+    // same run (the counts are broadcast inside the scan phase,
+    // scrape-orchestrator.mjs:331; the terminal state is set after the
+    // verification pass), and overwrote four real numbers with a zero. The
+    // counts belong to the scan, so they are read from the scan — see
+    // refreshScanSummary.
   } catch (_err) { /* ignore */ }
 }
 
@@ -1692,9 +1773,10 @@ _sse = arbiterSse.connect((type, payload) => {
       'success',
       'engine',
     );
-    $('m-arb-summary').textContent =
-      `${t('opps')}: ${payload.opportunities} · ${t('middles')}: ${payload.middles} · `
-      + `${t('positiveEv')}: ${payload.positiveEv} · ${t('lowHoldLabel')}: ${payload.lowHold}`;
+    // Same formatter as the reload path, so the card cannot print the four
+    // numbers one way live and another way after a refresh. `true` is the
+    // frame's own claim: it is broadcast only after a scan produced a result.
+    renderScanSummary(payload, t, true);
   } else if (type === 'verify-start') {
     renderVerificationStart(payload);
   } else if (type === 'verify-batch-start') {

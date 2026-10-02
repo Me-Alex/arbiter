@@ -61,7 +61,14 @@ export function buildRouter(ctx) {
     'GET /api/scrape/state': () => sendJson(null, 200, { state: orchestrator.scrapeState || emptyState() }),
     'GET /api/scrape-run': async () => {
       const run = await scanService.readLatestScrapeRun(dataDir);
-      return sendJson(null, 200, run || { jobs: [], opportunitiesCount: 0 });
+      // `{ jobs: [] }` and nothing else. This fallback used to add
+      // `opportunitiesCount: 0`, which no persisted report carries — the stored
+      // document's top level is runId, startedAt, finishedAt, status and jobs —
+      // so the field was published in exactly the one case where there are no
+      // opportunities to count, and read by a page card that then reported a
+      // measured zero forever. The counts are read from the scan instead; see
+      // refreshScanSummary in public/js/pages/scrape.js.
+      return sendJson(null, 200, run || { jobs: [] });
     },
     'POST /api/scrape': async (req) => {
       const body = await parseBody(req);

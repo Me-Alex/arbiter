@@ -18,6 +18,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import vm from 'node:vm';
+import { codeOnly } from './helpers/code-only.mjs';
 
 const scrapeSource = readFileSync(new URL('../public/js/pages/scrape.js', import.meta.url), 'utf8');
 const commonSource = readFileSync(new URL('../public/js/pages/common.js', import.meta.url), 'utf8');
@@ -1560,7 +1561,6 @@ const RUN = {
   finishedAt: '2026-09-30T01:09:40.180Z',
   status: 'ok',
   jobs: [],
-  opportunitiesCount: 0,
 };
 
 const whenLine = async (lang, run) => {
@@ -1604,13 +1604,105 @@ test('a run that has not finished does not claim that it has', async () => {
 
 test('a machine that has never scraped gets an empty note, not one full of undefined', async () => {
   // The route's own fallback (src/router.mjs:63): no run file means
-  // `{ jobs: [], opportunitiesCount: 0 }` — no runId, no startedAt, no
-  // finishedAt. Three unguarded template literals would print "Run ID:
-  // undefined · Started: undefined · Finished: undefined" on a fresh install.
-  assert.equal(await whenLine('ro', { jobs: [], opportunitiesCount: 0 }), '');
+  // `{ jobs: [] }` — no runId, no startedAt, no finishedAt. Three unguarded
+  // template literals would print "Run ID: undefined · Started: undefined ·
+  // Finished: undefined" on a fresh install.
+  assert.equal(await whenLine('ro', { jobs: [] }), '');
   // And the same for a payload that is not there at all, which is what
   // readLatestScrapeRun hands the route before its own fallback runs.
   assert.equal(await whenLine('ro', null), '');
+});
+
+// ---- the scan summary under the events card --------------------------------
+
+/**
+ * `GET /api/scan`, shaped like the document on disk: the four signal families
+ * are arrays and `published` rides on the served scan (src/router.mjs:93).
+ */
+const SCAN = {
+  opportunities: [{}, {}, {}],
+  middles: [{}],
+  positiveEv: [],
+  lowHold: [{}, {}, {}, {}],
+  published: true,
+};
+
+const summaryAt = async (lang, scan) => {
+  const h = harness(lang, { api: { get: async () => scan } });
+  await h.run('refreshScanSummary()');
+  return h.nodes.get('m-arb-summary').textContent;
+};
+
+test('the last scan is still on screen after a reload', async () => {
+  // The counts reach the card from the stored scan, in both shapes the app
+  // publishes them. `scan-update` sends four numbers
+  // (scrape-orchestrator.mjs:331); `GET /api/scan` sends the four arrays.
+  // Counting both is what lets one formatter serve the live frame and the
+  // reload — and it is what the card lacked entirely before this: a live frame
+  // is gone when the tab reloads, so the summary was blank until the next run.
+  const stored = await summaryAt('en', SCAN);
+  assert.equal(stored,
+    `${DICTS.en.t('opps')}: 3 · ${DICTS.en.t('middles')}: 1 · `
+    + `${DICTS.en.t('positiveEv')}: 0 · ${DICTS.en.t('lowHoldLabel')}: 4`);
+
+  const live = harness('en', { api: { get: async () => SCAN } });
+  await live.run('renderScanSummary({ opportunities: 12, middles: 3, positiveEv: 8, lowHold: 41 }, arbiterI18n.t.bind(arbiterI18n), true)');
+  assert.equal(live.nodes.get('m-arb-summary').textContent,
+    `${DICTS.en.t('opps')}: 12 · ${DICTS.en.t('middles')}: 3 · `
+    + `${DICTS.en.t('positiveEv')}: 8 · ${DICTS.en.t('lowHoldLabel')}: 41`,
+    'the same card, from the frame the pipeline broadcasts');
+
+  // And in the reader's own language, because this is prose on a card.
+  assert.match(await summaryAt('ro', SCAN), /^op\.: 3 · medii: 1 · EV pozitiv: 0 · Hold scăzut: 4$/);
+});
+
+test('a machine that has never published a scan does not report a quiet market', async () => {
+  // `readPublishedScan` answers an empty document — real keys, zero findings,
+  // a fresh id — both for "a scan ran and found nothing" and for "no scan has
+  // ever run here", and separates them with the flag alone. Counting the empty
+  // one would tell a fresh install that its market is quiet.
+  assert.equal(await summaryAt('en', { opportunities: [], middles: [], positiveEv: [], lowHold: [], published: false }),
+    DICTS.en.t('neverRan'));
+  // The flag missing is the flag saying no: `published` is a boolean the route
+  // sets, and a document without it has not been through the route.
+  assert.equal(await summaryAt('en', { opportunities: [], middles: [], positiveEv: [], lowHold: [] }),
+    DICTS.en.t('neverRan'));
+  // The control: a published scan of zero findings IS a quiet market, and says
+  // so with the numbers rather than with a shrug.
+  assert.match(await summaryAt('en', { ...SCAN, opportunities: [], lowHold: [] }),
+    new RegExp(`^${DICTS.en.t('opps')}: 0 · `));
+});
+
+test('the summary card has one writer, and the last-run panel is not it', async () => {
+  // Two writers fought over this card. The `scan-update` frame wrote the four
+  // real counts; `refreshLastRun()` wrote `Opps: ${run.opportunitiesCount || 0}`
+  // and won every time, because the terminal `scrape-update` that triggers it
+  // arrives after the `scan-update` of the same run — the counts go out inside
+  // the scan phase, the terminal state is set after the verification pass. No
+  // run report carries that field: `persistRunReport` persists
+  // `sanitizeReport(report)`, and the stored document's top level is runId,
+  // startedAt, finishedAt, status and jobs. So every finished scrape replaced
+  // the scan's own numbers with a measured zero.
+  const writers = [...scrapeSource.matchAll(/\$\('m-arb-summary'\)/g)];
+  assert.equal(writers.length, 1,
+    `the card is written from ${writers.length} places — a second writer is how it came to report a zero`);
+
+  // Comments are excluded, because the reason this happened is written down
+  // next to the code that no longer does it, and a raw-text search would read
+  // that note as a live reference.
+  assert.doesNotMatch(codeOnly(scrapeSource), /opportunitiesCount/,
+    'no run report carries opportunitiesCount, so nothing should read it');
+
+  // And behaviourally, on a document that still carries the old field: the
+  // panel must leave the card exactly as it found it.
+  const h = harness('en', { api: { get: async () => ({ ...RUN, opportunitiesCount: 99 }) } });
+  // The harness materialises a node when the page resolves it, so the card has
+  // to be asked for by name before this test can hand it a value.
+  h.run("$('m-arb-summary')");
+  h.nodes.get('m-arb-summary').textContent = 'left alone';
+  await h.run('refreshLastRun()');
+  assert.equal(h.nodes.get('m-arb-summary').textContent, 'left alone',
+    'the last-run panel wrote to a card whose numbers it has no source for');
 });
 
 test('the note shows the run id itself, because a Text node is not an HTML parser', async () => {
