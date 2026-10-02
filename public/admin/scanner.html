@@ -154,7 +154,32 @@
             <th scope="col" data-i18n="bookmaker">Book</th>
             <th scope="col" class="num" data-i18n="odds">Odds</th>
             <th scope="col" class="num" data-i18n="evPct">EV %</th>
+            <th scope="col" class="num" data-i18n="consensus">Consensus</th>
             <th scope="col" class="num" data-i18n="stake">Stake</th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Low hold: the one family the engine computes on every scan and no page
+         rendered. Analytics counted the array; the signals themselves had no
+         table until here, while `lowHoldLabel` sat translated in both
+         dictionaries waiting for it. -->
+    <div class="card scanner-section">
+      <h3>
+        <span><span class="text-blue">●</span> <span data-i18n="lowHoldLabel">Low hold</span></span>
+        <span class="h3-meta" id="low-count" aria-live="polite">0</span>
+      </h3>
+      <div class="table-wrap table-clean">
+        <table class="compact" id="low-table">
+          <caption class="sr-only">Markets priced below the usual margin</caption>
+          <thead><tr>
+            <th scope="col" data-i18n="match">Match</th>
+            <th scope="col" data-i18n="market">Market</th>
+            <th scope="col" data-i18n="bookmaker">Book</th>
+            <th scope="col" class="num" data-i18n="selections">Selections</th>
+            <th scope="col" class="num" data-i18n="holdPct">Hold %</th>
           </tr></thead>
           <tbody></tbody>
         </table>

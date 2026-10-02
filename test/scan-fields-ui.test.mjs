@@ -16,6 +16,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import vm from 'node:vm';
+import { codeOnly } from './helpers/code-only.mjs';
 
 const read = (path) => readFileSync(new URL(`../${path}`, import.meta.url), 'utf8');
 const scannerSource = read('public/js/pages/scanner.js');
@@ -35,7 +36,19 @@ function i18nContext(lang) {
     console,
   };
   context.window = context;
-  vm.runInNewContext(i18nSource, context);
+  // `dict` lives inside the module IIFE and never reaches the context object, so
+  // the test gets at it by adding it to the object the IIFE does export. A copy
+  // in memory only — the file on disk is untouched.
+  //
+  // It has to reach the dictionaries rather than `t()`, because `t` resolves
+  // `(dict[lang] && dict[lang][key]) || (dict.en[key]) || key`: it falls back to
+  // English and then to the key itself, so a label that exists only in Romanian
+  // still renders as a sentence in the English context. That is how a mutant
+  // deleting the English label outright survived a `t(key) !== key` check.
+  const EXPORT = 'window.arbiterI18n = { t, setLang, apply,';
+  const exposed = i18nSource.replace(EXPORT, 'window.arbiterI18n = { dict, t, setLang, apply,');
+  assert.notEqual(exposed, i18nSource, 'the i18n export line moved; the dictionary is no longer reachable and this test would pass on a missing label again');
+  vm.runInNewContext(exposed, context);
   return context.arbiterI18n;
 }
 
@@ -211,4 +224,65 @@ test('the summary strip has a slot for the counters, and the page owns the windo
   const note = scannerHtml.match(/<span[^>]*id="live-window-note"[^>]*>/);
   assert.ok(note, 'the window note exists in the markup');
   assert.ok(!note[0].includes('data-i18n'), 'the page is the only writer of the window note');
+});
+
+test('an arbitrage that only exists on paper is marked as such', () => {
+  // The engine refuses any allocation with an inverse sum of 1 or more, so a
+  // published arbitrage has a positive theoretical edge. It can still lose money
+  // once the stake split is rounded to cents, and when it does the row reads
+  // +0.00% ROI next to -0.01 profit with nothing connecting them. The same flag
+  // is already disclosed on the event-detail panel, so this is the one surface
+  // that lists arbitrages and did not carry it. Measured on the real allocator,
+  // it fires 40 of 200 allocations over the thin tail of the inverse sum at a
+  // 1000 bankroll, so this is a row a trader sees, not a theoretical one.
+  const { context, select } = page();
+  const t = context.arbiterI18n.t.bind(context.arbiterI18n);
+  const rows = () => select('#arb-table tbody').innerHTML;
+
+  const arb = (roundingRisk) => ({
+    homeTeam: 'Home', awayTeam: 'Away', marketKey: 'MATCH_ODDS', legs: [{ sourceId: 'alpha' }],
+    roiPercent: 0, totalStake: 1000, guaranteedProfit: roundingRisk ? -0.01 : 12.5,
+    roundingRisk,
+  });
+
+  context.render({ ...BASE_SCAN, opportunities: [arb(true)] });
+  const risky = rows();
+  assert.ok(risky.includes(escapeHtml(t('roundingRisk'))), `the marker is missing from the row: ${risky}`);
+  assert.ok(risky.includes(escapeHtml(t('roundingRiskHint'))), 'and it has to say what it means, not just name itself');
+  assert.ok(risky.includes('chip yellow'), 'and it is styled with a class the stylesheet actually defines');
+
+  // A scan published before the field existed carries no flag at all. The row
+  // must render exactly as it did, rather than showing a badge nobody set.
+  context.render({ ...BASE_SCAN, opportunities: [{ ...arb(false) }] });
+  assert.ok(!rows().includes(escapeHtml(t('roundingRisk'))), 'a false flag draws nothing');
+  context.render({ ...BASE_SCAN, opportunities: [{ ...arb(undefined), roundingRisk: undefined }] });
+  assert.ok(!rows().includes(escapeHtml(t('roundingRisk'))), 'and a missing flag draws nothing either');
+});
+
+test('the marker reuses the keys the event-detail panel already discloses with', () => {
+  // An earlier draft added its own `roundingRisk` and `roundingRiskTooltip`
+  // here. That is a duplicate key in an object literal, which is not a syntax
+  // error: the later entry wins, the first is dead text that reads like a real
+  // translation, and test/i18n-dictionary.test.mjs caught the pair. The fix was
+  // to use the two keys event-detail-modal.js:415 already renders this with, so
+  // the same disclosure reads the same in both languages on both surfaces.
+  const modal = read('public/js/pages/event-detail-modal.js');
+  assert.match(modal, /t\('roundingRisk'\)/, 'the event-detail panel no longer names the flag');
+  assert.match(modal, /t\('roundingRiskHint'\)/);
+
+  const ro = i18nContext('ro').dict.ro;
+  const en = i18nContext('en').dict.en;
+  for (const key of ['roundingRisk', 'roundingRiskHint']) {
+    for (const [lang, dict] of [['ro', ro], ['en', en]]) {
+      assert.ok(typeof dict[key] === 'string' && dict[key].length > 0, `${lang}.${key} is missing from the dictionary`);
+      assert.notEqual(dict[key], key, `${lang}.${key} echoes its own key`);
+    }
+  }
+  assert.notEqual(ro.roundingRiskHint, en.roundingRiskHint, 'the Romanian hint is the English one verbatim');
+  assert.notEqual(ro.roundingRisk, en.roundingRisk, 'and so is the label');
+
+  // Nothing invented a key for this row alone. The chip has no string of its
+  // own, which is what makes the two surfaces agree by construction.
+  const scanner = codeOnly(scannerSource);
+  assert.ok(!/roundingRisk(?!Hint)\w*\s*:/.test(scanner), 'the page defines a translation key instead of reading one');
 });

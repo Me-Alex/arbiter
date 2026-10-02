@@ -3,6 +3,7 @@
     const $ = (id) => document.getElementById(id);
     let _sportsData = [];
     let _isFirstScanLoad = true;
+    let _optionsSeeded = false;
 
     let _alertWatcher = null;
 
@@ -191,9 +192,14 @@
     }
 
     function verificationCell(t, o) {
-      return o.verification
-        ? `<span class="status ${escapeHtml(o.verification.status)}">${escapeHtml(o.verification.status)}</span>`
-        : `<span class="muted text-xs">${escapeHtml(t('unverified'))}</span>`;
+      if (!o.verification) return `<span class="muted text-xs">${escapeHtml(t('unverified'))}</span>`;
+      // The status alone is a verdict with no reasoning attached. `reason` is
+      // published on every verified signal and was read by nothing, so a
+      // rejected row showed a bare "rejected" for what is always a specific
+      // sentence — an odds drift with both prices, or the leg that could not be
+      // re-quoted. It is the whole explanation of why the trade is not there.
+      const reason = o.verification.reason ? ` title="${escapeHtml(o.verification.reason)}"` : '';
+      return `<span class="status ${escapeHtml(o.verification.status)}"${reason}>${escapeHtml(o.verification.status)}</span>`;
     }
 
     /**
@@ -248,6 +254,37 @@
         : '';
     }
 
+    /**
+     * The rounding marker, beside the profit it explains.
+     *
+     * The engine refuses any allocation whose inverse sum is not under 1
+     * (market-contracts.mjs:180), so a surviving arbitrage always has a
+     * positive theoretical edge — but the stake split it prints is rounded to
+     * cents, and an edge smaller than half a cent per leg loses. `roundingRisk`
+     * is the engine naming that case, and it is a flag, not a number: the
+     * allocation writes it as `guaranteedProfit < 0`.
+     *
+     * The same flag is already disclosed on the event-detail panel
+     * (event-detail-modal.js:380,415), so this is not a new disclosure — it is
+     * the one surface that lists arbitrages and did not carry it, which left a
+     * row reading +0.00% ROI beside -0.01 profit with nothing connecting them.
+     * Measured on the real allocator, the flag is not theoretical: over the
+     * thin tail of the inverse sum it fires 40 of 200 allocations at a 1000
+     * bankroll and 120 of 200 at a bankroll of 1, and 8 of 36 three-leg arbs.
+     *
+     * The label and the hint are the two keys the event-detail panel already
+     * used for this, so both surfaces say the same thing in both languages. An
+     * earlier draft added `roundingRisk` and a `roundingRiskTooltip` here, which
+     * was a duplicate key: the object literal is not a syntax error about it,
+     * the later entry silently won, and test/i18n-dictionary.test.mjs caught
+     * the pair. Reusing the keys was the cheaper fix and the better one.
+     */
+    function roundingRiskBadge(t, signal) {
+      return signal && signal.roundingRisk === true
+        ? `<span class="chip yellow" title="${escapeHtml(t('roundingRiskHint'))}">${escapeHtml(t('roundingRisk'))}</span>`
+        : '';
+    }
+
     async function init() {
       const [profiles, sportsData] = await Promise.all([
         arbiterApi.get('/api/profiles').then((d) => d.profiles || []),
@@ -274,14 +311,14 @@
     }
 
     function setTableState(message, className = 'empty') {
-      [['arb-table', 6], ['mid-table', 5], ['ev-table', 6]].forEach(([id, colspan]) => {
+      [['arb-table', 6], ['mid-table', 5], ['ev-table', 7], ['low-table', 5]].forEach(([id, colspan]) => {
         const body = document.querySelector(`#${id} tbody`);
         if (body) body.innerHTML = `<tr><td colspan="${colspan}" class="${className}">${escapeHtml(message)}</td></tr>`;
       });
     }
 
     function setLoading() {
-      [['arb-table', 6], ['mid-table', 5], ['ev-table', 6]].forEach(([id, colspan]) => {
+      [['arb-table', 6], ['mid-table', 5], ['ev-table', 7], ['low-table', 5]].forEach(([id, colspan]) => {
         const body = document.querySelector(`#${id} tbody`);
         if (body) body.innerHTML = `<tr class="loading-row"><td colspan="${colspan}"><span class="skeleton skeleton-line lg">Loading scan results</span></td></tr>`;
       });
@@ -407,6 +444,28 @@
         ? t('neverRan')
         : capturedAt ? new Date(capturedAt).toLocaleString() : '—';
       $('scan-events').textContent = `${Number(scan.eventCount || 0).toLocaleString()} events`;
+      // The settings the published scan was actually produced under, put back
+      // into the form that re-runs it. The form carried hardcoded defaults, so
+      // a scan published with a 5000 bankroll and a 2% minimum ROI was on screen
+      // with its stakes and ROI rendered, and a re-run silently used 1000 and
+      // 0 — the reader could not tell which run they were looking at.
+      //
+      // Seeded once and only from the published document: `render` also draws
+      // the preview response, and seeding from that would overwrite whatever is
+      // being typed on every scan-update.
+      if (published && !_optionsSeeded) {
+        _optionsSeeded = true;
+        const opts = scan.options || {};
+        const put = (id, value) => {
+          if (value !== undefined && value !== null && $(id)) $(id).value = value;
+        };
+        put('bankroll', opts.bankroll);
+        put('min-roi', opts.minRoiPercent);
+        put('mid-risk', opts.maxMiddleRiskPercent);
+        put('mid-roi', opts.minMiddleRoiPercent);
+        put('sport-filter', opts.sport);
+        if ($('inc-live')) $('inc-live').checked = opts.includeLive === true;
+      }
       $('verification-mix').textContent = verificationMix(t, scan.verificationSummary);
       const windowNote = $('live-window-note');
       if (windowNote) windowNote.textContent = liveWindowNote(t, scan);
@@ -467,7 +526,7 @@
           </td>
           <td class="num tabnum"><span class="strong green">+${(o.roiPercent || 0).toFixed(2)}</span></td>
           <td class="num tabnum">${(o.totalStake || 0).toFixed(0)}</td>
-          <td class="num tabnum"><span class="strong">${(o.guaranteedProfit || 0).toFixed(2)}</span></td>
+          <td class="num tabnum"><span class="strong">${(o.guaranteedProfit || 0).toFixed(2)}</span> ${roundingRiskBadge(t, o)}</td>
           <td>${verificationCell(t, o)}</td>
         </tr>${legRows}`;
       }).join('') : `<tr><td colspan="6" class="empty">${escapeHtml(noData ? t('noFreshData') : t('noArbsFound'))}</td></tr>`;
@@ -478,7 +537,7 @@
       mid.innerHTML = mids.length ? mids.map((m) => `
         <tr class="${m.verification?.status === 'confirmed' ? 'row-confirmed' : ''}">
           <td><div class="strong">${escapeHtml(m.homeTeam)} <span class="muted">${t('vs')}</span> ${escapeHtml(m.awayTeam)}</div><div class="secondary"><span class="chip chip-sport">${escapeHtml(m.sport || 'Football')}</span> ${liveBadge(t, m)}</div></td>
-          <td><div class="mono text-xs market-label">${escapeHtml(m.marketKey || '—')}</div>${(m.legs || []).map((l) => `<div class="mono text-xs">${escapeHtml(l.sourceId)} ${escapeHtml(l.selection)} ${escapeHtml(l.handicap)} <span class="muted">@</span> <span class="strong">${(l.odds || 0).toFixed(2)}</span></div>`).join('')}</td>
+          <td><div class="mono text-xs market-label">${escapeHtml(m.marketKey || '—')}${Number.isFinite(m.gap) ? `<span class="muted"> · ${escapeHtml(t('gap'))} ${Math.abs(Number(m.gap))}</span>` : ''}</div>${(m.legs || []).map((l) => `<div class="mono text-xs">${escapeHtml(l.sourceId)} ${escapeHtml(l.selection)} ${escapeHtml(l.handicap)} <span class="muted">@</span> <span class="strong">${(l.odds || 0).toFixed(2)}</span></div>`).join('')}</td>
           <td class="num tabnum"><span class="strong purple">+${(m.roiPercent || 0).toFixed(2)}</span></td>
           <td class="num tabnum"><span class="yellow">${(m.riskPercent || 0).toFixed(2)}</span></td>
           <td>${verificationCell(t, m)}</td>
@@ -494,9 +553,33 @@
           <td class="mono">${escapeHtml(e.sourceId)}</td>
           <td class="num tabnum">${(e.odds || 0).toFixed(2)}</td>
           <td class="num tabnum"><span class="strong yellow">+${(e.evPercent || 0).toFixed(2)}</span></td>
+          <td class="num tabnum">${Number.isFinite(e.consensusProbability) ? (e.consensusProbability * 100).toFixed(1) + '%' : '—'}</td>
           <td class="num tabnum">${(e.legs?.[0]?.stake || 0).toFixed(2)}</td>
         </tr>
-      `).join('') : `<tr><td colspan="6" class="empty">${escapeHtml(noData ? t('noFreshData') : t('noEvFound'))}</td></tr>`;
+      `).join('') : `<tr><td colspan="7" class="empty">${escapeHtml(noData ? t('noFreshData') : t('noEvFound'))}</td></tr>`;
+
+      // Low hold. The engine has published this family on every scan since it
+      // was written; until now the only reader was analytics.js counting the
+      // array, so a trader could see "12 low hold" on one page and nothing at
+      // all on the page the signals belong to.
+      // Deliberately not run through filterBySport. A low-hold record carries
+      // no `sport` field, and that helper defaults a missing sport to
+      // "football" — so filtering would drop every non-football market from the
+      // one table that shows them, while claiming the filter applied. The
+      // honest answer is that the family is not sport-scoped; giving it a sport
+      // is a change to the engine, not to the page.
+      const low = document.querySelector('#low-table tbody');
+      const lows = (scan.lowHold || []).slice().sort((a, b) => Number(a.holdPercent || 0) - Number(b.holdPercent || 0));
+      $('low-count').textContent = String(lows.length);
+      low.innerHTML = lows.length ? lows.map((l) => `
+        <tr>
+          <td><div class="strong">${evMatchLabel(l.eventKey)}</div></td>
+          <td><div class="mono text-xs">${escapeHtml(l.marketKey || '—')}</div></td>
+          <td>${escapeHtml(l.sourceId || '—')}</td>
+          <td class="num tabnum">${Number(l.selectionCount || 0)}</td>
+          <td class="num tabnum"><span class="strong">${(l.holdPercent || 0).toFixed(2)}</span></td>
+        </tr>
+      `).join('') : `<tr><td colspan="5" class="empty">${escapeHtml(noData ? t('noFreshData') : t('noLowHoldFound'))}</td></tr>`;
 
       // Counted across the three tables, because "in-play" is a property of the
       // price and not of the strategy: an in-play middle is just as perishable as

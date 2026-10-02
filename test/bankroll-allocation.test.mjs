@@ -70,6 +70,52 @@ test('roundedArbitrageAllocation exposes the worst case and the rounding risk', 
   assert.equal(out.worstCasePayout, Math.min(...out.legs.map((l) => l.payout)));
   assert.equal(out.guaranteedProfit, Math.round((out.worstCasePayout - 1000) * 100) / 100);
   // The theoretical ROI survives even when rounding eats into it.
-  assert.ok(out.roundingRisk >= 0);
+  //
+  // This line used to read `assert.ok(out.roundingRisk >= 0)`, which passed for
+  // `false`, for `0`, for `true` and for `'abc'` alike: the flag is a boolean
+  // (`roundingRisk: guaranteedProfit < 0`), and `false >= 0` is true, so the
+  // assertion verified nothing at all while reading as if it did. It now states
+  // what the allocator actually writes — the type, and the predicate it is.
+  assert.equal(typeof out.roundingRisk, 'boolean', 'the rounding risk is a flag, not a magnitude');
+  assert.equal(out.roundingRisk, out.guaranteedProfit < 0);
   assert.ok(out.roiPercent > 0);
+});
+
+test('the rounding risk is reachable, so a page has something to disclose', () => {
+  // The allocator refuses anything with an inverse sum of 1 or more, so a fat
+  // arbitrage cannot lose money to rounding and the flag above is always false
+  // there. That is the whole reason to measure the thin tail separately: the
+  // flag is the engine's disclosure for an edge smaller than its own rounding
+  // grid, and scanner.js marks those rows on screen because of it. If this stops
+  // firing, that badge is a lie and the page test will have been asserting a
+  // state the engine cannot produce.
+  const pair = (deficit, a) => [
+    { sourceId: 'a', selection: 'H', odds: a },
+    { sourceId: 'b', selection: 'A', odds: 1 / (1 - deficit - 1 / a) },
+  ];
+
+  // Fat: a 1% edge is 10 units on 1000 and rounding cannot touch it.
+  assert.equal(roundedArbitrageAllocation(pair(1e-2, 2.5), 1000).roundingRisk, false);
+
+  // Thin: the ROI rounds to 0.00% while the cent-level split comes out under the
+  // bankroll. Swept over the tail and five price pairs, at a 1000 bankroll.
+  let fired = 0;
+  let total = 0;
+  for (let k = 1; k <= 40; k += 1) {
+    for (const a of [2.02, 2.5, 3.0, 4.0, 1.6]) {
+      const out = roundedArbitrageAllocation(pair(k * 1e-11, a), 1000);
+      if (!out) continue;
+      total += 1;
+      if (out.roundingRisk === true) fired += 1;
+    }
+  }
+  assert.ok(fired > 0, `no allocation set the flag in ${total} tries, so the engine cannot produce the state the page marks`);
+  assert.equal(total, 200, 'the sweep shrank, so the count above would mean less');
+
+  // And when it fires, the two numbers a trader reads contradict each other:
+  // the ROI prints as zero while the profit is negative.
+  const thin = roundedArbitrageAllocation(pair(1e-7, 3.0), 1000);
+  assert.equal(thin.roundingRisk, true);
+  assert.equal(thin.roiPercent, 0, 'the theoretical edge rounds to nothing');
+  assert.equal(thin.guaranteedProfit, -0.01, 'while the rounded split loses a cent');
 });
