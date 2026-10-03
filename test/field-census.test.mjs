@@ -39,13 +39,16 @@ import { readdirSync, readFileSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { codeOnly, fieldsOn } from './helpers/code-only.mjs';
+import { resolveScanRequest } from '../src/scrape-orchestrator.mjs';
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url));
 const readJson = (p) => JSON.parse(readFileSync(join(ROOT, p), 'utf8'));
 const readText = (p) => readFileSync(join(ROOT, p), 'utf8');
 
 const scrapeCode = codeOnly(readText('public/js/pages/scrape.js'), true);
+const scannerCode = codeOnly(readText('public/js/pages/scanner.js'), true);
 const routerSource = codeOnly(readText('src/router.mjs'), true);
+const orchestratorSource = codeOnly(readText('src/scrape-orchestrator.mjs'), true);
 
 /* ── instruments ───────────────────────────────────────────────────────────── */
 
@@ -76,6 +79,7 @@ function functionWindow(source, name) {
 const CHIP = functionWindow(scrapeCode, 'renderBookmakerChips');
 const PROFILE_LABEL = functionWindow(scrapeCode, 'profileLabel');
 const APPLY_PROFILE = functionWindow(scrapeCode, 'applyProfile');
+const APPLY_PROFILE_HINT = functionWindow(scrapeCode, 'applyProfileHint');
 const SPORT_GATE = functionWindow(scrapeCode, 'jobMatchesSport');
 const PROMOTION_GATE = functionWindow(scrapeCode, 'passesPromotionGate');
 
@@ -105,6 +109,79 @@ function returnedKeys(route) {
   if (ret === -1 || close < ret) throw new Error(`${route} no longer returns sendJson`);
   const keys = [...handler.slice(ret, close).matchAll(/^ {8}(\w+):/gm)].map((m) => m[1]);
   if (!keys.length) throw new Error(`${route} returned an object with no keys at its own indent — the cut moved`);
+  return keys.sort();
+}
+
+/**
+ * The keys of `state.options`, measured from BOTH producers the route has.
+ *
+ * `GET /api/scrape/state` serves `orchestrator.scrapeState || emptyState()`
+ * (src/router.mjs:61), so the document has two producers and they disagree by
+ * design: `emptyState()` publishes `options: {}` for the idle state before any
+ * run has been launched, and `resolveScanRequest` publishes the nine keys a run
+ * resolved.
+ *
+ * Neither producer is read out of `data/scrape-state.json`, which is where this
+ * census read the list from and why the list was wrong. Two of the nine are
+ * optional inputs normalised to `undefined` when the caller omits them
+ * (src/scrape-orchestrator.mjs:509-510), and `JSON.stringify` drops a key whose
+ * value is undefined — so the stored document carries 7, 8 or 9 of them
+ * depending on what the last run happened to ask for. Measured on this tree:
+ * the committed copy holds 8, with `sport` and no `maxEvents`; the working copy
+ * holds 8, with `maxEvents` and no `sport`. A census that reads that file is
+ * censusing one machine's last run, and the committed copy failed the pinned
+ * comparison on the branch for as long as the drift was there.
+ *
+ * The producer is called over inputs that exercise both optional keys rather
+ * than trusted to have nine, because the union is the measurement.
+ */
+const SCAN_REQUESTS = [
+  {},                                       // neither optional key
+  { sport: 'Football' },                    // the sport filter the form sends
+  { maxEvents: 12 },                        // the event cap the form sends
+  { sport: 'Football', maxEvents: 'all' },  // both at once
+];
+
+/** The idle producer's `options`, read off its own literal in the router. */
+function emptyStateOptionKeys() {
+  const at = routerSource.indexOf('function emptyState()');
+  if (at === -1) throw new Error('src/router.mjs no longer declares emptyState()');
+  const lines = routerSource.slice(at).split(/\r?\n/);
+  const end = lines.findIndex((line, i) => i > 0 && line === '}');
+  if (end === -1) throw new Error('emptyState() has no lone } in column 0 — the body cut would run away');
+  const literal = lines.slice(1, end + 1).join('\n').match(/^\s*options:\s*\{([^}]*)\}/m);
+  if (!literal) throw new Error('emptyState() no longer publishes an `options` object literal');
+  const inner = literal[1].trim();
+  if (!inner) return [];
+  return inner.split(',').map((s) => s.split(':')[0].trim()).filter(Boolean);
+}
+
+const producedOptionKeys = () => {
+  const out = new Set();
+  for (const input of SCAN_REQUESTS) {
+    for (const k of Object.keys(resolveScanRequest(input))) out.add(k);
+  }
+  for (const k of emptyStateOptionKeys()) out.add(k);
+  return [...out].sort();
+};
+
+/**
+ * The four leaves of `state.summary`, read off the fold that writes them.
+ *
+ * Measured from the writer for the same reason as the options above and with the
+ * same consequence: the stored copy is a sample, and a run that has not reached
+ * the fold yet stores `summary: null`. Reading the file turned that null into a
+ * `TypeError` at module load — the census died before it could report, which is
+ * the one failure a census is not allowed to have.
+ */
+function producedSummaryKeys() {
+  const at = orchestratorSource.indexOf('this.scrapeState.summary = {');
+  if (at === -1) throw new Error('src/scrape-orchestrator.mjs no longer assigns scrapeState.summary');
+  const lines = orchestratorSource.slice(at).split(/\r?\n/);
+  const end = lines.findIndex((line, i) => i > 0 && line === '    };');
+  if (end === -1) throw new Error('the summary fold has no lone `};` — the body cut would run away');
+  const keys = [...lines.slice(1, end + 1).join('\n').matchAll(/^ {6}(\w+):/gm)].map((m) => m[1]);
+  if (keys.length < 2) throw new Error(`the summary fold yielded ${keys.length} keys — the cut moved`);
   return keys.sort();
 }
 
@@ -209,11 +286,26 @@ const STATE_JOB = [
  * other five censuses: the one entry here is the parent, and an ancestor walk
  * over a bare leaf has no parent to reach. It is also the shape the document
  * really has, so nothing is lost by writing it down.
+ *
+ * Nine entries, and this list used to hold eight. The eighth was `maxEvents` and
+ * the ninth is `sport`; both were published all along, and the list could only
+ * see one of them at a time because it was compared against the stored document
+ * rather than against the producer that fills it. `sport` was the one it could
+ * not see, and the canary that was meant to catch its arrival compared a
+ * hand-written list with itself — so the day the producer grew it, nothing fired.
+ * `sport` is the ninth entry now, and the comparison that fires is between the
+ * nine below and the nine `producedOptionKeys` calls out of the producer.
+ *
+ * The cross-check that keeps the two honest: the scrape page carries the same
+ * nine names in its own `SCHEDULER_SCAN_FIELDS` table, `runOptionsText` walks
+ * that table, and the control below asserts the table and the producer agree on
+ * the count. Two independent lists of nine, written by different code, is a
+ * stronger claim than either list alone.
  */
 const STATE_OPTIONS = [
   'options.bankroll', 'options.includeLive', 'options.includePast', 'options.maxEvents',
   'options.maxMiddleRiskPercent', 'options.minEvPercent', 'options.minMiddleRoiPercent',
-  'options.minRoiPercent',
+  'options.minRoiPercent', 'options.sport',
 ];
 const STATE_SUMMARY = ['completed', 'events', 'failed', 'markets'];
 const RUN_JOB = ['durationMs', 'error', 'events', 'id', 'name', 'sourceIds', 'status', 'valid'];
@@ -304,10 +396,12 @@ const SCAN_FIELDS = schedulerScanFields();
  * census reported nine fields read by a page that renders nothing at all. The
  * behavioural test caught it; the census did not, until the return was required.
  *
- * `sport` is in the page's table and not in the pinned list below, because no
- * stored state carries it yet. The day one does, the comparison in `censusFor`
- * fires on `options.sport` and the answer is already written down here: the page
- * reads it.
+ * The page's table carries `sport` and the pinned list above carries it too,
+ * because the producer publishes it. This paragraph used to say the opposite —
+ * that no stored state carries it yet — and to name `censusFor` as the thing
+ * that would catch the day one did. That sentence was the canary's own blind
+ * spot: the comparison fired on the STORED document, so it could only ever report
+ * which optional keys the last run happened to supply.
  */
 const optionsReads = () => {
   const out = new Set();
@@ -324,29 +418,127 @@ const optionsReads = () => {
 };
 
 /**
- * `/api/profiles`, read through three bindings rather than one.
+ * `/api/profiles`, read on two pages, through a receiver each and one alias.
  *
  * `profileLabel` takes the row as `profile` and reads `d.includeLive` out of its
  * defaults; `applyProfile` takes it as `p` and reads `p.defaults.bankroll` in
- * full; the hint added for `description` takes it as `found`. Searching one
- * receiver name reported all six defaults and the description as unread, which
- * was the instrument being wrong rather than the page.
+ * full, matching it first through `x.id`; the hint added for `description` takes
+ * it as `found`. Searching one receiver name reported all six defaults and the
+ * description as unread, which was the instrument being wrong rather than the
+ * page.
+ *
+ * Then there was a second consumer. `/api/profiles` is fetched by scanner.js as
+ * well, at :339, and this census read one page, so a field that only scanner.js
+ * reads would have been reported unread by a page that does read it. Measured,
+ * scanner.js reads a strict subset of what scrape.js reads — `id`, `label` and
+ * four of the six defaults, and neither `mode` nor `description` nor the two
+ * scope switches — so widening the set moves no verdict today. It is here
+ * because the subset is a fact about today.
+ *
+ * The alias is the part that has to stay a cut. `d` is bound to a profile's
+ * defaults on both pages and to something else entirely in both: on scrape.js a
+ * search for `d.` page-wide returns `ours`, `theirs`, `getTime`, `labelKey` and
+ * `toLocaleTimeString`, which are arbitrage and event-detail fields, and on
+ * scanner.js it returns `profiles` and `sports`, which are two response
+ * envelopes. Six names the page never reads as a profile would have been
+ * credited as profile reads. So the defaults are read only inside the window
+ * where the alias is bound to `<row>.defaults`, and the window throws if it
+ * runs away.
  */
-const profileReads = () => {
-  const out = new Set([
-    ...fieldsOn(scrapeCode, 'profile'),
-    ...fieldsOn(scrapeCode, 'p'),
-    ...fieldsOn(scrapeCode, 'found'),
-  ]);
-  // `defaults` is read as an object through two different names at two depths, so
-  // its leaves are searched as the dotted expressions the two functions write —
-  // not through `fieldsOn`, which only ever returns the first segment.
-  const defaultsCode = `${PROFILE_LABEL}\n${APPLY_PROFILE}`;
+
+/** Where each consumer binds the row, and where it binds the defaults alias. */
+const PROFILE_RECEIVERS = {
+  'scrape.js': {
+    scope: () => [PROFILE_LABEL, APPLY_PROFILE, APPLY_PROFILE_HINT],
+    rows: ['profile', 'p', 'x', 'found'],
+    alias: 'd',
+  },
+  'scanner.js': { scope: () => [scannerProfileBlock()], rows: ['p'], alias: 'd' },
+};
+
+/**
+ * The block of scanner.js that consumes a profile row.
+ *
+ * scanner.js keeps no top-level function for this the way scrape.js does — the
+ * rows are used inside the page's nested `init()`, in the `<option>` list it
+ * builds and in the change listener that applies a profile's defaults. The cut
+ * runs from the fetch to the first line that closes that listener, measured at
+ * :339-358, and both ends are loud: a page that stops fetching the route, or
+ * stops closing the listener on its own line, fails here rather than reporting
+ * every profile field unread.
+ */
+function scannerProfileBlock() {
+  const lines = scannerCode.split(/\r?\n/);
+  const from = lines.findIndex((l) => l.includes("arbiterApi.get('/api/profiles')"));
+  if (from === -1) throw new Error('scanner.js no longer fetches /api/profiles');
+  const to = lines.findIndex((l, i) => i > from && l.trim() === '});');
+  if (to === -1) throw new Error('scanner.js no longer closes the profile change listener on its own line — the cut would run away');
+  const block = lines.slice(from, to + 1).join('\n');
+  if (!/\.defaults\b/.test(block)) throw new Error('the cut no longer contains a defaults read — it is measuring the wrong region');
+  return block;
+}
+
+/** Every page that fetches the route, derived rather than written down. */
+function profileConsumers() {
+  const files = readdirSync(join(ROOT, 'public/js/pages')).filter((f) => f.endsWith('.js')).sort();
+  const out = [];
+  for (const file of files) {
+    const code = codeOnly(readText(`public/js/pages/${file}`), true);
+    if (!code.includes("arbiterApi.get('/api/profiles')")) continue;
+    const spec = Object.prototype.hasOwnProperty.call(PROFILE_RECEIVERS, file) ? PROFILE_RECEIVERS[file] : null;
+    if (!spec) throw new Error(`${file} fetches /api/profiles and this census has no receiver spec for it — write one rather than let its fields count as unread`);
+    out.push([file, spec]);
+  }
+  if (out.length !== Object.keys(PROFILE_RECEIVERS).length) {
+    throw new Error(`the receiver spec names ${Object.keys(PROFILE_RECEIVERS).length} pages and ${out.length} fetch the route — a spec outlived its page`);
+  }
+  return out;
+}
+
+/**
+ * The reads on one alias, inside the window where it is a profile's defaults.
+ *
+ * The binding is what starts it and the first line that closes the statement
+ * chain is what ends it. Both halves are loud: a page that renames the alias, or
+ * hoists the reads out of the block, fails here instead of reporting the defaults
+ * unread on a page that does read them.
+ */
+function aliasDefaultsReads(code, alias) {
+  const lines = code.split(/\r?\n/);
+  const start = lines.findIndex((l) => new RegExp(`\\b(?:const|let|var)\\s+${alias}\\s*=\\s*\\w+\\.defaults\\b`).test(l));
+  if (start === -1) throw new Error(`${alias} is no longer bound to a row's .defaults on this page`);
+  const end = lines.findIndex((l, i) => i > start && ['};', '}', '});'].includes(l.trim()));
+  if (end === -1) throw new Error(`${alias} still binds a row's .defaults but the window has no closing line — the cut would run away`);
+  return fieldsOn(lines.slice(start, end + 1).join('\n'), alias);
+}
+
+const profileReadsOn = (file, spec) => {
+  const code = codeOnly(readText(`public/js/pages/${file}`), true);
+  const out = new Set();
+  const cuts = spec.scope();
+  // Each receiver has to be bound on its page, or `fieldsOn` finds nothing and
+  // the census reports a field unread for a page that does read it.
+  for (const r of spec.rows) {
+    if (!new RegExp(`\\b${r}\\b`).test(code)) throw new Error(`${file} no longer binds a profile row as \`${r}\` — the receiver table is stale`);
+    for (const cut of cuts) for (const f of fieldsOn(cut, r)) if (f !== 'defaults') out.add(f);
+  }
+  // Dotted (`p.defaults.bankroll`) and aliased (`d.includeLive`) are the two
+  // shapes the tree uses; both are collected, and only over the leaves the
+  // config actually publishes — `applyProfile` also reads `p.defaults.maxEvents`,
+  // which no shipped profile carries, so that read is a guard and not a field.
+  const dotted = cuts.flatMap((cut) => [...cut.matchAll(/\b\w+\.defaults\.(\w+)\b/g)].map((m) => m[1]));
+  const aliased = [...aliasDefaultsReads(code, spec.alias)];
   for (const key of PROFILES_ROW) {
     if (!key.startsWith('defaults.')) continue;
     const leaf = key.slice('defaults.'.length);
-    if (new RegExp(`\\.defaults\\.${leaf}\\b|\\bd\\.${leaf}\\b`).test(defaultsCode)) out.add(leaf);
+    if (dotted.includes(leaf) || aliased.includes(leaf)) out.add(leaf);
   }
+  return out;
+};
+
+const profileReads = () => {
+  const out = new Set();
+  for (const [file, spec] of profileConsumers()) for (const f of profileReadsOn(file, spec)) out.add(f);
   return out;
 };
 
@@ -569,8 +761,8 @@ const CENSUS = [
   },
   { label: R_PROFILES, published: keysOfRows(PROFILES.profiles), pinned: PROFILES_ROW, reads: profileReads },
   { label: R_STATE_JOB, published: keysOfRows(STATE.jobs), pinned: STATE_JOB, reads: () => stateReadSet },
-  { label: R_STATE_OPTIONS, published: Object.keys(STATE.options).map((k) => `options.${k}`).sort(), pinned: STATE_OPTIONS, reads: optionsReads },
-  { label: R_STATE_SUMMARY, published: Object.keys(STATE.summary).sort(), pinned: STATE_SUMMARY, reads: summaryReads },
+  { label: R_STATE_OPTIONS, published: producedOptionKeys().map((k) => `options.${k}`), pinned: STATE_OPTIONS, reads: optionsReads },
+  { label: R_STATE_SUMMARY, published: producedSummaryKeys(), pinned: STATE_SUMMARY, reads: summaryReads },
   { label: R_RUN_JOB, published: keysOfRows(RUN.jobs), pinned: RUN_JOB, reads: runReads },
 ];
 
@@ -594,6 +786,72 @@ function censusFor({ label, published, pinned, reads }) {
 
 test('every published field of these four documents is read, or has a measured reason', () => {
   for (const census of CENSUS) censusFor(census);
+});
+
+/**
+ * The stored state is a sample of the producer, not a second definition of it.
+ *
+ * This is the half that keeps the derived census honest about the file it no
+ * longer reads. `censusFor` compares the producer against a list written by hand,
+ * which says the two agree; it says nothing about the document a running server
+ * would serve, and that document is written from the same producer. So the file
+ * has to stay inside it: a stored key the producer cannot build means the state
+ * on disk was written by a build that no longer exists, and every claim this
+ * census makes about the served document would be about that build instead.
+ *
+ * The converse is not asserted, and the reason is the measurement above: the
+ * stored copy carries 7, 8 or 9 of the nine depending on the last run's optional
+ * inputs, so demanding all nine would demand that someone had run a scrape with
+ * every switch on. What is demanded is the direction that can catch a defect.
+ */
+test('the stored state carries no option the producer cannot build', () => {
+  const built = new Set(producedOptionKeys());
+  const stored = Object.keys(STATE.options || {});
+  const foreign = stored.filter((k) => !built.has(k));
+  assert.deepEqual(foreign, [],
+    `data/scrape-state.json carries option keys nothing builds any more: ${foreign.join(', ')} — the file is from a build this branch does not have`);
+  // Named so the subset control cannot be mistaken for "the file agrees": it is
+  // measured how much of the producer the last run happened to exercise.
+  assert.ok(stored.length > 0 && stored.length <= built.size,
+    `data/scrape-state.json carries ${stored.length} of the ${built.size} fields the producer builds — the direction of this control moved`);
+});
+
+/**
+ * Both consumers are really being read, each over its own window.
+ *
+ * Widening the reader set from one page to two moves no verdict today, because
+ * scanner.js reads a strict subset of what scrape.js reads — six of the ten
+ * leaves, and neither `mode`, nor `description`, nor the two scope switches. A
+ * change that moves no verdict cannot be shown by breaking a page, so the thing
+ * that has to be pinned instead is that each consumer still contributes at all.
+ *
+ * The floors are measured per page, not shared, because a shared floor is a
+ * floor on the union and the union is what never moved. Both numbers come from
+ * the same run of `profileReadsOn` this census calls: scrape.js touches ten
+ * leaves, scanner.js six, and the four defaults scanner.js reads are the ones its
+ * alias window can see and no more — a search for `d.` page-wide would have added
+ * `profiles` and `sports`, which are two response envelopes and not profile rows.
+ */
+const PROFILE_READ_FLOOR = { 'scrape.js': 10, 'scanner.js': 6 };
+
+test('both consumers of /api/profiles are read, each over its own window', () => {
+  for (const [file, spec] of profileConsumers()) {
+    const found = profileReadsOn(file, spec);
+    const floor = PROFILE_READ_FLOOR[file];
+    assert.ok(found.size >= floor,
+      `${file} contributes ${found.size} profile leaves, under its floor of ${floor} — its window stopped seeing the reads`);
+  }
+  // The two consumers overlap, and the overlap is a measurement rather than an
+  // assumption: it is why the union is ten and not sixteen. Stated as "read by
+  // exactly one of them" so the assertion does not depend on which of the two
+  // the derived list happens to return first.
+  const sets = profileConsumers().map(([file, spec]) => profileReadsOn(file, spec));
+  const byExactlyOne = [...new Set(sets.flatMap((s) => [...s]))]
+    .filter((f) => sets.filter((s) => s.has(f)).length === 1).sort();
+  assert.deepEqual(byExactlyOne, ['description', 'includeLive', 'includePast', 'mode'],
+    'the two consumers no longer read the same set — a field moved between pages');
+  assert.equal(PROFILES_ROW.length, new Set(sets.flatMap((s) => [...s])).size,
+    'the two consumers no longer cover every leaf the config publishes between them');
 });
 
 test('the scraper route still publishes what the census names', () => {
@@ -752,8 +1010,18 @@ test('the census instruments are the ones they claim to be', () => {
     'the options fields are unread to fieldsOn and read to optionsReads — both halves hold');
   assert.equal(optionsReads().size, SCAN_FIELDS.length,
     `optionsReads reported ${optionsReads().size} of ${SCAN_FIELDS.length} table fields — the gate moved`);
-  assert.ok(optionsReads().has('sport') && STATE_OPTIONS.every((k) => !k.endsWith('.sport')),
-    'the table carries sport and no stored state does yet — the canary above is what catches that day');
+  // The canary that replaced the one this file used to carry. That one asked
+  // `STATE_OPTIONS` — a list written here — whether it held `sport`, so it
+  // compared the hand with itself and could not fail. This one asks the producer
+  // and the page's own table, two pieces of code that have to name the same nine
+  // fields for the panel above the last run's results to say anything true.
+  assert.deepEqual(
+    [...new Set(SCAN_FIELDS.map(([field]) => field))].sort(),
+    producedOptionKeys(),
+    'the scrape page\'s option table and the producer of state.options no longer name the same fields — one of the two moved',
+  );
+  assert.ok(optionsReads().has('sport') && STATE_OPTIONS.includes('options.sport'),
+    'sport is published, pinned and read — the day the old canary was waiting for has arrived');
   assert.ok(!fieldsOn(scrapeCode, 'state').includes('options')
     && /\blastState\??\.options\b/.test(scrapeCode),
     'and the page reads the state document\'s options through its module binding, not a dotted `state.` read');

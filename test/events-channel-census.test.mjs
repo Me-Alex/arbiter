@@ -33,7 +33,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { mkdtemp, rm, mkdir, writeFile, readFile } from 'node:fs/promises';
-import { readFileSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import vm from 'node:vm';
@@ -42,6 +42,7 @@ import { StateBroadcaster } from '../src/state-broadcaster.mjs';
 import Superbet from '../src/scrapers/superbet.mjs';
 import Betano from '../src/scrapers/betano.mjs';
 import { sanitizeResult } from '../src/shared/sanitize.mjs';
+import { codeOnly } from './helpers/code-only.mjs';
 
 const ROOT = join(import.meta.dirname, '..');
 const read = (p) => readFileSync(join(ROOT, p), 'utf8');
@@ -315,7 +316,37 @@ function sseClient(context) {
   return listeners;
 }
 
-const PAGE_FILES = ['scrape.js', 'dashboard.js', 'scanner.js', 'analytics.js', 'ai.js'];
+/**
+ * The pages that subscribe to this channel, derived from the pages themselves.
+ *
+ * The list was five names written out by hand, and it was right — which is the
+ * part that made it dangerous. Nothing held it: a sixth page that called
+ * `arbiterSse.connect` would have joined the channel without joining the census,
+ * and every frame it read would have been reported as read by nobody while the
+ * suite stayed green. The comment above this file says the subscriber set is
+ * "measured the same way"; the set itself was not.
+ *
+ * The rule is the call, over code with the comments blanked. Three things it has
+ * to get right, and each one is checked by a control below rather than argued for
+ * here: prose is not a call (`connection-status.js` names `arbiterSse.connect()`
+ * in a comment and in its own wrapper); the window publishes the client as
+ * `window.arbiterSse` while a page sees a bare `arbiterSse`, so both spellings
+ * have to match; and connection-status.js is not a page — it wraps `connect` to
+ * register a state callback and subscribes to no frame of its own, so counting it
+ * would put a page in this census that reads nothing.
+ */
+const SSE_CONNECT = /\b(?:window\.)?arbiterSse\s*\.\s*connect\s*\(/;
+
+function sseConsumers() {
+  const dir = join(ROOT, 'public/js/pages');
+  const found = [];
+  for (const file of readdirSync(dir).filter((f) => f.endsWith('.js')).sort()) {
+    if (SSE_CONNECT.test(codeOnly(readFileSync(join(dir, file), 'utf8'), true))) found.push(file);
+  }
+  return found;
+}
+
+const PAGE_FILES = sseConsumers();
 
 const READS = new Map();      // frame type → leaf paths any page touched
 const READ_BY = new Map();    // frame type → pages that touched it
@@ -327,6 +358,70 @@ const EMPTY_SCAN = {
   opportunities: [], middles: [], positiveEv: [], lowHold: [], sources: [], published: false,
   options: {}, dataHealth: { status: 'empty', sources: {}, actionableSourceCount: 0 },
 };
+
+/**
+ * The subscriber list is a measurement, and the measurement can see.
+ *
+ * Four controls, each aimed at one way the rule above could be wrong. A rule that
+ * matches nothing would make this census vacuous and the rest of the file would
+ * still pass, which is the failure mode that costs the most: five pages quietly
+ * stop subscribing, the loop below iterates over nothing, and every assertion in
+ * this file is satisfied by an empty set.
+ */
+test('the subscriber list is derived from the pages, and the rule sees a call', () => {
+  const dir = join(ROOT, 'public/js/pages');
+  const every = readdirSync(dir).filter((f) => f.endsWith('.js')).sort();
+  // Vacuous in both directions, because both leave every assertion in this file
+  // satisfied by a set nobody chose. A rule that matches nothing and a rule that
+  // matches everything produce the same green suite, and the first version of
+  // this control only caught the second: `every.length > PAGE_FILES.length` is
+  // true for an empty list, which is how a rule that stopped matching at all
+  // went unreported until a mutation found it.
+  assert.ok(PAGE_FILES.length > 0,
+    'the rule matched no page at all — every assertion in this file is satisfied by an empty set');
+  assert.ok(every.length > PAGE_FILES.length,
+    'every page in the directory subscribes, which this rule cannot tell apart from a rule that matches everything');
+
+  // Forward: a real call is a consumer, including the `window.` spelling the
+  // client publishes under. Both are taken from pages that are in the list.
+  for (const page of PAGE_FILES) {
+    const src = readFileSync(join(dir, page), 'utf8');
+    assert.ok(/\barbiterSse\s*\.\s*connect\s*\(/.test(src),
+      `${page} is in the subscriber list and no longer calls arbiterSse.connect — the list outlived the call`);
+  }
+  const dotted = every.find((f) => /window\.arbiterSse\s*\.\s*connect\s*\(/.test(codeOnly(readFileSync(join(dir, f), 'utf8'), true)));
+  if (dotted) assert.ok(PAGE_FILES.includes(dotted),
+    `a page subscribes through window.arbiterSse and was left out: ${dotted}`);
+
+  // Reverse: prose is not a call. connection-status.js names the function in a
+  // comment and wraps it to register a state callback; it subscribes to no frame
+  // of its own, and counting it would put a silent page in the census. The pair
+  // of lines below is the control: the same file, the same text, and the only
+  // difference between matching and not matching is the comment blanking.
+  const raw = readFileSync(join(ROOT, 'public/js/connection-status.js'), 'utf8');
+  assert.ok(/\/\*[\s\S]*?arbiterSse\.connect\(\)/.test(raw),
+    'connection-status.js no longer names connect in prose — the reverse control would have nothing to reject');
+  assert.ok(SSE_CONNECT.test(raw),
+    'the raw text of connection-status.js no longer matches the rule at all — blanking is not what is rejecting it');
+  const status = codeOnly(raw, true);
+  assert.ok(!SSE_CONNECT.test(status),
+    'a file that is not a page joined the subscriber list through its own comment');
+  assert.ok(!PAGE_FILES.includes('connection-status.js'),
+    'a file that is not a page joined the subscriber list');
+
+  // Completeness: every line of page code that mentions the channel has to be a
+  // call on it. This is the one that catches the rule being too narrow, which is
+  // the direction that loses a reader — `const sse = arbiterSse; sse.connect(…)`
+  // would subscribe a page this file would not count.
+  for (const page of every) {
+    const lines = codeOnly(readFileSync(join(dir, page), 'utf8'), true).split(/\r?\n/);
+    for (const [i, line] of lines.entries()) {
+      if (!/arbiterSse/.test(line)) continue;
+      assert.ok(/\b(?:window\.)?arbiterSse\s*\.\s*connect\s*\(/.test(line),
+        `public/js/pages/${page}:${i + 1} names arbiterSse without calling connect on it — ${line.trim()}`);
+    }
+  }
+});
 
 for (const page of PAGE_FILES) {
   const api = {
@@ -397,8 +492,13 @@ test('every page in the census was really handed frames', () => {
 
   // The three pages that read nothing are named so the number above is a fact
   // about this tree and not an accident of the fixture.
-  const silent = PAGE_FILES.filter((p) => HITS_PER_PAGE.get(p) === 0);
-  assert.deepEqual(silent, ['scanner.js', 'analytics.js', 'ai.js'],
+  //
+  // Sorted on both sides because `PAGE_FILES` is derived now, and a derived set
+  // carries no order to compare against. The names below were written down from
+  // the order the hand-written list happened to have; what they claim is which
+  // pages read nothing, and that is a set.
+  const silent = PAGE_FILES.filter((p) => HITS_PER_PAGE.get(p) === 0).sort();
+  assert.deepEqual(silent, ['ai.js', 'analytics.js', 'scanner.js'],
     'the set of pages that use an SSE frame only as a refresh signal has changed');
 });
 
