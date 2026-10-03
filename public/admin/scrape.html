@@ -248,14 +248,22 @@
       <section class="sl-panel">
         <header class="sl-panel-head">
           <h2 class="sl-panel-title" data-i18n="lastScrapeRun">Ultima rulare</h2>
-          <span class="sl-panel-note" id="last-run-when"></span>
+          <!-- Two notes, stacked: which run this is, and what that run was told
+               to collect. A flex head would otherwise push the heading off the
+               panel as soon as the options line grew past the title. -->
+          <span class="sl-panel-note sl-panel-notes">
+            <span id="last-run-when"></span>
+            <span id="last-run-options"></span>
+          </span>
         </header>
         <div class="sl-table-wrap">
           <table class="sl-table">
             <caption class="visually-hidden">Rezultate ultimei rulări</caption>
             <thead>
               <tr>
-                <th scope="col" data-i18n="runId">Run ID</th>
+                <!-- `bookmaker`, not `runId`: this column has always held one
+                     book per row, and the run's own id is in the note above. -->
+                <th scope="col" data-i18n="bookmaker">Casă</th>
                 <th scope="col" class="sl-num" data-i18n="events">Evenimente</th>
                 <th scope="col" class="sl-num">Ms</th>
                 <th scope="col" data-i18n="status">Stare</th>

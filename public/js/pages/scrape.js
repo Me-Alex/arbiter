@@ -862,12 +862,21 @@ function refreshJobRows() {
     const errorText = !j.error
       ? ''
       : typeof j.error === 'string' ? j.error : (j.error.message || j.error.code || '');
+    // The book's own name above its id, not the id alone. Every other surface
+    // on this page names its books — the chips, the scheduler's list, the live
+    // poll's list — so this table was the one place an operator had to read a
+    // slug and remember what it was. `name` is on the report and on the
+    // per-book state; a report from before it, or one whose book has no name,
+    // still draws the id rather than an empty cell.
+    const bookCell = j.name
+      ? `<div>${escapeHtml(j.name)}</div><span class="muted text-xs mono">${escapeHtml(id)}</span>`
+      : escapeHtml(id);
     // Table rows, not divs: the page renders a 26-row queue, and a table is
     // what gives the event count and the duration a column that lines up. The
     // previous markup put a status word between the name and the numbers, so
     // both drifted freely and the eye had to pair them by position.
     return `<tr role="listitem">
-      <td class="mono">${escapeHtml(id)}</td>
+      <td class="mono">${bookCell}</td>
       <td class="sl-num mono">${(evs).toLocaleString()}</td>
       <td class="sl-num mono">${fmtDuration(ms) || ms + 'ms'}</td>
       <td><span class="status ${escapeHtml(j.status)}">${escapeHtml(j.status)}</span>${errorText ? `<div class="job-error">${escapeHtml(errorText)}</div>` : ''}</td>
@@ -1209,6 +1218,27 @@ async function refreshLastRun() {
       if (finished) parts.push(`${t('finishedLabel')}: ${finished}`);
       when.textContent = parts.join(' · ');
     }
+    // What this run was told to collect. `options` has been on the STATE
+    // document since the state was written (src/scrape-orchestrator.mjs:175,
+    // `options: scanOptions`) and was read by nothing, so the page could say a
+    // run happened and could not say what it was looking for — the form beside
+    // it shows what the NEXT run will use, which is a different question.
+    //
+    // It is read off the state and NOT off `run`, because the report does not
+    // carry it: `persistRunReport` persists `sanitizeReport(report)`, whose top
+    // level is runId, startedAt, finishedAt, status and jobs
+    // (src/shared/sanitize.mjs:60). Measured on the stored pair — run.options is
+    // `undefined` — and reading it off the report renders an empty line on every
+    // load, which is the same shape of defect as the writer below.
+    //
+    // Gated on the two documents naming the same run. They do when the page is
+    // idle: data/scrape-state.json and data/latest-scrape-run.json both carry
+    // 2026-09-30T10:36:13.440Z, because the state IS the last run and the report
+    // is that run's. A page opened while a run is in flight reads the new state
+    // over the previous report, and the options of a run that has not finished
+    // would sit above the previous run's results.
+    const runOptions = lastState && run && lastState.runId === run.runId ? lastState.options : null;
+    $('last-run-options').textContent = runOptionsText(runOptions, t);
     if (!run || !run.jobs) {
       tbody.innerHTML = `<tr><td colspan="4" class="muted">${escapeHtml(t('noRunYet'))}</td></tr>`;
       return;
@@ -1218,9 +1248,14 @@ async function refreshLastRun() {
       const errCode = !j.error
         ? ''
         : typeof j.error === 'string' ? j.error : (j.error.code || j.error.message || '');
+      // Name above id, exactly as the live job table above draws it, so the two
+      // tables of the same panel do not show the same book two different ways.
+      const bookCell = j.name
+        ? `<div>${escapeHtml(j.name)}</div><span class="muted text-xs mono">${escapeHtml(j.id)}</span>`
+        : escapeHtml(j.id);
       return `
       <tr>
-        <td class="mono">${escapeHtml(j.id)}</td>
+        <td class="mono">${bookCell}</td>
         <td class="num tabnum">${(j.events || 0).toLocaleString()}</td>
         <td class="num tabnum">${escapeHtml(fmtDuration(j.durationMs || 0) || '—')}</td>
         <td><span class="status ${escapeHtml(j.status)}">${escapeHtml(j.status)}</span>${errCode ? ` <span class="muted mono">${escapeHtml(errCode)}</span>` : ''}</td>
@@ -1368,6 +1403,47 @@ function schedulerScanDiff(saved, current) {
 }
 
 /**
+ * One scan-option value as prose: `da`/`nu` for a flag, otherwise itself.
+ *
+ * Shared by the two places a scan option reaches a line, because a flag drawn
+ * as `true` in one and as `yes` in the other is the same defect twice.
+ *
+ * @param {*} value
+ * @param {Function} t the translation lookup
+ * @returns {string}
+ */
+function formatScanValue(value, t) {
+  return typeof value === 'boolean' ? t(value ? 'yesShort' : 'noShort') : String(value);
+}
+
+/**
+ * What a run that already happened was told to collect, in the form's labels.
+ *
+ * The form shows what the NEXT run will use, so on its own it never answered
+ * "why did I get these opportunities" — the operator has changed the profile
+ * since, and nothing on the page recorded what the last one ran with. The
+ * stored copy has been on the scrape state since the state was written, read by
+ * nothing. Same nine fields and the same labels the scheduler's difference line
+ * uses, so the two cannot drift apart: a tenth option added there is drawn here
+ * too, and one added here is not a second list to rot.
+ *
+ * A field the stored copy does not carry is left out, not printed as
+ * `undefined`. The state file is written by whatever version last ran, and a
+ * missing field is a version behind, not a value.
+ *
+ * @param {object} options the scrape state's `options`, possibly absent
+ * @param {Function} t the translation lookup
+ * @returns {string} empty when there is nothing to say
+ */
+function runOptionsText(options, t) {
+  if (!options || typeof options !== 'object') return '';
+  const parts = SCHEDULER_SCAN_FIELDS
+    .filter(([field]) => options[field] !== undefined && options[field] !== null)
+    .map(([field, labelKey]) => `${t(labelKey)}: ${formatScanValue(options[field], t)}`);
+  return parts.join(' · ');
+}
+
+/**
  * A stored-vs-form difference, as one line.
  *
  * `includeLive` is the one field the live poll does not take from the form:
@@ -1379,10 +1455,9 @@ function schedulerScanDiff(saved, current) {
  */
 function scanDiffLine(saved, current, headlineKey) {
   const t = window.arbiterI18n.t.bind(window.arbiterI18n);
-  const show = (value) => (typeof value === 'boolean' ? t(value ? 'yesShort' : 'noShort') : String(value));
   const diff = schedulerScanDiff(saved, current);
   return diff.length
-    ? `${t(headlineKey)}: ${diff.map((d) => `${t(d.labelKey)} ${show(d.theirs)} → ${show(d.ours)}`).join(', ')}`
+    ? `${t(headlineKey)}: ${diff.map((d) => `${t(d.labelKey)} ${formatScanValue(d.theirs, t)} → ${formatScanValue(d.ours, t)}`).join(', ')}`
     : '';
 }
 

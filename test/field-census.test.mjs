@@ -11,9 +11,10 @@
  * that describe how a book is collected reached a page.
  *
  * Every number in the exempt list below was measured, not reasoned about, and the
- * measurement is in the reason. Where the measurement says a field cannot yet be
- * judged — which is one entry, and it is the interesting one — the reason says
- * that too rather than asserting a conclusion the data does not support.
+ * measurement is in the reason. Every entry carries one: this file used to hold
+ * a single blank, for the one field it could not judge, and that field is read
+ * now. The test that enforced the blank enforces the absence of one instead, so
+ * a new entry has to arrive with the measurement that justifies it.
  *
  * ── What this census can and cannot see ──────────────────────────────────────
  *
@@ -264,6 +265,65 @@ const stateReads = () => new Set(fieldsOn(scrapeCode, 'state'));
 const summaryReads = () => new Set(fieldsOn(scrapeCode, 'summary'));
 
 /**
+ * The field names the page's own scan-option table carries.
+ *
+ * Read out of `public/js/pages/scrape.js` rather than written down here, because
+ * this instrument's whole claim is that the page reads the options *through that
+ * table* — a hand-kept copy would let the two drift, and a drifted copy is the
+ * instrument lying about the page rather than the page going unread.
+ */
+function schedulerScanFields() {
+  const at = scrapeCode.indexOf('const SCHEDULER_SCAN_FIELDS = [');
+  if (at === -1) throw new Error('scrape.js no longer declares SCHEDULER_SCAN_FIELDS');
+  const body = scrapeCode.slice(at);
+  const end = body.indexOf('];');
+  if (end === -1) throw new Error('SCHEDULER_SCAN_FIELDS is no longer a top-level array literal');
+  const pairs = [...body.slice(0, end).matchAll(/\['(\w+)',\s*'(\w+)'\]/g)].map((m) => [m[1], m[2]]);
+  if (pairs.length < 5) throw new Error(`SCHEDULER_SCAN_FIELDS yielded ${pairs.length} pairs — the cut moved`);
+  return pairs;
+}
+
+const SCAN_FIELDS = schedulerScanFields();
+
+/**
+ * `/api/scrape/state`'s `options`: read through a computed index, which is the
+ * one shape `fieldsOn` cannot see.
+ *
+ * `fieldsOn` matches `state.<name>`, and the page reads the stored options as
+ * `options[field]` — `field` being the loop variable of the table above. There
+ * is no dotted read of `state.options.bankroll` anywhere, so the nine fields
+ * were unread to this census on a page that draws all nine. The instrument that
+ * fixed it is this one, and it is deliberately built to go quiet rather than to
+ * guess: a field counts as read only while four things hold at once — the panel
+ * still writes the line, the line's receiver is the state's own options, a
+ * function still walks the table indexing an options object by name, and what it
+ * walks comes back out. Drop the call and the first fails; rename the receiver
+ * and the second fails; gut the function and the third returns nothing; and the
+ * fourth is the one this file was wrong about first — computing the nine parts
+ * and returning an empty string leaves every marker above in place, so the
+ * census reported nine fields read by a page that renders nothing at all. The
+ * behavioural test caught it; the census did not, until the return was required.
+ *
+ * `sport` is in the page's table and not in the pinned list below, because no
+ * stored state carries it yet. The day one does, the comparison in `censusFor`
+ * fires on `options.sport` and the answer is already written down here: the page
+ * reads it.
+ */
+const optionsReads = () => {
+  const out = new Set();
+  const sink = /\btextContent\s*=\s*runOptionsText\(/.test(scrapeCode)
+    && /\$?\('last-run-options'\)/.test(scrapeCode);
+  const receiver = /\b(?:lastState|state)\??\.options\b/.test(scrapeCode);
+  if (!sink || !receiver) return out;
+  const indexer = functionWindow(scrapeCode, 'runOptionsText');
+  const walks = /SCHEDULER_SCAN_FIELDS/.test(indexer) && /\boptions\[field\]/.test(indexer);
+  if (walks && /return\s+parts\.join\(/.test(indexer)) {
+    for (const [field] of SCAN_FIELDS) out.add(field);
+  }
+  return out;
+};
+
+/**
  * `/api/profiles`, read through three bindings rather than one.
  *
  * `profileLabel` takes the row as `profile` and reads `d.includeLive` out of its
@@ -378,14 +438,15 @@ const WHY = {
     'the capture ids this field carries.',
   ].join(' '),
 
-  rowName: [
-    'On a run row, redundant with a label the page already holds: it resolves a row',
-    'through `scrapers.find(b => b.id === …)` and prints the name off the',
-    'GET /api/scrapers list, so a second copy of the same string arriving on the',
-    'row would be a second source for one label. The job\'s own `name` in',
-    'config/scrapers.json is read, and read as the chip text — which is why this',
-    'entry is scoped to the two run documents and does not cover the chip.',
-  ].join(' '),
+  // `name` is no longer on this list, and that is the list working. It was
+  // exempt twice, on both run documents, with a reason that said the row
+  // resolves its label through GET /api/scrapers. Then the panel gained a
+  // `bookCell` and both tables began drawing the name the row already carries —
+  // the live job table above the panel had been doing it all along, so the two
+  // halves of one panel were naming the same book two different ways. An
+  // exemption is a statement about today; the day a page starts reading the
+  // field, the statement is false and the entry has to go in the same commit as
+  // the read. The test below enforces that from the other side.
 
   // `label` was on this list once and the test below removed it, which is the
   // list working. It belongs to a category this table does not hold: the page
@@ -427,31 +488,42 @@ const WHY = {
     'and the fold that fills it has never produced an incomplete row to show.',
   ].join(' '),
 
-  options: [
-    'Read by nobody, and this is the one entry that cannot yet be judged. The',
-    'stored state records what a run used and no page renders it — but the tree',
-    'keeps no history: of the 10 documents data/scrape-run-*.json none carries an',
-    'options object, and a sweep of all 142 JSON documents under data/ found one',
-    'sample, this one. One sample cannot tell a field that varies from one that',
-    'does not, so no claim is made about whether it deserves a line. What is',
-    'certain is that the recorded parameters of a run started by the scheduler, by',
-    'a profile default or by another client are not shown anywhere.',
-  ].join(' '),
+  // `options` is no longer on this list, and the reason it used to carry is gone
+  // with it. That reason said the field could not be judged, because the tree
+  // keeps one sample of a run's parameters and one sample cannot tell a field
+  // that varies from one that does not. The judgeability was never the problem:
+  // the nine fields the form collects were on the page, on the state's `options`
+  // and on nothing in between. `runOptionsText` walks the same table
+  // `schedulerScanDiff` walks, in the form's own labels, so the panel above the
+  // last run's results now says what that run was looking for.
+  //
+  // It was also the only reason in this table that nothing referenced. The entry
+  // below had been blanked to keep it out of the exemption while the prose stayed
+  // here, so `WHY.options` was dead weight that still read like a live argument.
+  // An unreferenced reason is worse than none: the next author would have read it
+  // as the standing justification for the gap it describes.
 };
 
 /**
  * Published by these routes, read by no page, with the reason it is allowed.
  *
  * Every key is `route › field`, and the route is part of the key on purpose. A
- * bare field name would exempt that field on every route at once, and `name` is
- * the case that made the rule: the chip reads it and a run row does not, so a
- * global entry would have hidden a real regression in the chip behind a reason
- * written about the row. The test below checks the other direction — nothing here
- * may name a field its own route reads.
+ * bare field name would exempt that field on every route at once, and `valid` is
+ * the case that still makes the rule: `isFailedJob` reads it on a STATE job —
+ * that is what counts the failed jobs on the KPI card — while a RUN job's copy
+ * is a second word beside a status the page already draws. A global entry would
+ * have exempted the first behind a reason written about the second. The test
+ * below checks the other direction — nothing here may name a field its own route
+ * reads.
  *
  * A field or any of its ancestors may be named, so `oddsFeed` covers its twelve
- * leaves and `options` its eight without a list that says the same thing twelve
- * times over.
+ * leaves without a list that says the same thing twelve times over.
+ *
+ * Three entries left this table in this lot, and each one left it because a page
+ * started reading the field: `name` on both run documents (the `bookCell` both
+ * job tables draw) and `options` on `/api/scrape/state` (`runOptionsText`). The
+ * test that names those fields is the test that catches a stale entry, so a
+ * reason left behind is a failing test rather than a stale paragraph.
  */
 const UNREAD_BY_DESIGN = {
   [`${R_SCRAPERS_JOB} › feedStatus`]: WHY.constant,
@@ -464,11 +536,8 @@ const UNREAD_BY_DESIGN = {
   [`${R_SCRAPERS_ARRAYS} › experimentalJobs`]: WHY.filterArray,
   [`${R_STATE_JOB} › marketDiagnostics`]: WHY.marketDiagnostics,
   [`${R_STATE_JOB} › sourceIds`]: WHY.sourceIds,
-  [`${R_STATE_JOB} › name`]: WHY.rowName,
   [`${R_STATE_SUMMARY} › markets`]: WHY.markets,
-  [`${R_STATE_OPTIONS} › options`]: '',
   [`${R_RUN_JOB} › sourceIds`]: WHY.sourceIds,
-  [`${R_RUN_JOB} › name`]: WHY.rowName,
   [`${R_RUN_JOB} › valid`]: WHY.valid,
 };
 
@@ -494,7 +563,7 @@ const CENSUS = [
   },
   { label: R_PROFILES, published: keysOfRows(PROFILES.profiles), pinned: PROFILES_ROW, reads: profileReads },
   { label: R_STATE_JOB, published: keysOfRows(STATE.jobs), pinned: STATE_JOB, reads: () => stateReadSet },
-  { label: R_STATE_OPTIONS, published: Object.keys(STATE.options).map((k) => `options.${k}`).sort(), pinned: STATE_OPTIONS, reads: stateReads },
+  { label: R_STATE_OPTIONS, published: Object.keys(STATE.options).map((k) => `options.${k}`).sort(), pinned: STATE_OPTIONS, reads: optionsReads },
   { label: R_STATE_SUMMARY, published: Object.keys(STATE.summary).sort(), pinned: STATE_SUMMARY, reads: summaryReads },
   { label: R_RUN_JOB, published: keysOfRows(RUN.jobs), pinned: RUN_JOB, reads: runReads },
 ];
@@ -539,8 +608,8 @@ test('the scraper route still publishes what the census names', () => {
  * An exemption is a statement about today. The day a page starts reading one of
  * these, the statement is false, and a census that cannot notice has stopped
  * being an audit. This is why the entries are route-scoped rather than bare
- * names — `name` is read by the chip and unread by a run row, and only the scope
- * lets both be true at once.
+ * names — `valid` is read on a state job and exempt on a run job, and only the
+ * scope lets both be true at once.
  */
 test('no exemption names a field its own route reads', () => {
   for (const key of Object.keys(UNREAD_BY_DESIGN)) {
@@ -554,21 +623,39 @@ test('no exemption names a field its own route reads', () => {
 });
 
 /**
- * Every reason must be a real sentence about a measurement, and the one entry
- * that is deliberately blank must say so.
+ * Every entry carries a reason, and the reason is a measurement, not an opinion.
  *
- * `options` carries no reason on purpose: it is the field this census could not
- * judge, because the tree keeps one sample of a run's parameters and one sample
- * cannot distinguish a field that varies from one that does not. The blank is
- * checked from both sides so it cannot be a way to smuggle an unreasoned entry
- * past the test above.
+ * This file used to hold one deliberate blank — `options`, the field it could not
+ * judge — checked from both sides so the blank could not become a way to smuggle
+ * an unreasoned entry past the census above. The field is read now, so the blank
+ * went with it and nothing is excepted without a reason: an entry carrying none
+ * is a field nobody looked at, and it fails as loudly as an unread one.
+ *
+ * The second half is the part the census above cannot check, so it is checked
+ * here: a reason is only worth carrying if it contains a number or names a file
+ * to check against, and if it is an argument rather than a stub. "Nobody needs
+ * this" passes a `.trim()` and would have been allowed to stand in the place of
+ * the paragraph it replaced. The floor is 150 characters, which the shortest
+ * live reason (`platform`, 206) clears and a one-line excuse does not.
+ *
+ * Sharing a paragraph between entries is allowed and is not checked against:
+ * `WHY.sourceIds` covers three routes and `WHY.filterArray` two, because the
+ * claim is one claim about one field. What makes that safe is the route being
+ * part of the key — a shared paragraph cannot exempt a field nobody measured,
+ * because the census still asks whether the page reads it.
  */
-test('the unreasoned entry is the one the measurement could not settle', () => {
+test('no exemption is unreasoned, and every reason names what was measured', () => {
   const unreasoned = Object.keys(UNREAD_BY_DESIGN).filter((k) => !UNREAD_BY_DESIGN[k].trim());
-  assert.deepEqual(unreasoned, [`${R_STATE_OPTIONS} › options`],
-    'every other exemption must carry a written reason, and `options` is the one that cannot yet');
-  assert.match(UNREAD_BY_DESIGN[`${R_STATE_OPTIONS} › options`], /^$/,
-    'and the table must not grow a reason onto it without the measurement to back it');
+  assert.deepEqual(unreasoned, [], 'every exemption must carry a written reason');
+  const unreasonedProse = Object.entries(UNREAD_BY_DESIGN)
+    .filter(([, why]) => !/\d/.test(why) && !/[\w/]+\.(?:mjs|json|js)\b/.test(why))
+    .map(([k]) => k);
+  assert.deepEqual(unreasonedProse, [],
+    'these reasons assert a state of the world without naming a count or a file to check it against');
+  const stubs = Object.entries(UNREAD_BY_DESIGN)
+    .filter(([, why]) => why.length < 150)
+    .map(([k, why]) => `${k} (${why.length} chars)`);
+  assert.deepEqual(stubs, [], 'these reasons are stubs — a claim too short to be checkable is not a reason');
 });
 
 test('every field the page reads off a scrapers job is one the route publishes', () => {
@@ -648,6 +735,22 @@ test('the census instruments are the ones they claim to be', () => {
     'a state-only field reached the scrapers read set — the gates were not cut');
   assert.ok(stateReadSet.has('summary') && !stateReads().has('options'),
     'the state receiver separates summary from options, which is the finding');
+  // …and the reason that cut is still the right one: `options` is read through a
+  // computed index, so the state receiver cannot see it, and the instrument below
+  // has to see it on its own. These two controls together are what make the
+  // options census honest — one proves the fields are not visible to `fieldsOn`,
+  // the other proves they are visible to `optionsReads`, so the eight cannot be
+  // unread on both counts at once. An instrument that reported zero would pass
+  // the census by making the page look blind.
+  assert.ok(!stateReads().has('bankroll') && optionsReads().has('bankroll'),
+    'the options fields are unread to fieldsOn and read to optionsReads — both halves hold');
+  assert.equal(optionsReads().size, SCAN_FIELDS.length,
+    `optionsReads reported ${optionsReads().size} of ${SCAN_FIELDS.length} table fields — the gate moved`);
+  assert.ok(optionsReads().has('sport') && STATE_OPTIONS.every((k) => !k.endsWith('.sport')),
+    'the table carries sport and no stored state does yet — the canary above is what catches that day');
+  assert.ok(!fieldsOn(scrapeCode, 'state').includes('options')
+    && /\blastState\??\.options\b/.test(scrapeCode),
+    'and the page reads the state document\'s options through its module binding, not a dotted `state.` read');
   assert.ok(profileReads().has('description'),
     'the profile receiver sees the description the hint now reads');
   // `label` is read, so it is not an exempt field and is not in the table above.

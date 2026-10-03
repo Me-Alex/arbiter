@@ -270,6 +270,18 @@
   color: var(--sl-text-faint);
 }
 
+/* A panel head carrying more than one note: the notes stack, right-aligned,
+   so a long second line wraps under the first instead of stretching the head
+   and pushing the title out of the panel. */
+.sl-panel-notes {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  text-align: right;
+  min-width: 0;
+}
+
 .sl-panel-tools {
   display: flex;
   align-items: center;

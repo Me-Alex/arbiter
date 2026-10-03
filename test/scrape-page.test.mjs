@@ -1705,6 +1705,153 @@ test('the summary card has one writer, and the last-run panel is not it', async 
     'the last-run panel wrote to a card whose numbers it has no source for');
 });
 
+// ---- what the last run was told to collect ---------------------------------
+
+/** The options a real run stored, copied off data/scrape-state.json. */
+const RUN_OPTIONS = {
+  bankroll: 1000,
+  minRoiPercent: 0,
+  minEvPercent: 2,
+  maxMiddleRiskPercent: 15,
+  minMiddleRoiPercent: 20,
+  includeLive: false,
+  includePast: false,
+  maxEvents: 'all',
+};
+
+/**
+ * The last-run panel's options line, from a state document and a run report.
+ *
+ * Two documents because that is where the fields are: `options` is on
+ * `/api/scrape/state` (scrape-orchestrator.mjs:175) and not on
+ * `/api/scrape-run`, whose persisted top level is runId, startedAt,
+ * finishedAt, status and jobs (shared/sanitize.mjs:60). The first version of
+ * this fixture put `options` on the report and every assertion in it passed on
+ * a panel that renders an empty line on every real load — the fixture was
+ * correcting the defect instead of reproducing it.
+ *
+ * The state is bound through `renderState` rather than assigned to `lastState`
+ * by hand, so the line is read the way the page reads it: off the binding the
+ * page itself keeps.
+ */
+const optionsLine = async (lang, { state, run = RUN } = {}) => {
+  const h = harness(lang, { api: { get: async (url) => (url === '/api/scrape-run' ? run : {}) } });
+  h.run("$('last-run-options')");
+  const bound = state ?? { runId: RUN.runId, status: 'completed', summary: {}, jobs: [], options: RUN_OPTIONS };
+  await h.run(`renderState(${JSON.stringify(bound)})`);
+  await h.run('refreshLastRun()');
+  return h.nodes.get('last-run-options').textContent;
+};
+
+test('the last-run panel says what that run was told to collect', async () => {
+  // `options` has been on the state since the state was written, read by
+  // nothing. The form above shows what the NEXT run will use, so the panel
+  // could say a run happened and never what it was looking for — and after a
+  // profile switch those are different answers to the same question.
+  const line = await optionsLine('en');
+  assert.match(line, new RegExp(`^${DICTS.en.t('bankroll')}: 1000 · `), 'the bankroll it ran with');
+  assert.match(line, new RegExp(`${DICTS.en.t('minRoi')}: 0`), 'and the thresholds, including a zero that is a value');
+  assert.match(line, new RegExp(`${DICTS.en.t('includeLive')}: ${DICTS.en.t('noShort')}`), 'and a flag as a word, not as false');
+  assert.match(line, new RegExp(`${DICTS.en.t('eventCollection')}: all`), 'and the collection scope');
+  assert.doesNotMatch(line, /undefined|NaN/, 'nothing undefined reaches the line');
+
+  // The same nine fields and the same labels the scheduler's difference line
+  // draws, so a tenth option cannot appear in one panel and not the other.
+  assert.equal(line.split(' · ').length, Object.keys(RUN_OPTIONS).length,
+    'one part per stored option, and no empty part between them');
+
+  // And in the reader's language, because this is prose on a panel.
+  assert.match(await optionsLine('ro'), new RegExp(`^${DICTS.ro.t('bankroll')}: 1000 · `));
+});
+
+test('the options line belongs to the run the panel is showing', async () => {
+  // Measured on the stored pair: data/scrape-state.json and
+  // data/latest-scrape-run.json both carry 2026-09-30T10:36:13.440Z, so when
+  // the page is idle the two documents describe one run and the options below
+  // are that run's.
+  //
+  // A page opened while a run is in flight does not have that. The state is
+  // replaced at launch (scrape-orchestrator.mjs:170) while the report on disk is
+  // still the previous run's until the pipeline persists a new one at :303 — so
+  // the state describes a run that has not finished, over a table of results
+  // from the one that has. Printing those options there would attribute one
+  // run's search to another's results, which is worse than printing nothing.
+  assert.match(await optionsLine('en', {
+    state: { runId: 'next-run', status: 'running', summary: {}, jobs: [], options: RUN_OPTIONS },
+    run: RUN,
+  }), /^$/, 'options of a run in flight must not sit above the previous run\'s results');
+
+  // And the other direction, so the gate is not simply closed: the same state
+  // against its own report still draws.
+  assert.match(await optionsLine('en', {
+    state: { runId: RUN.runId, status: 'completed', summary: {}, jobs: [], options: RUN_OPTIONS },
+    run: RUN,
+  }), new RegExp(`^${DICTS.en.t('bankroll')}: 1000`), 'the same two documents, naming the same run');
+
+  // A machine with no report at all gets the route's `{ jobs: [] }` fallback,
+  // which has no runId — so there is no run to attribute options to.
+  assert.match(await optionsLine('en', { state: null, run: { jobs: [] } }), /^$/,
+    'the fallback report names no run, so the panel attributes nothing');
+});
+
+test('a run that stored nothing to collect says nothing', async () => {
+  // A state written before `options` existed carries none, and a stored copy
+  // missing one field is a version behind, not a value to print.
+  const bare = (options) => optionsLine('en', {
+    state: { runId: RUN.runId, status: 'completed', summary: {}, jobs: [], options },
+    run: RUN,
+  });
+  assert.equal(await bare(undefined), '', 'no options, no line');
+  assert.equal(await bare('not-an-object'), '');
+  assert.equal(await bare({ bankroll: 1000 }), `${DICTS.en.t('bankroll')}: 1000`,
+    'the one field it has, and no dangling separator');
+});
+
+// ---- the last-run table names its books ------------------------------------
+
+const lastRunRows = async (lang, jobs) => {
+  const h = harness(lang, { api: { get: async () => ({ ...RUN, jobs }) } });
+  await h.run('refreshLastRun()');
+  return h.nodes.get('last-run-table').innerHTML;
+};
+
+test('the last-run table names the book and keeps the id under it', async () => {
+  // Every other surface on this page names its books — the chips, the
+  // scheduler's list, the live poll's list. This table was the one place the
+  // operator had to read a slug and remember what it was, while `name` sat
+  // unread in the same payload as the id it was printing.
+  const rows = await lastRunRows('en', [
+    { id: 'superbet', name: 'Superbet', valid: true, status: 'ok', events: 3069, durationMs: 1683, error: null },
+  ]);
+  assert.match(rows, /Superbet/, 'the name the book goes by');
+  assert.match(rows, /superbet/, 'and the id, which identifies it across books');
+  // The pair is ordered: name first, id underneath, because the id is the
+  // secondary label here — the same shape the analytics catalog draws.
+  assert.match(rows, /Superbet<\/div><span class="muted text-xs mono">superbet<\/span>/);
+
+  // A job with no name still draws its id, rather than an empty cell that
+  // reads as a row the page could not render.
+  const nameless = await lastRunRows('en', [
+    { id: 'winner', valid: false, status: 'failed', events: 0, durationMs: 12, error: 'timeout' },
+  ]);
+  assert.match(nameless, /winner/, 'the id is not lost when the name is missing');
+  assert.doesNotMatch(nameless, /muted text-xs mono/, 'and no empty second line is drawn in its place');
+});
+
+test('the last-run table\'s first column is labelled as books, not as the run', () => {
+  // The header has read `runId` over a column that has always held one book
+  // per row, while the run's own id is in the note above the table. Read by
+  // anyone scanning the table, it says the opposite of what the column is.
+  const table = scrapeHtml.slice(scrapeHtml.indexOf('id="last-run-table"') - 400);
+  const head = table.slice(0, table.indexOf('<tbody'));
+  const first = head.match(/<th[^>]*data-i18n="([^"]+)"/);
+  assert.ok(first, 'the last-run table has a labelled first column');
+  assert.equal(first[1], 'bookmaker', 'and it is labelled as the book column');
+  // The key it now uses has to exist in both languages, or the header renders
+  // as its own name in one of them.
+  for (const lang of ['ro', 'en']) assert.notEqual(DICTS[lang].t('bookmaker'), 'bookmaker', `${lang} names the book column`);
+});
+
 test('the note shows the run id itself, because a Text node is not an HTML parser', async () => {
   // Measured rather than assumed. In a real browser (playwright's chromium,
   // with common.js:23's escaper copied verbatim) `textContent =
