@@ -521,6 +521,17 @@
   border-color: var(--sl-warn-line);
 }
 
+/* `cancelled` is neither a success nor a failure: the run was cut short. It is
+   the same wash `pending` takes here and the same one theme.css gives `partial`,
+   `skipped` and `timeout`, and it was in neither file — so a cancelled run, and
+   every cancelled book row this table prints, has been rendering as a pill with
+   no background and no colour of its own. */
+.status.cancelled {
+  background: var(--sl-warn-wash);
+  color: var(--sl-warn);
+  border-color: var(--sl-warn-line);
+}
+
 /* ── Alert ─────────────────────────────────────────────────────────────── */
 
 .sl-alert {

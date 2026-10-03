@@ -315,7 +315,24 @@ export function objectEntries(src, marker, isJs = true) {
     if (!found && n.type === 'ObjectExpression' && n.range[0] === braceAt) found = n;
   });
   if (!found) throw new Error(`no object literal opens at the brace ${marker} names`);
+  return entriesOf(src, found);
+}
 
+/**
+ * The properties of one object literal, in source order.
+ *
+ * Shared by the two instruments that read literals so that "which keys does this
+ * object have" is answered by one piece of code. Two copies of this loop existed
+ * for a few minutes while the second instrument was written; the thing they both
+ * have to get right — that a spread, a computed key and a nested object are not
+ * keys of the object being asked about — is exactly the kind of detail that goes
+ * stale in a copy.
+ *
+ * @param {string} src
+ * @param {object} found an ObjectExpression node
+ * @returns {{key: string, value: string, literal: boolean}[]}
+ */
+function entriesOf(src, found) {
   const keyName = (p) => {
     if (p.key.type === 'Identifier') return p.key.name;
     if (p.key.type === 'Literal' && typeof p.key.value === 'string') return p.key.value;
@@ -331,6 +348,81 @@ export function objectEntries(src, marker, isJs = true) {
       literal: p.value.type === 'Literal',
     }];
   });
+}
+
+/**
+ * Every object literal in a file that carries a given key, with all of its keys.
+ *
+ * `objectEntries` answers "which keys does THIS literal have", and a field
+ * census needs the question one level up: "everywhere the producer writes this
+ * key, what does it put beside it?" That is what turns a sentence like "`valid`
+ * is true exactly when the status the page prints is `ok`" from a claim about
+ * the code into a measurement of it — and it is what makes the sentence expire
+ * instead of quietly becoming false when a producer starts pairing them
+ * differently.
+ *
+ * Derived from the tree, like everything else here: nesting is the parser's
+ * job, so the `valid: false` inside a method body is found on its own literal
+ * rather than as a line of its own, and a commented-out `valid:` is not found at
+ * all.
+ *
+ * @param {string} src whole source file
+ * @param {string} key a plain key name
+ * @param {boolean} [isJs]
+ * @returns {{line: number, entries: {key: string, value: string, literal: boolean}[]}[]}
+ */
+export function objectsWithKey(src, key, isJs = true) {
+  if (!/^\w+$/.test(key)) throw new Error(`key must be an identifier, got ${key}`);
+  const out = [];
+  visit(parseAny(src, isJs), (n) => {
+    if (n.type !== 'ObjectExpression') return;
+    const entries = entriesOf(src, n);
+    if (!entries.some((e) => e.key === key)) return;
+    out.push({ line: n.loc.start.line, entries });
+  });
+  return out;
+}
+
+/**
+ * One named function, cut out of a source file, with the span it occupies.
+ *
+ * A census of a payload's reader has to ask about one function and not about the
+ * file that happens to contain it. `run` is a common name: measured over
+ * public/js/pages/scrape.js, twenty-two reads of `run.*` and `j.*` sit outside
+ * `refreshLastRun`, every one of them on a different payload's jobs — so a
+ * census that scanned the file would answer with the union of the two and report
+ * fields as read that this route does not publish.
+ *
+ * The span comes back too, because a line number has to be one a human can go
+ * and look at and the tree's own line numbers belong to the fragment: measured
+ * while writing that test, `loc` from the extracted text said line 5 where the
+ * file says 158.
+ *
+ * Sliced by the node's own range rather than by counting braces. A brace counter
+ * does not know about a brace inside a string, a template literal or a regular
+ * expression, and the hand-written scanner in api-surface that did it that way
+ * blanked the rest of a 700-line file over one backtick.
+ *
+ * @param {string} src whole source file
+ * @param {string} name the function's own name
+ * @param {boolean} [isJs]
+ * @returns {{text: string, line: number, endLine: number}}
+ * @throws when no function declaration of that name is in the file — a census
+ *   over an empty fragment reports every published field as unread, which is the
+ *   one answer this instrument must not be able to give.
+ */
+export function functionSource(src, name, isJs = true) {
+  if (!/^\w+$/.test(name)) throw new Error(`function name must be an identifier, got ${name}`);
+  let found = null;
+  visit(parseAny(src, isJs), (n) => {
+    if (!found && n.type === 'FunctionDeclaration' && n.id && n.id.name === name) found = n;
+  });
+  if (!found) throw new Error(`no function declaration named ${name} is in this source`);
+  return {
+    text: src.slice(found.range[0], found.range[1]),
+    line: found.loc.start.line,
+    endLine: found.loc.end.line,
+  };
 }
 
 /**

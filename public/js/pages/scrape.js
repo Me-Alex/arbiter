@@ -1231,6 +1231,38 @@ async function refreshScanSummary() {
   } catch (_e) { /* ignore */ }
 }
 
+/**
+ * The last run's own verdict, in the pill the job rows already use.
+ *
+ * The payload's value goes into the class and the reader's word goes on screen,
+ * and the set of values is closed — `cancelled | ok | failed | partial`, decided
+ * in one ternary at src/scraper-service.mjs:144 — so this map is the whole of
+ * what can arrive and anything else prints nothing. That includes the document
+ * the route serves on a machine that has never scraped, `{ jobs: [] }`, which
+ * carries no status at all: an absent verdict is an honest blank panel head, and
+ * an empty pill or the word `undefined` would be neither.
+ *
+ * All four words are the dictionary's and all four are already there in both
+ * languages (`completed`, `failed`, `completedWithErrors`, `cancelled`), which
+ * is the family the status column uses — so the run reads beside its own rows
+ * in one vocabulary instead of two.
+ */
+const VERDICT_WORDS = {
+  ok: 'completed',
+  failed: 'failed',
+  partial: 'completedWithErrors',
+  cancelled: 'cancelled',
+};
+
+function runVerdictHtml(status, t) {
+  // `Object.hasOwn` and not a truthiness test, because the status is a string
+  // out of a file on disk: on a bare object literal `VERDICT_WORDS
+  // ['constructor']` is Object's own constructor, which is truthy, and it would
+  // then be handed to the dictionary as though it were a key.
+  if (!Object.hasOwn(VERDICT_WORDS, status)) return '';
+  return `<span class="status ${status}">${escapeHtml(t(VERDICT_WORDS[status]))}</span>`;
+}
+
 async function refreshLastRun() {
   try {
     const t = window.arbiterI18n.t.bind(window.arbiterI18n);
@@ -1269,6 +1301,23 @@ async function refreshLastRun() {
       if (finished) parts.push(`${t('finishedLabel')}: ${finished}`);
       when.textContent = parts.join(' · ');
     }
+    // How the run went, which the rows below cannot always say. `status` is on
+    // the payload — sanitizeReport's top level is runId, startedAt, finishedAt,
+    // status and jobs (src/shared/sanitize.mjs:60) — and refreshLastRun was the
+    // only reader of the route, so it was published to this panel and dropped.
+    //
+    // Three of its four values are arithmetic on the statuses the table already
+    // prints: `ok` is no failing row, `failed` no successful one, `partial` a
+    // mix. `cancelled` is not, because it is decided from the abort signal alone
+    // (src/scraper-service.mjs:144) and not from the jobs — so a run cut short
+    // after its last book answered leaves a full column of green rows under a
+    // heading that says the run went fine. The page's only other word on the
+    // subject was the toast on the cancel button (line 1710), which a reload
+    // erases, and the orchestrator's terminal state cannot cover for it either:
+    // resolveTerminalStatus returns completed, completed-with-errors or failed,
+    // and has no cancelled among them (src/scrape-orchestrator.mjs:481).
+    const verdict = $('last-run-verdict');
+    if (verdict) verdict.innerHTML = runVerdictHtml(run && run.status, t);
     // What this run was told to collect. `options` has been on the STATE
     // document since the state was written (src/scrape-orchestrator.mjs:175,
     // `options: scanOptions`) and was read by nothing, so the page could say a
@@ -1296,9 +1345,29 @@ async function refreshLastRun() {
     }
     tbody.innerHTML = run.jobs.map((j) => {
       // Same shape question as refreshJobRows: the error may be a string.
-      const errCode = !j.error
+      //
+      // The class, then the text, and both in the backend's own words — a class
+      // name and a sentence, like `reason` and `lastError.message` further down,
+      // so neither is translated. `name` is on the payload (sanitizeReport keeps
+      // it, src/shared/sanitize.mjs:75) and nothing here read it, and it is not
+      // decoration: measured over the 31 UpstreamError sites under src/scrapers,
+      // a good share of the messages do not say what KIND of failure they were.
+      // `everymatrix-wamp: ws error` and `Altenar: no readable container among
+      // 5 probed` name neither an unreachable book nor an unusable feed, so the
+      // row could not tell a transport problem from a data problem.
+      //
+      // `code` used to be tried first here and could never fire: _shapeError
+      // builds it (src/scrapers/base.mjs:331) and sanitizeReport keeps only
+      // name, message and field, so this route has never served one. Reading it
+      // first meant the row printed a key the reader was told to expect and
+      // never got. refreshJobRows keeps `|| j.error.code` and is right to keep
+      // it — `sanitizeResult`, the sanitizer behind that table's payload, does
+      // publish it (src/shared/sanitize.mjs:52). Two payloads, two rules; the
+      // difference is which sanitizer ran, not a preference.
+      const errText = !j.error
         ? ''
-        : typeof j.error === 'string' ? j.error : (j.error.code || j.error.message || '');
+        : typeof j.error === 'string' ? j.error
+          : [j.error.name, j.error.message].filter(Boolean).join(': ');
       // Name above id, exactly as the live job table above draws it, so the two
       // tables of the same panel do not show the same book two different ways.
       const bookCell = j.name
@@ -1309,7 +1378,7 @@ async function refreshLastRun() {
         <td class="mono">${bookCell}</td>
         <td class="num tabnum">${(j.events || 0).toLocaleString()}</td>
         <td class="num tabnum">${escapeHtml(fmtDuration(j.durationMs || 0) || '—')}</td>
-        <td><span class="status ${escapeHtml(j.status)}">${escapeHtml(j.status)}</span>${errCode ? ` <span class="muted mono">${escapeHtml(errCode)}</span>` : ''}</td>
+        <td><span class="status ${escapeHtml(j.status)}">${escapeHtml(j.status)}</span>${errText ? ` <span class="muted mono">${escapeHtml(errText)}</span>` : ''}</td>
       </tr>`;
     }).join('');
     // This panel does not write the scan summary card, and the reason is a

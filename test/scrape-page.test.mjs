@@ -22,7 +22,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import vm from 'node:vm';
 import { buildRouter } from '../src/router.mjs';
-import { codeOnly } from './helpers/code-only.mjs';
+import { codeOnly, functionSource, guardedPropertyReads, objectEntries, objectKeys, objectsWithKey } from './helpers/code-only.mjs';
 
 const scrapeSource = readFileSync(new URL('../public/js/pages/scrape.js', import.meta.url), 'utf8');
 const commonSource = readFileSync(new URL('../public/js/pages/common.js', import.meta.url), 'utf8');
@@ -2189,6 +2189,298 @@ test('the note shows the run id itself, because a Text node is not an HTML parse
   // rewrite that ampersand.
   assert.equal(harness('en').run("escapeHtml('run&7')"), 'run&amp;7',
     'the escaper this page shares is live and would have escaped it');
+});
+
+// ---- the field census of GET /api/scrape-run ---------------------------------
+
+/**
+ * What the route publishes, level by level, and what its one consumer reads.
+ *
+ * `GET /api/scrape-run` is the whole persisted run report (router.mjs:62) and
+ * refreshLastRun is the only function in public/ or electron/ that asks for it —
+ * measured, not assumed: one mention of the path in the whole frontend. So this
+ * is a census with a single reader, which makes it the cleanest one in the tree:
+ * three levels, no aliases, and every key either read or excused with a
+ * measurement that a test below re-takes.
+ *
+ * The three levels are kept apart because two of them publish `status`: the
+ * document's verdict and a book's verdict are different facts that happen to
+ * share a name, and the first version of the probe that measured this merged
+ * them into one dictionary and reported the document's `status` as read — the
+ * read it had found was `j.status`, thirty lines further down. An instrument
+ * that cannot tell two levels apart answers a question nobody asked.
+ */
+const sanitizeSource = readFileSync(new URL('../src/shared/sanitize.mjs', import.meta.url), 'utf8');
+const baseSource = readFileSync(new URL('../src/scrapers/base.mjs', import.meta.url), 'utf8');
+const serviceSource = readFileSync(new URL('../src/scraper-service.mjs', import.meta.url), 'utf8');
+
+const RUN_LEVELS = {
+  document: objectEntries(sanitizeSource, 'return {'),
+  job: objectEntries(sanitizeSource, 'jobs: Array.isArray(report.jobs) ? report.jobs.map((j) => ({'),
+  'job error': objectEntries(sanitizeSource, 'error: j.error ? {'),
+};
+
+/** The reader, cut out of the page, with the span it occupies in the file. */
+const lastRun = functionSource(scrapeSource, 'refreshLastRun');
+
+/** The keys one receiver reads inside it. Comments cannot be counted. */
+const readOn = (receiver) => new Set(guardedPropertyReads(lastRun.text, [receiver]).map((r) => r.key));
+
+const RUN_READS = {
+  document: readOn('run'),
+  job: readOn('j'),
+  'job error': readOn('j.error'),
+};
+
+/** Every published key this consumer does not read, as `level.key`. */
+const unreadOf = (level) => RUN_LEVELS[level].map((e) => e.key).filter((k) => !RUN_READS[level].has(k));
+const UNREAD = Object.keys(RUN_LEVELS).flatMap((level) => unreadOf(level).map((k) => `${level}.${k}`));
+
+/** The verdicts the page knows, read out of the page rather than listed here. */
+const VERDICT_WORDS_IN_PAGE = objectKeys(scrapeSource, 'const VERDICT_WORDS = {');
+
+/**
+ * The excuses, and the measurement each one rests on.
+ *
+ * An excuse is a proposition with a number in it, and the number is taken again
+ * by the test that follows it — so an excuse expires loudly rather than quietly
+ * becoming false. All three are about the payload carrying a fact the page
+ * already has by another road, which is the only kind of unread field this repo
+ * has ever been willing to keep.
+ */
+const EXCUSED = [
+  {
+    at: 'job.sourceIds',
+    why: 'on every registered job it is the job\'s own id, and the row prints the id',
+  },
+  {
+    at: 'job.valid',
+    why: 'true exactly where the status the row already prints is "ok"',
+  },
+  {
+    at: 'job error.field',
+    why: 'a path into an event object, and this panel has no surface to follow it',
+  },
+];
+const excuseFor = new Map(EXCUSED.map((e) => [e.at, e]));
+
+test('every field the run report publishes is read by the page or excused with a measurement', () => {
+  // The liveness guard comes FIRST, and it is first for a measured reason: with
+  // the reader blind — every read set empty — all sixteen fields read as unread,
+  // so the orphan check below fires and this one never does. Written in the other
+  // order it is a test that cannot fail, which is the thing it exists to catch;
+  // a mutation that emptied `functionSource`'s text escaped on exactly that.
+  for (const level of Object.keys(RUN_LEVELS)) {
+    assert.ok(RUN_READS[level].size > 0, `${level}: nothing was read, so this census cannot see anything`);
+  }
+  const orphan = UNREAD.filter((at) => !excuseFor.has(at));
+  assert.deepEqual(orphan, [],
+    'a published field is unread and nobody has said why, or an excuse is left over from a field that is now read');
+  assert.deepEqual(UNREAD.filter((at) => excuseFor.get(at).why.length < 20), [],
+    'an excuse without a measurement in it is a shrug');
+  // And the census is only worth the lines above if both halves of it are
+  // non-empty, which is said out loud here rather than left to a reader of the
+  // lists: sixteen fields, thirteen read, three excused.
+  assert.equal(Object.values(RUN_LEVELS).flat().length, 16, 'the report has not been re-measured');
+});
+
+test('every key the page reads off this route is one the route publishes', () => {
+  // The other direction, and the one that earns its keep here: `refreshLastRun`
+  // read `j.error.code` first, in a chain that could only ever fall through to
+  // the message. _shapeError builds a code (base.mjs:331) and sanitizeReport
+  // keeps name, message and field, so no report this route has ever served
+  // carried one — a read of a field that does not exist, written as though it
+  // did. The census below is what makes that visible: published keys are checked
+  // against reads, and a read with nothing published behind it has to be named.
+  for (const level of Object.keys(RUN_LEVELS)) {
+    const published = RUN_LEVELS[level].map((e) => e.key);
+    const read_ = [...RUN_READS[level]].sort();
+    assert.deepEqual(read_.filter((k) => !published.includes(k)), [],
+      `${level}: the page reads a key the route cannot serve`);
+  }
+  // The measured reason the chain above was wrong, re-taken from the two
+  // sanitizers rather than asserted: the state table's payload keeps `code` and
+  // this one does not, so the two readers are allowed to disagree.
+  const runErrorKeys = objectKeys(sanitizeSource, 'error: j.error ? {');
+  const resultKeys = objectKeys(sanitizeSource, 'out.error = {');
+  assert.ok(!runErrorKeys.includes('code'), 'the run report publishes no code');
+  assert.ok(resultKeys.includes('code'), 'and the result shape does — which is why refreshJobRows keeps it');
+});
+
+test('sourceIds is excused, and the excuse is re-measured over the registry', () => {
+  // Read, not copied: config/scrapers.json is the document the registry is
+  // loaded from, so a scraper declared with two sources fails this test instead
+  // of leaving the sentence below quietly untrue.
+  const registry = JSON.parse(readFileSync(new URL('../config/scrapers.json', import.meta.url), 'utf8'));
+  const jobs = registry.jobs;
+  assert.ok(Array.isArray(jobs) && jobs.length > 0, 'the registry is a list of jobs under .jobs');
+  const disagreeing = jobs.filter((j) => !Array.isArray(j.sourceIds)
+    || j.sourceIds.length !== 1
+    || j.sourceIds[0] !== j.id);
+  assert.deepEqual(disagreeing.map((j) => j.id), [],
+    'the excuse has expired: a job now declares sources other than its own id, so the row needs them');
+  assert.ok(RUN_READS.job.has('id'), 'and the row does print the id the excuse relies on');
+});
+
+test('valid is excused: it is true exactly where the printed status is "ok"', () => {
+  // Both producers, taken from the tree: every object literal in either file
+  // that carries `valid`, with the status it sits beside. Ten of them, measured.
+  const sites = [baseSource, serviceSource]
+    .flatMap((src) => objectsWithKey(src, 'valid'))
+    .map(({ line, entries }) => ({
+      line,
+      valid: (entries.find((e) => e.key === 'valid') || {}).value,
+      status: (entries.find((e) => e.key === 'status') || {}).value,
+    }));
+  assert.equal(sites.length, 10, 'the producers of a job verdict have been re-measured');
+  assert.deepEqual(sites.filter((s) => s.valid === 'true' && s.status !== "'ok'"), [],
+    'a producer now sets valid true beside some other status');
+  assert.deepEqual(sites.filter((s) => s.status === "'ok'" && s.valid !== 'true'), [],
+    'a producer now reports "ok" beside something other than a true valid');
+  assert.ok(RUN_READS.job.has('status'), 'and the status is the one the row prints');
+});
+
+test('field is excused: this panel has no surface a path into an event could point at', () => {
+  // The excuse is about the page, so the measurement is of the page. `field` is
+  // a path — "id", "eventKey", "markets.selections.odds", all three measured off
+  // base.mjs — and a path is worth printing where a reader can follow it. Here
+  // the table has a book, a count, a duration and a verdict, and the markup has
+  // no node anywhere that draws a single event, so the path would be a word
+  // about an object nothing on the page holds.
+  const origins = objectsWithKey(baseSource, 'field')
+    .filter(({ entries }) => entries.length === 1)
+    .map(({ entries }) => entries[0].value);
+  assert.deepEqual(origins.sort(), ["'eventKey'", "'id'", "'markets.selections.odds'"],
+    'the paths a validation failure can name have been re-measured');
+  // The panel's own head, taken as the table element that ends at this tbody —
+  // the columns are above the tbody in the markup, so a window opened at the
+  // tbody counts none of them, which is the kind of zero that reads as a
+  // measurement.
+  const tbodyAt = scrapeHtml.indexOf('id="last-run-table"');
+  const head = scrapeHtml.slice(scrapeHtml.lastIndexOf('<table', tbodyAt), tbodyAt);
+  assert.equal((head.match(/<th\b/g) || []).length, 4, 'the last-run table still has its four columns');
+  assert.doesNotMatch(scrapeHtml, /\bevent-(row|detail|drawer|panel)\b/,
+    'the excuse has expired: this page now draws single events, so a path into one is worth printing');
+});
+
+test('the run\'s own verdict is a pill, in the reader\'s language', async () => {
+  // Four values, all of them real: `cancelled | ok | failed | partial`, decided
+  // in one ternary that the route serves verbatim, taken here off that ternary
+  // rather than retyped — so a fifth value the backend starts writing has to be
+  // added here on purpose or not at all.
+  const reportStatus = objectEntries(serviceSource, 'const report = {').find((e) => e.key === 'status').value;
+  const produced = [...new Set([...reportStatus.matchAll(/'([a-z-]+)'/g)].map((m) => m[1]))];
+  const handled = [...VERDICT_WORDS_IN_PAGE];
+  assert.deepEqual(handled.sort(), produced.sort(),
+    'the page must handle exactly the verdicts the producer can write');
+
+  const forStatus = async (lang, status) => {
+    const h = harness(lang, { api: { get: async () => ({ ...RUN, status }) } });
+    await h.run('refreshLastRun()');
+    return h.nodes.get('last-run-verdict').innerHTML;
+  };
+  assert.equal(await forStatus('en', 'ok'), '<span class="status ok">Completed</span>');
+  assert.equal(await forStatus('ro', 'ok'), '<span class="status ok">Complet</span>');
+  assert.equal(await forStatus('en', 'failed'), '<span class="status failed">Failed</span>');
+  assert.equal(await forStatus('en', 'partial'), '<span class="status partial">Completed w/ errors</span>');
+  assert.equal(await forStatus('ro', 'cancelled'), '<span class="status cancelled">Anulat</span>');
+});
+
+test('a run cut short after every book succeeded is not reported as a clean one', async () => {
+  // The measurement that made this worth connecting, as a positive that differs
+  // from the negative in one condition only. `cancelled` comes from the abort
+  // signal and not from the jobs, so all-green rows are exactly the case the
+  // table cannot speak for; before this the panel said nothing at all.
+  const allGreen = { status: 'ok', jobs: [{ id: 'favbet', name: 'Favbet', status: 'ok', events: 1200, durationMs: 4100, error: null }] };
+  const h = harness('en', { api: { get: async () => ({ ...RUN, ...allGreen, status: 'cancelled' }) } });
+  await h.run('refreshLastRun()');
+  assert.match(h.nodes.get('last-run-verdict').innerHTML, /class="status cancelled">Cancelled</,
+    'the run is named as cut short');
+  assert.doesNotMatch(h.nodes.get('last-run-table').innerHTML, /cancelled/,
+    'while the row itself is green, which is why the note has to carry it');
+
+  // The same document one condition the other way: nothing green is claimed.
+  const h2 = harness('en', { api: { get: async () => ({ ...RUN, ...allGreen, status: 'ok' }) } });
+  await h2.run('refreshLastRun()');
+  assert.match(h2.nodes.get('last-run-verdict').innerHTML, /class="status ok">Completed</);
+});
+
+test('a machine that has never scraped shows no verdict, rather than an empty one', async () => {
+  // The route's fallback is `{ jobs: [] }` — a document with no status on it at
+  // all. The panel head must be empty there, not a pill with nothing in it and
+  // not the word `undefined`.
+  const h = harness('en', { api: { get: async () => ({ jobs: [] }) } });
+  await h.run('refreshLastRun()');
+  assert.equal(h.nodes.get('last-run-verdict').innerHTML, '');
+  assert.equal(h.nodes.get('last-run-when').textContent, '');
+  // And a value nobody wrote cannot walk past the map: the status is a string
+  // out of a file on disk.
+  const odd = harness('en', { api: { get: async () => ({ ...RUN, status: 'constructor' }) } });
+  await odd.run('refreshLastRun()');
+  assert.equal(odd.nodes.get('last-run-verdict').innerHTML, '', 'a status outside the four prints nothing');
+});
+
+test('a failed book prints what kind of failure it was, and the error object\'s code is gone', async () => {
+  // `name` is published (sanitize.mjs:75) and was read by nothing. It is the
+  // only thing on the row that separates a transport failure from a data one,
+  // because a good share of the messages do not say: measured over the 31
+  // UpstreamError sites under src/scrapers, "everymatrix-wamp: ws error" names
+  // neither an unreachable book nor an unusable feed.
+  const rows = async (job) => {
+    const h = harness('en', { api: { get: async () => ({ ...RUN, jobs: [job] }) } });
+    await h.run('refreshLastRun()');
+    return h.nodes.get('last-run-table').innerHTML;
+  };
+  const base = { id: 'everymatrix-wamp', name: 'EveryMatrix', status: 'failed', events: 0, durationMs: 900 };
+  assert.match(await rows({ ...base, error: { name: 'UpstreamError', message: 'everymatrix-wamp: ws error' } }),
+    /UpstreamError: everymatrix-wamp: ws error/,
+    'the class leads, the text follows');
+  assert.match(await rows({ ...base, error: { name: 'ValidationError', message: 'everymatrix-wamp: event missing eventKey' } }),
+    /ValidationError: everymatrix-wamp: event missing eventKey/);
+  // The control: with no message there is a class and nothing else, not a colon.
+  assert.match(await rows({ ...base, error: { name: 'TimeoutError' } }), />TimeoutError</);
+  // A payload from a writer that predates the sanitizer keeps working, the way
+  // the string branch has always allowed.
+  assert.match(await rows({ ...base, error: 'raw string failure' }), /raw string failure/);
+  // And the key that was read first here and could never arrive is not read any
+  // more — the direction the census above checks from the other side. Asked of
+  // the comments-blanked fragment, and that is the whole lesson of this lot: the
+  // first version of this assertion ran over the raw text and failed on the
+  // comment above, which names `j.error.code` while explaining why the chain that
+  // used it was wrong. A mention is not a read, and the only place in this tree
+  // that decides such a question is the one that already knows it.
+  assert.doesNotMatch(codeOnly(lastRun.text), /j\.error\.code/,
+    'the page asks for no field the route cannot serve');
+});
+
+test('the census instrument sees reads, not mentions, in both directions', () => {
+  // Prose is not a read. This page has a comment naming `run.status`, `run.jobs`
+  // and `j.error.field` within forty lines of the code that reads them, and a
+  // census that counted mentions would report the very fields it is here to
+  // prove unread as read — which is how `selection.group` passed for years on
+  // the strength of the word "group:" in a comment.
+  const commented = scrapeSource.replace('async function refreshLastRun() {',
+    'async function refreshLastRun() {\n  // run.secret and j.sourceIds and j.error.field, named and not read.');
+  assert.equal(functionSource(commented, 'refreshLastRun').line, lastRun.line,
+    'the line moved, which is what the injection was for');
+  const seen = new Set(guardedPropertyReads(functionSource(commented, 'refreshLastRun').text, ['run', 'j', 'j.error'])
+    .map((r) => r.key));
+  assert.deepEqual([...seen].filter((k) => ['secret', 'sourceIds', 'field'].includes(k)), [],
+    'a comment cannot add a field to the read set');
+
+  // The other direction: the instrument is not blind. A function with a known
+  // body has to yield exactly that body's reads — one of them through `?.`,
+  // which is the shape a regex over the same tree is documented as missing.
+  const tiny = 'function sample(run) { return run?.runId + run.jobs.length; }';
+  assert.equal(functionSource(tiny, 'sample').text, tiny, 'a one-function file comes back whole');
+  const got = guardedPropertyReads(functionSource(tiny, 'sample').text, ['run']);
+  assert.deepEqual(got.map((r) => [r.key, r.optional]), [['runId', true], ['jobs', false]]);
+
+  // And it cannot answer over nothing: a name that is not there is a loud
+  // failure, because a census over an empty fragment reports every published
+  // field as unread, which is the one answer it must not be able to give.
+  assert.throws(() => functionSource(tiny, 'absent'), /no function declaration named absent/,
+    'a method name is not a declaration, and asking for one must not answer with an empty fragment');
 });
 
 // ---- the banner when the page cannot load its configuration ------------------

@@ -248,10 +248,17 @@
       <section class="sl-panel">
         <header class="sl-panel-head">
           <h2 class="sl-panel-title" data-i18n="lastScrapeRun">Ultima rulare</h2>
-          <!-- Two notes, stacked: which run this is, and what that run was told
-               to collect. A flex head would otherwise push the heading off the
-               panel as soon as the options line grew past the title. -->
+          <!-- Three notes, stacked: how that run went, which run this is, and
+               what it was told to collect. A flex head would otherwise push the
+               heading off the panel as soon as the options line grew past the
+               title. -->
           <span class="sl-panel-note sl-panel-notes">
+            <!-- The run's own verdict, and above the note that names the run,
+                 because it is the answer to "how did it go" and the run id and
+                 the two timestamps do not give it. A pill and not a fourth note
+                 item: every book's status in the table below is a pill, and
+                 this is the same fact one level up. -->
+            <span id="last-run-verdict"></span>
             <span id="last-run-when"></span>
             <span id="last-run-options"></span>
           </span>
