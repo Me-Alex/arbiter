@@ -40,6 +40,7 @@ import { join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { codeOnly, fieldsOn } from './helpers/code-only.mjs';
 import { resolveScanRequest } from '../src/scrape-orchestrator.mjs';
+import { toProgressJob } from '../src/scraper-service.mjs';
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url));
 const readJson = (p) => JSON.parse(readFileSync(join(ROOT, p), 'utf8'));
@@ -49,6 +50,8 @@ const scrapeCode = codeOnly(readText('public/js/pages/scrape.js'), true);
 const scannerCode = codeOnly(readText('public/js/pages/scanner.js'), true);
 const routerSource = codeOnly(readText('src/router.mjs'), true);
 const orchestratorSource = codeOnly(readText('src/scrape-orchestrator.mjs'), true);
+const sanitizeSource = codeOnly(readText('src/shared/sanitize.mjs'), true);
+const serviceSource = codeOnly(readText('src/scraper-service.mjs'), true);
 
 /* ── instruments ───────────────────────────────────────────────────────────── */
 
@@ -186,6 +189,66 @@ function producedSummaryKeys() {
 }
 
 /**
+ * The keys of a `state.jobs` row, from the two producers that fill one.
+ *
+ * `toProgressJob` builds the row and is exported, so it is called rather than
+ * parsed. Its `sourceIds` is a literal empty array and it is marked `[]` here for
+ * the same reason `keysOfRows` marks one: the marker is a claim about the shape,
+ * and this is the shape the producer declares.
+ *
+ * The second producer is not a constructor but a fold: `job-complete` and
+ * `batch-end` assign onto a `j` that already exists (src/scrape-orchestrator.mjs:
+ * 417-424 and 442-447), and `marketDiagnostics` is the one field no constructor
+ * sets. Every field those folds assign is collected by name, so a fold that
+ * starts writing a new field changes this set without the test being edited.
+ *
+ * Measured, because a mutation showed the union is more forgiving than the
+ * sentence above claims: `job-complete` assigns nine names and `batch-end` six,
+ * and `batch-end`'s six are a subset of the first fold's nine. So no field is
+ * contributed by exactly one fold — renaming a receiver in either of them, or
+ * deleting one of the two `marketDiagnostics` writes, leaves this set identical.
+ * The union is still what carries `marketDiagnostics`, since no constructor sets
+ * it, but it is not defended twice.
+ *
+ * Measured: ten fields from the constructor plus `marketDiagnostics` is eleven,
+ * and `sourceIds` is in it while being unassignable — see the reason it carries.
+ */
+function producedStateJobKeys() {
+  const out = new Set();
+  for (const [k, v] of Object.entries(toProgressJob('census'))) {
+    out.add(Array.isArray(v) && !v.length ? `${k}[]` : k);
+  }
+  const folds = [...orchestratorSource.matchAll(/\bj\.(\w+)\s*=\s*[^=]/g)].map((m) => m[1]);
+  if (!folds.length) throw new Error('the orchestrator no longer assigns onto a job row — the fold set is empty');
+  for (const k of new Set(folds)) out.add(k);
+  return [...out].sort();
+}
+
+/**
+ * The keys of a `latest-scrape-run.json` job row, from the last thing to touch it.
+ *
+ * `persistRunReport` does not write the batch report; it writes
+ * `sanitizeReport(report)`, and that reduction rebuilds each row from a literal
+ * (src/shared/sanitize.mjs:67-80). So the literal is the shape the route and the
+ * file actually publish, and it is the second thing in a chain that has three:
+ * the scraper's envelope, the batch's `{ ...job, ...result }` spread, and this.
+ *
+ * `sourceIds` is a ternary here rather than a literal array, so it is not marked
+ * `[]`, and that is the distinction doing the work: the state row's marker comes
+ * from a declared empty array, this one's does not come from one at all.
+ */
+function producedRunJobKeys() {
+  const at = sanitizeSource.indexOf('jobs: Array.isArray(report.jobs)');
+  if (at === -1) throw new Error('sanitizeReport no longer reduces report.jobs');
+  const lines = sanitizeSource.slice(at).split(/\r?\n/);
+  const end = lines.findIndex((l, i) => i > 0 && l.trim() === '})) : [],');
+  if (end === -1) throw new Error('the job reduction has no closing line of its own — the cut would run away');
+  const keys = [...lines.slice(1, end + 1).join('\n').matchAll(/^ {6}(\w+):/gm)].map((m) => m[1]);
+  if (keys.length < 2) throw new Error(`the job reduction yielded ${keys.length} keys — the cut moved`);
+  return keys.sort();
+}
+
+/**
  * The union of the keys of every element of `arr`, or a marker for the two shapes
  * that are not object rows.
  *
@@ -275,6 +338,21 @@ const PROFILES_ROW = [
   'defaults.minMiddleRoiPercent', 'defaults.minRoiPercent', 'description', 'id', 'label', 'mode',
 ];
 
+/**
+ * `state.jobs`, pinned by hand against the producer rather than against the file.
+ *
+ * This list used to be compared with `keysOfRows(STATE.jobs)` — the rows stored in
+ * data/scrape-state.json — so it was a claim about the last scrape that happened
+ * to run on the machine that wrote it. The eleven below were re-measured against
+ * `producedStateJobKeys` instead, and they are unchanged, which is the point:
+ * the hand-written half and the derived half are now two things written by
+ * different code, so the day the producer grows or drops a field this fails
+ * instead of agreeing with whatever is on disk.
+ *
+ * The `[]` on `sourceIds` is part of the claim. The constructor declares a literal
+ * empty array (src/scraper-service.mjs:161) and no fold ever fills it, so the
+ * wire carries an empty array on every row — a shape the marker records.
+ */
 const STATE_JOB = [
   'durationMs', 'error', 'events', 'finishedAt', 'id', 'marketDiagnostics', 'name', 'sourceIds[]',
   'startedAt', 'status', 'valid',
@@ -308,6 +386,16 @@ const STATE_OPTIONS = [
   'options.minRoiPercent', 'options.sport',
 ];
 const STATE_SUMMARY = ['completed', 'events', 'failed', 'markets'];
+/**
+ * `latest-scrape-run.json` job rows, pinned the same way and for the same reason.
+ *
+ * The other side of `sourceIds` from the list above: here the ternary in
+ * `sanitizeReport` (src/shared/sanitize.mjs:70) is not a literal empty array, and
+ * it is populated on 24 of 24 stored rows because the batch report spreads the
+ * adapter result over the job (src/scraper-service.mjs:147). Same field, opposite
+ * marker — which is why the two entries are separate keys and not one name with
+ * one `WHY` paragraph behind it.
+ */
 const RUN_JOB = ['durationMs', 'error', 'events', 'id', 'name', 'sourceIds', 'status', 'valid'];
 
 /* ── who reads what ────────────────────────────────────────────────────────── */
@@ -621,13 +709,50 @@ const WHY = {
   ].join(' '),
 
   sourceIds: [
-    'The capture ids a run row wrote, and no page on either route shows them.',
+    'The capture ids a scraper writes, and no page shows them. Measured: every',
+    'adapter declares them (src/scrapers/*.mjs), src/scrape-orchestrator.mjs:141',
+    'expands the enabled set with them, and each extracted event is stamped with',
+    'one — so the field is the join between a job and the capture files under the',
+    'data directory. The page reads those files through GET /api/odds/:book',
+    'instead, which is keyed by book rather than by the capture ids this field',
+    'carries. The two other routes publish the same name with different facts',
+    'behind them, and each carries its own paragraph rather than borrowing this',
+    'one: `stateSourceIds` and `runSourceIds`.',
+  ].join(' '),
+
+  // One field, two routes, two opposite facts — so two reasons, not one shared
+  // paragraph. The paragraph they used to share was written about a run row, and
+  // it was applied to the state row as well because the route was the only part
+  // of the key that differed. That borrowed a true statement onto a row where it
+  // is false in a stronger way: on the run row the field is populated, and on the
+  // state row it never has been.
+  stateSourceIds: [
+    'Published and never filled — measured on the writers, not on the file: 0 of',
+    'the 24 rows in data/scrape-state.json carry an id, while 24 of 24 rows of',
+    'data/latest-scrape-run.json do, written 31 seconds apart by one run. The',
+    'cause is src/scraper-service.mjs:147, where the batch report spreads the',
+    'adapter result (which carries `sourceIds` from src/scrapers/base.mjs:209) over',
+    'the job, against the fold at src/scrape-orchestrator.mjs:417-424 and 442-447,',
+    'which copies seven fields by name and omits this one. `j.sourceIds =` appears',
+    '0 times in that file and `job.sourceIds =` 0 times in the service. So the row',
+    'on the wire carries an array that is empty on every scrape, forever, and the',
+    'page is right not to draw it — there is nothing there to draw. The control',
+    'below pins the measurement, and the day a fold starts writing it, that control',
+    'fails and this reason has to be rewritten.',
+  ].join(' '),
+
+  runSourceIds: [
+    'The capture ids a run row wrote, and no page on the run route shows them.',
     'Measured: every adapter declares them (src/scrapers/*.mjs),',
     'src/scrape-orchestrator.mjs:141 expands the enabled set with them, and each',
     'extracted event is stamped with one — so the field is the join between a job',
-    'and the capture files under the data directory. The page reads those files',
+    'and the capture files under the data directory. Populated on 24 of 24 stored',
+    'rows, e.g. `admiral: ["admiral"]`, so this exemption is about the row being',
+    'drawn and not the field being empty. The page reads those capture files',
     'through GET /api/odds/:book instead, which is keyed by book rather than by',
-    'the capture ids this field carries.',
+    'the capture ids this field carries. The two frontend reads of the name are on',
+    'alert rows, not job rows: public/js/pages/scanner.js:148 and',
+    'public/js/pages/alerts.js:180.',
   ].join(' '),
 
   // `name` is no longer on this list, and that is the list working. It was
@@ -733,9 +858,9 @@ const UNREAD_BY_DESIGN = {
   [`${R_SCRAPERS_ARRAYS} › enabledJobs`]: WHY.filterArray,
   [`${R_SCRAPERS_ARRAYS} › experimentalJobs`]: WHY.filterArray,
   [`${R_STATE_JOB} › marketDiagnostics`]: WHY.marketDiagnostics,
-  [`${R_STATE_JOB} › sourceIds`]: WHY.sourceIds,
+  [`${R_STATE_JOB} › sourceIds`]: WHY.stateSourceIds,
   [`${R_STATE_SUMMARY} › markets`]: WHY.markets,
-  [`${R_RUN_JOB} › sourceIds`]: WHY.sourceIds,
+  [`${R_RUN_JOB} › sourceIds`]: WHY.runSourceIds,
   [`${R_RUN_JOB} › valid`]: WHY.valid,
 };
 
@@ -760,10 +885,14 @@ const CENSUS = [
     reads: () => envelopeReadSet,
   },
   { label: R_PROFILES, published: keysOfRows(PROFILES.profiles), pinned: PROFILES_ROW, reads: profileReads },
-  { label: R_STATE_JOB, published: keysOfRows(STATE.jobs), pinned: STATE_JOB, reads: () => stateReadSet },
+  // The two job rows take their published set from the producer, like the options
+  // and summary rows above. They used to take it from the stored documents, which
+  // made the census a report on the last scrape run on this machine rather than a
+  // report on the backend — the file is now only a subset control, below.
+  { label: R_STATE_JOB, published: producedStateJobKeys(), pinned: STATE_JOB, reads: () => stateReadSet },
   { label: R_STATE_OPTIONS, published: producedOptionKeys().map((k) => `options.${k}`), pinned: STATE_OPTIONS, reads: optionsReads },
   { label: R_STATE_SUMMARY, published: producedSummaryKeys(), pinned: STATE_SUMMARY, reads: summaryReads },
-  { label: R_RUN_JOB, published: keysOfRows(RUN.jobs), pinned: RUN_JOB, reads: runReads },
+  { label: R_RUN_JOB, published: producedRunJobKeys(), pinned: RUN_JOB, reads: runReads },
 ];
 
 /* ── the tests ─────────────────────────────────────────────────────────────── */
@@ -866,6 +995,73 @@ test('the scraper route still publishes what the census names', () => {
 });
 
 /**
+ * Both stored job documents are samples of their producer, like the options above.
+ *
+ * The census stopped reading these two files as its definition of what the routes
+ * publish, and they did not stop being checked: a key on disk that the producer
+ * cannot build means the file was written by a build this branch does not have,
+ * and every claim the census makes about the served document would then be about
+ * that build. Measured: both files carry exactly their producer's key set on
+ * disk right now — 24 rows of 11 keys and 24 rows of 8 — so the subset control
+ * has no slack today, and it is still written as a subset because that is the
+ * direction that can catch the defect. `sourceIds` is why: a row whose arrays
+ * happened to be non-empty would arrive marked, and a marked key is not a foreign
+ * key, so the markers are compared on their leaves.
+ */
+test('neither stored job document carries a key its producer cannot build', () => {
+  for (const [file, doc, produced] of [
+    ['data/scrape-state.json', STATE, producedStateJobKeys()],
+    ['data/latest-scrape-run.json', RUN, producedRunJobKeys()],
+  ]) {
+    const built = new Set(produced.map((k) => leafOf(k)));
+    const stored = keysOfRows(doc.jobs);
+    const foreign = stored.filter((k) => !built.has(leafOf(k)));
+    assert.deepEqual(foreign, [],
+      `${file} carries job keys nothing builds any more: ${foreign.join(', ')} — the file is from a build this branch does not have`);
+    assert.ok(stored.length > 0 && stored.length <= built.size,
+      `${file} carries ${stored.length} of the ${built.size} job keys the producer builds — the direction of this control moved`);
+  }
+});
+
+/**
+ * The two `sourceIds` rows are opposites, and the measurement behind them is the
+ * writers, not the file.
+ *
+ * One exemption used to cover all three routes, and the paragraph it carried was
+ * true of one of them. On the run row the field is populated — 24 of 24 stored
+ * rows, `admiral: ["admiral"]` — so "no page draws it" is the whole claim. On the
+ * state row it has never been populated at all: 0 of 24, written 31 seconds after
+ * the run file by the same scrape. The cause is that the batch report spreads the
+ * adapter result over the job while the orchestrator's folds copy seven fields by
+ * name, so the two documents disagree about the same field and both are right.
+ *
+ * So this pins the writers rather than the sample. A stored-file reading would
+ * still hold on this machine, and would go quiet on the next scrape that filled
+ * the field, which is the one moment the reason stops being true. The assertions
+ * below fire in that moment, and the day they do the paragraph is rewritten
+ * instead of left to become a second stale one.
+ */
+test('the state row publishes sourceIds that no writer ever fills, and the run row does', () => {
+  assert.ok(producedStateJobKeys().includes('sourceIds[]'),
+    'the state job row no longer publishes sourceIds — drop its exemption and say whether a page reads it');
+  assert.ok(!producedRunJobKeys().includes('sourceIds[]'),
+    'the run job row marks sourceIds as a declared empty array — re-measure which of the two documents this exemption describes');
+
+  const filled = (src, receiver) => [...src.matchAll(new RegExp(`\\b${receiver}\\.sourceIds\\s*=`, 'g'))].length;
+  assert.equal(filled(orchestratorSource, 'j'), 0,
+    'an orchestrator fold now writes j.sourceIds — the state row fills it, so WHY.stateSourceIds is no longer true');
+  assert.equal(filled(serviceSource, 'job'), 0,
+    'the scraper service now writes job.sourceIds — the state row fills it, so WHY.stateSourceIds is no longer true');
+
+  // The other half of the contrast, because a control that only says "the one
+  // exemption is still true" would pass just as happily if the run row stopped
+  // being filled too. The run row is filled by a spread, not by a named
+  // assignment, so that is what has to be there.
+  assert.match(serviceSource, /jobs:\s*jobs\.map\(\s*\(job\)\s*=>\s*\(\{\s*\.\.\.job,\s*\.\.\.results\.get\(job\.id\)\s*\}\)\s*\)/,
+    'the batch report no longer spreads the adapter result over the job — WHY.runSourceIds no longer describes a populated field');
+});
+
+/**
  * The other direction of the exempt table: nothing may name a field its own
  * route actually reads.
  *
@@ -903,10 +1099,16 @@ test('no exemption names a field its own route reads', () => {
  * live reason (`platform`, 206) clears and a one-line excuse does not.
  *
  * Sharing a paragraph between entries is allowed and is not checked against:
- * `WHY.sourceIds` covers three routes and `WHY.filterArray` two, because the
- * claim is one claim about one field. What makes that safe is the route being
- * part of the key — a shared paragraph cannot exempt a field nobody measured,
- * because the census still asks whether the page reads it.
+ * `WHY.filterArray` covers two routes, because the claim is one claim about one
+ * field. What makes that safe is the route being part of the key — a shared
+ * paragraph cannot exempt a field nobody measured, because the census still asks
+ * whether the page reads it.
+ *
+ * What sharing is not safe for is a field whose facts differ per route, and that
+ * is what `sourceIds` turned out to be: one paragraph had covered all three of
+ * its routes and was true of one. The route being in the key is what let the
+ * borrow happen, so the rule is now narrower — a name that appears on more than
+ * one route with its own paragraph beside each one keeps them apart.
  */
 test('no exemption is unreasoned, and every reason names what was measured', () => {
   const unreasoned = Object.keys(UNREAD_BY_DESIGN).filter((k) => !UNREAD_BY_DESIGN[k].trim());
