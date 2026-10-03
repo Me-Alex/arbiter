@@ -376,35 +376,17 @@ test('the payload publishes no field without a reader, and every excuse is named
 });
 
 /**
- * The plan walk four excuses above lean on, recomputed instead of quoted.
+ * The captures, grouped the way the route groups them, and the plans that fall
+ * out — shared by the two tests below so neither re-derives it.
  *
- * `plan.family`, `plan.period`, `plan.line` and `plan.inverseSum` each carried a
- * figure transcribed from a run over data-market-run/workspace — how many
- * fixtures two books quote, how many of those produce a plan, and what that
- * plan's family, window and line turned out to be. Nothing checked any of it, so
- * those numbers could only go stale in one direction: quietly, and while still
- * reading as current.
- *
- * It is worse than stale for `family`. The walk found three plans and all three
- * were BTTS, which is what the excuse leaned on — but the BTTS legs came off
- * favbet rows this tree no longer emits, so the coverage said nothing about what
- * a fresh capture would hold. That is measured in test/favbet.test.mjs, and the
- * excuse no longer claims the coverage.
- *
- * The walk below is rebuilt from the captures and the real engine, the way the
- * route does it ({ ...ev, sourceId } into `findDetailArbitrages`, src/router.mjs:
- * 610 and 655), and each excuse is held to a property that either holds or
- * fails: no plan sits on a market the heading leaves unlabelled, none settles
- * outside full-time, none carries a line, and the ROI is the inverse sum in
- * another unit. None of those four is a number that can rot unnoticed.
+ * The grouping is the route's: one entry per (eventKey, sourceId), spread with
+ * `sourceId` attached and handed to `findDetailArbitrages` (src/router.mjs:610
+ * and 655). `namesByMarketKey` is what the panel's heading reads, so a claim
+ * about a heading is checked against the names the captures actually carry.
  */
-test('the plan walk the excuses above quote is measured, not transcribed', () => {
+function plansOnDisk() {
   const dir = new URL('../data-market-run/workspace/', import.meta.url);
   const files = readdirSync(dir).filter((f) => f.endsWith('_events.json'));
-  assert.ok(files.length >= 20, `only ${files.length} captures in data-market-run/workspace — every measurement below would rest on a handful`);
-
-  // The route's own grouping: eventKey -> the one event each book quoted it on,
-  // plus the names those markets arrived under, which is what the heading reads.
   const byKey = new Map();
   const namesByMarketKey = new Map();
   for (const f of files) {
@@ -420,15 +402,45 @@ test('the plan walk the excuses above quote is measured, not transcribed', () =>
       if (!books.has(ev.sourceId)) books.set(ev.sourceId, ev);
     }
   }
-
-  const multi = [...byKey.values()].filter((books) => books.size >= 2);
-  assert.ok(multi.length > 0, 'no fixture on disk is quoted by two books — the walk measures nothing');
-
+  const multi = [...byKey.entries()].filter(([, books]) => books.size >= 2);
   const plans = [];
-  for (const books of multi) {
+  for (const [eventKey, books] of multi) {
     const instances = [...books.entries()].map(([sourceId, ev]) => ({ ...ev, sourceId }));
-    for (const [marketKey, plan] of findDetailArbitrages(instances)) plans.push({ marketKey, plan });
+    for (const [marketKey, plan] of findDetailArbitrages(instances)) plans.push({ eventKey, marketKey, plan });
   }
+  return { files, multi, plans, namesByMarketKey };
+}
+
+/** Read once. The captures are 31 MB and two tests above need the same walk. */
+let diskCache = null;
+const disk = () => (diskCache ||= plansOnDisk());
+
+/**
+ * The plan walk four excuses above lean on, recomputed instead of quoted.
+ *
+ * `plan.family`, `plan.period`, `plan.line` and `plan.inverseSum` each carried a
+ * figure transcribed from a run over data-market-run/workspace — how many
+ * fixtures two books quote, how many of those produce a plan, and what that
+ * plan's family, window and line turned out to be. Nothing checked any of it, so
+ * those numbers could only go stale in one direction: quietly, and while still
+ * reading as current.
+ *
+ * It is worse than stale for `family`. The walk found three plans and all three
+ * were BTTS, which is what the excuse leaned on — but the BTTS legs came off
+ * favbet rows this tree no longer emits, so the coverage said nothing about what
+ * a fresh capture would hold. That is measured in test/favbet.test.mjs, and the
+ * excuse no longer claims the coverage.
+ *
+ * The walk below is rebuilt from the captures and the real engine, and each
+ * excuse is held to a property that either holds or fails: no plan sits on a
+ * market the heading leaves unlabelled, none settles outside full-time, none
+ * carries a line, and the ROI is the inverse sum in another unit. None of those
+ * four is a number that can rot unnoticed.
+ */
+test('the plan walk the excuses above quote is measured, not transcribed', () => {
+  const { files, multi, plans, namesByMarketKey } = disk();
+  assert.ok(files.length >= 20, `only ${files.length} captures in data-market-run/workspace — every measurement below would rest on a handful`);
+  assert.ok(multi.length > 0, 'no fixture on disk is quoted by two books — the walk measures nothing');
   // The guard that makes the three assertions after it mean anything. A capture
   // set that had stopped producing arbitrages would leave every one of them
   // empty and all three would pass — the shape a census is weakest in.
@@ -465,6 +477,75 @@ test('the plan walk the excuses above quote is measured, not transcribed', () =>
     assert.ok(Math.abs(plan.roiPercent - (1 / plan.inverseSum - 1) * 100) < 0.005,
       `${marketKey}: roiPercent ${plan.roiPercent} is not inverseSum ${plan.inverseSum} rescaled — the two published figures are the same number in two units, and the panel shows only one`);
   }
+});
+
+/**
+ * One URL on the event, one on each leg — and they are not the same field.
+ *
+ * src/router.mjs explains the missing `eventUrl` on the event with a pair of
+ * figures it measured over the real route. The figures have rotted the way
+ * transcribed ones do: it says 12 two-book fixtures and 26 events served, and
+ * the two-book fixtures in the captures on disk hold 16938 events. The argument
+ * does not need them, which is why this test exists rather than a corrected
+ * number — both keys were written as `ev.sourceUrl || null`, so the measurement
+ * could never have come out any other way. A tautology dressed as a sample size.
+ *
+ * What the comment never says is why the deletion stops at the event, and the
+ * answer is not symmetry. A plan is attached to every book's copy of a market
+ * (src/router.mjs:661-666), while its legs point at their own book — so the
+ * plan sitting on betano's row carries a favbet leg, and that leg's URL is a
+ * different page from the event's. On every plan the captures hold, the legs
+ * open two different books. Collapsing `eventUrl` up to the event would have
+ * made every leg in a plan open the same page, which is the one thing a leg
+ * link must not do.
+ */
+test('the event carries one URL and every leg carries its own', async () => {
+  const payload = await fetchPayload();
+  const events = payload.events || [];
+  assert.ok(events.length >= 2, `the fixture must reach two books, got ${events.length}`);
+
+  const eventKeys = new Set(events.flatMap((e) => Object.keys(e)));
+  assert.equal(eventKeys.has('eventUrl'), false,
+    'eventUrl is back on the event: it was the same expression as sourceUrl, so one of the two is a second name for a value the first already carries');
+  assert.ok(eventKeys.has('sourceUrl'), 'and the field it duplicated is the one that is published');
+  const urls = events.map((e) => e.sourceUrl);
+  assert.ok(urls.every((u) => typeof u === 'string' && u.length > 0),
+    `every served event publishes the book's own URL, got ${JSON.stringify(urls)}`);
+
+  const plans = events.flatMap((e) => (e.markets || []).map((m) => m.arb).filter(Boolean));
+  assert.ok(plans.length >= 1, 'the priced fixture produces a plan — nothing below is checked');
+  const legs = plans.flatMap((p) => p.legs);
+  assert.ok(legs.every((l) => 'eventUrl' in l),
+    'a leg without its own eventUrl has no link to its book, which is the only way back from a stake');
+  // The control, and it is the whole point: two legs from two books must not open
+  // the same page. A projection that copied the event's sourceUrl onto every leg
+  // would pass the check above and quietly break navigation.
+  const multiBook = plans.filter((p) => new Set(p.legs.map((l) => l.sourceId)).size >= 2);
+  assert.ok(multiBook.length >= 1, `the fixture must produce a plan with legs from two books, got ${plans.length} plans`);
+  for (const p of multiBook) {
+    assert.ok(new Set(p.legs.map((l) => l.eventUrl)).size >= 2,
+      `every leg of this plan opened ${JSON.stringify(p.legs.map((l) => l.eventUrl))} — the per-leg URL was collapsed onto one book`);
+  }
+
+  // And it has to be read, or carrying it is the same waste the event-level field
+  // was. The modal turns it into the link icon beside each leg's stake.
+  //
+  // The search is for a CONDITIONAL, not for the name. A bare /l\.eventUrl/
+  // passes on a line that mentions the field and no longer lets it decide
+  // anything — which is exactly the mutation that got past the first version of
+  // this assertion: gating the link on `l.stake` instead, leaving the field read
+  // into an escapeHtml call that never runs when the stake is set.
+  const modalCode = codeOnly(CONSUMERS[0][1]);
+  assert.match(modalCode, /l\.eventUrl\s*\?/,
+    'event-detail-modal.js no longer lets a leg eventUrl decide whether the link renders, so the field is published with no reader');
+
+  // The same claim on the real captures rather than on the fixture: every plan
+  // the engine finds there has legs opening more than one book.
+  const { plans: onDisk } = disk();
+  assert.ok(onDisk.length >= 1, 'no plan on disk — the claim above rests on the fixture alone');
+  const flat = onDisk.filter(({ plan }) => new Set(plan.legs.map((l) => l.eventUrl)).size >= 2);
+  assert.deepEqual(flat.length, onDisk.length,
+    `a plan on disk has legs opening one page: ${JSON.stringify(onDisk.filter(({ plan }) => new Set(plan.legs.map((l) => l.eventUrl)).size < 2).map(({ marketKey, plan }) => plan.legs.map((l) => `${l.sourceId}->${l.eventUrl}`)))}`);
 });
 
 test('the payload does not republish the arbitrage map it already attaches per market', async () => {

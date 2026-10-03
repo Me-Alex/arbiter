@@ -612,13 +612,19 @@ export async function readEventDetailRoute(res, parsedUrl, dataDir) {
       events.push({
         sourceId,
         sourceUrl: ev.sourceUrl || null,
-        // No `eventUrl` here. It was written as `ev.sourceUrl || null` two lines
-        // under this one — the same expression, so the same value, always — and
-        // nothing read it: the only `eventUrl` reads in the frontend are on a
-        // plan's legs, which carry their own. Measured over the real route on
-        // data-market-run/workspace: 12 two-book fixtures, 26 events served,
-        // eventUrl === sourceUrl in 26 of 26. A second name for a value the
-        // first name already carries, on the object a consumer is holding.
+        // No `eventUrl` here, and the reason is arithmetic rather than a sample.
+        // It was written as `ev.sourceUrl || null`, which is the expression two
+        // lines above, so the two keys could never have held different values —
+        // a measurement quoted 26 of 26 and could not have read any other way.
+        //
+        // Nothing read it either: the `eventUrl` reads in the frontend are all on
+        // a plan's legs. That field is NOT the same thing, which is why the
+        // deletion stops at this level. A plan is attached to every book's copy
+        // of a market (below) while its legs point at their own book, so the plan
+        // on betano's row carries a favbet leg whose page is a different one. On
+        // every plan in data-market-run/workspace the legs open two different
+        // books; hoisting the field to the event would have made all of them open
+        // the same page. Checked in test/event-detail-payload.test.mjs.
         sport: ev.sport,
         league: ev.league || '',
         kickoff: ev.kickoff,
