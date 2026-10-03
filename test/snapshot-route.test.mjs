@@ -28,7 +28,6 @@ import { codeOnly } from './helpers/code-only.mjs';
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url));
 const read = (rel) => readFileSync(join(ROOT, rel), 'utf8');
-const readJson = (rel) => JSON.parse(read(rel));
 
 /* ── the writer ────────────────────────────────────────────────────────────── */
 
@@ -118,9 +117,94 @@ const SNAPSHOT_TOP = [
 const SAMPLE_DIR = 'data-market-run/workspace';
 const sampleFiles = readdirSync(join(ROOT, SAMPLE_DIR)).filter((f) => f.endsWith('_events.json'));
 const sampleKeys = new Set();
-for (const file of sampleFiles) {
-  for (const key of Object.keys(readJson(`${SAMPLE_DIR}/${file}`))) sampleKeys.add(key);
+
+/**
+ * What the captures hold below the top-level keys, measured in the same pass.
+ *
+ * Three exemptions elsewhere in this tree are written against numbers taken from
+ * these files — `selection.group` in event-detail-payload.test.mjs, the board's
+ * event `id` in scrape-page.test.mjs, and the byte argument behind the
+ * `/api/snapshot` excuse in api-surface.test.mjs. All three were transcribed by
+ * hand, which makes them true until someone edits a capture, at which point they
+ * are wrong and silent: the excuse still carries the old figure and nothing
+ * recomputes it. So they are computed here instead, next to the parse that
+ * already paid for them, and asserted below as claims rather than as figures.
+ *
+ * This is not the file arguing that the sample is evidence. The header says the
+ * opposite: two of the top-level keys are evidence of a writer this tree lacks.
+ * These are measurements of rows the writers still produce, and each one is
+ * stated as the property the excuse rests on, so a capture set that stopped
+ * supporting it fails here instead of leaving the prose behind.
+ */
+const sample = {
+  events: 0,
+  markets: 0,
+  selections: 0,
+  selectionsWithoutGroup: 0,
+  groupValues: new Set(),
+  /** markets holding two selections that share a name under different groups */
+  nameCollisions: 0,
+  distinctIds: new Set(),
+  /** ids seen in more than one file of the same book */
+  idsAcrossFiles: 0,
+  /** ids shared by two or more books */
+  idsAcrossBooks: 0,
+  /** (book, eventKey) pairs carrying more than one id */
+  pairsWithTwoIds: 0,
+  bookPairs: 0,
+  bytesTotal: 0,
+  bytesEvents: 0,
+};
+
+{
+  const filesSeenById = new Map();
+  const booksById = new Map();
+  const idsByPair = new Map();
+  for (const file of sampleFiles) {
+    const raw = read(join(SAMPLE_DIR, file));
+    const doc = JSON.parse(raw);
+    for (const key of Object.keys(doc)) sampleKeys.add(key);
+    // "metadata" is the document with its events array emptied, which is the
+    // same split api-surface.test.mjs quotes and the only way to compare the two
+    // without holding both in memory.
+    const size = Buffer.byteLength(raw);
+    const meta = Buffer.byteLength(JSON.stringify({ ...doc, events: [] }));
+    sample.bytesTotal += size;
+    sample.bytesEvents += size - meta;
+    for (const event of doc.events || []) {
+      sample.events += 1;
+      if (!filesSeenById.has(event.id)) filesSeenById.set(event.id, new Set());
+      filesSeenById.get(event.id).add(`${doc.sourceId}:${file}`);
+      if (!booksById.has(event.id)) booksById.set(event.id, new Set());
+      booksById.get(event.id).add(doc.sourceId);
+      const pair = `${doc.sourceId}:${event.eventKey}`;
+      if (!idsByPair.has(pair)) idsByPair.set(pair, new Set());
+      idsByPair.get(pair).add(event.id);
+      for (const market of event.markets || []) {
+        sample.markets += 1;
+        const byName = new Map();
+        for (const sel of market.selections || []) {
+          sample.selections += 1;
+          if (!('group' in sel)) { sample.selectionsWithoutGroup += 1; continue; }
+          sample.groupValues.add(sel.group);
+          if (!byName.has(sel.name)) byName.set(sel.name, new Set());
+          byName.get(sel.name).add(sel.group);
+        }
+        for (const groups of byName.values()) if (groups.size > 1) sample.nameCollisions += 1;
+      }
+    }
+  }
+  sample.distinctIds = new Set(filesSeenById.keys());
+  sample.idsAcrossFiles = [...filesSeenById.values()].filter((tags) => new Set([...tags].map((t) => t.split(':')[0])).size === 1 && tags.size > 1).length;
+  sample.idsAcrossBooks = [...booksById.values()].filter((books) => books.size > 1).length;
+  sample.pairsWithTwoIds = [...idsByPair.values()].filter((ids) => ids.size > 1).length;
+  sample.bookPairs = idsByPair.size;
 }
+
+// Derived after the pass, not before it: the first version of this read the
+// sample keys out of the set above before the walk had put anything in it, and
+// reported an empty `unreachable` — which is the vacuous direction, the one that
+// passes while measuring nothing.
 const unreachable = [...sampleKeys].filter((k) => !PUBLISHED.includes(k)).sort();
 
 /* ── the tests ─────────────────────────────────────────────────────────────── */
@@ -205,4 +289,65 @@ test('the closure check\'s excuse for this route names only reachable keys', () 
   const unreachableNamed = named.filter((k) => !PUBLISHED.includes(k));
   assert.deepEqual(unreachableNamed, [],
     `the excuse names keys this route cannot serve: ${unreachableNamed.join(', ')} — measured against the writers above`);
+});
+
+/**
+ * The three sample measurements other files quote, recomputed rather than trusted.
+ *
+ * Each of these was a figure typed into a paragraph: 93600 selections all saying
+ * "Main", 12390 distinct ids, "99.93% of what these documents hold". A figure in
+ * a paragraph is true until somebody edits a capture, and then it is wrong in
+ * silence — the excuse keeps the old number, the number is nobody's claim, and
+ * the suite stays green. So they are computed in the pass above and asserted
+ * here as the property the excuse rests on, with the freshly measured figure in
+ * the message so a failure tells you what it is now rather than what it was.
+ *
+ * The assertions are claims, not figures, on purpose. "12390 distinct ids" is a
+ * transcription that goes stale on the next scrape; "every (book, eventKey) pair
+ * carries exactly one id, no id appears in two files of one book, and some ids do
+ * appear under more than one book" are three properties that survive a rescrape
+ * and still pin the excuse, which is what the excuse is actually for.
+ *
+ * The guards are the point where this file is unusual: every measurement below
+ * is a count over the captures, and a count over an empty directory is 0, which
+ * is the value most of these claims want. So the pass is checked to have read
+ * something first, and each claim that would otherwise pass vacuously is stated
+ * with a floor on what it was measured over.
+ */
+test('the sample measurements the other files quote are still true', () => {
+  const floor = `measured over ${sampleFiles.length} captures / ${sample.events} events —`;
+  assert.ok(sample.events > 0 && sample.selections > 0 && sample.distinctIds.size > 0 && sample.bytesTotal > 0,
+    `${floor} the pass above read nothing, so every count below is 0 and passes for the wrong reason`);
+
+  // (a) The `selection.group` exemption in event-detail-payload.test.mjs: the field
+  // separates nothing, because every selection carries it and it separates nothing
+  // between two outcomes that share a name.
+  assert.equal(sample.selectionsWithoutGroup, 0,
+    `${floor} ${sample.selectionsWithoutGroup} of ${sample.selections} selections no longer carry \`group\` — re-read the selection exemption`);
+  assert.deepEqual([...sample.groupValues].sort(), ['Main'],
+    `the group values in the captures are now ${JSON.stringify([...sample.groupValues].sort())}, not just "Main" — the field separates something and the exemption has to be re-argued`);
+  assert.equal(sample.nameCollisions, 0,
+    `${floor} ${sample.nameCollisions} markets hold two same-named selections under different groups — \`group\` now disambiguates a name, which is what it exists for`);
+
+  // (b) The board's event `id` exemption in scrape-page.test.mjs. Both halves are
+  // needed: the id being useless follows from it being ambiguous ACROSS books and
+  // absent ACROSS files, and an excuse that only said one of those would be right
+  // for the wrong reason.
+  assert.equal(sample.pairsWithTwoIds, 0,
+    `${floor} ${sample.pairsWithTwoIds} of ${sample.bookPairs} (book, eventKey) pairs carry more than one id — the id is no longer a stand-in for eventKey`);
+  assert.equal(sample.bookPairs, sample.events,
+    `${floor} ${sample.bookPairs} (book, eventKey) pairs over ${sample.events} events — eventKey is no longer unique inside a book, so the id cannot stand in for it`);
+  assert.equal(sample.idsAcrossFiles, 0,
+    `${floor} ${sample.idsAcrossFiles} ids appear in more than one file of the same book — the id IS stable across captures, and the board exemption's wording about it is wrong`);
+  assert.ok(sample.idsAcrossBooks > 0,
+    `${floor} no id is shared by two books, so "an address inside one book" would hold and the id would be a usable handle — re-argue the exemption`);
+
+  // (c) The byte argument behind the `/api/snapshot` excuse in api-surface.test.mjs:
+  // serving a capture for provenance alone would pull orders of magnitude more
+  // than the page shows. The ratio is the claim; the percentage was the figure.
+  const share = sample.bytesEvents / sample.bytesTotal;
+  assert.ok(share > 0.99,
+    `${floor} \`events\` is now ${(share * 100).toFixed(2)}% of what the captures hold (was quoted as 99.93%) — a page reading this route for provenance is no longer pulling a thousand times its display`);
+  assert.ok(sample.bytesEvents / (sample.bytesTotal - sample.bytesEvents) > 100,
+    `${floor} metadata is no longer 100x smaller than the events array — the size argument in the api-surface excuse has lost its order of magnitude`);
 });
