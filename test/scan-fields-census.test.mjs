@@ -23,6 +23,15 @@
 // collected. An instrument that reports zero because a page threw has to say
 // so, which is why each page's hit count is asserted.
 //
+// The set of pages is derived from the pages, because a typed list is a claim
+// about the frontend that nothing re-checks. It was typed, it listed four, and
+// the fifth consumer — scrape.js, `refreshScanSummary` — was outside the census
+// for as long as the omission lasted, with the route's own comment agreeing with
+// the list. A field read only by the omitted page reads as a field nobody reads.
+// scrape.js cannot be run whole (its init awaits /api/scrape/state first and
+// rejects into its own catch, touching 0 paths), so the three functions that
+// read the document are lifted out of it and driven against the same proxy.
+//
 // An executed instrument has a blind spot of its own, and it is the same trap
 // as everywhere else in this repo: a field read only in a rare branch is
 // indistinguishable from a field nobody reads. `scanStartedAt` is never touched
@@ -36,12 +45,12 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { mkdtemp, rm, mkdir, writeFile } from 'node:fs/promises';
-import { readFileSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import vm from 'node:vm';
 import { scanWorkspace } from '../src/scanner/scanner.mjs';
-import { codeOnly, fieldsOn } from './helpers/code-only.mjs';
+import { codeOnly, fieldsOn, functionSource } from './helpers/code-only.mjs';
 
 const ROOT = join(import.meta.dirname, '..');
 const read = (p) => readFileSync(join(ROOT, p), 'utf8');
@@ -239,7 +248,12 @@ function record(value, path, hits) {
 }
 
 // Array and promise machinery the proxy walks through on the way to a field.
-const NOT_PAYLOAD = /(^$)|(\.(constructor|length|map|filter|sort|slice|then|forEach|reduce|concat|join|indexOf|includes|push|find|some|every|values|entries|keys|toFixed|replace|split|toLocaleString|toLocaleDateString|toISOString|prototype)$)/;
+// The bare `then` is here because `await` reaches it at the ROOT, not under a
+// key: the filter below only ever matched the dotted spellings, so a lifted
+// reader that awaits the document records one `then` that is machinery wearing a
+// payload key's name — and the constant's own comment claimed it filtered
+// promise machinery.
+const NOT_PAYLOAD = /(^$)|(^then$)|(\.(constructor|length|map|filter|sort|slice|then|forEach|reduce|concat|join|indexOf|includes|push|find|some|every|values|entries|keys|toFixed|replace|split|toLocaleString|toLocaleDateString|toISOString|prototype)$)/;
 
 const i18nSource = read('public/js/i18n.js');
 
@@ -272,17 +286,122 @@ function pageContext(api) {
   return context;
 }
 
-const PAGE_FILES = ['scanner.js', 'dashboard.js', 'analytics.js', 'ai.js'];
+/**
+ * The readers that cannot be run whole, and the functions that read the
+ * document in them.
+ *
+ * scrape.js fetches this route too — `refreshScanSummary`, line 1226 — and the
+ * census left it out for a year because the list of pages was typed by hand
+ * rather than measured, and the route's own comment agreed with the list
+ * ("four pages"). Running the page whole does not find it either: its init
+ * awaits `/api/scrape/state` first, and the harness answers that route with a
+ * stub that has no `state`, so init rejects into its own catch and the fetch
+ * below it never happens. Measured: the page ran, threw nothing, and touched
+ * **0** paths — which is exactly the silence the per-reader floor exists to
+ * refuse, and which no floor could have caught while the page was not in the
+ * list at all.
+ *
+ * So those three functions are lifted out of the page and driven directly.
+ * Production code, read from the file, not a second implementation of it — the
+ * same trade `liftFromOrchestrator` makes on the other side of this tree. The
+ * page's own `$` comes along for the ride rather than being retyped here.
+ */
+const LIFTED_READERS = {
+  'scrape.js': ['scanSummaryText', 'renderScanSummary', 'refreshScanSummary'],
+};
+
+/**
+ * The source a lifted reader runs: the page's own `$`, then its own functions.
+ *
+ * The `$` is read out of the page rather than typed here, because a harness
+ * that draws through a helper the page does not have is measuring a page that
+ * does not exist. Both halves come from the file, and both fail loudly rather
+ * than degrading: a page that stops declaring `$`, or a function that is renamed
+ * away, is a loud stop, not an empty reader set.
+ *
+ * @param {string} page file under public/js/pages
+ * @param {string[]} names functions to lift, in dependency order
+ * @returns {{dollar: string, code: string}}
+ */
+function liftedSource(page, names) {
+  const source = read(`public/js/pages/${page}`);
+  const dollar = source.match(/^const \$ = .*$/m);
+  if (!dollar) throw new Error(`${page} no longer declares \`$\` the way the lift assumes`);
+  return {
+    dollar: dollar[0],
+    code: [dollar[0], ...names.map((n) => functionSource(source, n).text)].join('\n'),
+  };
+}
+
+/**
+ * Every page that fetches this route, derived from the pages themselves.
+ *
+ * A typed list is a claim about the frontend that nothing re-checks, and the
+ * failure it hides is the one this census exists to prevent: a field read by
+ * the page that was left out reads as a field nobody reads, and gets excused
+ * forever on the strength of an omission. Deriving it costs one pass over the
+ * directory, so the omission cannot survive the next run.
+ *
+ * Comments are blanked first, because scrape.js names this route in three
+ * places in prose and two of them are sentences about it, not calls.
+ */
+const SCAN_FETCH = /arbiterApi\.get\(\s*'\/api\/scan'\s*\)/;
+const PAGE_NAMES = readdirSync(join(ROOT, 'public', 'js', 'pages')).filter((f) => f.endsWith('.js'));
+
+/**
+ * Whether a page source is a consumer of this route.
+ *
+ * One function, used by the derivation and by its own control below: if the two
+ * spelled out the rule separately they could drift, and the drift would look
+ * like the control passing.
+ *
+ * @param {string} src a page's whole source
+ * @returns {boolean}
+ */
+const isConsumer = (src) => SCAN_FETCH.test(codeOnly(src));
+
+const SCAN_CONSUMERS = PAGE_NAMES
+  .filter((f) => isConsumer(read(`public/js/pages/${f}`)))
+  .sort();
+
+/**
+ * How little a reader may touch and still be a reader.
+ *
+ * A number, not a derivation, because the floor's job is to catch a reader that
+ * throws — and the number that does that is whatever each reader touches today,
+ * measured. scrape.js's is 11 raw paths for 5 of the document, one floor below
+ * that; the four it shares with the other pages are already past theirs.
+ */
+const FLOOR = {
+  'scanner.js': 50,
+  'dashboard.js': 20,
+  'analytics.js': 5,
+  'ai.js': 15,
+  'connection-status.js': 3,
+  'scrape.js': 10,
+};
+
+/** Whole-page readers: every consumer whose reads happen at load time. */
+const PAGE_FILES = SCAN_CONSUMERS.filter((f) => !LIFTED_READERS[f]);
 
 /**
  * Run one payload past every reader and collect the paths touched.
  *
  * @param {object} payload
- * @returns {Promise<{hits: Set<string>, perPage: Record<string, number>}>}
+ * @returns {Promise<{hits: Set<string>, perPage: Record<string, number>, perPagePaths: Record<string, string[]>}>}
  */
 async function measureReads(payload) {
   const hits = new Set();
   const perPage = {};
+  const perPagePaths = {};
+  const collect = (page, pageHits) => {
+    perPage[page] = pageHits.size;
+    perPagePaths[page] = [...pageHits].sort();
+    for (const p of pageHits) {
+      const n = p.replace(/\.\d+/g, '[]');
+      if (!NOT_PAYLOAD.test(n)) hits.add(n);
+    }
+  };
 
   for (const page of PAGE_FILES) {
     const pageHits = new Set();
@@ -299,11 +418,27 @@ async function measureReads(payload) {
     // profile list; the preview path is the same function.
     if (page === 'scanner.js') context.render(record(payload, '', pageHits));
     await new Promise((r) => setTimeout(r, 25));
-    perPage[page] = pageHits.size;
-    for (const p of pageHits) {
-      const n = p.replace(/\.\d+/g, '[]');
-      if (!NOT_PAYLOAD.test(n)) hits.add(n);
-    }
+    collect(page, pageHits);
+  }
+
+  // scrape.js reads this document through three lifted functions rather than
+  // through its own init, which never reaches them here. Lifting a function
+  // that no longer exists fails loudly in `functionSource`, and a page whose `$`
+  // is not the one the page declares fails in `liftedSource` — a retyped `$`
+  // would quietly change what the page draws.
+  for (const [page, names] of Object.entries(LIFTED_READERS)) {
+    const pageHits = new Set();
+    const api = {
+      async get(path) {
+        if (path === '/api/scan') return record(payload, '', pageHits);
+        return {};
+      },
+      async post() { return {}; },
+    };
+    const context = pageContext(api);
+    vm.runInNewContext(liftedSource(page, names).code, context);
+    await context[names[names.length - 1]]();
+    collect(page, pageHits);
   }
 
   // connection-status.js is not a page but it is a reader: it decides the
@@ -316,14 +451,10 @@ async function measureReads(payload) {
     const proxied = record(payload, '', pageHits);
     context.decideHealthBanner(proxied.dataHealth);
     context.decideHealthChip(proxied.dataHealth);
-    perPage['connection-status.js'] = pageHits.size;
-    for (const p of pageHits) {
-      const n = p.replace(/\.\d+/g, '[]');
-      if (!NOT_PAYLOAD.test(n)) hits.add(n);
-    }
+    collect('connection-status.js', pageHits);
   }
 
-  return { hits, perPage };
+  return { hits, perPage, perPagePaths };
 }
 
 /** The scan with every fallback branch forced. */
@@ -353,18 +484,25 @@ function arbOnTop(base) {
 
 let readRun = null;
 
-/** @returns {Promise<Set<string>>} every payload path any reader touched. */
+/** @returns {Promise<{hits: Set<string>, perPage: Record<string, number>, perPagePaths: Record<string, string[]>}>} */
 async function readPaths() {
   if (readRun) return readRun;
   const base = await publishedScan();
   const perPage = {};
+  const perPagePaths = {};
   const hits = new Set();
   for (const payload of [base, degraded(base), arbOnTop(base)]) {
     const run = await measureReads(payload);
     Object.assign(perPage, run.perPage);
+    // Union, not last writer wins: the three payloads force different branches,
+    // so a path read only by the degraded one is exactly the kind this census
+    // cannot see if it keeps only the final pass.
+    for (const [page, paths] of Object.entries(run.perPagePaths)) {
+      perPagePaths[page] = [...new Set([...(perPagePaths[page] || []), ...paths])].sort();
+    }
     for (const p of run.hits) hits.add(p);
   }
-  readRun = { hits, perPage };
+  readRun = { hits, perPage, perPagePaths };
   return readRun;
 }
 
@@ -603,11 +741,73 @@ test('the published set is 166 leaves, and the reader is not reporting zeros', a
   // silence would report every field it never reached as unread. The floors are
   // per reader because the readers are not the same size: connection-status
   // decides a banner from two fields, the scanner page draws four tables.
-  const FLOOR = { 'scanner.js': 50, 'dashboard.js': 20, 'analytics.js': 5, 'ai.js': 15, 'connection-status.js': 3 };
   assert.deepEqual(Object.keys(perPage).sort(), Object.keys(FLOOR).sort(), 'a reader was added or dropped');
   for (const [page, floor] of Object.entries(FLOOR)) {
     assert.ok(perPage[page] > floor, `${page} touched ${perPage[page]} paths, under its floor of ${floor}: it threw, and the census would be reading its silence`);
   }
+});
+
+test('the reader set is derived from the pages, and prose is not a call', () => {
+  assert.deepEqual(SCAN_CONSUMERS, ['ai.js', 'analytics.js', 'dashboard.js', 'scanner.js', 'scrape.js'],
+    'the set of pages that fetch this route moved: the new one has to be read, not assumed');
+
+  // Both directions of the rule, because a derivation is only worth its cost if
+  // it cannot pass on either side. The masker is what makes the second one
+  // necessary: scrape.js names this route in three sentences of prose, one of
+  // them on a line that would match without it.
+  assert.ok(isConsumer("const s = await arbiterApi.get('/api/scan');"),
+    'the rule stopped matching a real call to the route');
+  assert.equal(isConsumer("// the page calls arbiterApi.get('/api/scan') on load\n"), false,
+    'a comment was counted as a consumer of the route');
+
+  // And the rule's blind spot is fenced rather than assumed: every line of code
+  // that names the route has to be a call on arbiterApi, so a sixth consumer
+  // spelled differently stops here instead of vanishing from the census.
+  const unexplained = [];
+  for (const f of PAGE_NAMES) {
+    codeOnly(read(`public/js/pages/${f}`)).split(/\r?\n/).forEach((line, i) => {
+      if (line.includes("'/api/scan'") && !line.includes('arbiterApi.')) {
+        unexplained.push(`${f}:${i + 1} ${line.trim()}`);
+      }
+    });
+  }
+  assert.deepEqual(unexplained, [], 'a line names this route without a call the reader set can see');
+});
+
+test('the route comment counts the consumers this census runs', () => {
+  // It said "four pages" and was right — for exactly as long as the list of
+  // readers was typed by hand and agreed with it. The two drifted together, so
+  // the comment could never have caught the omission; now the number in the
+  // comment is the number measured here, and a sixth consumer breaks both.
+  const route = read('src/router.mjs');
+  const start = route.indexOf("'GET /api/scan'");
+  const block = route.slice(start, start + 700);
+  const WORDS = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight'];
+  assert.ok(start > 0, 'the route key is no longer in router.mjs, so this comment cannot be pinned to it');
+  assert.match(block, new RegExp(`here ${WORDS[SCAN_CONSUMERS.length]} page`),
+    'the route comment still counts the pages by hand, and now says a different number than this census runs');
+});
+
+test('the lifted page reads the document it fetches', async () => {
+  const { perPage, perPagePaths } = await readPaths();
+
+  // Five of the eleven paths this page touches are payload paths; `.length` and
+  // `then` are the machinery the proxy walks to reach them. Pinned by name
+  // because a floor cannot tell "reads the four families and the flag" from
+  // "touched something" — and this is the consumer whose reads were missing.
+  assert.deepEqual(
+    perPagePaths['scrape.js'].filter((p) => !NOT_PAYLOAD.test(p)),
+    ['lowHold', 'middles', 'opportunities', 'positiveEv', 'published'],
+    'scrape.js no longer reads exactly the document it fetches',
+  );
+  assert.ok(perPage['scrape.js'] > FLOOR['scrape.js'],
+    `scrape.js touched ${perPage['scrape.js']} paths, under its floor: the lift is not reaching the page's own code`);
+
+  // The lift runs the page's declarations, so a helper typed into the harness
+  // cannot stand in for one the page has.
+  const lifted = liftedSource('scrape.js', LIFTED_READERS['scrape.js']);
+  assert.equal(lifted.dollar, read('public/js/pages/scrape.js').split(/\r?\n/)[1],
+    'the lift stopped using the page\'s own `$`, so the harness would be drawing through a helper scrape.js does not have');
 });
 
 test('the reader instrument finds reads it is supposed to find', async () => {

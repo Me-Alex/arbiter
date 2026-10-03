@@ -199,11 +199,36 @@ export function guardedPropertyReads(src, receivers = ['window.arbiterFormat'], 
   }
   const ast = parseAny(src, isJs);
 
+  /**
+   * The receiver a member expression reads through, seeing past a fallback.
+   *
+   * `(scan.options || {}).liveMaxAgeMs` is a read of `scan.options` and of
+   * nothing new, but its object is a LogicalExpression, so a matcher written on
+   * the object's own text cannot see it. Without this, `options.liveMaxAgeMs`
+   * — read by public/js/pages/scanner.js:286, on the one page whose whole job is
+   * to show the window a scan applied — is reported as unread by a census being
+   * run over that very page. The blindness is in the direction that invents a
+   * gap, which is the direction a census must not be wrong in.
+   *
+   * The fallback is not scored as a guard: `x || {}` chooses what to read
+   * *through*, and nothing stands between the read and a missing receiver, so
+   * `guard: 'none'` below still describes it honestly.
+   */
+  const receiverText = (object) => {
+    const text = src.slice(object.range[0], object.range[1]);
+    if (receivers.includes(text)) return text;
+    if (object.type === 'LogicalExpression' && (object.operator === '||' || object.operator === '??')) {
+      const left = src.slice(object.left.range[0], object.left.range[1]);
+      if (receivers.includes(left)) return left;
+    }
+    return null;
+  };
+
   const membersIn = (node) => {
     const found = [];
     visit(node, (n) => {
       if (n.type !== 'MemberExpression') return;
-      if (!receivers.includes(src.slice(n.object.range[0], n.object.range[1]))) return;
+      if (!receiverText(n.object)) return;
       const key = n.computed
         ? (n.property.type === 'Literal' ? n.property.value : null)
         : n.property.name;
@@ -237,7 +262,7 @@ export function guardedPropertyReads(src, receivers = ['window.arbiterFormat'], 
   const reads = [];
   visit(ast, (n, ancestors) => {
     if (n.type !== 'MemberExpression') return;
-    if (!receivers.includes(src.slice(n.object.range[0], n.object.range[1]))) return;
+    if (!receiverText(n.object)) return;
     const key = n.computed
       ? (n.property.type === 'Literal' ? n.property.value : null)
       : n.property.name;

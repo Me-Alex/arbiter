@@ -21,7 +21,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { codeOnly, fieldReads, fieldsOn } from './helpers/code-only.mjs';
+import { codeOnly, fieldReads, fieldsOn, guardedPropertyReads } from './helpers/code-only.mjs';
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url));
 const read = (rel) => readFileSync(`${ROOT}${rel}`, 'utf8');
@@ -90,6 +90,39 @@ test('HTML comments are blanked on the HTML path', () => {
   assert.equal(out.length, src.length);
   assert.doesNotMatch(out, /cat\.events/);
   assert.match(out, /id="b"/, 'the rest of the markup survived');
+});
+
+test('a read through a fallback receiver is a read, and a fallback nobody owns is not', () => {
+  // `(scan.options || {}).liveMaxAgeMs` is a read of `scan.options`, and a
+  // matcher written on the object's own text cannot see it — the object is a
+  // LogicalExpression. The blindness is in the direction that invents a gap: the
+  // scan census ran over the page that reads it and reported the field unread.
+  const src = [
+    'function liveWindowNote(t, scan) {',
+    '  const ms = Number((scan.options || {}).liveMaxAgeMs);',   // the read
+    '  return ms ? t(\'liveWindow\') + ms : \'\';',
+    '}',
+  ].join('\n');
+  assert.deepEqual(guardedPropertyReads(src, ['scan.options']).map((r) => r.key), ['liveMaxAgeMs'],
+    'a read through a fallback receiver is invisible');
+  assert.deepEqual(guardedPropertyReads(src, ['scan']).map((r) => r.key), ['options'],
+    'the inner read still belongs to the outer receiver');
+
+  // The other direction, and it is the one that invents a field: the fallback
+  // only widens the match to the receiver it actually falls back FROM. An
+  // unrelated object behind the same `||` must not answer for it.
+  const other = 'const ms = Number((lastState.options || {}).liveMaxAgeMs);';
+  assert.deepEqual(guardedPropertyReads(other, ['scan.options']), [],
+    'another object answered for this receiver');
+  assert.deepEqual(guardedPropertyReads('const ms = (scan.other || {}).liveMaxAgeMs;', ['scan.options']), [],
+    'a sibling key answered for this receiver');
+
+  // And `??` is the same shape, so it is the same rule.
+  assert.deepEqual(
+    guardedPropertyReads('const ms = (scan.options ?? {}).liveMaxAgeMs;', ['scan.options']).map((r) => r.key),
+    ['liveMaxAgeMs'],
+    'a nullish fallback is not seen through',
+  );
 });
 
 test('the real files still parse, and their real reads are still found', () => {

@@ -91,11 +91,13 @@ export function buildRouter(ctx) {
     'GET /api/scan': async () => {
       // `published` rides on the served document rather than wrapping it in an
       // envelope like readAlertPayload does. There the page asks for the
-      // payload and knows the scan is inside it; here four pages read
-      // `scan.opportunities` and `scan.dataHealth` directly, and an envelope
-      // would hand every one of them `undefined` — which renders as 0, the
-      // exact lie the flag exists to stop. Flat, a consumer that never learns
-      // the flag exists still receives it.
+      // payload and knows the scan is inside it; here five pages read
+      // `scan.opportunities` directly and four of them read `scan.dataHealth` as
+      // well, and an envelope would hand every one of them `undefined` — which
+      // renders as 0, the exact lie the flag exists to stop. Flat, a consumer
+      // that never learns the flag exists still receives it. The count is
+      // measured, not remembered: test/scan-fields-census.test.mjs derives the
+      // consumer set from these pages and fails on this sentence.
       const { scan, published } = await scanService.readPublishedScan(dataDir);
       return sendJson(null, 200, { ...scan, published });
     },

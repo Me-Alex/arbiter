@@ -194,23 +194,31 @@ test('the key lists are the ones they claim to be', () => {
 });
 
 test('the numbers the withdrawn report quoted still hold', () => {
-  // 7 pages, 4 without format.js, 22 reads, 2 bare, 0 hazardous. If a page is
+  // 7 pages, 4 without format.js, 23 reads, 3 bare, 0 hazardous. If a page is
   // added, a script is loaded onto an admin page, or a formatter is called for
   // the first time, one of them moves — and a measurement nobody re-checks is
   // the same as no measurement.
+  //
+  // The 23rd read joined when `guardedPropertyReads` learned to see through a
+  // fallback receiver: `timeAgo: (window.arbiterFormat || {}).timeAgo || …` at
+  // common.js:281 is a read of the object whose only trace used to be the word
+  // `window.arbiterFormat` in a file the count was measured over. It counts as
+  // bare on purpose — a `|| {}` stands in for a missing object, not for a
+  // missing key, and this file's hazard is a key called on a page that never
+  // defined it.
   assert.equal(PAGES.length, 7, `expected 7 pages, measured ${PAGES.length}`);
   assert.deepEqual(PAGES_WITHOUT_FORMAT_JS.map((p) => p.replace(/^public\//, '')).sort(),
     ['admin/ai.html', 'admin/analytics.html', 'admin/login.html', 'admin/scanner.html'],
     'the set of pages without format.js changed');
   assert.deepEqual(PAGES_WITHOUT_THE_OBJECT.map((p) => p.replace(/^public\//, '')), ['admin/login.html'],
     'login.html loads neither format.js nor common.js, so window.arbiterFormat does not exist there at all');
-  assert.equal(CALLS.length, 22, `expected 22 reads of the object, measured ${CALLS.length}`);
+  assert.equal(CALLS.length, 23, `expected 23 reads of the object, measured ${CALLS.length}`);
   const byGuard = (g) => CALLS.filter((c) => c.guard === g);
   const bare = CALLS.filter((c) => c.guard === 'none' && !c.optional);
   assert.deepEqual([byGuard('key').length, byGuard('receiver').length, byGuard('none').length, CALLS.filter((c) => c.optional).length],
-    [8, 8, 6, 4], 'the reads are no longer split the way this file measured them');
-  assert.equal(bare.length, 2, `expected 2 reads with nothing in front of them, measured ${bare.length}`);
+    [8, 8, 7, 4], 'the reads are no longer split the way this file measured them');
+  assert.equal(bare.length, 3, `expected 3 reads with nothing in front of them, measured ${bare.length}`);
   assert.deepEqual(bare.map((c) => `${c.file.replace(/^public\/js\//, '')}:${c.line} ${c.key}`),
-    ['pages/event-detail.js:51 formatKickoff', 'pages/scrape.js:535 fmtOdds'],
-    'the reads with nothing in front of them are not the two this file knows about');
+    ['pages/common.js:281 timeAgo', 'pages/event-detail.js:51 formatKickoff', 'pages/scrape.js:535 fmtOdds'],
+    'the reads with nothing in front of them are not the three this file knows about');
 });
