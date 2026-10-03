@@ -1068,7 +1068,7 @@ const READ = {
  * machine-only, the excuse is stale and the test says so.
  */
 const ODDS_UNREAD = new Map([
-  ['results[].id', "The book's own event id, published so a reader can find that event inside the raw capture. The board prints none of it: the only place in the tree that reads an event's id is the scanner engine, which takes it as providerEventId (src/scanner/engine.mjs:57), and there are 0 occurrences of providerEventId anywhere under public/js, so the value stops at the machine. What the row prints instead is the app's own way of naming an event — teams, sport, league, kickoff (public/js/pages/event-detail.js:47) — and the only handle this panel can act on is eventKey, which it already reads into both filter lists. Measured on the captures rather than on the fixture above: 12390 distinct ids over 24829 events in the 22 files under data-market-run/workspace, and re-measured as three claims by test/snapshot-route.test.mjs rather than trusted as a figure. The id is not a handle a page could look an event up in, and the reason is not the one this paragraph used to give. It never repeats between two files of the same book (0 of 12390), so it is not an address inside one capture either, and it is not unique to a book: 4474 ids are shared by two or more books and 834 of those stand for different eventKeys. What it is, inside one book, is a one-to-one stand-in for eventKey, over all 24829 pairs. So the field says exactly what the handle the panel already keys on says, which is why there is nothing for it to add here."],
+  ['results[].id', "The book's own event id, published so a reader can find that event inside the raw capture. The board prints none of it: the name the tree gives that id is `providerEventId`, and 0 occurrences of it sit anywhere under public/js, so the value stops at the machine. What it does not stop at is the rest of the backend: 3 of the 73 modules under src/ read it and 2 write it, and the paragraph used to call the scanner engine the only place it appears at all, which is why it read that way. Measured, and re-measured by the test below: engine.mjs:57 and :484, scanner.mjs:133 and :136, verification.mjs:224, and altenar-public.mjs:362 as a writer. Every reader is machine-to-machine, a scan fingerprint and a verification leg match, which is the same reason the panel has nothing to draw. What the row prints instead is the app's own way of naming an event, teams at public/js/pages/event-detail.js:44-46 and sport, kickoff and league in the meta line at :49-52; and the only handle this panel can act on is eventKey, which it already reads into both filter lists (public/js/pages/scrape.js:514 and :579). Measured on the captures rather than on the fixture above: 12390 distinct ids over 24829 events in the 22 files under data-market-run/workspace, and re-measured as three claims by test/snapshot-route.test.mjs rather than trusted as a figure. The id is not a handle a page could look an event up in, and the reason is not the one this paragraph used to give. It never repeats between two files of the same book (0 of 12390), so it is not an address inside one capture either, and it is not unique to a book: 4474 ids are shared by two or more books and 834 of those stand for different eventKeys. What it is, inside one book, is a one-to-one stand-in for eventKey, over all 24829 pairs. So the field says exactly what the handle the panel already keys on says, which is why there is nothing for it to add here."],
 ]);
 
 let CENSUS = null;
@@ -1126,6 +1126,45 @@ test('the unread leaf is excused, and the excuse is re-measured rather than asse
     readFileSync(new URL(`../public/js/${entry}`, import.meta.url), 'utf8').includes('providerEventId'));
   assert.deepEqual(readers, [],
     `the excuse for results[].id says nothing under public/js reads providerEventId; ${readers.length} file(s) now do`);
+
+  // The half that was wrong. The excuse used to call the scanner engine the only
+  // place the name appears anywhere in the tree, and it names three readers and
+  // two writers today — a universal claim about a codebase that moves, which is
+  // the kind of claim that rots without anything failing. The excuse now quotes
+  // those five sites, so this asks the tree for them instead.
+  //
+  // Read and written are told apart per line rather than per file, because one of
+  // the sites does both: engine.mjs:484 both declares the key and reaches for the
+  // value it falls back to. Stripped of comments first, since this repo names
+  // things in prose and a mention is not a use.
+  const srcTree = [];
+  const walkSrc = (dir) => {
+    for (const e of readdirSync(dir, { withFileTypes: true })) {
+      if (e.isDirectory()) walkSrc(new URL(`${e.name}/`, dir));
+      else if (e.name.endsWith('.mjs')) srcTree.push(new URL(e.name, dir));
+    }
+  };
+  walkSrc(new URL('../src/', import.meta.url));
+  assert.equal(srcTree.length, 73, 'the modules under src/ have been re-counted');
+  const reading = [];
+  const writing = [];
+  for (const url of srcTree) {
+    const code = codeOnly(readFileSync(url, 'utf8'), true);
+    const where = `src/${url.pathname.split('/src/')[1]}`;
+    for (const line of code.split(/\r?\n/)) {
+      if (!line.includes('providerEventId')) continue;
+      // A line that opens with the key is the object literal declaring it; a line
+      // with `name =` is an assignment. Everything else reaches for the value.
+      if (/^\s*providerEventId\s*:/.test(line) || /\bproviderEventId\s*=[^=]/.test(line)) writing.push(where);
+      else reading.push(where);
+    }
+  }
+  assert.deepEqual([...new Set(reading)].sort(),
+    ['src/scanner/engine.mjs', 'src/scanner/scanner.mjs', 'src/verification.mjs'],
+    'the excuse for results[].id names three modules reading providerEventId and these are they');
+  assert.deepEqual([...new Set(writing)].sort(),
+    ['src/scanner/engine.mjs', 'src/scrapers/altenar-public.mjs'],
+    'the excuse for results[].id names two modules writing providerEventId and these are they');
 });
 
 test('the tooltip falls back to a translated line, not a hardcoded English one', () => {
