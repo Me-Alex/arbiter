@@ -16,8 +16,12 @@
 
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs';
+import { mkdtemp, mkdir, writeFile, rm } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import vm from 'node:vm';
+import { buildRouter } from '../src/router.mjs';
 import { codeOnly } from './helpers/code-only.mjs';
 
 const scrapeSource = readFileSync(new URL('../public/js/pages/scrape.js', import.meta.url), 'utf8');
@@ -610,14 +614,24 @@ test('the board asks the route about the book it is showing, and nothing else', 
 
   const html = boardHtml(h);
   assert.match(html, /CFR Cluj – CSIC M/, 'the two clubs are what identifies the row');
-  assert.match(html, /Liga · 2026-09-05T10:00:00\.000Z/, 'and the league and kickoff travel with them');
+  // Sport leads the way it leads the event page's own meta line
+  // (public/js/pages/event-detail.js:50): the projection publishes it and this
+  // row had been dropping it, so a capture holding two sports could not say
+  // which row belonged to which.
+  assert.match(html, /Football · Liga · 2026-09-05T10:00:00\.000Z/,
+    'and the sport, league and kickoff travel with them');
   assert.match(html, /Rezultat final/, 'the market is labelled with the provider’s own name');
   assert.match(html, /1 @ 2\.63/, 'each selection reads as name @ odds');
   // 2.1 is not 2.1 on this page: it goes through the shared formatter, which is
   // the whole reason scrape.html now loads format.js.
   assert.match(html, /X @ 2\.10/, 'odds are formatted by the shared formatter, not by the page');
-  assert.match(boardNote(h), /1 markets · Captured: 2026-09-28T10:00:00\.000Z/,
-    'the note carries the row count and when the capture was taken');
+  // Exact, because the note is the panel's one running sentence and its parts
+  // are an order: whose capture, how much of it is on screen, and when it was
+  // taken. Built from the dictionary rather than from a literal so this cannot
+  // pass on an English string that Romanian no longer has.
+  assert.equal(boardNote(h),
+    `${DICTS.en.t('bookmaker')}: winner · 1 markets · ${DICTS.en.t('capturedAt')}: 2026-09-28T10:00:00.000Z`,
+    'the note names the book, the row count and when the capture was taken');
 });
 
 test('the board sends both filters, and uppercases the market the way the route compares it', async () => {
@@ -668,6 +682,32 @@ test('a row is marked live from either the event or the market', async () => {
   // saying nothing. "pre-match" would be a claim about the capture, and the
   // capture is the last one the operator ran.
   assert.doesNotMatch(boardHtml(h), /pre-?match|prematch/i, 'a row that is not in-play is not labelled');
+});
+
+test('an event the adapter could not name is a row without names, not a row of separators', async () => {
+  // `validate` rejects an event with no id or no eventKey and never asks for a
+  // team name (src/scrapers/base.mjs:229-234), and one adapter builds its own
+  // fallback id out of two empty names (src/scrapers/altenar-provider.mjs:74).
+  // So a capture can carry an event the board cannot name, and a row built by
+  // gluing the two names with a dash prints that dash as the whole cell.
+  const h = harness('en', {
+    form: { 'odds-book': { value: 'winner' } },
+    api: {
+      get: async () => ({
+        results: [oddsResult({ sport: '', homeTeam: '', awayTeam: '', league: '', kickoff: '' })],
+      }),
+    },
+  });
+  await h.run('loadPriceBoard()');
+  const html = boardHtml(h);
+  // Asked of the two places the separators live, not of the whole row: three
+  // selections are joined by the same " · " the meta line used to be built with,
+  // and a check over the whole markup would pass for the wrong reason.
+  const cell = html.split('<td>')[1].split('</td>')[0];
+  const foot = (html.match(/<div class="sl-stat-foot">([^<]*)<\/div>/) || ['', ''])[1];
+  assert.doesNotMatch(cell, /–/, 'no separator stands in for the two names the event does not have');
+  assert.equal(foot, '', 'and the meta line says nothing rather than a separator of its own');
+  assert.match(html, /Rezultat final/, 'the market and its prices are the row, which is all this capture knows');
 });
 
 test('the note says when the board is cut short, and when it is not', async () => {
@@ -798,6 +838,40 @@ test('the board is translated, note and empty row alike', async () => {
   assert.doesNotMatch(rows.en, /piețe|Alege o casă|Nicio piață|captură salvată/, 'nor Romanian into English');
 });
 
+test('the note names the book the payload is about, and the selector can disagree with it', async () => {
+  // What the published `sourceId` is for. Four `change` listeners each start a
+  // load and none of them awaits one (scrape.js:765), so two requests can be in
+  // flight at once and whichever response lands last is the one on screen. The
+  // route answers with the name it served; the note says it, so a table that no
+  // longer belongs to the selected book announces itself instead of passing for
+  // it.
+  //
+  // The ordering itself is not fixed here — the late response still replaces the
+  // rows it should not have replaced. What this pins is that the panel then says
+  // whose prices those are.
+  const gates = [];
+  const h = harness('en', {
+    form: { 'odds-book': { value: 'winner' } },
+    api: { get: () => new Promise((resolve) => gates.push(resolve)) },
+  });
+  const first = h.run('loadPriceBoard()');
+  h.nodes.get('odds-book').value = 'unibet';
+  const second = h.run('loadPriceBoard()');
+  assert.equal(gates.length, 2, 'both loads reached the route before either answered');
+
+  gates[1]({ sourceId: 'unibet', results: [oddsResult({ homeTeam: 'Second', awayTeam: 'Choice' })] });
+  await second;
+  assert.match(boardNote(h), new RegExp(DICTS.en.t('bookmaker') + ': unibet'),
+    'the newest response names the book it is about');
+  assert.match(boardHtml(h), /Second/, 'and its rows are the ones on screen');
+
+  gates[0]({ sourceId: 'winner', results: [oddsResult({ homeTeam: 'First', awayTeam: 'Choice' })] });
+  await first;
+  assert.match(boardNote(h), new RegExp(DICTS.en.t('bookmaker') + ': winner'),
+    'a response that arrives after the operator moved on names its own book');
+  assert.equal(h.nodes.get('odds-book').value, 'unibet', 'while the selector still reads the other');
+});
+
 test('scrape.html loads the formatter the board renders odds through', () => {
   // The one failure this file cannot catch from the vm: remove the script tag
   // and every test above still passes, because the harness loads format.js
@@ -806,6 +880,176 @@ test('scrape.html loads the formatter the board renders odds through', () => {
     'scrape.html must load format.js — the board calls arbiterFormat.fmtOdds');
   assert.ok(scrapeHtml.includes('id="odds-book"') && scrapeHtml.includes('id="odds-rows"'),
     'and the controls the controller reaches for by id are still in the markup');
+});
+
+// ---- the odds projection, field by field -------------------------------------
+//
+// `GET /api/odds/:sourceId` projects 17 leaves per book. This block measures
+// which of them the board reads, by serving a marker snapshot through the real
+// router and then rendering that exact response through the real page: the
+// published set comes from the producer, the read set from the consumer, and
+// neither is a list written next to the other. A leaf added to the route arrives
+// here as a new path in the failure; a leaf the page stops reading stops being
+// measured and says so.
+
+/** A marker per field, suffixed by row so the two rows can be told apart. */
+const mk = (field, row = 1) => `MK${field}${row}`;
+/** The one leaf the page formats rather than prints, so its marker is a price. */
+const MK_ODDS = 4.09;
+
+const censusSnapshot = () => ({
+  schemaVersion: 2,
+  sourceId: 'census-book',
+  capturedAt: mk('capturedAt'),
+  events: [1, 2].map((row) => ({
+    id: mk('id', row),
+    eventKey: mk('eventKey'),
+    sport: mk('sport', row),
+    league: mk('league', row),
+    kickoff: mk('kickoff', row),
+    homeTeam: mk('homeTeam', row),
+    awayTeam: mk('awayTeam', row),
+    // Two events, not one: the route copies `event.live` onto every one of its
+    // rows, so a single event cannot tell the event flag from the market flag.
+    // Split across two rows, each flag is the only reason its own row is marked.
+    live: row === 1,
+    markets: [{
+      key: mk('marketKey'),
+      name: mk('marketName', row),
+      live: row === 2,
+      // Only these two keys: the route forwards the writer's selection objects
+      // whole, so their shape belongs to the scrapers and to the snapshot route's
+      // census, and a third key here would be a leaf this route never published.
+      selections: [{ name: mk('selectionName', row), odds: MK_ODDS }],
+    }],
+  })),
+});
+
+/** Serve one workspace file through the real router and hand back its JSON. */
+async function oddsResponse(snapshot, book = 'census-book') {
+  const dir = await mkdtemp(join(tmpdir(), 'arbiter-odds-census-'));
+  try {
+    await mkdir(join(dir, 'workspace'), { recursive: true });
+    await writeFile(join(dir, 'workspace', `${book}_events.json`), JSON.stringify(snapshot));
+    let raw = null;
+    const res = { setHeader() {}, end(body) { raw = body; }, headersSent: false };
+    const req = {
+      method: 'GET',
+      url: `/api/odds/${book}`,
+      headers: { host: '127.0.0.1:8080' },
+      socket: { remoteAddress: '127.0.0.1' },
+    };
+    await buildRouter({ dataDir: dir })(req, res, new URL(req.url, 'http://127.0.0.1'));
+    assert.notEqual(raw, null, 'the route answered — a null body means the stub never saw sendJson');
+    return JSON.parse(raw);
+  } finally {
+    await rm(dir, { recursive: true, force: true });
+  }
+}
+
+/** Every leaf path in a payload: `results[].market.selections[].name`. */
+function leafPaths(value, prefix = '') {
+  if (Array.isArray(value)) return value.flatMap((v) => leafPaths(v, `${prefix}[]`));
+  if (value && typeof value === 'object') {
+    return Object.entries(value).flatMap(([k, v]) => leafPaths(v, prefix ? `${prefix}.${k}` : k));
+  }
+  return [prefix];
+}
+
+/**
+ * What the board does with each published leaf, asked of the markup it wrote.
+ *
+ * A leaf read only as a key — `market.key` and `eventKey`, which feed the two
+ * filter lists — is measured where it lands, not where it is written.
+ */
+const READ = {
+  sourceId: (v) => v.note.includes('census-book'),
+  capturedAt: (v) => v.note.includes(mk('capturedAt')),
+  'results[].eventKey': (v) => v.lists.includes(mk('eventKey')),
+  // Measured in upper case, because that is what the page offers: the route
+  // compares `String(market.key).toUpperCase()` against the `marketKey` it is
+  // sent, and the page uppercases the same way before it fills the list. A probe
+  // looking for the key as written would report the field unread for a page that
+  // reads it on every row.
+  'results[].market.key': (v) => v.lists.includes(mk('marketKey').toUpperCase()),
+  'results[].sport': (v) => v.row(1).includes(mk('sport', 1)),
+  'results[].league': (v) => v.row(1).includes(mk('league', 1)),
+  'results[].kickoff': (v) => v.row(1).includes(mk('kickoff', 1)),
+  'results[].homeTeam': (v) => v.row(1).includes(mk('homeTeam', 1)),
+  'results[].awayTeam': (v) => v.row(1).includes(mk('awayTeam', 1)),
+  'results[].live': (v) => v.row(1).includes(v.pill),
+  'results[].market.name': (v) => v.row(1).includes(mk('marketName', 1)),
+  'results[].market.live': (v) => v.row(2).includes(v.pill),
+  'results[].market.selections[].name': (v) => v.html.includes(mk('selectionName', 1)),
+  'results[].market.selections[].odds': (v) => v.html.includes(MK_ODDS.toFixed(2)),
+};
+
+/**
+ * The one leaf the board does not read, and why.
+ *
+ * An excuse is a proposition with a measurement in it, and the measurement is
+ * re-measured by the test below: if the frontend ever reads the value this calls
+ * machine-only, the excuse is stale and the test says so.
+ */
+const ODDS_UNREAD = new Map([
+  ['results[].id', "The book's own event id, published so a reader can find that event inside the raw capture. The board prints none of it: the only place in the tree that reads an event's id is the scanner engine, which takes it as providerEventId (src/scanner/engine.mjs:57), and there are 0 occurrences of providerEventId anywhere under public/js, so the value stops at the machine. What the row prints instead is the app's own way of naming an event — teams, sport, league, kickoff (public/js/pages/event-detail.js:47) — and the only handle this panel can act on is eventKey, which it already reads into both filter lists. Measured on the captures rather than on the fixture above: 12390 distinct ids over 24829 events in the 22 files under data-market-run/workspace, so an id is stable per book and repeats across captures. It is an address inside one file, on a panel that issues 1 request per control change and has nothing to look it up in."],
+]);
+
+let CENSUS = null;
+
+/** Serve the markers, render them, and keep what each leaf turned into. */
+async function census() {
+  if (CENSUS) return CENSUS;
+  const payload = await oddsResponse(censusSnapshot());
+  const h = harness('en', {
+    form: { 'odds-book': { value: 'census-book' } },
+    api: { get: async () => payload },
+  });
+  await h.run('loadPriceBoard()');
+  const html = boardHtml(h);
+  const chunks = html.split('<tr>');
+  CENSUS = {
+    payload,
+    paths: [...new Set(leafPaths(payload))].sort(),
+    html,
+    row: (n) => chunks.find((chunk) => chunk.includes(mk('homeTeam', n))) || '',
+    lists: h.nodes.get('odds-market-keys').innerHTML + h.nodes.get('odds-event-keys').innerHTML,
+    note: boardNote(h),
+    pill: '<span class="status ok">',
+  };
+  return CENSUS;
+}
+
+test('every leaf the odds projection publishes is on the board or excused with a measurement', async () => {
+  const measured = await census();
+  const { paths } = measured;
+  assert.equal(paths.length, 15,
+    // 2 at the top (sourceId, capturedAt), 8 on each result, 3 on its market and
+    // 2 on each selection. `results`, `market` and `selections` are containers,
+    // not leaves: counting them is how this line first said 17 and was wrong.
+    'the projection publishes 15 leaves, and this is the count it published');
+
+  assert.deepEqual(paths.filter((p) => !(p in READ) && !ODDS_UNREAD.has(p)), [],
+    'a leaf the route has started publishing needs a probe here or an excuse above, not silence');
+  assert.deepEqual(paths.filter((p) => !(READ[p]?.(measured)) && !ODDS_UNREAD.has(p)), [],
+    'a leaf the board used to read is no longer read');
+});
+
+test('the unread leaf is excused, and the excuse is re-measured rather than asserted', async () => {
+  const { paths } = await census();
+  for (const [path, why] of ODDS_UNREAD) {
+    assert.ok(paths.includes(path), `the excuse for ${path} names a leaf the route still publishes`);
+    assert.match(why, /\d/, `the excuse for ${path} carries a number to check`);
+  }
+
+  // The excuse's own claim, asked of the tree rather than believed: nothing in
+  // the frontend reads the value it calls machine-only.
+  const jsUnder = readdirSync(new URL('../public/js', import.meta.url), { recursive: true })
+    .filter((entry) => entry.endsWith('.js'));
+  const readers = jsUnder.filter((entry) =>
+    readFileSync(new URL(`../public/js/${entry}`, import.meta.url), 'utf8').includes('providerEventId'));
+  assert.deepEqual(readers, [],
+    `the excuse for results[].id says nothing under public/js reads providerEventId; ${readers.length} file(s) now do`);
 });
 
 test('the tooltip falls back to a translated line, not a hardcoded English one', () => {

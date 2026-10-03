@@ -516,9 +516,20 @@ function priceRow(r, t) {
   const odds = (Array.isArray(market.selections) ? market.selections : [])
     .map((s) => `<span class="sl-num">${escapeHtml(s.name)} @ ${escapeHtml(window.arbiterFormat.fmtOdds(s.odds))}</span>`)
     .join(' · ');
-  const teams = `${r.homeTeam || ''} – ${r.awayTeam || ''}`.trim();
+  const teams = [r.homeTeam, r.awayTeam].filter(Boolean).join(' – ');
+  // The same three facts the event page's own meta line is built from
+  // (public/js/pages/event-detail.js: `[ev.sport, kickoff, league]`, sport
+  // first), and the projection publishes all three. The board is the one screen
+  // where an event's sport has no other label: the capture holds every event
+  // the book served, and this panel is the only place two sports can end up
+  // one row under the other.
+  //
+  // `filter(Boolean)`, not `|| ''` on both sides: `validate` requires an id and
+  // an eventKey on every event but never a team name, so a row with no names
+  // is reachable, and the separator would then be the entire cell.
+  const foot = [r.sport, r.league, r.kickoff].filter(Boolean).join(' · ');
   return `<tr>
-      <td>${escapeHtml(teams)}<div class="sl-stat-foot">${escapeHtml(r.league || '')} · ${escapeHtml(r.kickoff || '')}</div></td>
+      <td>${escapeHtml(teams)}<div class="sl-stat-foot">${escapeHtml(foot)}</div></td>
       <td>${escapeHtml(name)}${live ? ` <span class="status ok">${escapeHtml(t('live'))}</span>` : ''}</td>
       <td>${odds}</td>
     </tr>`;
@@ -553,7 +564,17 @@ function renderPriceBoard(payload, t) {
     ? results.map((r) => priceRow(r, t)).join('')
     : `<tr><td class="sl-empty" colspan="3">${escapeHtml(t('pricesNoneForFilter'))}</td></tr>`;
 
-  const bits = [t('pricesCount').replace('{count}', String(results.length))];
+  // The book this payload is about, said by the payload. The selector above
+  // names the book that was *asked* for, and the two can disagree: four
+  // `change` listeners each start a load without awaiting it, so two responses
+  // can be in flight at once and the one that lands last is rendered last. The
+  // route answers with the name it served precisely so the panel can show whose
+  // prices these are rather than leaving the operator to assume the selector
+  // describes the table under it.
+  const bits = [];
+  const served = String(payload?.sourceId || '').trim();
+  if (served) bits.push(`${t('bookmaker')}: ${served}`);
+  bits.push(t('pricesCount').replace('{count}', String(results.length)));
   const limit = Number.parseInt(String($('odds-limit')?.value || ''), 10);
   if (results.length && Number.isFinite(limit) && results.length >= limit) {
     bits.push(t('pricesTruncated').replace('{count}', String(results.length)));
