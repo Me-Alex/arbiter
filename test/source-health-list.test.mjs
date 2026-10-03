@@ -26,6 +26,7 @@ import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import vm from 'node:vm';
 import { codeOnly } from './helpers/code-only.mjs';
+import { extractFn } from './helpers/extract-fn.mjs';
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url));
 const read = (rel) => readFileSync(join(ROOT, rel), 'utf8');
@@ -61,30 +62,13 @@ const dataQualityCode = codeOnly(dataQualitySource, true);
  * like `qualityOptions = {}` opens a brace that closes again before the body
  * begins, so matching braces from the first `{` after the name returns the
  * signature, calls it the function, and hands the caller a census of zero.
+ *
+ * That was worth writing here and it is worth keeping — four other files held a
+ * copy that did not skip it, and the one function in this tree where the two
+ * answers differ is the very one this file extracts. It now lives in
+ * test/helpers/extract-fn.mjs with the rest; this note is the record of why it
+ * is written that way.
  */
-function extractFn(name, from) {
-  const start = from.indexOf(`function ${name}(`);
-  assert.notEqual(start, -1, `${name} is gone from the file`);
-  let parens = 0;
-  let bodyStart = -1;
-  for (let i = from.indexOf('(', start); i < from.length; i += 1) {
-    if (from[i] === '(') parens += 1;
-    else if (from[i] === ')') {
-      parens -= 1;
-      if (parens === 0) { bodyStart = from.indexOf('{', i); break; }
-    }
-  }
-  assert.notEqual(bodyStart, -1, `${name} has no body`);
-  let depth = 0;
-  for (let i = bodyStart; i < from.length; i += 1) {
-    if (from[i] === '{') depth += 1;
-    else if (from[i] === '}') {
-      depth -= 1;
-      if (depth === 0) return from.slice(start, i + 1);
-    }
-  }
-  throw new Error(`${name} is not closed — has its shape changed?`);
-}
 
 const sourceHealthRows = (() => {
   const context = {};

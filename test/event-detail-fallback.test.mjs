@@ -1,22 +1,9 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { extractFn } from './helpers/extract-fn.mjs';
 
 const dashSrc = readFileSync(join(import.meta.dirname, '..', 'public/js/pages/dashboard.js'), 'utf8');
 const modalSrc = readFileSync(join(import.meta.dirname, '..', 'public/js/pages/event-detail-modal.js'), 'utf8');
-
-function extractFn(name, from) {
-  const src = from;
-  const idx = src.indexOf(`function ${name}(`);
-  if (idx === -1) throw new Error('cannot find ' + name);
-  let depth = 0, i = src.indexOf('{', idx);
-  if (i === -1) throw new Error('no open brace for ' + name);
-  for (; i < src.length; i++) {
-    const ch = src[i];
-    if (ch === '{') depth++;
-    else if (ch === '}') { depth--; if (depth === 0) break; }
-  }
-  return src.slice(idx, i + 1);
-}
 
 const gl = globalThis;
 gl.BOOK_PALETTE = [{ color: '#fff', bg: '#333', border: '#555' }];

@@ -8,6 +8,7 @@ import { join } from 'node:path';
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import { guardedPropertyReads, objectEntries, objectKeys } from './helpers/code-only.mjs';
+import { extractFn } from './helpers/extract-fn.mjs';
 
 const src = readFileSync(join(import.meta.dirname, '..', 'public/js/connection-status.js'), 'utf8');
 const i18nSrc = readFileSync(join(import.meta.dirname, '..', 'public/js/i18n.js'), 'utf8');
@@ -62,30 +63,13 @@ describe('i18n status keys', () => {
   }
 });
 
-// Extract a top-level `function NAME(...) { ... }` by brace matching.
-function extractFn(name, from = src) {
-  const re = new RegExp(`function\\s+${name}\\s*\\(`);
-  const m = re.exec(from);
-  if (!m) throw new Error('cannot find function ' + name);
-  const idx = m.index;
-  let depth = 0;
-  let i = from.indexOf('{', idx);
-  if (i === -1) throw new Error('no open brace for ' + name);
-  for (; i < from.length; i++) {
-    const ch = from[i];
-    if (ch === '{') depth++;
-    else if (ch === '}') {
-      depth--;
-      if (depth === 0) break;
-    }
-  }
-  return from.slice(idx, i + 1);
-}
-
-const fnSrc = `${extractFn('decideStateTransition')}
-${extractFn('decideHealthBanner')}
-${extractFn('formatUptime')}
-${extractFn('decideHealthChip')}
+// Extract a top-level `function NAME(...) { ... }` — the shared helper, which
+// skips the parameter list before counting braces. See test/helpers/extract-fn.mjs
+// for what the naive version of this returned on a default argument.
+const fnSrc = `${extractFn('decideStateTransition', src)}
+${extractFn('decideHealthBanner', src)}
+${extractFn('formatUptime', src)}
+${extractFn('decideHealthChip', src)}
 return { decideStateTransition, decideHealthBanner, formatUptime, decideHealthChip };`;
 const { decideStateTransition, decideHealthBanner, formatUptime, decideHealthChip } = new Function(fnSrc)();
 
@@ -936,9 +920,9 @@ const HEALTH_MARKER = "'GET /api/health': () => sendJson(null, 200, {";
 const HEALTH_KEYS = objectKeys(routerSrc, HEALTH_MARKER);
 const healthField = (name) => objectEntries(routerSrc, HEALTH_MARKER).find((f) => f.key === name);
 
-const chipReads = guardedPropertyReads(extractFn('decideHealthChip'), ['health']);
-const paintReads = guardedPropertyReads(extractFn('renderHealth'), ['health']);
-const bannerReads = guardedPropertyReads(extractFn('decideHealthBanner'), ['health']);
+const chipReads = guardedPropertyReads(extractFn('decideHealthChip', src), ['health']);
+const paintReads = guardedPropertyReads(extractFn('renderHealth', src), ['health']);
+const bannerReads = guardedPropertyReads(extractFn('decideHealthBanner', src), ['health']);
 const readKeys = (reads) => reads.map((r) => r.key).sort();
 
 /**
@@ -951,7 +935,7 @@ const readKeys = (reads) => reads.map((r) => r.key).sort();
  * function's own start line back puts the number back where it came from, which
  * is the only version a reader can check against the file.
  */
-const fnStartLine = (name) => src.slice(0, src.indexOf(extractFn(name))).split('\n').length;
+const fnStartLine = (name) => src.slice(0, src.indexOf(extractFn(name, src))).split('\n').length;
 const fileLine = (name, lineInFn) => fnStartLine(name) + lineInFn - 1;
 
 describe('GET /api/health: the payload contract', () => {

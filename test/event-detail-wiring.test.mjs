@@ -4,25 +4,14 @@
 // notes, kickoff guards, injection escaping, and a render micro-benchmark.
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { extractFn } from './helpers/extract-fn.mjs';
 
 const modalSrc = readFileSync(join(import.meta.dirname, '..', 'public/js/pages/event-detail-modal.js'), 'utf8');
 const dashSrc = readFileSync(join(import.meta.dirname, '..', 'public/js/pages/dashboard.js'), 'utf8');
 
-// Extract a top-level `function NAME(...) { ... }` by brace matching.
-function extractFn(name, from = modalSrc) {
-  const re = new RegExp(`function\\s+${name}\\s*\\(`);
-  const m = re.exec(from);
-  if (!m) throw new Error('cannot find function ' + name);
-  const idx = m.index;
-  let depth = 0, i = from.indexOf('{', idx);
-  for (; i < from.length; i++) {
-    const ch = from[i];
-    if (ch === '{') depth++;
-    else if (ch === '}') { depth--; if (depth === 0) break; }
-  }
-  return from.slice(idx, i + 1);
-}
-
+// Extract a top-level `function NAME(...) { ... }` — the shared helper. See
+// test/helpers/extract-fn.mjs for what the naive version returned on a default
+// argument in the parameter list.
 // Extract the event-listener callback body: locate the registration on #opp-list.
 function extractListener(from) {
   const marker = "document.getElementById('opp-list').addEventListener('click',";

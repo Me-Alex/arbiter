@@ -5,6 +5,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
+import { extractFn } from './helpers/extract-fn.mjs';
 
 const ROOT = join(import.meta.dirname, '..');
 
@@ -13,22 +14,7 @@ import { isEventUrl } from '../src/shared/event-url.mjs';
 
 const modalSrc = readFileSync(join(ROOT, 'public/js/pages/event-detail-modal.js'), 'utf8');
 
-// Extract functions via brace matching.
-function extractFn(name, from = modalSrc) {
-  const re = new RegExp(`function\\s+${name}\\s*\\(`);
-  const m = re.exec(from);
-  if (!m) throw new Error('cannot find function ' + name);
-  const idx = m.index;
-  let depth = 0;
-  let i = from.indexOf('{', idx);
-  for (; i < from.length; i++) {
-    const ch = from[i];
-    if (ch === '{') depth++;
-    else if (ch === '}') { depth--; if (depth === 0) break; }
-  }
-  return from.slice(idx, i + 1);
-}
-
+// Extract functions — the shared helper. See test/helpers/extract-fn.mjs.
 // ── Denylist correctness ────────────────────────────────────────────────
 
 describe('isEventUrl denylist', () => {
