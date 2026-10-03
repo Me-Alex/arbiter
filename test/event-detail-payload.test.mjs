@@ -22,13 +22,14 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import http from 'node:http';
-import { mkdtempSync, writeFileSync, rmSync, readFileSync, mkdirSync } from 'node:fs';
+import { mkdtempSync, writeFileSync, rmSync, readFileSync, readdirSync, mkdirSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { buildRouter } from '../src/router.mjs';
 import * as scanService from '../src/scan-service.mjs';
 import { RateLimiter } from '../src/shared/rate-limit.mjs';
 import { codeOnly, fieldReads, fieldsOn } from './helpers/code-only.mjs';
+import { findDetailArbitrages } from '../src/scanner/event-arbs.mjs';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const CONSUMERS = [
@@ -60,10 +61,10 @@ const UNREAD_WITH_REASON = new Map([
   // are gone (see the DetailArb docstring); these four are not copies, they are
   // simply unread — and each is kept for a reason that can be checked, not for
   // the convenience of the publisher.
-  ['plan.family', 'the canonical alias of the contract the market heading already names in the book\'s own words. The heading renders m.name on every market (event-detail-modal.js:217-219) and the plan only ever attaches to such a market, so the panel has nothing to add by showing the alias. Measured on data-market-run/workspace: 5166 fixtures carry two or more books, 3 of them produce a plan, and all 3 are family=BTTS — the capture contains no family the heading fails to name.'],
-  ['plan.period', 'the settlement window the legs agree on. Measured on the same capture: all 3 plans are period=fulltime, so the field separates nothing on disk. The scope that does vary is live vs pre-match, and that is published as `live` and already rendered as the panel\'s live badge. Kept because the docstring claims the view must be able to say a plan expires in 90 seconds, and that claim is about this field — dropping it would quietly retire a promise the panel has not yet kept.'],
-  ['plan.line', 'the canonical line. Measured on the same capture: null in all 3 plans, because all 3 are BTTS, a contract with no line. Where a line does exist the heading shows it, derived from the market key by thresholdFromKey — the same derivation the assertion below checks. The case this reason does NOT cover is an Asian-handicap plan: thresholdFromKey only matches /^OVER_UNDER_\\d+_\\d+$/, so an AH heading would show no line. That is a gap in the heading, and it is named here rather than used as a licence to publish the number twice.'],
-  ['plan.inverseSum', 'the raw reconciliation before it is rescaled into the ROI the panel does render. No screen shows it, and that is the honest part: the reader is a backend contract assertion, test/event-detail-arb.test.mjs:86, which recomputes Σ(1/odds) from the legs and holds the published figure to it. That reader is what makes this a contract on the allocation rather than a leftover from it, and roiPercent cannot stand in for it — on the real capture the pair is 0.5042016806722689 against 98.33, the same number in two units, only one of which is on screen.'],
+  ['plan.family', 'the canonical alias of the contract the market heading already names in the book\'s own words. The heading renders m.name on every market (event-detail-modal.js:217-219) and falls back to the canonical key when a book sends none (:192), so a section is never left unlabelled and the alias has nothing to add beside it. What this reason deliberately does NOT claim is that the captures cover no family the heading fails to name. It used to, on a walk over data-market-run/workspace that found three plans and called them all BTTS — but every BTTS leg came off favbet rows this tree no longer emits, so that coverage described a writer which is not the one in this tree. Measured in test/favbet.test.mjs (\'the stored capture keys BTTS to rows this adapter now withholds\') and in the walk at the end of this file.'],
+  ['plan.period', 'the settlement window the legs agree on. No plan on disk settles outside full-time, so the field separates nothing there — recomputed by the walk at the end of this file rather than quoted from one run of it. The scope that does vary is live vs pre-match, and that is published as `live` and already rendered as the panel\'s live badge. Kept because the docstring claims the view must be able to say a plan expires in 90 seconds, and that claim is about this field — dropping it would quietly retire a promise the panel has not yet kept.'],
+  ['plan.line', 'the canonical line. No plan on disk carries one — recomputed by the same walk, not transcribed. Where a line does exist the heading shows it, derived from the market key by thresholdFromKey — the same derivation the assertion below checks. The case this reason does NOT cover is an Asian-handicap plan: thresholdFromKey only matches /^OVER_UNDER_\\d+_\\d+$/, so an AH heading would show no line. That is a gap in the heading, and it is named here rather than used as a licence to publish the number twice.'],
+  ['plan.inverseSum', 'the raw reconciliation before it is rescaled into the ROI the panel does render. No screen shows it, and that is the honest part: the reader is a backend contract assertion, test/event-detail-arb.test.mjs:86, which recomputes Σ(1/odds) from the legs and holds the published figure to it. That reader is what makes this a contract on the allocation rather than a leftover from it, and roiPercent cannot stand in for it — the two are one figure in two units, the ROI being the inverse sum rescaled and rounded to two decimals (src/scanner/market-contracts.mjs:203), and the walk at the end of this file checks that relation on every plan it finds. The text this replaced quoted both numbers from one capture; the relation outlives that capture.'],
 ]);
 
 /**
@@ -372,6 +373,98 @@ test('the payload publishes no field without a reader, and every excuse is named
     `${modalName} no longer names the market in its heading, so plan.family is no longer an alias of something already on screen`);
   assert.match(modalCode, /market-threshold/,
     `${modalName} no longer shows the line in the heading, so plan.line has no on-screen equivalent`);
+});
+
+/**
+ * The plan walk four excuses above lean on, recomputed instead of quoted.
+ *
+ * `plan.family`, `plan.period`, `plan.line` and `plan.inverseSum` each carried a
+ * figure transcribed from a run over data-market-run/workspace — how many
+ * fixtures two books quote, how many of those produce a plan, and what that
+ * plan's family, window and line turned out to be. Nothing checked any of it, so
+ * those numbers could only go stale in one direction: quietly, and while still
+ * reading as current.
+ *
+ * It is worse than stale for `family`. The walk found three plans and all three
+ * were BTTS, which is what the excuse leaned on — but the BTTS legs came off
+ * favbet rows this tree no longer emits, so the coverage said nothing about what
+ * a fresh capture would hold. That is measured in test/favbet.test.mjs, and the
+ * excuse no longer claims the coverage.
+ *
+ * The walk below is rebuilt from the captures and the real engine, the way the
+ * route does it ({ ...ev, sourceId } into `findDetailArbitrages`, src/router.mjs:
+ * 610 and 655), and each excuse is held to a property that either holds or
+ * fails: no plan sits on a market the heading leaves unlabelled, none settles
+ * outside full-time, none carries a line, and the ROI is the inverse sum in
+ * another unit. None of those four is a number that can rot unnoticed.
+ */
+test('the plan walk the excuses above quote is measured, not transcribed', () => {
+  const dir = new URL('../data-market-run/workspace/', import.meta.url);
+  const files = readdirSync(dir).filter((f) => f.endsWith('_events.json'));
+  assert.ok(files.length >= 20, `only ${files.length} captures in data-market-run/workspace — every measurement below would rest on a handful`);
+
+  // The route's own grouping: eventKey -> the one event each book quoted it on,
+  // plus the names those markets arrived under, which is what the heading reads.
+  const byKey = new Map();
+  const namesByMarketKey = new Map();
+  for (const f of files) {
+    const doc = JSON.parse(readFileSync(new URL(f, dir), 'utf8'));
+    for (const ev of doc.events || []) {
+      if (!Array.isArray(ev.markets) || !ev.markets.length) continue;
+      for (const m of ev.markets) {
+        if (!namesByMarketKey.has(m.key)) namesByMarketKey.set(m.key, new Set());
+        if (m.name) namesByMarketKey.get(m.key).add(m.name);
+      }
+      if (!byKey.has(ev.eventKey)) byKey.set(ev.eventKey, new Map());
+      const books = byKey.get(ev.eventKey);
+      if (!books.has(ev.sourceId)) books.set(ev.sourceId, ev);
+    }
+  }
+
+  const multi = [...byKey.values()].filter((books) => books.size >= 2);
+  assert.ok(multi.length > 0, 'no fixture on disk is quoted by two books — the walk measures nothing');
+
+  const plans = [];
+  for (const books of multi) {
+    const instances = [...books.entries()].map(([sourceId, ev]) => ({ ...ev, sourceId }));
+    for (const [marketKey, plan] of findDetailArbitrages(instances)) plans.push({ marketKey, plan });
+  }
+  // The guard that makes the three assertions after it mean anything. A capture
+  // set that had stopped producing arbitrages would leave every one of them
+  // empty and all three would pass — the shape a census is weakest in.
+  assert.ok(plans.length > 0, `${multi.length} two-book fixtures on disk and not one plan — every measurement below is vacuous`);
+
+  // plan.family. The excuse is that the heading names the contract already, so
+  // the canonical alias beside it adds nothing. That only holds while every
+  // market a plan attaches to is one the panel actually labels — and the modal
+  // falls back to the canonical key, so a market with no name of its own heads
+  // the section, it does not leave it blank.
+  const unlabelled = plans.filter(({ marketKey }) => !(namesByMarketKey.get(marketKey)?.size));
+  assert.deepEqual(unlabelled.map((p) => p.marketKey), [],
+    `a plan sits on a market the captures never name, so the heading has nothing for the alias to repeat: ${JSON.stringify(unlabelled.map((p) => p.marketKey))}`);
+
+  // plan.period — nothing on disk settles outside the full-time window.
+  const offWindow = plans.filter(({ plan }) => plan.period !== 'fulltime');
+  assert.deepEqual(offWindow.map(({ marketKey, plan }) => `${marketKey} = ${plan.period}`), [],
+    `a plan now settles in a window other than full-time, so plan.period does separate something on disk: ${JSON.stringify(offWindow.map(({ marketKey, plan }) => plan.period))}`);
+
+  // plan.line — and nothing on disk carries a line.
+  const onLine = plans.filter(({ plan }) => plan.line !== null && plan.line !== undefined);
+  assert.deepEqual(onLine.map(({ marketKey, plan }) => `${marketKey} = ${plan.line}`), [],
+    `a plan now carries a line, so plan.line has a figure no heading shows: ${JSON.stringify(onLine.map(({ plan }) => plan.line))}`);
+
+  // plan.inverseSum — the reason the raw sum is kept beside the ROI at all. Not
+  // two figures from one run but one figure in two units, so the excuse that
+  // the ROI cannot stand in for it holds without quoting either number. The
+  // tolerance is the rounding, not slop: `roundedArbitrageAllocation` returns
+  // `round2((1 / inverseSum - 1) * 100)` (src/scanner/market-contracts.mjs:203),
+  // so the rescale agrees to half a hundredth. The first version of this
+  // assertion asked for exact equality and failed on 98.33 against 98.3358 —
+  // the source was right and the test was not.
+  for (const { marketKey, plan } of plans) {
+    assert.ok(Math.abs(plan.roiPercent - (1 / plan.inverseSum - 1) * 100) < 0.005,
+      `${marketKey}: roiPercent ${plan.roiPercent} is not inverseSum ${plan.inverseSum} rescaled — the two published figures are the same number in two units, and the panel shows only one`);
+  }
 });
 
 test('the payload does not republish the arbitrage map it already attaches per market', async () => {

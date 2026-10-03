@@ -205,6 +205,68 @@ test('only the unqualified "both teams score" market may take the BTTS key', (t)
   }
 });
 
+/**
+ * The stored captures predate that guard, and the difference is measurable.
+ *
+ * favbet_events.json in data-market-run/workspace keys three distinct market
+ * names to BOTH_TEAMS_SCORE and every one of them is a qualified form this
+ * adapter now withholds. So that capture is not evidence about what the adapter
+ * writes today — which matters, because a census in another file was leaning on
+ * it for exactly that: the plan.family excuse in test/event-detail-payload.test.mjs
+ * read the walk over that directory as covering the contract space, and every
+ * plan the walk found was BTTS resting on these rows. That excuse no longer
+ * claims it; this is the measurement behind the change.
+ *
+ * The names are the capture's own, not a list typed here, and each one goes
+ * through the real `extractEvents` — so this measures the writer rather than
+ * restating the guard, which is the whole reason it is a second test.
+ */
+test('the stored capture keys BTTS to rows this adapter now withholds', (t) => {
+  atPinnedNow(t);
+  const doc = JSON.parse(readFileSync(new URL('../data-market-run/workspace/favbet_events.json', import.meta.url), 'utf8'));
+  const names = new Set();
+  let rows = 0;
+  for (const ev of doc.events || []) {
+    for (const m of ev.markets || []) {
+      if (m.key !== 'BOTH_TEAMS_SCORE') continue;
+      rows += 1;
+      names.add(m.name);
+    }
+  }
+  assert.ok(names.size >= 2, `the capture should carry more than one BTTS name, got ${names.size} over ${rows} rows — the walk below measures nothing`);
+
+  // 779 is the template the adapter's own docstring names for BTTS; the leg text
+  // is "Da"/"Nu", which is the reading the yes/no match uses.
+  const btts = (marketId, name) => ({
+    market_id: marketId, market_name: name, market_suspend: false, market_template_id: 779,
+    result_type_name: 'Timp Regulamentar', result_type_short_name: 'Tr',
+    outcomes: [leg(marketId * 10 + 1, '1', 'Da', 1.8), leg(marketId * 10 + 2, '2', 'Nu', 2.05)],
+  });
+
+  const s = new Favbet({ windowHours: 72 });
+  let eventId = 5000;
+  const emitsBtts = (name) => {
+    eventId += 10;
+    const out = s.extractEvents(s.normalize(envelopeWith([btts(eventId, name)], { home: 'Gazde', away: 'Oaspeti', eventId })));
+    return (out[0]?.markets || []).some((m) => m.key === 'BOTH_TEAMS_SCORE');
+  };
+
+  // The control, and it is the reason the assertion below can be trusted. A walk
+  // that reports nothing is a walk that cannot report anything: the unqualified
+  // name from the adapter's own fixture has to come out as BTTS, or "no rows
+  // emitted" would be indistinguishable from a broken yes/no resolution.
+  assert.ok(emitsBtts('Ambele Marcheaza'),
+    'this adapter no longer emits BTTS at all, so a withheld capture row proves nothing — read the branch before believing the finding below');
+
+  const emitted = [];
+  const withheld = [];
+  for (const name of names) (emitsBtts(name) ? emitted : withheld).push(name);
+  assert.deepEqual(emitted, [],
+    `the favbet capture holds a plain BTTS row after all (${emitted.join(' | ')}) — the captures are current again, and the excuse in event-detail-payload.test.mjs can lean on them`);
+  assert.deepEqual(withheld.length, names.size,
+    `${withheld.length} of ${names.size} BTTS names were withheld; re-read which one slipped through`);
+});
+
 test('a qualified "Ambele ..." market is withheld rather than keyed as BTTS', (t) => {
   // Direct check on the classifier: feed it the exact market names observed on
   // the live endpoint and assert only the bare one survives. Pinned for the
