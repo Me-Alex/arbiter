@@ -93,6 +93,14 @@
       topOpportunities: 'Top oportunități',
       sortedByRoi: 'Sortate după ROI',
       exportCsv: 'Exportă CSV',
+      // One export per family table on the scanner page, each naming its family
+      // because four links reading "Exportă CSV" tell a screen reader nothing
+      // about which table they belong to. The family words are the ones the
+      // headings already use (arbitrage, middlesLabel, positiveEv, lowHoldLabel).
+      exportCsvArbitrage: 'Exportă CSV · Arbitraj',
+      exportCsvMiddles: 'Exportă CSV · Middles',
+      exportCsvPositiveEv: 'Exportă CSV · EV pozitiv',
+      exportCsvLowHold: 'Exportă CSV · Hold scăzut',
       freshSources: 'surse actuale',
       noPublishedData: 'fără date publicate',
       connected: 'conectat',
@@ -468,6 +476,12 @@
       topOpportunities: 'Top opportunities',
       sortedByRoi: 'Sorted by ROI',
       exportCsv: 'Export CSV',
+      // The per-family labels on the scanner page; see the Romanian block above
+      // for why the family is spelled out instead of a bare "Export CSV".
+      exportCsvArbitrage: 'Export CSV · Arbitrage',
+      exportCsvMiddles: 'Export CSV · Middles',
+      exportCsvPositiveEv: 'Export CSV · Positive EV',
+      exportCsvLowHold: 'Export CSV · Low hold',
       freshSources: 'fresh sources',
       noPublishedData: 'no published data',
       connected: 'connected',
