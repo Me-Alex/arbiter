@@ -152,8 +152,16 @@ const sample = {
   /** (book, eventKey) pairs carrying more than one id */
   pairsWithTwoIds: 0,
   bookPairs: 0,
-  bytesTotal: 0,
-  bytesEvents: 0,
+  /** bytes the captures occupy on disk, in the writer's pretty-printed encoding */
+  bytesOnDisk: 0,
+  /** bytes the route actually sends for those same documents */
+  bytesServed: 0,
+  bytesServedEvents: 0,
+  /** smallest single-document share of served bytes spent on `events` */
+  minShare: 1,
+  minShareFile: '',
+  /** documents whose stored file is larger than the response the route sends */
+  filesBiggerThanServed: 0,
 };
 
 {
@@ -167,10 +175,29 @@ const sample = {
     // "metadata" is the document with its events array emptied, which is the
     // same split api-surface.test.mjs quotes and the only way to compare the two
     // without holding both in memory.
-    const size = Buffer.byteLength(raw);
-    const meta = Buffer.byteLength(JSON.stringify({ ...doc, events: [] }));
-    sample.bytesTotal += size;
-    sample.bytesEvents += size - meta;
+    //
+    // Both halves are measured in the encoding the route SENDS, not the one the
+    // writer stored, and that distinction is the whole point of the split.
+    // `writeJsonAtomicSync` stores `JSON.stringify(value, null, 2)` — pretty-
+    // printed — while `readSnapshotRoute` parses the file and hands the object to
+    // `sendJson`, which ends with `res.end(JSON.stringify(body))`, with no
+    // indentation at all. The first version of this pass subtracted compact
+    // metadata from the pretty-printed file, which charged the indentation to
+    // `events` and reported the share as 99.93% — the figure the excuse then
+    // transcribed, along with the on-disk totals around it. A page does not
+    // receive the whitespace, so neither may the argument about its bytes.
+    const served = Buffer.byteLength(JSON.stringify(doc));
+    const servedMeta = Buffer.byteLength(JSON.stringify({ ...doc, events: [] }));
+    const disk = Buffer.byteLength(raw);
+    sample.bytesOnDisk += disk;
+    sample.bytesServed += served;
+    sample.bytesServedEvents += served - servedMeta;
+    if (disk > served) sample.filesBiggerThanServed += 1;
+    const share = served === 0 ? 0 : (served - servedMeta) / served;
+    if (share < sample.minShare) {
+      sample.minShare = share;
+      sample.minShareFile = file;
+    }
     for (const event of doc.events || []) {
       sample.events += 1;
       if (!filesSeenById.has(event.id)) filesSeenById.set(event.id, new Set());
@@ -302,6 +329,14 @@ test('the closure check\'s excuse for this route names only reachable keys', () 
  * here as the property the excuse rests on, with the freshly measured figure in
  * the message so a failure tells you what it is now rather than what it was.
  *
+ * The byte figure was a second thing wrong with the same sentence, and this is
+ * where that gets recorded. It was not merely stale: it had been measured in the
+ * wrong encoding, and recomputing it correctly would not have brought it back.
+ * The captures are stored pretty-printed and served compact, so a byte count read
+ * off a file is not a byte count a page ever receives. The measurement above was
+ * corrected to the served encoding for that reason; the paragraph that quoted it
+ * dropped the numbers instead of replacing them.
+ *
  * The assertions are claims, not figures, on purpose. "12390 distinct ids" is a
  * transcription that goes stale on the next scrape; "every (book, eventKey) pair
  * carries exactly one id, no id appears in two files of one book, and some ids do
@@ -316,7 +351,7 @@ test('the closure check\'s excuse for this route names only reachable keys', () 
  */
 test('the sample measurements the other files quote are still true', () => {
   const floor = `measured over ${sampleFiles.length} captures / ${sample.events} events —`;
-  assert.ok(sample.events > 0 && sample.selections > 0 && sample.distinctIds.size > 0 && sample.bytesTotal > 0,
+  assert.ok(sample.events > 0 && sample.selections > 0 && sample.distinctIds.size > 0 && sample.bytesServed > 0,
     `${floor} the pass above read nothing, so every count below is 0 and passes for the wrong reason`);
 
   // (a) The `selection.group` exemption in event-detail-payload.test.mjs: the field
@@ -345,9 +380,31 @@ test('the sample measurements the other files quote are still true', () => {
   // (c) The byte argument behind the `/api/snapshot` excuse in api-surface.test.mjs:
   // serving a capture for provenance alone would pull orders of magnitude more
   // than the page shows. The ratio is the claim; the percentage was the figure.
-  const share = sample.bytesEvents / sample.bytesTotal;
+  //
+  // Stated over the whole capture set, which is where it holds. It does NOT hold
+  // per document, and saying so would be the same error in a new coat: 19 of the
+  // 22 are over 99%, but one sits far below that and the weakest case is pinned
+  // separately below so the aggregate cannot quietly stand in for it.
+  const servedEvents = sample.bytesServedEvents;
+  const servedMeta = sample.bytesServed - servedEvents;
+  const share = servedEvents / sample.bytesServed;
   assert.ok(share > 0.99,
-    `${floor} \`events\` is now ${(share * 100).toFixed(2)}% of what the captures hold (was quoted as 99.93%) — a page reading this route for provenance is no longer pulling a thousand times its display`);
-  assert.ok(sample.bytesEvents / (sample.bytesTotal - sample.bytesEvents) > 100,
+    `${floor} \`events\` is now ${(share * 100).toFixed(2)}% of what the route sends (was quoted as 99.93%, and that number measured the stored file rather than the response) — a page reading this route for provenance is no longer pulling orders of magnitude more than it displays`);
+  assert.ok(servedEvents / servedMeta > 100,
     `${floor} metadata is no longer 100x smaller than the events array — the size argument in the api-surface excuse has lost its order of magnitude`);
+
+  // The weakest single document, so the aggregate above cannot be read as "every
+  // response is 99% events". Measured, not assumed: this is the floor the
+  // per-document claim actually has.
+  assert.ok(sample.minShare > 0.5,
+    `${floor} \`events\` is no longer the majority of the response for ${sample.minShareFile} (${(sample.minShare * 100).toFixed(2)}%) — a book whose capture is mostly metadata is not the argument the excuse makes, and the aggregate above is hiding it`);
+
+  // The encoding distinction itself. Every capture is stored pretty-printed and
+  // served compact, so the stored files are strictly larger than any response
+  // they can produce. This is the fact that made the transcribed figures wrong,
+  // and it is cheap to keep: if a future writer stores compact JSON the two
+  // encodings converge and this fails, which is the moment a byte count read off
+  // a file starts meaning what the excuse has always claimed it means.
+  assert.equal(sample.filesBiggerThanServed, sampleFiles.length,
+    `${floor} only ${sample.filesBiggerThanServed} of ${sampleFiles.length} captures are larger on disk than the response they serve — the stored and served encodings have converged, so a byte count taken from a file is no longer an overstatement and this argument needs re-deriving rather than restating`);
 });
