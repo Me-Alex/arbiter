@@ -475,17 +475,23 @@ const WHY = {
   ].join(' '),
 
   marketDiagnostics: [
-    'A constant, measured over the 22 captures in data-market-run/workspace:',
-    '`mergeMarketDiagnostics` folds 12 market keys and every one of them reads',
-    'completeCount == eventCount, with incompleteCount 0 throughout, and',
-    '`rejectionReasons` is empty on all 22 captures. The completeness diagnostic',
-    'exists to say which markets came out short, and it has never once said so.',
+    'Produced by nothing in this tree, measured on the writers rather than on a',
+    'stored sample: BaseScraper._serializable (src/scrapers/base.mjs:348) emits 9',
+    'keys and 13 adapters override it adding four more — coverage, sourceUrl,',
+    'transport and scrapeLimits — for 13 in all, and this name is in neither list.',
+    'So `result.marketDiagnostics` is undefined on every job, the orchestrator',
+    'stores null (src/scrape-orchestrator.mjs:422), and the fold below has nothing',
+    'to fold. The 16 of 22 captures in data-market-run/workspace that carry it were',
+    'written by a version that no longer exists; test/snapshot-route.test.mjs',
+    'measures that too, from the writer side.',
   ].join(' '),
 
   markets: [
-    'The same measurement as `marketDiagnostics`, one level up: this is the field',
-    'that summary.markets holds. The stored data/scrape-state.json has it empty,',
-    'and the fold that fills it has never produced an incomplete row to show.',
+    'The same measurement as `marketDiagnostics`, one level up: mergeMarketDiagnostics',
+    'reads `job.marketDiagnostics.markets` (src/scrape-orchestrator.mjs:463) and',
+    'every job\'s copy is null, so the array is empty on every run. The stored',
+    'data/scrape-state.json measures it as `[]`, which is what an unfilled fold',
+    'looks like rather than what a complete one looks like.',
   ].join(' '),
 
   // `options` is no longer on this list, and the reason it used to carry is gone
