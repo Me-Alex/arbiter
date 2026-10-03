@@ -7,6 +7,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
+import { guardedPropertyReads, objectEntries, objectKeys } from './helpers/code-only.mjs';
 
 const src = readFileSync(join(import.meta.dirname, '..', 'public/js/connection-status.js'), 'utf8');
 const i18nSrc = readFileSync(join(import.meta.dirname, '..', 'public/js/i18n.js'), 'utf8');
@@ -910,5 +911,136 @@ describe('health chip: the classes it writes are defined in the stylesheet', () 
   // matches anything containing a dot.
   it('the check is not satisfied by a class that does not exist', () => {
     assert.ok(!new RegExp('\\.dot\\.nope\\s*[,{]').test(themeCss));
+  });
+});
+
+// ── GET /api/health: the payload contract ────────────────────────────────────
+// A census, because a field nobody reads is either a lost feature or a
+// deliberate one, and only a written reason can tell them apart. The route
+// publishes three fields (src/router.mjs:55); the chip reads one of them. The
+// other two are excused below, each with the measurement its excuse rests on —
+// and each excuse is written to EXPIRE: the assertion that carries it fails the
+// day the premise changes, instead of the excuse quietly outliving it.
+//
+// The census is scoped by FUNCTION, not by receiver name, because `health` is
+// the parameter name of two different payloads in this one file:
+//   - decideHealthChip(health) — the /api/health payload, painted as the chip;
+//   - decideHealthBanner(health) — /api/scan's dataHealth ({status,
+//     actionableSourceCount, prematchMaxAgeMs}), painted by setDataHealth.
+// A census keyed on the receiver alone reports FOUR fields read for /api/health
+// and is wrong about three of them — presence counted as evidence. So the split
+// is pinned at the bottom of this section rather than merely explained here.
+
+const routerSrc = readFileSync(join(import.meta.dirname, '..', 'src', 'router.mjs'), 'utf8');
+const HEALTH_MARKER = "'GET /api/health': () => sendJson(null, 200, {";
+const HEALTH_KEYS = objectKeys(routerSrc, HEALTH_MARKER);
+const healthField = (name) => objectEntries(routerSrc, HEALTH_MARKER).find((f) => f.key === name);
+
+const chipReads = guardedPropertyReads(extractFn('decideHealthChip'), ['health']);
+const paintReads = guardedPropertyReads(extractFn('renderHealth'), ['health']);
+const bannerReads = guardedPropertyReads(extractFn('decideHealthBanner'), ['health']);
+const readKeys = (reads) => reads.map((r) => r.key).sort();
+
+/**
+ * Line in connection-status.js where a named function begins.
+ *
+ * The detector reports `loc` against the text it was GIVEN, and what it is given
+ * here is an extracted function — so `decideHealthChip`'s read of
+ * `health.uptimeSeconds` arrives as line 5, not as the 158 a reader needs to
+ * open. Pinning 5 would be pinning a property of the extraction; adding the
+ * function's own start line back puts the number back where it came from, which
+ * is the only version a reader can check against the file.
+ */
+const fnStartLine = (name) => src.slice(0, src.indexOf(extractFn(name))).split('\n').length;
+const fileLine = (name, lineInFn) => fnStartLine(name) + lineInFn - 1;
+
+describe('GET /api/health: the payload contract', () => {
+  it('publishes exactly ok, timestamp and uptimeSeconds', () => {
+    // router.test.mjs already pins that each of the three is present and of the
+    // right type. This pins that there is no FOURTH, which that test cannot see:
+    // a new field would pass every assertion there while nothing on any page
+    // read it.
+    assert.deepEqual(HEALTH_KEYS, ['ok', 'timestamp', 'uptimeSeconds'],
+      'the route publishes a different field set; every unread one has to be read or excused below');
+  });
+
+  it('the chip reads uptimeSeconds and nothing else off the payload', () => {
+    assert.deepEqual(readKeys(chipReads), ['uptimeSeconds'],
+      'the payload field the chip acts on changed — the three states are decided from it alone');
+    assert.equal(fileLine('decideHealthChip', chipReads[0].line), 158,
+      'the read moved: decideHealthChip is the one function allowed to name a payload field');
+    assert.deepEqual(readKeys(paintReads), [],
+      'renderHealth paints the decision and forwards the payload; it reads no field of it');
+  });
+
+  it('names both unread fields, so neither can go unnoticed', () => {
+    const unread = HEALTH_KEYS.filter((k) => !readKeys(chipReads).includes(k));
+    assert.deepEqual(unread, ['ok', 'timestamp'],
+      'the unread set changed: read the new field or write an excuse for it here');
+  });
+
+  it('excuse for `ok`: it is the constant true, and a constant is not a signal', () => {
+    // The measurement the excuse rests on: objectEntries reports the value node
+    // as a LITERAL. The response arriving is the signal this chip acts on — a
+    // route that answers 200 with a body is the only thing it can observe — so
+    // a flag that is always true would add a field to trust and nothing to read.
+    const ok = healthField('ok');
+    assert.ok(ok, 'the route stopped publishing `ok`');
+    assert.equal(ok.value, 'true',
+      'ok no longer publishes the literal true. A literal that is not true is a different sentence from "a constant is not a signal" — measure what it is now and write the excuse that matches it');
+    assert.ok(ok.literal,
+      'ok is no longer a constant: a computed flag is a signal the chip may be ignoring. This excuse has expired — read the field, or write the new one, and do not leave it unread');
+  });
+
+  it('excuse for `timestamp`: zero reads, and one stamp per response cannot carry what it would be read for', () => {
+    // The measurements. (1) Zero reads: the census above names `timestamp` as
+    // unread and the detector is pinned below against being flattered by a
+    // comment. (2) The only thing a server-side stamp can add to what the page
+    // already has is the SERVER's clock, and detecting skew needs two samples —
+    // one response stamp beside the Date.now() the browser already has is not a
+    // comparison, it is a second copy of a moment the client can time itself.
+    // (3) It is paid for on every poll: 39 bytes, and the chip polls every 30s
+    // (the interval is pinned at "registers exactly one 30s interval" above),
+    // which is 4,680 bytes an hour for a field nothing reads.
+    const ts = healthField('timestamp');
+    assert.ok(ts, 'the route stopped publishing `timestamp`');
+    assert.ok(!ts.literal,
+      'timestamp is now a constant: it has stopped being a stamp of this response and is the same on every poll, so whatever it was for no longer holds. Re-measure and re-excuse, do not keep this sentence');
+    assert.ok(ts.value.includes('new Date()'),
+      `timestamp is no longer built per request — it now reads: ${ts.value}`);
+
+    const stamp = '2026-09-28T18:40:18.804Z';
+    const withField = JSON.stringify({ ok: true, uptimeSeconds: 3600, timestamp: stamp });
+    const without = JSON.stringify({ ok: true, uptimeSeconds: 3600 });
+    assert.equal(withField.length - without.length, 39,
+      'the cost the excuse quotes has moved; re-measure it rather than leaving a stale number in a comment');
+  });
+
+  it('the read detector cannot be flattered by a comment naming the field', () => {
+    // The whole census rests on "zero reads", and a prose mention of
+    // `health.timestamp` in a future comment must not be able to pay that debt
+    // off — or, in the other direction, a detector that saw comments would make
+    // this section's own count meaningless. Both directions, because the control
+    // is the half that fails silently.
+    const prose = ['function f(health) {',
+      '  // health.timestamp is deliberately never read',
+      '  return health.uptimeSeconds;',
+      '}'].join('\n');
+    assert.deepEqual(readKeys(guardedPropertyReads(prose, ['health'])), ['uptimeSeconds'],
+      'a comment was counted as a read');
+    assert.deepEqual(guardedPropertyReads('function f(health) { return 1; }', ['health']), [],
+      'the detector reported a read where there is none — it is measuring something other than reads');
+  });
+
+  it('the receiver named `health` carries two payloads, and the split is pinned', () => {
+    // The trap this section is scoped around, fixed in numbers so a future
+    // census cannot walk into it: three of the four `health.*` reads in this
+    // file belong to /api/scan's dataHealth, not to /api/health.
+    assert.deepEqual(readKeys(bannerReads), ['actionableSourceCount', 'prematchMaxAgeMs', 'status'],
+      'the /api/scan dataHealth fields this file reads changed');
+    assert.deepEqual(bannerReads.map((r) => fileLine('decideHealthBanner', r.line)).sort((a, b) => a - b), [59, 62, 76],
+      'those reads moved');
+    assert.equal(guardedPropertyReads(src, ['health']).length, 4,
+      'the whole file no longer reads `health` exactly four times — re-measure the split before quoting any of these numbers');
   });
 });

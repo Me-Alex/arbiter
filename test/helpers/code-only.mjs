@@ -268,3 +268,80 @@ export function guardedPropertyReads(src, receivers = ['window.arbiterFormat'], 
   });
   return reads;
 }
+
+/**
+ * The object literal a source file hands to `marker`, as entries with values.
+ *
+ * `marker` is a piece of the source that ends on the line opening the literal,
+ * so the literal is LOCATED from text and then READ from the parse tree.
+ * Locating it from text is unavoidable — a caller knows the name it is looking
+ * for, not an offset — but everything after that is the parser's answer rather
+ * than a counter's, because two hand-written versions of this got two different
+ * things wrong and both wrongnesses showed up as a *clean* census:
+ *
+ *   - The LAST brace on the marker's line, not the first. common.js writes
+ *     `Object.assign(Object.create(null), window.arbiterFormat || {}, { … })`,
+ *     so the first brace belongs to that `|| {}` and slicing from it yields a
+ *     body with no keys in it. The version that took the first brace reported
+ *     common.js as defining nothing — the one answer a census of this shape
+ *     exists to rule out.
+ *   - Keys at their own nesting level only. A line scan counted the `if (` that
+ *     opens a method body as a key, putting a key named `if` on format.js's
+ *     list, which would have let a call to `arbiterFormat.if(…)` pass as a
+ *     known key. Nesting is the parser's job, and asking a brace counter for
+ *     it is how that key got there.
+ *
+ * `literal` is the fact a field excuse needs. `{ ok: true }` publishes a
+ * constant, and a constant nobody reads is not a lost feature — it is a
+ * deliberate one. `{ ok: probe() }` is a signal the page may be ignoring, and
+ * that is a defect. The two need different sentences, and a census reporting
+ * only the key name cannot tell them apart.
+ *
+ * @param {string} src whole source file
+ * @param {string} marker text ending on the line that opens the literal
+ * @param {boolean} [isJs]
+ * @returns {{key: string, value: string, literal: boolean}[]} in source order
+ */
+export function objectEntries(src, marker, isJs = true) {
+  const text = codeOnly(src, isJs);
+  const at = text.indexOf(marker);
+  if (at === -1) throw new Error(`${marker} is no longer in the source`);
+  const lineEnd = text.indexOf('\n', at);
+  const braceAt = lineEnd === -1 ? text.length : text.lastIndexOf('{', lineEnd);
+  if (braceAt === -1) throw new Error(`${marker} names no object literal on its line`);
+
+  let found = null;
+  visit(parseAny(text, isJs), (n) => {
+    if (!found && n.type === 'ObjectExpression' && n.range[0] === braceAt) found = n;
+  });
+  if (!found) throw new Error(`no object literal opens at the brace ${marker} names`);
+
+  const keyName = (p) => {
+    if (p.key.type === 'Identifier') return p.key.name;
+    if (p.key.type === 'Literal' && typeof p.key.value === 'string') return p.key.value;
+    return null;
+  };
+  return found.properties.flatMap((p) => {
+    if (p.type !== 'Property' || p.computed) return [];
+    const key = keyName(p);
+    if (key === null) return [];
+    return [{
+      key,
+      value: src.slice(p.value.range[0], p.value.range[1]).trim(),
+      literal: p.value.type === 'Literal',
+    }];
+  });
+}
+
+/**
+ * The keys of that literal, unique and sorted — what a caller wants when it is
+ * asking only which names exist.
+ *
+ * @param {string} src
+ * @param {string} marker
+ * @param {boolean} [isJs]
+ * @returns {string[]}
+ */
+export function objectKeys(src, marker, isJs = true) {
+  return [...new Set(objectEntries(src, marker, isJs).map((e) => e.key))].sort();
+}

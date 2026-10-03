@@ -38,7 +38,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, readdirSync } from 'node:fs';
-import { codeOnly, guardedPropertyReads } from './helpers/code-only.mjs';
+import { codeOnly, guardedPropertyReads, objectKeys } from './helpers/code-only.mjs';
 
 // Rooted at the repository, not at this file: `new URL(path, import.meta.url)`
 // from a test under test/ resolves `public` to `test/public`, and the first run of
@@ -71,59 +71,14 @@ const pagesLoading = (script) => {
 
 const loads = (page, script) => PAGE_SCRIPTS.get(page).some((src) => src.includes(script));
 
-/**
- * The body of the object literal a file assigns to `window.arbiterFormat`.
- *
- * The LAST brace on the marker's line, not the first: common.js writes
- * `Object.assign(Object.create(null), window.arbiterFormat || {}, { … })`, so
- * the first brace belongs to that `|| {}` and slicing from it yields a body with
- * no keys in it. The version of this that took the first brace reported common.js
- * as defining nothing, which read as "every key is format.js-only" — the one
- * answer this file exists to rule out.
- */
-function objectBody(src, marker) {
-  const at = src.indexOf(marker);
-  assert.notEqual(at, -1, `${marker} is no longer in the source`);
-  const braceAt = src.lastIndexOf('{', src.indexOf('\n', at));
-  let depth = 0;
-  for (let i = braceAt; i < src.length; i++) {
-    if (src[i] === '{') depth++;
-    else if (src[i] === '}') {
-      depth--;
-      if (depth === 0) return src.slice(braceAt + 1, i);
-    }
-  }
-  throw new Error(`unbalanced braces after ${marker}`);
-}
+// The two files define one object between them, so its key list is read by the
+// same instrument every other census in this tree uses — `objectKeys` in
+// helpers/code-only.mjs, which locates the literal from text and then reads its
+// keys off the parse tree. Both rationales (last brace, own nesting level) live
+// with it, because that is where the next census will look for them.
 
-/**
- * The object's own keys, at its own nesting level only.
- *
- * Three shapes, because the two files disagree: format.js writes shorthand
- * (`paletteFor,`) for eight of its nine keys and one method; common.js writes
- * methods only. And depth matters — a scan of every line of the body counted the
- * `if (` that opens a method body as a key, putting a ninth key named `if` on
- * format.js's list, which would have let a call to `arbiterFormat.if(…)` pass
- * as a known key.
- */
-function keysIn(body) {
-  const keys = [];
-  let depth = 0;
-  for (const line of body.split('\n')) {
-    const atTop = depth === 0;
-    for (const ch of line) {
-      if (ch === '{') depth++;
-      else if (ch === '}') depth--;
-    }
-    if (!atTop) continue;
-    const m = /^\s+([A-Za-z_$][\w$]*)\s*(?::|[(,]|$)/.exec(line);
-    if (m) keys.push(m[1]);
-  }
-  return [...new Set(keys)].sort();
-}
-
-const FORMAT_KEYS = keysIn(objectBody(codeOnly(read('public/js/format.js'), true), 'window.arbiterFormat = {'));
-const COMMON_KEYS = keysIn(objectBody(codeOnly(read('public/js/pages/common.js'), true), 'window.arbiterFormat = Object.assign'));
+const FORMAT_KEYS = objectKeys(read('public/js/format.js'), 'window.arbiterFormat = {');
+const COMMON_KEYS = objectKeys(read('public/js/pages/common.js'), 'window.arbiterFormat = Object.assign');
 
 /**
  * Every read of the object, with the guard in front of it.
