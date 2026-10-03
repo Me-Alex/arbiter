@@ -270,6 +270,66 @@ export function guardedPropertyReads(src, receivers = ['window.arbiterFormat'], 
 }
 
 /**
+ * Properties one receiver is ASSIGNED, with the operator it was assigned by.
+ *
+ * A census needs the other half of this: `guardedPropertyReads` answers which
+ * keys a consumer reads, and a producer's published set is not the same question
+ * — it is which keys get WRITTEN. Reads cannot stand in for it, and the reason
+ * is not subtle. On `src/scrape-orchestrator.mjs` the read instrument answers
+ * twenty-two member expressions on `this.scrapeState`, and eighteen of them are
+ * assignments: `this.scrapeState.status = 'cancelling'` is a write that the read
+ * instrument happily reports as a read. That direction happens to be harmless on
+ * a page, where everything on the receiver is a read; on the producer it is the
+ * whole census. A key the backend only ever READS — `this.scrapeState.runId ===
+ * runId` in three guards — would be counted as published, and a field nobody
+ * writes would be excused as if something did.
+ *
+ * The reverse blindness is the one that costs a field: a key that is written and
+ * never read looks identical to a key that is only read, if you measure the
+ * wrong one of the two.
+ *
+ * `==`, `===` and `!=` are not assignments and are not reported, which is the
+ * whole reason this walks the tree: a regular expression for `\.\w+\s*=` cannot
+ * tell `state.runId = x` from `state.runId === runId` without also forbidding
+ * `==`, and the guards in this tree are full of the second form written with one
+ * `=` of slack. `x?.y = ` is not valid syntax, so optional chaining never
+ * reaches here, and a destructuring target (`({ runId } = next)`) is a pattern
+ * rather than a member expression and is likewise not reported — a census that
+ * wanted those has to say so.
+ *
+ * @param {string} src whole source file
+ * @param {string[]} [receivers] dotted receiver names
+ * @param {boolean} [isJs]
+ * @returns {{key: string, line: number, op: string, text: string}[]}
+ */
+export function propertyWrites(src, receivers = ['window.arbiterFormat'], isJs = true) {
+  for (const r of receivers) {
+    if (!/^[\w$.]+$/.test(r)) throw new Error(`receiver must be a dotted identifier, got ${r}`);
+  }
+  const keyOf = (member) => (member.computed
+    ? (member.property.type === 'Literal' ? member.property.value : null)
+    : member.property.name);
+  const writes = [];
+  const take = (left, op, node) => {
+    if (!left || left.type !== 'MemberExpression') return;
+    if (!receivers.includes(src.slice(left.object.range[0], left.object.range[1]))) return;
+    const key = keyOf(left);
+    if (typeof key !== 'string') return;
+    writes.push({
+      key,
+      line: node.loc.start.line,
+      op,
+      text: (src.split('\n')[node.loc.start.line - 1] || '').trim(),
+    });
+  };
+  visit(parseAny(src, isJs), (n) => {
+    if (n.type === 'AssignmentExpression') take(n.left, n.operator, n);
+    else if (n.type === 'UpdateExpression') take(n.argument, n.operator, n);
+  });
+  return writes;
+}
+
+/**
  * The object literal a source file hands to `marker`, as entries with values.
  *
  * `marker` is a piece of the source that ends on the line opening the literal,

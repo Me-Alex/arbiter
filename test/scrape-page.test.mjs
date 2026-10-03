@@ -22,7 +22,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import vm from 'node:vm';
 import { buildRouter } from '../src/router.mjs';
-import { codeOnly, functionSource, guardedPropertyReads, objectEntries, objectKeys, objectsWithKey } from './helpers/code-only.mjs';
+import { codeOnly, functionSource, guardedPropertyReads, objectEntries, objectKeys, objectsWithKey, propertyWrites } from './helpers/code-only.mjs';
 
 const scrapeSource = readFileSync(new URL('../public/js/pages/scrape.js', import.meta.url), 'utf8');
 const commonSource = readFileSync(new URL('../public/js/pages/common.js', import.meta.url), 'utf8');
@@ -2481,6 +2481,360 @@ test('the census instrument sees reads, not mentions, in both directions', () =>
   // field as unread, which is the one answer it must not be able to give.
   assert.throws(() => functionSource(tiny, 'absent'), /no function declaration named absent/,
     'a method name is not a declaration, and asking for one must not answer with an empty fragment');
+});
+
+// ---- the field census of GET /api/scrape/state --------------------------------
+
+/**
+ * The same census one route over, on the payload with the most readers.
+ *
+ * `GET /api/scrape/state` (router.mjs:61) serves `orchestrator.scrapeState ||
+ * emptyState()` and eleven functions on the page read it, so this is the
+ * opposite of the run report: one document, three levels, a reader on every one
+ * of them. Measured — 43 reads of `state.*`/`lastState.*` spread over 11
+ * functions, 6 of `summary.*`, and 28 of `j.*` inside the six functions that
+ * take a job as a parameter.
+ *
+ * Three levels, because two of them publish the same name. `status` here is a
+ * fact about the run and `status` there is a fact about one book, and the
+ * levels are kept apart for the reason the run census kept its own three apart:
+ * a dictionary that merges them answers about a field nobody read.
+ *
+ * The published side is measured from the WRITES, not from the literals alone.
+ * A launch writes nine keys, the idle fallback writes seven, and four more
+ * arrive on the state afterwards — `error` only ever that way, so a census built
+ * from the two literals would have reported a field the route serves on every
+ * failed run as one nothing publishes. Reading those four off
+ * `guardedPropertyReads` instead would be worse: on this file that instrument
+ * answers twenty-two member expressions on `this.scrapeState` and eighteen of
+ * them are assignments, so the producer's published set would be whatever the
+ * backend happened to look at.
+ */
+const routerSource = readFileSync(new URL('../src/router.mjs', import.meta.url), 'utf8');
+const orchestratorSource = readFileSync(new URL('../src/scrape-orchestrator.mjs', import.meta.url), 'utf8');
+
+/** What the route falls back to when nothing has ever run. */
+const IDLE_KEYS = objectEntries(functionSource(routerSource, 'emptyState').text, 'return {').map((e) => e.key);
+/** What a launch publishes, with the values, so a derivation can be run on them. */
+const LAUNCH = Object.fromEntries(objectEntries(orchestratorSource, 'this.scrapeState = {').map((e) => [e.key, e.value]));
+/** What is written onto the state after it was published. */
+const STATE_WRITES = propertyWrites(orchestratorSource, ['this.scrapeState']);
+
+const STATE_KEYS = [...new Set([...IDLE_KEYS, ...Object.keys(LAUNCH), ...STATE_WRITES.map((w) => w.key)])].sort();
+const SUMMARY_KEYS = objectEntries(orchestratorSource, 'this.scrapeState.summary = {').map((e) => e.key).sort();
+const JOB_KEYS = [...new Set([
+  ...objectEntries(functionSource(serviceSource, 'toProgressJob').text, 'return {').map((e) => e.key),
+  ...propertyWrites(orchestratorSource, ['j']).map((w) => w.key),
+])].sort();
+
+/** `lastState` is the module-level binding of the very payload a function gets. */
+const STATE_READS = new Set([
+  ...guardedPropertyReads(scrapeSource, ['state']),
+  ...guardedPropertyReads(scrapeSource, ['lastState']),
+].map((r) => r.key));
+const SUMMARY_READS = new Set(guardedPropertyReads(scrapeSource, ['summary']).map((r) => r.key));
+
+/**
+ * The six functions that read one job off this document, and the name each of
+ * them gives the job.
+ *
+ * Four of them take a job as a parameter and read it there — `refreshJobRows`
+ * alone would report five fields unread that ten lines up in `isFailedJob` decide
+ * what the whole panel counts. The other two read `j` inside a `.map()` or a
+ * `.find()` over `state.jobs`. The receiver is per function because it has to be:
+ * `isFailedJob(job)` spells its parameter out, and a census that asked that
+ * function for `j` alone would have reported `valid` unread while the very next
+ * line reads it — which is what it did, until the alias was noticed.
+ *
+ * `refreshLastRun` reads `j.*` too and is NOT on this list: its `j` is a job out
+ * of the run report, a different document behind a different sanitizer, censused
+ * above on its own.
+ */
+const JOB_READERS = [
+  ['isFailedJob', ['job']],
+  ['countDoneJobs', ['j']],
+  ['updateChipStatus', ['j', 'job']],
+  ['refreshJobRows', ['j']],
+  ['updateKpiCard', ['j']],
+  ['updateActivityLine', ['j']],
+];
+const JOB_READS = new Set(JOB_READERS.flatMap(
+  ([name, receivers]) => guardedPropertyReads(functionSource(scrapeSource, name).text, receivers).map((r) => r.key)));
+
+const STATE_CENSUS = {
+  'state': { published: STATE_KEYS, read: STATE_READS },
+  'state.summary': { published: SUMMARY_KEYS, read: SUMMARY_READS },
+  'state.jobs[]': { published: JOB_KEYS, read: JOB_READS },
+};
+const UNREAD_STATE = Object.entries(STATE_CENSUS)
+  .flatMap(([level, c]) => c.published.filter((k) => !c.read.has(k)).map((k) => `${level}.${k}`));
+
+/**
+ * The excuses, and the measurement each one rests on.
+ *
+ * Same contract as the run census: a proposition with a number in it, taken
+ * again by the test under it. Four of the six unread fields are excused here and
+ * the two that are left are left on purpose — see the test that says so.
+ */
+const STATE_EXCUSED = [
+  {
+    at: 'state.books',
+    why: 'it is the list of job ids by construction: one array feeds both, over 3 sampled books',
+  },
+  {
+    at: 'state.summary.markets',
+    why: 'it aggregates job.marketDiagnostics, and 0 of the 73 files under src/ write that key',
+  },
+  {
+    at: 'state.jobs[].marketDiagnostics',
+    why: 'the same 0 writers: it is the field the aggregate above reads and nobody fills it',
+  },
+  {
+    at: 'state.jobs[].sourceIds',
+    why: 'constructed as an empty literal and written 0 times after, while the row prints the id',
+  },
+  {
+    at: 'state.jobs[].startedAt',
+    why: 'the row has 4 columns and 1 time column, filled by durationMs between the same 2 clock reads',
+  },
+  {
+    at: 'state.jobs[].finishedAt',
+    why: 'the same 4 columns and 1 of them a duration; the 2 timestamps bound the 1 interval printed',
+  },
+];
+const stateExcuseFor = new Map(STATE_EXCUSED.map((e) => [e.at, e]));
+
+test('every field GET /api/scrape/state publishes is read by the page or excused with a measurement', () => {
+  // Liveness first, and first for a measured reason: with the reader blind, all
+  // twenty-six fields read as unread, so the orphan check would fire and this
+  // one would never get the chance. The other order is a test that cannot fail.
+  for (const level of Object.keys(STATE_CENSUS)) {
+    assert.ok(STATE_CENSUS[level].read.size > 0, `${level}: nothing was read, so this census cannot see anything`);
+  }
+  assert.deepEqual(UNREAD_STATE.filter((at) => !stateExcuseFor.has(at)), [],
+    'a published field is unread and nobody has said why, or an excuse is left over from a field that is now read');
+  assert.deepEqual(UNREAD_STATE.filter((at) => stateExcuseFor.get(at).why.length < 20), [],
+    'an excuse without a measurement in it is a shrug');
+  // Both halves said out loud, so the number a reader of this file checks first
+  // is the number the tree actually has: 11 + 4 + 11, of which 20 are read.
+  assert.deepEqual(Object.values(STATE_CENSUS).map((c) => c.published.length), [11, 4, 11],
+    'the state document has not been re-measured');
+  assert.equal(UNREAD_STATE.length, 6, 'and neither has the list of what nobody reads');
+});
+
+test('every key the page reads off this route is one the route publishes', () => {
+  // The other direction. On the state document it is not a formality: the four
+  // keys a failed run adds are written and never in a literal, so a census built
+  // from the literals alone would call `state.error` a read of a field that does
+  // not exist — the exact defect the run census found on this page once already.
+  for (const [level, c] of Object.entries(STATE_CENSUS)) {
+    const read_ = [...c.read].sort();
+    assert.deepEqual(read_.filter((k) => !c.published.includes(k)), [],
+      `${level}: the page reads a key the route cannot serve`);
+  }
+  // And the keys `emptyState()` omits are published anyway — a machine that has
+  // never scraped gets a payload of seven keys, and the page reads four of them
+  // on every load. Measured here so a fourth omission cannot pass unnoticed.
+  assert.deepEqual(STATE_KEYS.filter((k) => !IDLE_KEYS.includes(k)).sort(), ['error', 'finishedAt', 'runId', 'startedAt'],
+    'the four fields a run adds over the idle fallback');
+});
+
+test('books is excused: it is the list of job ids, and one array feeds both', () => {
+  // Derived, not asserted. The two properties are read out of the launch literal
+  // and then RUN with the real `toProgressJob`, so the excuse holds only while
+  // the source still says what it says: `books: selected` beside
+  // `jobs: selected.map(toProgressJob)`, over the same `selected`.
+  assert.equal(LAUNCH.books, 'selected', 'books is the selected array itself');
+  assert.equal(LAUNCH.jobs, 'selected.map(toProgressJob)', 'and the jobs are built from it');
+  // `map` passes three arguments, so this only holds because toProgressJob reads
+  // its first one and nothing else.
+  const toProgressJob = new Function(`${functionSource(serviceSource, 'toProgressJob').text}; return toProgressJob;`)();
+  const selected = JSON.parse(readFileSync(new URL('../config/scrapers.json', import.meta.url), 'utf8')).jobs
+    .slice(0, 3).map((j) => j.id);
+  const build = (booksExpr, jobsExpr) => new Function('selected', 'toProgressJob',
+    `return { books: ${booksExpr}, jobs: ${jobsExpr} };`)(selected, toProgressJob);
+  const built = build(LAUNCH.books, LAUNCH.jobs);
+  assert.deepEqual(built.books, selected, 'three real book ids');
+  assert.deepEqual(built.jobs.map((j) => j.id), selected,
+    'so the two agree field for field, which is what the excuse rests on');
+  assert.equal(toProgressJob(selected[0]).id, selected[0], 'and the id is the argument, not a position');
+  // The control, in the direction that matters: the same instrument run over a
+  // books expression that is NOT the same array has to report a disagreement. An
+  // identity that holds for everything is not a measurement.
+  const broken = build('selected.slice(0, -1)', LAUNCH.jobs);
+  assert.notDeepEqual(broken.books, broken.jobs.map((j) => j.id),
+    'a books list that stops one short is a disagreement, and the instrument can say so');
+  assert.ok(JOB_READS.has('id'), 'and the row prints the id the other half carries');
+});
+
+test('marketDiagnostics is excused: 0 of the 73 files under src/ write it', () => {
+  // The strongest excuse in the file, and the only one that is not about the
+  // page at all. `summary.markets` is `mergeMarketDiagnostics(jobs)`, which
+  // returns a list of a per-market aggregate that lives on each job as
+  // `job.marketDiagnostics`. So the question is whether anything fills that in,
+  // and it is asked of every module in the tree rather than of the sample of one
+  // run — the first answer is that nothing does.
+  const files = [];
+  const walk = (url) => {
+    for (const e of readdirSync(url, { withFileTypes: true })) {
+      if (e.isDirectory()) walk(new URL(`${e.name}/`, url));
+      else if (e.name.endsWith('.mjs')) files.push(new URL(e.name, url));
+    }
+  };
+  walk(new URL('../src/', import.meta.url));
+  const producers = files.flatMap((u) => objectsWithKey(readFileSync(u, 'utf8'), 'marketDiagnostics')
+    .map(({ line }) => `${u.pathname.split('/').pop()}:${line}`));
+  assert.equal(files.length, 73, 'the modules under src/ have been re-counted');
+  assert.deepEqual(producers, [],
+    'the excuse has expired: a module now publishes marketDiagnostics, so there is a market coverage to draw');
+
+  // The chain that makes the two fields one excuse rather than two: the summary
+  // value is the merge, and the merge reads the job field. If either link is cut
+  // the sentence above stops being about these two fields.
+  assert.equal(LAUNCH.summary, 'null', 'a launch publishes no summary at all');
+  assert.equal(objectEntries(orchestratorSource, 'this.scrapeState.summary = {').find((e) => e.key === 'markets').value,
+    'mergeMarketDiagnostics(batch.report.jobs)', 'and the summary markets list is the merge of the jobs');
+  const merge = functionSource(orchestratorSource, 'mergeMarketDiagnostics');
+  assert.ok(merge.text.includes('job.marketDiagnostics'), 'over exactly that field');
+
+  // And the shape is not invented by this census: a committed run report carries
+  // the field on 22 of its 24 jobs, so the data this would draw once existed.
+  // It is read, never asserted on — an artefact of one machine is a witness, not
+  // a rule, which is the whole difference between it and a derivation.
+  const witness = JSON.parse(readFileSync(new URL('../data-market-run/all-market-report.json', import.meta.url), 'utf8'));
+  assert.equal(witness.jobs.filter((j) => j.marketDiagnostics).length, 22,
+    'the field has a real shape, produced by a module this branch no longer carries');
+});
+
+test('sourceIds is excused at the job level: an empty literal and 0 writes after it', () => {
+  // A different excuse from the run census's, because this is a different
+  // document: there, sourceIds is the job's own id on all 26 registered jobs.
+  // Here `toProgressJob` publishes `[]` and the orchestrator never fills it — the
+  // state document's job carries an empty list, always, so there is nothing on
+  // the row for a second column of sources to say.
+  const entry = objectEntries(functionSource(serviceSource, 'toProgressJob').text, 'return {').find((e) => e.key === 'sourceIds');
+  assert.ok(entry, 'toProgressJob still publishes sourceIds');
+  assert.equal(entry.value, '[]', 'as an empty literal, which is a deliberate constant and not a signal');
+  assert.deepEqual(propertyWrites(orchestratorSource, ['j']).filter((w) => w.key === 'sourceIds'), [],
+    'and nothing writes it afterwards');
+  assert.ok(JOB_READS.has('id'), 'while the row prints the id the field would have repeated');
+});
+
+test('startedAt and finishedAt are excused: the row has one time column and it is filled', () => {
+  // Both numbers are taken from the tree rather than from a run. First: the table
+  // above `job-rows` has four columns and one of them is a duration — the same
+  // `<th>` count this file already uses for the last-run table. Second: the
+  // producer publishes all three fields out of ONE pair of clock readings, so the
+  // two timestamps are the ends of the interval that column already prints.
+  const at = scrapeHtml.indexOf('id="job-rows"');
+  const head = scrapeHtml.slice(scrapeHtml.lastIndexOf('<table', at), at);
+  assert.equal((head.match(/<th\b/g) || []).length, 4, 'the job table still has its four columns');
+  assert.equal((head.match(/<th[^>]*>(?:(?!<\/th>).)*Timp/s) || []).length, 1,
+    'and exactly one of them is a time column');
+
+  // `envelope` is a class method, and functionSource refuses those on purpose, so
+  // the literal is found by the key it carries instead of by the method name.
+  const base = readFileSync(new URL('../src/scrapers/base.mjs', import.meta.url), 'utf8');
+  const envelope = objectsWithKey(base, 'durationMs');
+  assert.equal(envelope.length, 1, 'exactly one literal publishes a duration');
+  const fields = Object.fromEntries(envelope[0].entries.map((e) => [e.key, e.value]));
+  assert.deepEqual(Object.keys(fields), ['id', 'name', 'sourceIds', 'startedAt', 'finishedAt', 'durationMs',
+    'outputs', 'events', 'rawSize', 'valid', 'status', 'error', 'reason'],
+    'the envelope has not been re-measured');
+  assert.equal(fields.durationMs, 'Date.now() - startedMs', 'the duration is one clock reading minus another');
+  assert.equal(fields.startedAt, 'startedAt', 'and the start time is passed in beside it');
+  assert.equal(fields.finishedAt, 'finishedAt', 'and so is the end time');
+  // The two readings those two arguments come from are taken together, one after
+  // the other, so the interval and the timestamps cannot drift apart.
+  assert.match(codeOnly(base), /const startedAt = new Date\(\)\.toISOString\(\);\s*const started = Date\.now\(\);/,
+    'the two clock reads that bracket the work are taken as a pair');
+  assert.ok(JOB_READS.has('durationMs'), 'and the column is filled from durationMs, which the row prints');
+});
+
+test('a machine that has never scraped renders, rather than reading four keys that are not there', async () => {
+  // The route's fallback is not the launch payload: `emptyState()` publishes
+  // seven keys and omits runId, startedAt, finishedAt and error, while the page
+  // reads all four on every load. The payload below is the real function lifted
+  // out of the router and evaluated, not a hand-written object that agrees with
+  // the reader by being edited when the reader breaks.
+  const idle = new Function(`${functionSource(routerSource, 'emptyState').text}; return emptyState();`)();
+  assert.deepEqual(Object.keys(idle).sort(), [...IDLE_KEYS].sort(), 'the lifted idle payload has the keys measured above');
+  for (const absent of ['runId', 'startedAt', 'finishedAt', 'error']) {
+    assert.equal(absent in idle, false, `${absent} really is absent, so this test can fail`);
+  }
+
+  const h = harness('en');
+  // Asked of the whole render rather than of one readout, and FIRST, because a
+  // reader that loses its guard does not print the wrong thing — it throws, and
+  // every assertion below would be skipped. A mutation that dropped
+  // `state.runId ? … : '—'` failed this test on a TypeError from inside the
+  // page, which is a catch of the wrong kind: the suite went red for a reason
+  // nobody wrote down. `doesNotThrow` and not `doesNotReject`, because the
+  // harness is synchronous here — `run` is `vm.runInContext`, so a throw leaves
+  // it as a throw rather than as a rejected promise.
+  assert.doesNotThrow(() => h.run(`renderState(${JSON.stringify(idle)})`),
+    'the idle payload renders rather than throwing on a key that is not there');
+  assert.equal(h.nodes.get('m-started').textContent, DICTS.en.t('awaitingTrigger'),
+    'the start readout says it is waiting rather than showing an empty date');
+  assert.equal(h.nodes.get('m-finished').textContent, '', 'and the finish readout is empty, not "undefined"');
+  assert.equal(h.nodes.get('act-runid').textContent, '—', 'the run id falls back to the dash this page uses');
+  assert.match(h.nodes.get('error-box').className, /\bhidden\b/, 'and no error box opens over a run that never failed');
+  assert.doesNotMatch(h.nodes.get('error-box').innerHTML, /undefined/, 'nothing undefined reaches it');
+
+  // The rows go through a second reader, which takes the state off the module
+  // binding rather than off a parameter — the path a live `scrape-update` frame
+  // takes when it re-renders without a reload.
+  h.run(`lastState = ${JSON.stringify(idle)};`);
+  assert.doesNotThrow(() => h.run('refreshJobRows()'), 'an empty queue renders as the empty row, not a throw');
+  assert.match(h.nodes.get('job-rows').innerHTML, /sl-empty/, 'and it says there is no run yet');
+});
+
+test('the state census measures writers, and knows every job reader it counts', () => {
+  // `propertyWrites` in both directions, because the failure it exists to prevent
+  // is silent in both: a census that credits the backend for publishing a field
+  // it only ever READS will happily excuse that field forever.
+  // The closing brace is on a line of its own, and that is not styling: the first
+  // version of this sample ended with `… other.runId = 2; }` inside the comment,
+  // and blanking the comment took the function's brace with it — which is the
+  // hazard `codeOnly` documents, met from the other side by a test of its own.
+  // The other receiver is a real line for the same reason: the commented one is
+  // there to be invisible, and an assertion cannot ask for both at once.
+  const src = 'function sample(state, next, prev) { state.runId = next;'
+    + ' if (state.runId === prev) return; state.n += 1; state.m++; other.runId = 2;\n'
+    + ' // state.commented = 1;\n }';
+  assert.deepEqual(propertyWrites(src, ['state']).map((w) => [w.key, w.op]),
+    [['runId', '='], ['n', '+='], ['m', '++']],
+    'a write, a comparison that is not one, an update, and nothing commented out');
+  assert.deepEqual(propertyWrites(src, ['other']).map((w) => w.key), ['runId'], 'and the receiver is the one asked for');
+  assert.deepEqual(propertyWrites('function one(state) { state.x = 1; }', ['state']).length, 1,
+    'so it is not blind over a real one');
+
+  // The other half of the same worry: a seventh reader of this document's jobs
+  // would be counted by nobody, and the census above would report the fields it
+  // reads as unread. Asked of the whole page rather than of the six functions, and
+  // compared by KEY rather than by line so an unrelated edit elsewhere in a
+  // 2000-line file cannot fail this. Eleven reads sit outside the six and outside
+  // refreshLastRun, and all of them belong to the scrapers registry — `job.enabled`,
+  // `job.supportedSports`, the chips — which is `/api/scrapers` and not this
+  // document. A new job reader showing up here gains a key, and this fires.
+  const spans = JOB_READERS.map(([name]) => functionSource(scrapeSource, name));
+  const report = functionSource(scrapeSource, 'refreshLastRun');
+  const counted = new Set([...spans, report].flatMap((f) => guardedPropertyReads(f.text, ['j', 'job']).map((r) => r.key)));
+  const elsewhere = new Set(guardedPropertyReads(scrapeSource, ['j', 'job'])
+    .filter((r) => ![...spans, report].some((f) => r.line >= f.line && r.line <= f.endLine))
+    .map((r) => r.key));
+  const REGISTRY_KEYS = ['enabled', 'events', 'id', 'status', 'supportedSports'];
+  assert.deepEqual([...elsewhere].sort(), REGISTRY_KEYS,
+    'a function outside these six reads a job field, so the census is missing a reader');
+
+  // And the reads that make it worth trusting: the whole page, counted, not a
+  // fragment of it. Both numbers are said here because a reader of this file who
+  // believes neither can re-measure them in one line.
+  const stateReadCount = guardedPropertyReads(scrapeSource, ['state']).length
+    + guardedPropertyReads(scrapeSource, ['lastState']).length;
+  assert.equal(stateReadCount, 43, 'the page reads this payload 43 times, in 11 functions');
+  assert.equal(STATE_WRITES.length, 17, 'and the orchestrator writes 17 of them onto the state it serves');
+  assert.ok(counted.size >= 6, 'and the six readers between them see more than one key');
 });
 
 // ---- the banner when the page cannot load its configuration ------------------
