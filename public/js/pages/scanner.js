@@ -58,6 +58,55 @@
       set('alert-quiet-to', prefs.quietHours.to);
     }
 
+    /**
+     * When the event kicks off, or nothing at all.
+     *
+     * The engine writes `kickoff` on every opportunity and every middle
+     * (src/scanner/engine.mjs:521, 611, 650) and the dashboard's own opportunity
+     * row prints it beside the league (public/js/pages/dashboard.js:492). The
+     * alert row had the league and no time, so a list of alerts could not say
+     * whether the thing it was warning about starts in five minutes or in five
+     * days — which is the one question an alert list is asked before it is acted
+     * on.
+     *
+     * Local rather than `arbiterFormat.formatKickoff`, and not by accident: the
+     * admin pages do not load /js/format.js, and the object common.js builds for
+     * them defines 7 keys, none of them formatKickoff
+     * (public/js/pages/common.js:212). This is that function's tolerant parse —
+     * a missing or malformed stamp yields '' and never the string "Invalid Date"
+     * — and the same `new Date(...).toLocaleString()` the scan's own stamp
+     * already takes a few lines below. `Date.parse(undefined)` is already NaN,
+     * so the tolerance is the `Number.isFinite` and not a default argument.
+     */
+    function kickoffLabel(kickoff) {
+      const at = Date.parse(kickoff);
+      return Number.isFinite(at) ? new Date(at).toLocaleString() : '';
+    }
+
+    /**
+     * What the arbitrage wins, in money, or nothing at all.
+     *
+     * `withBankroll` writes `guaranteedProfit: null` on every middle by
+     * construction (src/scanner/scanner.mjs:473) — a middle can lose, so there
+     * is no guaranteed profit to quote and the cell stays empty rather than
+     * showing a zero that reads like a claim. On an arbitrage it is a real
+     * number, and the row already prints the stake that number is the profit on
+     * while quoting only the percentage above it: 11.31% of 1000 is not
+     * something a reader does in their head, and this same page prints the same
+     * field for the same signals four hundred lines down.
+     *
+     * The percentage cannot rebuild it either. Measured over a driven scan the
+     * rounded allocation left 113.10 where the guaranteed profit is 113.05, so
+     * a reader who worked it out from the two printed numbers would be off by
+     * five bani on every row — small, wrong, and wrong in the direction that
+     * flatters the trade.
+     */
+    function profitOnAlert(t, alert) {
+      const profit = alert.guaranteedProfit;
+      if (profit === null || profit === undefined) return '';
+      return `<div class="secondary mono text-xs">${escapeHtml(`${t('guaranteedProfit')} ${Math.round(profit)}`)}</div>`;
+    }
+
     function renderAlerts(payload) {
       const t = arbiterI18n.t.bind(arbiterI18n);
       const counts = payload.counts || { arbitrages: 0, middles: 0 };
@@ -92,9 +141,9 @@
       }
       body.innerHTML = shown.map((a) => `
         <tr>
-          <td><div class="strong">${escapeHtml(a.homeTeam)} <span class="muted">${t('vs')}</span> ${escapeHtml(a.awayTeam)}</div><div class="secondary"><span class="chip chip-sport">${escapeHtml(a.sport || 'Football')}</span> ${liveBadge(t, a)} ${escapeHtml(a.league || '')}</div></td>
+          <td><div class="strong">${escapeHtml(a.homeTeam)} <span class="muted">${t('vs')}</span> ${escapeHtml(a.awayTeam)}</div><div class="secondary"><span class="chip chip-sport">${escapeHtml(a.sport || 'Football')}</span> ${liveBadge(t, a)} ${escapeHtml([a.league, kickoffLabel(a.kickoff)].filter(Boolean).join(' · '))}</div></td>
           <td><div class="mono text-xs">${escapeHtml(a.marketKey || '—')}</div><div class="secondary mono text-xs">${escapeHtml(a.type)}</div></td>
-          <td class="num tabnum"><span class="strong ${a.type === 'middle' ? 'purple' : 'green'}">+${(a.roiPercent || 0).toFixed(2)}</span></td>
+          <td class="num tabnum"><span class="strong ${a.type === 'middle' ? 'purple' : 'green'}">+${(a.roiPercent || 0).toFixed(2)}</span>${profitOnAlert(t, a)}</td>
           <td class="num tabnum">${a.type === 'middle' ? `<span class="yellow">${(a.riskPercent || 0).toFixed(2)}</span>` : '—'}</td>
           <td><div class="secondary">${escapeHtml((a.sourceIds || []).join(' · '))}</div><div class="secondary">${a.totalStake === null || a.totalStake === undefined ? '' : escapeHtml(`${t('alertStake')} ${Math.round(a.totalStake)}`)}</div></td>
           <td>${verificationCell(t, { verification: a.verified ? { status: a.verified } : null })}</td>

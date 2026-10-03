@@ -86,6 +86,7 @@ const ALERT_PAYLOAD = {
     arbitrages: [{
       key: 'fotbal::1x2::arb', type: 'arb', eventKey: 'fotbal::1x2', marketKey: '1x2',
       sport: 'fotbal', league: 'Superliga', homeTeam: 'FCSB', awayTeam: 'Dinamo',
+      kickoff: '2030-01-01T19:30:00.000Z',
       live: false, roiPercent: 4, totalStake: 100, guaranteedProfit: 4, riskPercent: 0,
       sourceIds: ['betano', 'fortuna'], verified: 'confirmed',
     }],
@@ -240,6 +241,16 @@ test('the notification templates really carry their placeholders', () => {
  * quietly) and the route's literals are read out of the router's source. The
  * comparison against ALERT_PAYLOAD below is the control that says the fixture in
  * this file still holds the real shape.
+ *
+ * That census is the envelope, and the two arrays inside it are where it stops:
+ * `leafPaths` calls an array a leaf, so `alerts.arbitrages` and `alerts.middles`
+ * are counted as fields and nothing under them is. What is under them is not the
+ * scan's signal objects after all — `selectFamily` re-projects each one through a
+ * literal key list (src/alert-engine.mjs:202-221), so their shape belongs to the
+ * alert engine and is measured by its own census at the foot of this file. This
+ * note once said the opposite, on the belief that the items were passed through;
+ * the code disagreed, and a census whose stated perimeter is wrong hides exactly
+ * the fields it should have counted.
  */
 const routerCode = read('src/router.mjs');
 const alertEngine = await import('../src/alert-engine.mjs');
@@ -404,6 +415,141 @@ test('the census instruments are the ones they claim to be', () => {
   assert.ok(!scannerCode.includes('thresholds'), 'the page never mentions thresholds outside a comment');
   assert.equal(alertEngine.ALERT_SCHEMA, ALERT_PAYLOAD.schemaVersion,
     'the fixture still carries the schema version the engine publishes');
+});
+
+// ---- the alert items themselves ---------------------------------------------
+
+/**
+ * The keys `selectFamily` publishes on every alert, measured by running it.
+ *
+ * The envelope census above calls an array a leaf, so everything under
+ * `alerts.arbitrages` and `alerts.middles` sat outside it. Those keys are not
+ * the scanner's: `selectFamily` (src/alert-engine.mjs:202-221) re-projects each
+ * signal through a literal list, so their shape belongs to the alert engine and
+ * the page is accountable for every one of them.
+ *
+ * Two seeds, on purpose. The list is a literal in the producer, so any input
+ * produces it. Were it a spread instead, the two seeds would disagree and the
+ * published set would depend on whatever the scanner happened to compute that
+ * day — which is exactly the field a hand-written list would sit on without
+ * noticing.
+ */
+const SIGNAL_WITH_EVERYTHING = {
+  eventKey: 'fotbal::1x2', marketKey: '1x2', sport: 'fotbal', league: 'Superliga',
+  kickoff: '2030-01-01T19:30:00.000Z', homeTeam: 'FCSB', awayTeam: 'Dinamo',
+  live: false, roiPercent: 4, totalStake: 100, guaranteedProfit: 4, riskPercent: 0,
+  legs: [{ sourceId: 'betano' }, { sourceId: 'fortuna' }], verification: { status: 'confirmed' },
+  inverseSum: 0.97, gap: 0.004, worstCasePayout: 104, roundingRisk: false, provider: 'egt',
+};
+const SIGNAL_WITH_ALMOST_NOTHING = { eventKey: 'fotbal::9x9', roiPercent: 9 };
+const itemKeys = (signal) => Object.keys(alertEngine.evaluateAlerts(
+  { opportunities: [signal], middles: [signal] },
+  { minRoiPercent: 0, minMiddleRoiPercent: 0 },
+).alerts.arbitrages[0] || {}).sort();
+const ITEM_KEYS = itemKeys(SIGNAL_WITH_EVERYTHING);
+
+/**
+ * The row the alerts table renders, cut out of the page's source.
+ *
+ * A whole-file search for `a.eventKey` finds the scan table's two rows
+ * (scanner.js:576, 601) and would count an alert field as read because a
+ * different table on the same page reads the same name — which is how a field
+ * ends up excused for a reader it does not have. So the search is this row, plus
+ * the other reader of this payload that ships on this page.
+ */
+const ROW_START = scannerCode.indexOf('shown.map((a) =>');
+const ROW_END = scannerCode.indexOf(".join('');", ROW_START);
+const ALERT_ROW = ROW_START === -1 ? '' : scannerCode.slice(ROW_START, ROW_END === -1 ? undefined : ROW_END);
+
+/**
+ * Fields the row reads without naming them, and the helper it hands the item to.
+ *
+ * A named pair, not "any function called with `a`": the list stays short enough
+ * to check by eye, and it is checked — the census's own test asserts every entry
+ * is still called with the item, because a helper this list forgets to mention
+ * turns a read field into an unread one and then into an excuse.
+ */
+const READ_VIA_HELPER = { live: 'liveBadge', guaranteedProfit: 'profitOnAlert' };
+
+const alertsCode = codeOnly(alertsSource, true);
+const isItemRead = (field) => {
+  if (ALERT_ROW.includes(`a.${field}`)) return true;
+  const helper = READ_VIA_HELPER[field];
+  if (helper && ALERT_ROW.includes(`${helper}(t, a)`)) return true;
+  // alerts.js is the desktop-channel half of this same page — scanner.html loads
+  // it above scanner.js — and it reads the same two arrays.
+  return new RegExp(`\\.${field}\\b`).test(alertsCode);
+};
+
+/**
+ * An alert key no reader on this page wants, with the measurement that says so.
+ */
+const UNREAD_ITEM_BY_DESIGN = {
+  eventKey: [
+    'The match identity, published so an alert can be tied back to an event. Measured',
+    'three ways. The key the notification script dedups on IS this field with the',
+    'market and the family appended: `key === eventKey::marketKey::type` holds on the',
+    'driven run, and alerts.js reads that key on five lines (124, 133, 138, 171, 204)',
+    'for the cooldown map and the notification tag. The row itself prints the two',
+    'team names the projection carries beside it, so a column here would be the same',
+    'event written twice in two notations — and the one on screen is the one a reader',
+    'can read. The row slice is what makes this falsifiable: `a.eventKey` appears at',
+    'scanner.js:576 and 601, on the scan tables, and never in the alerts row.',
+  ].join(' '),
+};
+
+test('every key an alert carries is read by the page, or has a measured reason', () => {
+  const unread = ITEM_KEYS.filter((k) => !isItemRead(k) && !(k in UNREAD_ITEM_BY_DESIGN));
+  assert.deepEqual(unread, [],
+    `the page never reads these, and they carry no reason above: ${unread.join(', ')}`);
+  // The canary, in the other direction: the fixture in this file still holds the
+  // real item shape, so the tests above are rendered against what the route sends.
+  assert.deepEqual(Object.keys(ALERT_PAYLOAD.alerts.arbitrages[0]).sort(), ITEM_KEYS,
+    'the fixture item in this file no longer holds the real alert shape');
+});
+
+test('no alert-key excuse names a field the page reads', () => {
+  for (const [field, reason] of Object.entries(UNREAD_ITEM_BY_DESIGN)) {
+    assert.ok(reason.length > 80, `${field} has no recorded reason`);
+    assert.ok(ITEM_KEYS.includes(field), `${field} is excused but no alert carries it`);
+    assert.ok(!isItemRead(field),
+      `${field} is excused, but the page reads it — remove the entry in the same commit`);
+  }
+  // The measurement the eventKey reason stands on, re-taken here rather than
+  // left as prose: the key really is this field with the market and the family
+  // appended, on the alert the producer builds.
+  const [alert] = alertEngine.evaluateAlerts(
+    { opportunities: [SIGNAL_WITH_EVERYTHING] }, { minRoiPercent: 0 },
+  ).alerts.arbitrages;
+  assert.equal(alert.key, `${alert.eventKey}::${alert.marketKey}::${alert.type}`,
+    'the alert key is no longer built from the field the reason calls redundant');
+});
+
+test('the alert-key census measures the projection and reads the right row', () => {
+  assert.equal(ITEM_KEYS.length, 16, `expected 16 keys on an alert, measured ${ITEM_KEYS.length}`);
+  // The published set must not depend on the seed, or the number above is a
+  // property of my fixture rather than of the producer.
+  assert.deepEqual(itemKeys(SIGNAL_WITH_ALMOST_NOTHING), ITEM_KEYS,
+    'the published key set changed with the signal it was given');
+  assert.ok(Object.keys(SIGNAL_WITH_EVERYTHING).length > ITEM_KEYS.length,
+    'the control: the signal is bigger than the alert, so the set above is a restriction');
+  // The slice really is the alerts row and not the scan table below it.
+  assert.ok(ALERT_ROW.includes('a.homeTeam') && ALERT_ROW.includes('a.kickoff'),
+    `the row slice no longer holds the alerts row: ${ALERT_ROW.slice(0, 120)}`);
+  assert.ok(!ALERT_ROW.includes('evMatchLabel'),
+    'the slice caught the scan tables, whose eventKey reads would excuse an alert field');
+  assert.ok(ALERT_ROW.includes('liveBadge(t, a)'),
+    'the row no longer hands the whole item to liveBadge, so `live` is no longer read');
+  // Every helper the row hands the item to, one by one. Without this an entry in
+  // READ_VIA_HELPER could outlive the call it was written for and excuse a field
+  // the page stopped reading — the census would then report a decision as a fact.
+  for (const [field, helper] of Object.entries(READ_VIA_HELPER)) {
+    assert.ok(ALERT_ROW.includes(`${helper}(t, a)`),
+      `${field} is counted as read through ${helper}, but the row no longer calls it with the item`);
+    assert.ok(scannerCode.includes(`function ${helper}(`),
+      `${helper} is counted as a reader of ${field}, but no such function is on the page`);
+  }
+  assert.ok(/\.key\b/.test(alertsCode), 'alerts.js no longer reads the alert key');
 });
 
 // ---- the flow --------------------------------------------------------------
@@ -584,6 +730,127 @@ test('the page still renders its alerts when the notification script is absent',
   assert.ok(get('alerts-count').textContent.includes('1'), 'the counts are still there');
   assert.ok(select('#alerts-table tbody').innerHTML.includes('FCSB'), 'and so is the list');
   assert.equal(get('alert-min-roi').value, '1', 'and the form is still filled from the server');
+});
+
+test('the alert row says when the match kicks off, not only who plays it', async () => {
+  const { context, select } = page();
+  await context.refreshAlerts();
+  const rows = select('#alerts-table tbody').innerHTML;
+  const stamp = new Date(ALERT_PAYLOAD.alerts.arbitrages[0].kickoff).toLocaleString();
+  // The whole pair, not `includes(stamp)`: a row that printed the time without
+  // the league, or the league without the time, satisfies a substring check and
+  // is still the wrong row. This one ends the cell at the time.
+  assert.ok(rows.includes(`Superliga · ${stamp}</div>`),
+    `the league and the kickoff are not printed together: ${rows}`);
+
+  // The control, so the assertion above is a claim about which field the row
+  // reads and not about a constant: move the kickoff and the printed time moves
+  // with it. Measured on the producer — scratch/probe-alert-kickoff.mjs drives
+  // the real engine, the real alert engine and the real route over one
+  // workspace and counts the field at each of the three hops, because a field
+  // the producer wrote and the alert engine dropped would look identical here.
+  const LATER = '2030-02-14T22:05:00.000Z';
+  const moved = page({
+    alerts: {
+      ...ALERT_PAYLOAD,
+      alerts: {
+        ...ALERT_PAYLOAD.alerts,
+        arbitrages: [{ ...ALERT_PAYLOAD.alerts.arbitrages[0], kickoff: LATER }],
+      },
+    },
+  });
+  await moved.context.refreshAlerts();
+  const movedRows = moved.select('#alerts-table tbody').innerHTML;
+  assert.ok(movedRows.includes(`Superliga · ${new Date(LATER).toLocaleString()}</div>`),
+    `moving only the kickoff left the row exactly where it was: ${movedRows}`);
+});
+
+test('a match with no usable kickoff is not handed a broken time', async () => {
+  for (const kickoff of [undefined, '', 'nu-e-o-data']) {
+    const { context, select } = page({
+      alerts: {
+        ...ALERT_PAYLOAD,
+        alerts: {
+          ...ALERT_PAYLOAD.alerts,
+          arbitrages: [{ ...ALERT_PAYLOAD.alerts.arbitrages[0], kickoff }],
+        },
+      },
+    });
+    await context.refreshAlerts();
+    const rows = select('#alerts-table tbody').innerHTML;
+    assert.ok(!rows.includes('Invalid Date'),
+      `a kickoff of ${JSON.stringify(kickoff)} was printed as Invalid Date: ${rows}`);
+    // The cell stops where the league stops. A separator left standing with
+    // nothing after it is the shape of a formatter that always joins.
+    assert.ok(rows.includes('Superliga</div>'),
+      `a kickoff of ${JSON.stringify(kickoff)} left a separator with nothing after it: ${rows}`);
+  }
+
+  // The control, so the two assertions above are about an absent time and not
+  // about a cell that never carried one.
+  const { context, select } = page();
+  await context.refreshAlerts();
+  assert.ok(!select('#alerts-table tbody').innerHTML.includes('Superliga</div>'),
+    'a real kickoff left the cell ending at the league too');
+});
+
+test('an arbitrage row names what it wins; a middle row claims no profit', async () => {
+  const langs = dictionaries();
+  const middle = {
+    ...ALERT_PAYLOAD.alerts.arbitrages[0],
+    key: 'fotbal::1x2::ah-1::middle', type: 'middle', marketKey: 'ah-1',
+    homeTeam: 'CFR', awayTeam: 'U Craiova',
+    roiPercent: 40, riskPercent: 2.5, guaranteedProfit: null, verified: null,
+  };
+  const { context, select } = page({
+    alerts: {
+      ...ALERT_PAYLOAD,
+      alerts: { arbitrages: [ALERT_PAYLOAD.alerts.arbitrages[0]], middles: [middle] },
+    },
+  });
+  await context.refreshAlerts();
+  const rows = select('#alerts-table tbody').innerHTML.split('<tr').slice(1);
+  const arbRow = rows.find((r) => r.includes('Dinamo'));
+  const middleRow = rows.find((r) => r.includes('Craiova'));
+  assert.ok(arbRow && middleRow, `one of the two rows is missing: ${JSON.stringify(rows)}`);
+
+  // The row already prints the stake the profit is a percentage of, so the two
+  // numbers to multiply are both on screen — but nobody multiplies 11.31% of 1000
+  // in their head, and the rounded allocation leaves that product 113.10 against
+  // a real 113.05. Five bani a row, flattering the trade, every time.
+  assert.ok(arbRow.includes(`${langs.en.t('guaranteedProfit')} 4`),
+    `the arbitrage row does not name what it wins: ${arbRow}`);
+  // A middle can lose, so `withBankroll` writes guaranteedProfit: null on every
+  // one of them (src/scanner/scanner.mjs:473). The cell stays empty rather than
+  // printing a 0 that reads like a promise, and the risk column carries the
+  // number that actually matters there.
+  assert.ok(!middleRow.includes(langs.en.t('guaranteedProfit')),
+    `a middle row claims a guaranteed profit: ${middleRow}`);
+  assert.ok(middleRow.includes('2.50'), `and the middle row lost its risk: ${middleRow}`);
+});
+
+test('the row renders the item the real producer builds, not this file\'s copy', async () => {
+  // Everything else in this file renders ALERT_PAYLOAD, which is written by
+  // hand. That copy is the test's own, so a producer that stopped carrying a
+  // value would leave those tests green — measured, not assumed: mutating
+  // `kickoff: signal.kickoff || null` in src/alert-engine.mjs to `kickoff: null`
+  // ran this file and every other one in it without a single failure. This test
+  // is the gap shut: the item comes out of the real producer and goes on the
+  // real page, producer and page in one hop with nothing written in between.
+  const built = alertEngine.evaluateAlerts(
+    { opportunities: [SIGNAL_WITH_EVERYTHING] }, { minRoiPercent: 0 },
+  ).alerts.arbitrages[0];
+  const { context, select } = page({
+    alerts: { ...ALERT_PAYLOAD, alerts: { arbitrages: [built], middles: [] } },
+  });
+  await context.refreshAlerts();
+  const rows = select('#alerts-table tbody').innerHTML;
+  const stamp = new Date(SIGNAL_WITH_EVERYTHING.kickoff).toLocaleString();
+  assert.ok(rows.includes(`Superliga · ${stamp}</div>`),
+    `the kickoff the producer published never reached the row: ${rows}`);
+  assert.ok(rows.includes(`${dictionaries().en.t('guaranteedProfit')} 4`),
+    `the profit the producer published never reached the row: ${rows}`);
+  assert.ok(rows.includes('FCSB'), 'and the row is the alert the producer built, not an empty table');
 });
 
 test('a scan-update re-reads the alerts, and a book-by-book scrape update does not', async () => {
