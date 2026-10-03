@@ -206,8 +206,11 @@ window.applyDesignTokens = function (theme) {
  * load format.js, so every key this file owns is also defined standalone below
  * and the base object only contributes on the pages that have it.
  *
- * Keys deliberately not redefined here: fmtOdds, fmtStake and timeAgo are
- * already provided by format.js with identical bodies.
+ * Keys deliberately not redefined here: fmtOdds and fmtStake are already
+ * provided by format.js with identical bodies. timeAgo is the exception — it is
+ * defined below as a fallback only, `(window.arbiterFormat || {}).timeAgo ||
+ * function timeAgoFallback(ms)`, so a page that loaded format.js keeps that body
+ * and the admin pages, which load only this file, get one.
  */
 window.arbiterFormat = Object.assign(Object.create(null), window.arbiterFormat || {}, {
   /**
