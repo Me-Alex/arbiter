@@ -473,6 +473,24 @@ function updateChipStatus(jobs) {
 const priceSuggestions = { markets: new Set(), events: new Set() };
 
 /**
+ * Serial token, so a response belonging to controls the operator has already
+ * moved on from cannot paint over the one that does.
+ *
+ * Four `change` listeners each start a load and none of them awaits one, so two
+ * requests are routinely in flight at once — and the answer time is the time it
+ * takes to read a capture, which varies as much as the captures do. Whichever
+ * response landed *last* used to win, rather than the one the panel is asking
+ * about now: choose a book with a large capture, then narrow the market, and the
+ * slow answer came back second and put a table the operator had moved away from
+ * back on screen, under a note that described it.
+ *
+ * The same shape as `eventDetailReqSeq` (public/js/pages/event-detail-modal.js:22),
+ * which guards the event dialog for the same reason: a close followed by a
+ * re-open, or a fast filter followed by a slow one.
+ */
+let priceBoardSeq = 0;
+
+/**
  * The URL this panel asks for.
  *
  * Every parameter the route accepts is here, and the empty ones are left off
@@ -606,6 +624,11 @@ function renderPriceBookOptions() {
  * of the page exactly as it found it.
  */
 async function loadPriceBoard() {
+  // Taken before anything else, so even the "no book chosen" exit below retires
+  // the request that is already in flight — otherwise clearing the selector and
+  // letting the old answer land would put a table back under a panel that is
+  // asking the operator to pick a book.
+  const seq = ++priceBoardSeq;
   const note = $('odds-note');
   const t = window.arbiterI18n.t.bind(window.arbiterI18n);
   const url = priceBoardUrl();
@@ -617,8 +640,15 @@ async function loadPriceBoard() {
   }
   if (note) note.textContent = t('pricesLoading');
   try {
-    renderPriceBoard(await arbiterApi.get(url), t);
+    const payload = await arbiterApi.get(url);
+    if (seq !== priceBoardSeq) return; // superseded while in flight
+    renderPriceBoard(payload, t);
   } catch (err) {
+    // The failure path retires too, and it matters more than the happy one: a
+    // superseded request that 404s would otherwise replace the book the operator
+    // is now looking at with "this book has no capture" for a book they have
+    // already moved away from.
+    if (seq !== priceBoardSeq) return; // a retired failure paints nothing
     // ENOTFOUND is the route's own answer for "this book has no capture" and
     // it is the common case here: two enabled, validated jobs have none. It
     // gets its own sentence, because "could not be read" would tell the

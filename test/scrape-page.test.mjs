@@ -839,16 +839,20 @@ test('the board is translated, note and empty row alike', async () => {
 });
 
 test('the note names the book the payload is about, and the selector can disagree with it', async () => {
-  // What the published `sourceId` is for. Four `change` listeners each start a
-  // load and none of them awaits one (scrape.js:765), so two requests can be in
-  // flight at once and whichever response lands last is the one on screen. The
+  // What the published `sourceId` is for, and a second claim that only became
+  // true with the serial token. Four `change` listeners each start a load and
+  // none of them awaits one (scrape.js:765), so two requests are in flight at
+  // once and whichever response lands last used to be the one on screen. The
   // route answers with the name it served; the note says it, so a table that no
   // longer belongs to the selected book announces itself instead of passing for
   // it.
   //
-  // The ordering itself is not fixed here — the late response still replaces the
-  // rows it should not have replaced. What this pins is that the panel then says
-  // whose prices those are.
+  // This test used to stop there and say so — "the ordering itself is not fixed
+  // here", the late response still replacing the rows it should not have
+  // replaced, with the book's name as the only warning. That was the price of the
+  // last lot, not a design: the warning is a sentence above a table the operator
+  // is already looking at. So the ordering is fixed now, and the two loads below
+  // are resolved in the order that used to be the broken one.
   const gates = [];
   const h = harness('en', {
     form: { 'odds-book': { value: 'winner' } },
@@ -864,12 +868,84 @@ test('the note names the book the payload is about, and the selector can disagre
   assert.match(boardNote(h), new RegExp(DICTS.en.t('bookmaker') + ': unibet'),
     'the newest response names the book it is about');
   assert.match(boardHtml(h), /Second/, 'and its rows are the ones on screen');
+  const noteThePanelOwns = boardNote(h);
+  const rowsThePanelOwns = boardHtml(h);
 
   gates[0]({ sourceId: 'winner', results: [oddsResult({ homeTeam: 'First', awayTeam: 'Choice' })] });
   await first;
-  assert.match(boardNote(h), new RegExp(DICTS.en.t('bookmaker') + ': winner'),
-    'a response that arrives after the operator moved on names its own book');
-  assert.equal(h.nodes.get('odds-book').value, 'unibet', 'while the selector still reads the other');
+  assert.equal(boardNote(h), noteThePanelOwns,
+    'a superseded response rewrote the note of the board that replaced it');
+  assert.equal(boardHtml(h), rowsThePanelOwns,
+    'and put its own rows back on screen under the book the operator moved away from');
+  assert.doesNotMatch(boardHtml(h), /First/, 'the board on screen is not the request that was retired');
+  assert.equal(h.nodes.get('odds-book').value, 'unibet', 'and the selector never changed');
+});
+
+test('a retired load cannot wipe the board with its own failure', async () => {
+  // The failure path, which matters more than the happy one: before the serial
+  // token it had no guard at all, and the route answers 404 for a book with no
+  // capture — two enabled, validated jobs in the registry have none. So the
+  // shape this defends against is an ordinary one: pick a book whose capture is
+  // missing, change the market while that 404 is still in flight, and the old
+  // answer replaced "unibet's prices" with "winner has no capture".
+  const gates = [];
+  const h = harness('en', {
+    form: { 'odds-book': { value: 'winner' } },
+    api: { get: () => new Promise((resolve, reject) => gates.push({ resolve, reject })) },
+  });
+  const first = h.run('loadPriceBoard()');
+  h.nodes.get('odds-book').value = 'unibet';
+  const second = h.run('loadPriceBoard()');
+  assert.equal(gates.length, 2, 'both loads reached the route before either answered');
+
+  gates[1].resolve({ sourceId: 'unibet', results: [oddsResult({ homeTeam: 'Second', awayTeam: 'Choice' })] });
+  await second;
+  const rowsThePanelOwns = boardHtml(h);
+
+  const missing = Object.assign(new Error('no capture'), { status: 404 });
+  gates[0].reject(missing);
+  await first;
+  assert.equal(boardHtml(h), rowsThePanelOwns,
+    'a 404 for a book the operator already left replaced the board with its own sentence');
+  assert.doesNotMatch(boardHtml(h), new RegExp(DICTS.en.t('pricesNoCapture')),
+    'the board on screen now claims the wrong book has no capture');
+
+  // The control, so the two assertions above are about a retired request and not
+  // about a page that never renders the failure: the same 404 on the request that
+  // still owns the panel does take it over.
+  const solo = harness('en', {
+    form: { 'odds-book': { value: 'winner' } },
+    api: { get: () => Promise.reject(Object.assign(new Error('no capture'), { status: 404 })) },
+  });
+  await solo.run('loadPriceBoard()');
+  assert.match(boardHtml(solo), new RegExp(DICTS.en.t('pricesNoCapture')),
+    'a 404 on the newest load is no longer shown, which would be the other bug');
+});
+
+test('clearing the selector retires the load already on its way', async () => {
+  // The third exit, and the one the token was taken for before anything is
+  // awaited. It writes "pick a book" without asking the route anything, so a
+  // guard placed after that return — the obvious place for it — would leave a
+  // response from the previous book free to land on the panel afterwards and
+  // fill a table the page had just emptied on purpose.
+  const gates = [];
+  const h = harness('en', {
+    form: { 'odds-book': { value: 'unibet' } },
+    api: { get: () => new Promise((resolve) => gates.push(resolve)) },
+  });
+  const inFlight = h.run('loadPriceBoard()');
+  assert.equal(gates.length, 1, 'the load reached the route');
+
+  h.nodes.get('odds-book').value = '';
+  await h.run('loadPriceBoard()');
+  const empty = boardHtml(h);
+  assert.match(empty, new RegExp(DICTS.en.t('pricesPickBook')), 'the panel asks for a book');
+
+  gates[0]({ sourceId: 'unibet', results: [oddsResult({ homeTeam: 'Late', awayTeam: 'Arrival' })] });
+  await inFlight;
+  assert.equal(boardHtml(h), empty,
+    'a response that arrives after the selector was cleared refilled a panel that had asked for a book');
+  assert.doesNotMatch(boardHtml(h), /Late/, 'and it put a table where the page had put its question');
 });
 
 test('scrape.html loads the formatter the board renders odds through', () => {
