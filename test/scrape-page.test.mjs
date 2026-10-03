@@ -2695,15 +2695,64 @@ test('marketDiagnostics is excused: 0 of the 73 files under src/ write it', () =
   assert.equal(objectEntries(orchestratorSource, 'this.scrapeState.summary = {').find((e) => e.key === 'markets').value,
     'mergeMarketDiagnostics(batch.report.jobs)', 'and the summary markets list is the merge of the jobs');
   const merge = functionSource(orchestratorSource, 'mergeMarketDiagnostics');
-  assert.ok(merge.text.includes('job.marketDiagnostics'), 'over exactly that field');
+  // The field the summary reads is named, not just the field it hangs off: the
+  // excuse above is about `markets`, and a merge that stopped reaching inside the
+  // object would leave the summary reading nothing while the substring below
+  // still matched.
+  assert.match(merge.text, /job\.marketDiagnostics\??\.markets\b/,
+    'the merge no longer reads the markets list out of the field, so WHY.markets in field-census.test.mjs has lost its base');
 
   // And the shape is not invented by this census: a committed run report carries
   // the field on 22 of its 24 jobs, so the data this would draw once existed.
-  // It is read, never asserted on — an artefact of one machine is a witness, not
-  // a rule, which is the whole difference between it and a derivation.
+  //
+  // It used to be called a witness here — "read, never asserted on" — one line
+  // above an exact count assertion on it, which is a sentence the next line
+  // contradicts. The word was wrong, and wrong in the useful direction: measured,
+  // 0 of the 95 files under src/, scripts/ and electron/ name this path, so
+  // nothing in this branch can rewrite the artefact. It is not a sample of one
+  // machine's last run, it is a fixture, and a fixture can carry rules — which is
+  // the same move snapshot-route.test.mjs made on the captures. So the count is
+  // now paired with the shape it was counting, and the "nothing writes it" half
+  // is asserted rather than assumed: the day a pipeline lands here, the fixture
+  // stops being frozen and the test says so instead of blaming a module.
+  const modules = [];
+  const scan = (url) => {
+    for (const e of readdirSync(url, { withFileTypes: true })) {
+      if (e.isDirectory()) scan(new URL(`${e.name}/`, url));
+      else if (/\.mjs$/.test(e.name)) modules.push(new URL(e.name, url));
+    }
+  };
+  for (const dir of ['../src/', '../scripts/', '../electron/']) scan(new URL(dir, import.meta.url));
+  assert.equal(modules.length, 95, 'the modules under src/, scripts/ and electron/ have been re-counted');
+  const writers = modules
+    // Stripped of comments first, because this file's whole vocabulary is
+    // comments citing paths, and src/scanner/league-aliases.mjs already names
+    // data-market-run in one. A mention is not a writer, and a guard that cannot
+    // tell them apart would be silenced by the first person who documents
+    // where the fixture came from.
+    .filter((url) => codeOnly(readFileSync(url, 'utf8'), true).includes('all-market-report'))
+    .map((url) => url.pathname.split('/').slice(-2).join('/'));
+  assert.deepEqual(writers, [],
+    'a module now names all-market-report.json, so the counts below are this tree\'s own output again and the excuse above has to be re-measured against a writer');
+
   const witness = JSON.parse(readFileSync(new URL('../data-market-run/all-market-report.json', import.meta.url), 'utf8'));
-  assert.equal(witness.jobs.filter((j) => j.marketDiagnostics).length, 22,
-    'the field has a real shape, produced by a module this branch no longer carries');
+  assert.deepEqual(witness.jobs.filter((j) => !('marketDiagnostics' in j)).map((j) => j.id), ['unibet', 'mozzartbet'],
+    'the two books the old pipeline left without the field are not these any more — re-read which books carried it');
+  // Key and type together, because "five names" and "five aggregates" are
+  // different claims and only the second one is what a coverage row would have
+  // been drawn from. Sixteen rows carry the full shape and the other six an
+  // empty object, which is a pipeline that emitted nothing for a book with no
+  // markets rather than one that skipped the key.
+  const shapeOf = (o) => Object.entries(o)
+    .map(([k, v]) => `${k}:${Array.isArray(v) ? 'array' : typeof v}`).sort().join(',');
+  const shapes = new Map();
+  for (const j of witness.jobs.filter((x) => 'marketDiagnostics' in x)) {
+    const shape = shapeOf(j.marketDiagnostics);
+    shapes.set(shape, (shapes.get(shape) || 0) + 1);
+  }
+  assert.deepEqual([...shapes].sort(),
+    [['', 6], ['completeMarkets:number,incompleteMarkets:number,markets:array,rejectionReasons:object,totalMarkets:number', 16]],
+    'the shape the old pipeline emitted has changed — re-measure the excuse above against the new one');
 });
 
 test('sourceIds is excused at the job level: an empty literal and 0 writes after it', () => {
