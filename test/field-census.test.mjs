@@ -603,26 +603,77 @@ const optionsReads = () => {
  * scope switches — so widening the set moves no verdict today. It is here
  * because the subset is a fact about today.
  *
- * The alias is the part that has to stay a cut. `d` is bound to a profile's
- * defaults on both pages and to something else entirely in both: on scrape.js a
- * search for `d.` page-wide returns `ours`, `theirs`, `getTime`, `labelKey` and
- * `toLocaleTimeString`, which are arbitrage and event-detail fields, and on
- * scanner.js it returns `profiles` and `sports`, which are two response
- * envelopes. Six names the page never reads as a profile would have been
- * credited as profile reads. So the defaults are read only inside the window
- * where the alias is bound to `<row>.defaults`, and the window throws if it
- * runs away.
+ * The receivers and the alias are derived, not written down. They used to be
+ * typed into the table below — `rows: ['profile', 'p', 'x', 'found']`, `alias:
+ * 'd'` — and a typed list of receiver names fails in the direction that blames
+ * the page for the instrument's ignorance: a fifth binding added inside a cut
+ * would go unlisted, its reads would never be collected, and a leaf the page
+ * does read would be reported as one no page reads. The stale check that
+ * guarded the list only caught a name that had VANISHED from the code, never a
+ * name missing from the list.
+ *
+ * So a receiver is whatever reads a published leaf inside a window — the leaf
+ * set is the pinned row itself, so a row that gains a field widens the net by
+ * itself — and an alias is whatever the page binds from `something.defaults`.
+ * Both derivations land on the same set the hand list named: profile, p, x and
+ * found on scrape.js, and p, x plus `s` (the sports map's row, inside scanner's
+ * own cut) on scanner.js. `s` contributes `id` and `name`; `name` is not a
+ * profile leaf and this census weighs only reads the page does NOT have, so an
+ * extra name in the read set changes no verdict.
+ *
+ * What stays typed is where the windows are: the three function names on
+ * scrape.js and the fetch-to-listener cut in scanner.js. A function name is a
+ * fact a rename can only make LOUD — functionWindow throws on a missing name —
+ * while widening the cuts to whatever looks like a profile consumer would sweep
+ * in the job tables, which read `id` through `j` and would credit a profile
+ * leaf no page reads. Over-crediting is the silent direction, so the cuts stay
+ * hand-named and everything inside them is derived.
+ *
+ * The alias NAME derives too, but its window still starts at the binding line
+ * and ends at the first line that closes the statement chain. That cut is what
+ * keeps `d` honest: a page-wide search for `d.` on scrape.js returns `ours`,
+ * `theirs`, `getTime`, `labelKey` and `toLocaleTimeString`, and on scanner.js
+ * `profiles` and `sports` — six names that are not profile rows at all.
  */
 
-/** Where each consumer binds the row, and where it binds the defaults alias. */
+/** The windows each consumer reads a profile row in. */
 const PROFILE_RECEIVERS = {
-  'scrape.js': {
-    scope: () => [PROFILE_LABEL, APPLY_PROFILE, APPLY_PROFILE_HINT],
-    rows: ['profile', 'p', 'x', 'found'],
-    alias: 'd',
-  },
-  'scanner.js': { scope: () => [scannerProfileBlock()], rows: ['p'], alias: 'd' },
+  'scrape.js': { scope: () => [PROFILE_LABEL, APPLY_PROFILE, APPLY_PROFILE_HINT] },
+  'scanner.js': { scope: () => [scannerProfileBlock()] },
 };
+
+/** The bare leaves of the pinned row: `defaults.*` is read through its own two shapes. */
+const PROFILE_ROW_LEAVES = PROFILES_ROW
+  .filter((key) => !key.startsWith('defaults.'))
+  .map(leafOf)
+  .sort();
+
+/**
+ * The identifiers the windows bind a profile row to, derived from the leaves
+ * they read.
+ *
+ * Derived because the hand list it replaces could only be stale in one
+ * direction, and that direction was an accusation against the page: a receiver
+ * nobody had written down read a leaf, and the leaf came back reported as
+ * unread. Nothing re-checked the list against the code.
+ *
+ * `s` lands in the scanner set because the sports map sits inside the cut and
+ * sports have an `id`. Counting it is deliberate over-collection: the census
+ * only ever asks which published leaves are MISSING from the set, so a
+ * non-profile name can hide nothing.
+ *
+ * @param {string[]} cuts the windows a page reads a profile row in
+ * @returns {string[]} unique, sorted; empty only if no window reads the row
+ */
+function profileRowReceivers(cuts) {
+  const found = new Set();
+  for (const cut of cuts) {
+    for (const leaf of PROFILE_ROW_LEAVES) {
+      for (const m of cut.matchAll(new RegExp(`\\b([A-Za-z_$][\\w$]*)\\.${leaf}\\b`, 'g'))) found.add(m[1]);
+    }
+  }
+  return [...found].sort();
+}
 
 /**
  * The block of scanner.js that consumes a profile row.
@@ -664,38 +715,64 @@ function profileConsumers() {
 }
 
 /**
- * The reads on one alias, inside the window where it is a profile's defaults.
+ * The reads on every alias this page binds from `something.defaults`, each
+ * inside its own window.
  *
- * The binding is what starts it and the first line that closes the statement
- * chain is what ends it. Both halves are loud: a page that renames the alias, or
- * hoists the reads out of the block, fails here instead of reporting the defaults
- * unread on a page that does read them.
+ * The alias NAME is derived rather than passed in: the table used to say `alias:
+ * 'd'`, and a rename in the page would have thrown "no longer bound" at the
+ * instrument while the reads sat right there under the new name — the same
+ * accusation against the page that the receiver list above used to make. What
+ * stays hand-cut is where a window opens and closes: the binding line opens it,
+ * the first line that closes the statement chain ends it. That cut is what keeps
+ * the alias honest, because the same name is rebound to other payloads elsewhere
+ * on both pages.
+ *
+ * A page with no such binding simply yields no alias reads here; if its defaults
+ * leaves are unread they surface in the census below, which is the loud place
+ * for that verdict rather than a probe that fires before the census has looked.
+ *
+ * @param {string} code comment-blanked page source
+ * @returns {Set<string>} fields read on all bindings' windows
  */
-function aliasDefaultsReads(code, alias) {
+function aliasDefaultsReads(code) {
   const lines = code.split(/\r?\n/);
-  const start = lines.findIndex((l) => new RegExp(`\\b(?:const|let|var)\\s+${alias}\\s*=\\s*\\w+\\.defaults\\b`).test(l));
-  if (start === -1) throw new Error(`${alias} is no longer bound to a row's .defaults on this page`);
-  const end = lines.findIndex((l, i) => i > start && ['};', '}', '});'].includes(l.trim()));
-  if (end === -1) throw new Error(`${alias} still binds a row's .defaults but the window has no closing line — the cut would run away`);
-  return fieldsOn(lines.slice(start, end + 1).join('\n'), alias);
+  const binding = /\b(?:const|let|var)\s+([A-Za-z_$][\w$]*)\s*=\s*[A-Za-z_$][\w$]*\.defaults\b/;
+  const out = new Set();
+  lines.forEach((line, start) => {
+    const match = binding.exec(line);
+    if (!match) return;
+    const alias = match[1];
+    const end = lines.findIndex((l, i) => i > start && ['};', '}', '});'].includes(l.trim()));
+    if (end === -1) throw new Error(`${alias} binds a row's .defaults but the window has no closing line — the cut would run away`);
+    for (const field of fieldsOn(lines.slice(start, end + 1).join('\n'), alias)) out.add(field);
+  });
+  return out;
 }
 
 const profileReadsOn = (file, spec) => {
   const code = codeOnly(readText(`public/js/pages/${file}`), true);
   const out = new Set();
   const cuts = spec.scope();
-  // Each receiver has to be bound on its page, or `fieldsOn` finds nothing and
-  // the census reports a field unread for a page that does read it.
-  for (const r of spec.rows) {
-    if (!new RegExp(`\\b${r}\\b`).test(code)) throw new Error(`${file} no longer binds a profile row as \`${r}\` — the receiver table is stale`);
-    for (const cut of cuts) for (const f of fieldsOn(cut, r)) if (f !== 'defaults') out.add(f);
+  const rows = profileRowReceivers(cuts);
+  // Derived, so an unbound name cannot happen — but a window that reads no row
+  // field at all can: it means the cut moved to a region that is not the profile
+  // consumer, and every leaf would come back unread for pages that read them.
+  if (!rows.length) throw new Error(`${file}: none of its profile windows reads a published row field — the cut moved, so it is no longer measuring the consumer`);
+  for (const r of rows) {
+    // Only the row's own published leaves belong in a profile read set. The
+    // derivation hands back every receiver that touches one — including `s`, the
+    // sports row inside scanner's cut — and a field like `name` that the sports
+    // map reads through it is not coverage of a profile row. The census only
+    // weighs what is missing, but the floor and the union control below weigh
+    // the set itself, and they are counting profile leaves.
+    for (const cut of cuts) for (const f of fieldsOn(cut, r)) if (PROFILE_ROW_LEAVES.includes(f)) out.add(f);
   }
   // Dotted (`p.defaults.bankroll`) and aliased (`d.includeLive`) are the two
   // shapes the tree uses; both are collected, and only over the leaves the
   // config actually publishes — `applyProfile` also reads `p.defaults.maxEvents`,
   // which no shipped profile carries, so that read is a guard and not a field.
   const dotted = cuts.flatMap((cut) => [...cut.matchAll(/\b\w+\.defaults\.(\w+)\b/g)].map((m) => m[1]));
-  const aliased = [...aliasDefaultsReads(code, spec.alias)];
+  const aliased = [...aliasDefaultsReads(code)];
   for (const key of PROFILES_ROW) {
     if (!key.startsWith('defaults.')) continue;
     const leaf = key.slice('defaults.'.length);
