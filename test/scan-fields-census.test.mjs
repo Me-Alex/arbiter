@@ -36,10 +36,14 @@
 // as everywhere else in this repo: a field read only in a rare branch is
 // indistinguishable from a field nobody reads. `scanStartedAt` is never touched
 // on a real scan, because `scan.scrapedAt || scan.scanStartedAt` short-circuits
-// on the first operand. So the reader runs three payloads and the census takes
-// the union: the real one, a degraded one that forces the fallback branches, and
-// one that puts an arbitrage on top of the ROI sort so the dashboard's `best`
-// record comes from the other family. Without the third, `opportunities[].eventKey`
+// on the first operand. So the reader runs four passes and the census takes
+// the union: the real one, a degraded one that forces the fallback branches, one
+// that puts an arbitrage on top of the ROI sort so the dashboard's `best`
+// record comes from the other family, and one that leaves the sport filter
+// selected — the three documents alone would all report `sport` unread on the
+// two families whose rows print no sport chip, because `filterBySport` returns
+// its argument untouched when nothing is selected. Without the third,
+// `opportunities[].eventKey`
 // reads as unread — which it is not, and which a test would then have excused
 // forever on the strength of an accident in the fixture.
 import test from 'node:test';
@@ -213,13 +217,19 @@ function leaves(value, prefix, out) {
 
 const escapeHtml = (v) => String(v ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 
-const node = () => ({
+const node = (overrides = {}) => ({
   textContent: '', innerHTML: '', className: '', value: '', checked: false, hidden: false,
   dataset: {}, style: {}, classList: { add() {}, remove() {}, toggle() {}, contains: () => false },
   addEventListener() {}, setAttribute() {}, getAttribute() { return null; },
   querySelector() { return node(); }, querySelectorAll() { return []; }, nextElementSibling: null,
   remove() {}, appendChild() {}, insertAdjacentHTML() {},
+  ...overrides,
 });
+
+/**
+ * The controls a pass puts the page into, keyed by element id, read by
+ * `pageContext`. The comment on `node` says why a pass has to set one at all.
+ */
 
 /**
  * A value that records every property path read off it.
@@ -257,9 +267,27 @@ const NOT_PAYLOAD = /(^$)|(^then$)|(\.(constructor|length|map|filter|sort|slice|
 
 const i18nSource = read('public/js/i18n.js');
 
-function pageContext(api) {
+/**
+ * A pass that never sets a control drives the page in exactly one state, and a
+ * control gated on a value the harness left empty takes an early return no
+ * reader would ever see. That is how `sport` came to be reported unread on two
+ * of the four families: the arb and middle rows print a sport chip, so `.sport`
+ * is read off them whichever way the filter sits, while the positive-EV and
+ * low-hold rows print none — there `sport` was read only by `filterBySport`, and
+ * `filterBySport` returns `items` untouched when nothing is selected.
+ *
+ * @param {object} api the arbiterApi stand-in for this pass
+ * @param {Record<string, unknown>} [values] control values by element id
+ */
+function pageContext(api, values = {}) {
   const byId = new Map();
-  const get = (id) => { if (!byId.has(id)) byId.set(id, node()); return byId.get(id); };
+  const get = (id) => {
+    if (!byId.has(id)) {
+      const own = Object.prototype.hasOwnProperty.call(values, id);
+      byId.set(id, node(own ? { value: values[id] } : {}));
+    }
+    return byId.get(id);
+  };
   const context = {
     document: {
       getElementById: get, querySelector: () => node(), querySelectorAll: () => [],
@@ -388,9 +416,10 @@ const PAGE_FILES = SCAN_CONSUMERS.filter((f) => !LIFTED_READERS[f]);
  * Run one payload past every reader and collect the paths touched.
  *
  * @param {object} payload
+ * @param {Record<string, unknown>} [values] controls the pages are put into
  * @returns {Promise<{hits: Set<string>, perPage: Record<string, number>, perPagePaths: Record<string, string[]>}>}
  */
-async function measureReads(payload) {
+async function measureReads(payload, values = {}) {
   const hits = new Set();
   const perPage = {};
   const perPagePaths = {};
@@ -412,7 +441,7 @@ async function measureReads(payload) {
       },
       async post() { return {}; },
     };
-    const context = pageContext(api);
+    const context = pageContext(api, values);
     vm.runInNewContext(read(`public/js/pages/${page}`), context);
     // scanner.js draws through render() only once its own init has resolved a
     // profile list; the preview path is the same function.
@@ -435,7 +464,7 @@ async function measureReads(payload) {
       },
       async post() { return {}; },
     };
-    const context = pageContext(api);
+    const context = pageContext(api, values);
     vm.runInNewContext(liftedSource(page, names).code, context);
     await context[names[names.length - 1]]();
     collect(page, pageHits);
@@ -482,6 +511,25 @@ function arbOnTop(base) {
   return d;
 }
 
+/**
+ * The controls each pass puts the pages into.
+ *
+ * Three of the four vary the document, because the document is what a real run
+ * changes. The fourth varies the page instead: `sport-filter` left empty makes
+ * `filterBySport` return its argument untouched, and that early return hid the
+ * only reader of `sport` on two of the four families — the rows that print no
+ * sport chip of their own. `football` is the value the scanner page can
+ * actually be put into today, being the one sport the registry offers
+ * (`src/sports/registry.mjs`), and it matches the driven events' `Football`
+ * case-insensitively, so the pass renders every row and reads every filter.
+ */
+const PASSES = (base) => [
+  { payload: base },
+  { payload: degraded(base) },
+  { payload: arbOnTop(base) },
+  { payload: base, values: { 'sport-filter': 'football' } },
+];
+
 let readRun = null;
 
 /** @returns {Promise<{hits: Set<string>, perPage: Record<string, number>, perPagePaths: Record<string, string[]>}>} */
@@ -491,12 +539,16 @@ async function readPaths() {
   const perPage = {};
   const perPagePaths = {};
   const hits = new Set();
-  for (const payload of [base, degraded(base), arbOnTop(base)]) {
-    const run = await measureReads(payload);
-    Object.assign(perPage, run.perPage);
-    // Union, not last writer wins: the three payloads force different branches,
-    // so a path read only by the degraded one is exactly the kind this census
-    // cannot see if it keeps only the final pass.
+  for (const { payload, values } of PASSES(base)) {
+    const run = await measureReads(payload, values);
+    // Union, not last writer wins: the four passes force different branches, so
+    // a path read only by the degraded one is exactly the kind this census
+    // cannot see if it keeps only the final pass. The count a reader touched
+    // takes the largest, because the floor below is a claim about the busiest
+    // pass rather than about the last one.
+    for (const [page, n] of Object.entries(run.perPage)) {
+      perPage[page] = Math.max(perPage[page] || 0, n);
+    }
     for (const [page, paths] of Object.entries(run.perPagePaths)) {
       perPagePaths[page] = [...new Set([...(perPagePaths[page] || []), ...paths])].sort();
     }
@@ -603,10 +655,10 @@ const UNREAD_BY_DESIGN = [
   },
   {
     id: 'ev-leg-restatement',
-    covers: ['consensusProbability', 'evPercent', 'eventKey', 'live', 'marketKey', 'odds', 'selection', 'sourceId', 'type']
+    covers: ['consensusProbability', 'evPercent', 'eventKey', 'live', 'marketKey', 'odds', 'selection', 'sourceId', 'sport', 'type']
       .map((f) => `positiveEv[].legs[].${f}`),
     reason: [
-      'A restatement of the parent, measured rather than argued: 9 of the 12 fields on',
+      'A restatement of the parent, measured rather than argued: 10 of the 13 fields on',
       'positiveEv[].legs[0] are byte-identical to the signal above them, which the page does read.',
       'The spread is withBankroll copying the whole signal into its single leg so the shape matches',
       'the other families.',
@@ -730,11 +782,11 @@ test('every family is populated, so an empty one cannot hide a leaf behind it', 
   assert.equal(Object.keys(scan).length, 15, 'the envelope, the five families, the summary and the route flag');
 });
 
-test('the published set is 166 leaves, and the reader is not reporting zeros', async () => {
+test('the published set is 169 leaves, and the reader is not reporting zeros', async () => {
   const doc = await publishedScan();
   const published = new Set();
   leaves(doc, '', published);
-  assert.equal(published.size, 166, 'the leaf count moved: a field was added or dropped upstream');
+  assert.equal(published.size, 169, 'the leaf count moved: a field was added or dropped upstream');
 
   const { perPage } = await readPaths();
   // A reader that threw records almost nothing, and a census built on its
@@ -869,7 +921,7 @@ test('every field the scan publishes is read by a page, or is named with a reaso
       `${group.id} is backed by "${group.measuredBy}", which is not a test in this file`,
     );
   }
-  assert.equal(unread.length, 77, `the unread set moved: ${unread.join(', ')}`);
+  assert.equal(unread.length, 78, `the unread set moved: ${unread.join(', ')}`);
 });
 
 // ---------------------------------------------------------------------------
@@ -905,10 +957,10 @@ test('the overlay is the pass output, and no page reads below its status', async
 test('the positive-EV leg restates its parent on every driven record', async () => {
   const scan = await driveScan();
   const stats = restatements();
-  assert.equal(stats.positiveEv.equal.length, 9, `restatements moved: ${stats.positiveEv.equal.join(', ')}`);
+  assert.equal(stats.positiveEv.equal.length, 10, `restatements moved: ${stats.positiveEv.equal.join(', ')}`);
   assert.equal(stats.positiveEv.legs, 8, 'the positive-EV sample shrank, so the count means less');
   const group = UNREAD_BY_DESIGN.find((g) => g.id === 'ev-leg-restatement');
-  assert.equal(group.covers.length, 9);
+  assert.equal(group.covers.length, 10);
   for (const path of group.covers) {
     const field = path.split('.').pop();
     assert.ok(stats.positiveEv.equal.includes(field), `${path} is excused as a restatement but ${field} differs from its parent`);

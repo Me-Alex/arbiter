@@ -683,7 +683,7 @@ function looksLikeTotalsOrHandicap(key) {
  * @param {{ minEvPercent?: number }} [options]
  * @returns {Array<{
  *   type: 'positive_ev',
- *   eventKey, marketKey, selection, sourceId, odds,
+ *   eventKey, sport, marketKey, live, selection, sourceId, odds,
  *   consensusProbability, evPercent,
  * }>}
  */
@@ -736,6 +736,11 @@ export function findPositiveEV(grouped, { minEvPercent = 2 } = {}) {
       out.push({
         type: SIGNAL_TYPES.POSITIVE_EV,
         eventKey: b.eventKey,
+        // The signal is priced off one event, so it inherits that event's
+        // competition. Without it the page's sport filter filed every signal
+        // under football, because the only fallback it had was 'football' —
+        // and the scan's own filter left non-football events in the scan.
+        sport: b.meta.event.sport,
         marketKey: b.marketKey,
         // The consensus is drawn from one scope only, so the signal inherits it.
         // An EV computed on in-play prices against other in-play prices is a
@@ -774,6 +779,9 @@ export function findLowHold(grouped, { maxHoldPercent = 4 } = {}) {
         out.push({
           type: SIGNAL_TYPES.LOW_HOLD,
           eventKey,
+          // Same reason as the positive-EV signal above: the market belongs to
+          // one event, so the record names the competition it came from.
+          sport: ev.sport,
           marketKey: m.key,
           sourceId: ev.sourceId,
           selectionCount: m.selections.length,

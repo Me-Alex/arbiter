@@ -158,7 +158,10 @@ export function buildScanCsv(scan, types = []) {
     for (const o of asArray(scan?.positiveEv)) {
       rows.push([
         'positiveEv',
-        '', '', '', '', '',
+        // Only the sport is published on this family; the other four identity
+        // columns stay empty because the engine does not emit them, and an
+        // empty cell is a true statement about a field nobody reads.
+        o.sport, '', '', '', '',
         o.marketKey,
         o.sourceId, o.selection, '', o.odds, '',
         '', '', '',
@@ -175,7 +178,7 @@ export function buildScanCsv(scan, types = []) {
     for (const o of asArray(scan?.lowHold)) {
       rows.push([
         'lowHold',
-        '', '', '', '', '',
+        o.sport, '', '', '', '',
         o.marketKey,
         o.sourceId, '', '', '', '',
         '', '', '',

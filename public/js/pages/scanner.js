@@ -458,7 +458,11 @@
 
     function filterBySport(items, sport) {
       if (!sport) return items;
-      return (items || []).filter((o) => (o.sport || 'football').toLowerCase() === sport.toLowerCase());
+      // No default sport. A signal the engine could not classify matches no
+      // sport filter, which is a different statement from being football — the
+      // fallback this replaced filed every unlabelled signal under football and
+      // then reported the filter as having applied.
+      return (items || []).filter((o) => String(o.sport || '').toLowerCase() === sport.toLowerCase());
     }
 
     function render(scan) {
@@ -611,14 +615,15 @@
       // was written; until now the only reader was analytics.js counting the
       // array, so a trader could see "12 low hold" on one page and nothing at
       // all on the page the signals belong to.
-      // Deliberately not run through filterBySport. A low-hold record carries
-      // no `sport` field, and that helper defaults a missing sport to
-      // "football" — so filtering would drop every non-football market from the
-      // one table that shows them, while claiming the filter applied. The
-      // honest answer is that the family is not sport-scoped; giving it a sport
-      // is a change to the engine, not to the page.
+      //
+      // It used to be held out of filterBySport because a low-hold record
+      // carried no `sport`, and the helper then defaulted a missing sport to
+      // football. findLowHold publishes the event's sport now, so all four
+      // families go through the same filter and the low count describes the
+      // rows on screen.
       const low = document.querySelector('#low-table tbody');
-      const lows = (scan.lowHold || []).slice().sort((a, b) => Number(a.holdPercent || 0) - Number(b.holdPercent || 0));
+      const lows = filterBySport(scan.lowHold || [], activeSport)
+        .slice().sort((a, b) => Number(a.holdPercent || 0) - Number(b.holdPercent || 0));
       $('low-count').textContent = String(lows.length);
       low.innerHTML = lows.length ? lows.map((l) => `
         <tr>
