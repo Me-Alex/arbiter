@@ -4,7 +4,7 @@
 
 import { test, describe, it, before, after } from 'node:test';
 import assert from 'node:assert/strict';
-import { CronService, createCronService } from '../src/cron-service.mjs';
+import { CronService } from '../src/cron-service.mjs';
 
 describe('CronService', () => {
   let cronService;
@@ -41,11 +41,6 @@ describe('CronService', () => {
       assert.strictEqual(cronService.config.cleanupIntervalHours, 12);
       assert.strictEqual(cronService.config.fullCleanupHour, 3);
       assert.strictEqual(cronService.config.logRotationIntervalHours, 2);
-    });
-
-    it('should use createCronService factory function', () => {
-      cronService = createCronService({ logger: mockLogger });
-      assert.ok(cronService instanceof CronService);
     });
   });
 
@@ -152,15 +147,15 @@ describe('CronService Configuration', () => {
   });
 });
 
-describe('createCronService', () => {
-  it('should create a CronService instance', () => {
-    const service = createCronService();
-    assert.ok(service instanceof CronService);
-  });
-
-  it('should pass options to CronService', () => {
+// This used to be a `createCronService` block, testing a factory that wrapped
+// `new CronService(options)` in one line and that nothing but this file called —
+// src/server.mjs constructs the class directly. The property is kept and pointed
+// at the construction the server actually performs.
+describe('construction', () => {
+  it('should hand the options to the instance', () => {
     const mockLogger = { info: () => {}, warn: () => {}, error: () => {} };
-    const service = createCronService({ logger: mockLogger });
+    const service = new CronService({ logger: mockLogger });
+    assert.ok(service instanceof CronService);
     assert.strictEqual(service.logger, mockLogger);
   });
 });

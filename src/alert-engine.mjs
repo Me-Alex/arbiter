@@ -172,11 +172,13 @@ export function evaluateAlerts(scan, preferences, { now = new Date() } = {}) {
  * family it is selecting rather than trusting a field the producer never
  * writes. Trusting it would have keyed every alert on `eventKey::marketKey::`,
  * making an arbitrage and a middle on the same market the same alert.
+ *
+ * Not exported. This was `alertKey`, and its test said it existed so the client
+ * could re-derive the same key — the page does not: it counts cooldowns on the
+ * `key` it is handed and never rebuilds the string, so the export had a client
+ * that did not exist. The format is a wire contract either way, and what holds it
+ * is the test, against the delivered key rather than against this function.
  */
-export function alertKey(signal) {
-  return buildKey(signal?.eventKey, signal?.marketKey, signal?.type);
-}
-
 function buildKey(eventKey, marketKey, type) {
   return `${eventKey || ''}::${marketKey || ''}::${type || ''}`;
 }

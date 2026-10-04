@@ -12,7 +12,7 @@ import http from 'node:http';
 import { buildRouter } from '../src/router.mjs';
 import { emptyScan } from '../src/scan-service.mjs';
 import { RateLimiter } from '../src/shared/rate-limit.mjs';
-import { csrfToken, rotateCsrf } from '../src/shared/security.mjs';
+import { rotateCsrf, assertCsrf } from '../src/shared/security.mjs';
 import { fileURLToPath } from 'node:url';
 import { LIVE_EVIDENCE } from '../src/scrapers/live-status.mjs';
 
@@ -150,7 +150,10 @@ test('GET /api/csrf returns a token', async () => {
     const res = await fetchOnce(server, '/api/csrf');
     assert.equal(res.status, 200);
     const body = JSON.parse(res.body);
-    assert.equal(body.token, csrfToken());
+    // The endpoint exists to hand out the token the server will accept, so check
+    // the delivered one against the guard that reads it — not against a getter
+    // over the same variable, which would agree with any string the route echoed.
+    assert.doesNotThrow(() => assertCsrf({ headers: { 'x-arbiter-token': body.token } }));
   } finally { await closeServer(server); }
 });
 
@@ -199,7 +202,7 @@ test('accepts POST with valid CSRF token', async () => {
   try {
     const res = await fetchOnce(server, '/api/scrape/cancel', {
       method: 'POST',
-      headers: { Host: '127.0.0.1', 'x-arbiter-token': csrfToken() },
+      headers: { Host: '127.0.0.1', 'x-arbiter-token': rotateCsrf() },
       body: '{}',
     });
     assert.equal(res.status, 202);
@@ -211,7 +214,7 @@ test('rejects POST after CSRF rotation', async () => {
   const { route } = makeServer();
   const server = await startServer(route);
   try {
-    const oldToken = csrfToken();
+    const oldToken = rotateCsrf();
     rotateCsrf();
     const res = await fetchOnce(server, '/api/scrape/cancel', {
       method: 'POST',
@@ -230,7 +233,7 @@ test('returns 429 once mutation bucket is empty', async () => {
   services.rateLimiter = new RateLimiter({ capacity: 2, refillPerSec: 0.001 });
   const route2 = buildRouter(services);
   const server = await startServer(route2);
-  const token = csrfToken();
+  const token = rotateCsrf();
   try {
     for (let i = 0; i < 2; i++) {
       const r = await fetchOnce(server, '/api/scrape/cancel', {
@@ -271,7 +274,7 @@ test('GETs do not consume the bucket', async () => {
 test('rejects oversized body with 413', async () => {
   const { route: _route } = makeServer();
   const server = await startServer(_route);
-  const token = csrfToken();
+  const token = rotateCsrf();
   try {
     const big = 'x'.repeat(1024 * 1024 + 16);
     const payload = JSON.stringify({ bookIds: [], extra: big });
@@ -300,7 +303,7 @@ test('rejects oversized body with 413', async () => {
 test('rejects invalid JSON with 400', async () => {
   const { route: _route2 } = makeServer();
   const server = await startServer(_route2);
-  const token = csrfToken();
+  const token = rotateCsrf();
   try {
     const res = await fetchOnce(server, '/api/scrape', {
       method: 'POST',
@@ -547,7 +550,7 @@ test('POST /api/alerts persists the settings and answers under them', async () =
   try {
     const res = await fetchOnce(server, '/api/alerts', {
       method: 'POST',
-      headers: { Host: '127.0.0.1', 'x-arbiter-token': csrfToken() },
+      headers: { Host: '127.0.0.1', 'x-arbiter-token': rotateCsrf() },
       body: JSON.stringify({ preferences: { minRoiPercent: 10, cooldownSeconds: 30 } }),
     });
     assert.equal(res.status, 200);
@@ -563,7 +566,7 @@ test('POST /api/alerts persists the settings and answers under them', async () =
     // The bare-body form is accepted too, since that is what the client posts.
     const bare = await fetchOnce(server, '/api/alerts', {
       method: 'POST',
-      headers: { Host: '127.0.0.1', 'x-arbiter-token': csrfToken() },
+      headers: { Host: '127.0.0.1', 'x-arbiter-token': rotateCsrf() },
       body: JSON.stringify({ minMiddleRoiPercent: 40 }),
     });
     assert.equal(bare.status, 200);

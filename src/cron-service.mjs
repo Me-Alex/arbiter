@@ -286,10 +286,3 @@ export class CronService {
     };
   }
 }
-
-/**
- * Create cron service instance
- */
-export function createCronService(options = {}) {
-  return new CronService(options);
-}

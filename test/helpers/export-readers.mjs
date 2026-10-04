@@ -151,6 +151,52 @@ export function importedNames(rel, files) {
 }
 
 /**
+ * Where `name` is mentioned inside the module that exports it.
+ *
+ * Split in two on purpose. `mentions` is every line the name appears on, `uses`
+ * is the same list without the line that declares it, because a function is
+ * trivially "mentioned" in its own declaration and counting that would make every
+ * export look used. `mentions.length - uses.length` is therefore the number of
+ * declaring lines, which is what makes the exclusion checkable instead of a
+ * silent filter that could be dropped without anything turning red.
+ *
+ * @param {string} rel repo-relative module
+ * @param {string} name the exported identifier
+ * @returns {{ mentions: number[], uses: number[] }} 1-based line numbers
+ */
+export function ownMentions(rel, name) {
+  const lines = linesOf(rel);
+  const re = new RegExp(`\\b${name}\\b`);
+  const declares = (line) => new RegExp(`\\bexport\\s+(?:async\\s+)?(?:const|let|function\\*?|class)\\s+${name}\\b`).test(line)
+    || new RegExp(`\\bexport\\s*\\{[^}]*\\b${name}\\b`).test(line);
+  const mentions = [];
+  const uses = [];
+  lines.forEach((line, i) => {
+    if (!re.test(line)) return;
+    mentions.push(i + 1);
+    if (!declares(line)) uses.push(i + 1);
+  });
+  return { mentions, uses };
+}
+
+/**
+ * Every export of `modules` with where it is used.
+ *
+ * @param {string[]} modules repo-relative modules
+ * @param {{ prodDirs?: string[], exts?: string[] }} [options]
+ * @returns {{ module: string, name: string, prod: string[], own: number[], mentions: number[] }[]}
+ */
+export function useCensus(modules, { prodDirs = ['src'], exts = ['.mjs', '.js'] } = {}) {
+  const prod = sourceFiles(prodDirs, exts);
+  return modules.flatMap((rel) => [...exportedNames(rel)].map((name) => ({
+    module: rel,
+    name,
+    prod: readersOf(name, prod, rel),
+    ...ownMentions(rel, name),
+  })));
+}
+
+/**
  * Every export of `rel` with where it is read.
  *
  * @param {string} rel repo-relative module

@@ -1,17 +1,4 @@
 /**
- * Numeric parsing that tolerates European odds formats: "1,85", "1.85",
- * "1 85", thousand-separator commas, etc.
- */
-export function parseOdds(value) {
-  if (typeof value === 'number') return Number.isFinite(value) ? value : null;
-  if (typeof value !== 'string') return null;
-  const s = value.trim().replace(/\s+/g, '').replace(/,/g, '.');
-  if (!/^-?\d+(\.\d+)?$/.test(s)) return null;
-  const n = Number(s);
-  return Number.isFinite(n) && n > 1 ? n : null;
-}
-
-/**
  * Read a decimal price from whatever shape the provider sent it in.
  *
  * Most feeds send a bare number, but Kambi wraps it: `{ decimal: 1.95 }`. The
@@ -192,29 +179,4 @@ export function teamsMatch(a, b) {
     if (short.length !== 1 || !long.startsWith(short)) return false;
   }
   return true;
-}
-
-/** Levenshtein distance (small inputs only, not used for huge strings). */
-export function levenshtein(a, b) {
-  if (a === b) return 0;
-  const m = a.length;
-  const n = b.length;
-  if (!m) return n;
-  if (!n) return m;
-  const prev = new Array(n + 1);
-  const cur = new Array(n + 1);
-  for (let j = 0; j <= n; j++) prev[j] = j;
-  for (let i = 1; i <= m; i++) {
-    cur[0] = i;
-    for (let j = 1; j <= n; j++) {
-      const cost = a.charCodeAt(i - 1) === b.charCodeAt(j - 1) ? 0 : 1;
-      cur[j] = Math.min(
-        cur[j - 1] + 1,
-        prev[j] + 1,
-        prev[j - 1] + cost,
-      );
-    }
-    for (let j = 0; j <= n; j++) prev[j] = cur[j];
-  }
-  return prev[n];
 }

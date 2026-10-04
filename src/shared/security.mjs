@@ -5,10 +5,6 @@ const LOOPBACK_HOSTS = new Set(['127.0.0.1', 'localhost', '::1', '[::1]']);
 
 let csrf = randomBytes(24).toString('hex');
 
-export function csrfToken() {
-  return csrf;
-}
-
 export function rotateCsrf() {
   csrf = randomBytes(24).toString('hex');
   return csrf;

@@ -1207,18 +1207,3 @@ function isBttsSelectionSet(selections) {
   return hasYes && hasNo && new Set(norm).size === 2;
 }
 
-
-// ---- Public per-family predicates (used by base.mjs + README + UI) ----
-
-export function isDoubleChanceMarket(market = {}) {
-  return resolveContract(market)?.family === 'DOUBLE_CHANCE';
-}
-
-export function isBttsMarket(market = {}) {
-  return resolveContract(market)?.family === 'BTTS';
-}
-
-export function isAsianHandicapMarket(market = {}) {
-  return resolveContract(market)?.family === 'ASIAN_HANDICAP';
-}
-

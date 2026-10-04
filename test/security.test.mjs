@@ -1,18 +1,15 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { csrfToken, rotateCsrf, isLoopbackHost, buildPublicHostSet, assertLocalApiRequest, assertCsrf, buildCsp } from '../src/shared/security.mjs';
+import { rotateCsrf, isLoopbackHost, buildPublicHostSet, assertLocalApiRequest, assertCsrf, buildCsp } from '../src/shared/security.mjs';
 
-test('csrfToken is a long random hex string', () => {
-  const t = csrfToken();
-  assert.match(t, /^[a-f0-9]{48}$/);
+test('rotateCsrf issues a long random hex string', () => {
+  assert.match(rotateCsrf(), /^[a-f0-9]{48}$/);
 });
 
-test('rotateCsrf returns a different token', () => {
-  const a = csrfToken();
+test('rotateCsrf returns a different token than the one it replaced', () => {
+  const a = rotateCsrf();
   const b = rotateCsrf();
   assert.notEqual(a, b);
-  // restore so subsequent tests see a known token
-  rotateCsrf();
 });
 
 test('isLoopbackHost recognises localhost variants', () => {
@@ -44,7 +41,7 @@ test('assertLocalApiRequest rejects external host', () => {
 test('assertCsrf rejects wrong / missing token', () => {
   assert.throws(() => assertCsrf({ headers: {} }), /csrf/);
   assert.throws(() => assertCsrf({ headers: { 'x-arbiter-token': 'nope' } }), /csrf/);
-  assert.doesNotThrow(() => assertCsrf({ headers: { 'x-arbiter-token': csrfToken() } }));
+  assert.doesNotThrow(() => assertCsrf({ headers: { 'x-arbiter-token': rotateCsrf() } }));
 });
 
 test('buildCsp locks executable code down to same-origin assets', () => {

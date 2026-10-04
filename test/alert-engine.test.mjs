@@ -14,7 +14,6 @@ import {
   ALERT_SCHEMA,
   DEFAULT_ALERT_PREFERENCES,
   MAX_ALERTS_PER_FAMILY,
-  alertKey,
   evaluateAlerts,
   isQuietNow,
   normalizeAlertPreferences,
@@ -248,23 +247,33 @@ test('the same opportunity is reported once, however many times it appears', () 
 });
 
 test('a re-verified signal keeps its identity so its cooldown survives', () => {
-  const base = { eventKey: 'e1', marketKey: '1x2' };
-  assert.equal(alertKey({ ...base, type: 'arb' }), 'e1::1x2::arb');
-  // The same three fields verification keys on, so a verification pass that
-  // rewrites the ROI does not look like a brand new opportunity.
-  assert.equal(alertKey({ ...base, type: 'arb', roiPercent: 9, verified: 'confirmed' }), 'e1::1x2::arb');
-  // A middle and an arb on the same market are not the same alert.
-  assert.notEqual(alertKey({ ...base, type: 'arb' }), alertKey({ ...base, type: 'middle' }));
-  // No signal is a degenerate key, not a thrown error: the page keys a Map it
-  // fills from a response and must not die on a malformed entry.
-  assert.equal(alertKey(null), '::::');
-  assert.equal(alertKey({}), '::::');
-  assert.equal(alertKey(undefined), '::::');
+  // This drove an exported `alertKey`, a one-line wrapper over the engine's own
+  // key builder with no production reader, and half of it tested the wrapper's
+  // optional chaining rather than the program: the engine calls the builder with
+  // `signal.eventKey` and would have thrown on a null signal, so `alertKey(null)`
+  // described a tolerance nothing in the running server had. What the server
+  // actually guarantees is that the key comes from the three fields and not from
+  // the numbers a verification pass rewrites, so that is what is pinned now —
+  // through the engine, on the keys it emits.
+  const opts = { minRoiPercent: 0, minMiddleRoiPercent: 0 };
+  const first = evaluateAlerts(scanOf({ opportunities: [signal({ roiPercent: 4 })] }), opts);
+  const reverified = evaluateAlerts(
+    scanOf({ opportunities: [signal({ roiPercent: 9, verification: { status: 'confirmed', reason: 'book' } })] }),
+    opts,
+  );
+
+  assert.equal(first.alerts.arbitrages[0].key, reverified.alerts.arbitrages[0].key,
+    'a verification pass rewrote the ROI and the alert got a new identity, so the page would re-alert for it');
+  assert.equal(first.alerts.arbitrages[0].key, 'fotbal:superliga:fcsb-dinamo::1x2::arb');
 });
 
 test('the key on an emitted alert is the key the dedup used', () => {
-  // The page keys its cooldown map with alertKey(alert) on the alert the engine
-  // emitted. The raw findings carry no `type` field — the family comes from
+  // The page counts its cooldowns in a Map keyed on `alert.key`, the field the
+  // engine delivered; it does not rebuild the string, so that field is the whole
+  // contract. This used to end with `alertKey(alert) === alert.key`, described as
+  // the client re-deriving the key — a comparison of the engine's own builder with
+  // the engine's own output, which any echoed string would have passed.
+  // The raw findings carry no `type` field — the family comes from
   // which array they were read from — so an engine that read `type` off the
   // input instead of using the family it was selecting would key everything on
   // `eventKey::marketKey::` and the page's map would not match its own list.
@@ -274,8 +283,6 @@ test('the key on an emitted alert is the key the dedup used', () => {
   }), { minRoiPercent: 0, minMiddleRoiPercent: 0 });
   const [arb] = result.alerts.arbitrages;
   const [mid] = result.alerts.middles;
-  assert.equal(alertKey(arb), arb.key, 're-deriving the key on the client agrees with the server');
-  assert.equal(alertKey(mid), mid.key);
   assert.equal(arb.key, 'fotbal:superliga:fcsb-dinamo::1x2::arb');
   assert.equal(mid.key, 'fotbal:superliga:fcsb-dinamo::1x2::middle');
   // The same market, both families: two alerts, two cooldowns, not one.

@@ -4,9 +4,6 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
   resolveContract,
-  isDoubleChanceMarket,
-  isBttsMarket,
-  isAsianHandicapMarket,
   canonicalOutcomeFor,
   bucketKeyForContract,
   isFullTimeMarket,
@@ -170,17 +167,24 @@ test('canonicalOutcomeFor routes by family', () => {
   assert.equal(canonicalOutcomeFor('Nu', b), 'no');
 });
 
+// This drove `isDoubleChanceMarket` / `isBttsMarket` / `isAsianHandicapMarket`,
+// three one-line wrappers over `resolveContract(market)?.family === …` that
+// nothing but this file called, under a comment naming base.mjs, the README and
+// the UI as their readers — none of which mention them. The shapes are the ones
+// worth keeping, so they are asked of the resolver the production path uses.
+const familyOf = (market) => resolveContract(market)?.family;
+
 test('guards reject the wrong-shaped family', () => {
-  assert.equal(isDoubleChanceMarket({ key: '1x2', selections: [{ name: '1' }, { name: 'X' }, { name: '2' }] }), false);
-  assert.equal(isDoubleChanceMarket({ key: 'DOUBLE_CHANCE', selections: [{ name: '1X' }, { name: 'X2' }, { name: '12' }] }), true);
-  assert.equal(isBttsMarket({ key: 'btts', selections: [{ name: 'Yes' }, { name: 'No' }] }), true);
-  assert.equal(isBttsMarket({ key: 'btts', selections: [{ name: 'Yes' }] }), false, 'BTTS with single outcome is not a 2-way market');
-  assert.equal(isAsianHandicapMarket({ key: 'game_handicap', selections: [
+  assert.notEqual(familyOf({ key: '1x2', selections: [{ name: '1' }, { name: 'X' }, { name: '2' }] }), 'DOUBLE_CHANCE');
+  assert.equal(familyOf({ key: 'DOUBLE_CHANCE', selections: [{ name: '1X' }, { name: 'X2' }, { name: '12' }] }), 'DOUBLE_CHANCE');
+  assert.equal(familyOf({ key: 'btts', selections: [{ name: 'Yes' }, { name: 'No' }] }), 'BTTS');
+  assert.notEqual(familyOf({ key: 'btts', selections: [{ name: 'Yes' }] }), 'BTTS', 'BTTS with single outcome is not a 2-way market');
+  assert.equal(familyOf({ key: 'game_handicap', selections: [
     { name: '1 (-1.5)', handicap: -1.5 },
     { name: '2 (+1.5)', handicap: 1.5 },
-  ] }), true);
-  assert.equal(isAsianHandicapMarket({ key: 'game_handicap', selections: [
+  ] }), 'ASIAN_HANDICAP');
+  assert.notEqual(familyOf({ key: 'game_handicap', selections: [
     { name: '1 (-1)', handicap: -1 },
     { name: '2 (+1)', handicap: 1 },
-  ] }), false, 'whole-line handicaps excluded (push semantics differ)');
+  ] }), 'ASIAN_HANDICAP', 'whole-line handicaps excluded (push semantics differ)');
 });

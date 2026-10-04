@@ -1,15 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { parseOdds, impliedProbability, normalizeTeamName, normalizeClubIdentity, canonicalSport, eventIdentityKey, levenshtein, tokens } from '../src/shared/text.mjs';
-
-test('parseOdds accepts decimal and rejects garbage', () => {
-  assert.equal(parseOdds('1.85'), 1.85);
-  assert.equal(parseOdds('1,85'), 1.85);
-  assert.equal(parseOdds(2.10), 2.10);
-  assert.equal(parseOdds('foo'), null);
-  assert.equal(parseOdds('0.5'), null); // below 1.0
-  assert.equal(parseOdds(''), null);
-});
+import { impliedProbability, normalizeTeamName, normalizeClubIdentity, canonicalSport, eventIdentityKey, tokens } from '../src/shared/text.mjs';
 
 test('impliedProbability is 1/odds', () => {
   assert.equal(impliedProbability(2), 0.5);
@@ -25,13 +16,6 @@ test('normalizeTeamName strips diacritics and lowercases', () => {
 
 test('tokens splits on whitespace', () => {
   assert.deepEqual(tokens('Manchester United FC'), ['manchester', 'united', 'fc']);
-});
-
-test('levenshtein is symmetric and zero on equal strings', () => {
-  assert.equal(levenshtein('abc', 'abc'), 0);
-  assert.equal(levenshtein('abc', 'abd'), 1);
-  assert.equal(levenshtein('kitten', 'sitting'), 3);
-  assert.equal(levenshtein('abc', ''), 3);
 });
 
 test('normalizeClubIdentity drops legal suffixes that never identify a club', () => {
