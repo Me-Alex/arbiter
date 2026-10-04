@@ -218,7 +218,16 @@ test('the numbers the withdrawn report quoted still hold', () => {
   assert.deepEqual([byGuard('key').length, byGuard('receiver').length, byGuard('none').length, CALLS.filter((c) => c.optional).length],
     [8, 8, 7, 4], 'the reads are no longer split the way this file measured them');
   assert.equal(bare.length, 3, `expected 3 reads with nothing in front of them, measured ${bare.length}`);
-  assert.deepEqual(bare.map((c) => `${c.file.replace(/^public\/js\//, '')}:${c.line} ${c.key}`),
-    ['pages/common.js:281 timeAgo', 'pages/event-detail.js:51 formatKickoff', 'pages/scrape.js:535 fmtOdds'],
-    'the reads with nothing in front of them are not the three this file knows about');
+  // The line number is absent from the expected list on purpose. It moves
+  // whenever a comment is reworded, and a read that did not change shape has
+  // not stopped being hazardous because it slid down two lines — pinning it
+  // makes this test report a defect where none happened, which is how a
+  // measurement teaches the reader to ignore it. What this file knows about is
+  // the set: which file, which key, read with nothing in front of it. The
+  // numbers are still printed on failure, computed from the same read, so
+  // there is a line to open.
+  assert.deepEqual(bare.map((c) => `${c.file.replace(/^public\/js\//, '')} ${c.key}`),
+    ['pages/common.js timeAgo', 'pages/event-detail.js formatKickoff', 'pages/scrape.js fmtOdds'],
+    'the reads with nothing in front of them are not the three this file knows about — measured at '
+    + bare.map((c) => `${c.file.replace(/^public\/js\//, '')}:${c.line} ${c.key}`).join(', '));
 });

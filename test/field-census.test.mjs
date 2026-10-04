@@ -781,11 +781,12 @@ const R_RUN_ERROR = 'GET /api/scrape-run · job.error';
  */
 const WHY = {
   constant: [
-    'A constant, measured: all 26 jobs in config/scrapers.json read `verified` and',
-    'none disagrees with its own `validationStatus`. A chip would gain a word and',
-    'say nothing. The page already writes down where this belongs — the note above',
-    '`chipTitle` in public/js/pages/scrape.js says it earns a line when it starts to',
-    'vary.',
+    'A constant, measured: every job in config/scrapers.json reads one `feedStatus`,',
+    'and data/endpoints/endpoints.json records the same value for every one of',
+    'them. A chip would gain a word and say nothing. The page writes down where',
+    'this belongs — the note above `chipTitle` in public/js/pages/scrape.js says',
+    'it earns a line when it starts to vary — and the control below re-derives both',
+    'halves instead of trusting this paragraph.',
   ].join(' '),
 
   transport: [
@@ -1284,6 +1285,64 @@ test('no exemption is unreasoned, and every reason names what was measured', () 
     .filter(([, why]) => why.length < 150)
     .map(([k, why]) => `${k} (${why.length} chars)`);
   assert.deepEqual(stubs, [], 'these reasons are stubs — a claim too short to be checkable is not a reason');
+});
+
+test('the `feedStatus` exemption rests on one value, and the recorded evidence agrees', () => {
+  // The reason above is a claim about config/scrapers.json and about
+  // data/endpoints/endpoints.json, so both are read here rather than asserted.
+  // Nothing else in this file could catch it going false: the exemption's only
+  // other guard is "a page started reading the field", which is the opposite
+  // direction, and the test in scrape-page.test.mjs that renders a synthetic
+  // `host-down` job passes whether or not the real config still agrees — which
+  // is not a guess. With superbet set to `host-down` against a registry that
+  // says `verified`, the whole suite was green.
+  //
+  // Both halves, in order. A sweep that found no jobs would leave the set of
+  // values empty — technically a constant, and the reading under which this
+  // exemption would look justified forever. So the census has to be seen to have
+  // read the document before its shape is allowed to mean anything.
+  const jobs = SCRAPERS.jobs || SCRAPERS;
+  // What is pinned is the shape of the rows that exist, not how many there are.
+  // A total goes stale the moment a book is added and trains the reader to bump
+  // it without reading the claim. An unreadable job list is not guarded from
+  // here either, and deliberately so: rename the `jobs` key and this file stops
+  // loading at all — `keysOfRows` is handed undefined and the censuses above it
+  // throw before any exemption is evaluated. That failure is louder than any
+  // assertion in a test, so adding one here would be a guard that cannot fire.
+  const missing = jobs.filter((j) => !('feedStatus' in j)).map((j) => j.id);
+  assert.deepEqual(missing, [],
+    'these registered jobs carry no feedStatus at all, so "every job reads one value" is no longer what the chip was told');
+  const values = [...new Set(jobs.map((j) => j.feedStatus))].sort();
+  assert.deepEqual(values, ['verified'],
+    `feedStatus is no longer one value across config/scrapers.json — it now reads ${values.join(', ')}. `
+    + 'That is the moment it starts to mean something, so chipTitle in public/js/pages/scrape.js earns a line '
+    + 'and WHY.constant above has to be rewritten in the same commit that moved the field');
+
+  // The half that was vacuous before this lot. "None disagrees with its own
+  // validationStatus" held for a trivial reason — a constant agrees with
+  // everything, and it would have gone on agreeing if every job in the file were
+  // reclassified. The registry is independent data, recorded from what each
+  // book's feed was measured to do, so a comparison against it can actually fail.
+  // src/shared/endpoints.mjs exists to reconcile the two; the only caller it has
+  // is test/endpoints-registry.test.mjs, so this reads the document directly.
+  const registry = readJson('data/endpoints/endpoints.json');
+  assert.ok(registry.books && Object.keys(registry.books).length > 0,
+    'data/endpoints/endpoints.json carries no books, so the agreement below proves nothing');
+  // Every job has to be compared, or the list below is silent about the ones it
+  // dropped: `registry.books[j.id]?.feedStatus` is undefined for a book the
+  // registry has never heard of, the filter skips it, and a registry that had
+  // quietly stopped describing a book would read as agreement. The comparison
+  // says how many rows it stood on, or it says nothing.
+  const uncompared = jobs.filter((j) => !registry.books[j.id]?.feedStatus).map((j) => j.id);
+  assert.deepEqual(uncompared, [],
+    'the registry has no recorded feed status for these registered jobs, so the agreement below is not measuring them');
+  const drifted = jobs
+    .filter((j) => registry.books[j.id]?.feedStatus)
+    .filter((j) => registry.books[j.id].feedStatus !== j.feedStatus)
+    .map((j) => `${j.id}: config ${j.feedStatus}, registry ${registry.books[j.id].feedStatus}`);
+  assert.deepEqual(drifted, [],
+    'the recorded evidence no longer agrees with config/scrapers.json — a job now claims a feed status the '
+    + 'captures contradict, which is the disagreement src/shared/endpoints.mjs was written to catch');
 });
 
 test('every field the page reads off a scrapers job is one the route publishes', () => {

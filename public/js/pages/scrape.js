@@ -183,10 +183,12 @@ function renderBookmakerChips() {
   // claim about how much the price can be trusted, and the page could not say
   // so before: it showed the reason prose and never the date.
   //
-  // `feedStatus` is deliberately not shown. All 26 wired jobs measure
-  // `verified` and none disagrees with its own `validationStatus`, so today it
-  // is a constant that would only add a word to every chip. It belongs here
-  // when it starts to vary — which is the moment it starts to mean something.
+  // `feedStatus` is deliberately not shown. Every job in config/scrapers.json
+  // reads one value, and the recorded evidence in data/endpoints/endpoints.json
+  // agrees for all of them, so today it is a constant that would only add a word
+  // to every chip. It belongs here when it starts to vary — which is the moment
+  // it starts to mean something, and the moment the `feedStatus` exemption control
+  // in test/field-census.test.mjs fails and hands the decision back.
   const chipTitle = (s, validated) => {
     const t = window.arbiterI18n.t.bind(window.arbiterI18n);
     const lines = [s.validationReason || (validated ? t('sourceValidated') : t('sourceExperimental'))];

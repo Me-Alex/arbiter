@@ -1232,10 +1232,17 @@ test('the tooltip escapes its content, because one job writes a quote into its r
 test('feedStatus is not shown, and that is a measured decision rather than an omission', () => {
   const h = harness();
   const title = titleOf(render(h, [job({ feedStatus: 'host-down' })]), 'favbet');
-  // Every one of the 26 wired jobs measures `verified` and none disagrees with
-  // its own validationStatus, so today the field is a constant. If that ever
-  // stops being true this assertion is the one that should fail and force the
-  // decision to be made, rather than the page quietly showing a stale claim.
+  // The decision not to print it rests on `feedStatus` being one value across
+  // config/scrapers.json, and this assertion does NOT check that — it cannot.
+  // The job below is synthetic, so the two passes whether or not the real config
+  // still agrees. The comment here used to claim the opposite ("if that ever
+  // stops being true this assertion is the one that should fail"), and it was
+  // wrong: with superbet set to `host-down` against a registry that says
+  // `verified`, the whole suite was green.
+  //
+  // So this pins the half that belongs to this file — the page does not print the
+  // field — and the premise is re-derived where it can fail, in the
+  // `feedStatus` exemption control in test/field-census.test.mjs.
   assert.doesNotMatch(title, /host-down/, 'a constant field stays out of the tooltip');
   assert.doesNotMatch(title, /feedStatus|Feed status/i, 'and it is not printed under a raw field name either');
 });
