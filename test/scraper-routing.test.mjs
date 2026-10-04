@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { promises as fs, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
-import { instantiate, ALL_SCRAPERS, ALL_TINYFISH_IDS, isKnownJob } from '../src/scrapers/index.mjs';
+import { instantiate, ALL_SCRAPERS, isKnownJob } from '../src/scrapers/index.mjs';
 import Superbet from '../src/scrapers/superbet.mjs';
 import Betano from '../src/scrapers/betano.mjs';
 import { runScraperBatch } from '../src/scraper-service.mjs';
@@ -100,7 +100,6 @@ test('disabled configuration is rejected', () => {
 test('no-config overlapping books select only their legacy direct adapters', () => {
   assert.ok(instantiate('superbet') instanceof Superbet);
   assert.ok(instantiate('betano') instanceof Betano);
-  assert.deepEqual(ALL_TINYFISH_IDS, []);
   assert.equal(new Set(ALL_SCRAPERS).size, ALL_SCRAPERS.length);
   assert.equal(isKnownJob('unknown-book'), false);
   assert.equal(instantiate('unknown-book'), null);
