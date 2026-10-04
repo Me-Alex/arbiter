@@ -39,6 +39,7 @@ import { readdirSync, readFileSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { codeOnly, fieldsOn } from './helpers/code-only.mjs';
+import { reachableModules } from './helpers/reachability.mjs';
 import { resolveScanRequest } from '../src/scrape-orchestrator.mjs';
 import { toProgressJob } from '../src/scraper-service.mjs';
 
@@ -882,8 +883,8 @@ const WHY = {
   // claim the page contradicts. The measurement is pinned as a control instead.
   valid: [
     'Redundant with `status` at every producer that can write it, measured rather',
-    'than assumed: all 13 sites in src/ that write `valid: false` set an explicit',
-    'status beside it, and those sites use six words between them — cancelled,',
+    'than assumed: every reachable site in src/ that writes `valid: false` sets an',
+    'explicit status beside it, and those sites use six words between them — cancelled,',
     'skipped, pending, failed, timeout, unknown. isFailedJob (public/js/pages/',
     'scrape.js:51) decides each of those six by status alone, with or without',
     '`valid`, so the row the run table draws is already the whole verdict; the',
@@ -944,33 +945,35 @@ const WHY = {
   // it does not already say — because the answer decides whether connecting it
   // helps or only lengthens the row.
   errorField: [
-    'A machine-readable restatement of the sentence beside it, measured site by',
-    'site over the 14 places under src/ that set one — 12 with a literal value and',
-    '2 propagating an inner error\'s field. At 6 of the 12 the literal is inside',
-    'the message (id, eventKey, events four times); at the other 6 it is the same',
-    'fact in other words — `response.size` on "response exceeds 1.0 MB",',
-    '`competitors` on "event missing teams", `markets.selections.odds` on',
-    '"selection has invalid odds". A path built for a machine to match on is not a',
-    'second thing to show a person already reading the sentence that carries it.',
-    'The two propagating sites are the wrapper that re-throws an inner error\'s',
-    'field, one in src/scrapers/base.mjs and one in src/scrapers/altenar-provider.mjs,',
-    'and they need no separate paragraph: the inner error they wrap is a',
-    'ValidationError, whose message is one of the six above. The control below',
-    're-derives the count, because this is the number that would overturn it.',
+    'A machine-readable restatement of the sentence beside it. Measured over the',
+    'modules the running program can reach from src/server.mjs, not over every',
+    'file under src/ — a file nothing imports still scans as a site, and the',
+    'total that comes out describes the directory rather than the program. At',
+    'most of those the field sits inside the message itself (`id` on "event',
+    'missing id", `events` on "no favbet events"), which is the strongest form',
+    'of restating it. At the rest it is the same fact in other words —',
+    '`response.size` on "response exceeds … MB", `markets.selections.odds` on',
+    '"selection has invalid odds" — and those are judgements no regex can make,',
+    'so each is named in the control below instead of being counted. The sites',
+    'that propagate an inner error\'s field are the wrapper in',
+    'src/scrapers/base.mjs, and they need no separate paragraph: the error they',
+    're-throw is a ValidationError whose own message carries the field. A path',
+    'built for a machine to match on is not a second thing to show a person',
+    'already reading the sentence that carries it.',
   ].join(' '),
 
   errorStatus: [
     'The HTTP status the message already spells out, measured site by site over',
-    'the 10 places under src/ that set one: at 9 of them the message carries the',
-    'same value — interpolated, as `NSoft: HTTP ${response.status}` does, or as the',
-    'digits of `rate limited (429)` at src/scrapers/base.mjs. The tenth is',
-    'src/scrapers/everymatrix-wamp.mjs, which rejects a dealer protocol frame as',
-    '502 and says only `dealer {...}`; everymatrix is not among the 26 ids in',
-    'config/scrapers.json, so no job row this page draws can carry it, and the',
-    'control below checks both halves — that the exception is still the only one,',
-    'and that no WAMP job appeared to make it reachable. Scoped to the state route:',
-    'the run route does not publish `status` at all, and says nothing about `code`',
-    'beside it, which that route drops and this one reads.',
+    'every place under src/ that the server can reach and that sets one: at all',
+    'but one the message carries the same value — interpolated, as an HTTP error',
+    'message does, or as the digits a rate-limit sentence carries. The exception is',
+    'src/scrapers/everymatrix-wamp.mjs, which rejects a dealer protocol frame as a',
+    'bad gateway and says only what the frame was. No configured job id names it, so',
+    'no job row this page draws can carry the status, and the control below checks',
+    'both halves — that the exception is still the only one, and that no WAMP job',
+    'appeared to make it reachable. Scoped to the state route: the run route does not',
+    'publish `status` at all, and says nothing about `code` beside it, which that',
+    'route drops and this one reads.',
   ].join(' '),
 };
 
@@ -1323,8 +1326,8 @@ test('the `feedStatus` exemption rests on one value, and the recorded evidence a
   // everything, and it would have gone on agreeing if every job in the file were
   // reclassified. The registry is independent data, recorded from what each
   // book's feed was measured to do, so a comparison against it can actually fail.
-  // src/shared/endpoints.mjs exists to reconcile the two; the only caller it has
-  // is test/endpoints-registry.test.mjs, so this reads the document directly.
+  // test/helpers/endpoints.mjs reconciles the two; its only caller is
+  // test/endpoints-registry.test.mjs, so this reads the document directly.
   const registry = readJson('data/endpoints/endpoints.json');
   assert.ok(registry.books && Object.keys(registry.books).length > 0,
     'data/endpoints/endpoints.json carries no books, so the agreement below proves nothing');
@@ -1360,15 +1363,24 @@ test('the run row\'s `valid` exemption rests on the producers, and they are chec
   // set. A producer that ever pairs `valid: false` with a status isFailedJob
   // would otherwise call a non-failure — `ok`, `completed` — fails this, which is
   // the day the exemption stops being true and the run table has to show it.
+  // Reachable, not present. Sweeping src/ flat counts producers no request can
+  // reach, and a producer nothing can run cannot have written the `valid` the
+  // page is being asked not to show. This sweep used to find four such rows in an
+  // Altenar adapter that nothing imports — which is where its floor came from.
+  // Deleting that module made the floor fire, and the floor firing was the
+  // correct answer about a measurement that had been counting a dead file.
+  const reached = reachableModules({ roots: ['src/server.mjs'] });
+  assert.ok(reached.size > 0, 'reachability returned no module, so the sweep below read nothing');
   const sites = [];
   for (const file of readdirSync(join(ROOT, 'src'), { recursive: true, withFileTypes: true })) {
     if (!file.isFile() || !file.name.endsWith('.mjs')) continue;
-    const rel = relative(ROOT, join(file.parentPath, file.name));
+    const rel = relative(ROOT, join(file.parentPath, file.name)).split(/[\\/]/).join('/');
+    if (!reached.has(rel)) continue;
     const lines = codeOnly(readFileSync(join(ROOT, rel), 'utf8'), true).split(/\r?\n/);
     lines.forEach((line, i) => {
       if (!/valid:\s*false\b/.test(line)) return;
-      // The status is not always on the next line — altenar-provider.mjs:243
-      // writes `valid: false, status: 'cancelled'` on one — so the same line is
+      // The status is not always on the next line — one site writes
+      // `valid: false, status: 'cancelled'` on a single line — so the same line is
       // searched first. The value is cut at the first comma rather than the end of
       // the line, so the `reason:` that follows it on that line is not read as a
       // status.
@@ -1385,7 +1397,13 @@ test('the run row\'s `valid` exemption rests on the producers, and they are chec
       for (const word of results.match(/'([^']*)'/g) || []) sites.push(word.slice(1, -1));
     });
   }
-  assert.ok(sites.length >= 13, `found only ${sites.length} \`valid: false\` sites in src/ — the sweep missed some`);
+  // No floor on how large this set is. The number moves every time a producer is
+  // added or removed, and a floor set at today's value says nothing except that
+  // someone measured it once — the floor this replaced was doing exactly that,
+  // and it went on holding a count four of whose rows could never run. What has
+  // to hold is below, and that is the claim the reason actually makes.
+  assert.ok(sites.length > 0,
+    'no reachable producer writes `valid: false`, so the sweep found nothing and the claim below is vacuous');
   const statuses = [...new Set(sites)].sort();
 
   // isFailedJob, transcribed from public/js/pages/scrape.js:51-54.
@@ -1508,14 +1526,13 @@ function throwSites() {
 /**
  * Every capitalised construction in src/, thrown or not.
  *
- * A throw-only scan is the wrong instrument for `status`, and it was the wrong one
- * the first time this was measured: of the ten places that set one, two are not
- * throws. `base.mjs` builds `const err = new UpstreamError(...429...)` and
- * `everymatrix-wamp.mjs` builds `finish(reject, new UpstreamError(...502...))`.
- * A scanner that looks only at `throw` reports eight sites, which makes the
- * single exception the reason is written around invisible — and an excuse whose
- * exception the instrument cannot see is not a checked excuse. So the wider
- * pattern, and the class list is filtered back to what is actually thrown.
+ * A throw-only scan is the wrong instrument for `status`, and the test below
+ * measures why instead of asserting it here: it finds sites that set a status
+ * without throwing, so a scanner that looked only at `throw` would report the
+ * exception the exemption is written around as invisible, and an excuse whose
+ * exception the instrument cannot see is not a checked excuse. So the pattern is
+ * the wider one, and the class list is filtered back to what is actually thrown
+ * where a class matters.
  */
 function constructionSites(pattern) {
   const out = [];
@@ -1532,6 +1549,24 @@ function constructionSites(pattern) {
 }
 
 const allErrorSites = () => constructionSites(/\bnew\s+([A-Z][\w$]*)\s*\(/g);
+
+/**
+ * The reachable `field` sites whose message does not carry the literal.
+ *
+ * Each is the same fact in other words — `response.size` on "response exceeds
+ * … MB", `markets.selections.odds` on "selection has invalid odds" — and whether
+ * it is the same fact is a judgement, not something a regex can settle. A
+ * judgement kept only in the paragraph is a judgement the next reader cannot
+ * check and cannot update, so it is written here instead: keyed `module|field`,
+ * and checked in the control below against the sites that actually exist, so an
+ * entry that outlives its site is reported rather than believed.
+ */
+const FIELD_RESTATED_ELSEWHERE = new Set([
+  'src/scrapers/base.mjs|markets.selections.odds',
+  'src/scrapers/favbet.mjs|markets',
+  'src/shared/bounded-json.mjs|response.size',
+  'src/shared/bounded-json.mjs|response.body',
+]);
 
 /**
  * The exemptions on the error object rest on three numbers, and this re-derives
@@ -1552,44 +1587,109 @@ const allErrorSites = () => constructionSites(/\bnew\s+([A-Z][\w$]*)\s*\(/g);
  */
 test('the error-field measurements the exemptions rest on are still this tree\'s', () => {
   const thrown = throwSites();
-  assert.ok(thrown.length > 50,
-    `only ${thrown.length} throw sites found under src/ — the parser lost the tree, and the measurement below would be read off an empty set`);
+  const constructed = allErrorSites();
+  // A receipt, not a threshold. No number is written down here, because a number
+  // here is a reading of this tree taken at one moment. All it has to say is that
+  // the scan read something: an empty walk leaves every list below empty and every
+  // measurement passes silently on empty sets. The property that says the two
+  // lists differ is checked further down, beside the measurement that depends on
+  // it, so that it can fail on its own instead of being pre-empted by a check that
+  // happens to notice the same change first.
+  assert.ok(thrown.length > 0 && constructed.length > 0,
+    `the scan found ${thrown.length} throw sites and ${constructed.length} constructions — `
+    + 'an empty walk makes every measurement below pass on empty sets');
 
-  // WHY.errorField: the field restates its own message.
-  const fieldSites = allErrorSites().filter((s) => /\bfield:\s*(?:'([^']*)'|"([^"]*)")/.test(s.opts));
-  assert.ok(fieldSites.length >= 10,
-    `only ${fieldSites.length} sites set a literal \`field\` — WHY.errorField counts 14 places and this one moved`);
-  const withLiteral = fieldSites.filter((s) => {
-    const lit = s.opts.match(/\bfield:\s*(?:'([^']*)'|"([^"]*)")/);
-    return s.msg !== null && s.msg.includes(lit[1] ?? lit[2]);
-  });
-  // The other six restate the field in other words, which no regex can see —
-  // `response.size` on "response exceeds 1.0 MB", `competitors` on "event
-  // missing teams". So this is a floor on the half that IS mechanical, and the
-  // floor is what fails if an adapter starts setting a field its message does not
-  // carry either way.
-  assert.ok(withLiteral.length >= 6,
-    `only ${withLiteral.length} of ${fieldSites.length} \`field\` sites carry the literal inside their message — re-read WHY.errorField, which counts six of each kind`);
+  // Reachable, not present. The paragraphs below used to count the places under
+  // src/, and one of the modules holding those places — the Altenar adapter that
+  // nothing imports — is gone. That does not change what these fields are for; it
+  // changes what the sentences are allowed to be evidence about. A count taken
+  // over the directory reads as a property of the program and is not one: the
+  // program cannot reach every line under src/, and the sites it cannot reach are
+  // exactly the ones that never put this field on a response anybody reads.
+  const reached = reachableModules({ roots: ['src/server.mjs'] });
+  assert.ok(reached.size > 0,
+    'reachability returned no module at all, so the population below is being read off an empty set');
 
   // WHY.errorStatus: the status is in the message at all but one site.
-  const statusSites = allErrorSites().filter((s) => /\bstatus:\s*[^,}]/.test(s.opts));
-  assert.ok(statusSites.length >= 9,
-    `only ${statusSites.length} sites set a \`status\` — WHY.errorStatus counts 10 and this one moved`);
+  //
+  // Reachable for the same reason the sweep is, and the ceiling this block used
+  // to carry is gone with the same reasoning: it was a number written down while a
+  // module nothing imported still held sites of its own, so it measured the tree
+  // at one moment instead of the program. What replaces it says the population
+  // has to exist, and — the part that makes it say anything — that it splits. A
+  // set where every site carries its status leaves the exemption with nothing to
+  // exempt and the paragraph with nothing to be an exception to; a set where none
+  // does leaves no redundancy to rest on.
+  const statusSites = allErrorSites().filter((s) => reached.has(s.rel) && /\bstatus:\s*[^,}]/.test(s.opts));
+  assert.ok(statusSites.length > 0,
+    'no module the server can reach sets a `status`, so WHY.errorStatus describes nothing');
+  const statusValue = (s) => s.opts.match(/\bstatus:\s*([^,}]+)/)[1].trim();
+
+  // The measurement the wider scan exists for, and it is ahead of the two below
+  // it on purpose. Narrowing the scan to `throw` makes all three fail at once,
+  // and a control that can never be the first to notice is a control nobody is
+  // told failed — so the check that exists because of the scan's width is the one
+  // that reports the scan losing its width.
+  const thrownKeys = new Set(thrown.map((s) => `${s.rel}|${s.cls}|${s.opts}`));
+  const notThrown = statusSites.filter((s) => !thrownKeys.has(`${s.rel}|${s.cls}|${s.opts}`));
+  assert.ok(notThrown.length > 0,
+    'every reachable `status` site is a throw now, so `allErrorSites` is wider than it needs to be for this reason');
+
   const inMessage = statusSites.filter((s) => {
-    const value = s.opts.match(/\bstatus:\s*([^,}]+)/)[1].trim();
     // A literal status reaches the message as its digits; a computed one only if
     // the message interpolates the same expression.
-    return s.msg !== null && s.msg.includes(value);
+    return s.msg !== null && s.msg.includes(statusValue(s));
   });
+  assert.ok(inMessage.length > 0 && inMessage.length < statusSites.length,
+    `of ${statusSites.length} reachable \`status\` sites, ${inMessage.length} carry it in their message — `
+    + 'a set that is all one way describes no redundancy, and one with nothing silent has no exception to name');
   const silent = statusSites.filter((s) => !inMessage.includes(s));
-  assert.deepEqual(silent.map((s) => `${s.rel}: ${s.opts.match(/\bstatus:\s*([^,}]+)/)[1].trim()}`),
-    [`src/scrapers/everymatrix-wamp.mjs: 502`],
+  // Identified by the value, not by a line number: the exception is a property of
+  // what the site does, and a position recorded next to it reads like a location
+  // that can be verified and cannot be.
+  assert.deepEqual(silent.map((s) => `${s.rel}: ${statusValue(s)}`),
+    ['src/scrapers/everymatrix-wamp.mjs: 502'],
     'the set of `status` sites whose message does not carry the status changed — WHY.errorStatus allows exactly one and names it');
 
   // …and that one cannot reach a row, which is the measurement that closes it.
   const ids = SCRAPERS.jobs.map((j) => j.id);
   assert.ok(!ids.some((id) => /wamp/i.test(id)),
     'a WAMP job is configured now, so the everymatrix site is reachable and WHY.errorStatus must be re-measured');
+
+  // WHY.errorField: the field restates its own message.
+  const fieldSites = allErrorSites().filter((s) => reached.has(s.rel) && /\bfield:/.test(s.opts));
+  assert.ok(fieldSites.length > 0,
+    'no module the server can reach builds an error with a `field`, so WHY.errorField describes nothing');
+
+  // Every one of them is accounted for, and the three ways are different kinds
+  // of claim. A literal inside its own message is checked mechanically. A site
+  // that propagates an inner error's field restates nothing of its own — the
+  // message it carries is the inner error's — and is covered by that shape. A
+  // site whose field says the same thing in other words is a judgement, and a
+  // judgement held only in prose is one the next reader cannot check, so those
+  // are named below rather than counted.
+  const unaccounted = [];
+  for (const s of fieldSites) {
+    const lit = s.opts.match(/\bfield:\s*(?:'([^']*)'|"([^"]*)")/);
+    if (!lit) {
+      if (!/\.field\b/.test(s.opts)) unaccounted.push(`${s.rel} ${s.cls}: field is neither a literal nor an inner one`);
+      continue;
+    }
+    const value = lit[1] ?? lit[2];
+    if (s.msg !== null && s.msg.includes(value)) continue;
+    if (!FIELD_RESTATED_ELSEWHERE.has(`${s.rel}|${value}`)) {
+      unaccounted.push(`${s.rel} ${s.cls}: field ${JSON.stringify(value)} is not in its message, `
+        + `and nobody has recorded that it restates it in other words`);
+    }
+  }
+  assert.deepEqual(unaccounted, [],
+    'these reachable `field` sites say something their message does not, which is the one thing this exemption is for');
+  // The named list is evidence, so it has to still be about something. A site
+  // that left the tree would otherwise keep its entry and keep the paragraph
+  // looking corroborated.
+  const stale = [...FIELD_RESTATED_ELSEWHERE].filter((key) => !fieldSites.some((s) => key.startsWith(`${s.rel}|`)));
+  assert.deepEqual(stale, [],
+    'these entries name a site that no longer exists, so the paragraph is being corroborated by a list of ghosts');
 
   // Why `name` is connected rather than excused: no message names its own class.
   const classes = new Set(thrown.map((s) => s.cls));
