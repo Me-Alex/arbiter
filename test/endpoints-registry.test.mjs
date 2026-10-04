@@ -12,7 +12,7 @@ import {
   ungroupedPlatformPeers,
   unscrapedBooks,
   feedStatusConflicts,
-} from '../src/shared/endpoints.mjs';
+} from './helpers/endpoints.mjs';
 import { FEED_GROUPS } from '../src/scanner/feed-groups.mjs';
 
 const cfg = JSON.parse(readFileSync(join('config', 'scrapers.json'), 'utf8'));
@@ -45,14 +45,31 @@ test('every enabled job carries the platform the registry recorded', () => {
 });
 
 test('the registry corroborates the declared feed groups', () => {
-  // Each declared group must sit on one platform in the recorded evidence.
-  // This is the check the hand-maintained list never had: if a book migrates
-  // provider, the group silently stops being true and this fails.
+  // Two directions, because there are two ways a group stops being corroborated.
+  //
+  // The second one was missing, and the check could not fail without it. The set
+  // of platforms was built with `.filter(Boolean)`, so a member the registry has
+  // stopped describing contributed nothing: drop one and the group still sits on
+  // a single platform, and the assertion still held. Removing every member of
+  // every group left an empty evidence set that also passed. What the comment
+  // here used to promise — "if a book migrates provider, the group silently
+  // stops being true and this fails" — held for the migration and not for the
+  // disappearance, and a check that names a failure it cannot see is worse than
+  // no check, because the next reader stops looking.
+  const unrecorded = [];
+  const split = [];
   for (const group of FEED_GROUPS) {
-    const platforms = new Set(group.members.map((m) => platformOf(m)).filter(Boolean));
-    assert.ok(platforms.size <= 1,
-      `feed group ${group.id} spans platforms: ${[...platforms].join(', ')}`);
+    const seen = group.members.map((m) => ({ member: m, platform: platformOf(m) }));
+    for (const { member, platform } of seen) {
+      if (!platform) unrecorded.push(`${group.id}/${member}`);
+    }
+    const platforms = new Set(seen.map((s) => s.platform).filter(Boolean));
+    if (platforms.size > 1) split.push(`${group.id} spans ${[...platforms].join(', ')}`);
   }
+  assert.deepEqual(unrecorded, [],
+    'these declared group members are not described by the registry at all, so the group is corroborated by nothing');
+  assert.deepEqual(split, [],
+    'a declared group no longer sits on a single recorded platform, which is what makes it one feed');
 });
 
 test('maxbet stays outside the nsoft group for the measured reason', () => {
@@ -75,12 +92,22 @@ test('ungroupedPlatformPeers surfaces maxbet as a candidate, not a verdict', () 
   assert.ok(hit.ungrouped.includes('maxbet'));
 });
 
-test('unscrapedBooks lists the additive candidates that already have evidence', () => {
+test('unscrapedBooks tells the rows that have evidence from the rows that do not', () => {
   const un = unscrapedBooks();
-  const names = un.map((b) => b.book);
-  // These have a recorded platform and/or a real capture but no scraper job.
-  assert.ok(names.includes('888sport'), '888sport has a digitain capture and no job');
-  assert.ok(names.includes('mrplay'));
+  const byBook = new Map(un.map((b) => [b.book, b]));
+  const names = [...byBook.keys()];
+  // The two rows this test has always named are named for a reason: they are on
+  // the list because a capture exists, not only a platform string. That is the
+  // claim the function's own note overreached on — it described the whole list
+  // as books waiting for an adapter, while `realCapture` is what earns a row
+  // its place and most rows do not carry it. No total is pinned here: it moves
+  // every time the crawl gains a row, and pinning one would train the reader to
+  // bump it without reading what it is for.
+  for (const book of ['888sport', 'mrplay']) {
+    assert.ok(names.includes(book), `${book} has a digitain capture and no job`);
+    assert.equal(byBook.get(book).realCapture, true,
+      `${book} is named here as a book that already has evidence, and its capture no longer says so`);
+  }
   assert.ok(!names.includes('favbet'), 'a scraped book must not be listed as a candidate');
   for (const job of jobs) assert.ok(!names.includes(job.id), `${job.id} is configured`);
 });

@@ -1,22 +1,34 @@
 /**
- * endpoints.mjs — the single endpoint registry.
+ * endpoints.mjs — readers over the endpoint registry, for the test beside them.
  *
  * data/endpoints/endpoints.json records, for every bookmaker the project has
  * looked at: which upstream platform serves it, whether that feed was verified
  * to carry public odds, the saved capture that proves it, and the sports that
  * were probed and found dead.
  *
- * This replaces two older, divergent artefacts:
- *   - data/endpoints/       — per-book captures, but its index knew only
- *                             platform/feedStatus and duplicated the crawl
- *   - data/endpoints-all/   — the original browser crawl, with a different
- *                             schema and its own index
- * Both were reference-only: nothing in src/ read them, so the platform a book
- * runs on — the single most load-bearing fact about a feed — was duplicated by
- * hand in src/scanner/feed-groups.mjs and had no check against reality.
+ * This file was in src/shared/ until it moved here, and the move is the
+ * correction rather than a tidiness. Nothing in src/ imported it: the checks it
+ * holds are diagnostics, and no runtime path called them. A reader with no
+ * caller, sitting in the shipped tree, reads as load-bearing code — while the
+ * registry itself, the most load-bearing fact about a feed, stayed unreadable
+ * by the running program. It is here now because its only consumer is
+ * test/endpoints-registry.test.mjs, which is what the move made true.
  *
- * The registry is data, not behaviour. It is read here so feed-group
- * declarations can be validated against recorded evidence rather than trusted.
+ * Two claims this file used to make were false, and are recorded rather than
+ * quietly dropped:
+ *
+ *   - "the platform a book runs on was duplicated by hand in
+ *     src/scanner/feed-groups.mjs". It was not. feed-groups.mjs declares a group
+ *     by provider and membership and holds no per-book platform map. The
+ *     hand-written copy is the `platform` field on each job in
+ *     config/scrapers.json — and that one is checked against the registry, in
+ *     the test named above.
+ *   - "It is read here so feed-group declarations can be validated against
+ *     recorded evidence rather than trusted." Nothing is read here for that.
+ *     The reconciliation lives in the test, and it was missing the direction in
+ *     which a group stops being true, which the test now covers.
+ *
+ * The registry is data, not behaviour, and the running program does not read it.
  */
 
 import { readFileSync, existsSync } from 'node:fs';
@@ -30,8 +42,8 @@ let cached = null;
 
 /**
  * Read the registry, or null when it is absent. A missing registry is not an
- * error: the scanner runs fine without it, and the checks that consume it are
- * diagnostics rather than gates.
+ * error: every check that consumes it is a diagnostic, and a diagnostic that
+ * cannot run has nothing to report.
  *
  * @param {string} [path]
  * @returns {object|null}
@@ -100,9 +112,16 @@ export function ungroupedPlatformPeers(groupedBooks, registry = loadEndpointRegi
 }
 
 /**
- * Books the registry has a capture for but the scraper config has no job for.
- * These are the additive candidates: the evidence already exists, only an
- * adapter is missing.
+ * Books the registry knows about that carry no scraper job.
+ *
+ * This is a list of names, not a worklist, and the note that used to sit above
+ * it overclaimed twice. It called these "the additive candidates: the evidence
+ * already exists, only an adapter is missing", but the capture files do not say
+ * that — most of the rows carry a platform string and no capture at all, and
+ * sport-suffixed rows for books already configured under their base name are in
+ * the same list. `realCapture` on each row is what separates the two, and it is
+ * the flag to read. The split is measured where it is meaningful, in
+ * test/endpoints-registry.test.mjs.
  */
 export function unscrapedBooks(registry = loadEndpointRegistry()) {
   if (!registry?.books) return [];
