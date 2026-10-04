@@ -4,6 +4,10 @@
     let _sportsData = [];
     let _isFirstScanLoad = true;
     let _optionsSeeded = false;
+    // The document the tables were last drawn from, kept so the sport control
+    // can redraw the same scan under a new selection instead of waiting for the
+    // next refresh (or re-running the engine for a filter change).
+    let _lastScan = null;
 
     let _alertWatcher = null;
 
@@ -344,8 +348,13 @@
       $('profile').value = profiles[0]?.id || '';
 // Create sport filter dropdown with persistence using common helper
       createDropdown('sport-filter', [{value: '', text: arbiterI18n.t('allSports')}].concat(sportsData.map(s => ({value: s.id, text: s.name}))), {storageKey: 'arbiter.scannerSportFilter'});
-      // The createDropdown handles restoring value and change listener.
-      // No further manual handling needed.
+      // createDropdown restores the stored value and stores a new one; its own
+      // listener draws nothing. This one is what applies the selection — without
+      // it the control moved while the tables, the banner and the export links
+      // kept the previous sport until the next refresh or scan-update.
+      $('sport-filter').addEventListener('change', () => {
+        if (_lastScan) render(_lastScan);
+      });
 
       $('profile').addEventListener('change', () => {
         const p = profiles.find((x) => x.id === $('profile').value);
@@ -465,9 +474,32 @@
       return (items || []).filter((o) => String(o.sport || '').toLowerCase() === sport.toLowerCase());
     }
 
+    /**
+     * Point the four export links at the selection the tables are drawn under.
+     *
+     * The `?type=` stays in the markup — the family is fixed per table — while
+     * the sport is whatever is selected when the page draws, so it is written
+     * here rather than in the href. Without this the two answers disagreed: the
+     * table showed the selected sport, the downloaded file held every sport,
+     * and nothing on screen said so.
+     *
+     * An empty selection writes no parameter: the link as shipped, and the same
+     * pass-through `filterBySport` applies — no selection means all records.
+     */
+    function syncExportSport(sport) {
+      document.querySelectorAll('a[href*="/api/scan/export.csv"]').forEach((link) => {
+        const [path, query = ''] = (link.getAttribute('href') || '').split('?');
+        const params = new URLSearchParams(query);
+        if (sport) params.set('sport', sport);
+        else params.delete('sport');
+        const search = params.toString();
+        link.setAttribute('href', search ? `${path}?${search}` : path);
+      });
+    }
+
     function render(scan) {
       const t = arbiterI18n.t.bind(arbiterI18n);
-      const activeSport = $('sport-filter')?.value || '';
+      _lastScan = scan;
       const health = scan.dataHealth || {};
       const healthStatus = health.status || 'empty';
       const noData = healthStatus !== 'fresh';
@@ -519,6 +551,14 @@
         put('sport-filter', opts.sport);
         if ($('inc-live')) $('inc-live').checked = opts.includeLive === true;
       }
+      // Read after the seed, not before it: the block above writes this very
+      // select when the published scan was run under a sport. Read first, the
+      // control ended up claiming that sport while the tables below were drawn
+      // unfiltered and the banner stayed hidden — the page disagreed with itself
+      // until the next refresh, which does read the seeded value.
+      const activeSport = $('sport-filter')?.value || '';
+      // The export links carry the same selection the tables are drawn under.
+      syncExportSport(activeSport);
       $('verification-mix').textContent = verificationMix(t, scan.verificationSummary);
       const windowNote = $('live-window-note');
       if (windowNote) windowNote.textContent = liveWindowNote(t, scan);

@@ -665,3 +665,63 @@ test('the four filtered lists stay consistent once the capability is attached', 
     'validatedJobs is no longer the validated subset',
   );
 });
+
+// ---- GET /api/scan/export.csv ---------------------------------------------
+
+/**
+ * The download answers the two parameters its links are built from.
+ *
+ * The scanner page ships `?type=` per family table and appends `?sport=` for
+ * the selection on screen (public/js/pages/scanner.js, `syncExportSport`), so
+ * the route has to honour both at once: ignoring the sport hands back a file
+ * for every sport under a table showing one, and ignoring the type under a
+ * selection hands back families that link never asked for.
+ *
+ * Neither parameter is a validated input that errors. An unknown family or an
+ * unknown sport is an empty file with the header, which is what the tables
+ * show for a selection nothing matches -- the same statement, not a failure
+ * the page would have to translate.
+ */
+const EXPORT_SCAN = {
+  opportunities: [
+    { sport: 'Football', homeTeam: 'FCSB', legs: [{ sourceId: 'a' }, { sourceId: 'b' }] },
+    { sport: 'TENNIS', homeTeam: 'Alcaraz', legs: [{ sourceId: 'c' }] },
+    { homeTeam: 'NoSport', legs: [{ sourceId: 'd' }] },
+  ],
+  positiveEv: [
+    { sport: 'Football', sourceId: 'e' },
+    { sport: 'TENNIS', sourceId: 'f' },
+  ],
+};
+
+test('the export route writes the family and the sport the links ask for', async () => {
+  const base = stubServices();
+  const { route } = makeServer({
+    scanService: { ...base.scanService, async readLatestScan() { return EXPORT_SCAN; } },
+    rateLimiter: new RateLimiter({ capacity: 50, refillPerSec: 50 }),
+  });
+  const server = await startServer(route);
+  const rows = async (path) => {
+    const res = await fetchOnce(server, path);
+    assert.equal(res.status, 200, `${path} answered ${res.status}: ${res.body.slice(0, 200)}`);
+    return res.body.split('\r\n').filter(Boolean).slice(1);
+  };
+  try {
+    assert.equal((await rows('/api/scan/export.csv')).length, 6,
+      'the whole file lost a row: 4 opportunity legs + 2 +EV rows');
+    assert.equal((await rows('/api/scan/export.csv?type=opportunities')).length, 4,
+      '?type= alone must still export every sport: 2 Football legs + 1 TENNIS leg + 1 unlabelled leg');
+
+    const tennis = await rows('/api/scan/export.csv?type=opportunities&sport=tennis');
+    assert.equal(tennis.length, 1,
+      `?sport=tennis kept ${tennis.length} rows, expected only the TENNIS leg: ${tennis.join(' | ')}`);
+    assert.equal(tennis[0].split(',')[1], 'TENNIS',
+      'the surviving row is not the tennis record');
+
+    assert.equal((await rows('/api/scan/export.csv?sport=tennis')).length, 2,
+      'without ?type= the selection must reach every family: 1 opportunity leg + 1 +EV row');
+
+    assert.equal((await rows('/api/scan/export.csv?type=opportunities&sport=handball')).length, 0,
+      'a sport no record carries exported rows the tables would not show');
+  } finally { await closeServer(server); }
+});

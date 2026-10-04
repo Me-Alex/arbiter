@@ -596,7 +596,7 @@ const optionsReads = () => {
  * page.
  *
  * Then there was a second consumer. `/api/profiles` is fetched by scanner.js as
- * well, at :339, and this census read one page, so a field that only scanner.js
+ * well, at :343, and this census read one page, so a field that only scanner.js
  * reads would have been reported unread by a page that does read it. Measured,
  * scanner.js reads a strict subset of what scrape.js reads — `id`, `label` and
  * four of the six defaults, and neither `mode` nor `description` nor the two
@@ -681,20 +681,30 @@ function profileRowReceivers(cuts) {
  * scanner.js keeps no top-level function for this the way scrape.js does — the
  * rows are used inside the page's nested `init()`, in the `<option>` list it
  * builds and in the change listener that applies a profile's defaults. The cut
- * runs from the fetch to the first line that closes that listener, measured at
- * :339-358, and both ends are loud: a page that stops fetching the route, or
- * stops closing the listener on its own line, fails here rather than reporting
- * every profile field unread.
+ * runs from the fetch (measured :343) to the close of the statement that binds
+ * those defaults (measured :362-367), and both ends are loud: a page that stops
+ * fetching the route, or stops binding a profile's defaults, fails here rather
+ * than reporting every profile field unread.
+ *
+ * The far end used to be the FIRST `});` after the fetch, which was the profile
+ * listener only because nothing else closed a statement in between. A sport
+ * listener added there ended the cut before the defaults read, and this
+ * function threw "measuring the wrong region" — the tripwire doing its job on
+ * a derivation that named a line shape instead of the region it wanted. The
+ * defaults binding now picks the end, so a listener inserted between the two
+ * ends widens the cut instead of truncating it, and the check that the cut
+ * contains a defaults read moved into the finder: it cannot fail here any more,
+ * and a check that cannot fail is worse than no check.
  */
 function scannerProfileBlock() {
   const lines = scannerCode.split(/\r?\n/);
   const from = lines.findIndex((l) => l.includes("arbiterApi.get('/api/profiles')"));
   if (from === -1) throw new Error('scanner.js no longer fetches /api/profiles');
-  const to = lines.findIndex((l, i) => i > from && l.trim() === '});');
+  const binding = lines.findIndex((l, i) => i > from && l.includes('p.defaults'));
+  if (binding === -1) throw new Error('scanner.js no longer binds a profile default after the fetch — it is measuring the wrong region');
+  const to = lines.findIndex((l, i) => i > binding && l.trim() === '});');
   if (to === -1) throw new Error('scanner.js no longer closes the profile change listener on its own line — the cut would run away');
-  const block = lines.slice(from, to + 1).join('\n');
-  if (!/\.defaults\b/.test(block)) throw new Error('the cut no longer contains a defaults read — it is measuring the wrong region');
-  return block;
+  return lines.slice(from, to + 1).join('\n');
 }
 
 /** Every page that fetches the route, derived rather than written down. */

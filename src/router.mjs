@@ -131,8 +131,15 @@ export function buildRouter(ctx) {
       const { buildScanCsv } = await import('./scan-service.mjs');
       const params = new URL(req.url, 'http://localhost').searchParams;
       const types = params.getAll('type').flatMap((t) => t.split(',')).map((t) => t.trim()).filter(Boolean);
+      // The sport selection the page is showing. The four scanner links carry
+      // `?type=` only in the markup — the family is fixed per table — and the
+      // page appends the current selection when it draws them, so a link clicked
+      // without that rewrite (or the dashboard's whole-file link) sends no sport
+      // here and downloads everything, which is what an empty selection means
+      // on the tables too.
+      const sport = params.get('sport') || '';
       const scan = await scanService.readLatestScan(dataDir);
-      const csv = buildScanCsv(scan, types);
+      const csv = buildScanCsv(scan, types, sport);
       res.setHeader('Content-Type', 'text/csv; charset=utf-8');
       res.setHeader('Content-Disposition', 'attachment; filename="scan-findings.csv"');
       res.setHeader('Cache-Control', 'no-store');

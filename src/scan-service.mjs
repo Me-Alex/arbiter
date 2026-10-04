@@ -97,9 +97,13 @@ export async function readLatestScrapeRun(dataDir) {
  * @param {string[]} [types]  Signal families to include, e.g. ['opportunities',
  *                             'middles', 'positiveEv', 'lowHold']. Omit or pass
  *                             an empty list to export every family.
+ * @param {string} [sport]    The sport selection to export, exactly as the page
+ *                             applies it to its tables: empty exports every
+ *                             record, otherwise only records whose own `sport`
+ *                             matches. Omit to export every sport.
  * @returns {string} CSV text.
  */
-export function buildScanCsv(scan, types = []) {
+export function buildScanCsv(scan, types = [], sport = '') {
   // Callers may pass a single comma-joined value ("?type=middles,lowHold") or
   // a list, so split here rather than relying on each route to do it.
   const wanted = new Set(
@@ -110,6 +114,17 @@ export function buildScanCsv(scan, types = []) {
   );
   const include = (family) => wanted.size === 0 || wanted.has(family.toLowerCase());
 
+  // The same rule the page applies to its tables (`filterBySport`), so the file
+  // holds what the selection on screen shows. Two decisions mirrored on purpose.
+  // Case, because the control offers the registry's lowercase id (`football`)
+  // while the records carry the event's own spelling (`Football`), and a
+  // case-sensitive match here would export a header-only file for the one sport
+  // the page can select. And no default: a record the engine could not classify
+  // belongs to no sport, so under a selection it is dropped — the same rows the
+  // table drops, rather than a file claiming to be the view and holding more.
+  const wantedSport = String(sport ?? '').trim().toLowerCase();
+  const sameSport = (o) => !wantedSport || String(o.sport || '').toLowerCase() === wantedSport;
+
   // A signal family is exported one row per leg, not one row per opportunity:
   // the per-leg book/selection/odds/stake is what a trader actually places,
   // and opportunity-level totals are repeated so the file stays self-contained.
@@ -117,6 +132,7 @@ export function buildScanCsv(scan, types = []) {
 
   if (include('opportunities')) {
     for (const o of asArray(scan?.opportunities)) {
+      if (!sameSport(o)) continue;
       for (const leg of asArray(o.legs)) {
         rows.push([
           'opportunity',
@@ -138,6 +154,7 @@ export function buildScanCsv(scan, types = []) {
 
   if (include('middles')) {
     for (const o of asArray(scan?.middles)) {
+      if (!sameSport(o)) continue;
       for (const leg of asArray(o.legs)) {
         rows.push([
           'middle',
@@ -156,6 +173,7 @@ export function buildScanCsv(scan, types = []) {
 
   if (include('positiveEv')) {
     for (const o of asArray(scan?.positiveEv)) {
+      if (!sameSport(o)) continue;
       rows.push([
         'positiveEv',
         // Only the sport is published on this family; the other four identity
@@ -176,6 +194,7 @@ export function buildScanCsv(scan, types = []) {
 
   if (include('lowHold')) {
     for (const o of asArray(scan?.lowHold)) {
+      if (!sameSport(o)) continue;
       rows.push([
         'lowHold',
         o.sport, '', '', '', '',
