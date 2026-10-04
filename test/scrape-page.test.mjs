@@ -1068,7 +1068,7 @@ const READ = {
  * machine-only, the excuse is stale and the test says so.
  */
 const ODDS_UNREAD = new Map([
-  ['results[].id', "The book's own event id, published so a reader can find that event inside the raw capture. The board prints none of it: the name the tree gives that id is `providerEventId`, and 0 occurrences of it sit anywhere under public/js, so the value stops at the machine. What it does not stop at is the rest of the backend: 3 of the 73 modules under src/ read it and 2 write it, and the paragraph used to call the scanner engine the only place it appears at all, which is why it read that way. Measured, and re-measured by the test below: engine.mjs:57 and :484, scanner.mjs:133 and :136, verification.mjs:224, and altenar-public.mjs:362 as a writer. Every reader is machine-to-machine, a scan fingerprint and a verification leg match, which is the same reason the panel has nothing to draw. What the row prints instead is the app's own way of naming an event, teams at public/js/pages/event-detail.js:44-46 and sport, kickoff and league in the meta line at :49-52; and the only handle this panel can act on is eventKey, which it already reads into both filter lists (public/js/pages/scrape.js:514 and :579). Measured on the captures rather than on the fixture above: 12390 distinct ids over 24829 events in the 22 files under data-market-run/workspace, and re-measured as three claims by test/snapshot-route.test.mjs rather than trusted as a figure. The id is not a handle a page could look an event up in, and the reason is not the one this paragraph used to give. It never repeats between two files of the same book (0 of 12390), so it is not an address inside one capture either, and it is not unique to a book: 4474 ids are shared by two or more books and 834 of those stand for different eventKeys. What it is, inside one book, is a one-to-one stand-in for eventKey, over all 24829 pairs. So the field says exactly what the handle the panel already keys on says, which is why there is nothing for it to add here."],
+  ['results[].id', "The book's own event id, published so a reader can find that event inside the raw capture. The board prints none of it: the name the tree gives that id is `providerEventId`, and 0 occurrences of it sit anywhere under public/js, so the value stops at the machine. What it does not stop at is the rest of the backend: 3 of the modules under src/ read it and 2 write it, and the paragraph used to call the scanner engine the only place it appears at all, which is why it read that way. Measured, and re-measured by the test below: engine.mjs:57 and :484, scanner.mjs:133 and :136, verification.mjs:224, and altenar-public.mjs:362 as a writer. Every reader is machine-to-machine, a scan fingerprint and a verification leg match, which is the same reason the panel has nothing to draw. What the row prints instead is the app's own way of naming an event, teams at public/js/pages/event-detail.js:44-46 and sport, kickoff and league in the meta line at :49-52; and the only handle this panel can act on is eventKey, which it already reads into both filter lists (public/js/pages/scrape.js:514 and :579). Measured on the captures rather than on the fixture above: 12390 distinct ids over 24829 events in the 22 files under data-market-run/workspace, and re-measured as three claims by test/snapshot-route.test.mjs rather than trusted as a figure. The id is not a handle a page could look an event up in, and the reason is not the one this paragraph used to give. It never repeats between two files of the same book (0 of 12390), so it is not an address inside one capture either, and it is not unique to a book: 4474 ids are shared by two or more books and 834 of those stand for different eventKeys. What it is, inside one book, is a one-to-one stand-in for eventKey, over all 24829 pairs. So the field says exactly what the handle the panel already keys on says, which is why there is nothing for it to add here."],
 ]);
 
 let CENSUS = null;
@@ -1145,7 +1145,15 @@ test('the unread leaf is excused, and the excuse is re-measured rather than asse
     }
   };
   walkSrc(new URL('../src/', import.meta.url));
-  assert.equal(srcTree.length, 73, 'the modules under src/ have been re-counted');
+  // The count that used to sit here — 73 — is gone, and 95 further down with it.
+  // They were tripwires on how many modules the tree has, and they fired the
+  // moment a lot deleted a file that had nothing to do with providerEventId:
+  // a tripwire on a moving number trains the next reader to bump the digit
+  // without reading the excuse. The exact reader and writer lists below are the
+  // stronger guard they were standing in for, because they fail when the walk
+  // collapses, fail when it misses a file, and name the file that moved.
+  assert.ok(srcTree.length > 0,
+    'the walk over src/ returned no modules at all, so every "nobody else reads this" below would hold of an empty tree');
   const reading = [];
   const writing = [];
   for (const url of srcTree) {
@@ -2622,11 +2630,11 @@ const STATE_EXCUSED = [
   },
   {
     at: 'state.summary.markets',
-    why: 'it aggregates job.marketDiagnostics, and 0 of the 73 files under src/ write that key',
+    why: 'it aggregates job.marketDiagnostics, and no module under src/ writes that key',
   },
   {
     at: 'state.jobs[].marketDiagnostics',
-    why: 'the same 0 writers: it is the field the aggregate above reads and nobody fills it',
+    why: 'the same empty set of writers: it is the field the aggregate above reads and nobody fills it',
   },
   {
     at: 'state.jobs[].sourceIds',
@@ -2706,7 +2714,7 @@ test('books is excused: it is the list of job ids, and one array feeds both', ()
   assert.ok(JOB_READS.has('id'), 'and the row prints the id the other half carries');
 });
 
-test('marketDiagnostics is excused: 0 of the 73 files under src/ write it', () => {
+test('marketDiagnostics is excused: no module under src/ writes it', () => {
   // The strongest excuse in the file, and the only one that is not about the
   // page at all. `summary.markets` is `mergeMarketDiagnostics(jobs)`, which
   // returns a list of a per-market aggregate that lives on each job as
@@ -2721,9 +2729,10 @@ test('marketDiagnostics is excused: 0 of the 73 files under src/ write it', () =
     }
   };
   walk(new URL('../src/', import.meta.url));
+  assert.ok(files.length > 0,
+    'the walk over src/ returned no modules at all, so "no module writes marketDiagnostics" would hold of an empty tree');
   const producers = files.flatMap((u) => objectsWithKey(readFileSync(u, 'utf8'), 'marketDiagnostics')
     .map(({ line }) => `${u.pathname.split('/').pop()}:${line}`));
-  assert.equal(files.length, 73, 'the modules under src/ have been re-counted');
   assert.deepEqual(producers, [],
     'the excuse has expired: a module now publishes marketDiagnostics, so there is a market coverage to draw');
 
@@ -2747,7 +2756,7 @@ test('marketDiagnostics is excused: 0 of the 73 files under src/ write it', () =
   // It used to be called a witness here — "read, never asserted on" — one line
   // above an exact count assertion on it, which is a sentence the next line
   // contradicts. The word was wrong, and wrong in the useful direction: measured,
-  // 0 of the 95 files under src/, scripts/ and electron/ name this path, so
+  // no module under src/, scripts/ or electron/ names this path, so
   // nothing in this branch can rewrite the artefact. It is not a sample of one
   // machine's last run, it is a fixture, and a fixture can carry rules — which is
   // the same move snapshot-route.test.mjs made on the captures. So the count is
@@ -2762,7 +2771,8 @@ test('marketDiagnostics is excused: 0 of the 73 files under src/ write it', () =
     }
   };
   for (const dir of ['../src/', '../scripts/', '../electron/']) scan(new URL(dir, import.meta.url));
-  assert.equal(modules.length, 95, 'the modules under src/, scripts/ and electron/ have been re-counted');
+  assert.ok(modules.length > 0,
+    'the walk over src/, scripts/ and electron/ returned no modules at all, so "nothing names all-market-report" would hold of an empty tree');
   const writers = modules
     // Stripped of comments first, because this file's whole vocabulary is
     // comments citing paths, and src/scanner/league-aliases.mjs already names

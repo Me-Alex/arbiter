@@ -22,8 +22,13 @@
   let eventDetailReqSeq = 0;
 
   // Denylist of scraper API/CDN/backend endpoints that are operationally not
-  // browseable event pages. Single source of truth: src/shared/event-url.mjs.
-  // Keep this copy in sync with that file — both define the same patterns.
+  // browseable event pages. This is the only definition of it in the product:
+  // there was a second one in src/shared/event-url.mjs, a server-side module no
+  // page ever fetches, and the two were tied together by a comment asking to keep
+  // them in sync. The tests now load the gate from below through
+  // test/helpers/event-url-gate.mjs, whose definitionsInShippedTree() fails if a
+  // second denylist or predicate appears anywhere under src/, public/,
+  // electron/ or scripts/.
   const API_URL_PATTERNS = [
     /nsoftcdn\.com/, /nsoft\.com/, /\/api\//, /\/api2\//,
     /getPalinsestoDelGiorno/, /\?companyUuid=/, /offerTemplate=/, /dataFormat=/,

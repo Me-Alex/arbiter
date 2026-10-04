@@ -17,14 +17,15 @@
 // value, and the set the file excused on the way past was itself wrong: it
 // excluded two books as "WebSocket-only", while their stored events carry real
 // per-event pages. What is left here is a measurement over the captures, through
-// the same gate the frontend calls. The gate is imported from
-// src/shared/event-url.mjs rather than copied: a denylist transcribed into a test
-// is a denylist that drifts from the file that decides.
+// the same gate the frontend calls. The gate is loaded from the modal itself
+// through test/helpers/event-url-gate.mjs rather than copied: a denylist
+// transcribed anywhere else is a denylist that drifts from the file that
+// decides, and this file's two versions did drift with no test able to see it.
 import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
-import { isEventUrl } from '../src/shared/event-url.mjs';
+import { isEventUrl } from './helpers/event-url-gate.mjs';
 
 const ROOT = join(import.meta.dirname, '..');
 const CAPTURE_DIR = join(ROOT, 'data-market-run/workspace');

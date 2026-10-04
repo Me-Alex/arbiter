@@ -9,8 +9,10 @@ import { extractFn } from './helpers/extract-fn.mjs';
 
 const ROOT = join(import.meta.dirname, '..');
 
-// Shared denylist from src/shared/event-url.mjs
-import { isEventUrl } from '../src/shared/event-url.mjs';
+// The gate, from the one file that defines it. See test/helpers/event-url-gate.mjs.
+import {
+  isEventUrl, definitionsInShippedTree, GATE_FILE, patternsSrc, fnSrc,
+} from './helpers/event-url-gate.mjs';
 
 const modalSrc = readFileSync(join(ROOT, 'public/js/pages/event-detail-modal.js'), 'utf8');
 
@@ -131,16 +133,14 @@ describe('engine eventUrl propagation', () => {
 
 // `buildFallbackFromLegs` asks `isEventUrl` before it renders a leg link, so an
 // extraction that left the predicate out failed with a ReferenceError instead of
-// testing anything. The gate comes out of the modal's own source rather than
-// being passed in from the import above: that import is what the denylist
-// describe block pins, while the modal keeps its own copy of the denylist, and
-// handing this the shared one would let the two drift with these tests agreeing
-// with each other.
-const gateFrom = modalSrc.indexOf('const API_URL_PATTERNS = [');
-if (gateFrom === -1) throw new Error('event-detail-modal.js no longer declares API_URL_PATTERNS');
-const gateTo = modalSrc.indexOf('];', gateFrom);
-if (gateTo === -1) throw new Error('API_URL_PATTERNS is declared but never closed');
-const GATE_SRC = modalSrc.slice(gateFrom, gateTo + 2);
+// testing anything. Both halves now come from the helper rather than from the
+// import above: the predicate reads API_URL_PATTERNS, so it cannot be handed in
+// alone, and the helper already holds the one slice of the modal that produces
+// them. Slicing a second copy here is what let a second denylist survive — this
+// file cut its own out of the modal while the describe block above imported
+// another one from src/shared/, each pinned to whichever it had, and the pair
+// outlived every comment claiming one was the source of truth.
+const GATE_SRC = `${patternsSrc}\n${fnSrc}`;
 
 const makeHelpers = () => ({
   paletteFor: () => ({ color: '#fff', bg: '#333', border: '#555' }),
@@ -152,7 +152,7 @@ const makeHelpers = () => ({
 });
 
 const loadFallback = () => new Function('helpers',
-  `${GATE_SRC}\n${extractFn('isEventUrl', modalSrc)}\n${extractFn('buildFallbackFromLegs', modalSrc)}\nreturn buildFallbackFromLegs;`)(makeHelpers());
+  `${GATE_SRC}\n${extractFn('buildFallbackFromLegs', modalSrc)}\nreturn buildFallbackFromLegs;`)(makeHelpers());
 
 describe('event-detail-modal fallback rendering', () => {
   it('buildFallbackFromLegs includes link icons when eventUrl present', () => {
@@ -198,5 +198,47 @@ describe('event-detail-modal fallback rendering', () => {
     const browseable = 'https://www.favbet.ro/ro/sports/event/fotbal/12345/';
     const ok = buildFallbackFromLegs({ ...withIt, legs: [{ ...withIt.legs[0], eventUrl: browseable }] }).sections.join('');
     assert.ok(ok.includes('book-link'), 'a browseable URL still gets its link icon');
+  });
+});
+
+// ── The gate is declared once ─────────────────────────────────────────────
+//
+// The denylist lived in two files at once — this modal, and a server-side module
+// under src/shared/ that no page ever fetches — with a comment on each telling
+// the reader to keep them in sync. Nothing measured that, so a rule added to one
+// of them changed nothing a bettor could see, and every test was pinned to
+// whichever copy it had reached for. These two are what turn the instruction into
+// a property: a second declaration anywhere in the shipped tree fails the suite
+// instead of waiting for a reader.
+
+describe('the URL gate is declared once in the shipped tree', () => {
+  // Written out here rather than imported from the helper: the helper's own
+  // root list is one of the things this is checking, and a list checked against
+  // itself passes whatever it is narrowed to. These four are the directories
+  // whose contents reach the user as code.
+  const SHIPPED_ROOTS = ['src', 'public', 'electron', 'scripts'];
+
+  it('the census reached every shipped root rather than reporting an empty tree', () => {
+    // No declarations found is the reading under which "exactly one" holds
+    // trivially, and a narrowed search looks exactly like an empty one. So the
+    // search is checked by where it went, not by how much it returned.
+    const { byRoot } = definitionsInShippedTree();
+    assert.deepEqual(
+      SHIPPED_ROOTS.map((root) => [root, byRoot[root] > 0]),
+      SHIPPED_ROOTS.map((root) => [root, true]),
+      `the census did not read every shipped root: ${SHIPPED_ROOTS.map((r) => `${r}=${byRoot[r]}`).join(', ')}`,
+    );
+  });
+
+  it('the denylist and the predicate are each declared once, in the file the page loads', () => {
+    const { defs } = definitionsInShippedTree();
+    const where = defs.map((d) => `${d.file}:${d.line} (${d.kind})`).join(', ');
+    // Asserted over file and kind, not line: a comment inserted above the
+    // denylist moves every line number here without anything having changed.
+    assert.deepEqual(
+      defs.map((d) => `${d.file} ${d.kind}`).sort(),
+      [`${GATE_FILE} denylist`, `${GATE_FILE} predicate`],
+      `the gate is declared more than once in the shipped tree — found: ${where}. Only ${GATE_FILE} is loaded by the page, so any other copy decides nothing it appears to decide`,
+    );
   });
 });
