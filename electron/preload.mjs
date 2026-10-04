@@ -19,7 +19,12 @@ contextBridge.exposeInMainWorld('arbiter', {
   onUpdateNotAvailable: (callback) => ipcRenderer.on('update-not-available', () => callback()),
   onUpdateDownloaded: (callback) => ipcRenderer.on('update-downloaded', (event, data) => callback(data)),
   onUpdateError: (callback) => ipcRenderer.on('update-error', (event, data) => callback(data)),
-  onUpdateProgress: (callback) => ipcRenderer.on('update-progress', (event, data) => callback(data)),
+  // There is deliberately no `onUpdateProgress`. It was here, listening to a
+  // channel nothing sends: electron/auto-update.mjs pushes four `update-*`
+  // events and a fifth (`update-checking`) from `checkForUpdates`, and progress
+  // was not among them. A subscriber to a channel with no sender reads as a
+  // wired feature and is not one. `test/ipc-surface.test.mjs` measures both
+  // directions and fails if a listener returns without a sender behind it.
   onUpdateChecking: (callback) => ipcRenderer.on('update-checking', () => callback()),
   /**
    * Show a desktop notification. Returns `{ ok, reason? }`; the client falls
@@ -28,5 +33,3 @@ contextBridge.exposeInMainWorld('arbiter', {
    */
   notify: (payload) => ipcRenderer.invoke('arbiter:notify', payload),
 });
-
-ipcRenderer.on('arbiter:noop', () => {});

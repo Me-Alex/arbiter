@@ -76,6 +76,20 @@ function buildAppMenu() {
           click: () => restartServer(),
         },
         { type: 'separator' },
+        // The two halves of the updater, called in the main process exactly the
+        // way `Restart server` above is: the capability lives here and the menu
+        // is its front end, so the renderer needs no bridge for either. They sit
+        // on the same list as the restart because they are the same kind of
+        // thing — something the operator triggers on purpose.
+        {
+          label: 'Check for updates',
+          click: () => checkForUpdates(mainWindow),
+        },
+        {
+          label: 'Install update and restart',
+          click: () => installUpdate(mainWindow),
+        },
+        { type: 'separator' },
         { role: isMac ? 'close' : 'quit' },
       ],
     },
@@ -106,7 +120,7 @@ function buildAppMenu() {
           click: () => dialog.showMessageBox({
             type: 'info',
             title: 'Arbiter',
-            message: 'Arbiter',
+            message: `Arbiter ${getVersion()}`,
             detail: 'Local-first sports arbitrage scanner for Romanian bookmakers.',
           }),
         },
@@ -124,15 +138,28 @@ function createWindow() {
     show: false,
     title: 'Arbiter',
     webPreferences: {
-      preload: join(__dirname, 'preload.mjs'),
       contextIsolation: true,
       nodeIntegration: false,
       sandbox: false,
     },
   });
 
+  // The preload belongs HERE and not on the window above. `mainWindow` is a
+  // frame that holds a BrowserView and loads no page of its own, so a preload
+  // on it never runs; the app runs in `browserView`, which is why Reload,
+  // DevTools and `restartServer` below all address `browserView.webContents`
+  // rather than `mainWindow.webContents`.
+  //
+  // With the preload on the wrong surface `window.arbiter` is undefined in the
+  // page, and the first rung of the alert ladder (public/js/alerts.js) silently
+  // never fires: it asks the main process for a desktop notification, gets
+  // nothing back, and degrades a rung down with no error anywhere. The
+  // capability was there the whole time. `restartServer` reloading the view is
+  // the proof that the two surfaces were already known to be different; the
+  // preload just was not moved with it.
   browserView = new BrowserView({
     webPreferences: {
+      preload: join(__dirname, 'preload.mjs'),
       contextIsolation: true,
       nodeIntegration: false,
       sandbox: false,
@@ -187,6 +214,13 @@ ipcMain.handle('arbiter:installUpdate', () => {
 ipcMain.handle('arbiter:getVersion', () => {
   return { version: getVersion() };
 });
+
+// `preload.quit` sends this one, and nothing answered it: the six `handle`
+// calls above are the whole list, so a renderer calling `window.arbiter.quit()`
+// fired a message into a channel with no listener and nothing happened. The
+// menu's `{ role: quit }` covers the operator, which is why this went unnoticed
+// — but the bridge is exposed, so it is either answered or absent.
+ipcMain.on('arbiter:quit', () => app.quit());
 
 /**
  * Desktop notifications, asked for by the alert client in the renderer.
@@ -252,8 +286,11 @@ app.whenReady().then(async () => {
   buildAppMenu();
   createWindow();
   
-  // Initialize auto-updater
-  initAutoUpdater(mainWindow);
+  // Initialize auto-updater. The window parents the install dialog; the
+  // BrowserView's webContents is what actually renders the app, so it is the
+  // target the `update-*` pushes must go to. Passing the window for both is
+  // how they ended up on a surface with no listener.
+  initAutoUpdater(mainWindow, (channel, payload) => browserView?.webContents.send(channel, payload));
   
   browserView.webContents.loadURL(URL);
 });

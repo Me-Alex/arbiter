@@ -237,5 +237,37 @@
     }
   }
 
+  /**
+   * Say what the desktop updater is doing, on whichever page is open.
+   *
+   * The updater runs in the main process and pushes five `update-*` events
+   * (electron/auto-update.mjs). Before this, every one of them arrived with
+   * nobody listening: the page has no update UI at all, so the operator found
+   * out an update had been downloaded and was waiting to be installed by
+   * noticing that nothing had changed. Four of the five say something; the
+   * fifth — `update-not-available` — deliberately says nothing, because
+   * "nothing to install" is the absence of news and a toast for it would train
+   * the operator to dismiss toasts.
+   *
+   * A browser tab has no `window.arbiter` and no main process behind it, so
+   * this returns on the first line and costs the tab nothing.
+   */
+  function watchUpdates() {
+    const bridge = window.arbiter;
+    if (!bridge || typeof bridge.onUpdateAvailable !== 'function') return;
+    const t = (key) => (window.arbiterI18n ? window.arbiterI18n.t(key) : key);
+    const say = (message, type, duration) => {
+      if (typeof window.showToast === 'function') window.showToast(message, type, { duration });
+    };
+    bridge.onUpdateChecking(() => say(t('updateChecking'), 'info', 2500));
+    bridge.onUpdateAvailable((info) => say(t('updateAvailable').replace('{version}', String((info && info.version) || '')), 'info', 6000));
+    bridge.onUpdateDownloaded((info) => say(t('updateReady').replace('{version}', String((info && info.version) || '')), 'success', 8000));
+    bridge.onUpdateError((err) => say(t('updateFailed').replace('{error}', String((err && err.error) || t('failedShort'))), 'error', 6000));
+    // Subscribed, and deliberately silent: the main process says this when the
+    // check found nothing, and the right answer to that is no toast at all.
+    bridge.onUpdateNotAvailable(() => {});
+  }
+  watchUpdates();
+
   window.arbiterApp = { mount };
 })();
