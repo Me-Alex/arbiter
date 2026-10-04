@@ -52,6 +52,10 @@ const routerSource = codeOnly(readText('src/router.mjs'), true);
 const orchestratorSource = codeOnly(readText('src/scrape-orchestrator.mjs'), true);
 const sanitizeSource = codeOnly(readText('src/shared/sanitize.mjs'), true);
 const serviceSource = codeOnly(readText('src/scraper-service.mjs'), true);
+// The scraper's own error envelope. Nothing here imports it — it is read as text,
+// like the rest of the producers, because the object it returns is what the
+// state route publishes and that route serves `scrapeState` unsanitized.
+const baseSource = codeOnly(readText('src/scrapers/base.mjs'), true);
 
 /* ── instruments ───────────────────────────────────────────────────────────── */
 
@@ -72,7 +76,9 @@ function functionWindow(source, name) {
   const lines = source.split(/\r?\n/);
   // The signature may carry parameters — `profileLabel(profile, t)` does — so the
   // match is on the name and the opening paren, not on an empty parameter list.
-  const start = lines.findIndex((line) => new RegExp(`^function ${name}\\(`).test(line));
+  // `async` is allowed because `refreshLastRun` is declared that way, and the cut
+  // has to reach the same body it always did.
+  const start = lines.findIndex((line) => new RegExp(`^(?:async\\s+)?function ${name}\\(`).test(line));
   if (start === -1) throw new Error(`scrape.js no longer declares a top-level function ${name}()`);
   const end = lines.findIndex((line, i) => i > start && line === '}');
   if (end === -1) throw new Error(`${name}() has no lone } in column 0 — the body cut would run away`);
@@ -85,6 +91,15 @@ const APPLY_PROFILE = functionWindow(scrapeCode, 'applyProfile');
 const APPLY_PROFILE_HINT = functionWindow(scrapeCode, 'applyProfileHint');
 const SPORT_GATE = functionWindow(scrapeCode, 'jobMatchesSport');
 const PROMOTION_GATE = functionWindow(scrapeCode, 'passesPromotionGate');
+// The two job tables of the same panel, cut apart. `refreshJobRows` draws
+// `state.jobs` and `refreshLastRun` draws `run.jobs`, and both bind the row as
+// `j` — so the shared receiver the rest of this census reads cannot tell a read
+// on one route from a read on the other. It is the error object where that
+// matters: the two tables disagreed about it, so a union would have credited the
+// run table's read of `name` to the state table, which is the exact field the
+// state table did not read.
+const JOB_ROWS = functionWindow(scrapeCode, 'refreshJobRows');
+const RUN_ROWS = functionWindow(scrapeCode, 'refreshLastRun');
 
 /**
  * The keys of the object one route sends, read off the router rather than off a
@@ -249,6 +264,55 @@ function producedRunJobKeys() {
 }
 
 /**
+ * The keys of the error object on a STATE job row, from the producer that builds it.
+ *
+ * This is the gap the census had. `error` was a leaf for `keysOfRows`, because
+ * every stored row carries `error: null` and the walk descends one level only —
+ * so a five-field object went uncounted on both routes, and the census reported
+ * the two tables of the scrape panel as reading a field called `error`.
+ *
+ * The shape comes from `_shapeError` (src/scrapers/base.mjs), for the same reason
+ * `sanitizeReport`'s literal is the shape over on the run row: the state route
+ * serves `orchestrator.scrapeState` unsanitized (src/router.mjs) and both folds
+ * that fill a row copy `result.error` and `rj.error` by reference
+ * (src/scrape-orchestrator.mjs), so what the page receives is exactly what this
+ * literal returned. Measured: the route's own expression is a pass-through, with
+ * no sanitizer on it.
+ */
+function producedStateErrorKeys() {
+  const lines = baseSource.split(/\r?\n/);
+  const start = lines.findIndex((l) => /^\s*_shapeError\(err\)\s*\{\s*$/.test(l));
+  if (start === -1) throw new Error('src/scrapers/base.mjs no longer declares _shapeError');
+  const end = lines.findIndex((l, i) => i > start && /^\s*\};\s*$/.test(l));
+  if (end === -1) throw new Error('_shapeError has no closing line of its own — the cut would run away');
+  // `[ ]{4,}` rather than `\s{4,}`: `\s` matches the newline, so a count that
+  // crossed a line boundary would credit a key to the wrong declaration.
+  const keys = [...lines.slice(start + 1, end).join('\n').matchAll(/^[ ]{4,}(\w+):/gm)].map((m) => m[1]);
+  if (keys.length < 3) throw new Error(`_shapeError yielded ${keys.length} keys — the cut moved`);
+  return keys.sort();
+}
+
+/**
+ * The keys of the error object on a RUN job row: the same measurement taken on
+ * the other producer.
+ *
+ * Two routes, two shapes, and the difference is not a preference — the run row
+ * goes through `sanitizeReport` and the state row does not. That is why `code` and
+ * `status` are listed on one and absent from the other, and why the exemptions
+ * below are written per route rather than once for `error`.
+ */
+function producedRunErrorKeys() {
+  const lines = sanitizeSource.split(/\r?\n/);
+  const start = lines.findIndex((l) => /^\s*error:\s*\w+\.error\s*\?\s*\{\s*$/.test(l));
+  if (start === -1) throw new Error('sanitizeReport no longer rebuilds a job row error from a literal');
+  const end = lines.findIndex((l, i) => i > start && /^\s*\}\s*:\s*null,?\s*$/.test(l));
+  if (end === -1) throw new Error('the job error literal has no closing line of its own — the cut would run away');
+  const keys = [...lines.slice(start + 1, end).join('\n').matchAll(/^[ ]{4,}(\w+):/gm)].map((m) => m[1]);
+  if (keys.length < 2) throw new Error(`the job error literal yielded ${keys.length} keys — the cut moved`);
+  return keys.sort();
+}
+
+/**
  * The union of the keys of every element of `arr`, or a marker for the two shapes
  * that are not object rows.
  *
@@ -397,6 +461,21 @@ const STATE_SUMMARY = ['completed', 'events', 'failed', 'markets'];
  * one `WHY` paragraph behind it.
  */
 const RUN_JOB = ['durationMs', 'error', 'events', 'id', 'name', 'sourceIds', 'status', 'valid'];
+
+/**
+ * The error object on a state job row, and the run row's beside it.
+ *
+ * Two lists because the two routes have two producers: the state row is served
+ * raw from `_shapeError` and the run row is rebuilt by `sanitizeReport`, which
+ * drops `code` and `status`. `code` is therefore read on one route and published
+ * on the other, which is the fact `refreshJobRows`'s comment leans on when it
+ * keeps `|| j.error.code` at the end of its chain.
+ *
+ * These five keys and those three were outside the census entirely while `error`
+ * was a leaf, so nothing here had a verdict.
+ */
+const STATE_JOB_ERROR = ['code', 'field', 'message', 'name', 'status'];
+const RUN_JOB_ERROR = ['field', 'message', 'name'];
 
 /* ── who reads what ────────────────────────────────────────────────────────── */
 
@@ -653,6 +732,29 @@ const runReads = () => new Set([...fieldsOn(scrapeCode, 'run'), ...fieldsOn(scra
  */
 const jobRowReads = () => new Set([...fieldsOn(scrapeCode, 'j'), ...fieldsOn(scrapeCode, 'job')]);
 
+/**
+ * The error object's own fields, read inside one table's body.
+ *
+ * `fieldsOn` returns the first segment of a dotted read, so it answers `error`
+ * and stops. This asks for the second: `j.error.message` is a read of `message`
+ * and `j.error` on its own is not. Both tables also test `typeof j.error ===
+ * 'string'`, which is a shape check and must not be counted as a field read — the
+ * anchor requires a dot and a name after it, so that line contributes nothing.
+ *
+ * The `j` anchor is the reason this takes a window and not the whole page. Both
+ * tables bind `j`, and so does `renderRequoteProgress` — on a different payload,
+ * the per-book requote result, which is neither of these two routes.
+ */
+const errorFieldsOn = (window, receiver) => [...new Set(
+  [...window.matchAll(new RegExp(`\\b${receiver}\\.error\\.(\\w+)`, 'g'))].map((m) => m[1]),
+)].sort();
+
+/** `/api/scrape/state`'s error object: read by the live job table only. */
+const stateErrorReads = () => new Set(errorFieldsOn(JOB_ROWS, 'j'));
+
+/** `/api/scrape-run`'s error object: read by the run-report table only. */
+const runErrorReads = () => new Set(errorFieldsOn(RUN_ROWS, 'j'));
+
 /* ── the exempt list, every reason measured ────────────────────────────────── */
 
 /** Route labels, spelled once so a key and its census cannot drift apart. */
@@ -663,6 +765,12 @@ const R_STATE_JOB = 'GET /api/scrape/state · job';
 const R_STATE_OPTIONS = 'GET /api/scrape/state · options';
 const R_STATE_SUMMARY = 'GET /api/scrape/state · summary';
 const R_RUN_JOB = 'GET /api/scrape-run · job';
+// The error object is censused on its own, under its own label, because the
+// producer differs per route and an exemption written about one of them would
+// otherwise be borrowed onto the other. That is the `sourceIds` lesson again:
+// the route has to be part of the key before two rows can both be true.
+const R_STATE_ERROR = 'GET /api/scrape/state · job.error';
+const R_RUN_ERROR = 'GET /api/scrape-run · job.error';
 
 /**
  * The reasons, written once each. An entry's rule is that it names a
@@ -825,6 +933,44 @@ const WHY = {
   // here, so `WHY.options` was dead weight that still read like a live argument.
   // An unreferenced reason is worse than none: the next author would have read it
   // as the standing justification for the gap it describes.
+
+  // The next two are the error object's own fields, and they are the first
+  // exemptions here written about a field nobody had looked at: `error` was a
+  // leaf, so its five keys were outside the census until this lot gave them their
+  // own rows. That is also why these two read differently from the rest of the
+  // table. Every reason above answers "why is this field not drawn", and this one
+  // answers a sharper question — would drawing it say anything the sentence above
+  // it does not already say — because the answer decides whether connecting it
+  // helps or only lengthens the row.
+  errorField: [
+    'A machine-readable restatement of the sentence beside it, measured site by',
+    'site over the 14 places under src/ that set one — 12 with a literal value and',
+    '2 propagating an inner error\'s field. At 6 of the 12 the literal is inside',
+    'the message (id, eventKey, events four times); at the other 6 it is the same',
+    'fact in other words — `response.size` on "response exceeds 1.0 MB",',
+    '`competitors` on "event missing teams", `markets.selections.odds` on',
+    '"selection has invalid odds". A path built for a machine to match on is not a',
+    'second thing to show a person already reading the sentence that carries it.',
+    'The two propagating sites are the wrapper that re-throws an inner error\'s',
+    'field, one in src/scrapers/base.mjs and one in src/scrapers/altenar-provider.mjs,',
+    'and they need no separate paragraph: the inner error they wrap is a',
+    'ValidationError, whose message is one of the six above. The control below',
+    're-derives the count, because this is the number that would overturn it.',
+  ].join(' '),
+
+  errorStatus: [
+    'The HTTP status the message already spells out, measured site by site over',
+    'the 10 places under src/ that set one: at 9 of them the message carries the',
+    'same value — interpolated, as `NSoft: HTTP ${response.status}` does, or as the',
+    'digits of `rate limited (429)` at src/scrapers/base.mjs. The tenth is',
+    'src/scrapers/everymatrix-wamp.mjs, which rejects a dealer protocol frame as',
+    '502 and says only `dealer {...}`; everymatrix is not among the 26 ids in',
+    'config/scrapers.json, so no job row this page draws can carry it, and the',
+    'control below checks both halves — that the exception is still the only one,',
+    'and that no WAMP job appeared to make it reachable. Scoped to the state route:',
+    'the run route does not publish `status` at all, and says nothing about `code`',
+    'beside it, which that route drops and this one reads.',
+  ].join(' '),
 };
 
 /**
@@ -862,6 +1008,15 @@ const UNREAD_BY_DESIGN = {
   [`${R_STATE_SUMMARY} › markets`]: WHY.markets,
   [`${R_RUN_JOB} › sourceIds`]: WHY.runSourceIds,
   [`${R_RUN_JOB} › valid`]: WHY.valid,
+  // `errorField` covers two routes on purpose: the claim is one claim about one
+  // field — both routes publish the same `_shapeError` literal, the run one
+  // through `sanitizeReport` — so there is nothing per-route to keep apart. The
+  // rule that forbids sharing is about fields whose facts DIFFER per route, and
+  // `status` is the one where they do, which is why it is written once and only
+  // against the route that publishes it.
+  [`${R_STATE_ERROR} › field`]: WHY.errorField,
+  [`${R_STATE_ERROR} › status`]: WHY.errorStatus,
+  [`${R_RUN_ERROR} › field`]: WHY.errorField,
 };
 
 /* ── the censuses ──────────────────────────────────────────────────────────── */
@@ -893,6 +1048,13 @@ const CENSUS = [
   { label: R_STATE_OPTIONS, published: producedOptionKeys().map((k) => `options.${k}`), pinned: STATE_OPTIONS, reads: optionsReads },
   { label: R_STATE_SUMMARY, published: producedSummaryKeys(), pinned: STATE_SUMMARY, reads: summaryReads },
   { label: R_RUN_JOB, published: producedRunJobKeys(), pinned: RUN_JOB, reads: runReads },
+  // The error object, on its own rows and under its own labels. Splitting the two
+  // tables is what makes these two censuses say something: both bind the row as
+  // `j`, so a shared receiver would report the run table's read of `name` as a
+  // read on the state table too, and the state table is precisely the one that
+  // did not read it until this lot connected it.
+  { label: R_STATE_ERROR, published: producedStateErrorKeys(), pinned: STATE_JOB_ERROR, reads: stateErrorReads },
+  { label: R_RUN_ERROR, published: producedRunErrorKeys(), pinned: RUN_JOB_ERROR, reads: runErrorReads },
 ];
 
 /* ── the tests ─────────────────────────────────────────────────────────────── */
@@ -1239,4 +1401,142 @@ test('the census instruments are the ones they claim to be', () => {
     'and no shipped profile reaches it — every one carries a mode');
   assert.ok(PROFILES.profiles.every((p) => typeof p.description === 'string' && p.description),
     'every shipped profile still carries the sentence the hint shows');
+});
+
+/* ── the error object's own fields, and the measurements behind the exemptions ── */
+
+/** Every `.mjs` under src/, comments blanked — a `throw` in a comment is not a site. */
+function srcSources() {
+  const out = [];
+  const walk = (dir) => {
+    for (const entry of readdirSync(join(ROOT, dir), { withFileTypes: true })) {
+      if (entry.name === 'node_modules' || entry.name === '.git') continue;
+      const rel = `${dir}/${entry.name}`;
+      if (entry.isDirectory()) walk(rel);
+      else if (entry.name.endsWith('.mjs')) out.push(rel);
+    }
+  };
+  walk('src');
+  return out.map((rel) => [rel, codeOnly(readText(rel), true)]);
+}
+
+/** The text between the parens of a call that starts at `open`, up to its match. */
+function argList(src, open) {
+  let depth = 0;
+  for (let i = open; i < src.length; i += 1) {
+    if (src[i] === '(') depth += 1;
+    else if (src[i] === ')') {
+      depth -= 1;
+      if (depth === 0) return src.slice(open + 1, i);
+    }
+  }
+  return null;
+}
+
+/**
+ * Every `throw new X(` in src/, with the class, the message and the option object.
+ *
+ * `message` is the first quoted literal in the argument list, and it is null when
+ * there is none — a site whose message is built before the throw is reported as
+ * unparsed rather than silently counted as agreeing with its own field, which is
+ * what a guess would have done. `opts` is the LAST brace group, because the
+ * convention at every one of these sites is `(message, { ...options })`.
+ */
+function throwSites() {
+  return constructionSites(/throw\s+new\s+([A-Za-z_$][\w$]*)\s*\(/g);
+}
+
+/**
+ * Every capitalised construction in src/, thrown or not.
+ *
+ * A throw-only scan is the wrong instrument for `status`, and it was the wrong one
+ * the first time this was measured: of the ten places that set one, two are not
+ * throws. `base.mjs` builds `const err = new UpstreamError(...429...)` and
+ * `everymatrix-wamp.mjs` builds `finish(reject, new UpstreamError(...502...))`.
+ * A scanner that looks only at `throw` reports eight sites, which makes the
+ * single exception the reason is written around invisible — and an excuse whose
+ * exception the instrument cannot see is not a checked excuse. So the wider
+ * pattern, and the class list is filtered back to what is actually thrown.
+ */
+function constructionSites(pattern) {
+  const out = [];
+  for (const [rel, src] of srcSources()) {
+    for (const m of src.matchAll(pattern)) {
+      const args = argList(src, m.index + m[0].length - 1);
+      if (!args) continue;
+      const msg = args.match(/(['"`])([\s\S]*?)\1/);
+      const groups = args.match(/\{[^}]*\}/g);
+      out.push({ rel, cls: m[1], msg: msg ? msg[2] : null, opts: groups ? groups[groups.length - 1] : '' });
+    }
+  }
+  return out;
+}
+
+const allErrorSites = () => constructionSites(/\bnew\s+([A-Z][\w$]*)\s*\(/g);
+
+/**
+ * The exemptions on the error object rest on three numbers, and this re-derives
+ * all three from the source rather than trusting the paragraphs.
+ *
+ * The paragraphs are allowed to state a measurement — that is the rule this file
+ * holds every reason to — but a stated measurement is prose until something
+ * recomputes it, and a reason that goes stale is worse than no reason: it keeps
+ * its exemption while the world it described has moved. So each claim below is
+ * checked against the tree, and each failure names the paragraph it invalidates.
+ *
+ * The three are deliberately different kinds of claim. `field` and `status` are
+ * claims about redundancy, and redundancy is a floor — a new site that restates
+ * its message does not weaken the reason, so those two are floors and not
+ * equalities. `name` is a claim of absence, and absence has no floor: one site
+ * whose message names its own class would make the field decorative, which is
+ * the one thing it is exempt-free for.
+ */
+test('the error-field measurements the exemptions rest on are still this tree\'s', () => {
+  const thrown = throwSites();
+  assert.ok(thrown.length > 50,
+    `only ${thrown.length} throw sites found under src/ — the parser lost the tree, and the measurement below would be read off an empty set`);
+
+  // WHY.errorField: the field restates its own message.
+  const fieldSites = allErrorSites().filter((s) => /\bfield:\s*(?:'([^']*)'|"([^"]*)")/.test(s.opts));
+  assert.ok(fieldSites.length >= 10,
+    `only ${fieldSites.length} sites set a literal \`field\` — WHY.errorField counts 14 places and this one moved`);
+  const withLiteral = fieldSites.filter((s) => {
+    const lit = s.opts.match(/\bfield:\s*(?:'([^']*)'|"([^"]*)")/);
+    return s.msg !== null && s.msg.includes(lit[1] ?? lit[2]);
+  });
+  // The other six restate the field in other words, which no regex can see —
+  // `response.size` on "response exceeds 1.0 MB", `competitors` on "event
+  // missing teams". So this is a floor on the half that IS mechanical, and the
+  // floor is what fails if an adapter starts setting a field its message does not
+  // carry either way.
+  assert.ok(withLiteral.length >= 6,
+    `only ${withLiteral.length} of ${fieldSites.length} \`field\` sites carry the literal inside their message — re-read WHY.errorField, which counts six of each kind`);
+
+  // WHY.errorStatus: the status is in the message at all but one site.
+  const statusSites = allErrorSites().filter((s) => /\bstatus:\s*[^,}]/.test(s.opts));
+  assert.ok(statusSites.length >= 9,
+    `only ${statusSites.length} sites set a \`status\` — WHY.errorStatus counts 10 and this one moved`);
+  const inMessage = statusSites.filter((s) => {
+    const value = s.opts.match(/\bstatus:\s*([^,}]+)/)[1].trim();
+    // A literal status reaches the message as its digits; a computed one only if
+    // the message interpolates the same expression.
+    return s.msg !== null && s.msg.includes(value);
+  });
+  const silent = statusSites.filter((s) => !inMessage.includes(s));
+  assert.deepEqual(silent.map((s) => `${s.rel}: ${s.opts.match(/\bstatus:\s*([^,}]+)/)[1].trim()}`),
+    [`src/scrapers/everymatrix-wamp.mjs: 502`],
+    'the set of `status` sites whose message does not carry the status changed — WHY.errorStatus allows exactly one and names it');
+
+  // …and that one cannot reach a row, which is the measurement that closes it.
+  const ids = SCRAPERS.jobs.map((j) => j.id);
+  assert.ok(!ids.some((id) => /wamp/i.test(id)),
+    'a WAMP job is configured now, so the everymatrix site is reachable and WHY.errorStatus must be re-measured');
+
+  // Why `name` is connected rather than excused: no message names its own class.
+  const classes = new Set(thrown.map((s) => s.cls));
+  assert.ok(classes.size >= 2,
+    `only ${classes.size} error class is thrown under src/ — with one class \`name\` says nothing, and refreshJobRows prints it for nothing`);
+  const selfNaming = thrown.filter((s) => s.msg !== null && new RegExp(`\\b${s.cls}\\b`).test(s.msg));
+  assert.deepEqual(selfNaming.map((s) => `${s.rel}: ${s.cls}`), [],
+    'a throw site now names its own error class in the message — `name` has become decoration, and the two job tables print it for nothing');
 });

@@ -910,9 +910,26 @@ function refreshJobRows() {
     // `error` arrives as an object from the batch envelope but as a plain
     // string from some state payloads; `j.error.message` on a string renders
     // nothing at all, so the failure reason silently disappeared.
+    //
+    // The class leads, in the shape the run table further down this file
+    // already uses (`refreshLastRun`), because the two tables of this panel draw
+    // the same book and used to describe the same failure two ways — one as
+    // "upstream: ...", the other as the bare sentence. It is the one field of
+    // the error object that no message in this tree repeats: the throw-site
+    // census in test/field-census.test.mjs counts the classes this tree actually
+    // throws and finds that not one message names the class it came from, so
+    // `ValidationError` against `UpstreamError` is the difference between "our
+    // parser rejected the payload" and "their server failed" — which is what
+    // the operator does next with the row.
+    //
+    // `code` stays in the chain, after the message and not instead of it. This
+    // route publishes it (`_shapeError`, src/scrapers/base.mjs) and the run
+    // route does not, so this table is its only reader and dropping the field
+    // would leave it published to nobody.
     const errorText = !j.error
       ? ''
-      : typeof j.error === 'string' ? j.error : (j.error.message || j.error.code || '');
+      : typeof j.error === 'string' ? j.error
+        : [j.error.name, j.error.message || j.error.code].filter(Boolean).join(': ');
     // The book's own name above its id, not the id alone. Every other surface
     // on this page names its books — the chips, the scheduler's list, the live
     // poll's list — so this table was the one place an operator had to read a
