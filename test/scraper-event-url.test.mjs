@@ -1,115 +1,115 @@
-// Contract test: every scraper's extractEvents output must carry a per-event
-// browseable sourceUrl so the event-detail modal can render a link icon.
-// See the event-link feature in public/js/pages/event-detail-modal.js.
+// What a scraper's events actually carry as `sourceUrl`, and whether that value
+// is something a bettor can be sent to. See the event-link feature in
+// public/js/pages/event-detail-modal.js.
+//
+// This file used to assert a contract it could not see. It claimed every scraper
+// emits "a per-event browseable sourceUrl", then checked two things. The first
+// looked for the text `sourceUrl:` inside the function body — the key's
+// presence standing in for its value. The second checked that any hardcoded
+// `https://` literal inside that body is browseable, and it had nothing to check:
+// across every `sourceUrl` assignment in every `extractEvents` in the tree, not
+// one takes the value from an http literal. They all take it from a variable —
+// `this.sourceUrl`, `this.baseUrl`, `directUrl` — which is the endpoint the
+// capture was pulled from. A census over zero entries reports zero and calls it
+// a finding.
+//
+// So the second check was vacuous and the first measured the key rather than its
+// value, and the set the file excused on the way past was itself wrong: it
+// excluded two books as "WebSocket-only", while their stored events carry real
+// per-event pages. What is left here is a measurement over the captures, through
+// the same gate the frontend calls. The gate is imported from
+// src/shared/event-url.mjs rather than copied: a denylist transcribed into a test
+// is a denylist that drifts from the file that decides.
 import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
+import { isEventUrl } from '../src/shared/event-url.mjs';
 
 const ROOT = join(import.meta.dirname, '..');
-const SCRAPERS_DIR = join(ROOT, 'src/scrapers');
+const CAPTURE_DIR = join(ROOT, 'data-market-run/workspace');
 
-// Denylist of scraper IDs that legitimately have no browseable event page.
-const EXCLUDED_FROM_EVENT_URL = new Set([
-  'tennis', 'basketball', 'ice-hockey', 'volleyball', 'handball', // generic sport scrapers
-  'contibet', 'getsbet', // EveryMatrix WAMP — WebSocket-only
-  'mozzartbet', // extractEvents returns [] until odds endpoint validated
-]);
-
-// Patterns the frontend isEventUrl() rejects
-const API_PATTERNS = [
-  /nsoftcdn\.com/, /nsoft\.com/, /\/api\//, /\/api2\//,
-  /getPalinsestoDelGiorno/, /\?companyUuid=/, /offerTemplate=/, /dataFormat=/,
-  /freetls\.fastly\.net/, /efortuna\.ro\/offer/, /sportify\.bet/,
-  /gambling-solutions\.ro/, /service\/lineout/,
-];
-
-function isBrowseableEventUrl(url) {
-  if (!url || typeof url !== 'string') return false;
-  if (!url.startsWith('http://') && !url.startsWith('https://')) return false;
-  return !API_PATTERNS.some((re) => re.test(url));
-}
-
-// Only test actual scraper files (skip base, helpers, index)
-const scraperFiles = readdirSync(SCRAPERS_DIR)
-  .filter((f) => f.endsWith('.mjs') && !f.startsWith('_') && !['base.mjs', 'index.mjs', 'provider-contract.mjs'].includes(f))
-  .map((f) => ({ id: f.replace('.mjs', ''), src: readFileSync(join(SCRAPERS_DIR, f), 'utf8') }));
-
-describe('scraper per-event sourceUrl contract', () => {
-  for (const { id, src } of scraperFiles) {
-    it(`${id}: emits browseable per-event sourceUrl`, { skip: EXCLUDED_FROM_EVENT_URL.has(id) ? `${id} excluded (generic/WAMP/placeholder)` : undefined }, () => {
-      // Find extractEvents or _serializable function and verify sourceUrl is set
-      const hasExtractEvents = /extractEvents\s*\(/.test(src);
-      const hasSerializable = /_serializable\s*\(/.test(src);
-
-      if (!hasExtractEvents && !hasSerializable) return; // skip pure helpers
-
-      // Extract function bodies that push events
-      let fnBody = '';
-      if (hasExtractEvents) {
-        const fnStart = src.indexOf('extractEvents(');
-        if (fnStart !== -1) {
-          let depth = 0;
-          let fnEnd = src.indexOf('{', fnStart);
-          for (let i = fnEnd; i < src.length; i++) {
-            if (src[i] === '{') depth++;
-            else if (src[i] === '}') { depth--; if (depth === 0) { fnEnd = i + 1; break; } }
-          }
-          fnBody += src.slice(fnStart, fnEnd);
-        }
-      }
-      if (hasSerializable) {
-        const fnStart = src.indexOf('_serializable(');
-        if (fnStart !== -1) {
-          let depth = 0;
-          let fnEnd = src.indexOf('{', fnStart);
-          for (let i = fnEnd; i < src.length; i++) {
-            if (src[i] === '{') depth++;
-            else if (src[i] === '}') { depth--; if (depth === 0) { fnEnd = i + 1; break; } }
-          }
-          fnBody += src.slice(fnStart, fnEnd);
-        }
-      }
-
-      // Verify sourceUrl is assigned somewhere
-      const hasSourceUrl = /\bsourceUrl\s*:/.test(fnBody);
-      assert.ok(
-        hasSourceUrl,
-        `${id} must set sourceUrl on event objects in extractEvents or _serializable`,
-      );
+/** What the stored captures say, per book. */
+function censusCaptures() {
+  const files = readdirSync(CAPTURE_DIR).filter((f) => f.endsWith('_events.json'));
+  const books = [];
+  for (const file of files) {
+    const doc = JSON.parse(readFileSync(join(CAPTURE_DIR, file), 'utf8'));
+    const events = doc.events || [];
+    const urls = new Set(
+      events.map((e) => (typeof e.sourceUrl === 'string' && e.sourceUrl.trim() ? e.sourceUrl : null)),
+    );
+    books.push({
+      id: doc.sourceId || file.replace('_events.json', ''),
+      events: events.length,
+      withUrl: events.filter((e) => typeof e.sourceUrl === 'string' && e.sourceUrl.trim()).length,
+      urls,
     });
   }
-});
+  return books;
+}
 
-describe('all hardcoded event URLs are browseable', () => {
-  it('static analysis: per-event URLs in extractEvents pass isEventUrl', () => {
-    for (const { id, src } of scraperFiles) {
-      if (EXCLUDED_FROM_EVENT_URL.has(id)) continue;
+describe('what the stored captures carry as sourceUrl', () => {
+  const books = censusCaptures();
+  const floor = `measured over ${books.length} stored captures —`;
 
-      // Find extractEvents function body
-      const fnStart = src.indexOf('extractEvents(');
-      if (fnStart === -1) continue;
-      let depth = 0;
-      let fnEnd = src.indexOf('{', fnStart);
-      for (let i = fnEnd; i < src.length; i++) {
-        if (src[i] === '{') depth++;
-        else if (src[i] === '}') { depth--; if (depth === 0) { fnEnd = i + 1; break; } }
-      }
-      const fnBody = src.slice(fnStart, fnEnd);
+  it('the census read the captures rather than reporting an empty set', () => {
+    // A count over a missing or renamed directory is 0, and 0 is the value that
+    // makes every claim below true. The pass has to have read something first.
+    assert.ok(books.length >= 20, `${floor} only ${books.length} captures were read`);
+    const events = books.reduce((a, b) => a + b.events, 0);
+    assert.ok(events > 1000, `${floor} the captures hold ${events} events in total`);
+  });
 
-      // Find all hardcoded https URLs (not in template literals for directUrl construction)
-      const urlRegex = /https?:\/\/[^\s'"`,)]+/g;
-      let match;
-      while ((match = urlRegex.exec(fnBody)) !== null) {
-        const url = match[0];
-        // Skip URLs used to construct dynamic URLs (e.g., `https://${domain}/...`)
-        const lineStart = fnBody.lastIndexOf('\n', match.index);
-        const line = fnBody.slice(lineStart, fnBody.indexOf('\n', match.index));
-        assert.ok(
-          isBrowseableEventUrl(url),
-          `${id} URL "${url}" must be a browseable event page`,
-        );
-      }
-    }
+  it('a book publishes a URL on all of its events or on none of them', () => {
+    // This is the property the old file could not check, and it is what makes
+    // "per event" mean anything: a URL on some rows of a book would be a
+    // per-event URL, and every count here would need re-deriving.
+    const partial = books.filter((b) => b.events > 0 && b.withUrl !== 0 && b.withUrl !== b.events);
+    assert.deepEqual(
+      partial.map((b) => `${b.id} ${b.withUrl}/${b.events}`), [],
+      `${floor} these books put a URL on some events and not others — the URL is no longer a property of the book`,
+    );
+  });
+
+  it('the books whose URL is a browseable page are named, and the rest are feed endpoints', () => {
+    const urlOf = (b) => [...b.urls].find(Boolean);
+    const pages = books.filter((b) => b.withUrl > 0 && isEventUrl(urlOf(b)));
+    const feeds = books.filter((b) => b.withUrl > 0 && !isEventUrl(urlOf(b)));
+    // Both sides non-empty on purpose: "everything passes" and "nothing passes"
+    // are the two readings under which this assertion would say nothing at all.
+    assert.ok(pages.length > 0,
+      `${floor} no book publishes a browseable event page, so the gate rejects everything and the distinction is untested`);
+    assert.ok(feeds.length > 0,
+      `${floor} every book's URL passes the gate, so the denylist no longer matches the endpoints the adapters publish`);
+    assert.deepEqual(
+      feeds.map((b) => b.id).sort(),
+      ['admiral', 'betano', 'casa-pariurilor', 'excelbet', 'favbet', 'fortuna', 'las-vegas',
+        'magnumbet', 'maxbet', 'netbet', 'stanleybet', 'superbet', 'winboss', 'winner'],
+      `${floor} the set of books pointing at a feed endpoint changed — every excuse and every frontend path that assumed the old set needs re-reading`,
+    );
+  });
+
+  it('the renderer offers a leg link only where the gate passes', () => {
+    // The measurement above only matters if the frontend obeys it. Both render
+    // paths of a leg are checked for the CONDITIONAL, not for the name: a bare
+    // /eventUrl/ also matches the attribute, a comment, or a line that no longer
+    // decides anything — which is how this passed while rendering a link to JSON.
+    const modal = readFileSync(join(ROOT, 'public/js/pages/event-detail-modal.js'), 'utf8');
+    const bodyOf = (name) => {
+      const from = modal.indexOf(`function ${name}`);
+      assert.notEqual(from, -1, `event-detail-modal.js no longer declares ${name}`);
+      return modal.slice(from, modal.indexOf('function ', from + 1));
+    };
+    assert.match(
+      bodyOf('renderLeg'),
+      /isEventUrl\(\s*l\.eventUrl\s*\)/,
+      'event-detail-modal.js no longer gates the card leg link on isEventUrl, so a leg on a feed-endpoint book opens JSON again',
+    );
+    assert.match(
+      bodyOf('buildFallbackFromLegs'),
+      /isEventUrl\(\s*leg\.eventUrl\s*\)/,
+      'event-detail-modal.js no longer gates the snapshot leg link on isEventUrl, so the card and the dialog disagree about when a link exists',
+    );
   });
 });

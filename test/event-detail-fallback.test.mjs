@@ -25,7 +25,26 @@ const helpers = {
 // The modal's functions reference the module-local `helpers` DI object. Wrap
 // each extracted function so it closes over a `helpers` object built from the
 // real parseStakeAmount source (dashboard.js) and the global shims.
+//
+// `isEventUrl` and the denylist it closes over come along for the same reason:
+// `buildFallbackFromLegs` asks the predicate before it renders a leg link, so an
+// extraction that left it out failed with a ReferenceError instead of testing
+// anything. Both are taken from the modal's own source rather than from
+// src/shared/event-url.mjs on purpose — that file declares itself the single
+// source of truth, and the modal keeps a copy, so injecting the shared one would
+// let the two drift with this file silently agreeing with itself.
+// A plain `throw`, not the local `assert` below: this runs during module setup,
+// long before that helper exists, and an extraction that silently yielded an
+// empty slice would hand the wrapper a predicate with no denylist — every URL
+// passing it, which is the answer this file would then report as a finding.
+const patternsFrom = modalSrc.indexOf('const API_URL_PATTERNS = [');
+if (patternsFrom === -1) throw new Error('the modal no longer declares API_URL_PATTERNS');
+const patternsTo = modalSrc.indexOf('];', patternsFrom);
+if (patternsTo === -1) throw new Error('API_URL_PATTERNS is declared but never closed');
+const patternsSrc = modalSrc.slice(patternsFrom, patternsTo + 2);
 const wrapWithHelpers = (fnSrc) => `(function() {
+  ${patternsSrc}
+  ${extractFn('isEventUrl', modalSrc)}
   const helpers = {
     parseStakeAmount: ${extractFn('parseStakeAmount', dashSrc)},
     paletteFor: (id) => globalThis.paletteFor(id),

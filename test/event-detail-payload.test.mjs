@@ -530,13 +530,19 @@ test('the event carries one URL and every leg carries its own', async () => {
   // And it has to be read, or carrying it is the same waste the event-level field
   // was. The modal turns it into the link icon beside each leg's stake.
   //
-  // The search is for a CONDITIONAL, not for the name. A bare /l\.eventUrl/
+  // The search is for the CONDITIONAL, not for the name. A bare /l\.eventUrl/
   // passes on a line that mentions the field and no longer lets it decide
   // anything — which is exactly the mutation that got past the first version of
   // this assertion: gating the link on `l.stake` instead, leaving the field read
   // into an escapeHtml call that never runs when the stake is set.
+  //
+  // It now asks for the gate itself, by call. The link did not grow an `?` when
+  // the feed URLs were filtered out — it moved into isEventUrl(l.eventUrl), so
+  // a test still looking for the bare ternary would have reported a regression
+  // that did not happen, and the day the gate was dropped it would have gone on
+  // reporting one anyway.
   const modalCode = codeOnly(CONSUMERS[0][1]);
-  assert.match(modalCode, /l\.eventUrl\s*\?/,
+  assert.match(modalCode, /isEventUrl\(\s*l\.eventUrl\s*\)/,
     'event-detail-modal.js no longer lets a leg eventUrl decide whether the link renders, so the field is published with no reader');
 
   // The same claim on the real captures rather than on the fixture: every plan

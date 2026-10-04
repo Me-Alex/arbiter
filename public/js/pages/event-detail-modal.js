@@ -44,7 +44,15 @@
   // parameter stays in the signature because dashboard.js passes it positionally.
   function renderLeg(l, t, _roiPercent) {
     const pal = helpers.paletteFor(l.sourceId);
-    const url = l.eventUrl ? ` data-event-url="${helpers.escapeHtml(l.eventUrl)}"` : '';
+    // Gated by the same `isEventUrl` the selection browser uses, and not by
+    // truthiness. A leg's `eventUrl` is whatever the adapter put in the capture,
+    // and for most books that is the feed endpoint the capture was pulled from,
+    // not a page a bettor can reach the event on — the link icon promises a page
+    // and would otherwise open JSON. Measured over the stored captures, of the
+    // adapters that publish a URL at all only two give one that passes this
+    // gate. The two paths disagreed until now; this is the one that decides
+    // whether a link is offered at all.
+    const url = isEventUrl(l.eventUrl) ? ` data-event-url="${helpers.escapeHtml(l.eventUrl)}"` : '';
     const stake = Number(l.stake) || 0;
     const odds = Number(l.odds) || 0;
     const hasPayout = Number.isFinite(l.payout) && l.payout > 0;
@@ -440,7 +448,7 @@ function collectCardLegs(card) {
       const stakeText = leg.stakeAmount !== null && leg.stakeAmount !== undefined
         ? `${t('stake')} ${helpers.fmtStake(leg.stakeAmount)}`
         : leg.stakeLabel || '';
-      const url = leg.eventUrl;
+      const url = isEventUrl(leg.eventUrl) ? leg.eventUrl : null;
       const linkIcon = url
         ? `<a class="book-link" href="${helpers.escapeHtml(url)}" target="_blank" rel="noopener" title="Open ${helpers.escapeHtml(book)} →"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>`
         : '';

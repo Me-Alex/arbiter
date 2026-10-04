@@ -8,7 +8,7 @@
  * the parameter list first, because a default argument like `qualityOptions = {}`
  * opens a brace that closes again before the body begins.
  *
- * Measured over the eleven pairs these tests actually ask for, the two answers
+ * Measured over every pair these tests actually ask for, the two answers
  * are identical — so nothing was measured wrongly. The one place they part is
  * `loadWorkspace`, and it parts completely: asked for it, the brace-first copies
  * return 51 characters, `function loadWorkspace(dataDir, qualityOptions = {}`,
@@ -60,6 +60,7 @@ const PAIRS = [
   ['public/js/pages/dashboard.js', 'dashLiveBadge'],
   ['public/js/pages/dashboard.js', 'sourceHealthRows'],
   ['public/js/pages/event-detail-modal.js', 'collectCardLegs'],
+  ['public/js/pages/event-detail-modal.js', 'isEventUrl'],
   ['public/js/pages/event-detail-modal.js', 'buildFallbackFromLegs'],
   ['src/scanner/scanner.mjs', 'loadWorkspace'],
 ];

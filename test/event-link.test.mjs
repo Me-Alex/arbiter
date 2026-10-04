@@ -129,19 +129,34 @@ describe('engine eventUrl propagation', () => {
 
 // ── Modal fallback renders links from leg.eventUrl ──────────────────────
 
-describe('event-detail-modal fallback rendering', () => {
-  const makeHelpers = () => ({
-    paletteFor: () => ({ color: '#fff', bg: '#333', border: '#555' }),
-    fmtStake: (n) => String(n || 0),
-    fmtOdds: (n) => String(n || 0),
-    escapeHtml: (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])),
-    parseStakeAmount: (s) => { if (!s || typeof s !== 'string') return null; const digits = s.match(/([\d,]+(?:\.\d+)?)/); if (!digits) return null; const n = Number(digits[1].replace(/,/g, '')); return Number.isFinite(n) ? n : null; },
-    arbiterI18n: { t: (k) => ({ stake: 'Miză', markets: 'Piețe', pick: 'Selecție', bookmaker: 'Casă', odds: 'Cotă', noBookmakersSelected: 'Niciuna' }[k] || k) },
-  });
+// `buildFallbackFromLegs` asks `isEventUrl` before it renders a leg link, so an
+// extraction that left the predicate out failed with a ReferenceError instead of
+// testing anything. The gate comes out of the modal's own source rather than
+// being passed in from the import above: that import is what the denylist
+// describe block pins, while the modal keeps its own copy of the denylist, and
+// handing this the shared one would let the two drift with these tests agreeing
+// with each other.
+const gateFrom = modalSrc.indexOf('const API_URL_PATTERNS = [');
+if (gateFrom === -1) throw new Error('event-detail-modal.js no longer declares API_URL_PATTERNS');
+const gateTo = modalSrc.indexOf('];', gateFrom);
+if (gateTo === -1) throw new Error('API_URL_PATTERNS is declared but never closed');
+const GATE_SRC = modalSrc.slice(gateFrom, gateTo + 2);
 
+const makeHelpers = () => ({
+  paletteFor: () => ({ color: '#fff', bg: '#333', border: '#555' }),
+  fmtStake: (n) => String(n || 0),
+  fmtOdds: (n) => String(n || 0),
+  escapeHtml: (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])),
+  parseStakeAmount: (s) => { if (!s || typeof s !== 'string') return null; const digits = s.match(/([\d,]+(?:\.\d+)?)/); if (!digits) return null; const n = Number(digits[1].replace(/,/g, '')); return Number.isFinite(n) ? n : null; },
+  arbiterI18n: { t: (k) => ({ stake: 'Miză', markets: 'Piețe', pick: 'Selecție', bookmaker: 'Casă', odds: 'Cotă', noBookmakersSelected: 'Niciuna' }[k] || k) },
+});
+
+const loadFallback = () => new Function('helpers',
+  `${GATE_SRC}\n${extractFn('isEventUrl', modalSrc)}\n${extractFn('buildFallbackFromLegs', modalSrc)}\nreturn buildFallbackFromLegs;`)(makeHelpers());
+
+describe('event-detail-modal fallback rendering', () => {
   it('buildFallbackFromLegs includes link icons when eventUrl present', () => {
-    const fnSrc = `${extractFn('buildFallbackFromLegs', modalSrc)}\nreturn buildFallbackFromLegs;`;
-    const buildFallbackFromLegs = new Function('helpers', fnSrc)(makeHelpers());
+    const buildFallbackFromLegs = loadFallback();
 
     const snap = {
       marketLabel: 'O/U 2.5',
@@ -159,10 +174,29 @@ describe('event-detail-modal fallback rendering', () => {
   });
 
   it('buildFallbackFromLegs omits link when eventUrl absent', () => {
-    const fnSrc = `${extractFn('buildFallbackFromLegs', modalSrc)}\nreturn buildFallbackFromLegs;`;
-    const buildFallbackFromLegs = new Function('helpers', fnSrc)(makeHelpers());
+    const buildFallbackFromLegs = loadFallback();
     const snap = { marketLabel: 'Test', legs: [{ book: 'm', odds: 2, pick: 'X', stakeAmount: 100, profit: '+50 RON', eventUrl: null }] };
     const { sections } = buildFallbackFromLegs(snap);
     assert.ok(!sections.join('').includes('book-link'), 'no link icon when no eventUrl');
+  });
+
+  // The absence above proves nothing on its own: a URL that is simply missing and
+  // a URL that is present but is the feed endpoint the capture was pulled from
+  // both have to end in no link icon. Only the second one is the regression — of
+  // the adapters that publish a URL at all, most publish the endpoint, so a
+  // truthiness check renders a link icon that opens JSON.
+  it('buildFallbackFromLegs omits the link for an API URL that is present', () => {
+    const buildFallbackFromLegs = loadFallback();
+    const apiUrl = 'https://www.favbet.ro/service/lineout/getAllEvents';
+    const withIt = { marketLabel: 'Test', legs: [{ book: 'favbet', odds: 2, pick: 'X', stakeAmount: 100, profit: '+50 RON', eventUrl: apiUrl }] };
+    assert.ok(withIt.legs[0].eventUrl, 'the leg really does carry a URL — the gate has to be what drops it');
+    const html = buildFallbackFromLegs(withIt).sections.join('');
+    assert.ok(!html.includes('book-link'), 'the feed endpoint is present and still gets no link icon');
+    assert.ok(!html.includes(apiUrl), 'and it is not in the markup at all');
+    // Both directions, or the assertion above cannot say which way the gate
+    // fails. The same function, the same leg, a browseable URL: the icon returns.
+    const browseable = 'https://www.favbet.ro/ro/sports/event/fotbal/12345/';
+    const ok = buildFallbackFromLegs({ ...withIt, legs: [{ ...withIt.legs[0], eventUrl: browseable }] }).sections.join('');
+    assert.ok(ok.includes('book-link'), 'a browseable URL still gets its link icon');
   });
 });

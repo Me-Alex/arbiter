@@ -722,14 +722,19 @@ if (eventDetailModal) {
 function dashRenderLeg(l, t, _roiPercent) {
   if (eventDetailModal) return eventDetailModal.renderLeg(l, t, _roiPercent);
   const pal = paletteFor(l.sourceId);
-  const url = l.eventUrl ? ` data-event-url="${escapeHtml(l.eventUrl)}"` : '';
+  // No link here, deliberately. This body only runs when the modal module failed
+  // to load, and the module owns the denylist that decides whether a leg's
+  // eventUrl is a browseable page or the adapter's capture endpoint — for most
+    // books it is the endpoint. Rendering the link unconditionally is what the two
+  // paths disagreed about; with the module absent there is no gate to ask, so
+  // this degraded row shows the leg without one rather than guessing.
   // Same rule as the module: a leg's own money is payout − stake. ROI is a
   // property of the whole combination, so it is never scaled by one stake.
   const stake = Number(l.stake) || 0;
   const odds = Number(l.odds) || 0;
   const hasPayout = Number.isFinite(l.payout) && l.payout > 0;
   const net = hasPayout ? Math.round((l.payout - stake + Number.EPSILON) * 100) / 100 : null;
-  return `<div class="leg"${url}>
+  return `<div class="leg">
       <div class="head">
         <span class="book" style="color:${pal.color};">${escapeHtml(l.sourceId)}</span>
         <span class="stake">${t('stake')} ${fmtStake(stake)}</span>
