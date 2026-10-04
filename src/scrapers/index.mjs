@@ -185,10 +185,4 @@ export function instantiate(jobId, opts = {}) {
   return new Cls(opts);
 }
 
-export function isKnownJob(jobId) {
-  return DIRECT[jobId] !== undefined && DIRECT[jobId] !== null
-    || ALTENAR_IDS.has(jobId)
-    || jobId === 'altenar-sites';
-}
-
 export const ALL_SCRAPERS = Object.keys(DIRECT);
