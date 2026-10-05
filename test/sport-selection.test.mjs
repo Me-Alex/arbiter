@@ -27,16 +27,8 @@
 // disagree.
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
-import vm from 'node:vm';
 import { buildScanCsv } from '../src/scan-service.mjs';
-import { codeOnly } from './helpers/code-only.mjs';
-
-const read = (path) => readFileSync(new URL(`../${path}`, import.meta.url), 'utf8');
-const scannerSource = read('public/js/pages/scanner.js');
-const scannerHtml = read('public/admin/scanner.html');
-const i18nSource = read('public/js/i18n.js');
-const escapeHtml = (v) => String(v ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+import { page, settle, SHIPPED } from './helpers/scanner-page.mjs';
 
 // Two labelled sports and one record with no sport at all, in every family.
 // The second sport is spelled differently in the data (`TENNIS`) than in the
@@ -46,11 +38,6 @@ const escapeHtml = (v) => String(v ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&a
 // offers football alone today, which is also why no test may assume the
 // control's value is hardcoded anywhere -- the assertion below selects the
 // sport the registry does NOT offer and expects it to travel.
-const SPORTS = [
-  { id: 'football', name: 'Football' },
-  { id: 'tennis', name: 'Tennis' },
-];
-
 const FAMILIES = ['opportunities', 'middles', 'positiveEv', 'lowHold'];
 
 const FIXTURE = {
@@ -80,105 +67,8 @@ const FIXTURE = {
   ],
 };
 
-// The links as the markup ships them: `?type=`, no sport. Read out of the page
-// rather than typed, so a link added or removed in the markup is exercised by
-// the rewrite below instead of being pinned here a second time -- test/scan-csv
-// already owns the census of which families have a link.
-const SHIPPED = [...codeOnly(scannerHtml, false)
-  .matchAll(/<a\b[^>]*\bhref="(\/api\/scan\/export\.csv[^"]*)"/g)].map((m) => m[1]);
-
-const node = () => ({
-  textContent: '', innerHTML: '', className: '', value: '', checked: false, hidden: false,
-  dataset: {},
-  classList: { add() {}, remove() {}, toggle() {}, contains: () => false },
-  _listeners: {},
-  addEventListener(type, fn) { (this._listeners[type] = this._listeners[type] || []).push(fn); },
-  fire(type) { for (const fn of this._listeners[type] || []) fn({ target: this }); },
-  setAttribute(name, value) { this[`attr:${name}`] = value; },
-  getAttribute(name) { return `attr:${name}` in this ? this[`attr:${name}`] : null; },
-  querySelector() { return null; }, querySelectorAll() { return []; }, nextElementSibling: null,
-});
-
-const settle = () => new Promise((r) => setTimeout(r, 0));
-
-/**
- * The scanner page as the browser drives it: the script runs, `init()` fires
- * on its own, fetches resolve, and `render` draws.
- *
- * The `change` dispatch goes through the page's own listener stack rather than
- * calling `render` directly -- the defect under test is precisely that no
- * listener existed, and a test calling `render` itself would pass on the page
- * it is failing.
- */
-function page({ scan = FIXTURE } = {}) {
-  const byId = new Map();
-  const bySelector = new Map();
-  const get = (id) => {
-    if (!byId.has(id)) byId.set(id, node());
-    return byId.get(id);
-  };
-  const select = (selector) => {
-    if (!bySelector.has(selector)) bySelector.set(selector, node());
-    return bySelector.get(selector);
-  };
-  const anchors = SHIPPED.map((href) => {
-    const a = node();
-    a.setAttribute('href', href);
-    return a;
-  });
-  const store = {};
-  const context = {
-    document: {
-      getElementById: get,
-      querySelector: select,
-      // Only the export links are modelled; every other selector the page
-      // walks (the flash targets) is empty in a document without layout.
-      querySelectorAll: (selector) => (selector.startsWith('a[href*=') ? anchors : []),
-      addEventListener() {},
-    },
-    escapeHtml,
-    // A browser global, not an ECMAScript one: `runInNewContext` starts from
-    // ECMAScript alone, and the page reads `URLSearchParams` to rewrite its
-    // export links. Same injection scrape-page.test.mjs makes.
-    URLSearchParams,
-    console: { warn() {}, log() {}, error() {} },
-    createDropdown() {},
-    arbiterSse: { connect() {} },
-    arbiterApi: {
-      async get(path) {
-        if (path === '/api/scan') return scan;
-        if (path === '/api/profiles') return { profiles: [] };
-        if (path === '/api/sports') return { sports: SPORTS };
-        if (path === '/api/alerts') return {
-          schemaVersion: 1,
-          published: true,
-          scan: {},
-          // Complete, because `fillAlertForm` reads `channels` and `quietHours`
-          // as objects: a stub with `preferences: {}` throws inside the page's
-          // own catch and leaves the alert form unfilled.
-          preferences: {
-            minRoiPercent: 1, minMiddleRoiPercent: 1, cooldownSeconds: 300, includeLive: false,
-            channels: { desktop: false, sound: false },
-            quietHours: { enabled: false, from: '23:00', to: '07:00' },
-          },
-          alerts: { arbitrages: [], middles: [] },
-          counts: { arbitrages: 0, middles: 0 },
-        };
-        return {};
-      },
-      async post() { return {}; },
-    },
-    localStorage: { getItem: (k) => (k in store ? store[k] : null), setItem: (k, v) => { store[k] = v; } },
-  };
-  context.window = { arbiterConnectionStatus: null, arbiterApp: { mount() {} }, showToast() {} };
-  vm.runInNewContext(i18nSource, context);
-  context.arbiterI18n = context.window.arbiterI18n;
-  vm.runInNewContext(scannerSource, context);
-  return { context, get, select, anchors };
-}
-
 test('moving the sport control redraws the tables and the banner', async () => {
-  const { context, get, select } = page();
+  const { context, get, select } = page({ scan: FIXTURE });
   await settle();
   const t = context.arbiterI18n.t.bind(context.arbiterI18n);
 
@@ -227,7 +117,7 @@ test('the published scan seeds the control before the tables read it', async () 
 });
 
 test('the export links carry the selection the tables show', async () => {
-  const { get, anchors } = page();
+  const { get, anchors } = page({ scan: FIXTURE });
   await settle();
   const hrefs = () => anchors.map((a) => a.getAttribute('href'));
 
@@ -254,7 +144,7 @@ test('the export links carry the selection the tables show', async () => {
 });
 
 test('the export keeps exactly the rows the tables keep, per family and sport', async () => {
-  const { context } = page();
+  const { context } = page({ scan: FIXTURE });
   await settle();
   const filterBySport = context.filterBySport;
   assert.equal(typeof filterBySport, 'function',

@@ -535,7 +535,10 @@ function renderOppV2(o, allMarkets) {
   const rawMarket = o.marketKey || o.market || '';
   const marketLabel = fmtMarketKey(rawMarket);
   const league = o.league || '';
-  const sport = o.sport || 'Football';
+  // '' when the record carries no sport, so the chip below is omitted rather
+  // than labelled Football — the same fact the CSV writes as an empty cell
+  // and renderOppGroup filters out of the match line above.
+  const sport = o.sport || '';
   const kickoff = formatKickoff(o.kickoff);
 
   // Time since detection badge
@@ -602,7 +605,7 @@ const dataAttrs = [
             </button>
 </div>
 <div class="match-meta">
-          <span class="chip">${escapeHtml(sport)}</span>
+          ${sport ? `<span class="chip">${escapeHtml(sport)}</span>` : ''}
           ${dashLiveBadge(t, inPlay)}
           ${league ? `<span>${escapeHtml(league)}</span>` : ''}
           ${kickoff ? `<span class="dim mono">${escapeHtml(kickoff)}</span>` : ''}

@@ -474,4 +474,25 @@ const degradedHtml = dashRenderLegDegraded({ sourceId: 'maxbet', selection: 'Ove
 assert(degradedHtml.includes('<span class="book"') && degradedHtml.includes('>maxbet</span>'), 'degraded dashRenderLeg renders a leg when module missing');
 assert(degradedHtml.includes('Miză 500') && degradedHtml.includes('11.00'), 'degraded dashRenderLeg renders stake+odds');
 
+// ---- Scenario 17: a card with no sport claims none ----
+// The fourth site that defaulted a missing sport to the literal 'Football'
+// (dashboard.js:538 -> the chip at :605), asserted where renderOppV2's
+// harness already lives — the harness dashboard.js says the retained
+// renderer is kept alive for. The pair is the proof: the unsported record
+// must print no bare chip, and the sported one must still print its own, or
+// a renderer that printed nothing at all would pass the first half while
+// having lost the label the second half is about.
+const noSportCard = renderOppV2({
+  homeTeam: 'NoSportHome', awayTeam: 'NoSportAway', marketKey: '1X2', roiPercent: 3,
+  kickoff: '2026-10-08T21:45:00.000Z',
+  legs: [{ sourceId: 'maxbet', selection: '1', odds: 2, stake: 100 }],
+}, []);
+assert(!/<span class="chip">/.test(noSportCard), 'the card prints a sport chip for a record that carries none');
+const sportedCard = renderOppV2({
+  sport: 'TENNIS', homeTeam: 'Alcaraz', awayTeam: 'Sinner', marketKey: '1X2', roiPercent: 3,
+  kickoff: '2026-10-08T21:45:00.000Z',
+  legs: [{ sourceId: 'maxbet', selection: '1', odds: 2, stake: 100 }],
+}, []);
+assert(sportedCard.includes('>TENNIS</span>'), 'the card lost the chip for the record that carries TENNIS');
+
 console.log('\nAll real-wiring scenario checks complete.');

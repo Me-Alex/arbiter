@@ -145,8 +145,8 @@ test('the guard detector tells the four kinds of guard apart, on cases it cannot
     'the read inside the block opened at dashboard.js:150 is guarded by that block\'s condition');
 
   // `receiver`: guarded on the object only — safe against no object at all, not
-  // against no key. dashboard.js:548 is the only site in the tree.
-  assert.equal(shape(at('public/js/pages/dashboard.js', 548, 'timeAgo')), 'receiver',
+  // against no key. dashboard.js:551 is the only site in the tree.
+  assert.equal(shape(at('public/js/pages/dashboard.js', 551, 'timeAgo')), 'receiver',
     'the `x && x.key(…)` form guards the object, not the key, and must not read as `key`');
 
   // `optional`: `?.` short-circuits, so this cannot throw whatever the object

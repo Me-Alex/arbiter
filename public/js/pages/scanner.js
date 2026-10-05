@@ -145,7 +145,7 @@
       }
       body.innerHTML = shown.map((a) => `
         <tr>
-          <td><div class="strong">${escapeHtml(a.homeTeam)} <span class="muted">${t('vs')}</span> ${escapeHtml(a.awayTeam)}</div><div class="secondary"><span class="chip chip-sport">${escapeHtml(a.sport || 'Football')}</span> ${liveBadge(t, a)} ${escapeHtml([a.league, kickoffLabel(a.kickoff)].filter(Boolean).join(' · '))}</div></td>
+          <td><div class="strong">${escapeHtml(a.homeTeam)} <span class="muted">${t('vs')}</span> ${escapeHtml(a.awayTeam)}</div><div class="secondary">${sportChip(a.sport)}${liveBadge(t, a)} ${escapeHtml([a.league, kickoffLabel(a.kickoff)].filter(Boolean).join(' · '))}</div></td>
           <td><div class="mono text-xs">${escapeHtml(a.marketKey || '—')}</div><div class="secondary mono text-xs">${escapeHtml(a.type)}</div></td>
           <td class="num tabnum"><span class="strong ${a.type === 'middle' ? 'purple' : 'green'}">+${(a.roiPercent || 0).toFixed(2)}</span>${profitOnAlert(t, a)}</td>
           <td class="num tabnum">${a.type === 'middle' ? `<span class="yellow">${(a.riskPercent || 0).toFixed(2)}</span>` : '—'}</td>
@@ -304,6 +304,26 @@
     function liveBadge(t, signal) {
       return signal && signal.live === true
         ? `<span class="chip red live-badge" title="${escapeHtml(t('liveTooltip'))}">${escapeHtml(t('live'))}</span>`
+        : '';
+    }
+
+    /**
+     * The sport chip a row prints beside the record — and nothing when the
+     * record carries no sport.
+     *
+     * No default: an absent sport is a fact about the record, and the other
+     * surfaces already tell the same fact — the CSV writes an empty cell for
+     * this record, filterBySport drops it under a selection, renderOppGroup
+     * filters it out of the match line. A chip inventing 'Football' here was
+     * the one surface asserting something the document does not contain, and
+     * only reachable through a producer that omits the field — which is
+     * exactly the case in which the claim would be a lie. The trailing space
+     * keeps chip-to-badge spacing identical to the inline markup this
+     * replaced.
+     */
+    function sportChip(sport) {
+      return sport
+        ? `<span class="chip chip-sport">${escapeHtml(sport)}</span> `
         : '';
     }
 
@@ -611,7 +631,7 @@
         <tr class="arb-main-row ${cls}" data-arb-toggle aria-expanded="false">
           <td>
             <div class="strong">${escapeHtml(o.homeTeam)} <span class="muted">${t('vs')}</span> ${escapeHtml(o.awayTeam)}</div>
-            <div class="secondary"><span class="chip chip-sport">${escapeHtml(o.sport || 'Football')}</span> ${liveBadge(t, o)} ${escapeHtml(o.league || '')}${o.kickoff ? ` · <span class="mono">${escapeHtml(new Date(o.kickoff).toLocaleString())}</span>` : ''}</div>
+            <div class="secondary">${sportChip(o.sport)}${liveBadge(t, o)} ${escapeHtml(o.league || '')}${o.kickoff ? ` · <span class="mono">${escapeHtml(new Date(o.kickoff).toLocaleString())}</span>` : ''}</div>
           </td>
           <td>
             <div class="mono">${escapeHtml(o.marketKey)}</div>
@@ -629,7 +649,7 @@
       $('mid-count').textContent = `${mids.length} ${t('middles')}`;
       mid.innerHTML = mids.length ? mids.map((m) => `
         <tr class="${m.verification?.status === 'confirmed' ? 'row-confirmed' : ''}">
-          <td><div class="strong">${escapeHtml(m.homeTeam)} <span class="muted">${t('vs')}</span> ${escapeHtml(m.awayTeam)}</div><div class="secondary"><span class="chip chip-sport">${escapeHtml(m.sport || 'Football')}</span> ${liveBadge(t, m)}</div></td>
+          <td><div class="strong">${escapeHtml(m.homeTeam)} <span class="muted">${t('vs')}</span> ${escapeHtml(m.awayTeam)}</div><div class="secondary">${sportChip(m.sport)}${liveBadge(t, m)}</div></td>
           <td><div class="mono text-xs market-label">${escapeHtml(m.marketKey || '—')}${Number.isFinite(m.gap) ? `<span class="muted"> · ${escapeHtml(t('gap'))} ${Math.abs(Number(m.gap))}</span>` : ''}</div>${(m.legs || []).map((l) => `<div class="mono text-xs">${escapeHtml(l.sourceId)} ${escapeHtml(l.selection)} ${escapeHtml(l.handicap)} <span class="muted">@</span> <span class="strong">${(l.odds || 0).toFixed(2)}</span></div>`).join('')}</td>
           <td class="num tabnum"><span class="strong purple">+${(m.roiPercent || 0).toFixed(2)}</span></td>
           <td class="num tabnum"><span class="yellow">${(m.riskPercent || 0).toFixed(2)}</span></td>
