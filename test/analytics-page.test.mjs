@@ -21,7 +21,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import vm from 'node:vm';
 import { buildMarketCatalog } from '../src/scanner/market-catalog.mjs';
-import { codeOnly, fieldReads, fieldsOn } from './helpers/code-only.mjs';
+import { codeOnly, fieldReads, fieldsOn, objectEntries } from './helpers/code-only.mjs';
 
 const analyticsSource = readFileSync(new URL('../public/js/pages/analytics.js', import.meta.url), 'utf8');
 const commonSource = readFileSync(new URL('../public/js/pages/common.js', import.meta.url), 'utf8');
@@ -257,6 +257,50 @@ test('every field the service writes is read by the page', () => {
   const readOnBets = fieldReads(analyticsSource, 'b');
   assert.ok(readOnBets.length > 0, 'the receiver this test reads is not bound anywhere');
   const missing = EXPECTED_BET_FIELDS.filter((field) => !(field in EXEMPT) && !readOnBets.includes(field));
+  assert.deepEqual(missing, [], `the page never reads these: ${missing.join(', ')}`);
+});
+
+/**
+ * The document's own envelope, as opposed to the rows inside it.
+ *
+ * The census above reads the bet rows through `b`, so a key the service writes
+ * at the top of the document and no page ever touches was invisible to it:
+ * `saveTracker` writes `schemaVersion`, `updatedAt` and `items`, and
+ * `loadTracker` answers a fresh file with the same three, so all three reach
+ * every consumer of `GET /api/tracker`.
+ *
+ * `updatedAt` is the whole-file stamp — when this tracker was last written —
+ * and the count line beside the table is the only thing on the page with a
+ * place for it. A page that shows per-bet stamps and not the document's own is
+ * not wrong, it is uncensused: nothing here would have noticed if the service
+ * stopped writing the key.
+ */
+test('every key the tracker document publishes is read by the page, or named with a reason', () => {
+  // The envelope is the literal `saveTracker` writes, read out of the parse
+  // tree rather than off the lines: a line counter over the function would also
+  // have picked up `id:` and `createdAt:` from the `normalizeBet` call one
+  // method further down, which is how the first version of this extraction
+  // reported five keys instead of three.
+  const saveAt = serviceSource.indexOf('async saveTracker');
+  const entries = objectEntries(serviceSource, 'const out = {');
+  assert.ok(saveAt !== -1 && serviceSource.indexOf('const out = {', saveAt) < serviceSource.indexOf('async addBet'),
+    'the literal this census reads is not the one saveTracker writes');
+  const published = entries.map((e) => e.key).sort();
+  assert.deepEqual(published, ['items', 'schemaVersion', 'updatedAt'],
+    'the tracker envelope changed — the page has to be told about it, not left behind');
+
+  // A schema marker, not a value: there is nothing on this page to render it
+  // with, and it is pinned where the document is written instead —
+  // test/tracker-service.test.mjs asserts `stored.schemaVersion` is 1 on the
+  // file `saveTracker` writes. Same division as the catalog's marker, exempt as
+  // a marker and pinned against its builder.
+  const EXEMPT = {
+    schemaVersion: 'a marker the page cannot render; pinned at the write by test/tracker-service.test.mjs (`stored.schemaVersion` is 1)',
+  };
+
+  const read = fieldReads(analyticsCode, 'tracker');
+  assert.ok(read.length > 0, 'the receiver this census reads is not bound anywhere');
+  const missing = published.filter((k) => !(k in EXEMPT) && !read.includes(k));
   assert.deepEqual(missing, [], `the page never reads these: ${missing.join(', ')}`);
 });
 

@@ -99,7 +99,11 @@ arbiterApp.mount('analytics');
       const t = arbiterI18n.t.bind(arbiterI18n);
       const tb = document.querySelector('#tracker-table tbody');
       const items = tracker.items || [];
-      $('tracker-count').textContent = `${items.length} ${t(items.length === 1 ? 'item' : 'items')}`;
+      // The document's own stamp, next to the rows it counts: `updatedAt` is
+      // written on every save, so it says when this tracker file was last
+      // touched — the one thing the count line can carry that no row can.
+      const stamp = tracker.updatedAt ? ` · ${t('betUpdated')} ${fmtWhen(tracker.updatedAt)}` : '';
+      $('tracker-count').textContent = `${items.length} ${t(items.length === 1 ? 'item' : 'items')}${stamp}`;
       tb.innerHTML = items.length ? items.map((b) => `
         <tr class="${b.status === 'won' ? 'row-confirmed' : b.status === 'lost' ? 'row-rejected' : ''}">
           <td><div>${escapeHtml(fmtWhen(b.createdAt))}</div>${
