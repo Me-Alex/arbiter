@@ -49,6 +49,7 @@ const readText = (p) => readFileSync(join(ROOT, p), 'utf8');
 
 const scrapeCode = codeOnly(readText('public/js/pages/scrape.js'), true);
 const scannerCode = codeOnly(readText('public/js/pages/scanner.js'), true);
+const settingsCode = codeOnly(readText('public/js/pages/settings.js'), true);
 const routerSource = codeOnly(readText('src/router.mjs'), true);
 const orchestratorSource = codeOnly(readText('src/scrape-orchestrator.mjs'), true);
 const sanitizeSource = codeOnly(readText('src/shared/sanitize.mjs'), true);
@@ -640,6 +641,7 @@ const optionsReads = () => {
 const PROFILE_RECEIVERS = {
   'scrape.js': { scope: () => [PROFILE_LABEL, APPLY_PROFILE, APPLY_PROFILE_HINT] },
   'scanner.js': { scope: () => [scannerProfileBlock()] },
+  'settings.js': { scope: () => [settingsProfileBlock()] },
 };
 
 /** The bare leaves of the pinned row: `defaults.*` is read through its own two shapes. */
@@ -704,6 +706,31 @@ function scannerProfileBlock() {
   if (binding === -1) throw new Error('scanner.js no longer binds a profile default after the fetch — it is measuring the wrong region');
   const to = lines.findIndex((l, i) => i > binding && l.trim() === '});');
   if (to === -1) throw new Error('scanner.js no longer closes the profile change listener on its own line — the cut would run away');
+  return lines.slice(from, to + 1).join('\n');
+}
+
+/**
+ * The block of settings.js that consumes a profile row.
+ *
+ * The page names row fields in exactly one place — the fill of the profile
+ * select inside renderFields() — while the fetch itself sits in refresh() and
+ * the defaults are consumed wholesale: profileDefaults() spreads
+ * `profile.defaults` into the payload, which names no leaf, so this census
+ * cannot see it (the defaults' leaves are weighed union-side by scrape.js and
+ * scanner.js, which do name them). The cut is the select's own statement, and
+ * both ends are loud: a page that stops filling the select, or stops naming a
+ * field while filling it, fails here rather than at the floor below.
+ *
+ * functionWindow() cannot cut this one: its convention is a top-level
+ * function's body ending on a `}` in column 0, and every function in
+ * settings.js is indented inside the mount IIFE.
+ */
+function settingsProfileBlock() {
+  const lines = settingsCode.split(/\r?\n/);
+  const from = lines.findIndex((l) => l.includes("$('set-profile').innerHTML ="));
+  if (from === -1) throw new Error('settings.js no longer fills the profile select — it is measuring the wrong region');
+  const to = lines.findIndex((l, i) => i > from && l.trimEnd().endsWith(';'));
+  if (to === -1) throw new Error('settings.js no longer closes the profile select statement on its own line — the cut would run away');
   return lines.slice(from, to + 1).join('\n');
 }
 
@@ -1199,41 +1226,43 @@ test('the stored state carries no option the producer cannot build', () => {
 });
 
 /**
- * Both consumers are really being read, each over its own window.
+ * Every consumer is really being read, each over its own window.
  *
- * Widening the reader set from one page to two moves no verdict today, because
- * scanner.js reads a strict subset of what scrape.js reads — six of the ten
- * leaves, and neither `mode`, nor `description`, nor the two scope switches. A
- * change that moves no verdict cannot be shown by breaking a page, so the thing
- * that has to be pinned instead is that each consumer still contributes at all.
+ * Widening the reader set moves no verdict today: scanner.js reads a strict
+ * subset of what scrape.js reads — six of the ten leaves, and neither `mode`,
+ * nor `description`, nor the two scope switches — and settings.js, the third
+ * consumer, names `id` and `label`, a subset of both. A change that moves no
+ * verdict cannot be shown by breaking a page, so the thing that has to be
+ * pinned instead is that each consumer still contributes at all.
  *
  * The floors are measured per page, not shared, because a shared floor is a
- * floor on the union and the union is what never moved. Both numbers come from
+ * floor on the union and the union is what never moved. The numbers come from
  * the same run of `profileReadsOn` this census calls: scrape.js touches ten
- * leaves, scanner.js six, and the four defaults scanner.js reads are the ones its
- * alias window can see and no more — a search for `d.` page-wide would have added
- * `profiles` and `sports`, which are two response envelopes and not profile rows.
+ * leaves, scanner.js six — the four defaults its alias window can see, plus
+ * `id` and `label` (a search for `d.` page-wide would have added `profiles`
+ * and `sports`, which are two response envelopes and not profile rows) — and
+ * settings.js two, all it names while filling its select.
  */
-const PROFILE_READ_FLOOR = { 'scrape.js': 10, 'scanner.js': 6 };
+const PROFILE_READ_FLOOR = { 'scrape.js': 10, 'scanner.js': 6, 'settings.js': 2 };
 
-test('both consumers of /api/profiles are read, each over its own window', () => {
+test('all three consumers of /api/profiles are read, each over its own window', () => {
   for (const [file, spec] of profileConsumers()) {
     const found = profileReadsOn(file, spec);
     const floor = PROFILE_READ_FLOOR[file];
     assert.ok(found.size >= floor,
       `${file} contributes ${found.size} profile leaves, under its floor of ${floor} — its window stopped seeing the reads`);
   }
-  // The two consumers overlap, and the overlap is a measurement rather than an
-  // assumption: it is why the union is ten and not sixteen. Stated as "read by
-  // exactly one of them" so the assertion does not depend on which of the two
-  // the derived list happens to return first.
+  // The consumers overlap, and the overlap is a measurement rather than an
+  // assumption: it is why the union is ten and not the sum. Stated as "read by
+  // exactly one of them" so the assertion does not depend on which of them the
+  // derived list happens to return first.
   const sets = profileConsumers().map(([file, spec]) => profileReadsOn(file, spec));
   const byExactlyOne = [...new Set(sets.flatMap((s) => [...s]))]
     .filter((f) => sets.filter((s) => s.has(f)).length === 1).sort();
   assert.deepEqual(byExactlyOne, ['description', 'includeLive', 'includePast', 'mode'],
-    'the two consumers no longer read the same set — a field moved between pages');
+    'the consumers no longer read the same set — a field moved between pages');
   assert.equal(PROFILES_ROW.length, new Set(sets.flatMap((s) => [...s])).size,
-    'the two consumers no longer cover every leaf the config publishes between them');
+    'the consumers no longer cover every leaf the config publishes between them');
 });
 
 test('the scraper route still publishes what the census names', () => {
