@@ -482,7 +482,7 @@ test('GET /api/alerts returns the settings and the signals they select', async (
   // are what it renders the list from. A route that returned only the settings
   // was what this route used to do: a control screen with nothing behind it.
   assert.ok(body.preferences, 'the preferences the page draws its controls from');
-  assert.equal(typeof body.preferences.minRoiPercent, 'number');
+  assert.equal(typeof body.preferences.minMarginPercent, 'number');
   assert.ok(Array.isArray(body.alerts.arbitrages), '...and the alerts those settings select');
   assert.ok(Array.isArray(body.alerts.middles));
   assert.equal(body.counts.arbitrages, 1, 'the 4% signal clears the default 1% threshold');
@@ -501,12 +501,12 @@ test('the route normalizes the settings it hands back', async () => {
   // builds its input boxes out of this object, so an undefined threshold here
   // is an empty box that saves an empty box.
   const { body } = await getAlerts(withScan({}));
-  assert.equal(typeof body.preferences.minRoiPercent, 'number');
+  assert.equal(typeof body.preferences.minMarginPercent, 'number');
   assert.equal(typeof body.preferences.cooldownSeconds, 'number');
   assert.deepEqual(body.preferences.channels, { desktop: true, sound: false });
   assert.equal(body.preferences.quietHours.from, '23:00');
   // ...and the thresholds the engine used are the same ones that came back.
-  assert.equal(body.thresholds.minRoiPercent, body.preferences.minRoiPercent);
+  assert.equal(body.thresholds.minMarginPercent, body.preferences.minMarginPercent);
   assert.equal(body.thresholds.minMiddleRoiPercent, body.preferences.minMiddleRoiPercent);
   assert.equal(body.thresholds.includeLive, body.preferences.includeLive);
 });
@@ -517,7 +517,7 @@ test('the threshold is applied to the scan, not just echoed back', async () => {
   }));
   // 0.5% is under the default 1%, so it is not an alert...
   assert.equal(body.counts.arbitrages, 0);
-  assert.equal(body.thresholds.minRoiPercent, 1);
+  assert.equal(body.thresholds.minMarginPercent, 1);
   // ...and the signal is still in the scan, it simply did not qualify. The
   // negative above only means something next to this one.
   const raised = await getAlerts(withScan({ opportunities: [alertOpportunity({ roiPercent: 1 })] }));
@@ -551,17 +551,17 @@ test('POST /api/alerts persists the settings and answers under them', async () =
     const res = await fetchOnce(server, '/api/alerts', {
       method: 'POST',
       headers: { Host: '127.0.0.1', 'x-arbiter-token': rotateCsrf() },
-      body: JSON.stringify({ preferences: { minRoiPercent: 10, cooldownSeconds: 30 } }),
+      body: JSON.stringify({ preferences: { minMarginPercent: 10, cooldownSeconds: 30 } }),
     });
     assert.equal(res.status, 200);
     const body = JSON.parse(res.body);
     assert.equal(saved.length, 1, 'the settings reached storage');
-    assert.equal(saved[0].minRoiPercent, 10);
+    assert.equal(saved[0].minMarginPercent, 10);
     // The answer is evaluated under the settings just written, so the page does
     // not have to ask again to learn what it just set — and cannot render a
     // list computed under thresholds it is no longer showing.
-    assert.equal(body.preferences.minRoiPercent, 10);
-    assert.equal(body.thresholds.minRoiPercent, 10);
+    assert.equal(body.preferences.minMarginPercent, 10);
+    assert.equal(body.thresholds.minMarginPercent, 10);
     assert.equal(body.counts.arbitrages, 0, 'a 4% signal no longer qualifies at 10%');
     // The bare-body form is accepted too, since that is what the client posts.
     const bare = await fetchOnce(server, '/api/alerts', {
