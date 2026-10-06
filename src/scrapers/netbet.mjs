@@ -356,7 +356,7 @@ export default class NetBetScraper extends ScraperBase {
         .filter(Boolean);
       if (markets.length === 0) continue;
       const league = e._competition?.name || e.competition_name || 'Unknown';
-      const sportName = e._sportName || 'Football';
+      const sportName = e._sportName || 'Unknown';
       const eventKey = [
         normalizeTeamName(sportName),
         normalizeTeamName(league),

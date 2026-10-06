@@ -164,7 +164,7 @@ if (eventRe.test(searchable)) {
           awayTeam: teams.awayTeam,
           league,
         kickoff: null,
-        sport: 'Football',
+        sport: 'Unknown',
         live: Boolean(live),
       });
       continue;
@@ -324,7 +324,7 @@ async function readAnchors(page) {
   return anchors;
 }
 
-async function readEventElements(page, {
+export async function readEventElements(page, {
   baseUrl,
   eventElementSelector,
   eventIdSelector,
@@ -383,7 +383,7 @@ async function readEventElements(page, {
         awayTeam: element.awayTeam || fallback.awayTeam,
         league: element.league || inferLeagueFromText(element.text),
         kickoff: null,
-        sport: 'Football',
+        sport: 'Unknown',
         live: Boolean(live),
       });
     }

@@ -47,7 +47,7 @@ export default class MaxBetScraper extends ProviderContract {
       }];
       return {
         id: String(e?.EventId ?? e?.id ?? `${normalizeTeamName(home)}-${normalizeTeamName(away)}-${kickoff}`),
-        sport: e?.SportName || 'Football',
+        sport: e?.SportName || 'Unknown',
         league: e?.LeagueName || 'Unknown',
         kickoff,
         homeTeam: home,

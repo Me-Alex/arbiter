@@ -50,7 +50,7 @@ export default class AdmiralScraper extends ProviderContract {
       }];
       return {
         id: String(e?.id ?? `${normalizeTeamName(home)}-${normalizeTeamName(away)}-${kickoff}`),
-        sport: e?.sport || 'Football',
+        sport: e?.sport || 'Unknown',
         league: e?.league || 'Unknown',
         kickoff,
         homeTeam: home,

@@ -159,7 +159,7 @@ export default class TinyfishScraper extends ProviderContract {
       homeTeam: e.homeTeam,
       awayTeam: e.awayTeam,
       league: e.league || 'Unknown',
-      sport: e.sport || 'Football',
+      sport: e.sport || 'Unknown',
       live: Boolean(e.live),
       kickoff: normalizeKickoff(e.kickoff),
       marketGroups: e.markets || [],
@@ -175,7 +175,7 @@ export default class TinyfishScraper extends ProviderContract {
       const kickoff = r.kickoff || null;
       const eventTimeKey = r.live && !r.kickoff ? 'live' : new Date(kickoff).toISOString();
       const eventKey = [
-        normalizeTeamName(r.sport || 'football'),
+        normalizeTeamName(r.sport || 'Unknown'),
         normalizeTeamName(r.league || 'unknown'),
         eventTimeKey,
         normalizeTeamName(r.homeTeam),
@@ -200,7 +200,7 @@ export default class TinyfishScraper extends ProviderContract {
       out.push({
         id: String(r.id),
         sourceId: this.sourceIds[0] || this.id,
-        sport: r.sport || 'Football',
+        sport: r.sport || 'Unknown',
         live: Boolean(r.live),
         league: r.league || 'Unknown',
         kickoff,

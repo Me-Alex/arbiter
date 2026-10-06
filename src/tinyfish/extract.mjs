@@ -160,7 +160,7 @@ export async function extractOdds({
   return { events, runs: results };
 }
 
-function normalizeExtraction(raw, sourceUrl, match = {}) {
+export function normalizeExtraction(raw, sourceUrl, match = {}) {
   if (!raw || typeof raw !== 'object') return null;
   const homeTeam = raw.homeTeam || raw.home || '';
   const awayTeam = raw.awayTeam || raw.away || '';
@@ -187,7 +187,7 @@ function normalizeExtraction(raw, sourceUrl, match = {}) {
     homeTeam,
     awayTeam,
     league: raw.league || 'Unknown',
-    sport: raw.sport || 'Football',
+    sport: raw.sport || 'Unknown',
     kickoff: raw.kickoff || null,
     live: Boolean(match.live || raw.live),
     markets: norm,

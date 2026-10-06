@@ -48,6 +48,35 @@ const DISCOVERY_OUTPUT_SCHEMA = {
   },
 };
 
+/**
+ * One agent-discovered match row, coerced field by field.
+ *
+ * Extracted as a pure function so the coercion of every field is a claim a
+ * test can fire directly: the agent schema marks only `url`, `homeTeam` and
+ * `awayTeam` required, so `sport` arrives missing on rows the model did not
+ * fill in, and where the row is labelled matters — the label feeds
+ * `eventIdentityKey`, where an invented sport pairs events cross-book that
+ * no feed ever said were the same sport.
+ *
+ * @param {unknown} m
+ * @param {{currency: string, locale: string}} ctx
+ * @returns {object|null} null when the row cannot become a match at all.
+ */
+export function agentMatchFrom(m, { currency, locale }) {
+  if (!m || typeof m !== 'object' || typeof m.url !== 'string') return null;
+  return {
+    url: m.url,
+    league: typeof m.league === 'string' ? m.league : 'Unknown',
+    homeTeam: typeof m.homeTeam === 'string' ? m.homeTeam : '',
+    awayTeam: typeof m.awayTeam === 'string' ? m.awayTeam : '',
+    kickoff: typeof m.kickoff === 'string' ? m.kickoff : null,
+    sport: typeof m.sport === 'string' ? m.sport : 'Unknown',
+    live: false,
+    currency,
+    locale,
+  };
+}
+
 export async function discoverMatches({
   baseUrl,
   liveUrl,
@@ -170,19 +199,8 @@ export async function discoverMatches({
   if (!out.result) return { matches: [], raw: out };
   const list = Array.isArray(out.result) ? out.result : (out.result.events || out.result.matches || []);
   const matches = list
-    .filter((m) => m && typeof m === 'object' && typeof m.url === 'string')
-    .map((m) => ({
-      url: m.url,
-      league: typeof m.league === 'string' ? m.league : 'Unknown',
-      homeTeam: typeof m.homeTeam === 'string' ? m.homeTeam : '',
-      awayTeam: typeof m.awayTeam === 'string' ? m.awayTeam : '',
-      kickoff: typeof m.kickoff === 'string' ? m.kickoff : null,
-      sport: typeof m.sport === 'string' ? m.sport : 'Football',
-      live: false,
-      currency,
-      locale,
-    }))
-    .filter((m) => m.homeTeam && m.awayTeam);
+    .map((m) => agentMatchFrom(m, { currency, locale }))
+    .filter((m) => m && m.homeTeam && m.awayTeam);
   return {
     matches,
     tournaments: [],

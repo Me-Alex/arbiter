@@ -60,7 +60,7 @@ export default class StanleybetScraper extends ProviderContract {
       }
       return {
         id: String(e?.id ?? `${normalizeTeamName(home)}-${normalizeTeamName(away)}-${kickoff}`),
-        sport: e?.sport || 'Football',
+        sport: e?.sport || 'Unknown',
         league: e?.league || e?.competition || 'Unknown',
         kickoff,
         homeTeam: home,

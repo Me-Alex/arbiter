@@ -250,7 +250,11 @@ export class FegCatalogueScraper extends ScraperBase {
           f._tournamentName = t.name;
           f._tournamentSeoName = t.seoName || t.name;
           f._categorySeoName = t.categorySeoName || '';
-          f._sportName = t._sportName || 'Football';
+          // Stamped by the catalogue loop above for every tournament —
+          // fegSportName is total, so there is no missing case here to
+          // default. The honest fallback for a fixture that reaches
+          // normalize() without a tree label lives there, in normalize().
+          f._sportName = t._sportName;
           allFixtures.push(f);
         }
       } catch (err) {
@@ -347,7 +351,7 @@ export class FegCatalogueScraper extends ScraperBase {
       const ownSportId = String(fix.sportId || '').trim();
       out.push({
         id: fix.id,
-        sport: ownSportId ? fegSportName(ownSportId) : (fix._sportName || 'Football'),
+        sport: ownSportId ? fegSportName(ownSportId) : (fix._sportName || 'Unknown'),
         league: fix._tournamentSeoName || 'unknown',
         kickoff: kickoff.toISOString(),
         homeTeam: homeP.name,
