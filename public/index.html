@@ -6,6 +6,7 @@
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <title>Arbiter — Sports Arbitrage Scanner</title>
   <link rel="stylesheet" href="/css/theme.css">
+  <link rel="stylesheet" href="/css/arbedge.css">
   <link rel="stylesheet" href="/css/dashboard.css">
 </head>
 <body class="has-sidebar">
@@ -23,7 +24,7 @@
       <div class="qb-cell">
         <div class="l">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
-          <span data-i18n="bestRoi">Best ROI</span>
+          <span data-i18n="bestMargin">Best margin</span>
         </div>
         <div class="v" id="qb-best-roi">—</div>
         <div class="s" id="qb-best-roi-match">—</div>
@@ -56,6 +57,8 @@
             <span class="count" id="opps-count" aria-live="polite">0</span>
           </h2>
           <div class="meta">
+            <a class="accent" href="/admin/arbitrage.html" data-i18n="openInConsole">Open in console &rarr;</a>
+            <span class="muted">&middot;</span>
             <span class="live-indicator connected" id="sse-status">
               <span class="dot"></span>
               <span>Live</span>

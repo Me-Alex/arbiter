@@ -11,10 +11,17 @@ data/alert-preferences.json
 
 # Per-run evidence directories. Live smoke runs write these next to the
 # project; keeping them out of git stops `git status` drowning in throwaway
-# snapshots. data-market-run/ is deliberately not listed: it is the one
-# directory holding a full multi-book capture kept for comparison.
+# snapshots. data-market-run/ is deliberately not listed: it is not a throwaway,
+# it is the one complete 24-book capture kept in the repo. It is an input to
+# scripts/gen-league-translations.mjs and the recorded basis for the tables in
+# src/scanner/feed-groups.mjs and league-aliases.mjs. See README "Layout".
 data-smoke*/
 data-verify*/
+
+# Tooling scratch. .vscode/ and .idea/ are already below; .zcode/ holds a
+# per-session plan file written by the ZCode agent, which is conversation
+# state rather than project state.
+.zcode/
 
 # Scratch space for live probes, ad-hoc scrapers and debug scripts. Everything
 # in here is disposable by construction and is regenerated on demand.

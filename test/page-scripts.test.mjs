@@ -5,7 +5,7 @@
  * This file closes a report rather than opening one. I filed "`arbiterFormat
  * .formatKickoff` does not exist on the admin pages, because they do not load
  * format.js" as a hazard, with a local formatter written into scanner.js to work
- * around it. Measured, the hazard is not there: 4 of the 7 pages load no
+ * around it. Measured, the hazard is not there: 8 of the 11 pages load no
  * format.js, and no script on them reads a key format.js alone defines. The
  * workaround is correct and stays. The report does not, and a fact that closes
  * a question is worth as much as one that opens it — otherwise the next reader
@@ -135,9 +135,9 @@ test('the guard detector tells the four kinds of guard apart, on cases it cannot
 
   // `key`: the condition names the key, the call sits after the closing paren on
   // the SAME line. The shape the character window could not see.
-  const sameLine = at('public/js/pages/dashboard.js', 509, 'formatKickoff');
+  const sameLine = at('public/js/pages/dashboard.js', 513, 'formatKickoff');
   assert.equal(shape(sameLine), 'receiver/key',
-    `expected a receiver probe and a key-guarded call at dashboard.js:509, measured ${shape(sameLine)}`);
+    `expected a receiver probe and a key-guarded call at dashboard.js:513, measured ${shape(sameLine)}`);
 
   // `key`: the condition names the key and the call is inside the block it
   // opened, two lines down. The other half of the same miss.
@@ -145,8 +145,8 @@ test('the guard detector tells the four kinds of guard apart, on cases it cannot
     'the read inside the block opened at dashboard.js:150 is guarded by that block\'s condition');
 
   // `receiver`: guarded on the object only — safe against no object at all, not
-  // against no key. dashboard.js:551 is the only site in the tree.
-  assert.equal(shape(at('public/js/pages/dashboard.js', 551, 'timeAgo')), 'receiver',
+  // against no key. dashboard.js:555 is the only site in the tree.
+  assert.equal(shape(at('public/js/pages/dashboard.js', 555, 'timeAgo')), 'receiver',
     'the `x && x.key(…)` form guards the object, not the key, and must not read as `key`');
 
   // `optional`: `?.` short-circuits, so this cannot throw whatever the object
@@ -194,10 +194,23 @@ test('the key lists are the ones they claim to be', () => {
 });
 
 test('the numbers the withdrawn report quoted still hold', () => {
-  // 7 pages, 4 without format.js, 23 reads, 3 bare, 0 hazardous. If a page is
+  // 11 pages, 8 without format.js, 23 reads, 3 bare, 0 hazardous. If a page is
   // added, a script is loaded onto an admin page, or a formatter is called for
   // the first time, one of them moves — and a measurement nobody re-checks is
   // the same as no measurement.
+  //
+  // The four ArbEdge console pages are in the no-format.js set below, and they
+  // are there for a stronger reason than the older admin pages: they never read
+  // window.arbiterFormat at all. They format through locals, because
+  // test/scan-fields-census.test.mjs runs each of them with the global set to
+  // null on purpose, to catch a reader that assumes the object exists at load
+  // time. Loading format.js on a page that never touches it would be a parse for
+  // nothing, so it is not loaded.
+  //
+  // They still load pages/common.js, which is where escapeHtml, showToast and
+  // the toast host come from, so they are not in the set below that has neither
+  // file. What covers them is the hazard test above: every key they call is one
+  // common.js defines, and it passes.
   //
   // The 23rd read joined when `guardedPropertyReads` learned to see through a
   // fallback receiver: `timeAgo: (window.arbiterFormat || {}).timeAgo || …` at
@@ -206,9 +219,10 @@ test('the numbers the withdrawn report quoted still hold', () => {
   // bare on purpose — a `|| {}` stands in for a missing object, not for a
   // missing key, and this file's hazard is a key called on a page that never
   // defined it.
-  assert.equal(PAGES.length, 7, `expected 7 pages, measured ${PAGES.length}`);
+  assert.equal(PAGES.length, 11, `expected 11 pages, measured ${PAGES.length}`);
   assert.deepEqual(PAGES_WITHOUT_FORMAT_JS.map((p) => p.replace(/^public\//, '')).sort(),
-    ['admin/ai.html', 'admin/analytics.html', 'admin/login.html', 'admin/scanner.html'],
+    ['admin/ai.html', 'admin/analytics.html', 'admin/arbitrage.html', 'admin/bookies.html',
+      'admin/live.html', 'admin/login.html', 'admin/scanner.html', 'admin/settings.html'],
     'the set of pages without format.js changed');
   assert.deepEqual(PAGES_WITHOUT_THE_OBJECT.map((p) => p.replace(/^public\//, '')), ['admin/login.html'],
     'login.html loads neither format.js nor common.js, so window.arbiterFormat does not exist there at all');

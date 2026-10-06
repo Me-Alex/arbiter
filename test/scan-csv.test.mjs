@@ -10,7 +10,7 @@ import { buildScanCsv } from '../src/scan-service.mjs';
  * the output has to be a valid spreadsheet file with no browser round-trip.
  */
 
-const HEADER = 'type,sport,league,kickoff,homeTeam,awayTeam,marketKey,sourceId,selection,outcome,odds,handicap,stake,payout,profit,inverseSum,roiPercent,totalStake,worstCasePayout,guaranteedProfit,roundingRisk,riskPercent,gap,verificationStatus,verificationReason,scope';
+const HEADER = 'type,sport,league,kickoff,homeTeam,awayTeam,marketKey,sourceId,selection,outcome,odds,handicap,stake,payout,profit,inverseSum,marginPercent,totalStake,worstCasePayout,guaranteedProfit,roundingRisk,riskPercent,gap,verificationStatus,verificationReason,scope';
 
 function makeScan() {
   return {
@@ -24,7 +24,8 @@ function makeScan() {
       homeTeam: 'Home',
       awayTeam: 'Away',
       inverseSum: 0.98,
-      roiPercent: 2.04,
+      // margin, not ROI: (1 - 0.98) * 100 = 2.00 (the old ROI read 2.04).
+      marginPercent: 2,
       totalStake: 1000,
       worstCasePayout: 1020,
       guaranteedProfit: 20,

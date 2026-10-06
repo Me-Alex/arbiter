@@ -72,7 +72,7 @@ test('integration: end-to-end scan with stubbed HTTP + workspace', async () => {
   assert.equal(scan.opportunities.length, 1, 'expected one arb');
   const opp = scan.opportunities[0];
   assert.equal(opp.legs.length, 3);
-  assert.equal(typeof opp.roiPercent, 'number');
+  assert.equal(typeof opp.marginPercent, 'number');
   assert.equal(typeof opp.totalStake, 'number');
   assert.ok(opp.guaranteedProfit > 0);
 

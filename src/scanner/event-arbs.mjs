@@ -30,7 +30,7 @@ export const DETAIL_BANKROLL = 100;
  * @property {string|null} line  canonical line, null for markets without one
  * @property {Array<{sourceId:string, selection:string, odds:number, stake:number, payout:number}>} legs
  * @property {number} inverseSum
- * @property {number} roiPercent
+ * @property {number} marginPercent
  * @property {number} totalStake
  * @property {number} worstCasePayout
  * @property {number} guaranteedProfit
@@ -101,7 +101,7 @@ export function findDetailArbitrages(instances, opts = {}) {
       const allocation = roundedArbitrageAllocation(arb.legs, bankroll);
       if (!allocation) continue;
       const existing = out.get(arb.marketKey);
-      if (existing && existing.roiPercent >= allocation.roiPercent) continue;
+      if (existing && existing.marginPercent >= allocation.marginPercent) continue;
       out.set(arb.marketKey, {
         family: arb.family,
         period: arb.period,
@@ -120,7 +120,7 @@ export function findDetailArbitrages(instances, opts = {}) {
           eventUrl: leg.eventUrl ?? null,
         })),
         inverseSum: allocation.inverseSum,
-        roiPercent: allocation.roiPercent,
+        marginPercent: allocation.marginPercent,
         totalStake: allocation.totalStake,
         worstCasePayout: allocation.worstCasePayout,
         guaranteedProfit: allocation.guaranteedProfit,

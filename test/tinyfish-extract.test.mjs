@@ -145,6 +145,6 @@ test('two books on the same event cross-match in the engine', async () => {
   assert.equal(home.odds, 2.50);
   assert.equal(draw.odds, 4.50);
   assert.equal(away.odds, 5.00);
-  assert.ok(opp.roiPercent > 0);
+  assert.ok(opp.marginPercent > 0);
   await rm(dataDir, { recursive: true });
 });

@@ -61,6 +61,8 @@ import { readBoundedJson, DEFAULT_MAX_BODY_BYTES } from '../shared/bounded-json.
 const GOALS_TOTAL_TEMPLATE = 50;
 /** template 190 — "Handicap", the two-way goals handicap. */
 const GOALS_HANDICAP_TEMPLATE = 190;
+/** template 1104 — full-time match corners total; team-corners use template 914. */
+const CORNERS_TOTAL_TEMPLATE = 1104;
 export default class FavbetScraper extends ProviderContract {
   id = 'favbet';
   name = 'Favbet';
@@ -234,15 +236,18 @@ export default class FavbetScraper extends ProviderContract {
       // apart, because the provider's own side tag is empty on 84% of rows.
       const homeKey = normalizeTeamName(home);
       const awayKey = normalizeTeamName(away);
-      const goalMarkets = [];
+      const measuredMarkets = [];
       for (const m of priced) {
         const template = Number(m.market_template_id);
         if (template === GOALS_TOTAL_TEMPLATE) {
           const mapped = goalsTotalMarket(m);
-          if (mapped) goalMarkets.push(mapped);
+          if (mapped) measuredMarkets.push(mapped);
         } else if (template === GOALS_HANDICAP_TEMPLATE) {
           const mapped = goalsHandicapMarket(m, homeKey, awayKey);
-          if (mapped) goalMarkets.push(mapped);
+          if (mapped) measuredMarkets.push(mapped);
+        } else if (template === CORNERS_TOTAL_TEMPLATE) {
+          const mapped = cornersTotalMarket(m);
+          if (mapped) measuredMarkets.push(mapped);
         }
       }
 
@@ -276,7 +281,7 @@ export default class FavbetScraper extends ProviderContract {
             const s = byKind.get(kind);
             return { id: String(s.outcome_id), name: kind, odds: Number(s.outcome_coef), group: 'Main' };
           }),
-        }, ...goalMarkets, ...additionalMarkets],
+        }, ...measuredMarkets, ...additionalMarkets],
       });
       if (limitReached(out.length, this.maxEvents)) break;
     }
@@ -617,13 +622,15 @@ function isMultiMatchTie(marketOdds) {
  * Read the other way round and Over 0.5 would be 11.00 and Over 5.5 would be
  * 1.04, which is a book that pays 11 to happen and 1.04 not to.
  *
- * Fail-closed on everything else: a non-full-time window, a missing leg, legs
- * that disagree about the line, or a line that is not on the half. Of 1,334
- * markets 347 are published; the rest are half-time and second-half quotes
- * (648), whole lines (338) and multi-match ties (3).
+ * Fail-closed on everything else: an unknown settlement window, a missing leg,
+ * legs that disagree about the line, or a line that is not on the half. The
+ * provider's first-half goals totals use this exact template and settle as a
+ * separate contract, so full-time and first-half are both admitted explicitly;
+ * second-half remains withheld until it has an independent counterpart.
  */
 function goalsTotalMarket(market) {
-  if (favbetPeriod(market) !== 'fulltime') return null;
+  const period = favbetPeriod(market);
+  if (period !== 'fulltime' && period !== 'half1') return null;
   const legs = (market.outcomes || []).filter(isPriced);
   const over = legs.find((o) => /^(peste|over)\b/i.test(String(o.outcome_name ?? '').trim()));
   const under = legs.find((o) => /^(sub|under)\b/i.test(String(o.outcome_name ?? '').trim()));
@@ -638,6 +645,36 @@ function goalsTotalMarket(market) {
     key: 'TOTAL_GOALS',
     providerMarketId: `${GOALS_TOTAL_TEMPLATE}:${overLine}`,
     name: String(market.market_name || 'Peste / Sub'),
+    period,
+    line,
+    selections: [
+      { id: String(over.outcome_id), name: `Over ${line}`, odds: Number(over.outcome_coef), group: 'Main' },
+      { id: String(under.outcome_id), name: `Under ${line}`, odds: Number(under.outcome_coef), group: 'Main' },
+    ],
+  };
+}
+
+/**
+ * The exact Favbet match-corners total template. Template 914 is a separate
+ * team-corners product, so it is intentionally not routed here: a team total
+ * cannot share a contract with the match-corners total.
+ */
+function cornersTotalMarket(market) {
+  if (favbetPeriod(market) !== 'fulltime') return null;
+  if (String(market.market_name || '').trim().toLowerCase() !== 'total cornere') return null;
+  const legs = (market.outcomes || []).filter(isPriced);
+  const over = legs.find((o) => /^(peste|over)\b/i.test(String(o.outcome_name ?? '').trim()));
+  const under = legs.find((o) => /^(sub|under)\b/i.test(String(o.outcome_name ?? '').trim()));
+  if (!over || !under) return null;
+  const overLine = legLine(over.outcome_name);
+  const underLine = legLine(under.outcome_name);
+  if (overLine === null || overLine !== underLine) return null;
+  const line = halfGoalLine(overLine);
+  if (line === null) return null;
+  return {
+    key: 'CNOU',
+    providerMarketId: `${CORNERS_TOTAL_TEMPLATE}:${overLine}`,
+    name: market.market_name,
     period: 'fulltime',
     line,
     selections: [

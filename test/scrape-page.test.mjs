@@ -1523,10 +1523,10 @@ test('a stored configuration that still matches the form says nothing', () => {
   // The list is exactly the six fields profile 2 changes — the four numbers
   // and the two checkboxes — with the stored value first.
   assert.equal(scanLine('en', PROFILE_TWO_FORM),
-    'The scheduler runs with values other than the form: Bankroll 1000 → 500, Min ROI % 0 → 1, '
+    'The scheduler runs with values other than the form: Bankroll 1000 → 500, Min margin % 0 → 1, '
     + 'Max middle risk % 15 → 10, Min middle ROI % 20 → 30, include live no → yes, include past no → yes');
   assert.equal(scanLine('ro', PROFILE_TWO_FORM),
-    'Programatorul rulează cu valori diferite de formular: Bankroll 1000 → 500, ROI minim % 0 → 1, '
+    'Programatorul rulează cu valori diferite de formular: Bankroll 1000 → 500, Marjă minimă % 0 → 1, '
     + 'Risc middle maxim % 15 → 10, ROI middle minim % 20 → 30, include live nu → da, include trecut nu → da');
 });
 
@@ -1546,7 +1546,7 @@ test('switching the profile is reported, with both values and a direction', () =
   const en = scanLine('en', PROFILE_TWO_FORM);
   assert.match(en, /runs with values other than the form/, 'the line says what it is about');
   assert.match(en, /Bankroll 1000 → 500/, 'stored first, form second, so the arrow is a direction');
-  assert.match(en, /Min ROI % 0 → 1/);
+  assert.match(en, /Min margin % 0 → 1/);
   assert.match(en, /include live no → yes/, 'a boolean is not printed as true/false on a translated page');
   assert.doesNotMatch(en, /Min positive EV/, 'an unchanged field is not reported');
 
@@ -1595,11 +1595,11 @@ test('the live poll shows the thresholds it will actually use', () => {
 
   const en = liveScanLine('en', PROFILE_TWO_FORM);
   assert.equal(en,
-    'The live poll uses values other than the form: Bankroll 1000 → 500, Min ROI % 0 → 1, '
+    'The live poll uses values other than the form: Bankroll 1000 → 500, Min margin % 0 → 1, '
     + 'Max middle risk % 15 → 10, Min middle ROI % 20 → 30, include past no → yes');
   const ro = liveScanLine('ro', PROFILE_TWO_FORM);
   assert.equal(ro,
-    'Rularea live folosește valori diferite de formular: Bankroll 1000 → 500, ROI minim % 0 → 1, '
+    'Rularea live folosește valori diferite de formular: Bankroll 1000 → 500, Marjă minimă % 0 → 1, '
     + 'Risc middle maxim % 15 → 10, ROI middle minim % 20 → 30, include trecut nu → da');
   assert.doesNotMatch(en, /include live/, 'the poll forces includeLive, so the form\'s box is not a difference');
   assert.doesNotMatch(en, /Min positive EV/, 'an unchanged field is not reported');
@@ -1641,7 +1641,7 @@ test('refreshLive writes the live scan line from one real payload', async () => 
   // had to create.
   h.run("$('live-scan')");
   assert.equal(h.nodes.get('live-scan').textContent,
-    'The live poll uses values other than the form: Bankroll 1000 → 500, Min ROI % 0 → 1, '
+    'The live poll uses values other than the form: Bankroll 1000 → 500, Min margin % 0 → 1, '
     + 'Max middle risk % 15 → 10, Min middle ROI % 20 → 30, include past no → yes',
     "the route's own scanOptions reached the line, compared against the form as it stands");
 
@@ -1691,7 +1691,7 @@ test('refreshScheduler writes all three readouts from one real payload', async (
   // the wiring unproven: a page that never called the comparison at all would
   // render the same empty line.
   assert.equal(h.nodes.get('sched-scan').textContent,
-    'The scheduler runs with values other than the form: Bankroll 1000 → 500, Min ROI % 0 → 1, '
+    'The scheduler runs with values other than the form: Bankroll 1000 → 500, Min margin % 0 → 1, '
     + 'Max middle risk % 15 → 10, Min middle ROI % 20 → 30, include live no → yes, include past no → yes',
     "the route's own scanOptions reached the line, compared against the form as it stands");
   assert.match(h.nodes.get('sched-last').textContent, /\(skipped\) — scrape already running$/);
@@ -2124,7 +2124,7 @@ test('the last-run panel says what that run was told to collect', async () => {
   // profile switch those are different answers to the same question.
   const line = await optionsLine('en');
   assert.match(line, new RegExp(`^${DICTS.en.t('bankroll')}: 1000 · `), 'the bankroll it ran with');
-  assert.match(line, new RegExp(`${DICTS.en.t('minRoi')}: 0`), 'and the thresholds, including a zero that is a value');
+  assert.match(line, new RegExp(`${DICTS.en.t('minMargin')}: 0`), 'and the thresholds, including a zero that is a value');
   assert.match(line, new RegExp(`${DICTS.en.t('includeLive')}: ${DICTS.en.t('noShort')}`), 'and a flag as a word, not as false');
   assert.match(line, new RegExp(`${DICTS.en.t('eventCollection')}: all`), 'and the collection scope');
   assert.doesNotMatch(line, /undefined|NaN/, 'nothing undefined reaches the line');

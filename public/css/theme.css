@@ -18,14 +18,7 @@ html {
   scrollbar-color: var(--bg-4) var(--bg-0);
 }
 
-[data-theme="light"] {
-  color-scheme: light;
-}
 
-[data-theme="light"] html,
-[data-theme="light"] {
-  scrollbar-color: var(--bg-4) var(--bg-0);
-}
 
 body {
   font-family: var(--font-sans);
@@ -431,8 +424,8 @@ main > section + section { margin-top: var(--s-6); }
 
 .sidebar nav a:hover {
   color: var(--text-strong);
-  background: rgba(255, 255, 255, 0.035);
-  border-color: rgba(255, 255, 255, 0.05);
+  background: var(--bg-2);
+  border-color: var(--border);
   text-decoration: none;
   transform: translateX(2px);
 }
@@ -631,36 +624,8 @@ main > section + section { margin-top: var(--s-6); }
   flex-shrink: 0;
 }
 
-.sidebar-footer .theme-toggle {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 26px;
-  height: 26px;
-  padding: 0;
-  border: 1px solid var(--border);
-  border-radius: var(--r-full);
-  background: var(--bg-0);
-  color: var(--text-dim);
-  cursor: pointer;
-  transition: all var(--t-fast) var(--ease-out);
-  flex-shrink: 0;
-}
-.sidebar-footer .theme-toggle:hover {
-  color: var(--text);
-  border-color: var(--accent-line);
-}
-.sidebar-footer .theme-toggle svg {
-  display: none;
-}
-[data-theme="dark"] .sidebar-footer .theme-toggle .theme-icon-dark,
-.sidebar-footer .theme-toggle:not([data-theme]) .theme-icon-dark {
-  display: block;
-}
-[data-theme="light"] .sidebar-footer .theme-toggle .theme-icon-light {
-  display: block;
-}
-
+/* The theme-toggle half of this list went when the toggle did; `.dot` is the
+ * connection indicator and stays. */
 .dot {
   width: 6px;
   height: 6px;
@@ -1081,7 +1046,6 @@ button.primary, .btn.primary {
     0 1px 0 rgba(255, 255, 255, 0.25) inset,
     0 1px 2px rgba(0, 0, 0, 0.4),
     0 0 0 0 var(--accent-glow);
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.18);
 }
 button.primary:hover:not(:disabled) {
   background: linear-gradient(180deg, #84e0fb 0%, var(--accent-2) 100%);
@@ -1268,7 +1232,7 @@ table th, table td {
 table tbody tr:last-child td { border-bottom: 0; }
 
 table th {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.02) 0%, transparent 100%), var(--bg-1);
+  background: var(--bg-2);
   color: var(--text-muted);
   font-weight: 700;
   font-size: 10.5px;
@@ -1284,7 +1248,7 @@ table tbody tr {
   transition: background var(--t-fast) var(--ease-out);
 }
 table tbody tr:nth-child(even) td {
-  background: rgba(255, 255, 255, 0.02);
+  background: var(--row-zebra);
 }
 table tbody tr:hover td {
   background: var(--bg-2);
@@ -1311,7 +1275,7 @@ table tbody tr:focus-within td {
 
 /* Subtle column dividers for numeric data */
 table td.num + td.num {
-  border-left: 1px solid rgba(255, 255, 255, 0.03);
+  border-left: 1px solid var(--border);
 }
 
 table tbody tr.row-confirmed {
@@ -1373,7 +1337,7 @@ table tr[data-link] { cursor: pointer; }
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.3) 50%, transparent 100%);
+  background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.55) 50%, transparent 100%);
   animation: progressShimmer 1.8s linear infinite;
   background-size: 200% 100%;
 }
@@ -1545,7 +1509,7 @@ table tr[data-link] { cursor: pointer; }
   white-space: pre-wrap;
   align-items: center;
 }
-.log .line:hover { background: rgba(255, 255, 255, 0.02); }
+.log .line:hover { background: var(--row-zebra); }
 
 .log .line .time {
   color: var(--text-faint);
@@ -1724,6 +1688,7 @@ input[type="checkbox"], input[type="radio"] {
 .text-yellow { color: var(--yellow); }
 .text-red { color: var(--red); }
 .text-accent { color: var(--accent); }
+.text-blue { color: var(--accent); }
 
 /* ROI magnitude color classes */
 .roi-low { color: var(--text-muted); }
@@ -2628,160 +2593,56 @@ table th.num, table td.num { min-width: 5rem; }
 }
 
 /* ============================================================
-   Light-mode component overrides — activated by [data-theme="light"]
    ============================================================ */
-[data-theme="light"] body {
-  background: var(--bg-0);
-}
 
-[data-theme="light"] body.has-aurora {
-  background: var(--grad-aurora);
-}
 
-[data-theme="light"] body.has-mesh {
-  background: var(--grad-mesh);
-}
 
 /* Sidebar */
-[data-theme="light"] .sidebar {
-  background: linear-gradient(180deg, var(--bg-1) 0%, var(--bg-0) 100%);
-  box-shadow: 4px 0 16px rgba(0, 0, 0, 0.08);
-}
-[data-theme="light"] .sidebar-footer {
-  background: rgba(255, 255, 255, 0.6);
-}
 
 /* Cards */
-[data-theme="light"] .card {
-  background: var(--bg-1);
-  box-shadow: var(--shadow-xs);
-}
-[data-theme="light"] .card.card-elevated {
-  background: var(--bg-1);
-  box-shadow: var(--shadow-sm);
-}
-[data-theme="light"] .card.card-glass,
-[data-theme="light"] .card.card-glass-strong {
-  background: rgba(255, 255, 255, 0.8);
-}
 
 /* Hero */
-[data-theme="light"] .hero {
-  background: linear-gradient(180deg, var(--bg-1) 0%, var(--bg-0) 100%);
-}
 
 /* Topbar */
-[data-theme="light"] .topbar {
-  background: rgba(248, 250, 252, 0.85);
-}
 
 /* Login */
-[data-theme="light"] .login::before { display: none; }
 
 /* Sidebar status card */
-[data-theme="light"] .sidebar-status-card {
-  background: rgba(255, 255, 255, 0.6);
-}
 
 /* Log panel */
-[data-theme="light"] .log {
-  background-image: none;
-}
 
 /* Sidebar nav hover (remove dark rgba) */
-[data-theme="light"] .sidebar nav a:hover {
-  background: rgba(0, 0, 0, 0.04);
-  border-color: rgba(0, 0, 0, 0.06);
-}
-[data-theme="light"] .sidebar nav a.active {
-  background: linear-gradient(90deg, rgba(2, 132, 199, 0.10) 0%, rgba(2, 132, 199, 0.02) 100%), rgba(0, 0, 0, 0.02);
-}
 
 /* Grid overlay masks */
-[data-theme="light"] body.has-sidebar::before,
-[data-theme="light"] body.has-grid::before,
-[data-theme="light"] body.has-dots::before {
-  display: none;
-}
 
 /* Table row even */
-[data-theme="light"] table tbody tr:nth-child(even) td {
-  background: rgba(0, 0, 0, 0.015);
-}
 
 /* Button primary hover */
-[data-theme="light"] button.primary:hover:not(:disabled) {
-  background: linear-gradient(180deg, #0ea5e9 0%, var(--accent-strong) 100%);
-  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25);
-}
 
 /* Skeleton shimmer for light mode */
-[data-theme="light"] .skeleton {
-  background: linear-gradient(90deg, var(--bg-2) 0%, var(--bg-3) 50%, var(--bg-2) 100%);
-  background-size: 200% 100%;
-  animation: shimmer 1.4s linear infinite;
-}
 
 /* Progress bar */
-[data-theme="light"] .progress .bar {
-  box-shadow: 0 0 12px rgba(2, 132, 199, 0.20);
-}
 
 /* Sidebar brand */
-[data-theme="light"] .sidebar-brand .logo {
-  box-shadow: 0 4px 16px rgba(2, 132, 199, 0.25);
-}
-[data-theme="light"] .sidebar-brand .logo::after {
-  opacity: 0.2;
-}
 
 /* ============================================================
    Analyst workspace — shared surfaces and navigation
    ============================================================ */
 body.has-sidebar::before { display: none; }
-.sidebar, [data-theme="light"] .sidebar {
-  background: var(--bg-1);
-  box-shadow: none;
-  backdrop-filter: none;
-  height: 100dvh;
-  overflow-y: auto;
-  padding: 32px 16px 20px;
-}
 .sidebar-brand { margin-bottom: 40px; }
 .sidebar-brand .name { font-size: 21px; font-weight: 650; letter-spacing: -0.045em; }
-.sidebar-brand .logo, [data-theme="light"] .sidebar-brand .logo { box-shadow: none; }
 .sidebar-brand .logo::after { display: none; }
 .sidebar-brand .badge { background: var(--accent-soft); border-color: var(--accent-line); }
 .sidebar-brand .subtitle { font-family: var(--font-sans); letter-spacing: 0.025em; font-size: 11px; }
 .sidebar nav { gap: 6px; }
 .sidebar nav a { min-height: 46px; font-size: 14px; }
 .sidebar nav a:hover { transform: none; background: var(--bg-2); border-color: var(--border); }
-.sidebar nav a.active, [data-theme="light"] .sidebar nav a.active {
-  background: var(--accent-soft);
-  border-color: var(--accent-line);
-  border-left: 3px solid var(--accent);
-  color: var(--accent);
-  box-shadow: none;
-}
 .sidebar nav a.active .nav-icon svg { filter: none; }
-.sidebar-status-card.workspace-guide, [data-theme="light"] .sidebar-status-card.workspace-guide {
-  padding: 16px;
-  margin: 24px 0 16px;
-  background: var(--bg-0);
-  box-shadow: none;
-  backdrop-filter: none;
-}
 .workspace-guide h2 { margin: 0 0 8px; font-size: 13px; font-weight: 650; color: var(--text-strong); }
 .workspace-guide p { margin: 0 0 12px; color: var(--text-muted); font-size: 12px; line-height: 1.7; }
 .workspace-guide a { display: inline-flex; align-items: center; min-height: 32px; font-size: 12px; font-weight: 650; }
-.sidebar-footer, [data-theme="light"] .sidebar-footer { background: transparent; }
 .sidebar-footer .footer-row { flex-wrap: wrap; gap: 12px; }
-.sidebar-footer .theme-toggle, .sidebar-footer .lang-btn { min-height: 36px; min-width: 36px; }
 .sidebar-toggle { width: 44px; height: 44px; }
-.card, [data-theme="light"] .card { background: var(--bg-1); box-shadow: var(--shadow-xs); }
-button.primary:hover:not(:disabled), [data-theme="light"] button.primary:hover:not(:disabled) {
-  background: var(--accent-strong); box-shadow: none;
-}
 :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
   outline: 3px solid var(--accent); outline-offset: 4px;
 }
@@ -2804,15 +2665,20 @@ button.primary:hover:not(:disabled), [data-theme="light"] button.primary:hover:n
    ============================================================ */
 
 @media (prefers-contrast: more) {
+  /* High contrast on a light surface means *more* ink, not less: the default
+     palette's muted greys are the first thing to fail WCAG AA at this weight, so
+     they are pushed darker and the borders thicken. These were the dark theme's
+     values, which on white made the page lower-contrast than the default rather
+     than higher. */
   :root {
-    --border: #3a4a60;
-    --border-strong: #5a6a80;
-    --text-muted: #b0bec5;
-    --text-dim: #90a4ae;
-    --accent-glow: rgba(56, 189, 248, 0.70);
-    --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.55);
-    --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.50), 0 1px 2px rgba(0, 0, 0, 0.40);
-    --shadow: 0 4px 12px rgba(0, 0, 0, 0.55), 0 16px 32px rgba(0, 0, 0, 0.45);
+    --border: #64748b;
+    --border-strong: #475569;
+    --text-muted: #475569;
+    --text-dim: #334155;
+    --accent-glow: rgba(37, 99, 235, 0.45);
+    --shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.16);
+    --shadow-sm: 0 2px 6px rgba(15, 23, 42, 0.18), 0 1px 2px rgba(15, 23, 42, 0.12);
+    --shadow: 0 4px 12px rgba(15, 23, 42, 0.18), 0 16px 32px rgba(15, 23, 42, 0.14);
   }
 
   .chip { border: 1px solid var(--border-bright); }

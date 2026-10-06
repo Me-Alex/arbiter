@@ -89,7 +89,7 @@ test('findArbitrage still reports a cross-feed arbitrage', () => {
   assert.equal(out.length, 1);
   const ids = out[0].legs.map((l) => l.sourceId);
   assert.ok(ids.includes('superbet') && ids.includes('fortuna'), `expected both feeds, got ${ids.join('+')}`);
-  assert.ok(out[0].roiPercent > 0);
+  assert.ok(out[0].marginPercent > 0);
 });
 
 test('findArbitrage still allows a three-leg arb with one shared-feed pair dropped', () => {

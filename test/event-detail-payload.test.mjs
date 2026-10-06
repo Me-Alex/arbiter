@@ -340,7 +340,7 @@ test('the payload publishes no field without a reader, and every excuse is named
   // allowed to pass as clean, which is what the arb's own reconciled ROI is for:
   // it is a field the panel renders, so its presence is the control.
   assert.ok(levels.plan.size >= 7, `the plan level has to be walked, got ${levels.plan.size} keys — if arbitrages stopped being produced the census below is vacuous`);
-  assert.ok(levels.plan.has('roiPercent'), 'the plan the census walked is the reconciled one the panel renders');
+  assert.ok(levels.plan.has('marginPercent'), 'the plan the census walked is the reconciled one the panel renders');
 
   const unread = [];
   for (const [level, keys] of Object.entries(levels)) {
@@ -474,8 +474,8 @@ test('the plan walk the excuses above quote is measured, not transcribed', () =>
   // assertion asked for exact equality and failed on 98.33 against 98.3358 —
   // the source was right and the test was not.
   for (const { marketKey, plan } of plans) {
-    assert.ok(Math.abs(plan.roiPercent - (1 / plan.inverseSum - 1) * 100) < 0.005,
-      `${marketKey}: roiPercent ${plan.roiPercent} is not inverseSum ${plan.inverseSum} rescaled — the two published figures are the same number in two units, and the panel shows only one`);
+    assert.ok(Math.abs(plan.marginPercent - (1 - plan.inverseSum) * 100) < 0.005,
+      `${marketKey}: marginPercent ${plan.marginPercent} is not inverseSum ${plan.inverseSum} rescaled — the two published figures are the same number in two units, and the panel shows only one`);
   }
 });
 
@@ -562,7 +562,7 @@ test('the payload does not republish the arbitrage map it already attaches per m
   // field is gone would pass on a route that had stopped finding arbitrages.
   const withArb = (payload.events || []).flatMap((e) => e.markets || []).filter((m) => m.arb);
   assert.ok(withArb.length >= 1, 'the priced fixture produces a real cross-book arbitrage, and m.arb carries it');
-  assert.equal(typeof withArb[0].arb.roiPercent, 'number', 'and it carries the reconciled ROI the panel renders');
+  assert.equal(typeof withArb[0].arb.marginPercent, 'number', 'and it carries the reconciled margin the panel renders');
   // The plan is a claim about money, so it may only sit on a market that has
   // one. The modal renders `m.arb` as both a "live arbitrage" badge and a full
   // stake/payout panel, so a plan attached to a market with no arbitrage would
@@ -653,7 +653,7 @@ test('the reader search is sensitive, so an unread field is not a naming acciden
   // receiver, and it is the one that would wave every future plan field through
   // — so the set has to be shown to hold the fields the panel demonstrably
   // renders, and to hold nothing beyond them.
-  assert.ok(PLAN_READERS.has('roiPercent'), 'the plan reader set lost roiPercent, which renderArbPanel renders — the receiver is wrong or renamed');
+  assert.ok(PLAN_READERS.has('marginPercent'), 'the plan reader set lost marginPercent, which renderArbPanel renders — the receiver is wrong or renamed');
   assert.ok(PLAN_READERS.has('totalStake'), 'the plan reader set lost totalStake, which the panel equation is built from');
   assert.ok(PLAN_READERS.has('legs'), 'the plan reader set lost legs, the one field every other figure hangs off');
   // And the case that motivated receiver-anchoring at all. `marketKey` is read

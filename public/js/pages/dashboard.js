@@ -221,12 +221,12 @@ async function refresh() {
     if (qbOppsSub) qbOppsSub.textContent = `${opportunities.length} arbs, ${middles.length} middles`;
 
     // Best ROI
-    const allOpps = [...opportunities, ...middles].sort((a, b) => (b.roiPercent || 0) - (a.roiPercent || 0));
+    const allOpps = [...opportunities, ...middles].sort((a, b) => (b.marginPercent || b.roiPercent || 0) - (a.marginPercent || a.roiPercent || 0));
     if (allOpps.length > 0) {
       const best = allOpps[0];
       if (qbBestRoi) {
-        const roiClass = window.arbiterFormat?.roiClass(best.roiPercent) || '';
-        qbBestRoi.textContent = `+${(best.roiPercent || 0).toFixed(2)}%`;
+        const roiClass = window.arbiterFormat?.roiClass(best.marginPercent || best.roiPercent) || '';
+        qbBestRoi.textContent = `+${(best.marginPercent || best.roiPercent || 0).toFixed(2)}%`;
         qbBestRoi.className = `v ${roiClass}`;
       }
       if (qbBestRoiMatch) {
@@ -302,7 +302,11 @@ async function refresh() {
           ${reason ? `<div class="source-reason">${escapeHtml(reason)}</div>` : ''}
         </div>
         <div class="freshness-bar" aria-hidden="true"><div class="fill ${freshClass}" style="width:${freshness.toFixed(0)}%"></div></div>
-        <div class="source-stats">${Number(source.count || 0).toLocaleString()} <span class="muted">ev</span></div>
+        <div class="source-stats">${Number(source.count || 0).toLocaleString()} <span class="muted">ev</span>
+          <a class="source-snapshot" href="/api/snapshot/${encodeURIComponent(source.sourceId || '')}" title="${escapeHtml(t('viewRawCapture'))}" download aria-label="${escapeHtml(t('viewRawCapture'))}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          </a>
+        </div>
         <span class="status ${stateClass}">${escapeHtml(sourceStatusLabel(state, t))}</span>
       </div>`;
     }).join('') : `<div class="empty">
@@ -333,7 +337,7 @@ async function refresh() {
         </div>`;
     } else {
       const all = [...opportunities, ...middles]
-        .sort((a, b) => (b.roiPercent || 0) - (a.roiPercent || 0));
+        .sort((a, b) => (b.marginPercent || b.roiPercent || 0) - (a.marginPercent || a.roiPercent || 0));
 
       // Group by match identity: home|away|kickoff
       const groups = new Map();
@@ -481,7 +485,7 @@ function renderOppGroup(opps) {
   const href = escapeHtml(`/event.html?${params}`);
   const event = `${best.homeTeam || '—'} ${t('vs')} ${best.awayTeam || '—'}`;
   const marketCount = new Set(opps.map(o => o.marketKey || o.market || '').filter(Boolean)).size;
-  const roi = Number(best.roiPercent || 0);
+  const roi = Number(best.marginPercent || best.roiPercent || 0);
   const kind = best.kind === 'middle' ? (arbiterI18n.lang === 'en' ? 'Middle' : 'Mijloc') : (arbiterI18n.lang === 'en' ? 'Arbitrage' : 'Arbitraj');
   // A row is one match with every market found on it, so the row is live when
   // any of them is — not only when the ROI-best one happens to be. Marking only
@@ -501,7 +505,7 @@ function renderOppGroup(opps) {
 const BADGE_FRESH_MS = 5 * 60 * 1000;   // <5 min
 const BADGE_RECENT_MS = 30 * 60 * 1000; // <30 min
 
-// ROI bar scale: map roiPercent onto the 0-100 fill width.
+// Margin bar scale: map marginPercent onto the 0-100 fill width.
 const ROI_BAR_SCALE = 12;
 
 // Shared formatters are loaded once via /js/format.js (see window.arbiterFormat).
@@ -523,15 +527,15 @@ function parseDate(value) {
 // eslint-disable-next-line no-unused-vars
 function renderOppV2(o, allMarkets) {
   const t = arbiterI18n.t.bind(arbiterI18n);
-  const legs = (o.legs || []).map((l) => dashRenderLeg(l, t, o.roiPercent)).join('');
+  const legs = (o.legs || []).map((l) => dashRenderLeg(l, t, o.marginPercent || o.roiPercent)).join('');
 
   const status = o.verification
     ? `<span class="status ${o.verification.status}">${escapeHtml(o.verification.status)}</span>`
     : `<span class="muted text-xs">${escapeHtml(t('unverified'))}</span>`;
 
   const kindClass = o.kind === 'middle' ? 'is-middle' : '';
-  const roi = Math.max(0, Math.min(100, (o.roiPercent || 0) * ROI_BAR_SCALE));
-  const hotClass = (o.roiPercent || 0) > 5 ? 'opp-hot' : '';
+  const roi = Math.max(0, Math.min(100, (o.marginPercent || o.roiPercent || 0) * ROI_BAR_SCALE));
+  const hotClass = (o.marginPercent || o.roiPercent || 0) > 5 ? 'opp-hot' : '';
   const rawMarket = o.marketKey || o.market || '';
   const marketLabel = fmtMarketKey(rawMarket);
   const league = o.league || '';
@@ -567,7 +571,7 @@ function renderOppV2(o, allMarkets) {
     ? `<div class="opp-market-chips">${markets.map((m, i) => {
         const mk = m.marketKey || m.market || '';
         const label = fmtMarketKey(mk);
-        const roi2 = (m.roiPercent || 0).toFixed(2);
+        const roi2 = (m.marginPercent || m.roiPercent || 0).toFixed(2);
         return `<button class="opp-market-chip${i === 0 ? ' active' : ''}" type="button" data-market-idx="${i}" title="${escapeHtml(mk)} · +${roi2}%">${escapeHtml(label)}</button>`;
       }).join('')}</div>`
     : '';
@@ -584,7 +588,7 @@ const dataAttrs = [
     // No verification/other mutable fields — the JSON is idempotent and safe to
     // re-stringify.
     markets ? `data-group="${escapeHtml(JSON.stringify(markets.map((m) => ({
-      roiPercent: m.roiPercent,
+      marginPercent: m.marginPercent, roiPercent: m.roiPercent,
       marketKey: m.marketKey || m.market || '',
       legs: (m.legs || []).map((l) => ({ sourceId: l.sourceId, selection: l.selection, odds: l.odds, stake: l.stake, eventUrl: l.eventUrl || null })),
     }))))}"` : '',
@@ -615,7 +619,7 @@ const dataAttrs = [
           </div>
         </div>
         <div class="roi-block">
-          <div class="roi">+${(o.roiPercent || 0).toFixed(2)}<span class="pct">%</span></div>
+          <div class="roi">+${(o.marginPercent || o.roiPercent || 0).toFixed(2)}<span class="pct">%</span></div>
           ${o.guaranteedProfit !== null && o.guaranteedProfit !== undefined ? `<div class="profit-badge green" title="${t('guaranteedProfit')}">+${fmtStake(o.guaranteedProfit)} RON</div>` : ''}
           <div class="roi-bar" aria-hidden="true"><div class="fill" style="width:${roi.toFixed(1)}%"></div></div>
           ${markets ? `<div class="opp-market-count">${markets.length} ${t('markets')}</div>` : ''}

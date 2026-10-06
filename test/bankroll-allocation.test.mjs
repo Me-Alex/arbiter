@@ -29,8 +29,9 @@ test('roundedArbitrageAllocation splits inversely to odds', () => {
   assert.equal(out.legs[1].payout, 1111.1);
   assert.equal(out.worstCasePayout, 1111.1);
   assert.equal(out.guaranteedProfit, 111.1);
-  // The theoretical ROI is still reported at full precision.
-  assert.equal(out.roiPercent, 11.11);
+  // The theoretical margin is still reported at full precision:
+  // (1 - 0.9) * 100 = 10.00%, not the 11.11% ROI of the same inverse sum.
+  assert.equal(out.marginPercent, 10);
 });
 
 test('roundedArbitrageAllocation gives every leg the same profit', () => {
@@ -69,7 +70,7 @@ test('roundedArbitrageAllocation exposes the worst case and the rounding risk', 
   const out = roundedArbitrageAllocation([{ odds: 2.0 }, { odds: 2.5 }], 1000);
   assert.equal(out.worstCasePayout, Math.min(...out.legs.map((l) => l.payout)));
   assert.equal(out.guaranteedProfit, Math.round((out.worstCasePayout - 1000) * 100) / 100);
-  // The theoretical ROI survives even when rounding eats into it.
+  // The theoretical margin survives even when rounding eats into it.
   //
   // This line used to read `assert.ok(out.roundingRisk >= 0)`, which passed for
   // `false`, for `0`, for `true` and for `'abc'` alike: the flag is a boolean
@@ -78,7 +79,7 @@ test('roundedArbitrageAllocation exposes the worst case and the rounding risk', 
   // what the allocator actually writes — the type, and the predicate it is.
   assert.equal(typeof out.roundingRisk, 'boolean', 'the rounding risk is a flag, not a magnitude');
   assert.equal(out.roundingRisk, out.guaranteedProfit < 0);
-  assert.ok(out.roiPercent > 0);
+  assert.ok(out.marginPercent > 0);
 });
 
 test('the rounding risk is reachable, so a page has something to disclose', () => {
@@ -97,7 +98,7 @@ test('the rounding risk is reachable, so a page has something to disclose', () =
   // Fat: a 1% edge is 10 units on 1000 and rounding cannot touch it.
   assert.equal(roundedArbitrageAllocation(pair(1e-2, 2.5), 1000).roundingRisk, false);
 
-  // Thin: the ROI rounds to 0.00% while the cent-level split comes out under the
+  // Thin: the margin rounds to 0.00% while the cent-level split comes out under the
   // bankroll. Swept over the tail and five price pairs, at a 1000 bankroll.
   let fired = 0;
   let total = 0;
@@ -113,9 +114,9 @@ test('the rounding risk is reachable, so a page has something to disclose', () =
   assert.equal(total, 200, 'the sweep shrank, so the count above would mean less');
 
   // And when it fires, the two numbers a trader reads contradict each other:
-  // the ROI prints as zero while the profit is negative.
+  // the margin prints as zero while the profit is negative.
   const thin = roundedArbitrageAllocation(pair(1e-7, 3.0), 1000);
   assert.equal(thin.roundingRisk, true);
-  assert.equal(thin.roiPercent, 0, 'the theoretical edge rounds to nothing');
+  assert.equal(thin.marginPercent, 0, 'the theoretical edge rounds to nothing');
   assert.equal(thin.guaranteedProfit, -0.01, 'while the rounded split loses a cent');
 });

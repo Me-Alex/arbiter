@@ -58,7 +58,7 @@ function renderInsights(scan) {
             <div class="match">${escapeHtml(item.homeTeam)} <span class="muted">${t('vs')}</span> ${escapeHtml(item.awayTeam)}</div>
             <div class="match-meta"><span class="chip green">${escapeHtml(t('confirmedLabel'))}</span>${liveBadge(item)}<span>${escapeHtml(item.marketKey)}</span></div>
           </div>
-          <div class="roi-wrap"><div class="roi" style="font-size:18px">+${Number(item.roiPercent || 0).toFixed(2)}%</div></div>
+          <div class="roi-wrap"><div class="roi" style="font-size:18px">+${Number(item.marginPercent || item.roiPercent || 0).toFixed(2)}%</div></div>
         </div>
         <div class="muted text-sm" style="margin-top:8px;position:relative;z-index:1">${escapeHtml(t('freshLegsFrom'))} ${escapeHtml((item.legs || []).map((leg) => leg.sourceId).join(' · '))}</div>
       </div>`).join('')

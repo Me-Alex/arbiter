@@ -48,9 +48,9 @@ const FIXTURE = {
   // the state the first test reads the control in.
   options: {},
   opportunities: [
-    { sport: 'Football', homeTeam: 'FCSB', awayTeam: 'Craiova', marketKey: 'MATCH_ODDS', roiPercent: 3, totalStake: 1000, guaranteedProfit: 30, legs: [{ sourceId: 'alpha', selection: 'Home', odds: 2.1, stake: 500, payout: 1050, profit: 50 }] },
-    { sport: 'TENNIS', homeTeam: 'Alcaraz', awayTeam: 'Sinner', marketKey: 'MATCH_ODDS', roiPercent: 2, totalStake: 1000, guaranteedProfit: 20, legs: [{ sourceId: 'bravo', selection: 'Home', odds: 2.05, stake: 500, payout: 1025, profit: 25 }] },
-    { homeTeam: 'NoSportEvent', awayTeam: 'Nobody', marketKey: 'MATCH_ODDS', roiPercent: 1, totalStake: 1000, guaranteedProfit: 10, legs: [{ sourceId: 'charlie', selection: 'Home', odds: 2.0, stake: 500, payout: 1000, profit: 0 }] },
+    { sport: 'Football', homeTeam: 'FCSB', awayTeam: 'Craiova', marketKey: 'MATCH_ODDS', marginPercent: 3, totalStake: 1000, guaranteedProfit: 30, legs: [{ sourceId: 'alpha', selection: 'Home', odds: 2.1, stake: 500, payout: 1050, profit: 50 }] },
+    { sport: 'TENNIS', homeTeam: 'Alcaraz', awayTeam: 'Sinner', marketKey: 'MATCH_ODDS', marginPercent: 2, totalStake: 1000, guaranteedProfit: 20, legs: [{ sourceId: 'bravo', selection: 'Home', odds: 2.05, stake: 500, payout: 1025, profit: 25 }] },
+    { homeTeam: 'NoSportEvent', awayTeam: 'Nobody', marketKey: 'MATCH_ODDS', marginPercent: 1, totalStake: 1000, guaranteedProfit: 10, legs: [{ sourceId: 'charlie', selection: 'Home', odds: 2.0, stake: 500, payout: 1000, profit: 0 }] },
   ],
   middles: [
     { sport: 'Football', homeTeam: 'FCSB', awayTeam: 'Craiova', marketKey: 'AH_HOME_-1', roiPercent: 9, legs: [{ sourceId: 'alpha' }] },

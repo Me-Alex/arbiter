@@ -31,3 +31,25 @@ dialog.arbiter-modal {
 }
 #tracker-table td .bet-origin { color: var(--text-muted); font-size: 11px; }
 #tracker-table td .bet-when-updated { color: var(--text-muted); font-size: 11px; white-space: nowrap; }
+
+/* KPI sub-caption: one quiet line under the value, the same role the other
+   surfaces give the meta line. */
+.kpi-hint {
+  margin-top: 6px;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* Section toolbar rows: label left, actions right, on one line that wraps. */
+.section-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-4);
+  flex-wrap: wrap;
+}
+.toolbar-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+}

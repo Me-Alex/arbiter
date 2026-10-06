@@ -81,14 +81,14 @@ test('detects a real cross-book arb and every figure reconciles', () => {
   assert.ok(Math.abs(arb.guaranteedProfit - (minPayout - arb.totalStake)) < 0.005,
     `guaranteed ${arb.guaranteedProfit} == minPayout − totalStake`);
 
-  // ROI is derived from the inverse sum of the two quoted prices.
+  // The margin is the overround the two quoted prices leave: 1 − Σ(1/odds).
   const inverseSum = arb.legs.reduce((s, l) => s + 1 / l.odds, 0);
   assert.ok(Math.abs(inverseSum - arb.inverseSum) < 1e-9, 'inverseSum matches Σ(1/odds)');
   assert.ok(inverseSum < 1, 'an arb requires Σ(1/odds) < 1');
-  assert.ok(Math.abs(arb.roiPercent - (1 / inverseSum - 1) * 100) < 0.01, 'ROI matches (1/inverseSum − 1)·100');
+  assert.ok(Math.abs(arb.marginPercent - (1 - inverseSum) * 100) < 0.01, 'margin matches (1 − inverseSum)·100');
 
   // The headline must be positive, and the money must actually be there.
-  assert.ok(arb.roiPercent > 0, 'ROI is positive');
+  assert.ok(arb.marginPercent > 0, 'margin is positive');
   assert.ok(arb.guaranteedProfit > 0, 'guaranteed profit is positive');
   assert.equal(arb.roundingRisk, false);
 });
@@ -122,17 +122,17 @@ test('a plan carries the scope it was priced in, and never mixes two', () => {
     'a pair with no scope recorded is pre-match');
 });
 
-test('the reported case reproduces the headline ROI, not the per-book overround', () => {
+test('the reported case reproduces the headline margin, not the per-book overround', () => {
   const arb = findDetailArbitrages(REAL_CASE, { bankroll: 1000 }).get('BOTH_TEAMS_SCORE');
   // Favbet 1/2.84 + 1/1.55 = 0.997 → about -0.27% overround on its own.
   const favbetOverround = (1 / 2.84 + 1 / 1.55 - 1) * 100;
   // The arb pairs Favbet Yes with Casa No: 1/2.84 + 1/2.55 = 0.7442.
-  const roi = (1 / (1 / 2.84 + 1 / 2.55) - 1) * 100;
+  const margin = (1 - (1 / 2.84 + 1 / 2.55)) * 100;
 
-  assert.ok(Math.abs(roi - 34.36) < 0.05, `headline ROI is ~34.36%, got ${roi.toFixed(2)}`);
-  assert.ok(Math.abs(arb.roiPercent - roi) < 0.01, 'panel ROI equals the cross-book ROI');
-  assert.ok(Math.abs(favbetOverround - arb.roiPercent) > 10,
-    'per-book overround cannot stand in for the arbitrage ROI');
+  assert.ok(Math.abs(margin - 25.57) < 0.05, `headline margin is ~25.57%, got ${margin.toFixed(2)}`);
+  assert.ok(Math.abs(arb.marginPercent - margin) < 0.01, 'panel margin equals the cross-book margin');
+  assert.ok(Math.abs(favbetOverround - arb.marginPercent) > 10,
+    'per-book overround cannot stand in for the arbitrage margin');
 });
 
 test('no arb when the books disagree with the market maker', () => {
@@ -206,7 +206,7 @@ gl.escapeHtml = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;
 const I18N = {
   bookmaker: 'Casă', odds: 'Cotă', pick: 'Selecție', stake: 'Miză', profit: 'Profit',
   stakePerLeg: 'Miză pe fiecare piață', payoutIfWins: 'Retragere', totalStake: 'Miză totală',
-  bestPayout: 'Retragere garantată', guaranteed: 'Profit garantat', theoreticalRoi: 'ROI teoretic',
+  bestPayout: 'Retragere garantată', guaranteed: 'Profit garantat', theoreticalMargin: 'Marjă teoretică',
   marketOdds: 'Toate cotele pieței', edge: 'Overround', edgeHint: 'h', arbLive: 'Arbitraj live',
   arbOnLiveOdds: 'Pe cotele live', roundingRisk: 'Atenție la rotunjire', roundingRiskHint: 'hint',
   livePrice: 'Cota live', noOddsFound: 'Nu s-au găsit cote', markets: 'piețe',
@@ -254,9 +254,9 @@ test('the panel renders the ROI, the money, and each staked leg', () => {
   const arb = findDetailArbitrages(REAL_CASE, { bankroll: 1000 }).get('BOTH_TEAMS_SCORE');
   const html = renderArb(arb);
 
-  // Headline ROI as the backend computed it.
-  assert.ok(html.includes(`+${arb.roiPercent.toFixed(2)}`), `ROI ${arb.roiPercent} rendered`);
-  assert.ok(html.includes('ROI teoretic'), 'ROI is labelled theoretical');
+  // Headline margin as the backend computed it.
+  assert.ok(html.includes(`+${arb.marginPercent.toFixed(2)}`), `margin ${arb.marginPercent} rendered`);
+  assert.ok(html.includes('Marjă teoretică'), 'margin is labelled theoretical');
 
   // The reconciled money, not a per-leg ROI slice.
   assert.ok(html.includes('1,000.00'), 'total stake rendered');
@@ -302,7 +302,7 @@ test('a market with no arb still shows its exact per-book prices', () => {
   assert.ok(html.includes('1.95'), 'prices shown');
   assert.ok(html.includes('Overround'), 'the column is named for what it is');
   assert.ok(!html.includes('ev-arb-roi-value'), 'no money panel without an arb');
-  assert.ok(!html.includes('ROI teoretic'), 'no ROI claim without an arb');
+  assert.ok(!html.includes('Marjă teoretică'), 'no margin claim without an arb');
 });
 
 test('the overround column is labelled as overround, not as the arb ROI', () => {
@@ -325,7 +325,7 @@ test('rounding risk is called out on the panel', () => {
       { sourceId: 'a', selection: 'Yes', odds: 2.02, stake: 0.5, payout: 1.01 },
       { sourceId: 'b', selection: 'No', odds: 2.02, stake: 0.5, payout: 0.99 },
     ],
-    roiPercent: 0.5, totalStake: 1, worstCasePayout: 0.99, guaranteedProfit: -0.01, roundingRisk: true,
+    marginPercent: 0.5, totalStake: 1, worstCasePayout: 0.99, guaranteedProfit: -0.01, roundingRisk: true,
   }, gl.arbiterI18n.t);
   assert.ok(html.includes('has-risk'), 'risk modifier set');
   assert.ok(html.includes('Atenție la rotunjire'), 'risk note rendered');
@@ -340,7 +340,7 @@ test('the panel tolerates a missing summary block', () => {
       { sourceId: 'a', selection: 'Yes', odds: 2.5, stake: 40, payout: 100 },
       { sourceId: 'b', selection: 'No', odds: 2.5, stake: 60, payout: 150 },
     ],
-    roiPercent: 10,
+    marginPercent: 10,
   }, gl.arbiterI18n.t);
   assert.ok(html.includes('100.00'), 'total stake recomputed as the sum of legs');
   assert.ok(html.includes('100.00'), 'worst payout = min payout');
@@ -387,7 +387,7 @@ test('the panel equation uses cents, not rounded whole units', () => {
       { sourceId: 'a', selection: 'Yes', odds: 3.16, stake: 37.67, payout: 119.04 },
       { sourceId: 'b', selection: 'No', odds: 1.91, stake: 62.33, payout: 119.05 },
     ],
-    roiPercent: 19.05, totalStake: 100, worstCasePayout: 119.04, guaranteedProfit: 19.04, roundingRisk: false,
+    marginPercent: 19.05, totalStake: 100, worstCasePayout: 119.04, guaranteedProfit: 19.04, roundingRisk: false,
   }, gl.arbiterI18n.t);
   // Each term must be arithmetically true as printed.
   assert.ok(html.includes('37.67'), 'stake printed with cents');

@@ -397,8 +397,8 @@ function collectCardLegs(card) {
       <div class="ev-arb-head">
         ${arb.live === true ? `<span class="chip red live-badge" title="${esc(t('liveTooltip'))}">${esc(t('live'))}</span>` : ''}
         <div class="ev-arb-roi">
-          <span class="ev-arb-roi-value">+${(Number(arb.roiPercent) || 0).toFixed(2)}<span class="pct">%</span></span>
-          <span class="ev-arb-roi-label">${esc(t('theoreticalRoi'))}</span>
+          <span class="ev-arb-roi-value">+${(Number(arb.marginPercent) || 0).toFixed(2)}<span class="pct">%</span></span>
+          <span class="ev-arb-roi-label">${esc(t('theoreticalMargin'))}</span>
         </div>
         <dl class="ev-arb-figures">
           <div><dt>${esc(t('totalStake'))}</dt><dd class="mono">${money(totalStake)}</dd></div>

@@ -218,9 +218,15 @@ function decideHealthChip(health) {
       }
     });
 
-    // Also update the legacy dashboard live-indicator if present
+    // Also update the legacy dashboard live-indicator if present.
+    // Guarded on `.chip`: the console pages anchor `#sse-status` on their own
+    // `.sse-status` pill, and the loop above has just rewritten that node's
+    // className to `chip green|red` (it assigns className wholesale, which drops
+    // `.sse-status`). Without this guard the legacy branch would overwrite the
+    // pill's own `data-connected-text` with the generic "Live" label on every
+    // state change. `.live-indicator` is the dashboard's marker and never `.chip`.
     const dashIndicator = document.getElementById('sse-status');
-    if (dashIndicator) {
+    if (dashIndicator && !dashIndicator.classList.contains('chip')) {
       dashIndicator.className = 'live-indicator ' + (connected ? 'connected' : 'disconnected');
       const dashLabel = dashIndicator.querySelector('span:last-child');
       if (dashLabel) dashLabel.textContent = label;

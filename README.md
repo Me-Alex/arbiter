@@ -122,14 +122,74 @@ arbiter/
 ├── config/
 │   ├── scrapers.json             # the scraper registry (source of truth)
 │   └── scan-profiles.json        # trusted + review scan profiles
-├── data/                         # runtime state (gitignored)
+├── data/                         # two different kinds of thing, see below
 │   ├── workspace/<book>_events.json   # one per bookmaker (atomic-promoted)
 │   ├── staging/<book>_<ts>.json       # write-then-promote buffer
 │   ├── discovery/<book>_links.json     # rendered routes, tournaments, event URLs
 │   ├── latest-*.json                  # canonical pointers
-│   └── bet-tracker.json
+│   ├── bet-tracker.json               # the user's own bets
+│   ├── scrape-state.json              # scrape orchestrator: last run, per book
+│   ├── scheduler-state.json           # scheduler: interval, last cycle
+│   ├── live-state.json                # live poll: interval, last duration, skips
+│   └── endpoints/                     # provider evidence: endpoints.json + 108 captures
+├── data-market-run/              # one frozen 24-book capture, versioned on purpose
+│   ├── workspace/<book>_events.json
+│   └── all-market-report.json
+├── scripts/                      # maintenance and measurement commands
 └── test/
 ```
+
+`data-market-run/` is a top-level directory that looks like leftover output and
+is not. It is versioned, and it is load-bearing in two places:
+`scripts/gen-league-translations.mjs` reads its `workspace/` to regenerate
+`src/scanner/league-translations.mjs`, and `src/scanner/feed-groups.mjs` plus
+`src/scanner/league-aliases.mjs` both name it as the capture their hardcoded
+tables were derived from. It is the only complete multi-book capture kept, so
+the derived tables can be rebuilt from a known input rather than from whatever
+the books happen to be quoting today.
+
+### What `data/` actually holds
+
+`data/` is not one thing, and the split is deliberate. Getting it backwards is
+how a capture gets deleted or an evidence file gets ignored.
+
+| | Contents | In git? |
+| --- | --- | --- |
+| **Runtime** | `workspace/`, `staging/`, `discovery/`, `backups/`, `latest-*.json`, `bet-tracker.json`, `measurements.jsonl` | No — written by the app, rebuilt by the next cycle |
+| **Service state** | `scrape-state.json`, `scheduler-state.json`, `live-state.json` | Yes — each is a service's own last-known state and its settings |
+| **Provider evidence** | `endpoints/` (109 files, ~11 MB) | Yes — the recorded basis for every claim about a bookmaker's feed |
+
+`endpoints/` is the exception that gives `data/` its bad name: it is reference
+material, not runtime output. It is the only versioned directory under `data/`,
+`src/shared/endpoints.mjs` reads `endpoints.json` from it at runtime, and the
+per-book captures under it are cited by name in the adapter comments and in the
+"Public endpoint pipeline" section below. It is deliberately not ignored — a
+provider's response shape is the thing most likely to change without notice, so
+it is the thing most worth being able to diff.
+
+The service-state files are versioned because they carry the settings the admin
+pages set (intervals, and whether a cycle is running), and a settings change
+should show up in a diff rather than only on the machine that made it. They also
+change on their own, which is the one cost of this arrangement.
+
+### Scripts you have to run by path
+
+Most of `scripts/` is reachable through `npm run`, and the verification commands
+are tabulated under [Checking a change](#checking-a-change). The eight below
+have **no `npm run` entry at all**, because each is either one-off, needs a
+browser attached over CDP, or regenerates a source file rather than reporting on
+the running app:
+
+| Script | What it is for |
+| --- | --- |
+| `gen-league-translations.mjs` | **Regenerates a source file.** Rewrites `src/scanner/league-translations.mjs` from the captures in `data/workspace` and `data-market-run/workspace`. The competition-alias table is derived, not hand-written; if you change how aliases are matched, this is how the table is rebuilt. |
+| `sample.mjs` | Repeated live capture over hours, reporting the distribution of the best cross-feed return. Answers whether a near-zero result in one capture is stable or an accident. |
+| `smoke.mjs` | Quick hit test against an already-running server on `127.0.0.1:3022`. Note the port is hardcoded, so it ignores `PORT`. |
+| `discover-unibet.mjs` | Loads Unibet's sportsbook in a real browser and records the requests it makes, to find a replacement for the retired Kambi path. Observes only. |
+| `probe-unibet-feed.mjs` | Captures the full URL of those sports calls, then replays one without a browser to test whether the feed is genuinely public. |
+| `inspect-event-element.mjs` | Playwright element inspector over CDP. Needs `CDP_URL`; `MATCH_TEXT` selects the element. |
+| `inspect-tinyfish-browser.mjs` | Playwright browser/context inspector over CDP. Needs `CDP_URL`. |
+| `test-cli.bat` | Windows-only Tinyfish CLI smoke test, hardcoded to one machine's absolute path. Local scratch, kept out of `npm run` on purpose. |
 
 ## Public endpoint pipeline
 
@@ -281,6 +341,89 @@ config, disabled, as the placeholders for when real adapters land.
    canonicalised to a contract (`MATCH_ODDS`, `OVER_UNDER_*`, …) before the
    engine pairs legs, which is what stops a 2-way market being arbitraged
    against a 3-way one.
+
+### What a line counts: `subject` and `team`
+
+A contract is `(family, period, lineKey, subject, team)`. The last two answer
+questions the first three could not: **what** the line counts and **whose**.
+
+| Dimension | Values |
+|---|---|
+| `subject` | `goals`, `corners`, `cards`, `points`, `games`, `rounds`, `legs`, `shots_on_target` |
+| `team` | `match`, `home`, `away` |
+
+`subject` and `team` are appended to the bucket key, so `OVER 8.5 corners` and
+`OVER 8.5 goals` are different buckets, and one team's goals total never meets
+the match's goals total of the same line.
+
+Every market type is built from the provider's own market name, read out of the
+captures rather than assumed. Two of those readings are not obvious and are the
+reason the table looks the way it does:
+
+- **`Total hărți` is CARDS; `Harta 1.` is a SET.** "harta" is the Romanian for a
+  *map*, and a set is a map of a match. Both appear on the same FEG feed with
+  numeric legs — `ufo:mtyp:02-02` "Total harti 2.5" and `ufo:mtyp:02-04` "Harta 1.
+  castigator" — so a bare `hărți` pattern would file a tennis set winner under
+  cards. The cards class requires `total` in front of it.
+- **`ufo:mtyp:03-03` is a cards TOTAL, not a handicap**, even though that slot
+  defaults to `ASIAN_HANDICAP` and its legs (`- 4.5` / `+ 4.5`) are the shape a
+  spread looks like. A name that says "total" overrides the key's family, which
+  is the same precedence this file gives a name over a declared period
+  everywhere else. Without it a push-capable contract was priced as an
+  exhaustive one.
+
+This exists because those two dimensions were the reason a large class of
+market was **refused outright**. Corners, cards, points and games totals used
+to `return null` in `market-contracts.mjs`: the contract could not say what the
+line counted, and a corners 8.5 landing in the same bucket as a goals 8.5 is an
+arithmetic result on one contract priced from another. Now that the answer has
+somewhere to live, the collision is closed **at the key** instead, and the
+markets became tradable. Measured on `data/workspace`, 131 markets that
+previously resolved to nothing now resolve: 35 games, 34 corners, 33 points, 29
+cards.
+
+**Every total must leave `resolveContract` with a subject, and this has to be
+checked rather than assumed.** `superbetDetailRoute` builds its contract
+directly and never had a subject to give, so superbet's goals totals bucketed as
+`_::_` while the same line from the other fifteen books bucketed as
+`goals::match` — and a bucket key is equality, so superbet could not pair its
+own goals 2.5 with anyone. 562 markets, and nothing raised: a lost opportunity
+and a quiet market look identical in a scan that reports rows. It surfaced as
+`superbet — single book` in `scripts/market-coverage.mjs`. Routing that branch
+through `ouContract` took goals 2.5 from 10 books / 43 pairs / 25 shared events
+to **11 / 53 / 29**, and improved every other goals line with it.
+`scratch/find-missing-subject.mjs` is the check that would have caught it.
+
+Two things are still refused, both because guessing is worse than declining:
+
+- **Keys with no measured subject.** `TOTP`, `TSCR` and `TCOR` sit beside the
+  measured keys in the old refusal list but no capture attributes a subject to
+  them, so they stay withheld. So does the Romanian spelling of *shots on
+  target* — the English is matched, but no capture contains the local form, and
+  inventing it is exactly the failure mode this table exists to prevent.
+- **A per-team total that does not name its side.** EveryMatrix publishes
+  `Total Goluri Echipă Peste/Sub` — one team's goals, with no indication of
+  which. Filed under `match` it would meet a real match total, so it is refused.
+  Costing 62 markets on getsbet and contibet, which is a real coverage loss and
+  the correct trade.
+
+A total whose subject nothing proves still defaults to `goals`, which is exactly
+the pre-change behaviour: every total the engine could reach before was a goals
+total, and that is *why* the others were refused. After the `rounds`, `cards`
+and `legs` readings were added, that fallback carries 3,199 markets and every
+one of them is a real goals total — favbet's `TOTAL_GOALS` titled only
+`"Peste / Sub"`, and getsbet — so the default is now narrow rather than a
+cloak.
+
+## Why a scan can still legitimately find nothing
+
+Coverage is not the binding constraint on football 1X2 — the market is. Every
+alt market above is published by **exactly one** of the 24 books
+(`scripts/market-coverage.mjs` reports them as `single book`), and an arbitrage
+needs one contract from two *independent* feeds. So the reachable edge is a
+book-coverage problem, not a maths problem: the alt markets are collected but
+have no counterparty, and football 1X2 has many counterparties and no edge. See
+`docs/no-arbitrage-root-cause.md` for the measured 1X2 series.
 
 ### Adding a new sport
 

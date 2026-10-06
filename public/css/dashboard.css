@@ -157,6 +157,25 @@ background: var(--source-color, var(--accent));
 .source-row .status.completed { color: var(--green); background: var(--green-soft); }
 .source-row .status.failed { color: var(--red); background: var(--red-soft); }
 .source-row .status.partial { color: var(--yellow); background: var(--yellow-soft); }
+/* Raw-capture link — one download per book, surfaced through the same
+   /api/snapshot/:sourceId route the file was written from. */
+.source-row .source-snapshot {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: var(--r-sm);
+  color: var(--text-muted);
+  border: 1px solid transparent;
+  transition: color var(--t-fast) var(--ease-out), border-color var(--t-fast) var(--ease-out), background var(--t-fast) var(--ease-out);
+}
+.source-row .source-snapshot svg { width: 14px; height: 14px; }
+.source-row .source-snapshot:hover {
+  color: var(--accent);
+  border-color: var(--accent-line);
+  background: var(--accent-soft);
+}
 .source-row:hover {
   border-color: var(--border-bright);
   background: var(--bg-3);
@@ -536,7 +555,7 @@ background: var(--source-color, var(--accent));
   z-index: 1;
 }
 .ev-table .ev-row td { padding: 10px 14px; }
-.ev-table .ev-row:nth-child(even) { background: rgba(255, 255, 255, 0.015); }
+.ev-table .ev-row:nth-child(even) { background: var(--row-zebra); }
 .ev-table .ev-row:hover { background: var(--bg-2); }
 .ev-table .ev-row .ev-cell strong { color: var(--yellow); }
 .ev-table .ev-row .ev-pct { color: var(--yellow); font-weight: 700; font-family: var(--font-mono); font-size: 12.5px; }
@@ -1069,8 +1088,8 @@ background: var(--source-color, var(--accent));
   white-space: nowrap;
 }
 .odds-table tbody tr:last-child td { border-bottom: 0; }
-.odds-table tbody tr:nth-child(even) td { background: rgba(255,255,255,0.015); }
-.odds-table tbody tr:hover td { background: rgba(255,255,255,0.03); }
+.odds-table tbody tr:nth-child(even) td { background: var(--row-zebra); }
+.odds-table tbody tr:hover td { background: var(--row-hover); }
 
 .odds-table .bookmaker-cell {
   display: flex;
@@ -1322,7 +1341,7 @@ background: var(--source-color, var(--accent));
 /* ---- Leg table inside the panel ---- */
 .ev-arb .odds-table-wrap { border: 0; border-radius: 0; background: transparent; }
 .ev-arb .odds-table th { background: transparent; }
-.ev-arb .odds-table tbody tr:nth-child(even) td { background: rgba(255, 255, 255, 0.012); }
+.ev-arb .odds-table tbody tr:nth-child(even) td { background: var(--row-zebra); }
 
 .arb-table .arb-pick {
   max-width: 220px;

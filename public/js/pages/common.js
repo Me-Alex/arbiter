@@ -55,19 +55,29 @@ window.createChip = function (text, extraClass = '') {
 
 /**
  * Apply design token theme to the document root and persist the choice.
- * Sets `data-theme` on `document.documentElement` and saves to localStorage
- * so the preference survives page reloads.
  *
- * @param {string} theme - 'light' or 'dark'.
- * @returns {string} The applied theme.
+ * Deprecated and inert. The app had two themes — a dark default with a light
+ * override — and now has one: the ArbEdge palette, as plain `:root` values in
+ * design-tokens.css. There is nothing left to select, so this clears whatever
+ * the old two-theme code left behind and returns 'light', which is the only
+ * answer that exists.
+ *
+ * The name and arity are kept because it is a published global on `window` and
+ * test/common-lang-toggle.test.mjs:110 asserts the export exists. Deleting the
+ * export instead would fail that test for no benefit to a caller that has
+ * nothing to select.
+ *
+ * @param {string} [_theme] - ignored; accepted so old callers do not throw.
+ * @returns {string} Always 'light'.
  */
-window.applyDesignTokens = function (theme) {
-  if (theme !== 'light' && theme !== 'dark') {
-    theme = document.documentElement.dataset.theme || 'dark';
+window.applyDesignTokens = function (_theme) {
+  try {
+    localStorage.removeItem('arbiter-theme');
+  } catch (_err) {
+    // Storage can be blocked; the document is already on the only palette.
   }
-  document.documentElement.dataset.theme = theme;
-  localStorage.setItem('arbiter-theme', theme);
-  return theme;
+  delete document.documentElement.dataset.theme;
+  return 'light';
 };
 
 /**

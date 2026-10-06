@@ -9,7 +9,15 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, '..');
 const PORT = Number(process.env.PORT || 3022);
 const HOST = process.env.HOST || '127.0.0.1';
-const URL = `http://${HOST}:${PORT}/admin/scrape`;
+// The console opens on Arbitrage, which is the page an operator wants on
+// launch: it is the scan, ranked. Scrape is one nav item away and still on the
+// sidebar of every console page.
+//
+// With the `.html` suffix, because serveStatic maps only "/" to /index.html and
+// reads every other path verbatim — the extensionless form this used to carry
+// 404s, which is why src/server.mjs logs the suffixed form and this did not
+// match it.
+const URL = `http://${HOST}:${PORT}/admin/arbitrage.html`;
 const IS_DEV = process.env.ARBITER_DEV === '1';
 
 let serverProcess = null;

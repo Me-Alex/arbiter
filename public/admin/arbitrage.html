@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ArbEdge — Arbitrage</title>
+  <link rel="icon" href="/favicon.svg">
+  <link rel="stylesheet" href="/css/theme.css">
+  <link rel="stylesheet" href="/css/arbedge.css">
+</head>
+<body class="edge min-h-screen flex">
+
+  <!-- Shared sidebar mounts from /js/app.js -->
+<!-- Main Content -->
+  <main class="flex-1 p-4 lg:p-6 space-y-6">
+    <div class="flex items-center justify-between">
+      <h1 class="text-xl lg:text-2xl font-bold text-[var(--edge-textBright)]">Arbitrage Console</h1>
+      <button id="btn-export" class="px-3 py-1.5 rounded-lg text-xs bg-[var(--edge-blue)] text-white hover:bg-[var(--edge-blue)]/90 transition-colors focus-ring">Export CSV</button>
+    </div>
+
+    <!-- KPI Row -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">
+      <div class="card p-4">
+        <div class="text-xs text-[var(--edge-textMuted)] mb-1">Arbitrages</div>
+        <div class="text-2xl font-bold text-[var(--edge-textBright)]" id="k-arbs">—</div>
+        <div class="text-xs text-[var(--edge-textMuted)] mt-1" id="k-arbs-sub">Across every market</div>
+      </div>
+      <div class="card p-4">
+        <div class="text-xs text-[var(--edge-textMuted)] mb-1">Guaranteed Profit</div>
+        <div class="text-2xl font-bold text-[var(--edge-green)]" id="k-profit">—</div>
+        <div class="text-xs text-[var(--edge-textMuted)] mt-1">Summed over the table below</div>
+      </div>
+      <div class="card p-4">
+        <div class="text-xs text-[var(--edge-textMuted)] mb-1">Total Stake</div>
+        <div class="text-2xl font-bold text-[var(--edge-textBright)]" id="k-stake">—</div>
+        <div class="text-xs text-[var(--edge-textMuted)] mt-1">Capital committed</div>
+      </div>
+      <div class="card p-4">
+        <div class="text-xs text-[var(--edge-textMuted)] mb-1">Middles</div>
+        <div class="text-2xl font-bold text-[var(--edge-blue)]" id="k-middles">—</div>
+        <div class="text-xs text-[var(--edge-textMuted)] mt-1" id="k-ev">—</div>
+      </div>
+    </div>
+
+    <!-- Filters. One row, one border, the way the design does every control group. -->
+    <div class="card p-4">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-xs text-[var(--edge-textMuted)] mb-1" for="f-sport">Sport</label>
+          <select id="f-sport" class="w-full"></select>
+        </div>
+        <div>
+          <label class="block text-xs text-[var(--edge-textMuted)] mb-1" for="f-q">Search</label>
+          <input type="text" id="f-q" class="w-full" placeholder="Team, market or book" autocomplete="off">
+        </div>
+      </div>
+      <div class="flex items-center justify-between mt-4">
+        <div class="flex items-center gap-2">
+          <input type="checkbox" class="toggle" id="f-confirmed">
+          <label class="text-sm text-[var(--edge-textBright)]" for="f-confirmed">Confirmed only</label>
+        </div>
+        <span class="text-xs text-[var(--edge-textMuted)]" id="f-count"></span>
+      </div>
+    </div>
+
+    <!-- Arbitrage cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3 lg:gap-4" id="arb-grid"></div>
+
+    <!-- Middles -->
+    <div class="card p-4 lg:p-5">
+      <h2 class="text-sm font-semibold text-[var(--edge-textBright)] mb-4">Middles</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3 lg:gap-4" id="middle-grid"></div>
+    </div>
+
+    <!-- Positive EV -->
+    <div class="card p-4 lg:p-5">
+      <h2 class="text-sm font-semibold text-[var(--edge-textBright)] mb-4">Positive EV</h2>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="border-b border-[var(--edge-border)] text-left text-xs text-[var(--edge-textMuted)] uppercase tracking-wider">
+              <th class="px-3 py-2 font-medium">Event</th>
+              <th class="px-3 py-2 font-medium">Market</th>
+              <th class="px-3 py-2 font-medium">Book</th>
+              <th class="px-3 py-2 font-medium text-right">Odds</th>
+              <th class="px-3 py-2 font-medium text-right">P</th>
+              <th class="px-3 py-2 font-medium text-right">EV</th>
+              <th class="px-3 py-2 font-medium text-right">Stake</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-[var(--edge-border)]" id="table-ev"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Low hold -->
+    <div class="card p-4 lg:p-5">
+      <h2 class="text-sm font-semibold text-[var(--edge-textBright)] mb-4">Low Hold</h2>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="border-b border-[var(--edge-border)] text-left text-xs text-[var(--edge-textMuted)] uppercase tracking-wider">
+              <th class="px-3 py-2 font-medium">Event</th>
+              <th class="px-3 py-2 font-medium">Market</th>
+              <th class="px-3 py-2 font-medium">Book</th>
+              <th class="px-3 py-2 font-medium text-right">Selections</th>
+              <th class="px-3 py-2 font-medium text-right">Hold</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-[var(--edge-border)]" id="table-lowhold"></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+
+  <script src="/js/i18n.js" defer></script>
+  <script src="/js/api.js" defer></script>
+  <script src="/js/pages/common.js" defer></script>
+  <script src="/js/sse.js" defer></script>
+  <script src="/js/connection-status.js" defer></script>
+  <script src="/js/app.js" defer></script>
+  <script src="/js/pages/arbitrage.js" defer></script>
+</body>
+</html>

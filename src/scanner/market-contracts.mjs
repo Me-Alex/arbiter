@@ -119,6 +119,33 @@ const SUB_SETTLEMENT_WORDS = [
 ];
 
 /**
+ * Market names that state the settlement window INCLUDES overtime, extra time,
+ * a super over, or extra innings. A full-time "Final" and an "incl.
+ * prelungiri" winner award the stake to different outcomes whenever extra time
+ * is needed, so they are different contracts — and they must never share a
+ * bucket with the genuine full-time market. This is the same class of defect as
+ * a first-half price stamped full-time, one window later.
+ *
+ * Measured on the live workspace (2026-10-05): superbet emits
+ * "Câştigă meciul (incl. prelungiri)", "Câștigător (incl. prelungiri)",
+ * "Final (incl. super over)" and "Câștigător (incl. inning-uri extra)" stamped
+ * `period: 'fulltime'`, and netbet emits "Castigator Meci (Inclusiv
+ * Prelungiri)" and "Total Puncte (Inclusiv Prelungiri)" the same way. None of
+ * those strings matched SUB_SETTLEMENT_WORDS, because that list looks for
+ * halves and double chance — words about EARLIER settlement, not LATER.
+ */
+const OVERTIME_INCLUSIVE_WORDS = [
+  /\bincl(?:usiv|\.?)\s*(?:prelungi(?:ri|r\u012f)?|prel\.?|extra\s*time|over\s*time|\bot\b|inn?ing[\s-]*ur?i?\s*extra|super\s*over)/i,
+  /\bsuper\s*over\b/i,
+  /\b(?:prelungiri|extra\s*time|over\s*time|inning[\s-]*ur?i?\s*extra)\b/i,
+];
+
+function nameSettlesPastFullTime(m) {
+  const name = String(m?.name || '');
+  return OVERTIME_INCLUSIVE_WORDS.some((re) => re.test(name));
+}
+
+/**
  * True when a market declares full-time settlement *and* nothing in its own
  * name contradicts that.
  *
@@ -133,6 +160,7 @@ export function isDeclaredFullTimeMarket(m = {}) {
   if (!isFullTimeMarket(m)) return false;
   const name = String(m.name || '');
   if (!name) return true;
+  if (nameSettlesPastFullTime(m)) return false;
   return !SUB_SETTLEMENT_WORDS.some((re) => re.test(name));
 }
 
@@ -190,9 +218,6 @@ export function roundedArbitrageAllocation(legs, bankroll) {
   const payouts = allocated.map((leg) => round2(leg.stake * leg.odds));
   const worstCasePayout = Math.min(...payouts);
   const guaranteedProfit = round2(worstCasePayout - total);
-  // Rounding is observable disclosure, not a reason to hide a mathematically
-  // valid arb. Preserve the theoretical ROI and expose the rounded worst case.
-  const theoreticalProfit = total * (1 / inverseSum - 1);
 
   return {
     legs: allocated.map((leg, index) => ({ ...leg, payout: payouts[index], profit: guaranteedProfit })),
@@ -200,7 +225,10 @@ export function roundedArbitrageAllocation(legs, bankroll) {
     totalStake: total,
     worstCasePayout,
     guaranteedProfit,
-    roiPercent: round2((theoreticalProfit / total) * 100),
+    // Rounding is observable disclosure, not a reason to hide a mathematically
+    // valid arb: `marginPercent` is the clean margin from the inverse sum, and
+    // `roundingRisk` says whether the staked worst case still clears the bankroll.
+    marginPercent: round2((1 - inverseSum) * 100),
     roundingRisk: guaranteedProfit < 0,
   };
 }
@@ -210,10 +238,246 @@ function round2(value) {
 }
 
 // ===========================================================================
+// WHAT IS BEING COUNTED — the `subject` and `team` dimensions
+// ===========================================================================
+
+// The countable things a total or a spread can be about are decided by the
+// resolver below, not enumerated here. A vocabulary constant with no reader is
+// backend surface nobody can act on: `export-use.test.mjs` refused this file
+// over one, and the list was documentation pretending to be a contract.
+
+/**
+ * Subject words, taken from the captures rather than invented.
+ *
+ * Measured on `data/endpoints/captures/wamp-match-odds.json`,
+ * `bet7_api.json`, `mrplay_api.json` and `topbet_api.json`:
+ *
+ *   Cornere Peste/Sub  66    Corners Over/Under  22    Corner  33
+ *   Total cartonașe Peste/Sub  14                  Cartonașe  1
+ *   Total Goluri Echipă Peste/Sub  62               Gol / Goluri  468
+ *   Game-uri 2    Total Puncte (betano FTPO/FOUT, from the key table below)
+ *
+ * Both scripts are listed because the feeds are bilingual on the same market:
+ * the Romanian books title a market "Cornere Peste/Sub" and the same product
+ * appears as "Corners Over/Under" elsewhere. Diacritics are matched
+ * insensitively — `cartonașe` is written `cartonase` by some providers and the
+ * ș (U+0219) is not the ASCII s — so every class lists both spellings.
+ *
+ * Every pattern ends with `(?![a-z0-9])` rather than `\b`, and that is not a
+ * style choice. JS `\b` and `\w` are ASCII-only, so a Romanian letter such as
+ * `ă` or `ț` counts as a NON-word character: `\bcolturi\b` matches "colturi"
+ * and silently fails on "colțuri", and `\bechipă\b` would match "echipa" and
+ * silently fail on the very spelling it was written for. `(?![a-z0-9])` is the
+ * Unicode-safe "not followed by another word character" test and fires for
+ * both spellings. The same trap is documented at length on the period words
+ * above; it is the same defect in a different table.
+ */
+const SUBJECT_WORDS = [
+  ['corners', /\b(?:corners?|cornere|colturi|col[tț]uri)(?![a-z0-9])/i],
+  // `cards` needs the word "total" in front of "hărți", and that is not
+  // redundancy — it is the only thing separating CARDS from a SET.
+  //
+  // Measured 2026-10-05 on the live capture, same feed, two readings of one
+  // Romanian word:
+  //
+  //   ufo:mtyp:02-02  "Total harti 2.5"        cards total   legs + 2.5 / - 2.5
+  //   ufo:mtyp:03-03  "Total harti 4.5"        cards total   legs - 4.5 / + 4.5
+  //   ufo:mtyp:02-04  "Harta 1. castigator"    tennis SET    legs 1 / 2
+  //   ufo:mtyp:03-06  "Harta 1. castigator"    hockey SET    legs 2 / 1
+  //
+  // "harta" is the Romanian for a MAP, and a set is a map of a match — hence
+  // "Harta 1." = "Set 1". A bare `hărți` matcher would file a tennis set winner
+  // under cards, so the class requires `total` and the set-winner stays out.
+  ['cards', /\b(?:cards?|cartonase|cartona[sș]e|total\s+h[ăa]r[tț]i)(?![a-z0-9])/i],
+  // `runs/sets` — measured "Harta 1.: total runde 21.5" (ufo:mtyp:02-06,
+  // basketball total sets) and "Total runde 7.5 / 9.5 / 10.5" (ufo:mtyp:14-02,
+  // MMA total rounds). Distinct from `games` because the word is different and
+  // because an MMA round is not a tennis set, even though both are "rounds".
+  ['rounds', /\b(?:total\s+runde|runde)(?![a-z0-9])/i],
+  // `legs` — darts, measured as "Total Leg-uri" on the `ou_legs` key. It gets its
+  // own class rather than being folded into `rounds` for the same reason
+  // `TOTAL_180S` is withheld outright elsewhere in this file: a darts leg and a
+  // darts 180 are both darts counters and neither is a scoring total, so letting
+  // one stand in for the other would be the subject collision by another name.
+  ['legs', /\b(?:leg[\s-]?uri|total\s+leg[\s-]?uri)(?![a-z0-9])/i],
+  // `shots on target` is the English surebet.com renders. The Romanian
+  // spelling these books use is NOT in any capture we hold, so it is listed as
+  // unverified rather than guessed — see the note on `subjectFor`.
+  ['shots_on_target', /\b(?:shots?\s*on\s*target|tiruri\s*(?:pe|la)\s*poart[aă])(?![a-z0-9])/i],
+  ['points', /\b(?:points?|puncte)(?![a-z0-9])/i],
+  // `games` = tennis/basketball sets, not video games. The captures contain
+  // casino URLs containing "games" on the same books, so the class requires the
+  // Romanian hyphenated spelling or an explicit set-word.
+  ['games', /\b(?:game[\s-]?uri|sets?)(?![a-z0-9])/i],
+  // `goals` LAST: it is the weakest match (a bare "gol" appears inside
+  // "goluri") and every other subject here is checked first, so a corners
+  // market titled "Cornere / Goluri" resolves to corners.
+  ['goals', /\b(?:goluri|total\s+goluri|gol|goals?)(?![a-z0-9])/i],
+];
+
+/**
+ * Keys whose subject was measured, per the live-feed table in `docs/` and the
+ * FEG catalogue walk. Only keys whose subject this project has actually
+ * observed are listed — a key that is present in the old refusal regex but has
+ * no measured meaning stays refused, because guessing it would put two
+ * different products in one bucket, which is the failure the whole dimension
+ * exists to remove.
+ */
+const SUBJECT_BY_KEY = new Map([
+  ['CNOU', 'corners'],   // "Cornere Peste/Sub"
+  ['TCOU', 'cards'],     // "Total cartonașe Peste/Sub"
+  ['TSMF', 'cards'],     // "Total Hărți"
+  ['FTPO', 'points'],    // "Total Puncte"
+  ['FOUT', 'points'],    // "Total Puncte"
+  ['FTGO', 'games'],     // "Game-uri"
+]);
+
+/**
+ * Resolve what a market's line counts, or null when nothing proves it.
+ *
+ * Reads the market's own NAME first — that is the provider's text, so it is
+ * evidence the adapter never wrote — and falls back to a measured key. Returns
+ * null rather than a guess: a total whose subject cannot be named must not be
+ * filed under a subject, and the caller's fallback is what keeps that safe.
+ *
+ * @param {{ key?: string, name?: string }} market
+ * @returns {string|null}
+ */
+export function subjectFor(market = {}) {
+  const key = String(market.key || '').trim().toUpperCase();
+  const name = String(market.name || '');
+
+  if (name) {
+    for (const [subject, re] of SUBJECT_WORDS) {
+      if (re.test(name)) return subject;
+    }
+  }
+  // FEG encodes the market in the key as `ufo:mtyp:<sport>-<type>`; the football
+  // goals total is `00-0u` and the two per-team goal totals are `00-10`/`00-13`.
+  const feg = /^UFO:MTYP:00-(0U|10|13)$/i.exec(key);
+  if (feg) return 'goals';
+
+  const byKey = SUBJECT_BY_KEY.get(key);
+  if (byKey) return byKey;
+
+  return null;
+}
+
+/**
+ * The subject a resolved total carries, defaulting to `goals`.
+ *
+ * The default is the whole point and it is not a shortcut. Every total this
+ * engine could resolve BEFORE this dimension existed was a goals total — that
+ * is precisely why the non-goal ones were refused, and `docs/no-arbitrage-
+ * root-cause.md` measured the reachable totals as goals and nothing else. So
+ * `goals` reproduces the old behaviour exactly for every market that already
+ * traded, while a market whose name or key PROVES a different subject now gets
+ * its own bucket and can no longer collide with a goals line of the same
+ * number.
+ *
+ * A total whose subject is genuinely unknowable therefore still lands in the
+ * goals bucket and can still pair with a goals market. That residual is not
+ * worse than the status quo — it is the status quo — and it is the safe
+ * direction: the alternative, refusing every unprovable total, would delete
+ * working coverage across every adapter to remove a collision that has never
+ * been observed.
+ *
+ * @returns {'goals'|'corners'|'cards'|'points'|'games'|'shots_on_target'}
+ */
+function totalSubject(market) {
+  return subjectFor(market) || 'goals';
+}
+
+/**
+ * Build an OVER_UNDER contract with its subject and team attached.
+ *
+ * Every OVER_UNDER return in this file goes through here, so no resolution path
+ * can quietly produce a contract that buckets differently from its siblings.
+ * That matters because the bucket key now includes both dimensions: a contract
+ * built without them would land in `_::_` while an identical market resolved
+ * two branches away landed in `corners::match`, and the two would never pair
+ * even though they are the same market.
+ *
+ * Returns null — refusing the market — when `teamFor` cannot name the side of a
+ * per-team total. Defaulting it to `match` would file a team's own goals under
+ * the match's goals and re-create the exact collision the `team` dimension was
+ * added to prevent, so it is refused instead. Measured cost: the EveryMatrix
+ * feed publishes "Total Goluri Echipă Peste/Sub" (62 occurrences in
+ * `wamp-match-odds.json`) which names no side, so that family on getsbet and
+ * contibet stops resolving. That is a real coverage loss and it is the correct
+ * trade — the alternative is a bucket in which one team's goal count is priced
+ * as the match's, which is a fabricated arbitrage.
+ *
+ * @param {{lineKey: string}} inline result of classifyAndExtractLine
+ * @param {object} market the provider market, for subject and side
+ * @param {string} [period]
+ */
+function ouContract(inline, market, period) {
+  const team = teamFor(market);
+  if (team === null) return null;
+  return {
+    family: 'OVER_UNDER',
+    period,
+    lineKey: inline.lineKey,
+    outcomes: ['over', 'under'],
+    subject: totalSubject(market),
+    team,
+  };
+}
+
+/**
+ * Whose count a total is about: the match, or one side.
+ *
+ * A per-team total ("Over 0.5 2nd team", "Echipa 1 Total goluri") settles on a
+ * different number than the match total of the same line, so it needs its own
+ * dimension for the same reason `subject` does. Measured on the FEG catalogue
+ * the two per-team football totals are `00-10` "Echipa 1" and `00-13`
+ * "Echipa 2"; on WAMP the market is titled "Total Goluri Echipă" and names
+ * NEITHER side, so the side cannot be read off it.
+ *
+ * Returns `null` for a per-team total whose side cannot be identified. That
+ * refusal is deliberate: a total that is one team's but does not say which would
+ * otherwise file itself under `match` and pair with a real match total, which
+ * is the same subject collision this dimension exists to prevent. A caller
+ * receiving null must refuse the market, not default it.
+ *
+ * @returns {'match'|'home'|'away'|null}
+ */
+export function teamFor(market = {}) {
+  const key = String(market.key || '').trim().toUpperCase();
+  const hay = `${market.name || ''} ${(market.selections || []).map((s) => s?.name ?? '').join(' ')}`;
+
+  // FEG names the side in the key.
+  if (key === 'UFO:MTYP:00-10') return 'home';
+  if (key === 'UFO:MTYP:00-13') return 'away';
+
+  // Romanian and English side tokens. Checked against the whole market text,
+  // which is what lets a total that names its side in the SELECTION ("Over 0.5
+  // 2nd team") resolve the same way as one that names it in the market name.
+  // `(?![a-z0-9])` rather than `\b` throughout: an `ă` or `ă`-ending token is a
+  // non-word character to JS, so `\bechipă\b` would never fire on "Echipă".
+  const isHome = /\b(?:echipa\s*1|echipa\s*i|1st\s*team|prim[aă]\s*echip[aă]|home\s*team)(?![a-z0-9])/i.test(hay);
+  const isAway = /\b(?:echipa\s*2|echipa\s*ii|2nd\s*team|a\s*doua\s*echip[aă]|away\s*team)(?![a-z0-9])/i.test(hay);
+  if (isHome && !isAway) return 'home';
+  if (isAway && !isHome) return 'away';
+
+  // "Echipă" / "Team" with no number: it IS one team's total, but not a
+  // nameable one. null makes the caller refuse rather than guess. The trailing
+  // lookahead is load-bearing for the same reason as above — with `\b` this test
+  // silently returned false for the exact Romanian spelling it was written for,
+  // and the market then resolved as a MATCH total, which is the collision the
+  // `team` dimension exists to prevent.
+  if (/\b(?:total\s+goluri\s+echip[aă]|team\s+total|team\s+goals?)(?![a-z0-9])/i.test(hay)) return null;
+
+  return 'match';
+}
+
+// ===========================================================================
 // Generic contract resolver — every arbitration-eligible market resolves to
-// exactly one of these. Period and line are first-class so cross-book pairs
-// always agree on the SAME settlement window and line before prices are
-// combined. (engine.mjs buckets by the resulting family+period+line key.)
+// exactly one of these. Period, line, subject and team are first-class so
+// cross-book pairs always agree on the SAME settlement window, line, subject
+// and side before prices are combined. (engine.mjs buckets by the resulting
+// family+period+line+subject+team key.)
 // ===========================================================================
 
 /**
@@ -271,6 +535,12 @@ export function canonicalPeriod(market = {}) {
     if (name) {
       if (FIRST_HALF_WORDS.some((re) => re.test(name))) return 'half1';
       if (SECOND_HALF_WORDS.some((re) => re.test(name))) return 'half2';
+      // A declared `fulltime` with an overtime-inclusive name is the same lie,
+      // just on the other side of the final whistle: "Câştigă meciul (incl.
+      // prelungiri)" labels a different payoff function than the genuine
+      // full-time result, so the honest period is the one the engine refuses
+      // rather than one it trades.
+      if (OVERTIME_INCLUSIVE_WORDS.some((re) => re.test(name))) return 'unknown';
     }
     return 'fulltime';
   }
@@ -439,6 +709,18 @@ export function resolveContract(market = {}) {
   if (/^(CURRENT_FRAME_WINNER|LEG_WINNER|TOTAL_180S)$/.test(key)) {
     return null;
   }
+  // FEG 'Se califica' (00-12) and 'Castigator finala' (00-1d) are asserted as
+  // NOT the full-time result. 'Se califica' settles on who advances (extra time
+  // and penalties can decide it), and 'Castigator finala' settles on who wins
+  // the final, which for a knockout game is likewise not the 90-minute result.
+  // Neither is exhaustive with the two-way/three-way full-time contract: pairing
+  // one against a genuine full-time price books an arbitrage that the draw /
+  // pens / extra-time branch erases. Refuse rather than let them fall through
+  // to the generic two-way match-winner path (which only tests the selection
+  // shape, not what the market settles).
+  if (/^UFO:MTYP:00-(12|1D)$/.test(key)) {
+    return null;
+  }
 
   // ---- 4. OVER/UNDER and ASIAN_HANDICAP via provider whitelists ----
   // FEG routing table — sport-prefix in XX selects the family, market-suffix in
@@ -468,7 +750,25 @@ export function resolveContract(market = {}) {
     // against another book's result market and settles on a different event.
     // And returning null is not enough on its own: the last-resort 2-way path
     // would re-admit the same pair. This branch is terminal either way.
-    if (declared) return { ...declared, period };
+    //
+    // The OVER_UNDER half must go through `ouContract` like every other total
+    // path, and this is measured rather than theoretical. `superbetDetailRoute`
+    // builds its contract directly, so before this was routed through
+    // `ouContract` superbet's goals totals left here with NO subject —
+    // `superbetDetailRoute` never had one to give. They bucketed as `_::_`
+    // while the same goals total from any of the other fifteen books bucketed
+    // as `goals::match`, and a bucket key is equality: superbet could not pair
+    // its own goals 2.5 with another book's goals 2.5 at all.
+    //
+    // Measured 2026-10-05 on the live workspace: 562 such markets on superbet
+    // alone, across lines 0.5 to 6.5 — which is the largest single block of
+    // unpaired goals totals in the capture. Nothing raised, because a lost
+    // opportunity and a quiet market look identical in a scan that reports rows.
+    // It showed up as `superbet — single book` in `scripts/market-coverage.mjs`.
+    if (declared) {
+      if (declared.family === 'OVER_UNDER') return ouContract(declared, market, period);
+      return { ...declared, period };
+    }
     return null;
   }
 
@@ -515,48 +815,65 @@ export function resolveContract(market = {}) {
   }
   // Goal totals (favbet/netbet style bundled keys + betano *GOT keys + FEG
   // *-0U/-02 totals) — line in name. Non-goal totals (corners, cards, points,
-  // games) are deliberately absent: they are withheld by the guard below,
-  // because the OVER_UNDER contract cannot express WHAT the line counts.
+  // games) are deliberately absent from THIS list: they are routed by the guard
+  // below, which resolves them under their own measured `subject` rather than
+  // folding them in here as goals.
   // netbet's TOTAL_180S used to sit in this list; it is a darts 180 count, not
   // a scoring total, and is withheld with the other segment markets in 3c.
   if (key === 'TOTAL_GOALS' || key === 'TOTAL' || /^H?CTG$/i.test(key) || /^T?GOT$/i.test(key) || /^OUH\d?$/i.test(key) || key === 'OVUN' || key === 'UFO:MTYP:00-0U' || key === 'UFO:MTYP:14-02' || key === 'UFO:MTYP:11-01' || key === 'UFO:MTYP:0C-03' || key === 'UFO:MTYP:35-01' || key === 'UFO:MTYP:02-06') {
     const inline = classifyAndExtractLine(market.selections, { kind: 'OU' });
-    if (inline) return { family: 'OVER_UNDER', period, lineKey: inline.lineKey, outcomes: ['over', 'under'] };
+    if (inline) return ouContract(inline, market, period);
   }
 
-  // ---- 5b. Non-goal totals are WITHHELD: the engine has no "what is counted"
-  // dimension, so a corners or cards line would bucket with a goals line ----
+  // ---- 5b. Non-goal totals now RESOLVE, carrying their measured subject ----
   //
-  // The OVER_UNDER contract is (family, period, lineKey) and nothing says what
-  // the line counts. Betano publishes several totals that are NOT goals, and
-  // measured on the live feed they are named distinctly:
+  // This branch used to return null for every one of these keys. The reason is
+  // still exactly right and is preserved below: the OVER_UNDER contract was
+  // (family, period, lineKey) and nothing in that tuple said what the line
+  // counts, so a corners 8.5 landed in the same bucket as a goals 8.5 — two
+  // markets that settle on entirely different events, and a cross-book
+  // "arbitrage" that is arithmetic on one contract and priced from another.
   //
-  //   CNOU  "Cornere Peste/Sub"        corners      -> was OVER_UNDER/8.5
-  //   TCOU  "Total cartonașe Peste/Sub" cards       -> was OVER_UNDER/3.5
-  //   TSMF  "Total Hărți"              cards       -> was OVER_UNDER/x
-  //   FTPO  "Total Puncte"             points      -> was OVER_UNDER/41.5
-  //   FOUT  "Total Puncte"             points      -> was OVER_UNDER/x
-  //   FTGO  "Game-uri"                 games       -> was OVER_UNDER/x
+  // What changed is that the contract now HAS somewhere to put the answer. The
+  // `subject` dimension resolves the collision at the key rather than refusing
+  // the market, so OVER_UNDER/fulltime/8.5/corners/match and
+  // OVER_UNDER/fulltime/8.5/goals/match are different buckets and each can only
+  // ever pair with its own kind.
   //
-  // A corners 8.5 landing in OVER_UNDER/8.5 is the same bucket as another book's
-  // goals 8.5 — two markets that settle on entirely different events. The engine
-  // would pair them and report an arbitrage that is arithmetic on one contract
-  // and priced from another. There is no cross-book counterparty for a corners
-  // line that the engine can prove, so the honest move is to withhold it: the
-  // same call made for Altenar's first-goal market and Unibet's player props.
+  // Measured subjects, from the live-feed names (see `subjectFor`):
   //
-  // This guard is placed before every fallback on purpose. Returning null from
-  // the whitelist above is NOT enough: "Peste 8.5"/"Sub 8.5" is a valid
-  // equal-magnitude O/U shape, so the generic line-in-name resolver below would
-  // immediately re-classify the same market as OVER_UNDER/8.5 and the withholding
-  // would be a no-op. These keys are therefore authoritative: if a market
-  // declares itself a non-goal total, it resolves to nothing and to nothing else.
+  //   CNOU  "Cornere Peste/Sub"        corners
+  //   TCOU  "Total cartonașe Peste/Sub" cards
+  //   TSMF  "Total Hărți"              cards
+  //   FTPO  "Total Puncte"             points
+  //   FOUT  "Total Puncte"             points
+  //   FTGO  "Game-uri"                 games
+  //
+  // TOTP, TSCR and TCOR are still refused. They sit in the old refusal regex
+  // but no capture in `data/endpoints/` attributes a subject to them, and
+  // guessing is the one thing this dimension must not do: an unmeasured key
+  // filed under the wrong subject would pair two different products and
+  // fabricate the exact arbitrage the refusal existed to prevent. They stay out
+  // until a capture says what they count.
+  //
+  // The line still comes from the selection names, and the market NAME is
+  // preferred over the key for the subject, because the name is the provider's
+  // own text and a key id is a label this project would otherwise be guessing
+  // at. `totalSubject` falls back to `goals` for a market whose subject nothing
+  // proves, which is the pre-existing behaviour rather than a new default.
   if (/^(CNOU|TCOU|TSMF|FTPO|FOUT|FTGO|TOTP|TSCR|TCOR)$/.test(key)) {
+    const subject = subjectFor(market);
+    // No measured subject for this key: refuse, exactly as before.
+    if (!subject) return null;
+    const inline = classifyAndExtractLine(market.selections, { kind: 'OU' });
+    if (inline) return ouContract(inline, market, period);
+    // A named non-goal total whose legs do not carry a legible line is not a
+    // two-sided contract, and admitting it with a placeholder line would put it
+    // in a bucket no real line occupies. Refuse rather than invent a line.
     return null;
   }
 
-  // ---- 5c. A PER-TEAM goal total is WITHHELD: same subject collision, other
-  // shape ----
+  // ---- 5c. A PER-TEAM goal total: same collision, now carried by `team` ----
   //
   // ufo:mtyp:00-10 "Echipa 1 Total goluri <line>" and ufo:mtyp:00-13 "Echipa 2
   // Total goluri <line>" are ONE TEAM's own goals, not the match margin. The
@@ -565,41 +882,42 @@ export function resolveContract(market = {}) {
   // 00-0b, whose legs carry the team names and which resolves correctly, so
   // nothing else in the football branch is affected.
   //
-  // Their legs are bare signed numbers with no team token at all: "+ 4.5" and
-  // "- 4.5". A signed pair is exactly the shape the generic resolver reads as a
-  // SPREAD, so these keys were resolving as ASIAN_HANDICAP — a match handicap
-  // priced off one team's goal count. Measured 2026-10-02 on the live Fortuna
-  // feed: 3 such markets across 763 football events, every one agreeing with its
-  // id, resolving to ASIAN_HANDICAP -4.5/4.5 (twice) and -2.5/2.5, period
-  // 'unknown'.
+  // These were refused for the same reason as 5b and are now resolved for the
+  // same reason: the difference between "the margin between two teams" and "the
+  // goals of one team" is real, and it now has a dimension to live in. The
+  // subject is still `goals` — it IS a goal count — so what separates them from
+  // a match goals total is `team`, and a match total carries `team: 'match'`.
+  // That is the whole collision: OVER_UNDER/fulltime/2.5/goals/match cannot meet
+  // OVER_UNDER/fulltime/2.5/goals/away.
   //
-  // The contract cannot carry the difference. ASIAN_HANDICAP buckets on
-  // (family, period, lineKey) and nothing in that tuple says whether the spread
-  // is the margin between two teams or the goals of one, so a team total lands in
-  // the same bucket as another book's match handicap on the same half line, and
-  // the engine pairs them. What the coverage report showed is that this id was
-  // carried as a provider key on four handicap lines, the widest being -0.5/0.5
-  // with 15 books and 95 pairs. Those 95 pairs are the shape of the problem and
-  // not, on their own, proof of a false pair: "15 books" is a book count, not a
-  // claim about what the other fourteen were quoting, and the withheld keys are
-  // 3 markets on 763 live football events today. It is the same subject
-  // collision already refused for superbet 535 "Total goluri <Team>", which is
-  // absent from DETAIL_MARKETS for the same reason, and that refusal did not
-  // wait for a live false arbitrage either.
+  // The `kind: 'OU'` hint is load-bearing and must not be dropped. These legs
+  // are bare signed numbers with no team token at all — "+ 4.5" and "- 4.5" —
+  // and a signed pair is exactly the shape `classifyAndExtractLine` auto-detects
+  // as a SPREAD. Measured 2026-10-02 on the live Fortuna feed, before the
+  // refusal existed: 3 such markets across 763 football events, every one
+  // agreeing with its id, resolving as ASIAN_HANDICAP -4.5/4.5 (twice) and
+  // -2.5/2.5. Forcing OU keeps a team total out of the handicap family, and
+  // `canonicalOutcomeFor` already reads "+" as over and "-" as under, which is
+  // the correct reading of these two legs.
   //
-  // No live false arbitrage was observed for these, and the negative is worth
-  // stating precisely rather than as reassurance: the 2026-10-02 engine run over
-  // nine books and 3269 grouped events emitted one arbitrage, none of it
-  // involving these legs — but none of the three fixtures that carried these
-  // markets was offered by any other book that day, so there was no counterparty
-  // to pair with. The negative measures that day's fixture coverage, not the
-  // label. The same run did read the legs (6 indexed out of 64 338) and did
-  // emit an arbitrage, so the engine was live throughout. Authoritative, like
-  // 5b: a bare signed pair would otherwise be re-classified as a spread by the
-  // generic line-in-name resolver immediately below, and the withholding would
-  // be a no-op.
+  // A caveat that is NOT fixed here, so it is stated rather than implied: on the
+  // live Fortuna feed these markets declare `period: 'unknown'`, and the engine
+  // refuses any contract whose period it cannot name. So resolving them here is
+  // necessary but not sufficient — the adapter that stamps `period` has to say
+  // `fulltime` for these two ids, exactly as it already must for the rest of
+  // the football branch. Until then they resolve correctly and are then dropped,
+  // which is the safe order: correctly labelled, then not traded.
   if (key === 'UFO:MTYP:00-10' || key === 'UFO:MTYP:00-13') {
-    return null;
+    const inline = classifyAndExtractLine(market.selections, { kind: 'OU' });
+    if (!inline) return null;
+    return {
+      family: 'OVER_UNDER',
+      period,
+      lineKey: inline.lineKey,
+      outcomes: ['over', 'under'],
+      subject: 'goals',
+      team: teamFor(market),
+    };
   }
 
   // ---- 6. Generic line-in-name resolver (handles any 2-outcome market whose
@@ -611,6 +929,18 @@ export function resolveContract(market = {}) {
   if (market.selections && market.selections.length === 2) {
     const inline = classifyAndExtractLine(market.selections);
     if (inline) {
+      // This is the last-resort resolver, so it is also the last place a subject
+      // can be unknown. It routes a totals pair the named branches above did not
+      // claim, and it now attaches the same `subject`/`team` every other path
+      // attaches — without that, this branch's contracts would bucket as `_::_`
+      // while an identical market resolved two branches earlier bucketed as
+      // `goals::match`, and the two would never pair.
+      //
+      // The ASIAN_HANDICAP half is left exactly as it was: a handicap carries a
+      // line and a side, and this project's measured history with it is a long
+      // record of false pairs (superbet 535, netbet's mirrored legs, betano's
+      // player spreads). Widening that family is not part of this change.
+      if (inline.family === 'OVER_UNDER') return ouContract(inline, market, period);
       return { family: inline.family, period, lineKey: inline.lineKey, outcomes: inline.outcomes };
     }
   }
@@ -677,7 +1007,7 @@ function fegRoute(rawKey, market) {
   if (sport === '02' || sport === '03' || sport === '04' || sport === '09' || sport === '11' || sport === '14' || sport === '26' || sport === '27' || sport === '35') {
     if (mtype === '06') {
       const inline = classifyAndExtractLine(market.selections, { kind: 'OU' });
-      if (inline) return { family: 'OVER_UNDER', lineKey: inline.lineKey, outcomes: ['over', 'under'] };
+      if (inline) return ouContract(inline, market);
     }
     if (mtype === '00' || mtype === '01' || mtype === '04' || mtype === '05' || mtype === '0u') {
       // 02-04, 04-05, 03-01, 04-01, 09-00, 11-0u, 14-00, 14-01, 27-01, 26-01, 35-XX
@@ -691,9 +1021,28 @@ function fegRoute(rawKey, market) {
     if (mtype === '02') {
       // total points / total rounds etc., line in name
       const inline = classifyAndExtractLine(market.selections, { kind: 'OU' });
-      if (inline) return { family: 'OVER_UNDER', lineKey: inline.lineKey, outcomes: ['over', 'under'] };
+      if (inline) return ouContract(inline, market);
     }
     if (mtype === '03') {
+      // A name that says "Total" beats the key's default family for this slot.
+      //
+      // Measured 2026-10-05 on the live capture: `ufo:mtyp:03-03` is
+      // "Total harti 4.5" and "Total harti 3.5" — CARDS totals on the ice
+      // hockey feed — and the `kind: 'AH'` hint below routed both as
+      // ASIAN_HANDICAP, because their legs are the signed pair `- 4.5` / `+ 4.5`
+      // and a signed pair is exactly the shape a spread looks like. That is the
+      // worst way to be wrong: a handicap is push-capable, so the inverse-sum
+      // test books an "arbitrage" whose two legs can both push and refund.
+      //
+      // The rule is the one this file already applies everywhere else — the
+      // market's own name is the provider's text, so when a key's family and the
+      // name disagree, the name wins. It is deliberately narrow: only the word
+      // "total", so a genuine `Harta 1. castigator` set-winner on the same feed
+      // (ufo:mtyp:02-04 / 03-06) still resolves as a match winner.
+      if (/\btotal(?![a-z0-9])/i.test(String(market.name || ''))) {
+        const asTotal = classifyAndExtractLine(market.selections, { kind: 'OU' });
+        if (asTotal) return ouContract(asTotal, market);
+      }
       // handicap
       const inline = classifyAndExtractLine(market.selections, { kind: 'AH' });
       if (inline) return { family: 'ASIAN_HANDICAP', lineKey: inline.lineKey, outcomes: ['home', 'away'] };
@@ -726,7 +1075,7 @@ function fegRoute(rawKey, market) {
     }
     if (mtype === '03') {
       const inline = classifyAndExtractLine(market.selections, { kind: 'OU' });
-      if (inline) return { family: 'OVER_UNDER', lineKey: inline.lineKey, outcomes: ['over', 'under'] };
+      if (inline) return ouContract(inline, market);
     }
   }
   return null;
@@ -789,6 +1138,7 @@ function betanoKeyRoute(rawKey, market) {
  */
 const SUPERBET_DETAIL = new Map([
   ['SB:200734:TOTAL GOLURI', 'OU'],
+  ['SB:200735:PRIMA REPRIZĂ - TOTAL GOLURI', 'OU'],
   ['SB:200736:HANDICAP', 'AH'],
 ]);
 
@@ -1069,7 +1419,18 @@ export function bucketKeyForContract(eventKey, contract) {
   // be placed. Carrying the outcomes makes the two shapes distinct contracts
   // and closes both failures at the key.
   const outcomes = Array.isArray(contract.outcomes) ? contract.outcomes.join('+') : '';
-  return `${eventKey}::${contract.family}::${contract.period}::${contract.lineKey}::${outcomes}`;
+  // subject and team are appended, never inserted. `test/favbet.test.mjs` reads
+  // the LINE out of this key by index (`bucket.split('::')[2]`), so anything
+  // added ahead of lineKey silently breaks that test's line assertions.
+  // Appending keeps every existing consumer working unchanged.
+  //
+  // A family with no subject (MATCH_ODDS, BTTS, DOUBLE_CHANCE, DRAW_NO_BET)
+  // normalises to `_` rather than the string "null", so the key stays readable
+  // in `scripts/market-coverage.mjs` output and cannot be confused with a real
+  // subject named "null".
+  const subject = contract.subject || '_';
+  const team = contract.team || '_';
+  return `${eventKey}::${contract.family}::${contract.period}::${contract.lineKey}::${outcomes}::${subject}::${team}`;
 }
 
 /**

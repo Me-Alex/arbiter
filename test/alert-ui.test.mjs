@@ -194,7 +194,7 @@ test('the alert controls are labelled for both languages, not just the default o
   const langs = dictionaries();
   const keys = [...new Set([...scannerHtml.matchAll(/data-i18n="([^"]+)"/g)].map((m) => m[1]))];
   const alertControls = [
-    'alertsLabel', 'alertMinRoi', 'alertMinMiddleRoi', 'alertCooldown', 'alertQuietFrom',
+    'alertsLabel', 'alertMinMargin', 'alertMinMiddleRoi', 'alertCooldown', 'alertQuietFrom',
     'alertQuietTo', 'alertChannels', 'alertDesktop', 'alertSound', 'alertQuietEnabled',
     'alertIncludeLive', 'alertsSave',
   ];

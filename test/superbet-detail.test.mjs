@@ -107,11 +107,19 @@ test('a line and its reciprocal are two different contracts, never one bucket', 
   assert.deepEqual(overlap, [], 'no line key is shared by a spread and its reciprocal');
 });
 
-test('the exact-name gate keeps out the period, team and Asian variants', async () => {
+test('the exact-name gate admits measured first-half goals, but keeps other variants out', async () => {
   const markets = await detailMarkets();
   const keys = new Set(markets.map((m) => m.key));
-  // Same marketId, different contract — these are the period variants.
-  for (const k of ['sb:200735:Prima repriză - Total goluri', 'sb:200738:A doua repriză - Total goluri',
+  const firstHalf = markets.filter((m) => m.key === 'sb:200735:Prima repriză - Total goluri');
+  assert.ok(firstHalf.length > 0, 'the measured first-half goals totals are published');
+  for (const m of firstHalf) {
+    const contract = resolveContract(m);
+    assert.equal(m.period, 'half1');
+    assert.equal(contract.family, 'OVER_UNDER');
+    assert.equal(contract.period, 'half1');
+  }
+  // The second-half and spread variants remain different settlement contracts.
+  for (const k of ['sb:200738:A doua repriză - Total goluri',
     'sb:200737:Prima repriză - Handicap', 'sb:200739:A doua repriză - Handicap']) {
     assert.equal(keys.has(k), false, `${k} must not be published`);
   }

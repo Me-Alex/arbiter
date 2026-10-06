@@ -42,25 +42,5 @@
     "cross-env": "^7.0.3",
     "electron": "^32.0.0",
     "eslint": "^9.39.5"
-  },
-  "eslintConfig": {
-    "env": {
-      "node": true,
-      "browser": true,
-      "es2022": true
-    },
-    "parserOptions": {
-      "ecmaVersion": 2023,
-      "sourceType": "module"
-    },
-    "rules": {
-      "no-unused-vars": [
-        "warn",
-        {
-          "argsIgnorePattern": "^_",
-          "varsIgnorePattern": "^_"
-        }
-      ]
-    }
   }
 }

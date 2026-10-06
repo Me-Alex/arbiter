@@ -296,6 +296,11 @@ function pageContext(api, values = {}) {
     escapeHtml, console: { log() {}, warn() {}, error() {} }, createDropdown() {},
     setTimeout() {}, clearTimeout() {}, setInterval() {}, clearInterval() {},
     fetch: async () => ({ ok: true, json: async () => ({}) }), location: { href: '' },
+    // A browser global, not a stand-in: rows build their own event link through
+    // it (`renderOppGroup`, dashboard.js:484), so a context without it throws
+    // before the census has read a single field, and every page that renders an
+    // opportunity would have been counted as reading nothing.
+    URLSearchParams,
   };
   context.window = {
     arbiterConnectionStatus: null, arbiterApp: { mount() {} }, arbiterFormat: null, addEventListener() {},
@@ -399,6 +404,15 @@ const SCAN_CONSUMERS = PAGE_NAMES
  * throws — and the number that does that is whatever each reader touches today,
  * measured. scrape.js's is 11 raw paths for 5 of the document, one floor below
  * that; the four it shares with the other pages are already past theirs.
+ *
+ * The three ArbEdge console pages are floors of a different kind, and the
+ * difference is the fixture rather than the page. live.js is the honest 7: the
+ * driven scan is a pre-match run, so no opportunity carries `live: true`,
+ * `liveOpps()` is empty and the page correctly reads almost nothing. Its floor
+ * says "it ran", not "it rendered a signal" — a run with live opportunities in it
+ * is what would move that number, and this census does not drive one. bookies.js
+ * reads the envelope through the join onto /api/scrapers, so its 25 is the depth
+ * of that join rather than of the tables it draws.
  */
 const FLOOR = {
   'scanner.js': 50,
@@ -407,6 +421,15 @@ const FLOOR = {
   'ai.js': 15,
   'connection-status.js': 3,
   'scrape.js': 10,
+  'arbitrage.js': 231,
+  // Recalibrated when the sidebar footer stats card was dropped: bookies.js
+  // stopped reading `opportunities`/`middles`/`positiveEv`/`lowHold` (array
+  // lengths only, for that card), taking it from 25 paths to 22. No field lost
+  // its last reader — arbitrage.js reads all four properly — so this is the
+  // reader shrinking on purpose, not a reader that threw. The floor stays just
+  // under the real count so the tripwire is still armed.
+  'bookies.js': 21,
+  'live.js': 7,
 };
 
 /** Whole-page readers: every consumer whose reads happen at load time. */
@@ -414,6 +437,17 @@ const PAGE_FILES = SCAN_CONSUMERS.filter((f) => !LIFTED_READERS[f]);
 
 /**
  * Run one payload past every reader and collect the paths touched.
+ *
+ * Each reader gets its own copy of the document, and that is a measurement
+ * decision rather than tidiness. The pages sort the arrays they are handed in
+ * place — `scanner.js:648` sorts `scan.middles` straight through the proxy the
+ * probe wrapped around it — so a single shared payload let one reader rewrite
+ * the document the next one was about to be shown. Measured: on one shared
+ * payload scanner.js read 75 paths and reported `middles[].legs[].handicap`
+ * unread, while `middles[].legs[].handicap` is read at scanner.js:653 and the
+ * same run reads the whole middles family the moment each page is handed its
+ * own copy (259 paths). A census that lets the previous reader decide the
+ * next one's reads is measuring the order of the list, not the pages.
  *
  * @param {object} payload
  * @param {Record<string, unknown>} [values] controls the pages are put into
@@ -433,11 +467,16 @@ async function measureReads(payload, values = {}) {
   };
 
   for (const page of PAGE_FILES) {
+    const own = JSON.parse(JSON.stringify(payload));
     const pageHits = new Set();
     const api = {
       async get(path) {
-        if (path === '/api/scan') return record(payload, '', pageHits);
-        return { profiles: [], sports: [], markets: [], events: [] };
+        if (path === '/api/scan') return record(own, '', pageHits);
+        // `jobs` is here because GET /api/scrapers returns it: bookies.js reads
+        // the scan only after it has a book list to join the sources onto, and a
+        // stand-in without `jobs` made that page look like a reader that touched
+        // almost nothing when it had simply found the envelope unfamiliar.
+        return { jobs: [], profiles: [], sports: [], markets: [], events: [] };
       },
       async post() { return {}; },
     };
@@ -445,7 +484,7 @@ async function measureReads(payload, values = {}) {
     vm.runInNewContext(read(`public/js/pages/${page}`), context);
     // scanner.js draws through render() only once its own init has resolved a
     // profile list; the preview path is the same function.
-    if (page === 'scanner.js') context.render(record(payload, '', pageHits));
+    if (page === 'scanner.js') context.render(record(own, '', pageHits));
     await new Promise((r) => setTimeout(r, 25));
     collect(page, pageHits);
   }
@@ -456,10 +495,11 @@ async function measureReads(payload, values = {}) {
   // is not the one the page declares fails in `liftedSource` — a retyped `$`
   // would quietly change what the page draws.
   for (const [page, names] of Object.entries(LIFTED_READERS)) {
+    const own = JSON.parse(JSON.stringify(payload));
     const pageHits = new Set();
     const api = {
       async get(path) {
-        if (path === '/api/scan') return record(payload, '', pageHits);
+        if (path === '/api/scan') return record(own, '', pageHits);
         return {};
       },
       async post() { return {}; },
@@ -503,10 +543,10 @@ function degraded(base) {
   return d;
 }
 
-/** The scan with an arbitrage on top of the ROI sort, so `best` is not a middle. */
+/** The scan with an arbitrage on top of the margin sort, so `best` is not a middle. */
 function arbOnTop(base) {
   const d = JSON.parse(JSON.stringify(base));
-  const bestOpp = Math.max(...d.opportunities.map((o) => Number(o.roiPercent || 0)));
+  const bestOpp = Math.max(...d.opportunities.map((o) => Number(o.marginPercent || 0)));
   for (const m of d.middles) m.roiPercent = bestOpp - 1;
   return d;
 }
@@ -655,13 +695,15 @@ const UNREAD_BY_DESIGN = [
   },
   {
     id: 'ev-leg-restatement',
-    covers: ['consensusProbability', 'evPercent', 'eventKey', 'live', 'marketKey', 'odds', 'selection', 'sourceId', 'sport', 'type']
+    covers: ['consensusProbability', 'evPercent', 'eventKey', 'live', 'marketKey', 'selection', 'sport', 'type']
       .map((f) => `positiveEv[].legs[].${f}`),
     reason: [
-      'A restatement of the parent, measured rather than argued: 10 of the 13 fields on',
+      'A restatement of the parent, measured rather than argued: 8 of the 13 fields on',
       'positiveEv[].legs[0] are byte-identical to the signal above them, which the page does read.',
       'The spread is withBankroll copying the whole signal into its single leg so the shape matches',
-      'the other families.',
+      'the other families. Two left this group when the ArbEdge console landed, and both are the',
+      'fields a row needs to be actionable: sourceId is the book the filter box searches, and odds',
+      'is the price the EV was computed from.',
     ].join(' '),
     measuredBy: 'the positive-EV leg restates its parent on every driven record',
   },
@@ -709,17 +751,19 @@ const UNREAD_BY_DESIGN = [
   {
     id: 'unread-leg-money',
     covers: [
-      'opportunities[].legs[].eventUrl', 'opportunities[].legs[].outcome', 'opportunities[].legs[].payout',
-      'middles[].legs[].eventUrl', 'middles[].legs[].payout', 'middles[].legs[].stake',
+      'opportunities[].legs[].outcome', 'opportunities[].legs[].payout',
+      'middles[].legs[].payout',
       'positiveEv[].legs[].payout', 'positiveEv[].legs[].profit',
     ],
     reason: [
-      'The 8 with no reader and no restatement. eventUrl is the book own page and is the one of these',
-      'a reader could act on: it rides all 3 arbitrage legs and 4 middle legs of the driven scan and is',
-      'read by neither a page nor verifySignal. outcome is what verifySignal derives from the selection,',
-      'never what it reads. payout and stake on a middle leg restate the parent totalStake.',
+      'The 5 with no reader and no restatement. This group had 8 covers and lost 3 to a measurement:',
+      'arbitrage.js:103 prints the book own page off every leg and arbitrage.js reads the middle',
+      'leg stake off the same rows, so eventUrl on the 3 arbitrage legs and the 4 middle legs, and',
+      'middles[].legs[].stake beside them, have a reader — verifySignal still reads neither. outcome is',
+      'what verifySignal derives from the selection, never what it reads. payout and stake on a middle',
+      'leg restate the parent totalStake.',
     ].join(' '),
-    measuredBy: 'eventUrl is published on every leg and read by nobody',
+    measuredBy: 'eventUrl rides every leg and is read by the page, not by verifySignal',
   },
   {
     id: 'contract-descriptor',
@@ -733,24 +777,26 @@ const UNREAD_BY_DESIGN = [
   },
   {
     id: 'allocation-detail',
-    covers: ['opportunities[].inverseSum', 'opportunities[].worstCasePayout'],
+    covers: ['opportunities[].inverseSum'],
     reason: [
-      'The 2 inputs to numbers the row already prints, and each is recoverable from them. On the',
-      'driven arbitrage inverseSum is 0.61453 and (1/inverseSum - 1) * 100 is 62.73, the exact',
-      'roiPercent on screen; worstCasePayout is 1627.25 = totalStake 1000 + guaranteedProfit 627.25.',
-      'Both derived in market-contracts.mjs, both operands read. roundingRisk left this group: it',
-      'is the one field here a page cannot reconstruct, so it is now marked on the row instead.',
+      'The input to a number the row already prints, and recoverable from it. On the',
+      'driven arbitrage inverseSum is 0.61453 and (1 - inverseSum) * 100 is 38.55, the exact',
+      'marginPercent on screen. Derived in market-contracts.mjs, both operands read. Two fields',
+      'left this group when the ArbEdge console landed: worstCasePayout is printed on the foot of',
+      'every arbitrage card, and the rounding flag is marked on the row — neither is reconstructible',
+      'from the margin, which is why the flag was never in this group.',
     ].join(' '),
-    measuredBy: 'the ROI on screen is computed from the inverse sum',
+    measuredBy: 'the margin on screen is computed from the inverse sum',
   },
   {
     id: 'middle-money',
-    covers: ['middles[].guaranteedProfit', 'middles[].league', 'middles[].totalStake'],
+    covers: ['middles[].guaranteedProfit'],
     reason: [
       'withBankroll writes guaranteedProfit: null on every middle by construction — a middle can lose,',
-      'so there is no guaranteed profit to quote. Both middles of the driven run carry null, and',
-      'totalStake is 1000, the 2 half-stakes the allocation splits. league is carried for arbitrages and',
-      'rendered there, while the middle row shows the two teams instead.',
+      'so there is no guaranteed profit to quote. All 2 middles of the driven run carry null, which is',
+      'the 2 of 2. Two more fields left this group when the ArbEdge console landed: totalStake and',
+      'league are both printed on its middle row, and neither is reconstructible from what the row',
+      'already shows.',
     ].join(' '),
     measuredBy: 'no middle has a guaranteed profit to publish',
   },
@@ -800,7 +846,7 @@ test('the published set is 169 leaves, and the reader is not reporting zeros', a
 });
 
 test('the reader set is derived from the pages, and prose is not a call', () => {
-  assert.deepEqual(SCAN_CONSUMERS, ['ai.js', 'analytics.js', 'dashboard.js', 'scanner.js', 'scrape.js'],
+  assert.deepEqual(SCAN_CONSUMERS, ['ai.js', 'analytics.js', 'arbitrage.js', 'bookies.js', 'dashboard.js', 'live.js', 'scanner.js', 'scrape.js'],
     'the set of pages that fetch this route moved: the new one has to be read, not assumed');
 
   // Both directions of the rule, because a derivation is only worth its cost if
@@ -868,7 +914,7 @@ test('the reader instrument finds reads it is supposed to find', async () => {
   // of things the instrument failed to see.
   const { hits } = await readPaths();
   for (const name of [
-    'opportunities[].roiPercent', 'opportunities[].legs[].stake',
+    'opportunities[].marginPercent', 'opportunities[].legs[].stake',
     'middles[].riskPercent', 'middles[].gap',
     'positiveEv[].evPercent', 'positiveEv[].consensusProbability',
     'lowHold[].holdPercent', 'lowHold[].selectionCount',
@@ -921,7 +967,9 @@ test('every field the scan publishes is read by a page, or is named with a reaso
       `${group.id} is backed by "${group.measuredBy}", which is not a test in this file`,
     );
   }
-  assert.equal(unread.length, 78, `the unread set moved: ${unread.join(', ')}`);
+  // 73 was 8 excused leg fields of which 3 turned out to have a reader once the
+  // harness could actually run the pages, so 70 is 73 minus exactly those 3.
+  assert.equal(unread.length, 70, `the unread set moved: ${unread.length} — ${unread.join(', ')}`);
 });
 
 // ---------------------------------------------------------------------------
@@ -960,7 +1008,10 @@ test('the positive-EV leg restates its parent on every driven record', async () 
   assert.equal(stats.positiveEv.equal.length, 10, `restatements moved: ${stats.positiveEv.equal.join(', ')}`);
   assert.equal(stats.positiveEv.legs, 8, 'the positive-EV sample shrank, so the count means less');
   const group = UNREAD_BY_DESIGN.find((g) => g.id === 'ev-leg-restatement');
-  assert.equal(group.covers.length, 10);
+  // 8, not the 10 the restatement measurement finds: `sourceId` and `odds` are
+  // still byte-identical to their parent, but a page now reads both, so they are
+  // no longer unread by design and do not belong in this excuse.
+  assert.equal(group.covers.length, 8);
   for (const path of group.covers) {
     const field = path.split('.').pop();
     assert.ok(stats.positiveEv.equal.includes(field), `${path} is excused as a restatement but ${field} differs from its parent`);
@@ -1001,12 +1052,26 @@ test('the settings the page does take over are 6 of 11', async () => {
   }
 });
 
-test('eventUrl is published on every leg and read by nobody', async () => {
+test('eventUrl rides every leg and is read by the page, not by verifySignal', async () => {
   await driveScan();
   const { leg } = serverReads();
   assert.ok(!leg.includes('eventUrl'), 'verifySignal reads eventUrl now, so the excuse is stale');
-  const { hits } = await readPaths();
-  assert.equal([...hits].filter((p) => p.endsWith('.eventUrl')).length, 0, 'a page reads eventUrl now');
+  const { perPagePaths } = await readPaths();
+  const reading = Object.entries(perPagePaths)
+    .filter(([, paths]) => paths.some((p) => p.endsWith('.eventUrl')))
+    .map(([page]) => page)
+    .sort();
+  // Measured: arbitrage.js is the only page that reads it, off both families —
+  // `arbitrage.js:103` decides between the capture feed and the book own page and
+  // links whichever it is. It used to read nowhere, and this is the assertion
+  // that would have said so: the count was 0 only because the harness threw
+  // before the pages could draw, and the excuse it supported was already false
+  // in the source.
+  assert.deepEqual(reading, ['arbitrage.js'], 'the set of pages reading eventUrl moved');
+  const group = UNREAD_BY_DESIGN.find((g) => g.id === 'unread-leg-money');
+  for (const path of ['opportunities[].legs[].eventUrl', 'middles[].legs[].eventUrl']) {
+    assert.ok(!group.covers.includes(path), `${path} is read now, so it is not excused`);
+  }
 });
 
 test('no middle has a guaranteed profit to publish', async () => {
@@ -1033,15 +1098,15 @@ test('the mirrored fields repeat what the EV column already shows', async () => 
   }
 });
 
-test('the ROI on screen is computed from the inverse sum', async () => {
+test('the margin on screen is computed from the inverse sum', async () => {
   const scan = await driveScan();
   const group = UNREAD_BY_DESIGN.find((g) => g.id === 'allocation-detail');
-  assert.deepEqual(group.covers, ['opportunities[].inverseSum', 'opportunities[].worstCasePayout']);
+  assert.deepEqual(group.covers, ['opportunities[].inverseSum']);
   for (const o of scan.opportunities) {
-    const recomputed = (1 / o.inverseSum - 1) * 100;
+    const recomputed = (1 - o.inverseSum) * 100;
     assert.ok(
-      Math.abs(recomputed - o.roiPercent) < 0.01,
-      `roiPercent ${o.roiPercent} is not the inverse sum ${o.inverseSum} rounded, so the excuse is wrong`,
+      Math.abs(recomputed - o.marginPercent) < 0.01,
+      `marginPercent ${o.marginPercent} is not 1 - the inverse sum ${o.inverseSum} rounded, so the excuse is wrong`,
     );
     assert.ok(
       Math.abs(o.worstCasePayout - (o.totalStake + o.guaranteedProfit)) < 0.01,
@@ -1052,10 +1117,17 @@ test('the ROI on screen is computed from the inverse sum', async () => {
   // from a hardcoded coincidence, so the two claims the reason makes about
   // market-contracts.mjs are pinned against its source as well. Both hold on
   // the driven run; this says they hold because of the code.
+  //
+  // It used to pin three literals and assert a fourth, `const theoreticalProfit
+  // = total * (1 / inverseSum - 1)`, as the backing for a claim about a
+  // theoretical profit. That const had no reader — ESLint's no-unused-vars
+  // reported it, and the value it computed was never on the published document
+  // — so it was deleted. Pinning a dead line would have made the census refuse
+  // the only correct repair, which is why the third literal is gone with it.
   const contracts = codeOnly(read('src/scanner/market-contracts.mjs'));
-  assert.match(contracts, /roiPercent: round2\(\(theoreticalProfit \/ total\) \* 100\)/, 'the ROI is no longer derived from the inverse sum');
-  assert.match(contracts, /const theoreticalProfit = total \* \(1 \/ inverseSum - 1\)/, 'the theoretical profit no longer comes from the inverse sum');
+  assert.match(contracts, /marginPercent: round2\(\(1 - inverseSum\) \* 100\)/, 'the margin is no longer derived from the inverse sum');
   assert.match(contracts, /const guaranteedProfit = round2\(worstCasePayout - total\)/, 'the worst case is no longer the stake plus the profit');
+  assert.doesNotMatch(contracts, /theoreticalProfit/, 'a theoretical profit is computed here again without being published');
 });
 
 test('the rounding flag is read by a page, not excused', async () => {

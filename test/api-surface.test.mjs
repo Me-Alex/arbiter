@@ -458,10 +458,16 @@ test('the price board is what keeps the odds route covered, and the check sees i
     && list.some((c) => c.via === 'literal'));
   assert.deepEqual(literalOdds, [], 'no page calls the odds route with a literal — it is composed, not written out');
 
+  // Two composed consumers now, and the second is named here rather than left to
+  // be discovered: scrape.js's price board, which an operator drives by hand, and
+  // live.js, which polls the same route per book to list what is in play. Both go
+  // through a top-level single-return function so the resolver above can read the
+  // route out of them; a literal at either call site fails the assertion above.
   const composedOdds = [...consumers.entries()].filter(([path, list]) => path === '/api/odds'
     && list.some((c) => c.via.startsWith('resolved')));
-  assert.deepEqual(composedOdds.map(([, list]) => list.map((c) => c.file)), [['public/js/pages/scrape.js']],
-    'and the price board is the page that reaches it');
+  assert.deepEqual(composedOdds.map(([, list]) => list.map((c) => c.file)),
+    [['public/js/pages/live.js', 'public/js/pages/scrape.js']],
+    'and these are the pages that reach it by composing the URL');
   assert.ok(served.has('GET /api/odds/'), 'the odds route is in the served set it is being checked against');
 });
 

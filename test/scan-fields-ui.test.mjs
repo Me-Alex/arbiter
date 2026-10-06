@@ -230,7 +230,7 @@ test('an arbitrage that only exists on paper is marked as such', () => {
   // The engine refuses any allocation with an inverse sum of 1 or more, so a
   // published arbitrage has a positive theoretical edge. It can still lose money
   // once the stake split is rounded to cents, and when it does the row reads
-  // +0.00% ROI next to -0.01 profit with nothing connecting them. The same flag
+  // +0.00% margin next to -0.01 profit with nothing connecting them. The same flag
   // is already disclosed on the event-detail panel, so this is the one surface
   // that lists arbitrages and did not carry it. Measured on the real allocator,
   // it fires 40 of 200 allocations over the thin tail of the inverse sum at a
@@ -241,7 +241,7 @@ test('an arbitrage that only exists on paper is marked as such', () => {
 
   const arb = (roundingRisk) => ({
     homeTeam: 'Home', awayTeam: 'Away', marketKey: 'MATCH_ODDS', legs: [{ sourceId: 'alpha' }],
-    roiPercent: 0, totalStake: 1000, guaranteedProfit: roundingRisk ? -0.01 : 12.5,
+    marginPercent: 0, totalStake: 1000, guaranteedProfit: roundingRisk ? -0.01 : 12.5,
     roundingRisk,
   });
 

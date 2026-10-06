@@ -64,7 +64,7 @@ const SPORT_NAMES = {
  * different contracts depending on the fixture:
  *
  *   200734 "Total goluri"        full-time goals total      -> OVER_UNDER
- *   200735 "Prima repriză - Total goluri"   first half      -> not ours
+ *   200735 "Prima repriză - Total goluri"   first-half goals total -> OVER_UNDER
  *   200738 "A doua repriză - Total goluri"  second half     -> not ours
  *   200736 "Handicap"            full-time spread           -> ASIAN_HANDICAP
  *   200737 / 200739             the same spread, per half  -> not ours
@@ -88,6 +88,7 @@ const SPORT_NAMES = {
  */
 const DETAIL_MARKETS = new Map([
   ['200734|Total goluri', 'OVER_UNDER'],
+  ['200735|Prima repriză - Total goluri', 'OVER_UNDER'],
   ['200736|Handicap', 'ASIAN_HANDICAP'],
 ]);
 
@@ -172,11 +173,12 @@ function marketsFromDetail(odds, teams) {
     if (m.selections.length !== 2) continue;
     out.push({
       key: detailKey(m.marketId, m.marketName),
-      // The provider's own label, verbatim. It is also the period claim: the
-      // first- and second-half variants are different marketNames, so the
-      // exact-name gate above is what keeps them out, not a period parser.
+      // The exact-name gate decides which provider contracts are safe to emit.
+      // First-half goals totals are a different settlement window from full-time
+      // goals, so write that fact explicitly instead of relying on a downstream
+      // label parser to correct a full-time default.
       name: m.marketName,
-      period: 'fulltime',
+      period: String(m.marketId) === '200735' ? 'half1' : 'fulltime',
       family: m.family,
       selections: m.selections,
     });

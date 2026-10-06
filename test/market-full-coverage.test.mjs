@@ -4,7 +4,7 @@
 // any, that book/publisher loses a slice of the reachable surface.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { resolveContract, classifyAndExtractLine, canonicalOutcomeFor } from '../src/scanner/market-contracts.mjs';
+import { resolveContract, classifyAndExtractLine, canonicalOutcomeFor, bucketKeyForContract } from '../src/scanner/market-contracts.mjs';
 
 function ev(key, selections) {
   return { key, period: 'fulltime', name: '', selections };
@@ -111,17 +111,39 @@ test('a per-team goal total is refused, not priced as a match spread', () => {
   // -0.5/0.5 with 15 books and 95 pairs — the shape of the risk, not a
   // measurement of a false pair: a book count says nothing about what the other
   // fourteen were quoting.
+  //
+  // These now RESOLVE, as OVER_UNDER with `team` set to the side the key names.
+  // The refusal they replaced was correct for the contract as it stood — a team
+  // total had nowhere to say whose goals it counted, so it had to be withheld
+  // rather than misfiled. It now resolves into a bucket that cannot be reached by
+  // anything else, which is a strictly stronger guarantee than the refusal: the
+  // failure mode this test exists to prevent is now UNREACHABLE rather than
+  // merely declined.
   for (const key of ['ufo:mtyp:00-10', 'ufo:mtyp:00-13']) {
-    assert.equal(resolveContract(ev(key, [
-      { name: '+ 4.5' }, { name: '- 4.5' },
-    ])), null, `${key} is a team total and must not resolve`);
+    const c = resolveContract(ev(key, [{ name: '+ 4.5' }, { name: '- 4.5' }]));
+    assert.equal(c.family, 'OVER_UNDER', `${key} is a total, not a spread`);
+    assert.equal(c.lineKey, '4.5', `${key} keeps the line the legs carry`);
+    assert.equal(c.subject, 'goals', `${key} counts goals`);
+    assert.equal(c.team, key === 'ufo:mtyp:00-10' ? 'home' : 'away', `${key} names its side`);
+    // The whole point: its bucket must not be reachable from a MATCH total of
+    // the same line, nor from a match handicap of the same line.
+    assert.notEqual(
+      bucketKeyForContract('E', c),
+      bucketKeyForContract('E', resolveContract(ev('ufo:mtyp:00-0u', [{ name: 'Peste 4.5' }, { name: 'Sub 4.5' }]))),
+      `${key} must not bucket with the match goals total on the same line`,
+    );
+    assert.notEqual(
+      bucketKeyForContract('E', c).split('::')[1],
+      bucketKeyForContract('E', resolveContract(ev('ufo:mtyp:00-0b', [{ name: 'Dinamo -4.5' }, { name: 'Rapid +4.5' }]))).split('::')[1],
+      `${key} must not land in the handicap family`,
+    );
     // Case must not be the thing that decides it — the feed is not guaranteed
     // to spell the id the way the census did.
-    assert.equal(resolveContract(ev(key.toUpperCase(), [
-      { name: '+ 4.5' }, { name: '- 4.5' },
-    ])), null, `${key} uppercased must not resolve either`);
+    const upper = resolveContract(ev(key.toUpperCase(), [{ name: '+ 4.5' }, { name: '- 4.5' }]));
+    assert.equal(upper.family, 'OVER_UNDER', `${key} uppercased still resolves`);
+    assert.equal(upper.team, c.team, `${key} uppercased keeps its side`);
   }
-  // POSITIVE CONTROL, immediately beside the refusal: the real FEG match
+  // POSITIVE CONTROL, immediately beside the per-team cases: the real FEG match
   // handicap is 00-0b and must still resolve, and so must the match-goals
   // total 00-0u. A guard that took the football namespace down with it would
   // pass this test's first half.
@@ -132,6 +154,100 @@ test('a per-team goal total is refused, not priced as a match spread', () => {
   assert.equal(resolveContract(ev('ufo:mtyp:00-0u', [
     { name: 'Peste 2.5' }, { name: 'Sub 2.5' },
   ])).family, 'OVER_UNDER', 'the FEG match goals total still prices');
+});
+
+test('a FEG cards TOTAL is not routed as a push-capable spread', () => {
+  // Measured 2026-10-05 on the live capture. `ufo:mtyp:03-03` carries "Total harti
+  // 4.5" and "Total harti 3.5" — CARDS totals on the ice hockey feed — and their
+  // legs are the signed pair `- 4.5` / `+ 4.5`. The key's default family for that
+  // slot is ASIAN_HANDICAP, and a signed pair is exactly what a spread looks
+  // like, so both resolved as a handicap.
+  //
+  // That is the worst way to be wrong rather than a cosmetic one: a handicap is
+  // push-capable, so the inverse-sum test books an "arbitrage" whose two legs can
+  // both push and refund the stake. The market settles on a COUNT and is not
+  // push-capable at all.
+  for (const [name, line] of [['Total harti 4.5', '4.5'], ['Total harti 3.5', '3.5']]) {
+    const c = resolveContract({
+      key: 'ufo:mtyp:03-03', name, period: 'fulltime',
+      selections: [{ name: `- ${line}` }, { name: `+ ${line}` }],
+    });
+    assert.equal(c.family, 'OVER_UNDER', `"${name}" is a total, not a spread`);
+    assert.equal(c.lineKey, line);
+    assert.equal(c.subject, 'cards', `"${name}" counts cards`);
+    assert.equal(c.team, 'match');
+  }
+
+  // A genuine handicap on the same feed still resolves as one. The override is
+  // scoped to a name that says "total", so nothing else moved.
+  const realSpread = resolveContract({
+    key: 'ufo:mtyp:02-03', name: 'Handicap', period: 'fulltime',
+    selections: [{ name: 'Argentina (-4.5)' }, { name: 'Benin (+4.5)' }],
+  });
+  assert.equal(realSpread.family, 'ASIAN_HANDICAP', 'a real handicap is still a handicap');
+});
+
+test('"Total hărți" is cards and "Harta 1." is a set — one Romanian word, two contracts', () => {
+  // Measured 2026-10-05, same feed, both live:
+  //
+  //   ufo:mtyp:02-02  "Total harti 2.5"      cards total, legs + 2.5 / - 2.5
+  //   ufo:mtyp:03-03  "Total harti 4.5"      cards total, legs - 4.5 / + 4.5
+  //   ufo:mtyp:02-04  "Harta 1. castigator"  tennis SET winner, legs 1 / 2
+  //   ufo:mtyp:03-06  "Harta 1. castigator"  hockey SET winner, legs 2 / 1
+  //
+  // "harta" is the Romanian for a MAP and a set is a map of a match, so "Harta 1."
+  // is "Set 1". A bare `hărți` matcher would file a set winner under cards — and
+  // because both carry a numeric leg, it might also resolve, which is what makes
+  // it worth pinning rather than assuming the two cannot collide.
+  const cards = resolveContract({
+    key: 'ufo:mtyp:02-02', name: 'Total harti 2.5', period: 'fulltime',
+    selections: [{ name: '+ 2.5' }, { name: '- 2.5' }],
+  });
+  assert.equal(cards.subject, 'cards');
+
+  const set = resolveContract({
+    key: 'ufo:mtyp:02-04', name: 'Harta 1. castigator', period: 'fulltime',
+    selections: [{ name: '1' }, { name: '2' }],
+  });
+  assert.equal(set.family, 'MATCH_ODDS', 'a set winner is a match winner');
+  assert.notEqual(set.subject, 'cards', 'a set winner is not a cards total');
+
+  // Same conclusion for the diacritic spelling, which is the one TSMF uses.
+  assert.equal(
+    resolveContract({
+      key: 'TSMF', name: 'Total Hărți', period: 'fulltime',
+      selections: [{ name: 'Peste 3.5' }, { name: 'Sub 3.5' }],
+    }).subject,
+    'cards',
+    'the diacritic spelling is cards too',
+  );
+});
+
+test('"total runde" is rounds and never a goals total', () => {
+  // Measured 2026-10-05: "Harta 1.: total runde 21.5" (ufo:mtyp:02-06, basketball
+  // total sets) and "Total runde 7.5 / 9.5 / 10.5" (ufo:mtyp:14-02, MMA total
+  // rounds). Both were resolving as `goals`, which is the collision the `subject`
+  // dimension exists to remove — a rounds 21.5 in the same bucket as a goals 21.5.
+  for (const [key, name, line] of [
+    ['ufo:mtyp:02-06', 'Harta 1.: total runde 21.5', '21.5'],
+    ['ufo:mtyp:14-02', 'Total runde 7.5', '7.5'],
+  ]) {
+    const c = resolveContract({
+      key, name, period: 'fulltime',
+      selections: [{ name: `+ ${line}` }, { name: `- ${line}` }],
+    });
+    assert.equal(c.family, 'OVER_UNDER', `${key} is a total`);
+    assert.equal(c.lineKey, line);
+    assert.equal(c.subject, 'rounds', `${key} counts rounds`);
+    assert.notEqual(
+      bucketKeyForContract('E', c),
+      bucketKeyForContract('E', resolveContract({
+        key: 'TOTAL_GOALS', name: 'Total goluri Peste/Sub', period: 'fulltime',
+        selections: [{ name: `Peste ${line}` }, { name: `Sub ${line}` }],
+      })),
+      `${key} must not bucket with a goals ${line}`,
+    );
+  }
 });
 
 test('netbet game_handicap with line in name → ASIAN_HANDICAP', () => {
@@ -185,14 +301,33 @@ test('betano FHOT (signed +/- X.X) → ASIAN_HANDICAP, in either leg order', () 
   assert.equal(reversed.lineKey, forward.lineKey, 'leg order must not split the contract');
 });
 
-test('betano FTGO ("Game-uri", a tennis games total) is withheld, not a goals total', () => {
+test('betano FTGO ("Game-uri", a tennis games total) is not a goals total', () => {
   // Measured on the live feed: FTGO is "Game-uri" on Tennis events (Peste/Sub
-  // 21.5 games), not goals. As a bare OVER_UNDDER line it shared a bucket with a
-  // goals line of the same value, which are entirely different contracts.
+  // 21.5 games), not goals. As a bare OVER_UNDER line it used to share a bucket
+  // with a goals line of the same value, which are entirely different contracts.
+  //
+  // It now resolves, under `subject: 'games'`. The guarantee is unchanged in
+  // substance and stronger in form: it cannot reach a goals bucket, so the two
+  // can never be priced against each other. What changed is that FTGO can now
+  // pair with ANOTHER book's games total, which is the coverage this buys.
   const c = resolveContract(ev('FTGO', [
     { name: 'Peste 22.5' }, { name: 'Sub 22.5' },
   ]));
-  assert.equal(c, null, 'a tennis games total must not resolve as a goal total');
+  assert.equal(c.family, 'OVER_UNDER');
+  assert.equal(c.lineKey, '22.5');
+  assert.equal(c.subject, 'games', 'a tennis games total counts games');
+  // Same key, same line, but the name says goals — so this proves the SUBJECT
+  // decides the bucket rather than the key alone.
+  const goals = resolveContract({
+    key: 'FTGO', name: 'Total goluri Peste/Sub', period: 'fulltime',
+    selections: [{ name: 'Peste 22.5' }, { name: 'Sub 22.5' }],
+  });
+  assert.equal(goals.subject, 'goals');
+  assert.notEqual(
+    bucketKeyForContract('E', c),
+    bucketKeyForContract('E', goals),
+    'the subject decides the bucket, not the key alone',
+  );
 });
 
 test('betano TGOT (P X.X / S X.X) → OVER_UNDER', () => {
@@ -281,19 +416,99 @@ test('a genuine two-way match winner is still arbitrable (the fix is narrow)', (
   assert.notEqual(c.arbEligible, false);
 });
 
-test('non-goal totals are withheld: a corners line is not a goals line', () => {
+test('a non-goal total never shares a bucket with a goals line', () => {
   // Measured on the live betano feed. CNOU "Cornere Peste/Sub" was resolving as
   // OVER_UNDER/8.5 — the same bucket a goals 8.5 uses — so a corners price and
   // a goals price from two books would pair as one contract.
-  for (const [key, name, sels] of [
-    ['CNOU', 'Cornere Peste/Sub', [{ name: 'Peste 8.5' }, { name: 'Sub 8.5' }]],
-    ['TCOU', 'Total cartonașe Peste/Sub', [{ name: 'Peste 3.5' }, { name: 'Sub 3.5' }]],
-    ['TSMF', 'Total Hărți', [{ name: 'Peste 3.5' }, { name: 'Sub 3.5' }]],
-    ['FTPO', 'Total Puncte', [{ name: 'Peste 41.5' }, { name: 'Sub 41.5' }]],
+  //
+  // The `subject` dimension closes that at the key. Each of these now resolves,
+  // under the subject its own name declares, and each is asserted against a real
+  // goals total of the SAME LINE — which is the exact pair that used to be
+  // mispriced. Checking only that the subject field is set would pass even if the
+  // bucket key forgot to include it, so the bucket comparison is the real test.
+  const GOALS_AT_SAME_LINE = (line) => ({
+    key: 'HCTG', name: 'Total goluri Peste/Sub', period: 'fulltime',
+    selections: [{ name: `Peste ${line}` }, { name: `Sub ${line}` }],
+  });
+
+  for (const [key, name, subject, line] of [
+    ['CNOU', 'Cornere Peste/Sub', 'corners', '8.5'],
+    ['TCOU', 'Total cartonașe Peste/Sub', 'cards', '3.5'],
+    ['TSMF', 'Total Hărți', 'cards', '3.5'],
+    ['FTPO', 'Total Puncte', 'points', '41.5'],
+    ['FOUT', 'Total Puncte', 'points', '41.5'],
+    ['FTGO', 'Game-uri', 'games', '21.5'],
   ]) {
-    assert.equal(resolveContract({ key, name, period: 'fulltime', selections: sels }), null,
-      `${key} (${name}) must not resolve as a goal total`);
+    const c = resolveContract({
+      key, name, period: 'fulltime',
+      selections: [{ name: `Peste ${line}` }, { name: `Sub ${line}` }],
+    });
+    assert.ok(c, `${key} (${name}) resolves`);
+    assert.equal(c.family, 'OVER_UNDER', `${key} is a total`);
+    assert.equal(c.lineKey, line, `${key} keeps its line`);
+    assert.equal(c.subject, subject, `${key} (${name}) counts ${subject}`);
+    assert.equal(c.team, 'match', `${key} is the match's ${subject}`);
+    assert.notEqual(
+      bucketKeyForContract('E', c),
+      bucketKeyForContract('E', resolveContract(GOALS_AT_SAME_LINE(line))),
+      `${key} (${name}) must never bucket with a goals ${line}`,
+    );
   }
+
+  // Two DIFFERENT non-goal subjects must not bucket together either — the
+  // collision was never only goals-versus-the-rest.
+  assert.notEqual(
+    bucketKeyForContract('E', resolveContract({
+      key: 'CNOU', name: 'Cornere Peste/Sub', period: 'fulltime',
+      selections: [{ name: 'Peste 3.5' }, { name: 'Sub 3.5' }],
+    })),
+    bucketKeyForContract('E', resolveContract({
+      key: 'TCOU', name: 'Total cartonașe Peste/Sub', period: 'fulltime',
+      selections: [{ name: 'Peste 3.5' }, { name: 'Sub 3.5' }],
+    })),
+    'a corners 3.5 and a cards 3.5 are different contracts',
+  );
+});
+
+test('a total with no measurable subject stays refused', () => {
+  // The keys below are in the same refusal list as the measured ones but no
+  // capture in data/endpoints/ says what they count. Filing them under a guessed
+  // subject would pair two different products, so they are still withheld.
+  for (const key of ['TOTP', 'TSCR', 'TCOR']) {
+    assert.equal(resolveContract({ key, name: '', period: 'fulltime', selections: [{ name: 'Peste 2.5' }, { name: 'Sub 2.5' }] }), null,
+      `${key} has no measured subject and must stay refused`);
+  }
+});
+
+test('a per-team total that does not name its side is refused, not filed as the match', () => {
+  // EveryMatrix publishes "Total Goluri Echipă Peste/Sub" — one team's own goals,
+  // with NO indication of which team. Filing that under `match` would put it in
+  // the same bucket as the match's goals total, which is precisely the collision
+  // the `team` dimension exists to prevent, so it is refused.
+  //
+  // This also pins the diacritic boundary: "Echipă" ends in `ă`, which JS treats
+  // as a NON-word character, so a `\b`-terminated test for it silently never
+  // fires and the market resolves as a match total.
+  assert.equal(resolveContract({
+    key: 'total_goals', name: 'Total Goluri Echipă Peste/Sub', period: 'fulltime',
+    selections: [{ name: 'Peste 0.5' }, { name: 'Sub 0.5' }],
+  }), null, 'an unnamed team total must be refused');
+
+  // The same market WITH its side named resolves, and files under that side.
+  const named = resolveContract({
+    key: 'total_goals', name: 'Total Goluri Echipa 2 Peste/Sub', period: 'fulltime',
+    selections: [{ name: 'Peste 0.5' }, { name: 'Sub 0.5' }],
+  });
+  assert.ok(named, 'a named team total resolves');
+  assert.equal(named.team, 'away');
+  assert.notEqual(
+    bucketKeyForContract('E', named),
+    bucketKeyForContract('E', resolveContract({
+      key: 'total_goals', name: 'Total Goluri Peste/Sub', period: 'fulltime',
+      selections: [{ name: 'Peste 0.5' }, { name: 'Sub 0.5' }],
+    })),
+    'one team\'s goals must never bucket with the match\'s goals',
+  );
 });
 
 test('a goals total is still arbitrable (the withholding is narrow)', () => {

@@ -14,6 +14,10 @@ const PAGES = [
   ['public/admin/scanner.html', '/js/pages/scanner.js'],
   ['public/admin/analytics.html', '/js/pages/analytics.js'],
   ['public/admin/ai.html', '/js/pages/ai.js'],
+  ['public/admin/arbitrage.html', '/js/pages/arbitrage.js'],
+  ['public/admin/live.html', '/js/pages/live.js'],
+  ['public/admin/bookies.html', '/js/pages/bookies.js'],
+  ['public/admin/settings.html', '/js/pages/settings.js'],
 ];
 
 function scriptSources(html) {

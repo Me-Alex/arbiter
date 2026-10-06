@@ -1,10 +1,22 @@
 // app.js — shared layout, sidebar, language toggle.
-// Theme init: restore saved preference before first paint to avoid flash.
-(function initTheme() {
-  const saved = localStorage.getItem('arbiter-theme');
-  if (saved === 'light' || saved === 'dark') {
-    document.documentElement.dataset.theme = saved;
+//
+// There is no theme preference any more. The app was dark-first with a light
+// override; it is now the ArbEdge palette only, which lives in design-tokens.css
+// as plain `:root` values. `design-tokens.css` keeps a `[data-theme]` selector as
+// a no-op so a stale attribute cannot ask for a palette that no longer exists.
+//
+// What this function still does is clear that stale state. A browser that ran
+// before the retheme has `arbiter-theme=dark` in localStorage and possibly
+// `data-theme="dark"` on the documentElement; both are removed here so nothing
+// downstream — a script reading `dataset.theme`, or a stale stylesheet rule —
+// can conclude the page is meant to be dark.
+(function clearLegacyTheme() {
+  try {
+    localStorage.removeItem('arbiter-theme');
+  } catch (_err) {
+    // A page opened with storage blocked still has to render.
   }
+  delete document.documentElement.dataset.theme;
 })();
 
 (function () {
@@ -15,6 +27,9 @@
     scanner:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="20" y1="20" x2="16.5" y2="16.5"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>',
     analytics: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="12" width="4" height="9" rx="1"/><rect x="10" y="7" width="4" height="14" rx="1"/><rect x="17" y="3" width="4" height="18" rx="1"/></svg>',
     ai:        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l1.8 5.4L19 9l-5.2 1.6L12 16l-1.8-5.4L5 9l5.2-1.6L12 2z"/><path d="M19 14l.9 2.6L22 17.5l-2.1.9L19 21l-.9-2.6L16 17.5l2.1-.9L19 14z" opacity="0.6"/></svg>',
+    live:      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>',
+    bookies:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21V5a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v5m-4 0h4"/></svg>',
+    settings:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 0 0-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 0 0-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 0 0-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 0 0-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 0 0 1.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/></svg>',
     chevron:   '<svg class="nav-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>',
   };
 
@@ -46,21 +61,63 @@
   function buildSidebar(active) {
     const t = window.arbiterI18n.t.bind(window.arbiterI18n);
     const curLang = window.arbiterI18n.lang || 'ro';
-    const items = [
-      { href: '/', label: 'dashboard', icon: 'dashboard' },
-      { href: '/admin/scrape.html', label: 'scrape', icon: 'scrape' },
-      { href: '/admin/scanner.html', label: 'scanner', icon: 'scanner' },
-      { href: '/admin/analytics.html', label: 'analytics', icon: 'analytics' },
-      { href: '/admin/ai.html', label: 'ai', icon: 'ai' },
+    // Grouped rather than one flat list: the console pages answer "where is the
+    // edge" (arbitrage / live / bookies) while the existing five answer "how do
+    // I run and inspect it". The ArbEdge mockup made that split explicit, and it
+    // is the only way a seven-item sidebar stays scannable.
+    const groups = [
+      {
+        key: 'navTrading',
+        items: [
+          { href: '/admin/arbitrage.html', label: 'arbitrage', icon: 'dashboard' },
+          { href: '/admin/live.html', label: 'liveArbitrage', icon: 'live' },
+          { href: '/admin/bookies.html', label: 'bookies', icon: 'bookies' },
+        ],
+      },
+      {
+        key: 'workspace',
+        id: 'nav-workspace',
+        items: [
+          { href: '/', label: 'dashboard', icon: 'dashboard' },
+          { href: '/admin/scrape.html', label: 'scrape', icon: 'scrape' },
+          { href: '/admin/scanner.html', label: 'scanner', icon: 'scanner' },
+          { href: '/admin/analytics.html', label: 'analytics', icon: 'analytics' },
+          { href: '/admin/ai.html', label: 'ai', icon: 'ai' },
+        ],
+      },
+      {
+        key: 'navSystem',
+        items: [
+          { href: '/admin/settings.html', label: 'settings', icon: 'settings' },
+        ],
+      },
     ];
-    const nav = items.map((it) => {
-      const aria = active === it.label ? ' aria-current="page"' : '';
+
+    const nav = groups.map((group) => {
+      const labelId = group.id || ('nav-' + group.key);
+      const links = group.items.map((it) => {
+        const on = active === it.label;
+        // The ArbEdge item, verbatim from the console pages: a full-width row, a
+        // fixed-size icon, and a label that collapses with the sidebar. The active
+        // state is the design's blue wash plus a hairline border rather than
+        // theme.css's left rule, so a generated sidebar and a hand-written one are
+        // the same component.
+        const row = on
+          ? 'bg-[var(--edge-blueDim)] text-[var(--edge-blue)] border border-[var(--edge-blue)]/15'
+          : 'text-[var(--edge-text)] hover:bg-[var(--edge-surface2)] hover:text-[var(--edge-textBright)] transition-colors';
+        return `
+          <a href="${it.href}" class="flex items-center gap-3 px-2 py-2 rounded-lg ${row}"${on ? ' aria-current="page"' : ''} role="link">
+            <span class="w-5 h-5 shrink-0 flex items-center justify-center">${ICONS[it.icon]}</span>
+            <span class="edge-label text-sm font-medium" data-i18n="${it.label}">${t(it.label)}</span>
+          </a>`;
+      }).join('');
       return `
-        <a href="${it.href}" class="${active === it.label ? 'active' : ''}"${aria} role="link">
-          <span class="nav-icon">${ICONS[it.icon]}</span>
-          <span class="nav-label" data-i18n="${it.label}">${t(it.label)}</span>
-          ${ICONS.chevron}
-        </a>`;
+        <div>
+          <div class="edge-label px-2 mb-1 text-[10px] font-semibold uppercase tracking-wider text-[var(--edge-textMuted)]" id="${labelId}" data-i18n="${group.key}">${t(group.key)}</div>
+          <div class="space-y-1">
+            <nav aria-labelledby="${labelId}" role="navigation">${links}</nav>
+          </div>
+        </div>`;
     }).join('');
 
     const skip = `<a class="visually-hidden-focusable" href="#main-content" style="position:absolute;inset:8px auto auto 8px;background:var(--accent);color:var(--surface-logo-text);padding:8px 12px;border-radius:var(--r-sm);z-index:9999;transform:translateY(-100%);">Skip to content</a>`;
@@ -76,49 +133,33 @@
       <aside class="sidebar" role="navigation" aria-label="Workspace navigation">
         <div class="sidebar-brand">
           <div class="logo" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <polygon points="12 2 2 22 22 22"/>
-              <line x1="6.5" y1="14" x2="17.5" y2="14"/>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M13 10V3L4 14h7v7l9-11h-7z"/>
             </svg>
           </div>
           <div class="brand-text">
             <div class="name-row">
-              <span class="name">Arbiter</span>
-              <span class="badge">v0.1</span>
+              <span class="name">ArbEdge</span>
             </div>
-            <div class="subtitle" data-i18n="terminalSubtitle">${t('terminalSubtitle')}</div>
           </div>
         </div>
 
-        <div class="sidebar-section">
-          <div class="label" id="nav-workspace" data-i18n="workspace">${t('workspace')}</div>
-          <nav aria-labelledby="nav-workspace" role="navigation">${nav}</nav>
-        </div>
-
-        <div class="sidebar-status-card workspace-guide">
-          <h2 data-workspace-copy="guideTitle">${workspaceCopy().guideTitle}</h2>
-          <p data-workspace-copy="guideBody">${workspaceCopy().guideBody}</p>
-          <a href="/admin/scrape.html" data-workspace-copy="guideLink">${workspaceCopy().guideLink}</a>
-        </div>
+        <nav class="sidebar-nav" aria-label="Workspace pages">${nav}</nav>
 
         <div class="sidebar-footer" role="contentinfo">
           <div class="footer-row">
-            <div class="connection-status" title="127.0.0.1:3022">
-              <span class="dot live"></span>
+            <span class="connection-status sse-status chip" id="sse-status" title="127.0.0.1:3022"
+                  data-connected-text="${t('localOnly')}" data-disconnected-text="${t('reconnecting')}">
+              <span class="dot"></span>
               <span class="conn-text" data-i18n="localOnly">${t('localOnly')}</span>
-            </div>
+            </span>
             <div class="footer-controls">
               <div class="lang-switch" role="group" aria-label="Language selection">
                 <button type="button" class="lang-btn ${curLang === 'ro' ? 'active' : ''}" data-lang-set="ro">RO</button>
                 <button type="button" class="lang-btn ${curLang === 'en' ? 'active' : ''}" data-lang-set="en">EN</button>
               </div>
-              <button type="button" class="theme-toggle" role="switch"
-                      aria-label="Toggle light/dark theme"
-                      aria-checked="${document.documentElement.dataset.theme === 'light'}"
-                      data-theme-toggle>
-                <svg class="theme-icon-dark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-                <svg class="theme-icon-light" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-              </button>
+              <!-- No theme control: the palette is fixed. The console pages never
+                   had one either, so this is the switch finally agreeing with them. -->
             </div>
           </div>
         </div>
@@ -126,10 +167,42 @@
     `;
   }
 
+  /**
+   * Wire the segmented language switch, wherever it appears on the page.
+   *
+   * Called from mount() rather than run at module scope for two reasons. It needs
+   * the DOM, and mount() is the point every page has already established that the
+   * DOM exists. And it has to run for a page that ships its own sidebar
+   * (`body.edge`) as well as a theme.css one: the ArbEdge console pages render
+   * the switch in their own markup, so a switch bound only on the path that
+   * builds a sidebar looks real and does nothing.
+   *
+   * `active` is recomputed from the dictionary's language rather than trusted from
+   * the markup. On a generated sidebar the markup was just written with the right
+   * answer; on the console pages it is static HTML, so a hand-written
+   * `class="active"` would be wrong for every session in the other language.
+   */
+  function wireLangSwitch() {
+    document.querySelectorAll('[data-lang-set]').forEach((button) => {
+      const isCurrent = button.dataset.langSet === window.arbiterI18n.lang;
+      button.classList.toggle('active', isCurrent);
+      button.setAttribute('aria-pressed', String(isCurrent));
+      button.addEventListener('click', () => {
+        const target = button.dataset.langSet;
+        if (target && target !== window.arbiterI18n.lang) {
+          window.arbiterI18n.setLang(target);
+          document.documentElement.lang = target;
+          location.reload();
+        }
+      });
+    });
+  }
+
   function mount(active) {
-    if (document.querySelector('.sidebar')) return;
     const main = document.querySelector('main');
     if (!main) return;
+
+    if (document.querySelector('.sidebar')) return;
     if (main && !main.id) main.id = 'main-content';
     main.setAttribute('role', 'main');
     const app = document.createElement('div');
@@ -151,37 +224,11 @@
     app.querySelector('.sidebar-toggle').setAttribute('aria-label', copy.toggle);
     app.querySelector('.sidebar-toggle').setAttribute('aria-controls', 'workspace-sidebar');
     app.querySelector('.lang-switch').setAttribute('aria-label', copy.language);
-    app.querySelector('[data-theme-toggle]').setAttribute('aria-label', copy.theme);
     const summary = main.querySelector('.dash-quickbar');
     if (summary) summary.setAttribute('aria-label', copy.summary);
-    app.querySelectorAll('[data-lang-set]').forEach((button) => {
-      button.setAttribute('aria-pressed', String(button.dataset.langSet === document.documentElement.lang));
-    });
-
-    // Wire up segmented language switchers
-    document.querySelectorAll('[data-lang-set]').forEach((btn) => {
-      btn.addEventListener('click', () => {
-        const target = btn.dataset.langSet;
-        if (target && target !== window.arbiterI18n.lang) {
-          window.arbiterI18n.setLang(target);
-          document.documentElement.lang = target;
-          location.reload();
-        }
-      });
-    });
-
-    // Wire theme toggle
-    const themeToggle = app.querySelector('[data-theme-toggle]');
-    if (themeToggle) {
-      themeToggle.addEventListener('click', () => {
-        const current = document.documentElement.dataset.theme || 'dark';
-        const next = current === 'dark' ? 'light' : 'dark';
-        document.documentElement.dataset.theme = next;
-        themeToggle.setAttribute('aria-checked', String(next === 'light'));
-        localStorage.setItem('arbiter-theme', next);
-        window.dispatchEvent(new Event('arbiter-theme-change'));
-      });
-    }
+    // Sets `active` and `aria-pressed` on every switch on the page, the one the
+    // generated sidebar included and the console pages render themselves.
+    wireLangSwitch();
 
     // Mobile sidebar toggle
     const toggle = app.querySelector('.sidebar-toggle');

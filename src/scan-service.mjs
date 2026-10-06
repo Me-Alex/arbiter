@@ -140,7 +140,7 @@ export function buildScanCsv(scan, types = [], sport = '') {
           o.marketKey,
           leg.sourceId, leg.selection, leg.outcome, leg.odds, leg.handicap,
           leg.stake, leg.payout, leg.profit,
-          o.inverseSum, o.roiPercent,
+          o.inverseSum, o.marginPercent,
           o.totalStake, o.worstCasePayout, o.guaranteedProfit, o.roundingRisk,
           // riskPercent/gap belong to the middle family; an opportunity has
           // neither, and omitting them here shifted every later column left.
@@ -217,7 +217,7 @@ export function buildScanCsv(scan, types = [], sport = '') {
     'type', 'sport', 'league', 'kickoff', 'homeTeam', 'awayTeam', 'marketKey',
     'sourceId', 'selection', 'outcome', 'odds', 'handicap',
     'stake', 'payout', 'profit',
-    'inverseSum', 'roiPercent',
+    'inverseSum', 'marginPercent',
     'totalStake', 'worstCasePayout', 'guaranteedProfit', 'roundingRisk',
     'riskPercent', 'gap',
     'verificationStatus', 'verificationReason',

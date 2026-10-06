@@ -61,6 +61,10 @@
   font-size: var(--sl-fs-sm);
 }
 
+.sl-head-text {
+  min-width: 0;
+}
+
 .sl-live,
 .sl-state {
   display: inline-flex;

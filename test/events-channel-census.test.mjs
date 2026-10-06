@@ -490,15 +490,18 @@ test('every page in the census was really handed frames', () => {
   assert.ok(READS.get('scan-update').has('opportunities'), 'the census lost the scan-update field the page reads');
   assert.ok(READS.get('verify-end').has('confirmed'), 'the census lost the verdict field the page reads');
 
-  // The three pages that read nothing are named so the number above is a fact
-  // about this tree and not an accident of the fixture.
+  // The seven pages that read nothing are named so the number above is a fact
+  // about this tree and not an accident of the fixture. The four ArbEdge console
+  // pages joined them by choosing the same arrangement deliberately:
+  // `scan-update` and `scrape-update` mean "refetch", and a frame that carried a
+  // value would have been a second, divergent path to the same rendering.
   //
   // Sorted on both sides because `PAGE_FILES` is derived now, and a derived set
   // carries no order to compare against. The names below were written down from
   // the order the hand-written list happened to have; what they claim is which
   // pages read nothing, and that is a set.
   const silent = PAGE_FILES.filter((p) => HITS_PER_PAGE.get(p) === 0).sort();
-  assert.deepEqual(silent, ['ai.js', 'analytics.js', 'scanner.js'],
+  assert.deepEqual(silent, ['ai.js', 'analytics.js', 'arbitrage.js', 'bookies.js', 'live.js', 'scanner.js', 'settings.js'],
     'the set of pages that use an SSE frame only as a refresh signal has changed');
 });
 

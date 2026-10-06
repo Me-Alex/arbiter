@@ -1,87 +1,94 @@
 /* Design Tokens - extracted from theme.css */
 :root {
   /* Surface scale */
-  --bg-0: #171b1c;
-  --bg-1: #202526;
-  --bg-2: #272d2e;
-  --bg-3: #303839;
-  --bg-4: #414c4d;
-  --bg-5: #586667;
-  --surface-highlight: rgba(255, 255, 255, 0.035);
-  --surface-overlay: rgba(10, 14, 22, 0.82);
+  --bg-0: #f8fafc;
+  --bg-1: #ffffff;
+  --bg-2: #f1f5f9;
+  --bg-3: #e2e8f0;
+  --bg-4: #cbd5e1;
+  --bg-5: #94a3b8;
+  --surface-highlight: rgba(255,255,255,.65);
+  --surface-overlay: rgba(248,250,252,.88);
+
+  /* Row states. The dark theme expressed zebra and hover as low-alpha white on a
+     dark panel; on white that renders as nothing at all, so the table lost its
+     stripes and its hover cue without any visible error. These are the same two
+     states as ink on paper. */
+  --row-zebra: rgba(15, 23, 42, 0.02);
+  --row-hover: rgba(15, 23, 42, 0.04);
 
   /* Borders */
-  --border: #364041;
-  --border-strong: #495657;
-  --border-bright: #637171;
-  --border-glass: rgba(255, 255, 255, 0.06);
+  --border: #e2e8f0;
+  --border-strong: #cbd5e1;
+  --border-bright: #cbd5e1;
+  --border-glass: rgba(255,255,255,.72);
 
   /* Text */
-  --text: #dce3e0;
-  --text-strong: #f5f5ef;
-  --text-muted: #b0bfba;
-  --text-dim: #a1b0ab;
-  --text-faint: #98a8a2;
+  --text: #475569;
+  --text-strong: #0f172a;
+  --text-muted: #94a3b8;
+  --text-dim: #64748b;
+  --text-faint: #94a3b8;
 
   /* Restrained teal */
-  --accent: #80cfc0;
-  --accent-2: #9bdbce;
-  --accent-strong: #b2e5da;
-  --accent-glow: rgba(128, 207, 192, 0.12);
-  --accent-soft: rgba(128, 207, 192, 0.09);
-  --accent-line: rgba(128, 207, 192, 0.30);
-  --accent-grad: linear-gradient(135deg, #80cfc0, #9bdbce);
-  --accent-grad-soft: linear-gradient(135deg, rgba(128,207,192,.10), transparent);
+  --accent: #3b82f6;
+  --accent-2: #2563eb;
+  --accent-strong: #1d4ed8;
+  --accent-glow: rgba(59,130,246,.16);
+  --accent-soft: rgba(59,130,246,.08);
+  --accent-line: rgba(59,130,246,.30);
+  --accent-grad: linear-gradient(135deg,#3b82f6,#2563eb);
+  --accent-grad-soft: linear-gradient(135deg,rgba(59,130,246,.08),transparent);
 
   /* Premium accent (lime) */
-  --lime: #a3e635;
-  --lime-soft: rgba(163, 230, 53, 0.12);
-  --lime-strong: #84cc16;
-  --lime-glow: rgba(163, 230, 53, 0.45);
+  --lime: #22c55e;
+  --lime-soft: rgba(34,197,94,.10);
+  --lime-strong: #16a34a;
+  --lime-glow: rgba(34,197,94,.25);
 
   /* Semantic colours */
-  --green: #34d399;
-  --green-soft: rgba(52, 211, 153, 0.12);
-  --green-strong: #10b981;
-  --green-glow: rgba(52, 211, 153, 0.45);
+  --green: #10b981;
+  --green-soft: rgba(16,185,129,.10);
+  --green-strong: #059669;
+  --green-glow: rgba(16,185,129,.25);
 
-  --yellow: #fbbf24;
-  --yellow-soft: rgba(251, 191, 36, 0.12);
-  --yellow-strong: #f59e0b;
+  --yellow: #f59e0b;
+  --yellow-soft: rgba(245,158,11,.10);
+  --yellow-strong: #b45309;
 
-  --red: #f87171;
-  --red-soft: rgba(248, 113, 113, 0.12);
-  --red-strong: #ef4444;
+  --red: #ef4444;
+  --red-soft: rgba(239,68,68,.10);
+  --red-strong: #dc2626;
 
-  --purple: #a78bfa;
-  --purple-soft: rgba(167, 139, 250, 0.12);
-  --purple-strong: #8b5cf6;
+  --purple: #8b5cf6;
+  --purple-soft: rgba(139,92,246,.10);
+  --purple-strong: #7c3ed8;
 
-  --cyan: #22d3ee;
-  --cyan-soft: rgba(34, 211, 238, 0.12);
+  --cyan: #06b6d4;
+  --cyan-soft: rgba(6,182,212,.10);
 
-  --magenta: #f472b6;
-  --magenta-soft: rgba(244, 114, 182, 0.12);
+  --magenta: #ec4899;
+  --magenta-soft: rgba(236,72,153,.10);
 
   /* Effects */
-  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.35);
-  --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.32), 0 1px 2px rgba(0, 0, 0, 0.25);
-  --shadow: 0 4px 12px rgba(0, 0, 0, 0.35), 0 16px 32px rgba(0, 0, 0, 0.28);
-  --shadow-lg: 0 16px 32px rgba(0, 0, 0, 0.42), 0 32px 64px rgba(0, 0, 0, 0.32);
-  --shadow-xl: 0 24px 48px rgba(0, 0, 0, 0.55), 0 48px 96px rgba(0, 0, 0, 0.40);
-  --shadow-inset: inset 0 1px 0 rgba(255, 255, 255, 0.04);
-  --shadow-glow: 0 0 32px rgba(56, 189, 248, 0.20);
+  --shadow-xs: 0 1px 2px rgba(15,23,42,.05);
+  --shadow-sm: 0 2px 6px rgba(15,23,42,.06),0 1px 2px rgba(15,23,42,.04);
+  --shadow: 0 4px 12px rgba(15,23,42,.07),0 16px 32px rgba(15,23,42,.05);
+  --shadow-lg: 0 16px 32px rgba(15,23,42,.09),0 32px 64px rgba(15,23,42,.06);
+  --shadow-xl: 0 24px 48px rgba(15,23,42,.11),0 48px 96px rgba(15,23,42,.07);
+  --shadow-inset: inset 0 1px 0 rgba(255,255,255,.8);
+  --shadow-glow: 0 0 32px rgba(59,130,246,.12);
   --ring: 0 0 0 3px var(--accent-soft);
   --ring-strong: 0 0 0 1px var(--accent-line), 0 0 0 4px var(--accent-soft);
 
   /* Radii */
   --r-xs: 4px;
   --r-sm: 6px;
-  --r-md: 10px;
-  --r-lg: 14px;
-  --r-xl: 20px;
-  --r-2xl: 28px;
-  --r-3xl: 36px;
+  --r-md: 8px;
+  --r-lg: 12px;
+  --r-xl: 16px;
+  --r-2xl: 20px;
+  --r-3xl: 28px;
   --r-full: 999px;
 
   /* Spacing */
@@ -98,22 +105,22 @@
   --s-20: 80px;
 
   /* Typography */
-  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  --font-display: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-display: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
 
-  --fs-xs: 11px;
-  --fs-sm: 12px;
-  --fs-md: 13px;
-  --fs-lg: 14px;
-  --fs-xl: 16px;
+  --fs-xs: 12px;
+  --fs-sm: 13px;
+  --fs-md: 14px;
+  --fs-lg: 15px;
+  --fs-xl: 17px;
   --fs-2xl: 20px;
   --fs-3xl: 26px;
-  --fs-4xl: 34px;
+  --fs-4xl: 32px;
   --fs-5xl: 44px;
   --fs-6xl: 60px;
   --lh-tight: 1.15;
-  --lh-body: 1.55;
+  --lh-body: 1.5;
   --content-max: 1480px;
 
   /* Motion */
@@ -127,40 +134,21 @@
   --t-slowest: 800ms;
 
   /* Layout */
-  --sidebar-w: 240px;
+  --sidebar-w: 224px;
   --header-h: 60px;
 
   /* Backdrop patterns */
-  --grad-page:
-    radial-gradient(1200px 700px at 85% -12%, rgba(56, 189, 248, 0.10), transparent 55%),
-    radial-gradient(900px 500px at -10% 100%, rgba(167, 139, 250, 0.07), transparent 55%),
-    radial-gradient(700px 400px at 50% 50%, rgba(34, 211, 238, 0.03), transparent 60%),
-    var(--bg-0);
+  --grad-page: var(--bg-0);
 
-  --grad-aurora:
-    radial-gradient(1100px 600px at 80% -10%, rgba(56, 189, 248, 0.18), transparent 50%),
-    radial-gradient(900px 500px at 0% 30%, rgba(163, 230, 53, 0.10), transparent 50%),
-    radial-gradient(700px 600px at 50% 100%, rgba(167, 139, 250, 0.12), transparent 55%),
-    radial-gradient(600px 400px at 100% 80%, rgba(34, 211, 238, 0.08), transparent 50%);
+  --grad-aurora: var(--bg-0);
 
-  --grad-mesh:
-    radial-gradient(at 27% 37%, rgba(56, 189, 248, 0.18) 0px, transparent 50%),
-    radial-gradient(at 97% 21%, rgba(167, 139, 250, 0.18) 0px, transparent 50%),
-    radial-gradient(at 52% 99%, rgba(34, 211, 238, 0.15) 0px, transparent 50%),
-    radial-gradient(at 10% 29%, rgba(163, 230, 53, 0.10) 0px, transparent 50%),
-    radial-gradient(at 97% 96%, rgba(244, 114, 182, 0.10) 0px, transparent 50%),
-    radial-gradient(at 33% 50%, rgba(96, 165, 250, 0.10) 0px, transparent 50%);
+  --grad-mesh: var(--bg-0);
 
-  --grid-bg:
-    linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px) 0 0/32px 32px,
-    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px) 0 0/32px 32px;
+  --grid-bg: none;
 
-  --grid-bg-fine:
-    linear-gradient(rgba(255, 255, 255, 0.018) 1px, transparent 1px) 0 0/24px 24px,
-    linear-gradient(90deg, rgba(255, 255, 255, 0.018) 1px, transparent 1px) 0 0/24px 24px;
+  --grid-bg-fine: none;
 
-  --dot-bg:
-    radial-gradient(circle, rgba(255, 255, 255, 0.04) 1px, transparent 1px) 0 0/24px 24px;
+  --dot-bg: none;
 
   /* Extra spacing (used by sidebar) */
   --s-7: 28px;
@@ -170,125 +158,30 @@
   --roi-mid: var(--green);
   --roi-high: var(--green-strong);
   --roi-hot: var(--green);
-  --roi-hot-glow: 0 0 8px rgba(52, 211, 153, 0.35);
+  --roi-hot-glow: 0 0 8px rgba(16,185,129,.20);
 
   /* Derived surface colors */
-  --surface-logo-text: #06121d;
-  --surface-btn-primary-text: #04141d;
-  --surface-log-bg: #03060a;
-  --surface-card-elevated-end: #06090e;
-  --surface-scan-tint: rgba(96, 201, 250, 0.08);
+  --surface-logo-text: #0f172a;
+  --surface-btn-primary-text: #ffffff;
+  --surface-log-bg: #0f172a;
+  --surface-card-elevated-end: #ffffff;
+  --surface-scan-tint: rgba(59,130,246,.06);
 
   /* Semantic line colors (used by group-select, chips, etc.) */
-  --green-line: rgba(52, 211, 153, 0.28);
-  --yellow-line: rgba(251, 191, 36, 0.28);
-  --red-line: rgba(248, 113, 113, 0.28);
+  --green-line: rgba(16,185,129,.28);
+  --yellow-line: rgba(245,158,11,.28);
+  --red-line: rgba(239,68,68,.28);
 }
 
 /* ============================================================
-   Light-mode override — activated by [data-theme="light"]
-   Inherits the token names, swaps values for a light surface.
-   ============================================================ */
-[data-theme="light"] {
-  /* Surface scale */
-  --bg-0: #f3f1eb;
-  --bg-1: #fffefb;
-  --bg-2: #eeeee7;
-  --bg-3: #e4e6de;
-  --bg-4: #ced5ca;
-  --bg-5: #98a69e;
-  --surface-highlight: rgba(0, 0, 0, 0.02);
-  --surface-overlay: rgba(255, 255, 255, 0.85);
-
-  /* Borders */
-  --border: #dadfd5;
-  --border-strong: #bdc8bd;
-  --border-bright: #83958b;
-  --border-glass: rgba(0, 0, 0, 0.06);
-
-  /* Text */
-  --text: #303c38;
-  --text-strong: #1e2e28;
-  --text-muted: #58665e;
-  --text-dim: #5f6d65;
-  --text-faint: #667269;
-
-  /* Teal — darkened for light-surface contrast */
-  --accent: #216b5d;
-  --accent-2: #185a4d;
-  --accent-strong: #144c42;
-  --accent-glow: rgba(33, 107, 93, 0.10);
-  --accent-soft: rgba(33, 107, 93, 0.07);
-  --accent-line: rgba(33, 107, 93, 0.25);
-  --accent-grad: linear-gradient(135deg, #216b5d, #185a4d);
-  --accent-grad-soft: linear-gradient(135deg, rgba(33,107,93,.08), transparent);
-
-  /* Lime */
-  --lime: #65a30d;
-  --lime-soft: rgba(101, 163, 13, 0.10);
-  --lime-strong: #4d7c0f;
-  --lime-glow: rgba(101, 163, 13, 0.25);
-
-  /* Semantic colours */
-  --green: #059669;
-  --green-soft: rgba(5, 150, 105, 0.10);
-  --green-strong: #047857;
-  --green-glow: rgba(5, 150, 105, 0.25);
-  --green-line: rgba(5, 150, 105, 0.25);
-
-  --yellow: #d97706;
-  --yellow-soft: rgba(217, 119, 6, 0.10);
-  --yellow-strong: #b45309;
-  --yellow-line: rgba(217, 119, 6, 0.25);
-
-  --red: #dc2626;
-  --red-soft: rgba(220, 38, 38, 0.10);
-  --red-strong: #b91c1c;
-  --red-line: rgba(220, 38, 38, 0.25);
-
-  --purple: #7c3aed;
-  --purple-soft: rgba(124, 58, 237, 0.10);
-  --purple-strong: #6d28d9;
-
-  --cyan: #0891b2;
-  --cyan-soft: rgba(8, 145, 178, 0.10);
-
-  --magenta: #db2777;
-  --magenta-soft: rgba(219, 39, 119, 0.10);
-
-  /* Effects — lighter shadows */
-  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.06);
-  --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.07), 0 1px 2px rgba(0, 0, 0, 0.04);
-  --shadow: 0 4px 12px rgba(0, 0, 0, 0.08), 0 16px 32px rgba(0, 0, 0, 0.05);
-  --shadow-lg: 0 16px 32px rgba(0, 0, 0, 0.10), 0 32px 64px rgba(0, 0, 0, 0.06);
-  --shadow-xl: 0 24px 48px rgba(0, 0, 0, 0.12), 0 48px 96px rgba(0, 0, 0, 0.08);
-  --shadow-inset: inset 0 1px 0 rgba(255, 255, 255, 0.7);
-  --shadow-glow: 0 0 32px rgba(2, 132, 199, 0.12);
-  --ring: 0 0 0 3px var(--accent-soft);
-  --ring-strong: 0 0 0 1px var(--accent-line), 0 0 0 4px var(--accent-soft);
-
-  /* Backdrop patterns — disabled / very subtle in light mode */
-  --grad-page: var(--bg-0);
-  --grad-aurora: var(--bg-0);
-  --grad-mesh: var(--bg-0);
-  --grid-bg: none;
-  --grid-bg-fine: none;
-  --dot-bg: none;
-
-  /* ROI magnitude color scale */
-  --roi-low: var(--text-muted);
-  --roi-mid: var(--green);
-  --roi-high: var(--green-strong);
-  --roi-hot: var(--green-strong);
-  --roi-hot-glow: 0 0 8px rgba(5, 150, 105, 0.20);
-
-  /* Derived surface colors */
-  --surface-logo-text: #f0fdfa;
-  --surface-btn-primary-text: #ffffff;
-  --surface-log-bg: #f1f5f9;
-  --surface-card-elevated-end: #ffffff;
-  --surface-scan-tint: rgba(2, 132, 199, 0.06);
+   Light-mode override — activated by /* The light-mode override is gone: the ArbEdge console has no dark variant,
+   so there is nothing for [data-theme="light"] to override — :root above is
+   light. The selector stays as a no-op so a stale localStorage value from
+   before the retheme cannot ask for a palette that no longer exists. */
+[data-theme] {
+  color-scheme: light;
 }
+
 
 /* ============================================================
    Scrape control — its own visual language.
@@ -306,47 +199,47 @@
 :root {
   /* Surfaces: one step lighter than the app, so cards read as panels on the
      page rather than as holes in it. */
-  --sl-0: #0e1316;
-  --sl-1: #141b1f;
-  --sl-2: #1a2226;
-  --sl-3: #212b30;
-  --sl-hover: #263238;
-  --sl-active: #2b383e;
+  --sl-0: #f8fafc;
+  --sl-1: #ffffff;
+  --sl-2: #f1f5f9;
+  --sl-3: #e2e8f0;
+  --sl-hover: #f1f5f9;
+  --sl-active: #e2e8f0;
 
-  --sl-line: #2a353a;
-  --sl-line-soft: #212a2e;
-  --sl-line-strong: #3a4a50;
+  --sl-line: #e2e8f0;
+  --sl-line-soft: #f1f5f9;
+  --sl-line-strong: #cbd5e1;
 
   /* One accent. The page has four live states competing for attention, so the
      neutral chrome stays neutral and colour is spent only on state. */
-  --sl-accent: #4fd1c5;
-  --sl-accent-dim: #38b2ac;
-  --sl-accent-ink: #04211f;
-  --sl-accent-wash: rgba(79, 209, 197, 0.10);
-  --sl-accent-line: rgba(79, 209, 197, 0.32);
+  --sl-accent: #3b82f6;
+  --sl-accent-dim: #2563eb;
+  --sl-accent-ink: #ffffff;
+  --sl-accent-wash: rgba(59,130,246,.08);
+  --sl-accent-line: rgba(59,130,246,.30);
 
   /* Status. Each has a text colour, a wash, a line, and a dot — a row has to
      be readable without relying on colour alone, so the label always says
      what the state is. */
-  --sl-ok: #4ade80;
-  --sl-ok-wash: rgba(74, 222, 128, 0.10);
-  --sl-ok-line: rgba(74, 222, 128, 0.30);
-  --sl-warn: #fbbf24;
-  --sl-warn-wash: rgba(251, 191, 36, 0.10);
-  --sl-warn-line: rgba(251, 191, 36, 0.30);
-  --sl-bad: #fb7185;
-  --sl-bad-wash: rgba(251, 113, 133, 0.10);
-  --sl-bad-line: rgba(251, 113, 133, 0.32);
-  --sl-idle: #64748b;
-  --sl-idle-wash: rgba(100, 116, 139, 0.10);
-  --sl-idle-line: rgba(100, 116, 139, 0.28);
-  --sl-run: #60a5fa;
-  --sl-run-wash: rgba(96, 165, 250, 0.12);
-  --sl-run-line: rgba(96, 165, 250, 0.36);
+  --sl-ok: #10b981;
+  --sl-ok-wash: rgba(16,185,129,.10);
+  --sl-ok-line: rgba(16,185,129,.30);
+  --sl-warn: #f59e0b;
+  --sl-warn-wash: rgba(245,158,11,.10);
+  --sl-warn-line: rgba(245,158,11,.30);
+  --sl-bad: #ef4444;
+  --sl-bad-wash: rgba(239,68,68,.10);
+  --sl-bad-line: rgba(239,68,68,.32);
+  --sl-idle: #94a3b8;
+  --sl-idle-wash: rgba(148,163,184,.10);
+  --sl-idle-line: rgba(148,163,184,.28);
+  --sl-run: #3b82f6;
+  --sl-run-wash: rgba(59,130,246,.12);
+  --sl-run-line: rgba(59,130,246,.36);
 
-  --sl-text: #e6edf0;
-  --sl-text-dim: #94a5ad;
-  --sl-text-faint: #64757e;
+  --sl-text: #0f172a;
+  --sl-text-dim: #475569;
+  --sl-text-faint: #94a3b8;
 
   /* Rhythm for a 26-row table: tighter than the app's cards, because the
      point is to see many rows at once. */
@@ -360,16 +253,16 @@
 
   /* Numerals line up in a column only if the digits are the same width. */
   --sl-font-num: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  --sl-fs-micro: 10px;
-  --sl-fs-xs: 11px;
-  --sl-fs-sm: 12px;
-  --sl-fs-md: 13px;
-  --sl-fs-lg: 15px;
-  --sl-fs-xl: 19px;
+  --sl-fs-micro: 11px;
+  --sl-fs-xs: 12px;
+  --sl-fs-sm: 13px;
+  --sl-fs-md: 14px;
+  --sl-fs-lg: 16px;
+  --sl-fs-xl: 20px;
   --sl-fs-2xl: 26px;
 
-  --sl-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
-  --sl-shadow-lift: 0 4px 16px rgba(0, 0, 0, 0.45);
+  --sl-shadow: 0 1px 2px rgba(15,23,42,.05);
+  --sl-shadow-lift: 0 4px 16px rgba(15,23,42,.07);
   --sl-t-fast: 120ms;
   --sl-t-base: 190ms;
   --sl-ease: cubic-bezier(0.2, 0, 0, 1);
