@@ -415,8 +415,22 @@
   // The server publishes the CSV for this document, so the button goes there
   // rather than rebuilding the rows here and risking a second, drifting
   // definition of the same export.
+  //
+  // The sport rides along, read at click time rather than held in the markup,
+  // because `state.sport` is whatever the sidebar holds when the button is
+  // pressed. The route reads `?sport=` and an absent parameter means every
+  // sport, so without this the tables showed one sport's signals while the file
+  // held all of them -- the same disagreement `syncExportSport` fixes on the
+  // scanner page, in the same shape.
+  //
+  // The search box and `confirmed only` have no counterpart in the route and
+  // are not sent: what travels is the sport selection the server can actually
+  // honour, not a second, client-side copy of every filter the sidebar offers.
   $('btn-export').addEventListener('click', () => {
-    window.location.href = '/api/scan/export.csv';
+    const params = new URLSearchParams();
+    if (state.sport) params.set('sport', state.sport);
+    const query = params.toString();
+    window.location.href = query ? `/api/scan/export.csv?${query}` : '/api/scan/export.csv';
   });
 
   refresh();
