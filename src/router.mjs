@@ -91,8 +91,8 @@ export function buildRouter(ctx) {
     'GET /api/scan': async () => {
       // `published` rides on the served document rather than wrapping it in an
       // envelope like readAlertPayload does. There the page asks for the
-      // payload and knows the scan is inside it; here five pages read
-      // `scan.opportunities` directly and four of them read `scan.dataHealth` as
+      // payload and knows the scan is inside it; here eight pages read
+      // `scan.opportunities` directly and six of them read `scan.dataHealth` as
       // well, and an envelope would hand every one of them `undefined` — which
       // renders as 0, the exact lie the flag exists to stop. Flat, a consumer
       // that never learns the flag exists still receives it. The count is
@@ -116,7 +116,7 @@ export function buildRouter(ctx) {
         dataDir,
         sourceIds: Array.isArray(body.sourceIds) ? body.sourceIds : null,
         bankroll: options.bankroll,
-        minRoiPercent: options.minRoiPercent,
+        minMarginPercent: options.minMarginPercent,
         minEvPercent: options.minEvPercent,
         maxMiddleRiskPercent: options.maxMiddleRiskPercent,
         minMiddleRoiPercent: options.minMiddleRoiPercent,

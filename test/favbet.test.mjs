@@ -657,12 +657,14 @@ test('the real capture publishes every full-time goals total, one market per lin
   const moldova = byId.get('43432794');
   assert.ok(latvia && moldova, 'both real two-team fixtures are published');
 
-  const totals = (e) => (e.markets || []).filter((m) => m.key === 'TOTAL_GOALS');
+  const totals = (e, period = 'fulltime') => (e.markets || [])
+    .filter((m) => m.key === 'TOTAL_GOALS' && m.period === period);
   // Letonia v Cipru quotes 0.5 through 4.5; Moldova v Insulele Feroe the same
   // five. Whole lines (1.0, 2.0, 3.0, 4.0) are in the capture and are NOT here:
   // they push, so the pair is not exhaustive.
   assert.deepEqual(totals(latvia).map((m) => m.line), [0.5, 1.5, 2.5, 3.5, 4.5]);
   assert.deepEqual(totals(moldova).map((m) => m.line), [0.5, 1.5, 2.5, 3.5, 4.5]);
+  assert.deepEqual(totals(latvia, 'half1').map((m) => m.line), [0.5, 1.5, 2.5]);
 
   // Verbatim, lowest line: "Peste (0.5)" 1.08 / "Sub (0.5)" 7.40.
   const lowest = totals(latvia)[0];
@@ -703,6 +705,44 @@ test('the real capture publishes every full-time goals total, one market per lin
       );
     }
   }
+});
+
+test('the real capture publishes only safe full-time match-corners totals', (t) => {
+  atPinnedNow(t);
+  const s = new Favbet({ windowHours: 72 });
+  const out = s.extractEvents(s.normalize(raw()));
+  const latvia = out.find((e) => String(e.id) === '43432785');
+  assert.ok(latvia, 'the captured fixture is published');
+
+  const corners = (latvia.markets || []).filter((m) => m.key === 'CNOU');
+  assert.equal(corners.length, 1, 'only the half-line match-corners total is emitted');
+  const market = corners[0];
+  assert.equal(market.providerMarketId, '1104:9.5');
+  assert.equal(market.period, 'fulltime');
+  assert.deepEqual(market.selections.map((s2) => s2.name), ['Over 9.5', 'Under 9.5']);
+
+  const contract = resolveContract(market);
+  assert.equal(contract.family, 'OVER_UNDER');
+  assert.equal(contract.period, 'fulltime');
+  assert.equal(contract.lineKey, '9.5');
+  assert.equal(contract.subject, 'corners');
+  assert.equal(contract.team, 'match');
+
+  const cornerBucket = bucketKeyForContract('', contract);
+  const goalBucket = bucketKeyForContract('', resolveContract({
+    key: 'TOTAL_GOALS',
+    name: 'Peste / Sub',
+    period: 'fulltime',
+    selections: [
+      { name: 'Over 9.5', odds: 1.9 },
+      { name: 'Under 9.5', odds: 1.9 },
+    ],
+  }));
+  assert.notEqual(cornerBucket, goalBucket, 'corners never share a goals-total bucket');
+  assert.ok(
+    !(latvia.markets || []).some((m) => String(m.providerMarketId || '').startsWith('914:')),
+    'team-corners totals remain withheld until team identity is modelled',
+  );
 });
 
 test('the real capture publishes every full-time goals handicap, one market per line', (t) => {
@@ -887,9 +927,9 @@ test('the goals families refuse every non-exhaustive or undeclared shape', (t) =
   const s = new Favbet({ windowHours: 72 });
 
   const refused = [
-    // Half-time and second-half totals are in the capture for every fixture;
-    // they settle on 45 minutes, not on the match.
-    ['a first-half total', total(710, 'Prima repriză', 1.5, 3.36, 1.30), {}],
+    // First-half goals totals are now explicitly supported as their own period;
+    // second-half contracts still await an independent counterpart.
+    ['a second-half goals total', total(710, 'A doua repriză', 1.5, 3.36, 1.30), {}],
     ['a second-half handicap', handicap(711, 'A doua repriză', [
       leg(7111, null, 'Slovacia (-1.5)', 9.2), leg(7112, null, 'Kazakhstan (+1.5)', 1.03),
     ]), {}],
@@ -949,17 +989,41 @@ test('the two goals families survive the real router and land in exhaustive buck
       const c = resolveContract(m);
       assert.ok(c, `${m.providerMarketId} resolves to a contract`);
       assert.notEqual(c.arbEligible, false, `${m.providerMarketId} is arbitrable`);
-      assert.ok(isFullTimeMarket(m), `${m.providerMarketId} is a full-time market`);
+      assert.ok(
+        isFullTimeMarket(m) || m.period === 'half1',
+        `${m.providerMarketId} is full-time or the explicitly supported first-half contract`,
+      );
       const bucket = bucketKeyForContract('', c).replace(/^::/, '');
       buckets.set(bucket, (buckets.get(bucket) || 0) + 1);
     }
   }
 
   // Both ladders are present and every bucket names a single line pair.
-  assert.ok(buckets.has('OVER_UNDER::fulltime::2.5::over+under'), 'the 2.5 total is arbitrable');
-  assert.ok(buckets.has('OVER_UNDER::fulltime::3.5::over+under'), 'the 3.5 total is arbitrable');
-  assert.ok(buckets.has('ASIAN_HANDICAP::fulltime::-1.5/1.5::home+away'), 'the -1.5 handicap is arbitrable');
-  assert.ok(buckets.has('ASIAN_HANDICAP::fulltime::1.5/-1.5::home+away'), 'the +1.5 handicap is a separate bucket');
+  //
+  // The key ends in `::goals::match` because the subject and team dimensions are
+  // part of the bucket identity: this feed publishes its totals as the MATCH's
+  // goals, so they file under `goals` and `match` rather than under a placeholder.
+  // The ASIAN_HANDICAP rows end in `::_::_` because a handicap carries no subject
+  // or team — see the note on the generic resolver about why that family was
+  // deliberately left alone.
+  //
+  // Only the PREFIX of a key is asserted here, not the whole string, so adding a
+  // dimension to the key does not silently invalidate this test again. The
+  // per-bucket checks below still read index 2 for the line.
+  assert.ok([...buckets.keys()].some((k) => k.startsWith('OVER_UNDER::fulltime::2.5::over+under')), 'the 2.5 total is arbitrable');
+  assert.ok([...buckets.keys()].some((k) => k.startsWith('OVER_UNDER::half1::1.5::over+under')), 'the first-half 1.5 total is arbitrable in its own bucket');
+  assert.ok([...buckets.keys()].some((k) => k.startsWith('OVER_UNDER::fulltime::3.5::over+under')), 'the 3.5 total is arbitrable');
+  assert.ok([...buckets.keys()].some((k) => k.startsWith('ASIAN_HANDICAP::fulltime::-1.5/1.5::home+away')), 'the -1.5 handicap is arbitrable');
+  assert.ok([...buckets.keys()].some((k) => k.startsWith('ASIAN_HANDICAP::fulltime::1.5/-1.5::home+away')), 'the +1.5 handicap is a separate bucket');
+
+  // The favbet feed publishes MATCH goals totals, so the subject and team the
+  // resolver chose must be exactly these — a regression that defaulted a total
+  // to a per-team or non-goal reading would pass every assertion above and still
+  // bucket this market against the wrong counterparty.
+  for (const [bucket] of buckets) {
+    if (!bucket.startsWith('OVER_UNDER::')) continue;
+    assert.ok(bucket.endsWith('::goals::match'), `${bucket} is the match's goals total`);
+  }
 
   for (const [bucket, n] of buckets) {
     assert.ok(n > 0, `${bucket} is populated`);
@@ -983,7 +1047,7 @@ test('favbet never disagrees with itself', (t) => {
   const s = new Favbet({ windowHours: 72 });
   const out = s.extractEvents(s.normalize(raw()));
   const grouped = groupByEvent(out, 'favbet');
-  const arbs = findArbitrage(grouped, { minRoiPercent: 0 });
+  const arbs = findArbitrage(grouped, { minMarginPercent: 0 });
   assert.deepEqual(arbs, [], 'no self-arbitrage across the capture');
   assert.ok(grouped.size > 0, 'the capture does produce grouped events');
 });

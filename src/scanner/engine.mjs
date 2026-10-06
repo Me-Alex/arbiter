@@ -334,10 +334,10 @@ export function groupByEvent(events) {
  *   sport, league, kickoff, homeTeam, awayTeam,
  *   marketKey,
  *   legs: Array<{ sourceId, selection, odds, stake, payout, profit }>,
- *   inverseSum, roiPercent, profit,
+ *   inverseSum, marginPercent, profit,
  * }>}
  */
-export function findArbitrage(grouped, { minRoiPercent = 0 } = {}) {
+export function findArbitrage(grouped, { minMarginPercent = 0 } = {}) {
   const out = [];
   // Only model contracts whose outcomes are known to be mutually exclusive and complete.
   const buckets = new Map();
@@ -502,9 +502,9 @@ export function findArbitrage(grouped, { minRoiPercent = 0 } = {}) {
       if (legs.some((leg) => legs.some((other) => isSharedFeed(leg.sourceId, other.sourceId)))) continue;
       const inverseSum = legs.reduce((acc, leg) => acc + 1 / leg.odds, 0);
       if (inverseSum >= 1) continue;
-      const roiPercent = (1 / inverseSum - 1) * 100;
-      if (roiPercent < minRoiPercent || (best && roiPercent <= best.roiPercent)) continue;
-      best = { legs, inverseSum, roiPercent };
+      const marginPercent = (1 - inverseSum) * 100;
+      if (marginPercent < minMarginPercent || (best && marginPercent <= best.marginPercent)) continue;
+      best = { legs, inverseSum, marginPercent };
     }
     if (!best) continue;
     const ev = b.meta.event;
@@ -523,7 +523,7 @@ export function findArbitrage(grouped, { minRoiPercent = 0 } = {}) {
       awayTeam: ev.awayTeam,
       legs: best.legs,
       inverseSum: best.inverseSum,
-      roiPercent: round2(best.roiPercent),
+      marginPercent: round2(best.marginPercent),
     });
   }
   return out;
@@ -588,34 +588,11 @@ export function findMiddles(grouped, {
         if (high.handicap <= low.handicap
             || high.sourceId === low.sourceId
             || isSharedFeed(high.sourceId, low.sourceId)) continue;
-        const gap = high.handicap - low.handicap; // e.g., 3.5 - 2.5 = 1.0
-        const stake = 100;
-        const minPayout = Math.min(stake * low.odds, stake * high.odds);
-        const worstCaseLoss = Math.max(0, (stake * 2) - minPayout);
-        const gainIfBothWin = stake * (high.odds - 1) + stake * (low.odds - 1);
-        const roiPercent = (gainIfBothWin / (stake * 2)) * 100;
-        const riskPercent = (worstCaseLoss / (stake * 2)) * 100;
-        if (riskPercent > maxMiddleRiskPercent) continue;
-        if (roiPercent < minMiddleRoiPercent) continue;
         const ev = b.meta.event;
-        out.push({
-          type: SIGNAL_TYPES.MIDDLE,
-          eventKey: b.eventKey,
-          marketKey: b.marketKey,
-          // The bucket is scoped, so every leg is the same kind of bet and the
-          // market that opened it names the scope honestly. Without this the UI
-          // could show a live middle with no way to tell it from a pre-match one.
-          live: b.meta.market.live === true,
-          sport: ev.sport,
-          league: ev.league,
-          kickoff: ev.kickoff,
-          homeTeam: ev.homeTeam,
-          awayTeam: ev.awayTeam,
-          legs: [low, high],
-          gap,
-          roiPercent: round2(roiPercent),
-          riskPercent: round2(riskPercent),
-        });
+        const signal = buildMiddleSignal(b, low, high, high.handicap - low.handicap, ev,
+          { maxMiddleRiskPercent, minMiddleRoiPercent });
+        if (!signal) continue;
+        out.push(signal);
       }
     }
 
@@ -630,35 +607,109 @@ export function findMiddles(grouped, {
         if (high.handicap <= low.handicap
             || high.sourceId === low.sourceId
             || isSharedFeed(high.sourceId, low.sourceId)) continue;
-        const gap = high.handicap - low.handicap; // e.g., 3.0 - 2.5 = 0.5
-        const stake = 100;
-        const minPayout = Math.min(stake * low.odds, stake * high.odds);
-        const worstCaseLoss = Math.max(0, (stake * 2) - minPayout);
-        const gainIfBothWin = stake * (high.odds - 1) + stake * (low.odds - 1);
-        const roiPercent = (gainIfBothWin / (stake * 2)) * 100;
-        const riskPercent = (worstCaseLoss / (stake * 2)) * 100;
-        if (riskPercent > maxMiddleRiskPercent) continue;
-        if (roiPercent < minMiddleRoiPercent) continue;
         const ev = b.meta.event;
-        out.push({
-          type: SIGNAL_TYPES.MIDDLE,
-          eventKey: b.eventKey,
-          marketKey: b.marketKey,
-          live: b.meta.market.live === true,
-          sport: ev.sport,
-          league: ev.league,
-          kickoff: ev.kickoff,
-          homeTeam: ev.homeTeam,
-          awayTeam: ev.awayTeam,
-          legs: [low, high],
-          gap,
-          roiPercent: round2(roiPercent),
-          riskPercent: round2(riskPercent),
-        });
+        const signal = buildMiddleSignal(b, low, high, high.handicap - low.handicap, ev,
+          { maxMiddleRiskPercent, minMiddleRoiPercent });
+        if (!signal) continue;
+        out.push(signal);
       }
     }
   }
   return out;
+}
+
+/**
+ * Build one middle signal, deciding on the way whether the pair is also a
+ * guaranteed arbitrage.
+ *
+ * A middle's two legs are an Over on the LOWER line and an Under on the HIGHER
+ * line (or the mirror spread), so the result always lands in at least one of
+ * them — below the low line only the Under wins, above the high line only the
+ * Over wins, in between BOTH win. Because at least one leg is guaranteed to
+ * pay, the pair is a true arbitrage whenever `1/oddsLow + 1/oddsHigh < 1`: split
+ * the stake proportionally to 1/odds and every outcome returns more than it
+ * cost, exactly as findArbitrage does for a same-line book.
+ *
+ * Measured on the 2026-10-05 capture: 1939 of 2486 middles satisfy that, so
+ * the arbitrage was real and simply unreported. When it holds we stamp
+ * `arb: true` alongside the market's own `inverseSum`, `marginPercent` and a
+ * bankroll-independent `guaranteedProfit` (per 100 staked), and the pair is
+ * admitted regardless of the speculative middle thresholds — a guaranteed
+ * profit does not need to clear a middle ROI floor to be worth reporting.
+ *
+ * When the inverse sum is >= 1 the pair is NOT an arbitrage: outside the gap
+ * window exactly one leg wins and the stake does not come back, so it stays a
+ * plain middle with its speculative both-win ROI and even-stake risk, still
+ * gated by the caller's thresholds.
+ *
+ * @param {object} b      the bucket (eventKey, marketKey, meta.event)
+ * @param {object} low    the lower-line leg (Over / negative spread)
+ * @param {object} high   the higher-line leg (Under / positive spread)
+ * @param {number} gap    high.handicap - low.handicap
+ * @param {object} ev     b.meta.event
+ * @param {{maxMiddleRiskPercent:number,minMiddleRoiPercent:number}} opts
+ * @returns {object|null} the middle signal, or null when it clears neither gate
+ */
+function buildMiddleSignal(b, low, high, gap, ev, opts) {
+  const { maxMiddleRiskPercent = 15, minMiddleRoiPercent = 20 } = opts || {};
+  const stake = 100;
+  const inverseSum = 1 / low.odds + 1 / high.odds;
+  const isArb = inverseSum < 1;
+
+  // Speculative middle economics (even stakes): the ROI if BOTH legs win, and
+  // the worst-case loss if only one does. These describe the middle itself and
+  // are reported whether or not the pair is also an arbitrage.
+  const minPayout = Math.min(stake * low.odds, stake * high.odds);
+  const worstCaseLoss = Math.max(0, (stake * 2) - minPayout);
+  const gainIfBothWin = stake * (high.odds - 1) + stake * (low.odds - 1);
+  const roiPercent = (gainIfBothWin / (stake * 2)) * 100;
+  const riskPercent = (worstCaseLoss / (stake * 2)) * 100;
+
+  // A guaranteed arbitrage bypasses the speculative middle gates: its profit
+  // does not depend on the result landing inside the gap, so refusing it for
+  // falling short of a middle ROI floor would be discarding a real surebet.
+  if (!isArb) {
+    if (riskPercent > maxMiddleRiskPercent) return null;
+    if (roiPercent < minMiddleRoiPercent) return null;
+  }
+
+  const base = {
+    type: SIGNAL_TYPES.MIDDLE,
+    eventKey: b.eventKey,
+    marketKey: b.marketKey,
+    live: b.meta.market.live === true,
+    sport: ev.sport,
+    league: ev.league,
+    kickoff: ev.kickoff,
+    homeTeam: ev.homeTeam,
+    awayTeam: ev.awayTeam,
+    legs: [low, high],
+    gap,
+    roiPercent: round2(roiPercent),
+    riskPercent: round2(riskPercent),
+  };
+
+  if (isArb) {
+    // Proportional (Dutch) allocation over 100 staked: each leg returns the
+    // same payout, so the worst outcome still clears the total stake.
+    const inverseSumR = inverseSum;
+    const marginPercent = (1 - inverseSumR) * 100;
+    const guaranteedProfit = round2(stake * (1 / inverseSumR - 1));
+    const allocated = [low, high].map((l) => ({
+      ...l,
+      stake: round2(stake * (1 / l.odds) / inverseSumR),
+    }));
+    return {
+      ...base,
+      arb: true,
+      inverseSum: round4(inverseSumR),
+      marginPercent: round2(marginPercent),
+      totalStake: stake,
+      guaranteedProfit,
+      legs: allocated,
+    };
+  }
+  return base;
 }
 
 function looksLikeTotalsOrHandicap(key) {
@@ -674,7 +725,7 @@ function looksLikeTotalsOrHandicap(key) {
  * Positive EV scan: per-leg, implied probability vs the consensus probability
  * (median of the *other* books' implied probabilities for the same selection).
  *
- * The threshold is deliberately separate from the arbitrage `minRoiPercent`:
+ * The threshold is deliberately separate from the arbitrage `minMarginPercent`:
  * arbitrage at 0% is still worth reporting, but a leg priced exactly at the
  * consensus carries no edge, and with a 0% default every two-book market would
  * be reported back to the caller.
@@ -713,7 +764,7 @@ export function findPositiveEV(grouped, { minEvPercent = 2 } = {}) {
     for (const l of b.legs) {
       // The consensus must be built from the *other* books. Including the leg
       // under test makes every leg at least as likely as the median that
-      // contains it, so with the default minRoiPercent of 0 each market would
+      // contains it, so with the default minMarginPercent of 0 each market would
       // report its own legs back as non-negative EV. Brands sharing a feed are
       // excluded too: a consensus drawn from one provider's resold copies is not
       // an independent market view. See feed-groups.mjs.

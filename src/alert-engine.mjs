@@ -3,7 +3,7 @@
  * interrupt the trader.
  *
  * This used to be two hand-written preference objects in tracker-service.mjs
- * that nothing read. `minRoiPercent`, `minMiddleRoiPercent`, `channels`,
+ * that nothing read. `minMarginPercent`, `minMiddleRoiPercent`, `channels`,
  * `quietHours` and `cooldownSeconds` were written to
  * data/alert-preferences.json on every save and consulted by no code at all,
  * and the defaults disagreed with DEFAULT_SCAN_OPTIONS anyway (1% / 25% against
@@ -35,7 +35,7 @@ const MINUTE_MS = 60 * 1000;
  * only fire for something worth being interrupted for.
  */
 export const DEFAULT_ALERT_PREFERENCES = Object.freeze({
-  minRoiPercent: 1,
+  minMarginPercent: 1,
   minMiddleRoiPercent: 25,
   includeLive: false,
   channels: Object.freeze({ desktop: true, sound: false }),
@@ -63,7 +63,7 @@ export function normalizeAlertPreferences(raw) {
   const channels = source.channels && typeof source.channels === 'object' ? source.channels : {};
   const quiet = source.quietHours && typeof source.quietHours === 'object' ? source.quietHours : {};
   return {
-    minRoiPercent: clampNumber(source.minRoiPercent, -50, 100, DEFAULT_ALERT_PREFERENCES.minRoiPercent),
+    minMarginPercent: clampNumber(source.minMarginPercent, -50, 100, DEFAULT_ALERT_PREFERENCES.minMarginPercent),
     minMiddleRoiPercent: clampNumber(source.minMiddleRoiPercent, 0, 1000, DEFAULT_ALERT_PREFERENCES.minMiddleRoiPercent),
     includeLive: toBoolean(source.includeLive, DEFAULT_ALERT_PREFERENCES.includeLive),
     channels: {
@@ -131,7 +131,7 @@ export function evaluateAlerts(scan, preferences, { now = new Date() } = {}) {
   const prefs = normalizeAlertPreferences(preferences);
   const arbitrages = selectFamily(scan?.opportunities, {
     type: 'arb',
-    threshold: prefs.minRoiPercent,
+    threshold: prefs.minMarginPercent,
     includeLive: prefs.includeLive,
   });
   const middles = selectFamily(scan?.middles, {
@@ -150,7 +150,7 @@ export function evaluateAlerts(scan, preferences, { now = new Date() } = {}) {
     counts: { arbitrages: arbitrages.total, middles: middles.total },
     truncated: { arbitrages: arbitrages.total - arbitrages.items.length, middles: middles.total - middles.items.length },
     thresholds: {
-      minRoiPercent: prefs.minRoiPercent,
+      minMarginPercent: prefs.minMarginPercent,
       minMiddleRoiPercent: prefs.minMiddleRoiPercent,
       includeLive: prefs.includeLive,
     },
@@ -194,7 +194,7 @@ function selectFamily(signals, { type, threshold, includeLive }) {
     // normalised is not a reason to believe a price is in-play.
     if (!includeLive && signal.live === true) continue;
 
-    const roi = toFiniteNumber(signal.roiPercent);
+    const roi = toFiniteNumber(signal.marginPercent ?? signal.roiPercent);
     if (roi === null || roi < threshold) continue;
 
     const key = buildKey(signal.eventKey, signal.marketKey, type);
@@ -235,7 +235,7 @@ function selectFamily(signals, { type, threshold, includeLive }) {
  * The guards are the whole reason this exists. `Number(null)`, `Number('')` and
  * `Number([])` are all `0`, and `0` is a legitimate answer everywhere a number
  * is read here — so `Number.isFinite(Number(x))` alone is not a test, it is a
- * rubber stamp: a hand-edited `"minRoiPercent": null` would become a 0%
+ * rubber stamp: a hand-edited `"minMarginPercent": null` would become a 0%
  * threshold, alerting on everything above zero, and a signal with no ROI would
  * pass a threshold of 0 and raise an alert whose own headline could not be
  * printed. Treating a missing value as a *missing* value is the only reading

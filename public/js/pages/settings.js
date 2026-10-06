@@ -204,16 +204,27 @@
 
   // The keys this form has an input for. They are rebuilt on every save, so
   // their stored copies must not survive an empty field — absence is what
-  // makes resolveScanRequest fall back to its defaults, and a stale number
-  // left behind would keep applying forever. `maxStake` and `maxAgeMinutes`
-  // are listed even though no file under src/ reads them: their inputs are a
-  // separate decision, and test/settings-page-wiring.test.mjs pins that gap
-  // as exactly two keys so a third cannot arrive unnoticed.
+  // makes resolveScanRequest fall back to its defaults, and, for `maxStake`
+  // and `maxAgeMinutes`, lifts the cap rather than replacing it. Both caps
+  // are read now (clamped by clampOptional, applied by the resolver and the
+  // scanner), and test/settings-page-wiring.test.mjs pins their readers to
+  // exactly those two files so a third cannot arrive unnoticed.
   const FORM_KEYS = ['bankroll', 'minEvPercent', 'maxStake', 'minMarginPercent', 'maxAgeMinutes', 'includePast'];
 
   function save() {
     const bookIds = $('set-book').value ? [$('set-book').value] : [];
     const enabled = (state.scheduler && state.scheduler.enabled) === true;
+    // Refuse before anything is sent when the schedule itself is off. The
+    // route answers `enabled: false` with disable(), and disable() keeps the
+    // stored scanOptions — so the form would show the operator values the
+    // server just declined to take, with nothing on screen to say so. The
+    // sentence lives in both dictionaries, and
+    // test/settings-page-wiring.test.mjs executes this branch end to end.
+    if (!enabled) {
+      $('save-state').textContent = t('failedShort');
+      toast(t('schedulerDisabledSave'), 'error');
+      return Promise.resolve();
+    }
     // scheduler.enable() refuses an empty list outright — EBADINPUT, "scheduler
     // requires at least one bookmaker" — and the route only reaches enable()
     // while `enabled` is not false, so an enabled schedule with the book select

@@ -220,13 +220,13 @@ function inverseSum(market) {
  * the other two disagreeing about what a default scan is. The orchestrator
  * imports this instead.
  *
- * @type {Readonly<{bankroll: number, minRoiPercent: number, minEvPercent: number,
+ * @type {Readonly<{bankroll: number, minMarginPercent: number, minEvPercent: number,
  *   maxMiddleRiskPercent: number, minMiddleRoiPercent: number,
  *   includeLive: boolean, includePast: boolean}>}
  */
 export const DEFAULT_SCAN_OPTIONS = Object.freeze({
   bankroll: 1000,
-  minRoiPercent: 0,
+  minMarginPercent: 0,
   minEvPercent: 2,
   maxMiddleRiskPercent: 15,
   minMiddleRoiPercent: 20,
@@ -250,7 +250,7 @@ export const DEFAULT_SCAN_OPTIONS = Object.freeze({
 export function scanOptionsPayload(overrides = {}) {
   return {
     bankroll: DEFAULT_SCAN_OPTIONS.bankroll,
-    minRoiPercent: DEFAULT_SCAN_OPTIONS.minRoiPercent,
+    minMarginPercent: DEFAULT_SCAN_OPTIONS.minMarginPercent,
     minEvPercent: DEFAULT_SCAN_OPTIONS.minEvPercent,
     maxMiddleRiskPercent: DEFAULT_SCAN_OPTIONS.maxMiddleRiskPercent,
     minMiddleRoiPercent: DEFAULT_SCAN_OPTIONS.minMiddleRoiPercent,
@@ -356,7 +356,10 @@ export function scanEnvelope({
  * @param {string} [args.scrapeRunId]
  * @param {string} [args.capturedAt]
  * @param {number} [args.bankroll]
- * @param {number} [args.minRoiPercent]
+ * @param {number} [args.maxStake] optional stake cap: bounds every allocation
+ *   to at most this many currency units without changing which signals are
+ *   produced; not published in the scan's options payload
+ * @param {number} [args.minMarginPercent]
  * @param {number} [args.maxMiddleRiskPercent]
  * @param {number} [args.minMiddleRoiPercent]
  * @param {boolean} [args.includeLive]
@@ -372,7 +375,12 @@ export async function scanWorkspace(args) {
     scrapeRunId = null,
     capturedAt = new Date().toISOString(),
     bankroll = DEFAULT_SCAN_OPTIONS.bankroll,
-    minRoiPercent = DEFAULT_SCAN_OPTIONS.minRoiPercent,
+    // Optional stake cap; null when unasked. It bounds the money each signal
+    // is allocated, never the signals themselves, so unlike the thresholds it
+    // does not join the published options payload — it is a scan input, like
+    // sourceIds, and the payload's key list is pinned by scan-fields-census.
+    maxStake = null,
+    minMarginPercent = DEFAULT_SCAN_OPTIONS.minMarginPercent,
     minEvPercent = DEFAULT_SCAN_OPTIONS.minEvPercent,
     maxMiddleRiskPercent = DEFAULT_SCAN_OPTIONS.maxMiddleRiskPercent,
     minMiddleRoiPercent = DEFAULT_SCAN_OPTIONS.minMiddleRoiPercent,
@@ -387,6 +395,13 @@ export async function scanWorkspace(args) {
     liveMaxAgeMs = DEFAULT_LIVE_MAX_AGE_MS,
     sport = null,
   } = args;
+
+  // Every allocator below treats the bankroll as its whole budget, so the cap
+  // is applied once, here: flat stakes land exactly on min(bankroll, maxStake)
+  // and the capped-Kelly ceiling (5% of the budget) scales down with it. If
+  // the cap were applied only at the flat families, a percentage stake would
+  // still be computed off the full bankroll and exceed it.
+  const stakeBudget = maxStake === undefined || maxStake === null ? bankroll : Math.min(bankroll, maxStake);
 
   const qualityOptions = { prematchMaxAgeMs, liveMaxAgeMs, expectedRunId: scrapeRunId };
   const { events, sources } = await loadWorkspace(dataDir, qualityOptions);
@@ -409,13 +424,13 @@ export async function scanWorkspace(args) {
   const actionableEvents = filtered.filter((event) => event.live === true || isActionableKickoff(event.kickoff));
   const actionableGrouped = groupByEvent(actionableEvents);
 
-  const opportunities = findArbitrage(actionableGrouped, { minRoiPercent })
-    .map((opportunity) => withBankroll(opportunity, bankroll))
+  const opportunities = findArbitrage(actionableGrouped, { minMarginPercent })
+    .map((opportunity) => withBankroll(opportunity, stakeBudget))
     .filter(Boolean);
   // Middling and positive-EV calculations remain informational until each market
   // contract has a complete payoff model and a fresh verification pass.
-  const middles = findMiddles(grouped, { maxMiddleRiskPercent, minMiddleRoiPercent }).map((opportunity) => withBankroll(opportunity, bankroll));
-  const positiveEv = findPositiveEV(grouped, { minEvPercent }).map((opportunity) => withBankroll(opportunity, bankroll));
+  const middles = findMiddles(grouped, { maxMiddleRiskPercent, minMiddleRoiPercent }).map((opportunity) => withBankroll(opportunity, stakeBudget));
+  const positiveEv = findPositiveEV(grouped, { minEvPercent }).map((opportunity) => withBankroll(opportunity, stakeBudget));
   const lowHold = findLowHold(grouped);
 
   const scan = {
@@ -426,7 +441,7 @@ export async function scanWorkspace(args) {
       eventCount: filtered.length,
       options: scanOptionsPayload({
         bankroll,
-        minRoiPercent,
+        minMarginPercent,
         minEvPercent,
         maxMiddleRiskPercent,
         minMiddleRoiPercent,
@@ -464,10 +479,31 @@ function withBankroll(opp, bankroll) {
       worstCasePayout: allocation.worstCasePayout,
       guaranteedProfit: allocation.guaranteedProfit,
       roundingRisk: allocation.roundingRisk,
-      roiPercent: allocation.roiPercent,
+      marginPercent: allocation.marginPercent,
     };
   }
   if (opp.type === 'middle' && Array.isArray(opp.legs)) {
+    // A middle that is also a true arbitrage (engine stamped `arb`) is a
+    // guaranteed-profit pair: at least one leg always wins, so stake it the
+    // same way findArbitrage stakes a surebet — proportionally to 1/odds — and
+    // keep the guaranteed profit. An even split would leave the surebet's edge
+    // on the table and `guaranteedProfit: null` would hide the one number that
+    // makes it a surebet rather than a speculative middle.
+    if (opp.arb === true) {
+      const allocation = roundedArbitrageAllocation(opp.legs, stake);
+      if (allocation) {
+        return {
+          ...opp,
+          legs: allocation.legs,
+          inverseSum: allocation.inverseSum,
+          totalStake: allocation.totalStake,
+          worstCasePayout: allocation.worstCasePayout,
+          guaranteedProfit: allocation.guaranteedProfit,
+          roundingRisk: allocation.roundingRisk,
+          marginPercent: allocation.marginPercent,
+        };
+      }
+    }
     const half = stake / 2;
     const legs = opp.legs.map((leg) => ({ ...leg, stake: round2(half), payout: round2(half * leg.odds) }));
     return { ...opp, legs, totalStake: round2(stake), guaranteedProfit: null, roiPercent: opp.roiPercent };

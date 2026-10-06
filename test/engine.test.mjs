@@ -16,7 +16,7 @@ function makeEvent(sourceId, eventKey, marketKey, selections) {
   };
 }
 
-test('findArbitrage flags a complete cross-book 3-way arb with sufficient ROI', () => {
+test('findArbitrage flags a complete cross-book 3-way arb with sufficient margin', () => {
   const grouped = groupByEvent([
     makeEvent('a', 'k1', 'MATCH_ODDS', [
       { name: 'Home', odds: 2.10 },
@@ -31,7 +31,7 @@ test('findArbitrage flags a complete cross-book 3-way arb with sufficient ROI', 
   ]);
   const opps = findArbitrage(grouped);
   assert.equal(opps.length, 1);
-  assert.ok(opps[0].roiPercent > 0);
+  assert.ok(opps[0].marginPercent > 0);
   assert.equal(opps[0].legs.length, 3);
   // inverse sum < 1
   const inv = opps[0].legs.reduce((acc, l) => acc + 1 / l.odds, 0);
@@ -192,7 +192,7 @@ test('findPositiveEV finds a mispriced leg vs consensus', () => {
   ]);
   // The consensus is built from the other books only, so book a's 2.50 Home
   // (implied 0.40) is measured against the ~0.49 median of b and c, and flagged.
-  // minEvPercent is the +EV threshold; it is deliberately not minRoiPercent,
+  // minEvPercent is the +EV threshold; it is deliberately not minMarginPercent,
   // which stays at 0 for arbitrage.
   const evs = findPositiveEV(grouped, { minEvPercent: 0 });
   assert.ok(evs.length >= 1);

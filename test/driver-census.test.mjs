@@ -28,6 +28,7 @@ import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { SchedulerService } from '../src/scheduler-service.mjs';
 import { LiveService } from '../src/live-service.mjs';
+import { resolveScanRequest } from '../src/scrape-orchestrator.mjs';
 import { codeOnly } from './helpers/code-only.mjs';
 
 const ROOT = join(fileURLToPath(new URL('.', import.meta.url)), '..');
@@ -64,17 +65,18 @@ const SCAN_INPUT = {
   maxEvents: 250, sport: 'soccer',
 };
 
-/** The nine fields `currentScanOptions()` builds, read out of the page itself. */
+/** The eleven fields `currentScanOptions()` builds, read out of the page itself. */
 const pageScanFields = () => {
   const window = scrapeSource.match(/function currentScanOptions\(\) \{([\s\S]*?)\n\}/);
   assert.ok(window, 'the page must still build its scan payload in currentScanOptions()');
   // Every line that opens with `key:` in that body. The object is flat, so
   // there is no nested brace to descend into — and if one is added, the count
   // below fails, which is the canary this file wants rather than a silent
-  // over-collection of keys that are not the payload's.
+  // over-collection of keys that are not the payload's. The two stored caps
+  // join the nine form fields as pass-throughs, taking the count to eleven.
   const names = [...window[1].matchAll(/^\s*(\w+):/gm)].map((m) => m[1]);
-  assert.equal(names.length, 9,
-    `currentScanOptions() must build exactly the nine scan fields, found ${names.join(', ')}`);
+  assert.equal(names.length, 11,
+    `currentScanOptions() must build exactly the eleven scan fields, found ${names.join(', ')}`);
   return names;
 };
 
@@ -129,7 +131,13 @@ async function driveScheduler() {
 
   merge(paths, leafPaths(await svc.status()));
 
-  await svc.enable({ bookIds: ['fortuna', 'superbet'], scanOptions: SCAN_INPUT, intervalMinutes: 15 });
+  // The routes resolve the body before calling enable (src/router.mjs, the
+  // POST handlers for /api/scheduler and /api/live), so the stored scanOptions
+  // a status payload echoes are resolveScanRequest's output — eleven field
+  // names including the two optional caps — not the raw input shape. Driving
+  // enable with the unresolved SCAN_INPUT here pinned the page's resolved
+  // field list against an input list the server never stores.
+  await svc.enable({ bookIds: ['fortuna', 'superbet'], scanOptions: resolveScanRequest(SCAN_INPUT), intervalMinutes: 15 });
   merge(paths, leafPaths(await svc.status()));
 
   // Branch 1: a tick that finds a scrape already running.
@@ -174,7 +182,7 @@ async function driveLive() {
 
   merge(paths, leafPaths(await svc.status()));
 
-  await svc.enable({ bookIds: [], scanOptions: { ...SCAN_INPUT, includeLive: true }, intervalSeconds: 60 });
+  await svc.enable({ bookIds: [], scanOptions: resolveScanRequest({ ...SCAN_INPUT, includeLive: true }), intervalSeconds: 60 });
   merge(paths, leafPaths(await svc.status()));
 
   // A tick that finds a scrape already running: skippedTicks and lastSkippedAt

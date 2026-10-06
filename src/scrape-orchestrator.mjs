@@ -63,7 +63,7 @@ export class ScrapeOrchestrator {
    *   bookIds: string[],
    *   scanOptions: {
    *     bankroll?: number,
-   *     minRoiPercent?: number,
+   *     minMarginPercent?: number,
    *     maxMiddleRiskPercent?: number,
    *     minMiddleRoiPercent?: number,
    *     includeLive?: boolean,
@@ -319,13 +319,23 @@ export class ScrapeOrchestrator {
         scrapeRunId: runId,
         capturedAt: new Date().toISOString(),
         bankroll: scanOptions.bankroll ?? DEFAULT_SCAN_OPTIONS.bankroll,
-        minRoiPercent: scanOptions.minRoiPercent ?? DEFAULT_SCAN_OPTIONS.minRoiPercent,
+        minMarginPercent: scanOptions.minMarginPercent ?? DEFAULT_SCAN_OPTIONS.minMarginPercent,
         minEvPercent: scanOptions.minEvPercent ?? DEFAULT_SCAN_OPTIONS.minEvPercent,
         maxMiddleRiskPercent: scanOptions.maxMiddleRiskPercent ?? DEFAULT_SCAN_OPTIONS.maxMiddleRiskPercent,
         minMiddleRoiPercent: scanOptions.minMiddleRoiPercent ?? DEFAULT_SCAN_OPTIONS.minMiddleRoiPercent,
         includeLive: scanOptions.includeLive ?? DEFAULT_SCAN_OPTIONS.includeLive,
         includePast: scanOptions.includePast ?? DEFAULT_SCAN_OPTIONS.includePast,
         sport: scanOptions.sport,
+        // The stake cap bounds every allocation and deliberately never joins
+        // the published scan.options: it is a scan input like sourceIds, and
+        // scan-fields-census pins that payload's key list.
+        maxStake: scanOptions.maxStake,
+        // The age cap is prematch-only, converted at the one call site that
+        // owns the scan's windows; live observations keep their own window
+        // (liveMaxAgeMs) untouched, per the design decision for this field.
+        prematchMaxAgeMs: scanOptions.maxAgeMinutes === undefined || scanOptions.maxAgeMinutes === null
+          ? undefined
+          : scanOptions.maxAgeMinutes * 60000,
         publish: false,
       });
       this._broadcast('scan-update', {
@@ -489,7 +499,7 @@ export function resolveTerminalStatus({ scanFailed, verifyFailed, jobs = [] }) {
 export function resolveScanRequest(input) {
   const {
     bankroll = DEFAULT_SCAN_OPTIONS.bankroll,
-    minRoiPercent = DEFAULT_SCAN_OPTIONS.minRoiPercent,
+    minMarginPercent = DEFAULT_SCAN_OPTIONS.minMarginPercent,
     minEvPercent = DEFAULT_SCAN_OPTIONS.minEvPercent,
     maxMiddleRiskPercent = DEFAULT_SCAN_OPTIONS.maxMiddleRiskPercent,
     minMiddleRoiPercent = DEFAULT_SCAN_OPTIONS.minMiddleRoiPercent,
@@ -497,10 +507,12 @@ export function resolveScanRequest(input) {
     includePast = DEFAULT_SCAN_OPTIONS.includePast,
     maxEvents,
     sport,
+    maxStake,
+    maxAgeMinutes,
   } = input || {};
   return {
     bankroll: clampNumber(bankroll, 10, 1000000, DEFAULT_SCAN_OPTIONS.bankroll),
-    minRoiPercent: clampNumber(minRoiPercent, -50, 100, DEFAULT_SCAN_OPTIONS.minRoiPercent),
+    minMarginPercent: clampNumber(minMarginPercent, -50, 100, DEFAULT_SCAN_OPTIONS.minMarginPercent),
     minEvPercent: clampNumber(minEvPercent, 0, 100, DEFAULT_SCAN_OPTIONS.minEvPercent),
     maxMiddleRiskPercent: clampNumber(maxMiddleRiskPercent, 0, 100, DEFAULT_SCAN_OPTIONS.maxMiddleRiskPercent),
     minMiddleRoiPercent: clampNumber(minMiddleRoiPercent, 0, 100, DEFAULT_SCAN_OPTIONS.minMiddleRoiPercent),
@@ -508,6 +520,13 @@ export function resolveScanRequest(input) {
     includePast: Boolean(includePast),
     maxEvents: normalizeMaxEvents(maxEvents),
     sport: sport ? String(sport).trim().toLowerCase() : undefined,
+    // The two optional caps. Absence stays absence — "no stake cap", and "the
+    // snapshot-quality default window" — so clampOptional returns undefined
+    // for anything it cannot read instead of inventing a number: a guessed
+    // maxStake of 0 would drop every arbitrage, and a guessed age would
+    // silently change which observations count as fresh.
+    maxStake: clampOptional(maxStake, 0, 1000000),
+    maxAgeMinutes: clampOptional(maxAgeMinutes, 1, 10080),
   };
 }
 
@@ -521,6 +540,20 @@ function normalizeMaxEvents(value) {
 function clampNumber(v, lo, hi, fallback) {
   const n = Number(v);
   if (!Number.isFinite(n)) return fallback;
+  return Math.max(lo, Math.min(hi, n));
+}
+
+/**
+ * Clamp an optional cap whose absence is meaningful. Unlike clampNumber —
+ * which answers an unreadable value with a documented default — an unreadable
+ * cap answers undefined: no cap was asked for, and the consumer falls back to
+ * its own unbounded behaviour. `maxStake: 0` is still a finite value and
+ * clamps to 0; only null, '' and non-numeric text read as "not expressed".
+ */
+function clampOptional(value, lo, hi) {
+  if (value === undefined || value === null || value === '') return undefined;
+  const n = Number(value);
+  if (!Number.isFinite(n)) return undefined;
   return Math.max(lo, Math.min(hi, n));
 }
 

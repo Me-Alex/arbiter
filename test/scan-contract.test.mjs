@@ -105,7 +105,7 @@ test('the nested blocks the frontend reads are themselves named', async () => {
         assert.ok(key in onDisk.dataHealth, `dataHealth.${key} is part of the contract`);
       }
       for (const key of [
-        'bankroll', 'minRoiPercent', 'minEvPercent', 'maxMiddleRiskPercent', 'minMiddleRoiPercent',
+        'bankroll', 'minMarginPercent', 'minEvPercent', 'maxMiddleRiskPercent', 'minMiddleRoiPercent',
         'includeLive', 'includePast', 'sourceIds', 'sport', 'prematchMaxAgeMs', 'liveMaxAgeMs',
       ]) {
         assert.ok(key in onDisk.options, `options.${key} is part of the contract`);

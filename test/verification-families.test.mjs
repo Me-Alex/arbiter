@@ -108,3 +108,22 @@ test('verifySignal still works on legacy opportunities that lack family/period/l
   const v = verifySignal(target, { options: { minRoiPercent: 0 } }, { index: makeIndex(legs) });
   assert.equal(v.status, 'confirmed', v.reason);
 });
+
+test('verifySignal re-allocates at the committed stake, not the full bankroll', () => {
+  // The scan published totalStake: 100 (a capped scan), while the default
+  // budget is 1000. Re-allocation must stay inside the committed stake:
+  // verification may not silently re-stake at the full bankroll.
+  const legs = [
+    { sourceId: 'bookA', marketKey: 'MATCH_ODDS', selection: '1', odds: 2.30, eventKey: 'event1' },
+    { sourceId: 'bookB', marketKey: 'MATCH_ODDS', selection: 'X', odds: 3.50, eventKey: 'event1' },
+    { sourceId: 'bookC', marketKey: 'MATCH_ODDS', selection: '2', odds: 4.50, eventKey: 'event1' },
+  ];
+  const target = {
+    type: 'arb', marketKey: 'MATCH_ODDS', eventKey: 'event1',
+    homeTeam: 'Poli', awayTeam: 'Craiova',
+    roiPercent: 5, totalStake: 100, legs,
+  };
+  const v = verifySignal(target, { options: { minRoiPercent: 0 } }, { index: makeIndex(legs) });
+  assert.equal(v.status, 'confirmed', v.reason);
+  assert.equal(v.allocation.totalStake, 100);
+});

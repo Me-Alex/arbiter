@@ -111,7 +111,7 @@ test('a 2-way leg never pairs with a 3-way leg', () => {
   const opps = findArbitrage(groupByEvent([
     event('bookA', [twoWay()]),
     event('bookB', [threeWay(2.20, 4.20, 4.60)]),
-  ]), { minRoiPercent: 0 });
+  ]), { minMarginPercent: 0 });
   assert.deepEqual(opps, [], 'different settlement windows must never be arbitraged together');
 });
 

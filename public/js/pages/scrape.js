@@ -804,7 +804,7 @@ function applyProfile() {
   const p = profiles.find((x) => x.id === $('profile').value);
   if (!p || !p.defaults) return;
   $('bankroll').value = p.defaults.bankroll;
-  $('min-roi').value = p.defaults.minRoiPercent;
+  $('min-roi').value = p.defaults.minMarginPercent;
   $('mid-risk').value = p.defaults.maxMiddleRiskPercent;
   $('mid-roi').value = p.defaults.minMiddleRoiPercent;
   $('inc-live').checked = !!p.defaults.includeLive;
@@ -878,9 +878,15 @@ function selectedMaxEvents() {
  * of it now so the thing that is compared, shown and saved is the same object.
  */
 function currentScanOptions() {
+  // The two caps have no form input: they exist only in the stored
+  // configuration, so they pass through from the last scheduler payload
+  // instead of being dropped by every save or manual run. With no payload
+  // yet they stay undefined, which runOptionsText and the stored-vs-form
+  // diff both treat as "not expressed".
+  const stored = (lastScheduler && lastScheduler.scanOptions) || {};
   return {
     bankroll: Number($('bankroll').value),
-    minRoiPercent: Number($('min-roi').value),
+    minMarginPercent: Number($('min-roi').value),
     minEvPercent: Number($('min-ev').value),
     maxMiddleRiskPercent: Number($('mid-risk').value),
     minMiddleRoiPercent: Number($('mid-roi').value),
@@ -893,6 +899,8 @@ function currentScanOptions() {
     // string and be run on another — the backend trims and lowercases whatever
     // arrives, and nothing here did the same.
     sport: currentSport() || undefined,
+    maxStake: stored.maxStake,
+    maxAgeMinutes: stored.maxAgeMinutes,
   };
 }
 
@@ -1499,16 +1507,20 @@ function renderSchedulerBooks(s) {
 }
 
 /**
- * The nine scan fields, each with the label the form already shows for it.
+ * The scan fields, each with the label the panel shows for it.
  *
  * Order is the order the form reads them in, and the keys are the ones the
  * backend stores — the comparison is a named field list, not a deep equality,
  * because the stored object is allowed to carry fields the form does not have
  * and a `JSON.stringify` comparison would call that a difference on every load.
+ *
+ * The last two are the stored caps: the form has no inputs for them, so they
+ * ride along as pass-throughs in currentScanOptions and render from the
+ * stored payload instead of being silently dropped.
  */
 const SCHEDULER_SCAN_FIELDS = [
   ['bankroll', 'bankroll'],
-  ['minRoiPercent', 'minRoi'],
+  ['minMarginPercent', 'minMargin'],
   ['minEvPercent', 'minEv'],
   ['maxMiddleRiskPercent', 'maxMiddleRisk'],
   ['minMiddleRoiPercent', 'minMiddleRoi'],
@@ -1516,6 +1528,8 @@ const SCHEDULER_SCAN_FIELDS = [
   ['includePast', 'includePast'],
   ['maxEvents', 'eventCollection'],
   ['sport', 'sport'],
+  ['maxStake', 'maxStake'],
+  ['maxAgeMinutes', 'maxAgeMinutes'],
 ];
 
 /**

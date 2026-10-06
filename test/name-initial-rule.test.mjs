@@ -288,7 +288,7 @@ describe('the second grouping pass', () => {
       book('a', { home: 'Bayern Munchen', away: 'Porto', odds: [2.60, 3.40, 3.20] }),
       book('b', { home: 'Bayern M', away: 'Porto', odds: [2.70, 3.40, 3.10] }),
     ]);
-    assert.equal(findArbitrage(grouped, { minRoiPercent: 0 }).length, 1,
+    assert.equal(findArbitrage(grouped, { minMarginPercent: 0 }).length, 1,
       'the reason the rule exists: this price was not reachable before');
 
     // CONTROL: the same two prices on two different fixtures are not an arb.
@@ -296,6 +296,6 @@ describe('the second grouping pass', () => {
       book('a', { home: 'Bayern Munchen', away: 'Porto', odds: [2.60, 3.40, 3.20] }),
       book('b', { home: 'Bayern M', away: 'Benfica', odds: [2.70, 3.40, 3.10] }),
     ]);
-    assert.equal(findArbitrage(apart, { minRoiPercent: 0 }).length, 0);
+    assert.equal(findArbitrage(apart, { minMarginPercent: 0 }).length, 0);
   });
 });

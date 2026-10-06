@@ -21,7 +21,7 @@
      */
     function readAlertForm() {
       return {
-        minRoiPercent: ($('alert-min-roi') || {}).value,
+        minMarginPercent: ($('alert-min-roi') || {}).value,
         minMiddleRoiPercent: ($('alert-mid-roi') || {}).value,
         cooldownSeconds: ($('alert-cooldown') || {}).value,
         includeLive: Boolean($('alert-live') && $('alert-live').checked),
@@ -51,7 +51,7 @@
         if (el.type === 'checkbox') el.checked = value === true;
         else el.value = value === null || value === undefined ? '' : String(value);
       };
-      set('alert-min-roi', prefs.minRoiPercent);
+      set('alert-min-roi', prefs.minMarginPercent);
       set('alert-mid-roi', prefs.minMiddleRoiPercent);
       set('alert-cooldown', prefs.cooldownSeconds);
       set('alert-live', prefs.includeLive);
@@ -381,7 +381,7 @@
         if (!p) return;
         const d = p.defaults || {};
         if (d.bankroll !== null && d.bankroll !== undefined) $('bankroll').value = d.bankroll;
-        if (d.minRoiPercent !== null && d.minRoiPercent !== undefined) $('min-roi').value = d.minRoiPercent;
+        if (d.minMarginPercent !== null && d.minMarginPercent !== undefined) $('min-roi').value = d.minMarginPercent;
         if (d.maxMiddleRiskPercent !== null && d.maxMiddleRiskPercent !== undefined) $('mid-risk').value = d.maxMiddleRiskPercent;
         if (d.minMiddleRoiPercent !== null && d.minMiddleRoiPercent !== undefined) $('mid-roi').value = d.minMiddleRoiPercent;
       });
@@ -424,7 +424,7 @@
         const sportVal = $('sport-filter').value || undefined;
         const data = await arbiterApi.post('/api/scan', {
           bankroll: Number($('bankroll').value),
-          minRoiPercent: Number($('min-roi').value),
+          minMarginPercent: Number($('min-roi').value),
           maxMiddleRiskPercent: Number($('mid-risk').value),
           minMiddleRoiPercent: Number($('mid-roi').value),
           includeLive: $('inc-live') ? $('inc-live').checked : false,
@@ -565,7 +565,7 @@
           if (value !== undefined && value !== null && $(id)) $(id).value = value;
         };
         put('bankroll', opts.bankroll);
-        put('min-roi', opts.minRoiPercent);
+        put('min-roi', opts.minMarginPercent);
         put('mid-risk', opts.maxMiddleRiskPercent);
         put('mid-roi', opts.minMiddleRoiPercent);
         put('sport-filter', opts.sport);
@@ -611,7 +611,7 @@
       }
 
       const arb = document.querySelector('#arb-table tbody');
-      const opps = filterBySport(scan.opportunities || [], activeSport).sort((a, b) => (b.roiPercent || 0) - (a.roiPercent || 0));
+      const opps = filterBySport(scan.opportunities || [], activeSport).sort((a, b) => (b.marginPercent || 0) - (a.marginPercent || 0));
       $('arb-count').textContent = `${opps.length} ${t('opps')}`;
       $('signal-mix').textContent = `${opps.length} arb · ${(scan.middles || []).length} middle · ${(scan.positiveEv || []).length} EV`;
       arb.innerHTML = opps.length ? opps.map((o) => {
@@ -637,7 +637,7 @@
             <div class="mono">${escapeHtml(o.marketKey)}</div>
             <div class="secondary">${(o.legs || []).map((l) => escapeHtml(l.sourceId)).join(' · ')}</div>
           </td>
-          <td class="num tabnum"><span class="strong green">+${(o.roiPercent || 0).toFixed(2)}</span></td>
+          <td class="num tabnum"><span class="strong green">+${(o.marginPercent || 0).toFixed(2)}</span></td>
           <td class="num tabnum">${(o.totalStake || 0).toFixed(0)}</td>
           <td class="num tabnum"><span class="strong">${(o.guaranteedProfit || 0).toFixed(2)}</span> ${roundingRiskBadge(t, o)}</td>
           <td>${verificationCell(t, o)}</td>

@@ -42,7 +42,7 @@ export class TrackerService {
    * The file is hand-editable and outlives schema changes, so whatever is on
    * disk is treated as a suggestion: a field that is missing, null, NaN or
    * "23h00" comes back as its default while the fields the user did set are
-   * kept. Returning the raw object instead would hand a `minRoiPercent` of
+   * kept. Returning the raw object instead would hand a `minMarginPercent` of
    * undefined straight to the engine, where it compares false against every
    * number and the page raises no alerts at all — silently, with no error.
    */

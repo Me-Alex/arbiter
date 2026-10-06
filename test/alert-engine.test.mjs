@@ -19,7 +19,7 @@ import {
   normalizeAlertPreferences,
 } from '../src/alert-engine.mjs';
 
-/** A signal in the shape buildScanCsv emits. */
+/** An arbitrage signal in the shape buildScanCsv emits. */
 function signal(overrides = {}) {
   return {
     sport: 'fotbal',
@@ -30,7 +30,7 @@ function signal(overrides = {}) {
     marketKey: '1x2',
     eventKey: 'fotbal:superliga:fcsb-dinamo',
     live: false,
-    roiPercent: 4,
+    marginPercent: 4,
     totalStake: 100,
     guaranteedProfit: 4,
     riskPercent: 0,
@@ -41,6 +41,17 @@ function signal(overrides = {}) {
     ],
     ...overrides,
   };
+}
+
+/**
+ * A middle signal: the middle family still reports `roiPercent`, so a middle
+ * built from the same defaults must not carry `marginPercent` — that is the
+ * field the engine reads first, and an arb field left on a middle would price
+ * it from the wrong number.
+ */
+function middle(overrides = {}) {
+  const { marginPercent, ...rest } = signal(overrides);
+  return { roiPercent: marginPercent, ...rest };
 }
 
 function scanOf({ opportunities = [], middles = [] } = {}) {
@@ -59,7 +70,7 @@ test('the defaults are stricter than the scanner it reads from', () => {
   // A scan computes everything above 0% because computing costs nothing; an
   // alert is an interruption. If these two ever converge, the thresholds are
   // no longer a judgement and the whole engine is a filter with extra steps.
-  assert.ok(DEFAULT_ALERT_PREFERENCES.minRoiPercent > 0);
+  assert.ok(DEFAULT_ALERT_PREFERENCES.minMarginPercent > 0);
   assert.ok(DEFAULT_ALERT_PREFERENCES.minMiddleRoiPercent > 0);
   assert.equal(DEFAULT_ALERT_PREFERENCES.includeLive, false);
   assert.equal(DEFAULT_ALERT_PREFERENCES.quietHours.enabled, false);
@@ -68,14 +79,14 @@ test('the defaults are stricter than the scanner it reads from', () => {
 
 test('a hand-edited file is repaired field by field, not thrown away whole', () => {
   const stored = {
-    minRoiPercent: 7,          // valid, keep
+    minMarginPercent: 7,       // valid, keep
     minMiddleRoiPercent: 'x',  // garbage, replace
     channels: { desktop: false },
     quietHours: { from: '23h00', to: '07:00', enabled: true },
     cooldownSeconds: 90.6,
   };
   const prefs = normalizeAlertPreferences(stored);
-  assert.equal(prefs.minRoiPercent, 7);
+  assert.equal(prefs.minMarginPercent, 7);
   assert.equal(prefs.minMiddleRoiPercent, DEFAULT_ALERT_PREFERENCES.minMiddleRoiPercent);
   assert.equal(prefs.channels.desktop, false, 'the field the user did set survives');
   assert.equal(prefs.channels.sound, DEFAULT_ALERT_PREFERENCES.channels.sound, 'the one they did not, defaults');
@@ -87,24 +98,24 @@ test('a hand-edited file is repaired field by field, not thrown away whole', () 
 
 test('an unreadable threshold becomes the default and never NaN', () => {
   for (const bad of [null, undefined, '', 'abc', NaN, Infinity, -Infinity, {}, []]) {
-    const prefs = normalizeAlertPreferences({ minRoiPercent: bad });
-    assert.equal(prefs.minRoiPercent, DEFAULT_ALERT_PREFERENCES.minRoiPercent, `input ${String(bad)}`);
-    assert.ok(Number.isFinite(prefs.minRoiPercent), 'NaN compares false against every threshold');
+    const prefs = normalizeAlertPreferences({ minMarginPercent: bad });
+    assert.equal(prefs.minMarginPercent, DEFAULT_ALERT_PREFERENCES.minMarginPercent, `input ${String(bad)}`);
+    assert.ok(Number.isFinite(prefs.minMarginPercent), 'NaN compares false against every threshold');
   }
   // The positive control: a real number is used verbatim, not merely replaced.
-  assert.equal(normalizeAlertPreferences({ minRoiPercent: 0 }).minRoiPercent, 0);
-  assert.equal(normalizeAlertPreferences({ minRoiPercent: 12.5 }).minRoiPercent, 12.5);
+  assert.equal(normalizeAlertPreferences({ minMarginPercent: 0 }).minMarginPercent, 0);
+  assert.equal(normalizeAlertPreferences({ minMarginPercent: 12.5 }).minMarginPercent, 12.5);
 });
 
 test('thresholds are clamped to a range that means something', () => {
-  assert.equal(normalizeAlertPreferences({ minRoiPercent: 9999 }).minRoiPercent, 100);
-  assert.equal(normalizeAlertPreferences({ minRoiPercent: -9999 }).minRoiPercent, -50);
+  assert.equal(normalizeAlertPreferences({ minMarginPercent: 9999 }).minMarginPercent, 100);
+  assert.equal(normalizeAlertPreferences({ minMarginPercent: -9999 }).minMarginPercent, -50);
   assert.equal(normalizeAlertPreferences({ minMiddleRoiPercent: 1e9 }).minMiddleRoiPercent, 1000);
   assert.equal(normalizeAlertPreferences({ cooldownSeconds: 1e9 }).cooldownSeconds, 86400);
   assert.equal(normalizeAlertPreferences({ cooldownSeconds: -5 }).cooldownSeconds, 0);
   // ...and a value inside the range is not nudged by the clamp.
-  assert.equal(normalizeAlertPreferences({ minRoiPercent: 100 }).minRoiPercent, 100);
-  assert.equal(normalizeAlertPreferences({ minRoiPercent: -50 }).minRoiPercent, -50);
+  assert.equal(normalizeAlertPreferences({ minMarginPercent: 100 }).minMarginPercent, 100);
+  assert.equal(normalizeAlertPreferences({ minMarginPercent: -50 }).minMarginPercent, -50);
 });
 
 test('booleans arrive from form posts as strings', () => {

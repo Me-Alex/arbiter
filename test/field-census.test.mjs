@@ -138,22 +138,22 @@ function returnedKeys(route) {
  * `GET /api/scrape/state` serves `orchestrator.scrapeState || emptyState()`
  * (src/router.mjs:61), so the document has two producers and they disagree by
  * design: `emptyState()` publishes `options: {}` for the idle state before any
- * run has been launched, and `resolveScanRequest` publishes the nine keys a run
- * resolved.
+ * run has been launched, and `resolveScanRequest` publishes the eleven keys a
+ * run resolved.
  *
  * Neither producer is read out of `data/scrape-state.json`, which is where this
- * census read the list from and why the list was wrong. Two of the nine are
- * optional inputs normalised to `undefined` when the caller omits them
- * (src/scrape-orchestrator.mjs:509-510), and `JSON.stringify` drops a key whose
- * value is undefined — so the stored document carries 7, 8 or 9 of them
- * depending on what the last run happened to ask for. Measured on this tree:
- * the committed copy holds 8, with `sport` and no `maxEvents`; the working copy
- * holds 8, with `maxEvents` and no `sport`. A census that reads that file is
- * censusing one machine's last run, and the committed copy failed the pinned
- * comparison on the branch for as long as the drift was there.
+ * census read the list from and why the list was wrong. Four of the eleven are
+ * optional inputs normalised to `undefined` when the caller omits them (the
+ * optional caps and filters of `resolveScanRequest`), and `JSON.stringify` drops
+ * a key whose value is undefined — so the stored document carries between 7 and
+ * 11 of them depending on what the last run happened to ask for. Measured on
+ * this tree: the committed copy holds 8, with `sport` and no `maxEvents`; the
+ * working copy holds 8, with `maxEvents` and no `sport`. A census that reads
+ * that file is censusing one machine's last run, and the committed copy failed
+ * the pinned comparison on the branch for as long as the drift was there.
  *
- * The producer is called over inputs that exercise both optional keys rather
- * than trusted to have nine, because the union is the measurement.
+ * The producer is called over inputs that exercise the optional keys rather
+ * than trusted to have eleven, because the union is the measurement.
  */
 const SCAN_REQUESTS = [
   {},                                       // neither optional key
@@ -401,7 +401,7 @@ const SCRAPERS_ARRAYS = ['jobs', 'enabledJobs', 'validatedJobs', 'experimentalJo
 
 const PROFILES_ROW = [
   'defaults.bankroll', 'defaults.includeLive', 'defaults.includePast', 'defaults.maxMiddleRiskPercent',
-  'defaults.minMiddleRoiPercent', 'defaults.minRoiPercent', 'description', 'id', 'label', 'mode',
+  'defaults.minMiddleRoiPercent', 'defaults.minMarginPercent', 'description', 'id', 'label', 'mode',
 ];
 
 /**
@@ -437,19 +437,22 @@ const STATE_JOB = [
  * rather than against the producer that fills it. `sport` was the one it could
  * not see, and the canary that was meant to catch its arrival compared a
  * hand-written list with itself — so the day the producer grew it, nothing fired.
- * `sport` is the ninth entry now, and the comparison that fires is between the
- * nine below and the nine `producedOptionKeys` calls out of the producer.
+ * Nine entries became eleven: `maxStake` and `maxAgeMinutes` — the two stored
+ * caps, published by the same producer and walked by the same page table —
+ * joined without a form input of their own, so the comparison that fires is
+ * between the eleven below and the eleven `producedOptionKeys` calls out of
+ * the producer.
  *
  * The cross-check that keeps the two honest: the scrape page carries the same
- * nine names in its own `SCHEDULER_SCAN_FIELDS` table, `runOptionsText` walks
+ * eleven names in its own `SCHEDULER_SCAN_FIELDS` table, `runOptionsText` walks
  * that table, and the control below asserts the table and the producer agree on
- * the count. Two independent lists of nine, written by different code, is a
+ * the count. Two independent lists of eleven, written by different code, is a
  * stronger claim than either list alone.
  */
 const STATE_OPTIONS = [
-  'options.bankroll', 'options.includeLive', 'options.includePast', 'options.maxEvents',
-  'options.maxMiddleRiskPercent', 'options.minEvPercent', 'options.minMiddleRoiPercent',
-  'options.minRoiPercent', 'options.sport',
+  'options.bankroll', 'options.includeLive', 'options.includePast', 'options.maxAgeMinutes',
+  'options.maxEvents', 'options.maxMiddleRiskPercent', 'options.maxStake', 'options.minEvPercent',
+  'options.minMiddleRoiPercent', 'options.minMarginPercent', 'options.sport',
 ];
 const STATE_SUMMARY = ['completed', 'events', 'failed', 'markets'];
 /**
@@ -553,7 +556,7 @@ const SCAN_FIELDS = schedulerScanFields();
  * `fieldsOn` matches `state.<name>`, and the page reads the stored options as
  * `options[field]` — `field` being the loop variable of the table above. There
  * is no dotted read of `state.options.bankroll` anywhere, so the nine fields
- * were unread to this census on a page that draws all nine. The instrument that
+ * were unread to this census on a page that draws them all. The instrument that
  * fixed it is this one, and it is deliberately built to go quiet rather than to
  * guess: a field counts as read only while four things hold at once — the panel
  * still writes the line, the line's receiver is the state's own options, a
@@ -1209,9 +1212,10 @@ test('every published field of these four documents is read, or has a measured r
  * census makes about the served document would be about that build instead.
  *
  * The converse is not asserted, and the reason is the measurement above: the
- * stored copy carries 7, 8 or 9 of the nine depending on the last run's optional
- * inputs, so demanding all nine would demand that someone had run a scrape with
- * every switch on. What is demanded is the direction that can catch a defect.
+ * stored copy carries between 7 and 11 of the eleven depending on the last run's
+ * optional inputs, so demanding all eleven would demand that someone had run a
+ * scrape with every switch on. What is demanded is the direction that can catch
+ * a defect.
  */
 test('the stored state carries no option the producer cannot build', () => {
   const built = new Set(producedOptionKeys());

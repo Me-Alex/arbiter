@@ -47,7 +47,7 @@ test('the same competition pairs across books, different groups do not', () => {
     book('b', 'fortuna', 'Super League', [2.30, 3.70, 3.70]),
   ]);
   assert.equal(same.size, 1, 'the same competition pairs despite the label');
-  assert.equal(findArbitrage(same, { minRoiPercent: 0 }).length, 1);
+  assert.equal(findArbitrage(same, { minMarginPercent: 0 }).length, 1);
 
   // The same teams, same kickoff, different competition group: two different
   // fixtures. Merging them would report an arbitrage between matches that were
@@ -57,7 +57,7 @@ test('the same competition pairs across books, different groups do not', () => {
     book('b', 'fortuna', 'Liga Natiunilor C', [2.30, 3.70, 3.70]),
   ]);
   assert.equal(groups.size, 2, 'group A and group C stay separate');
-  assert.equal(findArbitrage(groups, { minRoiPercent: 0 }).length, 0);
+  assert.equal(findArbitrage(groups, { minMarginPercent: 0 }).length, 0);
 });
 
 test('a competition group is compared before the alias table', () => {

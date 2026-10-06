@@ -133,7 +133,7 @@ export async function runVerificationPass(targets, baseScan, opts = {}) {
     scrapeRunId: batch.runId,
     capturedAt: new Date().toISOString(),
     bankroll: baseScan.options?.bankroll ?? DEFAULT_SCAN_OPTIONS.bankroll,
-    minRoiPercent: baseScan.options?.minRoiPercent ?? DEFAULT_SCAN_OPTIONS.minRoiPercent,
+    minMarginPercent: baseScan.options?.minMarginPercent ?? DEFAULT_SCAN_OPTIONS.minMarginPercent,
     minEvPercent: opts.minEvPercent ?? baseScan.options?.minEvPercent ?? DEFAULT_SCAN_OPTIONS.minEvPercent,
     maxMiddleRiskPercent: baseScan.options?.maxMiddleRiskPercent ?? DEFAULT_SCAN_OPTIONS.maxMiddleRiskPercent,
     minMiddleRoiPercent: baseScan.options?.minMiddleRoiPercent ?? DEFAULT_SCAN_OPTIONS.minMiddleRoiPercent,
@@ -287,11 +287,16 @@ export function verifySignal(target, confirmationScan, { index, tolerance = RECH
       return { target, status: 'rejected', reason: 'incomplete or unsupported contract', legs: reconfirmed };
     }
     const inv = reconfirmed.reduce((acc, l) => acc + 1 / l.currentOdds, 0);
-    const roi = (1 / inv - 1) * 100;
-    if (!(inv < 1) || roi < Math.max(confirmationScan.options?.minRoiPercent ?? 0, (target.roiPercent || 0) - 1)) {
-      return { target, status: 'rejected', reason: `roi dropped to ${roi.toFixed(2)}%`, legs: reconfirmed };
+    const margin = (1 - inv) * 100;
+    if (!(inv < 1) || margin < Math.max(confirmationScan.options?.minMarginPercent ?? 0, (target.marginPercent || 0) - 1)) {
+      return { target, status: 'rejected', reason: `margin dropped to ${margin.toFixed(2)}%`, legs: reconfirmed };
     }
-    const allocation = roundedArbitrageAllocation(reconfirmed.map(l => ({ ...l, odds: l.currentOdds })), confirmationScan.options?.bankroll ?? target.totalStake ?? 1000);
+    // Re-allocation must respect the money the scan actually committed: a
+    // capped scan published totalStake at the cap, and verification may not
+    // silently re-stake at the full bankroll. With no cap in play (totalStake
+    // absent, or equal to the budget) this is the same budget as before.
+    const budget = confirmationScan.options?.bankroll ?? 1000;
+    const allocation = roundedArbitrageAllocation(reconfirmed.map(l => ({ ...l, odds: l.currentOdds })), Math.min(budget, target.totalStake ?? budget));
     if (!allocation || allocation.guaranteedProfit <= 0) {
       return { target, status: 'rejected', reason: 'no positive rounded guaranteed profit', legs: reconfirmed };
     }

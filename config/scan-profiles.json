@@ -7,7 +7,7 @@
       "description": "Independent feeds with plausibility checks.",
       "defaults": {
         "bankroll": 1000,
-        "minRoiPercent": 0,
+        "minMarginPercent": 0,
         "maxMiddleRiskPercent": 15,
         "minMiddleRoiPercent": 20,
         "includeLive": false,
@@ -21,7 +21,7 @@
       "description": "Lower-confidence feeds \u2014 verify prices before placing stakes.",
       "defaults": {
         "bankroll": 500,
-        "minRoiPercent": 1,
+        "minMarginPercent": 1,
         "maxMiddleRiskPercent": 10,
         "minMiddleRoiPercent": 30,
         "includeLive": true,

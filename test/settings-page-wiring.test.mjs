@@ -18,9 +18,17 @@
  * that quotes the source on both sides agrees with itself even when the wire is
  * broken, which is exactly how this page shipped broken.
  *
- * The fifth test measures the one gap this file does not fix: two inputs the
- * whole backend has never read. They are pinned as exactly two, so the debt is
- * stated rather than rediscovered.
+ * The fifth test measures what the form posts against what the backend reads.
+ * It used to pin a gap — two inputs the whole backend had never read — and the
+ * gap is paid now: `maxStake` and `maxAgeMinutes` are destructured, clamped
+ * and applied. What is pinned is the two-sided claim: nothing the form posts
+ * is dropped, and the caps are read in exactly the files that turn them into
+ * a budget and a window.
+ *
+ * The sixth test executes the page: a save while the schedule is off must
+ * refuse in a sentence both dictionaries have, before any POST — a disabled
+ * save used to reach the route, which answers disable() and keeps the stored
+ * options, so the form displayed numbers the server had just declined.
  */
 
 import { test } from 'node:test';
@@ -29,6 +37,7 @@ import { mkdtempSync, readFileSync, readdirSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { runInNewContext } from 'node:vm';
 import { codeOnly, fieldReads, functionSource, objectEntries } from './helpers/code-only.mjs';
 import { SchedulerService } from '../src/scheduler-service.mjs';
 
@@ -114,15 +123,17 @@ test('the guard for a schedule with no book is a sentence both languages have', 
   assert.equal(defined, 2, 'the key must exist in the Romanian dictionary and the English one');
 });
 
-test('the form inputs the whole backend never reads are pinned as exactly two', () => {
+test('every key the Settings form posts is one the backend reads, and where', () => {
   // scanOptionsFromForm posts six keys; resolveScanRequest destructures its
-  // input and returns nine, clamped. The difference is not empty: `maxStake`
-  // and `maxAgeMinutes` were posted on every save and dropped on every save,
-  // before this page was ever wired — their values never reached a scanner,
-  // a store, or a clamp. Deleting those inputs means editing settings.html,
-  // which is its own decision, so the debt is pinned here instead: exactly
-  // these two may go unread, and either a third dead input or a backend that
-  // starts reading one forces the pin to be restated out loud.
+  // input and returns eleven, clamped. The gap this test used to pin —
+  // `maxStake` and `maxAgeMinutes` posted on every save and dropped on every
+  // save, their values never reaching a scanner, a store, or a clamp — is
+  // paid: both are destructured now, clamped by clampOptional, and the stake
+  // cap becomes the scanner's budget. What is pinned instead is the
+  // two-sided claim — nothing the form posts is dropped, and the caps are
+  // read in exactly the files that apply them, comments stripped first, so a
+  // comment cannot be credited with a read (the hole that shipped once here
+  // already, see helpers/code-only.mjs).
   const posted = [...functionSource(settingsCode, 'scanOptionsFromForm').text.matchAll(/\bout\.(\w+)\s*=/g)]
     .map((m) => m[1]).sort();
   const orchestrator = codeOnly(readFileSync(join(ROOT, 'src/scrape-orchestrator.mjs'), 'utf8'), true);
@@ -131,17 +142,162 @@ test('the form inputs the whole backend never reads are pinned as exactly two', 
   const read = [...destructure.matchAll(/^\s{4}(\w+)[\s=,]/gm)].map((m) => m[1]);
   assert.ok(posted.length > 0 && read.length > 0, 'one side of this census read nothing');
   const unread = posted.filter((k) => !read.includes(k)).sort();
-  assert.deepEqual(unread, ['maxAgeMinutes', 'maxStake'],
-    'the posted-vs-read gap changed — restate the pinned pair, do not let it drift');
+  assert.deepEqual(unread, [],
+    `posted but dropped by resolveScanRequest: ${unread.join(', ')} — clamp it or stop posting it`);
 
-  // The same claim, one level wider: not just "this resolver drops them" but
-  // "nothing under src/ has ever read either" — comments stripped first, so a
-  // comment cannot be credited with a read (the hole that shipped once here
-  // already, see helpers/code-only.mjs).
+  // The readers, named file by file: the resolver turns the age cap into the
+  // scan's prematch window and hands the stake cap to the scanner, which
+  // turns it into the budget every allocation is computed from. A third file
+  // reading either key — or one of the two going quiet — moves this pin.
   const offenders = readdirSync(join(ROOT, 'src'), { recursive: true, withFileTypes: true })
     .filter((f) => f.isFile() && f.name.endsWith('.mjs'))
     .map((f) => join(f.parentPath, f.name))
-    .filter((f) => /\b(maxStake|maxAgeMinutes)\b/.test(codeOnly(readFileSync(f, 'utf8'), true)));
-  assert.deepEqual(offenders, [],
-    'a pinned key gained a backend reader — move it out of the exception');
+    .filter((f) => /\b(maxStake|maxAgeMinutes)\b/.test(codeOnly(readFileSync(f, 'utf8'), true)))
+    .sort();
+  assert.deepEqual(offenders, [
+    join(ROOT, 'src', 'scrape-orchestrator.mjs'),
+    join(ROOT, 'src', 'scanner', 'scanner.mjs'),
+  ].sort(), 'the two caps must be read by the resolver and the scanner, and by nothing else');
+});
+
+/**
+ * The page, run: real i18n, real settings.js, a recorded wire.
+ *
+ * Every element is a generic record — the page touches dozens of ids and this
+ * test drives two of them, so the harness answers any getElementById instead
+ * of transcribing a DOM the test would then be asserting against itself. What
+ * is real is everything under test: the dictionary (evaluated from its own
+ * source, English), save(), the guards, and the payload on the wire.
+ */
+async function loadSettingsPage(scheduler) {
+  const posts = [];
+  const toasts = [];
+  const elements = new Map();
+  const handlers = new Map();
+  let sseHandler = null;
+
+  const makeElement = (id) => {
+    if (elements.has(id)) return elements.get(id);
+    const byType = new Map();
+    const el = {
+      id, value: '', checked: false, textContent: '', innerHTML: '', className: '',
+      style: {}, dataset: {}, children: [],
+      classList: { add() {}, remove() {}, toggle() {}, contains: () => false },
+      setAttribute() {}, getAttribute: () => null,
+      appendChild() {}, removeChild() {}, focus() {}, blur() {},
+      addEventListener(type, fn) {
+        if (!byType.has(type)) byType.set(type, []);
+        byType.get(type).push(fn);
+      },
+      removeEventListener() {},
+      querySelector: () => null, querySelectorAll: () => [],
+    };
+    elements.set(id, el);
+    handlers.set(id, byType);
+    return el;
+  };
+
+  const context = {
+    console,
+    setTimeout, clearTimeout, setInterval, clearInterval,
+    document: {
+      getElementById: makeElement,
+      querySelector: () => null,
+      querySelectorAll: () => [],
+      createElement: () => makeElement(`created-${elements.size}`),
+      addEventListener() {}, removeEventListener() {},
+      body: makeElement('body'),
+    },
+    arbiterApp: { mount() {} },
+    arbiterSse: { connect(fn) { sseHandler = fn; } },
+    arbiterApi: {
+      async get(url) {
+        if (url === '/api/scheduler') return scheduler;
+        if (url === '/api/scrapers') return { jobs: [] };
+        if (url === '/api/health') return { ok: true };
+        if (url === '/api/sports') return { sports: [] };
+        if (url === '/api/profiles') return { profiles: [] };
+        return {};
+      },
+      async post(url, payload) {
+        posts.push({ url, payload });
+        return { ...payload };
+      },
+    },
+    escapeHtml: (s) => String(s),
+    localStorage: { getItem: (k) => (k === 'arbiter.lang' ? 'en' : null), setItem() {} },
+    window: {
+      showToast: (message, type) => toasts.push({ message, type }),
+      confirm: () => true,
+      addEventListener() {}, removeEventListener() {},
+      setInterval: () => 0, clearInterval() {}, setTimeout: () => 0, clearTimeout() {},
+    },
+  };
+  context.globalThis = context;
+
+  // The real dictionary first, in English, then the real page on top of it.
+  runInNewContext(i18nSource, context);
+  context.window.arbiterI18n = context.window.arbiterI18n ?? context.arbiterI18n;
+  runInNewContext(settingsSource, context);
+
+  const flush = async () => {
+    // refresh() and save() each chain two async turns: the allSettled fetch
+    // and the render, or the POST and its then-handler. Two macrotask turns
+    // settle both.
+    await new Promise((resolve) => { setTimeout(resolve, 0); });
+    await new Promise((resolve) => { setTimeout(resolve, 0); });
+  };
+  await flush();
+
+  return {
+    posts, toasts, elements, scheduler,
+    fire(id, type) {
+      const byType = handlers.get(id);
+      assert.ok(byType, `${id} was never created — the page does not listen on it`);
+      for (const fn of byType.get(type) || []) fn();
+    },
+    emitSse(type) { if (sseHandler) sseHandler(type); },
+    flush,
+  };
+}
+
+test('a save while the schedule is off refuses in words instead of posting', async () => {
+  // Executed, not read. A save with the schedule off posted `enabled: false`,
+  // the route answered with disable(), and disable() keeps the stored
+  // scanOptions — so the form showed values the server had just declined to
+  // take. The refusal has to happen before the POST, in a sentence both
+  // dictionaries have.
+  const dictKeys = (name) => [...codeOnly(i18nSource, true).matchAll(new RegExp(`^\\s*${name}:\\s*'([^']*)'`, 'gm'))]
+    .map((m) => m[1]);
+  const sentences = dictKeys('schedulerDisabledSave');
+  assert.equal(sentences.length, 2, 'the key must exist in the Romanian dictionary and the English one');
+  assert.notEqual(sentences[0], 'schedulerDisabledSave', 'the Romanian value must not be its own key name');
+  const enSentence = sentences[1]; // ro block first, en second; the harness runs lang en.
+  const failedShort = dictKeys('failedShort')[1];
+
+  const scheduler = { enabled: false, intervalMinutes: 15, bookIds: [], scanOptions: {} };
+  const page = await loadSettingsPage(scheduler);
+
+  // A numeric change on a field the load-time wiring registered (NUMERIC row).
+  page.fire('set-interval', 'change');
+  await page.flush();
+  assert.equal(page.posts.length, 0, 'no POST is sent while the schedule is off');
+  assert.equal(page.toasts.at(-1) && page.toasts.at(-1).message, enSentence,
+    'the operator is told why, in the exact English sentence the dictionary holds');
+  assert.equal(page.elements.get('save-state').textContent, failedShort,
+    'the save line reports the refusal as a failure');
+
+  // Flip the schedule on through the status refresh the SSE hook triggers,
+  // and the same change must post — with the flag it read, not a constant.
+  scheduler.enabled = true;
+  page.emitSse('scrape-update');
+  await page.flush();
+  page.elements.get('set-book').value = 'fortuna';
+  page.fire('set-book', 'change');
+  await page.flush();
+  assert.equal(page.posts.length, 1, 'with the schedule on, the save posts');
+  assert.equal(page.posts[0].payload.enabled, true, 'and posts the flag it read');
+  // Spread first: the payload was built inside the vm context, and a vm Array
+  // fails deepStrictEqual against a host one on its prototype, not its items.
+  assert.deepEqual([...page.posts[0].payload.bookIds], ['fortuna'], 'with the book the form holds');
 });
