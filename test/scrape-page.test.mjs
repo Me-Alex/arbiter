@@ -1415,7 +1415,7 @@ test('every key the scheduler and live readouts use exists in both languages', (
  * actually receives — seven keys, no `maxEvents`, no `sport`.
  */
 const STORED_SCAN = {
-  bankroll: 1000, minRoiPercent: 0, minEvPercent: 2, maxMiddleRiskPercent: 15,
+  bankroll: 1000, minMarginPercent: 0, minEvPercent: 2, maxMiddleRiskPercent: 15,
   minMiddleRoiPercent: 20, includeLive: false, includePast: false,
 };
 
@@ -1453,7 +1453,7 @@ test('the scan payload is written in one place, not one per caller', () => {
   // handler. The scheduler's copy is what gets persisted and then replayed on
   // every tick, so a second copy is a second description of a configuration
   // that nothing on the page shows.
-  assert.equal((scrapeSource.match(/minRoiPercent: Number/g) || []).length, 1,
+  assert.equal((scrapeSource.match(/minMarginPercent: Number/g) || []).length, 1,
     'one place reads the form into a scan payload');
   assert.equal((scrapeSource.match(/const scanOptions = currentScanOptions\(\)/g) || []).length, 2,
     'and both callers go through it');
@@ -1481,7 +1481,7 @@ test('currentScanOptions is the form, coerced the way the backend stores it', ()
   // a null the backend would have to special-case.
   const sent = JSON.parse(JSON.stringify(h.run('currentScanOptions()')));
   assert.deepEqual(sent, {
-    bankroll: 750.5, minRoiPercent: 1.5, minEvPercent: 3.5, maxMiddleRiskPercent: 12.5,
+    bankroll: 750.5, minMarginPercent: 1.5, minEvPercent: 3.5, maxMiddleRiskPercent: 12.5,
     minMiddleRoiPercent: 27.5, includeLive: true, includePast: false, maxEvents: 250, sport: 'soccer',
   });
 
@@ -1777,7 +1777,7 @@ test('a saved scheduler is re-read, so the comparison cannot survive a stale sav
 
   // Now the operator switches the profile: applyProfile() rewrites the form
   // under the comparison, so the line has to be recomputed without a poll.
-  h.run(`profiles = [{ id: 'review-live', defaults: { bankroll: 500, minRoiPercent: 1, maxMiddleRiskPercent: 10, minMiddleRoiPercent: 30, includeLive: true, includePast: true } }]`);
+  h.run(`profiles = [{ id: 'review-live', defaults: { bankroll: 500, minMarginPercent: 1, maxMiddleRiskPercent: 10, minMiddleRoiPercent: 30, includeLive: true, includePast: true } }]`);
   h.run(`document.getElementById('profile').value = 'review-live'; onProfileChange()`);
   assert.match(h.nodes.get('sched-scan').textContent, /Bankroll 1000 → 500/,
     'the line answers about the profile on screen now, not the one it booted with');
@@ -2084,7 +2084,7 @@ test('the summary card has one writer, and the last-run panel is not it', async 
 /** The options a real run stored, copied off data/scrape-state.json. */
 const RUN_OPTIONS = {
   bankroll: 1000,
-  minRoiPercent: 0,
+  minMarginPercent: 0,
   minEvPercent: 2,
   maxMiddleRiskPercent: 15,
   minMiddleRoiPercent: 20,

@@ -77,7 +77,7 @@ const ALERT_PAYLOAD = {
   // page dates the list by pass regardless of the answer.
   scan: { id: 'scan-1', scrapedAt: '2026-10-01T10:00:00.000Z', eventCount: 4 },
   preferences: {
-    minRoiPercent: 1, minMiddleRoiPercent: 25, includeLive: false,
+    minMarginPercent: 1, minMiddleRoiPercent: 25, includeLive: false,
     channels: { desktop: true, sound: false },
     quietHours: { from: '23:00', to: '07:00', enabled: false },
     cooldownSeconds: 60,
@@ -94,7 +94,7 @@ const ALERT_PAYLOAD = {
   },
   counts: { arbitrages: 1, middles: 0 },
   truncated: { arbitrages: 0, middles: 0 },
-  thresholds: { minRoiPercent: 1, minMiddleRoiPercent: 25, includeLive: false },
+  thresholds: { minMarginPercent: 1, minMiddleRoiPercent: 25, includeLive: false },
   quietNow: false,
   evaluatedAt: '2026-10-01T14:05:00.000Z',
 };
@@ -306,7 +306,7 @@ const UNREAD_BY_DESIGN = {
   thresholds: [
     'A second copy of three fields `preferences` already carries, with the same',
     'values from the same object: `evaluateAlerts` normalises once into `prefs`',
-    '(src/alert-engine.mjs:131) and then publishes `prefs.minRoiPercent`,',
+    '(src/alert-engine.mjs:131) and then publishes `prefs.minMarginPercent`,',
     '`prefs.minMiddleRoiPercent` and `prefs.includeLive` again under this name',
     '(:152-156), while the route publishes the same normalised object as',
     '`preferences` (src/router.mjs:292). The page fills its form from',
@@ -444,7 +444,7 @@ const SIGNAL_WITH_EVERYTHING = {
 const SIGNAL_WITH_ALMOST_NOTHING = { eventKey: 'fotbal::9x9', roiPercent: 9 };
 const itemKeys = (signal) => Object.keys(alertEngine.evaluateAlerts(
   { opportunities: [signal], middles: [signal] },
-  { minRoiPercent: 0, minMiddleRoiPercent: 0 },
+  { minMarginPercent: 0, minMiddleRoiPercent: 0 },
 ).alerts.arbitrages[0] || {}).sort();
 const ITEM_KEYS = itemKeys(SIGNAL_WITH_EVERYTHING);
 
@@ -519,7 +519,7 @@ test('no alert-key excuse names a field the page reads', () => {
   // left as prose: the key really is this field with the market and the family
   // appended, on the alert the producer builds.
   const [alert] = alertEngine.evaluateAlerts(
-    { opportunities: [SIGNAL_WITH_EVERYTHING] }, { minRoiPercent: 0 },
+    { opportunities: [SIGNAL_WITH_EVERYTHING] }, { minMarginPercent: 0 },
   ).alerts.arbitrages;
   assert.equal(alert.key, `${alert.eventKey}::${alert.marketKey}::${alert.type}`,
     'the alert key is no longer built from the field the reason calls redundant');
@@ -615,7 +615,7 @@ test('a field the user is typing in is not overwritten by a refresh', async () =
 test('saving posts the form and renders the answer, without a second request', async () => {
   const posted = {
     ...ALERT_PAYLOAD,
-    preferences: { ...ALERT_PAYLOAD.preferences, minRoiPercent: 10, channels: { desktop: true, sound: true } },
+    preferences: { ...ALERT_PAYLOAD.preferences, minMarginPercent: 10, channels: { desktop: true, sound: true } },
   };
   const { context, get, select, calls } = page({ postResult: posted });
   await context.refreshAlerts();
@@ -627,7 +627,7 @@ test('saving posts the form and renders the answer, without a second request', a
   assert.equal(calls.post.length, 1, 'one request, not "save then re-read"');
   const [call] = calls.post;
   assert.equal(call.path, '/api/alerts');
-  assert.equal(call.body.preferences.minRoiPercent, '10', 'the raw field value is posted; the server coerces it');
+  assert.equal(call.body.preferences.minMarginPercent, '10', 'the raw field value is posted; the server coerces it');
   assert.equal(call.body.preferences.channels.sound, true);
   assert.equal(call.body.preferences.quietHours.from, '23:00');
   // The answer is rendered, so the list is never computed under thresholds the
@@ -838,7 +838,7 @@ test('the row renders the item the real producer builds, not this file\'s copy',
   // is the gap shut: the item comes out of the real producer and goes on the
   // real page, producer and page in one hop with nothing written in between.
   const built = alertEngine.evaluateAlerts(
-    { opportunities: [SIGNAL_WITH_EVERYTHING] }, { minRoiPercent: 0 },
+    { opportunities: [SIGNAL_WITH_EVERYTHING] }, { minMarginPercent: 0 },
   ).alerts.arbitrages[0];
   const { context, select } = page({
     alerts: { ...ALERT_PAYLOAD, alerts: { arbitrages: [built], middles: [] } },

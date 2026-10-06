@@ -202,12 +202,12 @@ test('no scan is not the same as a scan that found nothing', () => {
 
 test('the threshold is inclusive and the boundary is decided, not assumed', () => {
   const scan = scanOf({ opportunities: [signal({ roiPercent: 1 })] });
-  const at1 = evaluateAlerts(scan, { minRoiPercent: 1 });
+  const at1 = evaluateAlerts(scan, { minMarginPercent: 1 });
   assert.equal(at1.counts.arbitrages, 1, 'a signal exactly on the line is included');
-  const justUnder = evaluateAlerts(scan, { minRoiPercent: 1.0001 });
+  const justUnder = evaluateAlerts(scan, { minMarginPercent: 1.0001 });
   assert.equal(justUnder.counts.arbitrages, 0, '...and one hair under it is not');
   // The positive control, so the first assertion cannot pass for free.
-  assert.equal(evaluateAlerts(scan, { minRoiPercent: 0 }).counts.arbitrages, 1);
+  assert.equal(evaluateAlerts(scan, { minMarginPercent: 0 }).counts.arbitrages, 1);
 });
 
 test('in-play signals are refused unless they were explicitly asked for', () => {
@@ -229,15 +229,15 @@ test('a signal with an unreadable ROI raises nothing rather than everything', ()
   // 0 would wave every one of these through. The ROI is the number the alert
   // is *about*; a missing one must not become a 0% one.
   for (const bad of [null, undefined, '', 'abc', '  ', NaN, Infinity, -Infinity, {}, [], [5], true, false]) {
-    const result = evaluateAlerts(scanOf({ opportunities: [signal({ roiPercent: bad })] }), { minRoiPercent: 0 });
+    const result = evaluateAlerts(scanOf({ opportunities: [signal({ roiPercent: bad })] }), { minMarginPercent: 0 });
     assert.equal(result.counts.arbitrages, 0, `roi ${JSON.stringify(bad)}`);
   }
   // The positive controls, so the loop above cannot pass by raising nothing ever.
-  assert.equal(evaluateAlerts(scanOf({ opportunities: [signal({ roiPercent: 4 })] }), { minRoiPercent: 0 }).counts.arbitrages, 1);
+  assert.equal(evaluateAlerts(scanOf({ opportunities: [signal({ roiPercent: 4 })] }), { minMarginPercent: 0 }).counts.arbitrages, 1);
   // A numeric *string* is how a value survives a form post, and it is honoured.
-  assert.equal(evaluateAlerts(scanOf({ opportunities: [signal({ roiPercent: '4' })] }), { minRoiPercent: 0 }).counts.arbitrages, 1);
+  assert.equal(evaluateAlerts(scanOf({ opportunities: [signal({ roiPercent: '4' })] }), { minMarginPercent: 0 }).counts.arbitrages, 1);
   assert.equal(
-    evaluateAlerts(scanOf({ opportunities: [signal({ roiPercent: '4' })] }), { minRoiPercent: 0 }).alerts.arbitrages[0].roiPercent,
+    evaluateAlerts(scanOf({ opportunities: [signal({ roiPercent: '4' })] }), { minMarginPercent: 0 }).alerts.arbitrages[0].roiPercent,
     4,
     '...and it arrives as a number, not as the string it came in as',
   );
@@ -246,7 +246,7 @@ test('a signal with an unreadable ROI raises nothing rather than everything', ()
 test('the same opportunity is reported once, however many times it appears', () => {
   const dup = signal({ roiPercent: 5 });
   const other = signal({ eventKey: 'fotbal:superliga:u-craiova-rapid', roiPercent: 5 });
-  const result = evaluateAlerts(scanOf({ opportunities: [dup, { ...dup }, { ...dup }, other] }), { minRoiPercent: 0 });
+  const result = evaluateAlerts(scanOf({ opportunities: [dup, { ...dup }, { ...dup }, other] }), { minMarginPercent: 0 });
   assert.equal(result.counts.arbitrages, 2, 'three identical rows plus one distinct row');
   assert.deepEqual(result.alerts.arbitrages.map((a) => a.key).sort(), [
     'fotbal:superliga:fcsb-dinamo::1x2::arb',
@@ -266,7 +266,7 @@ test('a re-verified signal keeps its identity so its cooldown survives', () => {
   // actually guarantees is that the key comes from the three fields and not from
   // the numbers a verification pass rewrites, so that is what is pinned now —
   // through the engine, on the keys it emits.
-  const opts = { minRoiPercent: 0, minMiddleRoiPercent: 0 };
+  const opts = { minMarginPercent: 0, minMiddleRoiPercent: 0 };
   const first = evaluateAlerts(scanOf({ opportunities: [signal({ roiPercent: 4 })] }), opts);
   const reverified = evaluateAlerts(
     scanOf({ opportunities: [signal({ roiPercent: 9, verification: { status: 'confirmed', reason: 'book' } })] }),
@@ -291,7 +291,7 @@ test('the key on an emitted alert is the key the dedup used', () => {
   const result = evaluateAlerts(scanOf({
     opportunities: [signal({ roiPercent: 4 })],
     middles: [signal({ marketKey: '1x2', roiPercent: 30 })],
-  }), { minRoiPercent: 0, minMiddleRoiPercent: 0 });
+  }), { minMarginPercent: 0, minMiddleRoiPercent: 0 });
   const [arb] = result.alerts.arbitrages;
   const [mid] = result.alerts.middles;
   assert.equal(arb.key, 'fotbal:superliga:fcsb-dinamo::1x2::arb');
@@ -306,7 +306,7 @@ test('each family is ranked by its own ROI and never merged', () => {
     opportunities: [signal({ roiPercent: 4 }), signal({ eventKey: 'e2', roiPercent: 12 })],
     middles: [signal({ roiPercent: 30, marketKey: 'ah-1' }), signal({ eventKey: 'e3', roiPercent: 25, marketKey: 'ah-1' })],
   });
-  const result = evaluateAlerts(scan, { minRoiPercent: 0, minMiddleRoiPercent: 0 });
+  const result = evaluateAlerts(scan, { minMarginPercent: 0, minMiddleRoiPercent: 0 });
   assert.deepEqual(result.alerts.arbitrages.map((a) => a.roiPercent), [12, 4]);
   assert.deepEqual(result.alerts.middles.map((a) => a.roiPercent), [30, 25]);
   // The middle at 30% must not appear in the arb list even though it is the
@@ -323,10 +323,10 @@ test('each family has its own threshold', () => {
     opportunities: [signal({ roiPercent: 10 })],
     middles: [signal({ roiPercent: 10, marketKey: 'ah-1' })],
   });
-  const result = evaluateAlerts(scan, { minRoiPercent: 1, minMiddleRoiPercent: 25 });
+  const result = evaluateAlerts(scan, { minMarginPercent: 1, minMiddleRoiPercent: 25 });
   assert.equal(result.counts.arbitrages, 1, '10% clears the arb threshold');
   assert.equal(result.counts.middles, 0, 'the same 10% does not clear the middle threshold');
-  assert.deepEqual(result.thresholds, { minRoiPercent: 1, minMiddleRoiPercent: 25, includeLive: false });
+  assert.deepEqual(result.thresholds, { minMarginPercent: 1, minMiddleRoiPercent: 25, includeLive: false });
 });
 
 test('a tie is broken on the key so the list does not reshuffle under the trader', () => {
@@ -348,7 +348,7 @@ test('a long list is capped, and says how much it is hiding', () => {
     eventKey: `e${String(i).padStart(3, '0')}`,
     roiPercent: i,
   }));
-  const result = evaluateAlerts(scanOf({ opportunities }), { minRoiPercent: 0 });
+  const result = evaluateAlerts(scanOf({ opportunities }), { minMarginPercent: 0 });
   assert.equal(result.alerts.arbitrages.length, MAX_ALERTS_PER_FAMILY);
   // The count is the full total, not the truncated length: "12 of 40" is the
   // difference between a list and a sample.
@@ -358,7 +358,7 @@ test('a long list is capped, and says how much it is hiding', () => {
   // ...and the cap keeps the best of them, not the first of them.
   assert.equal(result.alerts.arbitrages[0].roiPercent, MAX_ALERTS_PER_FAMILY + 6);
   // A list that fits is not reported as truncated.
-  const small = evaluateAlerts(scanOf({ opportunities: opportunities.slice(0, 3) }), { minRoiPercent: 0 });
+  const small = evaluateAlerts(scanOf({ opportunities: opportunities.slice(0, 3) }), { minMarginPercent: 0 });
   assert.equal(small.truncated.arbitrages, 0);
   assert.equal(small.alerts.arbitrages.length, 3);
 });
@@ -428,7 +428,7 @@ test('the alert survives the JSON round trip the route puts it through', () => {
   // receives is the form on the wire, so that is the form under test.
   const result = evaluateAlerts(scanOf({
     opportunities: [signal({ riskPercent: 0, totalStake: 0, guaranteedProfit: null, verification: undefined })],
-  }), { minRoiPercent: 0 });
+  }), { minMarginPercent: 0 });
   const overTheWire = JSON.parse(JSON.stringify(result));
   assert.equal(overTheWire.alerts.arbitrages[0].riskPercent, 0);
   assert.equal(overTheWire.alerts.arbitrages[0].totalStake, 0);
@@ -451,7 +451,7 @@ test('junk in the families is skipped, and real signals beside it are not', () =
   const result = evaluateAlerts(scanOf({
     opportunities: [null, undefined, 'nonsense', 42, [], signal({ roiPercent: 6 })],
     middles: [null, signal({ marketKey: 'ah-1', roiPercent: 40 })],
-  }), { minRoiPercent: 0, minMiddleRoiPercent: 0 });
+  }), { minMarginPercent: 0, minMiddleRoiPercent: 0 });
   assert.equal(result.counts.arbitrages, 1);
   assert.equal(result.counts.middles, 1);
   assert.equal(result.alerts.arbitrages[0].roiPercent, 6);
