@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import NetBetScraper from '../src/scrapers/netbet.mjs';
-import { resolveContract, canonicalOutcomeFor } from '../src/scanner/market-contracts.mjs';
+import { resolveContract, canonicalOutcomeFor, bucketKeyForContract } from '../src/scanner/market-contracts.mjs';
 
 /**
  * netbet regression coverage.
@@ -390,4 +390,305 @@ test('the settlement window is fulltime, and a named window is read from the nam
     ]),
   ]);
   assert.equal(event.markets[0].period, 'fulltime');
+});
+
+test('total_points attaches subject points and resolves to OVER_UNDER points contract', () => {
+  const event = extract([
+    rawMarket('total_points', 'Total Puncte', 5501, [
+      { kind: 'Over', name: 'Peste (215.5)', odds: 1.88, handicap: 215.5, handicap_abs: 215.5 },
+      { kind: 'Under', name: 'Sub (215.5)', odds: 1.92, handicap: 215.5, handicap_abs: 215.5 },
+    ], { handicap: 215.5 }),
+  ]);
+  const market = event.markets.find((m) => m.key === 'total_points');
+  assert.ok(market);
+  assert.equal(market.subject, 'points');
+  const contract = resolveContract(market, { sport: 'Basketball' });
+  assert.ok(contract);
+  assert.equal(contract.family, 'OVER_UNDER');
+  assert.equal(contract.subject, 'points');
+  assert.equal(contract.lineKey, '215.5');
+});
+
+test('total_games attaches subject games and resolves to OVER_UNDER games contract', () => {
+  const scraper = new NetBetScraper({ maxEvents: 10 });
+  scraper.observedAt = '2026-09-29T12:33:00.000Z';
+  const tennisMarket = rawMarket('total_games', 'Total Game-uri', 5502, [
+    { kind: 'Over', name: 'Peste (22.5)', odds: 1.80, handicap: 22.5, handicap_abs: 22.5 },
+    { kind: 'Under', name: 'Sub (22.5)', odds: 2.05, handicap: 22.5, handicap_abs: 22.5 },
+  ], { handicap: 22.5 });
+  const rawEvents = scraper.normalize({
+    tree: [{
+      name: 'Tenis',
+      competitions: [{
+        name: 'ATP',
+        events: [{
+          id: 900002,
+          is_live: false,
+          is_suspended: false,
+          starts_at: FUTURE,
+          competition_name: 'ATP',
+          competitors: [
+            { name: 'Jannik Sinner', is_home: true },
+            { name: 'Carlos Alcaraz', is_home: false },
+          ],
+          markets: [tennisMarket],
+        }],
+      }],
+    }],
+  });
+  const events = scraper.extractEvents(rawEvents);
+  assert.equal(events.length, 1);
+  const market = events[0].markets.find((m) => m.key === 'total_games');
+  assert.ok(market);
+  assert.equal(market.subject, 'games');
+  const contract = resolveContract(market, { sport: 'Tennis' });
+  assert.ok(contract);
+  assert.equal(contract.family, 'OVER_UNDER');
+  assert.equal(contract.subject, 'games');
+  assert.equal(contract.lineKey, '22.5');
+});
+
+test('includeLive: true admits live matches and stamps markets with live: true', () => {
+  const liveMarket = rawMarket('default', 'Rezultat Final', 5498, [
+    { kind: 'W1', name: '1', fullname: 'Arsenal', odds: 1.85 },
+    { kind: 'X', name: 'X', fullname: 'Egal', odds: 3.40 },
+    { kind: 'W2', name: '2', fullname: 'Chelsea', odds: 3.50 },
+  ]);
+  const liveEventRaw = {
+    id: 900003,
+    is_live: true,
+    is_suspended: false,
+    starts_at: FUTURE,
+    competition_name: 'Premier League',
+    competitors: [
+      { name: 'Arsenal', is_home: true },
+      { name: 'Chelsea', is_home: false },
+    ],
+    markets: [liveMarket],
+  };
+
+  const defaultScraper = new NetBetScraper({ includeLive: false });
+  const norm1 = defaultScraper.normalize({
+    tree: [{ name: 'Fotbal', competitions: [{ name: 'Premier League', events: [liveEventRaw] }] }],
+  });
+  assert.equal(defaultScraper.extractEvents(norm1).length, 0, 'live match dropped by default');
+
+  const liveScraper = new NetBetScraper({ includeLive: true });
+  const norm2 = liveScraper.normalize({
+    tree: [{ name: 'Fotbal', competitions: [{ name: 'Premier League', events: [liveEventRaw] }] }],
+  });
+  const liveExtracted = liveScraper.extractEvents(norm2);
+  assert.equal(liveExtracted.length, 1, 'live match admitted when includeLive is true');
+  assert.equal(liveExtracted[0].live, true);
+  assert.equal(liveExtracted[0].isLive, true);
+  assert.equal(liveExtracted[0].markets[0].live, true, 'markets stamped with live: true');
+});
+
+test('NetBet: sub-window markets extract quarter and set periods with bucket isolation', () => {
+  const basketballQ1Market = rawMarket('total_points', 'Total Puncte Primul Sfert', 5501, [
+    { kind: 'Over', name: 'Peste (52.5)', odds: 1.85, handicap: 52.5, handicap_abs: 52.5 },
+    { kind: 'Under', name: 'Sub (52.5)', odds: 1.95, handicap: 52.5, handicap_abs: 52.5 },
+  ]);
+
+  const ftPointsMarket = rawMarket('total_points', 'Total Puncte', 5501, [
+    { kind: 'Over', name: 'Peste (215.5)', odds: 1.90, handicap: 215.5, handicap_abs: 215.5 },
+    { kind: 'Under', name: 'Sub (215.5)', odds: 1.90, handicap: 215.5, handicap_abs: 215.5 },
+  ]);
+
+  const event = extract([basketballQ1Market, ftPointsMarket]);
+  assert.equal(event.markets.length, 2);
+
+  const q1 = event.markets.find((m) => m.period === 'q1');
+  const ft = event.markets.find((m) => m.period === 'fulltime');
+  assert.ok(q1, 'Primul sfert extracts with period q1');
+  assert.ok(ft, 'Total puncte extracts with period fulltime');
+
+  const cQ1 = resolveContract(q1);
+  const cFt = resolveContract(ft);
+  assert.ok(cQ1 && cFt);
+  assert.equal(cQ1.period, 'q1');
+  assert.equal(cFt.period, 'fulltime');
+
+  const bQ1 = bucketKeyForContract(event.eventKey, cQ1);
+  const bFt = bucketKeyForContract(event.eventKey, cFt);
+  assert.notEqual(bQ1, bFt);
+  assert.ok(bQ1.includes('::q1::'));
+  assert.ok(bFt.includes('::fulltime::'));
+});
+
+test('NetBet: basketball dynamic quarters Q1-Q4 and tennis sets S1-S3 resolve to isolated buckets', () => {
+  const q2Win = rawMarket('quarter_winner', 'Castigator Sfertul 2', 5498, [
+    { kind: 'W1', name: '1', fullname: 'Boston Celtics', odds: 1.80 },
+    { kind: 'W2', name: '2', fullname: 'Detroit Pistons', odds: 2.05 },
+  ]);
+
+  const q3Tot = rawMarket('total_points', 'Total Puncte Sfertul 3', 5501, [
+    { kind: 'Over', name: 'Peste (54.5)', odds: 1.88, handicap: 54.5, handicap_abs: 54.5 },
+    { kind: 'Under', name: 'Sub (54.5)', odds: 1.92, handicap: 54.5, handicap_abs: 54.5 },
+  ]);
+
+  const q4Tot = rawMarket('quarter_4_total', 'Total Puncte', 5501, [
+    { kind: 'Over', name: 'Peste (51.5)', odds: 1.90, handicap: 51.5, handicap_abs: 51.5 },
+    { kind: 'Under', name: 'Sub (51.5)', odds: 1.90, handicap: 51.5, handicap_abs: 51.5 },
+  ]);
+
+  const bballEvent = extract([q2Win, q3Tot, q4Tot]);
+  assert.equal(bballEvent.markets.length, 3);
+
+  const mQ2 = bballEvent.markets.find((m) => m.period === 'q2');
+  const mQ3 = bballEvent.markets.find((m) => m.period === 'q3');
+  const mQ4 = bballEvent.markets.find((m) => m.period === 'q4');
+  assert.ok(mQ2 && mQ3 && mQ4);
+
+  const cQ2 = resolveContract(mQ2, { sport: 'Basketball' });
+  const cQ3 = resolveContract(mQ3, { sport: 'Basketball' });
+  const cQ4 = resolveContract(mQ4, { sport: 'Basketball' });
+
+  assert.equal(cQ2.family, 'MATCH_ODDS');
+  assert.equal(cQ2.period, 'q2');
+
+  assert.equal(cQ3.family, 'OVER_UNDER');
+  assert.equal(cQ3.period, 'q3');
+  assert.equal(cQ3.subject, 'points');
+  assert.equal(cQ3.lineKey, '54.5');
+
+  assert.equal(cQ4.family, 'OVER_UNDER');
+  assert.equal(cQ4.period, 'q4');
+  assert.equal(cQ4.subject, 'points');
+  assert.equal(cQ4.lineKey, '51.5');
+
+  const bKeyQ2 = bucketKeyForContract(bballEvent.eventKey, cQ2);
+  const bKeyQ3 = bucketKeyForContract(bballEvent.eventKey, cQ3);
+  const bKeyQ4 = bucketKeyForContract(bballEvent.eventKey, cQ4);
+
+  assert.notEqual(bKeyQ2, bKeyQ3);
+  assert.notEqual(bKeyQ3, bKeyQ4);
+  assert.ok(bKeyQ2.includes('::q2::'));
+  assert.ok(bKeyQ3.includes('::q3::'));
+  assert.ok(bKeyQ4.includes('::q4::'));
+
+  // Tennis sets
+  const s1Win = rawMarket('set_winner', 'Castigator Primul Set', 5498, [
+    { kind: 'W1', name: '1', fullname: 'Carlos Alcaraz', odds: 1.75 },
+    { kind: 'W2', name: '2', fullname: 'Jannik Sinner', odds: 2.10 },
+  ]);
+
+  const s2Tot = rawMarket('set_2_total_games', 'Total Game-uri', 5502, [
+    { kind: 'Over', name: 'Peste (9.5)', odds: 1.85, handicap: 9.5, handicap_abs: 9.5 },
+    { kind: 'Under', name: 'Sub (9.5)', odds: 1.95, handicap: 9.5, handicap_abs: 9.5 },
+  ]);
+
+  const scraper = new NetBetScraper({ maxEvents: 10 });
+  scraper.observedAt = '2026-09-29T12:33:00.000Z';
+  const rawTennis = scraper.normalize({
+    tree: [{
+      name: 'Tenis',
+      competitions: [{
+        name: 'ATP',
+        events: [{
+          id: 900004,
+          is_live: false,
+          is_suspended: false,
+          starts_at: FUTURE,
+          competition_name: 'ATP',
+          competitors: [
+            { name: 'Carlos Alcaraz', is_home: true },
+            { name: 'Jannik Sinner', is_home: false },
+          ],
+          markets: [s1Win, s2Tot],
+        }],
+      }],
+    }],
+  });
+
+  const [tennisEvent] = scraper.extractEvents(rawTennis);
+  assert.ok(tennisEvent);
+  assert.equal(tennisEvent.markets.length, 2);
+
+  const mS1 = tennisEvent.markets.find((m) => m.period === 'set1');
+  const mS2 = tennisEvent.markets.find((m) => m.period === 'set2');
+  assert.ok(mS1 && mS2);
+
+  const cS1 = resolveContract(mS1, { sport: 'Tennis' });
+  const cS2 = resolveContract(mS2, { sport: 'Tennis' });
+
+  assert.equal(cS1.family, 'MATCH_ODDS');
+  assert.equal(cS1.period, 'set1');
+
+  assert.equal(cS2.family, 'OVER_UNDER');
+  assert.equal(cS2.period, 'set2');
+  assert.equal(cS2.subject, 'games');
+  assert.equal(cS2.lineKey, '9.5');
+
+  const bKeyS1 = bucketKeyForContract(tennisEvent.eventKey, cS1);
+  const bKeyS2 = bucketKeyForContract(tennisEvent.eventKey, cS2);
+  assert.notEqual(bKeyS1, bKeyS2);
+  assert.ok(bKeyS1.includes('::set1::'));
+  assert.ok(bKeyS2.includes('::set2::'));
+});
+
+test('NetBet: football sub-window derivatives (half1, half2) isolate from full-time markets', () => {
+  const h1_1x2 = rawMarket('1st_half_1x2', '1X2 Prima Repriza', 5498, [
+    { kind: 'W1', name: '1', fullname: 'Arsenal', odds: 2.25 },
+    { kind: 'X', name: 'X', fullname: 'Egal', odds: 2.20 },
+    { kind: 'W2', name: '2', fullname: 'Chelsea', odds: 3.90 },
+  ]);
+
+  const h2_tot = rawMarket('total_goals', 'Total Goluri A Doua Repriza', 5500, [
+    { kind: 'Over', name: 'Peste (1.5)', odds: 2.05, handicap: 1.5, handicap_abs: 1.5 },
+    { kind: 'Under', name: 'Sub (1.5)', odds: 1.75, handicap: 1.5, handicap_abs: 1.5 },
+  ]);
+
+  const h1_btts = rawMarket('btts', 'Ambele Marcheaza Prima Repriza', 5508, [
+    { kind: 'Yes', name: 'Da', odds: 4.10 },
+    { kind: 'No', name: 'Nu', odds: 1.22 },
+  ]);
+
+  const h2_dc = rawMarket('double_chance', 'Sansa Dubla A Doua Repriza', 5503, [
+    { kind: '1X', name: '1X', odds: 1.35 },
+    { kind: '12', name: '12', odds: 1.45 },
+    { kind: 'X2', name: 'X2', odds: 1.60 },
+  ]);
+
+  const event = extract([h1_1x2, h2_tot, h1_btts, h2_dc], [
+    { name: 'Arsenal', is_home: true },
+    { name: 'Chelsea', is_home: false },
+  ]);
+
+  assert.equal(event.markets.length, 4);
+
+  const mH1_1x2 = event.markets.find((m) => m.key === '1st_half_1x2');
+  const mH2_tot = event.markets.find((m) => m.key === 'total_goals');
+  const mH1_btts = event.markets.find((m) => m.key === 'btts');
+  const mH2_dc = event.markets.find((m) => m.key === 'double_chance');
+
+  assert.ok(mH1_1x2 && mH2_tot && mH1_btts && mH2_dc);
+
+  const cH1_1x2 = resolveContract(mH1_1x2);
+  const cH2_tot = resolveContract(mH2_tot);
+  const cH1_btts = resolveContract(mH1_btts);
+  const cH2_dc = resolveContract(mH2_dc);
+
+  assert.equal(cH1_1x2.family, 'MATCH_ODDS');
+  assert.equal(cH1_1x2.period, 'half1');
+
+  assert.equal(cH2_tot.family, 'OVER_UNDER');
+  assert.equal(cH2_tot.period, 'half2');
+  assert.equal(cH2_tot.lineKey, '1.5');
+
+  assert.equal(cH1_btts.family, 'BTTS');
+  assert.equal(cH1_btts.period, 'half1');
+
+  assert.equal(cH2_dc.family, 'DOUBLE_CHANCE');
+  assert.equal(cH2_dc.period, 'half2');
+
+  const bH1_1x2 = bucketKeyForContract(event.eventKey, cH1_1x2);
+  const bH2_tot = bucketKeyForContract(event.eventKey, cH2_tot);
+  const bH1_btts = bucketKeyForContract(event.eventKey, cH1_btts);
+  const bH2_dc = bucketKeyForContract(event.eventKey, cH2_dc);
+
+  assert.ok(bH1_1x2.includes('::half1::'));
+  assert.ok(bH2_tot.includes('::half2::'));
+  assert.ok(bH1_btts.includes('::half1::'));
+  assert.ok(bH2_dc.includes('::half2::'));
 });

@@ -67,6 +67,10 @@ const DEFAULT_INTERVAL_SECONDS = 60;
 const MIN_INTERVAL_SECONDS = 30;
 const MAX_INTERVAL_SECONDS = 600;
 
+export const FAST_LIVE_BOOKS = Object.freeze([
+  'excelbet', 'favbet', 'betfair', 'superbet', 'betano', 'unibet'
+]);
+
 export class LiveService {
   constructor({ dataDir, configPath, orchestrator, logger = () => {} }) {
     this.dataDir = dataDir;
@@ -74,9 +78,11 @@ export class LiveService {
     this.orchestrator = orchestrator;
     this.logger = logger;
 
+    this.liveOnly = Boolean(process.env.ARBITER_LIVE_ONLY === '1');
     this.intervalSeconds = clampInterval(
       process.env.ARBITER_LIVE_INTERVAL_SECONDS,
       DEFAULT_INTERVAL_SECONDS,
+      this.liveOnly ? 3 : MIN_INTERVAL_SECONDS,
     );
     this.enabled = false;
     /** Empty means every runnable book — see the runId note in the file header. */
@@ -98,7 +104,8 @@ export class LiveService {
   async loadState() {
     const state = await readJson(join(this.dataDir, STATE_FILENAME), null);
     if (!state) return;
-    this.intervalSeconds = clampInterval(state.intervalSeconds, this.intervalSeconds);
+    if (state.liveOnly !== undefined) this.liveOnly = Boolean(state.liveOnly);
+    this.intervalSeconds = clampInterval(state.intervalSeconds, this.intervalSeconds, this.liveOnly ? 3 : MIN_INTERVAL_SECONDS);
     this.bookIds = Array.isArray(state.bookIds) ? state.bookIds.filter((id) => typeof id === 'string') : [];
     this.scanOptions = state.scanOptions && typeof state.scanOptions === 'object' ? state.scanOptions : {};
     this.lastRun = state.lastRun || null;
@@ -119,6 +126,7 @@ export class LiveService {
   async persistState() {
     await writeJsonAtomic(join(this.dataDir, STATE_FILENAME), {
       enabled: this.enabled,
+      liveOnly: this.liveOnly,
       intervalSeconds: this.intervalSeconds,
       bookIds: this.bookIds,
       scanOptions: this.scanOptions,
@@ -129,10 +137,11 @@ export class LiveService {
     });
   }
 
-  async enable({ bookIds, scanOptions, intervalSeconds } = {}) {
+  async enable({ bookIds, scanOptions, intervalSeconds, liveOnly } = {}) {
+    if (liveOnly !== undefined) this.liveOnly = Boolean(liveOnly);
     if (Array.isArray(bookIds)) this.bookIds = [...new Set(bookIds.map(String))];
     if (scanOptions && typeof scanOptions === 'object') this.scanOptions = { ...scanOptions };
-    this.intervalSeconds = clampInterval(intervalSeconds, this.intervalSeconds);
+    this.intervalSeconds = clampInterval(intervalSeconds, this.intervalSeconds, this.liveOnly ? 3 : MIN_INTERVAL_SECONDS);
     if (this._timer) {
       clearInterval(this._timer);
       // Same reason as SchedulerService.enable(): `_startTimer()` bails on a
@@ -220,9 +229,12 @@ export class LiveService {
 
     const startedAt = Date.now();
     try {
+      const targetBooks = this.bookIds.length > 0
+        ? this.bookIds
+        : (this.liveOnly ? [...FAST_LIVE_BOOKS] : []);
       const state = await this.orchestrator.launch({
-        bookIds: this.bookIds,
-        scanOptions: { ...this.scanOptions, includeLive: true },
+        bookIds: targetBooks,
+        scanOptions: { ...this.scanOptions, includeLive: true, ...(this.liveOnly ? { liveOnly: true } : {}) },
         // See the _runPipeline doc: the verification pass re-scrapes the books
         // behind every leg, and on this cadence that re-scrape costs more than
         // the 90s window the poll exists to serve.
@@ -265,10 +277,10 @@ export class LiveService {
   }
 }
 
-function clampInterval(value, fallback) {
+function clampInterval(value, fallback, minSeconds = MIN_INTERVAL_SECONDS) {
   const parsed = Number(value);
   if (!Number.isFinite(parsed) || parsed <= 0) {
-    return Math.max(MIN_INTERVAL_SECONDS, Math.min(MAX_INTERVAL_SECONDS, Number(fallback) || DEFAULT_INTERVAL_SECONDS));
+    return Math.max(minSeconds, Math.min(MAX_INTERVAL_SECONDS, Number(fallback) || DEFAULT_INTERVAL_SECONDS));
   }
-  return Math.max(MIN_INTERVAL_SECONDS, Math.min(MAX_INTERVAL_SECONDS, Math.round(parsed)));
+  return Math.max(minSeconds, Math.min(MAX_INTERVAL_SECONDS, Math.round(parsed)));
 }

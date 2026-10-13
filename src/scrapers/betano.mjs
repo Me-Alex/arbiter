@@ -1,8 +1,9 @@
 import ScraperBase from './base.mjs';
-import { normalizeTeamName } from '../shared/text.mjs';
+import { normalizeTeamName, canonicalSport } from '../shared/text.mjs';
 import { ValidationError, UpstreamError } from '../shared/errors.mjs';
-import { liveCoverageFor } from './live-status.mjs';
+import { liveCoverageFor, markMarketsLive } from './live-status.mjs';
 import { describeError, summariseReasons } from './feg-common.mjs';
+import { extractPeriodFromName } from '../scanner/market-contracts.mjs';
 
 /** All known Betano sport IDs from sportCallerSportMapping + live layout. */
 const SPORT_IDS = ['FOOT', 'TENN', 'BASK', 'HANB', 'ICEH', 'VOLY', 'FUTS', 'DART', 'SNOO', 'MMA', 'RUGB', 'CRIC', 'ESPORTS', 'TABT', 'BADM', 'BASE', 'AMFO', 'MMAF', 'ESPS', 'VOLL', 'HAND', 'WTPL', 'TABL', 'BOXI', 'BCHV', 'VRTS', 'SWIM', 'FENC', 'TAEK', 'WINT', 'ATHL', 'GYMA', 'MOGP', 'RALL', 'MOTO', 'SPED', 'FRM1'];
@@ -55,6 +56,23 @@ const SPORT_IDS = ['FOOT', 'TENN', 'BASK', 'HANB', 'ICEH', 'VOLY', 'FUTS', 'DART
 const BARE_SPREAD_KEYS = new Set(['FHOT']);
 const BARE_SPREAD = /^\s*([+-])\s*(\d+(?:[.,]\d+)?)\s*$/;
 
+/**
+ * Resolve Betano market period with dynamic sub-window identification
+ * (halves, quarters, sets) based on both market name and Betano type codes.
+ */
+function periodForBetano(mType, mName) {
+  const fromName = extractPeriodFromName(mName);
+  if (fromName) return fromName;
+  const t = String(mType || '').toUpperCase();
+  if (/^OUH1\b|^MRH1\b|^BTH1\b|^H1PO\b|^DCH1\b|^DNH1\b/.test(t) || /(?:^|_)H1(?:_|$)/.test(t)) return 'half1';
+  if (/^OUH2\b|^MRH2\b|^BTH2\b|^H2PO\b|^DCH2\b|^DNH2\b/.test(t) || /(?:^|_)H2(?:_|$)/.test(t)) return 'half2';
+  const qM = /^Q([1-4])/.exec(t);
+  if (qM) return `q${qM[1]}`;
+  const sM = /^S([1-5])/.exec(t);
+  if (sM) return `set${sM[1]}`;
+  return 'fulltime';
+}
+
 /** Returns the selections with sides assigned, or the input if it is not this shape. */
 function assignBareSpreadSides(key, sels) {
   if (!BARE_SPREAD_KEYS.has(key) || sels.length !== 2) return sels;
@@ -100,9 +118,12 @@ export default class BetanoScraper extends ScraperBase {
 
   constructor(opts = {}) {
     super(opts);
-    this.maxEvents = opts.maxEvents === 'all' ? 5000 : Math.min(Number(opts.maxEvents ?? 100), 5000);
+    this.maxEvents = opts.maxEvents === 'all' ? Infinity : Number(opts.maxEvents ?? Infinity);
     this.timeoutMs = opts.timeoutMs ?? 60000;
     this.maxAttempts = 1;
+    this.sport = opts.sport || 'all';
+    this.includeLive = opts.includeLive === true;
+    this.includePast = opts.includePast === true;
   }
 
   async fetchRaw({ signal } = {}) {
@@ -257,11 +278,15 @@ export default class BetanoScraper extends ScraperBase {
       const kickoff = ev.startTime ? new Date(ev.startTime).toISOString() : new Date().toISOString();
       const league = leagues?.[String(ev.leagueId)]?.name || 'Unknown';
       const sportName = SPORT_NAMES[ev.sportId] || ev.sportId || 'Unknown';
+      if (this.sport && this.sport !== 'all' && canonicalSport(sportName) !== canonicalSport(this.sport)) continue;
+      const isLive = Boolean(ev.isLive || ev.live || ev.inPlay || ev.state === 'LIVE' || ev.scoreboard);
+      if (isLive && !this.includeLive) continue;
       const eventKey = [
         normalizeTeamName(sportName.toLowerCase()), normalizeTeamName(league), kickoff,
         normalizeTeamName(home), normalizeTeamName(away),
       ].join('|');
       const eventMarkets = [];
+      const seen = new Set();
       // Source 1: top-events-v2 format (markets in separate map)
       for (const mid of (ev.marketIdList || [])) {
         if (String(mid).startsWith('search_')) continue; // skip search-market IDs
@@ -272,9 +297,29 @@ export default class BetanoScraper extends ScraperBase {
           .filter((s) => Number.isFinite(s.price) && s.price > 1)
           .map((s) => ({ id: String(s.id), name: String(s.shortName || s.name || '').trim(), odds: Number(s.price), handicap: s.handicap ?? null, group: 'Main' }));
         if (sels.length < 2) continue;
-        eventMarkets.push({ key: m.type || String(mid), name: m.name || m.type || 'Market', period: 'fulltime', selections: assignBareSpreadSides(m.type || String(mid), sels) });
+
+        let subject;
+        if (sportName === 'Basketball') subject = 'points';
+        else if (sportName === 'Tennis') subject = 'games';
+        else if (/^HCTG$|^OUH[12]$/.test(m.type) || (sportName === 'Football' && (m.type?.includes('OU') || m.type?.includes('TG') || m.type === 'HCTG'))) subject = 'goals';
+        else if (sportName === 'Handball' || sportName === 'Ice Hockey') subject = 'goals';
+
+        const period = periodForBetano(m.type, m.name);
+
+        const dedupKey = `${period}:${m.type || mid}:${subject || ''}:${sels.map((s) => `${s.name}:${s.handicap}`).join('|')}`;
+        if (seen.has(dedupKey)) continue;
+        seen.add(dedupKey);
+
+        eventMarkets.push({
+          key: m.type || String(mid),
+          name: m.name || m.type || 'Market',
+          period,
+          ...(subject ? { subject } : {}),
+          selections: assignBareSpreadSides(m.type || String(mid), sels),
+        });
       }
       if (eventMarkets.length === 0) continue;
+      markMarketsLive(eventMarkets, () => isLive);
       // Per-event deep link only. The feed URL is an API endpoint, not a
       // browseable page: emitting it as a fallback would render a link icon
       // that dumps raw JSON on the user, so an event without a public path
@@ -284,6 +329,7 @@ export default class BetanoScraper extends ScraperBase {
         id: String(eid), sourceId: 'betano', sourceUrl,
         sport: sportName, league, kickoff,
         homeTeam: home, awayTeam: away, eventKey,
+        live: isLive, isLive,
         markets: eventMarkets,
       });
     }

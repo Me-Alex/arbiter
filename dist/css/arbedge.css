@@ -1,0 +1,710 @@
+/* arbedge.css — the ArbEdge console.
+ *
+ * A hand-port of the design in the two original mockups. Those were single
+ * self-contained pages that pulled Tailwind from `cdn.tailwindcss.com` and kept
+ * their overrides in an inline `<style>`. Two things in this repo forbid both:
+ * `src/shared/security.mjs` builds a CSP whose script-src is `'self'`, and
+ * `test/frontend-csp.test.mjs` fails CI on any remote script, inline event
+ * handler, or inline `<style>`. There is also no build step here to compile a
+ * utility framework in.
+ *
+ * So the mockups' markup is kept as-is and the utility subset it actually uses
+ * is implemented here. Every value below is the Tailwind default it replaces
+ * (p-4 = 1rem, rounded-lg = 0.5rem, lg = 1024px, sm = 640px, xl = 1280px), and
+ * the `:root` block, `.card`, `.toggle` and `.status-dot` rules are copied
+ * verbatim from the mockups. That is deliberate: keeping the class names means
+ * the pages can be diffed against the originals to check the design, instead of
+ * against my memory of it.
+ *
+ * Arbitrary values keep Tailwind's bracket syntax so a line here has an obvious
+ * counterpart there. The `/15`-style opacity suffixes use color-mix rather than
+ * Tailwind' rgb(... / n), because here the colour is a variable and cannot be
+ * decomposed into channels at build time.
+ */
+
+/* ── Tokens ────────────────────────────────────────────────────────────────
+ * The --edge-* compatibility names now inherit from design-tokens.css on
+ * every page, including pages without body.edge. */
+body.edge {
+  background-color: var(--edge-bg);
+  color: var(--edge-text);
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial,
+    "Apple Color Emoji", "Segoe UI Emoji";
+}
+
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--edge-border2); border-radius: 3px; }
+
+/* ── Components (verbatim from the mockups) ─────────────────────────────── */
+.card {
+  background: var(--edge-surface);
+  border: 1px solid var(--edge-border);
+  border-radius: 0.75rem;
+  box-shadow: none;
+  transition: border-color var(--t-fast);
+}
+.card:hover { border-color: var(--edge-border2); }
+
+.status-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+.toggle {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 38px;
+  height: 22px;
+  background: var(--edge-surface3);
+  border-radius: 9999px;
+  position: relative;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.toggle::after {
+  content: '';
+  position: absolute;
+  top: 2px; left: 2px;
+  width: 18px; height: 18px;
+  background: var(--edge-textBright);
+  border-radius: 50%;
+  transition: transform 0.2s;
+}
+.toggle:checked { background: var(--edge-blue); }
+.toggle:checked::after { transform: translateX(18px); }
+
+input[type="text"], input[type="email"], input[type="number"], input[type="password"], select {
+  background: var(--edge-surface2);
+  border: 1px solid var(--edge-border);
+  color: var(--edge-textBright);
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  outline: none;
+  transition: border-color 0.15s;
+}
+input:focus, select:focus { border-color: var(--edge-blue); }
+input::placeholder { color: var(--edge-textMuted); }
+
+/* A table row the reader can act on. `card` is for blocks; a <tr> cannot take a
+ * border or a transform, so the hover affordance is painted on its cells. */
+.row-btn { cursor: pointer; }
+.row-btn > td { transition: background-color 0.15s; }
+.row-btn:hover > td { background: var(--edge-surface2); }
+
+/* The empty states. The mockups left these implicit; a live API returns empty
+ * arrays often enough that an unstyled blank reads as a broken page. */
+.edge-empty {
+  padding: 1.5rem;
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--edge-textMuted);
+  background: var(--edge-surface2);
+  border-radius: 0.5rem;
+}
+
+/* ── Display ─────────────────────────────────────────────────────────────── */
+.hidden { display: none; }
+.block { display: block; }
+.flex { display: flex; }
+.inline-flex { display: inline-flex; }
+.grid { display: grid; }
+
+/* ── Flex ────────────────────────────────────────────────────────────────── */
+.flex-col { flex-direction: column; }
+.flex-wrap { flex-wrap: wrap; }
+.flex-1 { flex: 1 1 0%; }
+.shrink-0 { flex-shrink: 0; }
+/* A flex item defaults to `min-height: auto`, which stops it shrinking below
+ * its content. `flex-1 overflow-y-auto` therefore does not clamp: the nav grows
+ * to its content height, pushes the footer past the bottom of the column, and
+ * the two overlap. `min-h-0` is what makes the scroll actually happen. */
+.min-h-0 { min-height: 0; }
+.min-w-0 { min-width: 0; }
+.items-center { align-items: center; }
+.items-end { align-items: flex-end; }
+.items-stretch { align-items: stretch; }
+.justify-between { justify-content: space-between; }
+.justify-center { justify-content: center; }
+.justify-end { justify-content: flex-end; }
+.justify-start { justify-content: flex-start; }
+
+/* ── Grid ────────────────────────────────────────────────────────────────── */
+.grid-cols-1 { grid-template-columns: repeat(1, minmax(0, 1fr)); }
+.grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.col-span-full { grid-column: 1 / -1; }
+
+/* ── Gap ─────────────────────────────────────────────────────────────────── */
+.gap-1 { gap: 0.25rem; }
+.gap-2 { gap: 0.5rem; }
+.gap-3 { gap: 0.75rem; }
+.gap-4 { gap: 1rem; }
+
+/* ── Space between (margin, not gap, so a bordered child keeps its edge) ──── */
+.space-y-1 > * + * { margin-top: 0.25rem; }
+.space-y-3 > * + * { margin-top: 0.75rem; }
+.space-y-4 > * + * { margin-top: 1rem; }
+.space-y-6 > * + * { margin-top: 1.5rem; }
+
+/* ── Position ────────────────────────────────────────────────────────────── */
+.fixed { position: fixed; }
+.absolute { position: absolute; }
+.relative { position: relative; }
+.inset-0 { inset: 0; }
+.inset-y-0 { top: 0; bottom: 0; }
+.left-0 { left: 0; }
+.z-40 { z-index: 40; }
+.z-50 { z-index: 50; }
+
+/* ── Sizing ──────────────────────────────────────────────────────────────── */
+.min-h-screen { min-height: 100vh; }
+.min-h-\[200px\] { min-height: 200px; }
+.w-full { width: 100%; }
+.w-16 { width: 4rem; }
+.w-5 { width: 1.25rem; }
+.w-6 { width: 1.5rem; }
+.w-8 { width: 2rem; }
+.h-14 { height: 3.5rem; }
+.h-1\.5 { height: 0.375rem; }
+.h-5 { height: 1.25rem; }
+.h-6 { height: 1.5rem; }
+.h-8 { height: 2rem; }
+.h-full { height: 100%; }
+.h-px { height: 1px; }
+.max-w-md { max-width: 28rem; }
+
+/* ── Padding / margin ────────────────────────────────────────────────────── */
+.p-3 { padding: 0.75rem; }
+.p-4 { padding: 1rem; }
+.px-1\.5 { padding-left: 0.375rem; padding-right: 0.375rem; }
+.px-2 { padding-left: 0.5rem; padding-right: 0.5rem; }
+.px-3 { padding-left: 0.75rem; padding-right: 0.75rem; }
+.py-0\.5 { padding-top: 0.125rem; padding-bottom: 0.125rem; }
+.py-1\.5 { padding-top: 0.375rem; padding-bottom: 0.375rem; }
+.py-2 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+.py-3 { padding-top: 0.75rem; padding-bottom: 0.75rem; }
+.pt-1 { padding-top: 0.25rem; }
+.pt-3 { padding-top: 0.75rem; }
+.mb-1 { margin-bottom: 0.25rem; }
+.mb-2 { margin-bottom: 0.5rem; }
+.mb-3 { margin-bottom: 0.75rem; }
+.mb-4 { margin-bottom: 1rem; }
+.mt-1 { margin-top: 0.25rem; }
+.ml-1 { margin-left: 0.25rem; }
+.ml-16 { margin-left: 4rem; }
+
+/* ── Typography ──────────────────────────────────────────────────────────── */
+.text-\[10px\] { font-size: 10px; line-height: 1.5; }
+.text-xs { font-size: 0.75rem; line-height: 1rem; }
+.text-sm { font-size: 0.875rem; line-height: 1.25rem; }
+.text-base { font-size: 1rem; line-height: 1.5rem; }
+.text-lg { font-size: 1.125rem; line-height: 1.75rem; }
+.text-xl { font-size: 1.25rem; line-height: 1.75rem; }
+.text-2xl { font-size: 1.5rem; line-height: 2rem; }
+.font-medium { font-weight: 500; }
+.font-semibold { font-weight: 600; }
+.font-bold { font-weight: 700; }
+.font-mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+}
+.uppercase { text-transform: uppercase; }
+.tracking-tight { letter-spacing: -0.025em; }
+.tracking-wider { letter-spacing: 0.05em; }
+.text-left { text-align: left; }
+.text-right { text-align: right; }
+.text-center { text-align: center; }
+.whitespace-nowrap { white-space: nowrap; }
+.truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* ── Colour ──────────────────────────────────────────────────────────────── */
+.bg-\[var\(--edge-surface\)\] { background-color: var(--edge-surface); }
+.bg-\[var\(--edge-surface2\)\] { background-color: var(--edge-surface2); }
+.bg-\[var\(--edge-surface3\)\] { background-color: var(--edge-surface3); }
+.bg-\[var\(--edge-blue\)\] { background-color: var(--edge-blue); }
+.bg-\[var\(--edge-blueDim\)\] { background-color: var(--edge-blueDim); }
+.bg-\[var\(--edge-textMuted\)\] { background-color: var(--edge-textMuted); }
+.bg-\[var\(--edge-green\)\] { background-color: var(--edge-green); }
+.bg-\[var\(--edge-amber\)\] { background-color: var(--edge-amber); }
+.bg-\[var\(--edge-red\)\] { background-color: var(--edge-red); }
+.bg-black\/60 { background-color: rgb(0 0 0 / 0.6); }
+
+/* Measured the same way: `arbitrage.js:262`'s guaranteed-profit callout
+ * carried `bg-[var(--edge-green)]/10 border border-[var(--edge-green)]/25`
+ * and neither token was defined — the only `/NN` utilities on record were
+ * blue/15 and red/20 borders two blocks down, both still used. A callout that
+ * paints its own background is the whole point of these, so the green pair is
+ * added with the colour the markup already names. */
+.bg-\[var\(--edge-green\)\]\/10 { background-color: color-mix(in srgb, var(--edge-green) 10%, transparent); }
+.border-\[var\(--edge-green\)\]\/25 { border-color: color-mix(in srgb, var(--edge-green) 25%, transparent); }
+
+.text-white { color: var(--surface-btn-primary-text); }
+.text-\[var\(--edge-textBright\)\] { color: var(--edge-textBright); }
+.text-\[var\(--edge-text\)\] { color: var(--edge-text); }
+.text-\[var\(--edge-textMuted\)\] { color: var(--edge-textMuted); }
+.text-\[var\(--edge-blue\)\] { color: var(--edge-blue); }
+.text-\[var\(--edge-green\)\] { color: var(--edge-green); }
+.text-\[var\(--edge-red\)\] { color: var(--edge-red); }
+.text-\[var\(--edge-amber\)\] { color: var(--edge-amber); }
+
+/* ── Border ──────────────────────────────────────────────────────────────── */
+.border { border-width: 1px; border-style: solid; }
+.border-t { border-top-width: 1px; border-top-style: solid; }
+.border-r { border-right-width: 1px; border-right-style: solid; }
+.border-b { border-bottom-width: 1px; border-bottom-style: solid; }
+.border-dashed { border-style: dashed; }
+.border-\[var\(--edge-border\)\] { border-color: var(--edge-border); }
+.border-\[var\(--edge-border2\)\] { border-color: var(--edge-border2); }
+.border-\[var\(--edge-blue\)\]\/15 {
+  border-color: color-mix(in srgb, var(--edge-blue) 15%, transparent);
+}
+.border-\[var\(--edge-red\)\]\/20 {
+  border-color: color-mix(in srgb, var(--edge-red) 20%, transparent);
+}
+.divide-y > * + * { border-top-width: 1px; border-top-style: solid; }
+.divide-\[var\(--edge-border\)\] > * + * { border-color: var(--edge-border); }
+
+/* ── Tables ────────────────────────────────────────────────────────────────
+ * These four pages load theme.css as well, for the toast host and the shared
+ * page helpers, and theme.css:1254 onwards styles bare `table`, `table th` and
+ * `table tbody tr:nth-child(even) td` for the product's dark surfaces. Its
+ * `table th` background resolves `var(--bg-1)` — a token the ArbEdge palette
+ * does not define — so the header rendered as a black bar over a light design,
+ * and every other row carried a 2% white tint plus a dark hover.
+ *
+ * The rules below are the design's own table style, scoped to `.card` so they
+ * outrank theme.css's element selectors without reaching any other page. Cell
+ * padding and the header rule stay in the markup; only the properties
+ * theme.css was reaching for are restated here. */
+.card table { width: 100%; border-collapse: collapse; font-size: 0.875rem; background: transparent; }
+.card table th {
+  background: var(--edge-surface2);
+  color: var(--edge-textMuted);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid var(--edge-border);
+  border-top: 0;
+  text-align: left;
+}
+.card table td { background: var(--edge-surface); border-bottom: 1px solid var(--edge-border); }
+.card table th.num { text-align: right; }
+.card table tbody tr:nth-child(even) td { background: var(--edge-surface); }
+.card table tbody tr:hover td { background: var(--edge-surface2); }
+
+/* ── Shared runtime, restyled for this palette ─────────────────────────────
+ * The console pages load theme.css for the helpers it provides, not for its
+ * chrome. Four pieces of that chrome are injected at runtime and were landing
+ * dark on a light page: the toast stack (common.js:84, `#toast-container`),
+ * the connection/health chips (connection-status.js:190), the data-freshness
+ * banner it inserts before `<main>`'s first child (connection-status.js:349),
+ * and the language switch. All four are restated here against the `--edge-*`
+ * tokens. Selectors are kept as specific as theme.css's own, and this file loads
+ * after it, so these win without needing `!important`.
+ *
+ * The chips keep theme.css's class contract deliberately: connection-status.js
+ * assigns `el.className = 'chip green' | 'chip red'`, replacing every class on
+ * the node, so a page cannot hang a scoping class off them. `.chip` is restyled
+ * globally instead — which is why the four console pages and the five theme.css
+ * pages agree on what a chip looks like in their own palette. */
+.toast-container {
+  position: fixed;
+  bottom: 1rem;
+  right: 1rem;
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-width: min(24rem, calc(100vw - 2rem));
+}
+.toast {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  padding: 0.625rem 0.75rem;
+  background: var(--edge-surface);
+  border: 1px solid var(--edge-border);
+  border-radius: 0.5rem;
+  box-shadow: 0 8px 24px -8px rgb(15 23 42 / 0.18);
+  color: var(--edge-text);
+  font-size: 0.8125rem;
+}
+.toast-msg { flex: 1; min-width: 0; color: var(--edge-text); }
+.toast-close {
+  flex: none;
+  cursor: pointer;
+  color: var(--edge-textMuted);
+  background: transparent;
+  border: 0;
+  padding: 0 0.125rem;
+  line-height: 1;
+}
+.toast-close:hover { color: var(--edge-text); }
+.toast-success { border-color: color-mix(in srgb, var(--edge-green) 45%, var(--edge-border)); }
+.toast-success .toast-msg { color: var(--green); }
+.toast-error { border-color: color-mix(in srgb, var(--edge-red) 45%, var(--edge-border)); }
+.toast-error .toast-msg { color: var(--red); }
+.toast-warning { border-color: color-mix(in srgb, var(--edge-amber) 45%, var(--edge-border)); }
+.toast-warning .toast-msg { color: var(--yellow); }
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.125rem 0.5rem;
+  border-radius: 9999px;
+  border: 1px solid var(--edge-border);
+  background: var(--edge-surface2);
+  color: var(--edge-text);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.chip.green { background: color-mix(in srgb, var(--edge-green) 12%, var(--edge-surface)); color: var(--green); border-color: color-mix(in srgb, var(--edge-green) 30%, transparent); }
+.chip.red { background: color-mix(in srgb, var(--edge-red) 12%, var(--edge-surface)); color: var(--red); border-color: color-mix(in srgb, var(--edge-red) 30%, transparent); }
+.chip.yellow { background: color-mix(in srgb, var(--edge-amber) 14%, var(--edge-surface)); color: var(--yellow); border-color: color-mix(in srgb, var(--edge-amber) 32%, transparent); }
+.chip.outline { background: transparent; }
+.chip .dot, .sse-status .dot {
+  width: 0.375rem;
+  height: 0.375rem;
+  border-radius: 9999px;
+  background: currentColor;
+  flex: none;
+}
+
+.data-freshness-banner {
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  margin-bottom: 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid color-mix(in srgb, var(--edge-amber) 35%, transparent);
+  border-left: 3px solid var(--edge-amber);
+  background: var(--edge-amberDim);
+  color: var(--yellow);
+  font-size: 0.8125rem;
+}
+/* `display` is absent from the base rule above on purpose. theme.css:1741 sets
+ * `display: none` and :1756 re-enables it on `.visible`; this file loads later
+ * at equal specificity, so restating `display` here would beat that and leave
+ * the banner permanently on screen for a scan it has no verdict about. */
+.data-freshness-banner.visible { display: flex; }
+/* A hidden injected banner still counts as the preceding sibling for the
+ * space-y utility. Remove that phantom gap so every console header starts at
+ * the same vertical position; visible banners keep the normal section gap. */
+.edge main > .data-freshness-banner:not(.visible) + * { margin-top: 0; }
+.data-freshness-banner .banner-text { flex: 1; min-width: 0; }
+.data-freshness-banner.info {
+  border-color: color-mix(in srgb, var(--edge-blue) 30%, transparent);
+  border-left-color: var(--edge-blue);
+  background: var(--edge-blueDim);
+  color: var(--accent);
+}
+
+.lang-btn {
+  padding: 0.125rem 0.375rem;
+  border-radius: 0.375rem;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--edge-textMuted);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.lang-btn:hover { color: var(--edge-text); background: var(--edge-surface2); }
+.lang-btn.active {
+  color: var(--edge-blue);
+  background: var(--edge-blueDim);
+  border-color: color-mix(in srgb, var(--edge-blue) 25%, transparent);
+}
+
+/* ── Radius ──────────────────────────────────────────────────────────────── */
+.rounded { border-radius: 0.25rem; }
+.rounded-lg { border-radius: 0.5rem; }
+.rounded-xl { border-radius: 0.75rem; }
+.rounded-full { border-radius: 9999px; }
+
+/* ── Effects ─────────────────────────────────────────────────────────────── */
+.shadow-2xl { box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25); }
+.backdrop-blur-sm { backdrop-filter: blur(4px); }
+
+/* ── Transition ──────────────────────────────────────────────────────────── */
+.transition-colors {
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+  transition-duration: 150ms;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+.transition-all { transition-property: all; transition-duration: 150ms; }
+.duration-300 { transition-duration: 300ms; }
+
+/* ── Interaction ─────────────────────────────────────────────────────────── */
+.cursor-pointer { cursor: pointer; }
+.hover\:bg-\[var\(--edge-surface2\)\]:hover { background-color: var(--edge-surface2); }
+.hover\:bg-\[var\(--edge-blue\)\]\/90:hover {
+  background-color: color-mix(in srgb, var(--edge-blue) 90%, transparent);
+}
+.hover\:bg-\[var\(--edge-red\)\]\/10:hover {
+  background-color: color-mix(in srgb, var(--edge-red) 10%, transparent);
+}
+.hover\:text-\[var\(--edge-textBright\)\]:hover { color: var(--edge-textBright); }
+.hover\:text-\[var\(--edge-text\)\]:hover { color: var(--edge-text); }
+.hover\:border-\[var\(--edge-border2\)\]:hover { border-color: var(--edge-border2); }
+.hover\:border-\[var\(--edge-textMuted\)\]:hover { border-color: var(--edge-textMuted); }
+.hover\:underline:hover { text-decoration: underline; }
+.focus-ring:focus-visible {
+  outline: 2px solid var(--edge-blue);
+  outline-offset: 2px;
+}
+
+/* theme.css provides the shared button baseline. Interactive cards opt back
+ * into card geometry so their contents fill and align like non-button cards. */
+button.edge-card-button {
+  display: flex;
+  align-items: stretch;
+  justify-content: flex-start;
+  gap: 0;
+  background: var(--edge-surface);
+  color: var(--edge-text);
+  border: 1px solid var(--edge-border);
+  border-radius: 0.75rem;
+  padding: 1rem;
+  white-space: normal;
+}
+button.edge-card-button:hover:not(:disabled) {
+  background: var(--edge-surface);
+  border-color: var(--edge-border2);
+}
+button.edge-card-button:active:not(:disabled) { transform: translateY(-1px); }
+
+/* ── Overflow ────────────────────────────────────────────────────────────── */
+.overflow-hidden { overflow: hidden; }
+.overflow-x-auto { overflow-x: auto; }
+.overflow-y-auto { overflow-y: auto; }
+
+/* ── Breakpoints: sm 640px, lg 1024px, xl 1280px ──────────────────────────────
+ *
+ * `.edge-label` is not `hidden lg:block`, and the reason is a collision rather
+ * than a preference. These four pages also load theme.css, and theme.css:1656
+ * is `.hidden { display: none !important; }`. An `!important` declaration beats
+ * a later rule of any specificity, so `hidden lg:block` resolved to
+ * `display:none` at every width and the entire sidebar — brand, section labels,
+ * every nav label, the footer — rendered as icons only, inside a 224px column.
+ *
+ * `.edge-label` states the same intent with no `hidden` in it, so there is
+ * nothing for theme.css to out-rank. */
+.edge-label { display: block; }
+
+@media (min-width: 640px) {
+  .sm\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (min-width: 1024px) {
+  .lg\:w-56 { width: 14rem; }
+  .lg\:ml-56 { margin-left: 14rem; }
+  .edge-label { display: block; }
+  .lg\:p-5 { padding: 1.25rem; }
+  .lg\:p-6 { padding: 1.5rem; }
+  .lg\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  /* The KPI row on arbitrage/live/bookies is marked up
+   * `grid-cols-2 lg:grid-cols-4`, but only the `lg:grid-cols-2` half of the
+   * pair was ever implemented here. An undeclared utility is not an error in
+   * CSS — it simply does nothing — so every console page kept the mobile
+   * `grid-cols-2` at desktop width and the four KPIs sat in a 2x2 block while
+   * the Dashboard's quickbar ran four across. Declared here rather than in the
+   * markup so the diff still reads against the mockups. */
+  .lg\:grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .lg\:gap-4 { gap: 1rem; }
+  .lg\:justify-start { justify-content: flex-start; }
+  .lg\:text-2xl { font-size: 1.5rem; line-height: 2rem; }
+  .lg\:flex-none { flex: none; }
+}
+
+@media (min-width: 1280px) {
+  .xl\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+/* ── Motion ────────────────────────────────────────────────────────────────
+ * `.card` translates on hover, which is decoration rather than information.
+ * `prefers-reduced-motion` is asked for by no page here, but a dashboard that
+ * refetches on a timer can repaint under the pointer, and a lift that fires
+ * during a refetch is the one that reads as a glitch. */
+@media (prefers-reduced-motion: reduce) {
+  .card, .card:hover,
+  .toggle, .toggle::after,
+  aside, .transition-colors, .transition-all {
+    transition-duration: 0.01ms !important;
+  }
+  .card:hover { transform: none; }
+}
+
+/* ── Subset completion ─────────────────────────────────────────────────────
+ * The classes below are used by the sidebar and the card markup but were never
+ * declared, so they did nothing. Values are Tailwind v3 defaults, matching the
+ * mockups the rest of this file was ported from. */
+.p-3 { padding: 0.75rem; }
+.px-1\.5 { padding-left: 0.375rem; padding-right: 0.375rem; }
+.py-0\.5 { padding-top: 0.125rem; padding-bottom: 0.125rem; }
+.ml-3 { margin-left: 0.75rem; }
+.mt-3 { margin-top: 0.75rem; }
+.h-1\.5 { height: 0.375rem; }
+.w-56 { width: 14rem; }
+.min-h-0 { min-height: 0; }
+.overflow-hidden { overflow: hidden; }
+.gap-1 { gap: 0.25rem; }
+.rounded { border-radius: 0.25rem; }
+.text-\[10px\] { font-size: 10px; }
+.space-y-1 > * + * { margin-top: 0.25rem; }
+.space-y-2 > * + * { margin-top: 0.5rem; }
+
+@media (min-width: 1024px) {
+  .lg\:w-56 { width: 14rem; }
+  .lg\:justify-start { justify-content: flex-start; }
+  .lg\:px-4 { padding-left: 1rem; padding-right: 1rem; }
+  .lg\:p-6 { padding: 1.5rem; }
+}
+
+/* ── Generated sidebar and layout ───────────────────────────────────────────
+ * For the pages that get their sidebar from app.js rather than carrying it in
+ * their own markup. The console pages wrote theirs out; these rules reproduce
+ * that look for the seven that do not, so all eleven read as one product.
+ *
+ * theme.css styles .sidebar as a sticky gradient column and .sidebar nav a as a
+ * block row, at a specificity that outranks the utility classes on the element.
+ * Restating the same selectors here — same specificity, later file — is what makes
+ * the design win, rather than reaching for !important or renaming every hook. */
+body.has-sidebar .app { grid-template-columns: minmax(0, 1fr); width: 100%; }
+body.has-sidebar main {
+  margin-left: var(--sidebar-w);
+  width: calc(100% - var(--sidebar-w));
+  padding: var(--s-6) var(--s-8) var(--s-12);
+}
+
+/* The shared sidebar is a drawer at this breakpoint, not the old 4rem icon
+ * rail. Console pages now use that same navigation, so their content starts
+ * at the viewport edge while the menu is closed. */
+@media (max-width: 980px) {
+  body.has-sidebar main {
+    margin-left: 0;
+    width: 100%;
+    padding: calc(var(--header-h) + var(--s-5)) var(--s-5) var(--s-8);
+  }
+}
+
+.sidebar {
+  position: fixed;
+  inset: 0 auto 0 0;
+  z-index: 40;
+  width: var(--sidebar-w);
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  background: var(--bg-1);
+  border-right: 1px solid var(--border);
+  overflow: hidden;
+}
+
+
+.sidebar .sidebar-brand {
+  display: flex;
+  align-items: center;
+  min-height: var(--header-h);
+  flex-shrink: 0;
+  padding: 0 var(--s-4);
+  margin: 0;
+  border-bottom: 1px solid var(--border);
+  gap: var(--s-3);
+}
+.sidebar .sidebar-brand .logo {
+  width: 1.5rem;
+  height: 1.5rem;
+  flex: none;
+  background: transparent;
+  border-radius: 0;
+}
+.sidebar .sidebar-brand .logo::after { display: none; }
+.sidebar .sidebar-brand .logo svg { width: 1.5rem; height: 1.5rem; color: var(--accent); }
+.sidebar .sidebar-brand .brand-text { display: flex; }
+.sidebar .sidebar-brand .name {
+  font-size: 1.125rem;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  color: var(--text-strong);
+}
+
+/* The scroll container. min-height:0 is load-bearing: as a flex item its default
+   is min-height:auto, which lets it grow past the column and push the footer out
+   of view. */
+.sidebar .sidebar-nav {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 0.75rem 0.5rem;
+}
+.sidebar .sidebar-nav > div + div { margin-top: var(--s-6); }
+.sidebar .sidebar-nav nav { display: flex; flex-direction: column; gap: 0.25rem; }
+
+.sidebar .sidebar-nav nav a {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem;
+  border: 1px solid transparent;
+  border-radius: 0.5rem;
+  background: transparent;
+  color: var(--text);
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-decoration: none;
+  transform: none;
+  transition: background-color var(--t-fast), color var(--t-fast);
+}
+.sidebar .sidebar-nav nav a:hover {
+  background: var(--bg-2);
+  color: var(--text-strong);
+  border-color: transparent;
+}
+.sidebar .sidebar-nav nav a[aria-current="page"] {
+  background: var(--accent-soft);
+  color: var(--accent);
+  border-color: color-mix(in srgb, var(--accent) 15%, transparent);
+}
+.sidebar .sidebar-nav nav a .nav-icon,
+.sidebar .sidebar-nav nav a > span:first-child {
+  width: 1.25rem;
+  height: 1.25rem;
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: inherit;
+}
+.sidebar .sidebar-nav nav a svg { width: 1.25rem; height: 1.25rem; }
+.sidebar .sidebar-nav nav a .nav-chevron { display: none; }
+
+.sidebar .sidebar-footer {
+  flex: none;
+  padding: 0.75rem;
+  border-top: 1px solid var(--border);
+  background: transparent;
+}
+.sidebar .sidebar-footer .footer-row { gap: 0.5rem; }
+.sidebar .connection-status { color: var(--text-muted); font-size: 0.75rem; }
+
+/* Drawer geometry shares the same breakpoint as app.js. */
+@media (max-width: 980px) {
+  .sidebar { padding-top: calc(var(--header-h) + var(--s-2)); }
+}
+@media (max-width: 600px) {
+  body.has-sidebar main { padding-inline: var(--s-4); }
+  .edge main > .flex, .edge .card > .flex { flex-wrap: wrap; gap: var(--s-3); }
+}
+.sidebar .sidebar-footer .footer-controls { flex-wrap: wrap; width: 100%; }
+.sidebar .sidebar-footer .footer-row { align-items: flex-start; }
+.theme-choice { flex: 1; min-width: 0; }
+.theme-choice select { min-height: var(--control-h); font-size: var(--fs-xs); }
+@media (max-width: 600px) {
+  select { font-size: 16px; }
+  .theme-choice select { min-height: var(--touch-target); }
+}
+/* Preserve switch dimensions against the shared checkbox selector. */
+input.toggle { width: 38px; height: 22px; flex-shrink: 0; }
+.toggle:checked::after { background: var(--surface-btn-primary-text); }

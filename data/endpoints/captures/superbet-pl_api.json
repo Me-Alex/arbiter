@@ -1,0 +1,30 @@
+{
+  "book": "superbet-pl",
+  "timestamp": "2026-10-12T15:30:00.242Z",
+  "endpoints": [
+    {
+      "method": "GET",
+      "url": "https://production-superbet-offer-pl.freetls.fastly.net/v3/pl-PL/events?index=active-prematch&startDate=2026-10-12T15:00:00.000Z&endDate=2026-10-19T15:00:00.000Z",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://superbet.pl/zaklady-bukmacherskie/pilka-nozna",
+      "capturedAt": "2026-10-12T15:30:00.242Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://production-superbet-offer-pl.freetls.fastly.net/v2/pl-PL/struct",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://superbet.pl/zaklady-bukmacherskie/pilka-nozna",
+      "capturedAt": "2026-10-12T15:30:00.242Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://production-superbet-offer-pl.freetls.fastly.net/v2/pl-PL/events/14025567",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://superbet.pl/zaklady-bukmacherskie/pilka-nozna",
+      "capturedAt": "2026-10-12T15:30:00.242Z"
+    }
+  ]
+}

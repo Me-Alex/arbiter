@@ -1,9 +1,12 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import EveryMatrixWampScraper from '../src/scrapers/everymatrix-wamp.mjs';
+import EveryMatrixWampScraper, {
+  EVERYMATRIX_SPORT_ID_MAP,
+  EVERYMATRIX_SPORT_NAME_TO_ID,
+} from '../src/scrapers/everymatrix-wamp.mjs';
 import GetsBetScraper from '../src/scrapers/getsbet.mjs';
 import ContibetScraper from '../src/scrapers/contibet.mjs';
-import { isFullTimeMarket, resolveContract, canonicalOutcomeFor } from '../src/scanner/market-contracts.mjs';
+import { isFullTimeMarket, resolveContract, canonicalOutcomeFor, bucketKeyForContract } from '../src/scanner/market-contracts.mjs';
 
 /**
  * EveryMatrix WAMP is the most complex transport in src/scrapers/ — a reverse
@@ -547,4 +550,454 @@ test('an unavailable offer is not a price', () => {
     { _type: 'BETTING_OFFER', id: 'o842', outcomeId: 842, odds: 1.98, isAvailable: false },
   ]);
   assert.equal(byKey(marketsOf(s, records), 'BOTH_TEAMS_SCORE').length, 0);
+});
+
+test('EveryMatrix sport maps export sports taxonomy and resolve IDs', () => {
+  assert.equal(EVERYMATRIX_SPORT_ID_MAP['1'], 'Football');
+  assert.equal(EVERYMATRIX_SPORT_ID_MAP['2'], 'Basketball');
+  assert.equal(EVERYMATRIX_SPORT_ID_MAP['3'], 'Tennis');
+  assert.equal(EVERYMATRIX_SPORT_ID_MAP['4'], 'Ice Hockey');
+  assert.equal(EVERYMATRIX_SPORT_ID_MAP['5'], 'Handball');
+  assert.equal(EVERYMATRIX_SPORT_ID_MAP['6'], 'Volleyball');
+
+  assert.equal(EVERYMATRIX_SPORT_NAME_TO_ID.football, '1');
+  assert.equal(EVERYMATRIX_SPORT_NAME_TO_ID.basketball, '2');
+  assert.equal(EVERYMATRIX_SPORT_NAME_TO_ID.tennis, '3');
+  assert.equal(EVERYMATRIX_SPORT_NAME_TO_ID['ice hockey'], '4');
+  assert.equal(EVERYMATRIX_SPORT_NAME_TO_ID.handball, '5');
+  assert.equal(EVERYMATRIX_SPORT_NAME_TO_ID.volleyball, '6');
+});
+
+test('EveryMatrix constructor sets sport, sportSlug, and sportId correctly', () => {
+  const bball = new GetsBetScraper({ sport: 'Basketball' });
+  assert.equal(bball.sport, 'Basketball');
+  assert.equal(bball.sportSlug, 'basketball');
+  assert.equal(bball.sportId, '2');
+
+  const tennis = new GetsBetScraper({ sport: 'Tennis' });
+  assert.equal(tennis.sport, 'Tennis');
+  assert.equal(tennis.sportSlug, 'tennis');
+  assert.equal(tennis.sportId, '3');
+
+  const byId = new GetsBetScraper({ sportId: '2' });
+  assert.equal(byId.sport, 'Basketball');
+  assert.equal(byId.sportSlug, 'basketball');
+  assert.equal(byId.sportId, '2');
+});
+
+function twoWayWinnerRecords(s, {
+  home = 'Jannik Sinner',
+  away = 'Carlos Alcaraz',
+  homeOdds = 1.75,
+  awayOdds = 2.10,
+  bettingTypeId = s.twoWayMatchWinnerTypeId,
+} = {}) {
+  return [
+    { _type: 'MARKET', id: 600, bettingTypeId, displayName: 'Câștigător meci' },
+    { _type: 'OUTCOME', id: 31, typeName: 'Home', paramParticipantName1: home },
+    { _type: 'OUTCOME', id: 32, typeName: 'Away', paramParticipantName1: away },
+    { _type: 'BETTING_OFFER', id: 41, bettingTypeId, outcomeId: 31, odds: homeOdds, isAvailable: true },
+    { _type: 'BETTING_OFFER', id: 42, bettingTypeId, outcomeId: 32, odds: awayOdds, isAvailable: true },
+  ];
+}
+
+test('extractTwoWayMatchWinner extracts 2-way moneyline for Tennis', () => {
+  const s = new GetsBetScraper({ sport: 'Tennis' });
+  const match = makeMatch({
+    id: 900002,
+    homeParticipantName: 'Jannik Sinner',
+    awayParticipantName: 'Carlos Alcaraz',
+    parentName: 'Wimbledon',
+  });
+  const records = twoWayWinnerRecords(s);
+  const result = s.extractTwoWayMatchWinner(match, records);
+
+  assert.ok(result, '2-way match winner extracted');
+  assert.deepEqual(result.selections, ['1', '2']);
+  assert.equal(result.offers['1'], 1.75);
+  assert.equal(result.offers['2'], 2.10);
+
+  const [ev] = s.extractEvents([{ match, records }]);
+  assert.ok(ev, 'event emitted for tennis 2-way winner');
+  assert.equal(ev.sport, 'Tennis');
+  assert.equal(ev.markets[0].key, 'MATCH_ODDS');
+  assert.equal(ev.markets[0].selections.length, 2);
+  assert.deepEqual(ev.markets[0].selections.map((x) => x.name), ['1', '2']);
+
+  const contract = resolveContract(ev.markets[0], { sport: 'Tennis', homeTeam: 'Jannik Sinner', awayTeam: 'Carlos Alcaraz' });
+  assert.equal(contract.family, 'MATCH_ODDS');
+  assert.deepEqual(contract.outcomes, ['home', 'away']);
+  assert.notEqual(contract.arbEligible, false);
+});
+
+test('extractTwoWayMatchWinner rejects markets with a draw outcome', () => {
+  const s = new GetsBetScraper({ sport: 'Tennis' });
+  const match = makeMatch({
+    id: 900002,
+    homeParticipantName: 'Jannik Sinner',
+    awayParticipantName: 'Carlos Alcaraz',
+  });
+  const records = [
+    { _type: 'MARKET', id: 600, bettingTypeId: '249', displayName: 'Winner' },
+    { _type: 'OUTCOME', id: 31, typeName: 'Home', paramParticipantName1: 'Jannik Sinner' },
+    { _type: 'OUTCOME', id: 32, typeName: 'Away', paramParticipantName1: 'Carlos Alcaraz' },
+    { _type: 'OUTCOME', id: 33, typeName: 'Draw' },
+    { _type: 'BETTING_OFFER', id: 41, bettingTypeId: '249', outcomeId: 31, odds: 1.80, isAvailable: true },
+    { _type: 'BETTING_OFFER', id: 42, bettingTypeId: '249', outcomeId: 32, odds: 2.10, isAvailable: true },
+    { _type: 'BETTING_OFFER', id: 43, bettingTypeId: '249', outcomeId: 33, odds: 3.50, isAvailable: true },
+  ];
+  assert.equal(s.extractTwoWayMatchWinner(match, records), null);
+});
+
+test('extractTotals emits POINTS_OVER_UNDER with points subject for Basketball', () => {
+  const s = new GetsBetScraper({ sport: 'Basketball' });
+  const match = makeMatch({
+    id: 900003,
+    homeParticipantName: 'Los Angeles Lakers',
+    awayParticipantName: 'Boston Celtics',
+    parentName: 'NBA',
+  });
+  const records = [
+    ...twoWayWinnerRecords(s, { home: 'Los Angeles Lakers', away: 'Boston Celtics' }),
+    { _type: 'MARKET', id: 700, bettingTypeId: '47', name: 'Total puncte 215.5', paramFloat1: 215.5 },
+    ...leg(700, 701, 'Total Score Over', 'Peste 215.5', 1.85),
+    ...leg(700, 702, 'Total Score Under', 'Sub 215.5', 1.95),
+  ];
+  const [ev] = s.extractEvents([{ match, records }]);
+  assert.ok(ev);
+  const totals = byKey(ev.markets, 'POINTS_OVER_UNDER');
+  assert.equal(totals.length, 1);
+  assert.equal(totals[0].subject, 'points');
+  assert.equal(totals[0].selections[0].handicap, 215.5);
+
+  const contract = resolveContract(totals[0], { sport: 'Basketball' });
+  assert.equal(contract.family, 'OVER_UNDER');
+  assert.equal(contract.subject, 'points');
+  assert.equal(contract.lineKey, '215.5');
+  assert.notEqual(contract.arbEligible, false);
+});
+
+test('extractTotals emits TOTAL_GAMES with games subject for Tennis', () => {
+  const s = new GetsBetScraper({ sport: 'Tennis' });
+  const match = makeMatch({
+    id: 900004,
+    homeParticipantName: 'Jannik Sinner',
+    awayParticipantName: 'Carlos Alcaraz',
+    parentName: 'Wimbledon',
+  });
+  const records = [
+    ...twoWayWinnerRecords(s),
+    { _type: 'MARKET', id: 710, bettingTypeId: '47', name: 'Total game-uri 22.5', paramFloat1: 22.5 },
+    ...leg(710, 711, 'Total Score Over', 'Peste 22.5', 1.80),
+    ...leg(710, 712, 'Total Score Under', 'Sub 22.5', 2.00),
+  ];
+  const [ev] = s.extractEvents([{ match, records }]);
+  assert.ok(ev);
+  const totals = byKey(ev.markets, 'TOTAL_GAMES');
+  assert.equal(totals.length, 1);
+  assert.equal(totals[0].subject, 'games');
+  assert.equal(totals[0].selections[0].handicap, 22.5);
+
+  const contract = resolveContract(totals[0], { sport: 'Tennis' });
+  assert.equal(contract.family, 'OVER_UNDER');
+  assert.equal(contract.subject, 'games');
+  assert.equal(contract.lineKey, '22.5');
+  assert.notEqual(contract.arbEligible, false);
+});
+
+test('extractEvents admits in-play matches and marks markets live when includeLive is true', () => {
+  const s = new GetsBetScraper();
+  s.includeLive = true;
+  const match = makeMatch({
+    id: 900005,
+    startTime: Date.now() - 30 * 60 * 1000,
+    isLive: true,
+  });
+  const records = oneXTwoRecords(s);
+  const [ev] = s.extractEvents([{ match, records }]);
+  assert.ok(ev, 'live event admitted when includeLive is true');
+  assert.equal(ev.live, true);
+  assert.equal(ev.markets[0].live, true, 'market must be marked live');
+});
+
+test('EveryMatrixWampScraper.periodFor recognizes sets and quarters', () => {
+  assert.equal(EveryMatrixWampScraper.periodFor('Câștigător Set 1'), 'set1');
+  assert.equal(EveryMatrixWampScraper.periodFor('Setul 2 Câștigător'), 'set2');
+  assert.equal(EveryMatrixWampScraper.periodFor('Primul set Câștigător'), 'set1');
+  assert.equal(EveryMatrixWampScraper.periodFor('Al doilea set'), 'set2');
+  assert.equal(EveryMatrixWampScraper.periodFor('Sfertul 1 Câștigător'), 'q1');
+  assert.equal(EveryMatrixWampScraper.periodFor('1st Quarter Winner'), 'q1');
+  assert.equal(EveryMatrixWampScraper.periodFor('Al doilea sfert'), 'q2');
+  assert.equal(EveryMatrixWampScraper.periodFor('Hartă 1 Câștigător'), 'set1');
+  assert.equal(EveryMatrixWampScraper.periodFor('Harta 2 Total Runde'), 'set2');
+  assert.equal(EveryMatrixWampScraper.periodFor('Total Goluri 1h'), 'half1');
+  assert.equal(EveryMatrixWampScraper.periodFor('Rezultat 2h'), 'half2');
+  assert.equal(EveryMatrixWampScraper.periodFor('Match Winner'), 'fulltime');
+});
+
+test('extractPeriodWinners extracts Set 1 Winner for Tennis and isolates in bucketKey', () => {
+  const s = new GetsBetScraper({ sport: 'Tennis' });
+  const match = makeMatch({
+    id: 900006,
+    homeParticipantName: 'Jannik Sinner',
+    awayParticipantName: 'Carlos Alcaraz',
+    parentName: 'Roland Garros',
+  });
+  const records = [
+    ...twoWayWinnerRecords(s),
+    { _type: 'MARKET', id: 800, bettingTypeId: '300', displayName: 'Câștigător Set 1' },
+    { _type: 'OUTCOME', id: 81, typeName: 'Home', paramParticipantName1: 'Jannik Sinner' },
+    { _type: 'OUTCOME', id: 82, typeName: 'Away', paramParticipantName1: 'Carlos Alcaraz' },
+    { _type: 'BETTING_OFFER', id: 801, bettingTypeId: '300', outcomeId: 81, odds: 1.65, isAvailable: true },
+    { _type: 'BETTING_OFFER', id: 802, bettingTypeId: '300', outcomeId: 82, odds: 2.25, isAvailable: true },
+  ];
+  const [ev] = s.extractEvents([{ match, records }]);
+  assert.ok(ev);
+  const set1Market = ev.markets.find((m) => m.period === 'set1');
+  assert.ok(set1Market, 'Set 1 market extracted');
+  assert.equal(set1Market.key, 'MATCH_ODDS');
+  assert.deepEqual(set1Market.selections.map((x) => x.name), ['1', '2']);
+
+  const contract = resolveContract(set1Market, { sport: 'Tennis', homeTeam: 'Jannik Sinner', awayTeam: 'Carlos Alcaraz' });
+  assert.ok(contract);
+  assert.equal(contract.family, 'MATCH_ODDS');
+  assert.equal(contract.period, 'set1');
+  assert.deepEqual(contract.outcomes, ['home', 'away']);
+
+  const ftMarket = ev.markets[0];
+  const ftContract = resolveContract(ftMarket, { sport: 'Tennis', homeTeam: 'Jannik Sinner', awayTeam: 'Carlos Alcaraz' });
+  assert.equal(ftContract.period, 'fulltime');
+});
+
+test('extractPeriodWinners extracts 3-way sub-window markets (Football 1st/2nd Half 1X2) with bucket key isolation', () => {
+  const s = new GetsBetScraper({ sport: 'Football' });
+  const match = makeMatch({
+    id: 900007,
+    homeParticipantName: 'Real Madrid',
+    awayParticipantName: 'Barcelona',
+    parentName: 'La Liga',
+  });
+  const records = [
+    ...oneXTwoRecords(s, { homeOdds: 2.15, drawOdds: 3.50, awayOdds: 3.20 }),
+    // Repriza 1 - 1X2 (3-way)
+    { _type: 'MARKET', id: 810, bettingTypeId: '69', displayName: 'Repriza 1 - 1X2' },
+    { _type: 'OUTCOME', id: 91, typeName: 'Home', paramParticipantName1: 'Real Madrid' },
+    { _type: 'OUTCOME', id: 92, typeName: 'Draw' },
+    { _type: 'OUTCOME', id: 93, typeName: 'Away', paramParticipantName1: 'Barcelona' },
+    { _type: 'BETTING_OFFER', id: 901, bettingTypeId: '69', outcomeId: 91, odds: 2.70, isAvailable: true },
+    { _type: 'BETTING_OFFER', id: 902, bettingTypeId: '69', outcomeId: 92, odds: 2.20, isAvailable: true },
+    { _type: 'BETTING_OFFER', id: 903, bettingTypeId: '69', outcomeId: 93, odds: 3.60, isAvailable: true },
+    // Repriza 2 - 1X2 (3-way)
+    { _type: 'MARKET', id: 820, bettingTypeId: '69', displayName: 'Repriza 2 - 1X2' },
+    { _type: 'OUTCOME', id: 94, typeName: 'Home', paramParticipantName1: 'Real Madrid' },
+    { _type: 'OUTCOME', id: 95, typeName: 'Draw' },
+    { _type: 'OUTCOME', id: 96, typeName: 'Away', paramParticipantName1: 'Barcelona' },
+    { _type: 'BETTING_OFFER', id: 904, bettingTypeId: '69', outcomeId: 94, odds: 2.50, isAvailable: true },
+    { _type: 'BETTING_OFFER', id: 905, bettingTypeId: '69', outcomeId: 95, odds: 2.40, isAvailable: true },
+    { _type: 'BETTING_OFFER', id: 906, bettingTypeId: '69', outcomeId: 96, odds: 3.40, isAvailable: true },
+  ];
+
+  const [ev] = s.extractEvents([{ match, records }]);
+  assert.ok(ev);
+
+  const ftMarket = ev.markets[0];
+  const half1Market = ev.markets.find((m) => m.period === 'half1');
+  const half2Market = ev.markets.find((m) => m.period === 'half2');
+
+  assert.ok(half1Market, 'First half 3-way market extracted');
+  assert.ok(half2Market, 'Second half 3-way market extracted');
+
+  assert.deepEqual(half1Market.selections.map((x) => x.name), ['1', 'X', '2']);
+  assert.deepEqual(half2Market.selections.map((x) => x.name), ['1', 'X', '2']);
+
+  const ftContract = resolveContract(ftMarket, { sport: 'Football', homeTeam: 'Real Madrid', awayTeam: 'Barcelona' });
+  const half1Contract = resolveContract(half1Market, { sport: 'Football', homeTeam: 'Real Madrid', awayTeam: 'Barcelona' });
+  const half2Contract = resolveContract(half2Market, { sport: 'Football', homeTeam: 'Real Madrid', awayTeam: 'Barcelona' });
+
+  assert.equal(ftContract.period, 'fulltime');
+  assert.equal(half1Contract.period, 'half1');
+  assert.equal(half2Contract.period, 'half2');
+
+  assert.deepEqual(ftContract.outcomes, ['home', 'draw', 'away']);
+  assert.deepEqual(half1Contract.outcomes, ['home', 'draw', 'away']);
+  assert.deepEqual(half2Contract.outcomes, ['home', 'draw', 'away']);
+
+  const ftBucket = bucketKeyForContract('evClasico', ftContract);
+  const half1Bucket = bucketKeyForContract('evClasico', half1Contract);
+  const half2Bucket = bucketKeyForContract('evClasico', half2Contract);
+
+  assert.equal(ftBucket, 'evClasico::MATCH_ODDS::fulltime::_::home+draw+away::_::_');
+  assert.equal(half1Bucket, 'evClasico::MATCH_ODDS::half1::_::home+draw+away::_::_');
+  assert.equal(half2Bucket, 'evClasico::MATCH_ODDS::half2::_::home+draw+away::_::_');
+
+  assert.notEqual(ftBucket, half1Bucket);
+  assert.notEqual(ftBucket, half2Bucket);
+  assert.notEqual(half1Bucket, half2Bucket);
+});
+
+test('extractPeriodWinners extracts multi-set tennis derivatives and basketball quarters with deduplication', () => {
+  const s = new GetsBetScraper({ sport: 'Tennis' });
+  const match = makeMatch({
+    id: 900008,
+    homeParticipantName: 'Novak Djokovic',
+    awayParticipantName: 'Daniil Medvedev',
+    parentName: 'US Open',
+  });
+  const records = [
+    ...twoWayWinnerRecords(s, { home: 'Novak Djokovic', away: 'Daniil Medvedev' }),
+    // Set 1
+    { _type: 'MARKET', id: 830, bettingTypeId: '300', displayName: 'Setul 1 Câștigător' },
+    { _type: 'OUTCOME', id: 101, typeName: 'Home', paramParticipantName1: 'Novak Djokovic' },
+    { _type: 'OUTCOME', id: 102, typeName: 'Away', paramParticipantName1: 'Daniil Medvedev' },
+    { _type: 'BETTING_OFFER', id: 1001, bettingTypeId: '300', outcomeId: 101, odds: 1.60, isAvailable: true },
+    { _type: 'BETTING_OFFER', id: 1002, bettingTypeId: '300', outcomeId: 102, odds: 2.30, isAvailable: true },
+    // Duplicate Set 1 market should be deduplicated
+    { _type: 'MARKET', id: 831, bettingTypeId: '300', displayName: 'Primul set Câștigător' },
+    { _type: 'OUTCOME', id: 103, typeName: 'Home', paramParticipantName1: 'Novak Djokovic' },
+    { _type: 'OUTCOME', id: 104, typeName: 'Away', paramParticipantName1: 'Daniil Medvedev' },
+    { _type: 'BETTING_OFFER', id: 1003, bettingTypeId: '300', outcomeId: 103, odds: 1.58, isAvailable: true },
+    { _type: 'BETTING_OFFER', id: 1004, bettingTypeId: '300', outcomeId: 104, odds: 2.35, isAvailable: true },
+    // Set 2
+    { _type: 'MARKET', id: 840, bettingTypeId: '300', displayName: 'Setul 2 Câștigător' },
+    { _type: 'OUTCOME', id: 105, typeName: 'Home', paramParticipantName1: 'Novak Djokovic' },
+    { _type: 'OUTCOME', id: 106, typeName: 'Away', paramParticipantName1: 'Daniil Medvedev' },
+    { _type: 'BETTING_OFFER', id: 1005, bettingTypeId: '300', outcomeId: 105, odds: 1.65, isAvailable: true },
+    { _type: 'BETTING_OFFER', id: 1006, bettingTypeId: '300', outcomeId: 106, odds: 2.25, isAvailable: true },
+  ];
+
+  const [ev] = s.extractEvents([{ match, records }]);
+  assert.ok(ev);
+
+  const set1Markets = ev.markets.filter((m) => m.period === 'set1');
+  assert.equal(set1Markets.length, 1, 'Duplicate set1 market was deduplicated');
+
+  const set2Markets = ev.markets.filter((m) => m.period === 'set2');
+  assert.equal(set2Markets.length, 1, 'Set 2 market was extracted');
+
+  const set1Contract = resolveContract(set1Markets[0], { sport: 'Tennis', homeTeam: 'Novak Djokovic', awayTeam: 'Daniil Medvedev' });
+  const set2Contract = resolveContract(set2Markets[0], { sport: 'Tennis', homeTeam: 'Novak Djokovic', awayTeam: 'Daniil Medvedev' });
+
+  assert.equal(set1Contract.period, 'set1');
+  assert.equal(set2Contract.period, 'set2');
+
+  const set1Bucket = bucketKeyForContract('evUSOpen', set1Contract);
+  const set2Bucket = bucketKeyForContract('evUSOpen', set2Contract);
+
+  assert.equal(set1Bucket, 'evUSOpen::MATCH_ODDS::set1::_::home+away::_::_');
+  assert.equal(set2Bucket, 'evUSOpen::MATCH_ODDS::set2::_::home+away::_::_');
+  assert.notEqual(set1Bucket, set2Bucket);
+});
+
+test('periodFor resolves period from eventPartName and shortEventPartName', () => {
+  assert.equal(EveryMatrixWampScraper.periodFor({ eventPartName: 'Repriza 1' }), 'half1');
+  assert.equal(EveryMatrixWampScraper.periodFor({ shortEventPartName: 'Repriza 2' }), 'half2');
+  assert.equal(EveryMatrixWampScraper.periodFor({ eventPartName: 'Sfertul 1' }), 'q1');
+  assert.equal(EveryMatrixWampScraper.periodFor({ shortEventPartName: 'Setul 1' }), 'set1');
+  assert.equal(EveryMatrixWampScraper.periodFor({ name: 'Total Peste/Sub 2.5', eventPartName: 'Repriza 1' }), 'half1');
+  assert.equal(EveryMatrixWampScraper.periodFor({ name: 'Total Peste/Sub 2.5' }), 'fulltime');
+});
+
+test('extractTotals deduplicates repeated period totals for the same line and isolates buckets', () => {
+  const s = makeScraper();
+  const match = makeMatch();
+  const records = [
+    ...oneXTwoRecords(s),
+    // Full time total 2.5
+    { _type: 'MARKET', id: 601, bettingTypeId: '47', paramFloat1: 2.5, name: 'Total goluri' },
+    { _type: 'MARKET_OUTCOME_RELATION', marketId: 601, outcomeId: 101 },
+    { _type: 'MARKET_OUTCOME_RELATION', marketId: 601, outcomeId: 102 },
+    { _type: 'OUTCOME', id: 101, shortTranslatedName: 'Peste 2.5' },
+    { _type: 'OUTCOME', id: 102, shortTranslatedName: 'Sub 2.5' },
+    { _type: 'BETTING_OFFER', id: 1001, bettingTypeId: '47', outcomeId: 101, odds: 1.95, isAvailable: true },
+    { _type: 'BETTING_OFFER', id: 1002, bettingTypeId: '47', outcomeId: 102, odds: 1.85, isAvailable: true },
+    // First half total 1.5 via eventPartName
+    { _type: 'MARKET', id: 602, bettingTypeId: '47', paramFloat1: 1.5, name: 'Total goluri', eventPartName: 'Repriza 1' },
+    { _type: 'MARKET_OUTCOME_RELATION', marketId: 602, outcomeId: 103 },
+    { _type: 'MARKET_OUTCOME_RELATION', marketId: 602, outcomeId: 104 },
+    { _type: 'OUTCOME', id: 103, shortTranslatedName: 'Peste 1.5' },
+    { _type: 'OUTCOME', id: 104, shortTranslatedName: 'Sub 1.5' },
+    { _type: 'BETTING_OFFER', id: 1003, bettingTypeId: '47', outcomeId: 103, odds: 2.10, isAvailable: true },
+    { _type: 'BETTING_OFFER', id: 1004, bettingTypeId: '47', outcomeId: 104, odds: 1.70, isAvailable: true },
+    // Duplicate first half total 1.5 (e.g. from promo or secondary widget block)
+    { _type: 'MARKET', id: 603, bettingTypeId: '47', paramFloat1: 1.5, name: 'Total Peste/Sub Repriza 1' },
+    { _type: 'MARKET_OUTCOME_RELATION', marketId: 603, outcomeId: 105 },
+    { _type: 'MARKET_OUTCOME_RELATION', marketId: 603, outcomeId: 106 },
+    { _type: 'OUTCOME', id: 105, shortTranslatedName: 'Peste 1.5' },
+    { _type: 'OUTCOME', id: 106, shortTranslatedName: 'Sub 1.5' },
+    { _type: 'BETTING_OFFER', id: 1005, bettingTypeId: '47', outcomeId: 105, odds: 2.05, isAvailable: true },
+    { _type: 'BETTING_OFFER', id: 1006, bettingTypeId: '47', outcomeId: 106, odds: 1.75, isAvailable: true },
+  ];
+
+  const [ev] = s.extractEvents([{ match, records }]);
+  assert.ok(ev);
+
+  const halfTotals = ev.markets.filter((m) => m.period === 'half1');
+  assert.equal(halfTotals.length, 1, 'Duplicate half1 total was cleanly deduplicated');
+
+  const ftTotals = ev.markets.filter((m) => m.period === 'fulltime');
+  assert.equal(ftTotals.length, 1, 'Full-time total was extracted');
+
+  const ftContract = resolveContract(ftTotals[0], { sport: 'Football' });
+  const halfContract = resolveContract(halfTotals[0], { sport: 'Football' });
+
+  assert.equal(ftContract.period, 'fulltime');
+  assert.equal(halfContract.period, 'half1');
+
+  const ftBucket = bucketKeyForContract('evMatch', ftContract);
+  const halfBucket = bucketKeyForContract('evMatch', halfContract);
+
+  assert.match(ftBucket, /::fulltime::2\.5::/);
+  assert.match(halfBucket, /::half1::1\.5::/);
+  assert.notEqual(ftBucket, halfBucket);
+});
+
+test('extractAsianHandicap and extractBothTeamsToScore deduplicate sub-window duplicates', () => {
+  const s = makeScraper();
+  const match = makeMatch();
+  const records = [
+    ...oneXTwoRecords(s),
+    // First half Asian Handicap -0.5
+    { _type: 'MARKET', id: 701, bettingTypeId: '48', name: 'Handicap Repriza 1' },
+    { _type: 'MARKET_OUTCOME_RELATION', marketId: 701, outcomeId: 201 },
+    { _type: 'MARKET_OUTCOME_RELATION', marketId: 701, outcomeId: 202 },
+    { _type: 'OUTCOME', id: 201, shortTranslatedName: 'Gazde (-0.5)' },
+    { _type: 'OUTCOME', id: 202, shortTranslatedName: 'Oaspeţi (+0.5)' },
+    { _type: 'BETTING_OFFER', id: 2001, bettingTypeId: '48', outcomeId: 201, odds: 2.00, isAvailable: true },
+    { _type: 'BETTING_OFFER', id: 2002, bettingTypeId: '48', outcomeId: 202, odds: 1.80, isAvailable: true },
+    // Duplicate First half Asian Handicap -0.5
+    { _type: 'MARKET', id: 702, bettingTypeId: '48', name: 'Handicap Repriza 1' },
+    { _type: 'MARKET_OUTCOME_RELATION', marketId: 702, outcomeId: 203 },
+    { _type: 'MARKET_OUTCOME_RELATION', marketId: 702, outcomeId: 204 },
+    { _type: 'OUTCOME', id: 203, shortTranslatedName: 'Gazde (-0.5)' },
+    { _type: 'OUTCOME', id: 204, shortTranslatedName: 'Oaspeţi (+0.5)' },
+    { _type: 'BETTING_OFFER', id: 2003, bettingTypeId: '48', outcomeId: 203, odds: 1.95, isAvailable: true },
+    { _type: 'BETTING_OFFER', id: 2004, bettingTypeId: '48', outcomeId: 204, odds: 1.85, isAvailable: true },
+    // First half BTTS
+    { _type: 'MARKET', id: 703, bettingTypeId: '76', name: 'Ambele marcheaza Repriza 1' },
+    { _type: 'MARKET_OUTCOME_RELATION', marketId: 703, outcomeId: 205 },
+    { _type: 'MARKET_OUTCOME_RELATION', marketId: 703, outcomeId: 206 },
+    { _type: 'OUTCOME', id: 205, shortTranslatedName: 'Da' },
+    { _type: 'OUTCOME', id: 206, shortTranslatedName: 'Nu' },
+    { _type: 'BETTING_OFFER', id: 2005, bettingTypeId: '76', outcomeId: 205, odds: 4.50, isAvailable: true },
+    { _type: 'BETTING_OFFER', id: 2006, bettingTypeId: '76', outcomeId: 206, odds: 1.18, isAvailable: true },
+    // Duplicate First half BTTS
+    { _type: 'MARKET', id: 704, bettingTypeId: '76', name: 'Ambele marcheaza Repriza 1' },
+    { _type: 'MARKET_OUTCOME_RELATION', marketId: 704, outcomeId: 207 },
+    { _type: 'MARKET_OUTCOME_RELATION', marketId: 704, outcomeId: 208 },
+    { _type: 'OUTCOME', id: 207, shortTranslatedName: 'Da' },
+    { _type: 'OUTCOME', id: 208, shortTranslatedName: 'Nu' },
+    { _type: 'BETTING_OFFER', id: 2007, bettingTypeId: '76', outcomeId: 207, odds: 4.40, isAvailable: true },
+    { _type: 'BETTING_OFFER', id: 2008, bettingTypeId: '76', outcomeId: 208, odds: 1.20, isAvailable: true },
+  ];
+
+  const [ev] = s.extractEvents([{ match, records }]);
+  assert.ok(ev);
+
+  const ahMarkets = ev.markets.filter((m) => m.key === 'ASIAN_HANDICAP');
+  assert.equal(ahMarkets.length, 1, 'Duplicate Asian Handicap was deduplicated');
+  assert.equal(ahMarkets[0].period, 'half1');
+
+  const bttsMarkets = ev.markets.filter((m) => m.key === 'BOTH_TEAMS_SCORE');
+  assert.equal(bttsMarkets.length, 1, 'Duplicate BTTS was deduplicated');
+  assert.equal(bttsMarkets[0].period, 'half1');
 });

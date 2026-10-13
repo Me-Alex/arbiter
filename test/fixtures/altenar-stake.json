@@ -1,0 +1,2327 @@
+{
+  "dates": [
+    {
+      "dateTime": "2026-09-21T20:00:00Z",
+      "eventIds": [
+        17706897,
+        17668825,
+        17706269,
+        17775622,
+        17995832,
+        17668900,
+        17696436,
+        17664681
+      ]
+    }
+  ],
+  "events": [
+    {
+      "marketIds": [
+        1735260622,
+        1735260661,
+        1735260572,
+        1735260592,
+        1735260375,
+        1735260414
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "offers": [
+        {
+          "type": 5
+        },
+        {
+          "type": 6
+        }
+      ],
+      "code": 5920,
+      "hasStream": false,
+      "extId": "fp32_ar:match:659187",
+      "sc": 21849,
+      "mc": 488,
+      "rc": false,
+      "pId": 32,
+      "et": 0,
+      "hasStats": true,
+      "competitorIds": [
+        43983,
+        43734
+      ],
+      "sportId": 66,
+      "catId": 506,
+      "champId": 2950,
+      "status": 0,
+      "startDate": "2026-09-21T20:00:00Z",
+      "id": 17706897,
+      "name": "Cologne vs. Monchengladbach"
+    },
+    {
+      "marketIds": [
+        1762770452,
+        1762770478,
+        1762770417,
+        1762770425,
+        1762770374,
+        1762770408
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "code": 1485,
+      "hasStream": false,
+      "extId": "fp32_ar:match:658651",
+      "sc": 7440,
+      "mc": 329,
+      "rc": false,
+      "pId": 32,
+      "et": 0,
+      "hasStats": true,
+      "competitorIds": [
+        47411,
+        43618
+      ],
+      "sportId": 66,
+      "catId": 501,
+      "champId": 3111,
+      "status": 0,
+      "startDate": "2026-09-21T20:00:00Z",
+      "id": 17668825,
+      "name": "Almeria vs. CD Leganes"
+    },
+    {
+      "marketIds": [
+        1736976204,
+        1736976234,
+        1736976163,
+        1736976174,
+        1736976116,
+        1736976154
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "offers": [
+        {
+          "type": 5
+        },
+        {
+          "type": 6
+        }
+      ],
+      "code": 4321,
+      "hasStream": false,
+      "extId": "fp32_ar:match:658625",
+      "sc": 23434,
+      "mc": 492,
+      "rc": false,
+      "pId": 32,
+      "et": 0,
+      "hasStats": true,
+      "competitorIds": [
+        43603,
+        44232
+      ],
+      "sportId": 66,
+      "catId": 501,
+      "champId": 2941,
+      "status": 0,
+      "startDate": "2026-09-21T20:00:00Z",
+      "id": 17706269,
+      "name": "Real Sociedad vs. Deportivo La Coruna"
+    },
+    {
+      "marketIds": [
+        1746598844,
+        1746598870,
+        1746598814,
+        1746598822,
+        1746598770,
+        1746598805
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "code": 4690,
+      "hasStream": false,
+      "extId": "fp32_ar:match:670602",
+      "sc": 2418,
+      "mc": 241,
+      "rc": false,
+      "pId": 32,
+      "et": 0,
+      "hasStats": true,
+      "competitorIds": [
+        48123,
+        46351
+      ],
+      "sportId": 66,
+      "catId": 506,
+      "champId": 3044,
+      "status": 0,
+      "startDate": "2026-09-21T20:00:00Z",
+      "id": 17775622,
+      "name": "Alemannia Aachen vs. FC Viktoria Cologne"
+    },
+    {
+      "marketIds": [
+        1772877736,
+        1772877743,
+        1772877723,
+        1772877725,
+        1772877669,
+        1772877721
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "code": 7970,
+      "hasStream": false,
+      "extId": "fp32_ar:match:688657",
+      "sc": 758,
+      "mc": 72,
+      "rc": false,
+      "pId": 32,
+      "et": 0,
+      "hasStats": false,
+      "competitorIds": [
+        48017,
+        1267451
+      ],
+      "sportId": 66,
+      "catId": 501,
+      "champId": 46552,
+      "status": 0,
+      "startDate": "2026-09-21T20:00:00Z",
+      "id": 17995832,
+      "name": "Becerril vs. CD Villamuriel"
+    },
+    {
+      "marketIds": [
+        1744021797,
+        1744021823,
+        1744021762,
+        1744021770,
+        1744021719,
+        1744021753
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "code": 93,
+      "hasStream": false,
+      "extId": "fp32_ar:match:667987",
+      "sc": 17293,
+      "mc": 374,
+      "rc": false,
+      "pId": 32,
+      "et": 0,
+      "hasStats": true,
+      "competitorIds": [
+        48087,
+        48088
+      ],
+      "sportId": 66,
+      "catId": 502,
+      "champId": 3079,
+      "status": 0,
+      "startDate": "2026-09-21T20:00:00Z",
+      "id": 17668900,
+      "name": "Padova vs. Carrarese"
+    },
+    {
+      "marketIds": [
+        1735484320,
+        1735484350,
+        1735484279,
+        1735484290,
+        1735484231,
+        1735484270
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "offers": [
+        {
+          "type": 5
+        },
+        {
+          "type": 6
+        }
+      ],
+      "code": 462,
+      "hasStream": false,
+      "extId": "fp32_ar:match:657673",
+      "sc": 21699,
+      "mc": 482,
+      "rc": false,
+      "pId": 32,
+      "et": 0,
+      "hasStats": true,
+      "competitorIds": [
+        43673,
+        46566
+      ],
+      "sportId": 66,
+      "catId": 503,
+      "champId": 2943,
+      "status": 0,
+      "startDate": "2026-09-21T20:00:00Z",
+      "id": 17696436,
+      "name": "Rennes vs. Auxerre"
+    },
+    {
+      "marketIds": [
+        1729302623,
+        1729302717,
+        1729302744,
+        1729302755,
+        1729302820,
+        1729302734
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "offers": [
+        {
+          "type": 5
+        },
+        {
+          "type": 6
+        }
+      ],
+      "code": 8639,
+      "hasStream": false,
+      "extId": "fp32_ar:match:656906",
+      "sc": 21069,
+      "mc": 489,
+      "rc": false,
+      "pId": 32,
+      "et": 0,
+      "hasStats": true,
+      "competitorIds": [
+        43703,
+        43691
+      ],
+      "sportId": 66,
+      "catId": 497,
+      "champId": 2936,
+      "status": 0,
+      "startDate": "2026-09-21T20:00:00Z",
+      "id": 17664681,
+      "name": "Liverpool vs. Manchester City"
+    }
+  ],
+  "markets": [
+    {
+      "oddIds": [
+        4509345790,
+        4509345791,
+        4509345792
+      ],
+      "typeId": 1,
+      "sportMarketId": 70472,
+      "id": 1735260622,
+      "name": "1x2"
+    },
+    {
+      "oddIds": [
+        4509345875,
+        4509345877,
+        4509345876
+      ],
+      "variant": 9,
+      "lines": [],
+      "typeId": 8,
+      "sportMarketId": 70491,
+      "sv": "1",
+      "sn": "Primul",
+      "id": 1735260661,
+      "name": "Golul primul"
+    },
+    {
+      "oddIds": [
+        4509345604,
+        4509345602,
+        4509345603
+      ],
+      "typeId": 10,
+      "sportMarketId": 70495,
+      "id": 1735260572,
+      "name": "Șansă dublă"
+    },
+    {
+      "oddIds": [
+        4509345659,
+        4509345660
+      ],
+      "typeId": 11,
+      "sportMarketId": 70500,
+      "id": 1735260592,
+      "name": "Egal pariu nul"
+    },
+    {
+      "oddIds": [
+        4509345456,
+        4509345457
+      ],
+      "typeId": 18,
+      "sportMarketId": 70520,
+      "sv": "3.5",
+      "sn": "3.5",
+      "id": 1735260375,
+      "name": "Total"
+    },
+    {
+      "oddIds": [
+        4509345534,
+        4509345535
+      ],
+      "typeId": 29,
+      "sportMarketId": 70545,
+      "id": 1735260414,
+      "name": "Ambele echipe să înscrie"
+    },
+    {
+      "oddIds": [
+        4596138021,
+        4596138022,
+        4596138023
+      ],
+      "typeId": 1,
+      "sportMarketId": 70472,
+      "id": 1762770452,
+      "name": "1x2"
+    },
+    {
+      "oddIds": [
+        4596138094,
+        4596138096,
+        4596138095
+      ],
+      "variant": 9,
+      "lines": [],
+      "typeId": 8,
+      "sportMarketId": 70491,
+      "sv": "1",
+      "sn": "Primul",
+      "id": 1762770478,
+      "name": "Golul primul"
+    },
+    {
+      "oddIds": [
+        4596137871,
+        4596137869,
+        4596137870
+      ],
+      "typeId": 10,
+      "sportMarketId": 70495,
+      "id": 1762770417,
+      "name": "Șansă dublă"
+    },
+    {
+      "oddIds": [
+        4596137908,
+        4596137909
+      ],
+      "typeId": 11,
+      "sportMarketId": 70500,
+      "id": 1762770425,
+      "name": "Egal pariu nul"
+    },
+    {
+      "oddIds": [
+        4596137733,
+        4596137734
+      ],
+      "typeId": 18,
+      "sportMarketId": 70520,
+      "sv": "2.5",
+      "sn": "2.5",
+      "id": 1762770374,
+      "name": "Total"
+    },
+    {
+      "oddIds": [
+        4596137801,
+        4596137802
+      ],
+      "typeId": 29,
+      "sportMarketId": 70545,
+      "id": 1762770408,
+      "name": "Ambele echipe să înscrie"
+    },
+    {
+      "oddIds": [
+        4515827359,
+        4515827360,
+        4515827361
+      ],
+      "typeId": 1,
+      "sportMarketId": 70472,
+      "id": 1736976204,
+      "name": "1x2"
+    },
+    {
+      "oddIds": [
+        4515827444,
+        4515827446,
+        4515827445
+      ],
+      "variant": 9,
+      "lines": [],
+      "typeId": 8,
+      "sportMarketId": 70491,
+      "sv": "1",
+      "sn": "Primul",
+      "id": 1736976234,
+      "name": "Golul primul"
+    },
+    {
+      "oddIds": [
+        4515827173,
+        4515827171,
+        4515827172
+      ],
+      "typeId": 10,
+      "sportMarketId": 70495,
+      "id": 1736976163,
+      "name": "Șansă dublă"
+    },
+    {
+      "oddIds": [
+        4515827228,
+        4515827229
+      ],
+      "typeId": 11,
+      "sportMarketId": 70500,
+      "id": 1736976174,
+      "name": "Egal pariu nul"
+    },
+    {
+      "oddIds": [
+        4515827027,
+        4515827028
+      ],
+      "typeId": 18,
+      "sportMarketId": 70520,
+      "sv": "2.5",
+      "sn": "2.5",
+      "id": 1736976116,
+      "name": "Total"
+    },
+    {
+      "oddIds": [
+        4515827103,
+        4515827104
+      ],
+      "typeId": 29,
+      "sportMarketId": 70545,
+      "id": 1736976154,
+      "name": "Ambele echipe să înscrie"
+    },
+    {
+      "oddIds": [
+        4546530893,
+        4546530894,
+        4546530895
+      ],
+      "typeId": 1,
+      "sportMarketId": 70472,
+      "id": 1746598844,
+      "name": "1x2"
+    },
+    {
+      "oddIds": [
+        4546530966,
+        4546530968,
+        4546530967
+      ],
+      "variant": 9,
+      "lines": [],
+      "typeId": 8,
+      "sportMarketId": 70491,
+      "sv": "1",
+      "sn": "Primul",
+      "id": 1746598870,
+      "name": "Golul primul"
+    },
+    {
+      "oddIds": [
+        4546530773,
+        4546530771,
+        4546530772
+      ],
+      "typeId": 10,
+      "sportMarketId": 70495,
+      "id": 1746598814,
+      "name": "Șansă dublă"
+    },
+    {
+      "oddIds": [
+        4546530810,
+        4546530811
+      ],
+      "typeId": 11,
+      "sportMarketId": 70500,
+      "id": 1746598822,
+      "name": "Egal pariu nul"
+    },
+    {
+      "oddIds": [
+        4546530633,
+        4546530634
+      ],
+      "typeId": 18,
+      "sportMarketId": 70520,
+      "sv": "3.5",
+      "sn": "3.5",
+      "id": 1746598770,
+      "name": "Total"
+    },
+    {
+      "oddIds": [
+        4546530703,
+        4546530704
+      ],
+      "typeId": 29,
+      "sportMarketId": 70545,
+      "id": 1746598805,
+      "name": "Ambele echipe să înscrie"
+    },
+    {
+      "oddIds": [
+        4627171042,
+        4627171043,
+        4627171044
+      ],
+      "typeId": 1,
+      "sportMarketId": 70472,
+      "id": 1772877736,
+      "name": "1x2"
+    },
+    {
+      "oddIds": [
+        4627171066,
+        4627171068,
+        4627171067
+      ],
+      "variant": 9,
+      "lines": [],
+      "typeId": 8,
+      "sportMarketId": 70491,
+      "sv": "1",
+      "sn": "Primul",
+      "id": 1772877743,
+      "name": "Golul primul"
+    },
+    {
+      "oddIds": [
+        4627170724,
+        4627170722,
+        4627170723
+      ],
+      "typeId": 10,
+      "sportMarketId": 70495,
+      "id": 1772877723,
+      "name": "Șansă dublă"
+    },
+    {
+      "oddIds": [
+        4627170728,
+        4627170729
+      ],
+      "typeId": 11,
+      "sportMarketId": 70500,
+      "id": 1772877725,
+      "name": "Egal pariu nul"
+    },
+    {
+      "oddIds": [
+        4627170590,
+        4627170591
+      ],
+      "typeId": 18,
+      "sportMarketId": 70520,
+      "sv": "2.5",
+      "sn": "2.5",
+      "id": 1772877669,
+      "name": "Total"
+    },
+    {
+      "oddIds": [
+        4627170694,
+        4627170695
+      ],
+      "typeId": 29,
+      "sportMarketId": 70545,
+      "id": 1772877721,
+      "name": "Ambele echipe să înscrie"
+    },
+    {
+      "oddIds": [
+        4538073026,
+        4538073027,
+        4538073028
+      ],
+      "typeId": 1,
+      "sportMarketId": 70472,
+      "id": 1744021797,
+      "name": "1x2"
+    },
+    {
+      "oddIds": [
+        4538073099,
+        4538073101,
+        4538073100
+      ],
+      "variant": 9,
+      "lines": [],
+      "typeId": 8,
+      "sportMarketId": 70491,
+      "sv": "1",
+      "sn": "Primul",
+      "id": 1744021823,
+      "name": "Golul primul"
+    },
+    {
+      "oddIds": [
+        4538072876,
+        4538072874,
+        4538072875
+      ],
+      "typeId": 10,
+      "sportMarketId": 70495,
+      "id": 1744021762,
+      "name": "Șansă dublă"
+    },
+    {
+      "oddIds": [
+        4538072913,
+        4538072914
+      ],
+      "typeId": 11,
+      "sportMarketId": 70500,
+      "id": 1744021770,
+      "name": "Egal pariu nul"
+    },
+    {
+      "oddIds": [
+        4538072738,
+        4538072739
+      ],
+      "typeId": 18,
+      "sportMarketId": 70520,
+      "sv": "2.5",
+      "sn": "2.5",
+      "id": 1744021719,
+      "name": "Total"
+    },
+    {
+      "oddIds": [
+        4538072806,
+        4538072807
+      ],
+      "typeId": 29,
+      "sportMarketId": 70545,
+      "id": 1744021753,
+      "name": "Ambele echipe să înscrie"
+    },
+    {
+      "oddIds": [
+        4509962949,
+        4509962950,
+        4509962951
+      ],
+      "typeId": 1,
+      "sportMarketId": 70472,
+      "id": 1735484320,
+      "name": "1x2"
+    },
+    {
+      "oddIds": [
+        4509963034,
+        4509963036,
+        4509963035
+      ],
+      "variant": 9,
+      "lines": [],
+      "typeId": 8,
+      "sportMarketId": 70491,
+      "sv": "1",
+      "sn": "Primul",
+      "id": 1735484350,
+      "name": "Golul primul"
+    },
+    {
+      "oddIds": [
+        4509962763,
+        4509962761,
+        4509962762
+      ],
+      "typeId": 10,
+      "sportMarketId": 70495,
+      "id": 1735484279,
+      "name": "Șansă dublă"
+    },
+    {
+      "oddIds": [
+        4509962818,
+        4509962819
+      ],
+      "typeId": 11,
+      "sportMarketId": 70500,
+      "id": 1735484290,
+      "name": "Egal pariu nul"
+    },
+    {
+      "oddIds": [
+        4509962615,
+        4509962616
+      ],
+      "typeId": 18,
+      "sportMarketId": 70520,
+      "sv": "3.5",
+      "sn": "3.5",
+      "id": 1735484231,
+      "name": "Total"
+    },
+    {
+      "oddIds": [
+        4509962693,
+        4509962694
+      ],
+      "typeId": 29,
+      "sportMarketId": 70545,
+      "id": 1735484270,
+      "name": "Ambele echipe să înscrie"
+    },
+    {
+      "oddIds": [
+        4491202753,
+        4491202755,
+        4491202757
+      ],
+      "typeId": 1,
+      "sportMarketId": 70472,
+      "id": 1729302623,
+      "name": "1x2"
+    },
+    {
+      "oddIds": [
+        4491202983,
+        4491202986,
+        4491202985
+      ],
+      "variant": 9,
+      "lines": [],
+      "typeId": 8,
+      "sportMarketId": 70491,
+      "sv": "1",
+      "sn": "Primul",
+      "id": 1729302717,
+      "name": "Golul primul"
+    },
+    {
+      "oddIds": [
+        4491203175,
+        4491203171,
+        4491203173
+      ],
+      "typeId": 10,
+      "sportMarketId": 70495,
+      "id": 1729302744,
+      "name": "Șansă dublă"
+    },
+    {
+      "oddIds": [
+        4491203394,
+        4491203396
+      ],
+      "typeId": 11,
+      "sportMarketId": 70500,
+      "id": 1729302755,
+      "name": "Egal pariu nul"
+    },
+    {
+      "oddIds": [
+        4491203980,
+        4491203983
+      ],
+      "typeId": 18,
+      "sportMarketId": 70520,
+      "sv": "2.5",
+      "sn": "2.5",
+      "id": 1729302820,
+      "name": "Total"
+    },
+    {
+      "oddIds": [
+        4491203043,
+        4491203045
+      ],
+      "typeId": 29,
+      "sportMarketId": 70545,
+      "id": 1729302734,
+      "name": "Ambele echipe să înscrie"
+    }
+  ],
+  "odds": [
+    {
+      "typeId": 1,
+      "price": 1.9,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 43983,
+      "isDBB": true,
+      "id": 4509345790,
+      "name": "Cologne"
+    },
+    {
+      "typeId": 2,
+      "price": 4,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4509345791,
+      "name": "Egal"
+    },
+    {
+      "typeId": 3,
+      "price": 3.6667,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 43734,
+      "isDBB": true,
+      "id": 4509345792,
+      "name": "Monchengladbach"
+    },
+    {
+      "typeId": 1,
+      "price": 1.625,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 43983,
+      "isDBB": true,
+      "id": 4509345875,
+      "name": "Cologne"
+    },
+    {
+      "typeId": 7,
+      "price": 20,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4509345877,
+      "name": "Niciunul"
+    },
+    {
+      "typeId": 3,
+      "price": 2.25,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 43734,
+      "isDBB": true,
+      "id": 4509345876,
+      "name": "Monchengladbach"
+    },
+    {
+      "typeId": 9,
+      "price": 1.2858,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 43983,
+      "isDBB": true,
+      "id": 4509345604,
+      "name": "Cologne sau egal"
+    },
+    {
+      "typeId": 10,
+      "price": 1.2308,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4509345602,
+      "name": "Cologne sau Monchengladbach"
+    },
+    {
+      "typeId": 11,
+      "price": 1.8182,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 43734,
+      "isDBB": true,
+      "id": 4509345603,
+      "name": "Egal sau Monchengladbach"
+    },
+    {
+      "typeId": 1,
+      "price": 1.4546,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 43983,
+      "id": 4509345659,
+      "name": "Cologne"
+    },
+    {
+      "typeId": 3,
+      "price": 2.7143,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 43734,
+      "id": 4509345660,
+      "name": "Monchengladbach"
+    },
+    {
+      "typeId": 12,
+      "price": 2.2858,
+      "isMB": true,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4509345456,
+      "name": "Peste 3.5"
+    },
+    {
+      "typeId": 13,
+      "price": 1.6364,
+      "isMB": true,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4509345457,
+      "name": "Sub 3.5"
+    },
+    {
+      "typeId": 74,
+      "price": 1.5,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4509345534,
+      "name": "Da"
+    },
+    {
+      "typeId": 76,
+      "price": 2.5,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4509345535,
+      "name": "Nu"
+    },
+    {
+      "typeId": 1,
+      "price": 1.6,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 47411,
+      "isDBB": true,
+      "id": 4596138021,
+      "name": "Almeria"
+    },
+    {
+      "typeId": 2,
+      "price": 4.2,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4596138022,
+      "name": "Egal"
+    },
+    {
+      "typeId": 3,
+      "price": 5,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 43618,
+      "isDBB": true,
+      "id": 4596138023,
+      "name": "CD Leganes"
+    },
+    {
+      "typeId": 1,
+      "price": 1.4546,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 47411,
+      "isDBB": true,
+      "id": 4596138094,
+      "name": "Almeria"
+    },
+    {
+      "typeId": 7,
+      "price": 13,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4596138096,
+      "name": "Niciunul"
+    },
+    {
+      "typeId": 3,
+      "price": 2.75,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 43618,
+      "isDBB": true,
+      "id": 4596138095,
+      "name": "CD Leganes"
+    },
+    {
+      "typeId": 9,
+      "price": 1.1539,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 47411,
+      "isDBB": true,
+      "id": 4596137871,
+      "name": "Almeria sau egal"
+    },
+    {
+      "typeId": 10,
+      "price": 1.2,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4596137869,
+      "name": "Almeria sau CD Leganes"
+    },
+    {
+      "typeId": 11,
+      "price": 2.0834,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 43618,
+      "isDBB": true,
+      "id": 4596137870,
+      "name": "Egal sau CD Leganes"
+    },
+    {
+      "typeId": 1,
+      "price": 1.2353,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 47411,
+      "id": 4596137908,
+      "name": "Almeria"
+    },
+    {
+      "typeId": 3,
+      "price": 3.75,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 43618,
+      "id": 4596137909,
+      "name": "CD Leganes"
+    },
+    {
+      "typeId": 12,
+      "price": 1.7858,
+      "isMB": true,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4596137733,
+      "name": "Peste 2.5"
+    },
+    {
+      "typeId": 13,
+      "price": 1.96,
+      "isMB": true,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4596137734,
+      "name": "Sub 2.5"
+    },
+    {
+      "typeId": 74,
+      "price": 1.8,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4596137801,
+      "name": "Da"
+    },
+    {
+      "typeId": 76,
+      "price": 1.8696,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4596137802,
+      "name": "Nu"
+    },
+    {
+      "typeId": 1,
+      "price": 1.6924,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 43603,
+      "isDBB": true,
+      "id": 4515827359,
+      "name": "Real Sociedad"
+    },
+    {
+      "typeId": 2,
+      "price": 4,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4515827360,
+      "name": "Egal"
+    },
+    {
+      "typeId": 3,
+      "price": 4.75,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 44232,
+      "isDBB": true,
+      "id": 4515827361,
+      "name": "Deportivo La Coruna"
+    },
+    {
+      "typeId": 1,
+      "price": 1.52,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 43603,
+      "isDBB": true,
+      "id": 4515827444,
+      "name": "Real Sociedad"
+    },
+    {
+      "typeId": 7,
+      "price": 13,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4515827446,
+      "name": "Niciunul"
+    },
+    {
+      "typeId": 3,
+      "price": 2.6667,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 44232,
+      "isDBB": true,
+      "id": 4515827445,
+      "name": "Deportivo La Coruna"
+    },
+    {
+      "typeId": 9,
+      "price": 1.1765,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 43603,
+      "isDBB": true,
+      "id": 4515827173,
+      "name": "Real Sociedad sau egal"
+    },
+    {
+      "typeId": 10,
+      "price": 1.25,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4515827171,
+      "name": "Real Sociedad sau Deportivo La Coruna"
+    },
+    {
+      "typeId": 11,
+      "price": 2.05,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 44232,
+      "isDBB": true,
+      "id": 4515827172,
+      "name": "Egal sau Deportivo La Coruna"
+    },
+    {
+      "typeId": 1,
+      "price": 1.2858,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 43603,
+      "id": 4515827228,
+      "name": "Real Sociedad"
+    },
+    {
+      "typeId": 3,
+      "price": 3.6,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 44232,
+      "id": 4515827229,
+      "name": "Deportivo La Coruna"
+    },
+    {
+      "typeId": 12,
+      "price": 1.7143,
+      "isMB": true,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4515827027,
+      "name": "Peste 2.5"
+    },
+    {
+      "typeId": 13,
+      "price": 2.1429,
+      "isMB": true,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4515827028,
+      "name": "Sub 2.5"
+    },
+    {
+      "typeId": 74,
+      "price": 1.7143,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4515827103,
+      "name": "Da"
+    },
+    {
+      "typeId": 76,
+      "price": 2.1,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4515827104,
+      "name": "Nu"
+    },
+    {
+      "typeId": 1,
+      "price": 2.2223,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 48123,
+      "isDBB": true,
+      "id": 4546530893,
+      "name": "Alemannia Aachen"
+    },
+    {
+      "typeId": 2,
+      "price": 3.6667,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4546530894,
+      "name": "Egal"
+    },
+    {
+      "typeId": 3,
+      "price": 2.8,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 46351,
+      "isDBB": true,
+      "id": 4546530895,
+      "name": "FC Viktoria Cologne"
+    },
+    {
+      "typeId": 1,
+      "price": 1.7334,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 48123,
+      "isDBB": true,
+      "id": 4546530966,
+      "name": "Alemannia Aachen"
+    },
+    {
+      "typeId": 7,
+      "price": 19,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4546530968,
+      "name": "Niciunul"
+    },
+    {
+      "typeId": 3,
+      "price": 1.96,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 46351,
+      "isDBB": true,
+      "id": 4546530967,
+      "name": "FC Viktoria Cologne"
+    },
+    {
+      "typeId": 9,
+      "price": 1.3637,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 48123,
+      "isDBB": true,
+      "id": 4546530773,
+      "name": "Alemannia Aachen sau egal"
+    },
+    {
+      "typeId": 10,
+      "price": 1.25,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4546530771,
+      "name": "Alemannia Aachen sau FC Viktoria Cologne"
+    },
+    {
+      "typeId": 11,
+      "price": 1.5455,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 46351,
+      "isDBB": true,
+      "id": 4546530772,
+      "name": "Egal sau FC Viktoria Cologne"
+    },
+    {
+      "typeId": 1,
+      "price": 1.6667,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 48123,
+      "id": 4546530810,
+      "name": "Alemannia Aachen"
+    },
+    {
+      "typeId": 3,
+      "price": 2.1,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 46351,
+      "id": 4546530811,
+      "name": "FC Viktoria Cologne"
+    },
+    {
+      "typeId": 12,
+      "price": 2.2,
+      "isMB": true,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4546530633,
+      "name": "Peste 3.5"
+    },
+    {
+      "typeId": 13,
+      "price": 1.6,
+      "isMB": true,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4546530634,
+      "name": "Sub 3.5"
+    },
+    {
+      "typeId": 74,
+      "price": 1.4546,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4546530703,
+      "name": "Da"
+    },
+    {
+      "typeId": 76,
+      "price": 2.5455,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4546530704,
+      "name": "Nu"
+    },
+    {
+      "typeId": 1,
+      "price": 1.6,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 48017,
+      "isDBB": true,
+      "id": 4627171042,
+      "name": "Becerril"
+    },
+    {
+      "typeId": 2,
+      "price": 3.8,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4627171043,
+      "name": "Egal"
+    },
+    {
+      "typeId": 3,
+      "price": 4.5,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 1267451,
+      "isDBB": true,
+      "id": 4627171044,
+      "name": "CD Villamuriel"
+    },
+    {
+      "typeId": 1,
+      "price": 1.4616,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 48017,
+      "isDBB": true,
+      "id": 4627171066,
+      "name": "Becerril"
+    },
+    {
+      "typeId": 7,
+      "price": 15,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4627171068,
+      "name": "Niciunul"
+    },
+    {
+      "typeId": 3,
+      "price": 2.5715,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 1267451,
+      "isDBB": true,
+      "id": 4627171067,
+      "name": "CD Villamuriel"
+    },
+    {
+      "typeId": 9,
+      "price": 1.1539,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 48017,
+      "isDBB": true,
+      "id": 4627170724,
+      "name": "Becerril sau egal"
+    },
+    {
+      "typeId": 10,
+      "price": 1.2,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4627170722,
+      "name": "Becerril sau CD Villamuriel"
+    },
+    {
+      "typeId": 11,
+      "price": 2,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 1267451,
+      "isDBB": true,
+      "id": 4627170723,
+      "name": "Egal sau CD Villamuriel"
+    },
+    {
+      "typeId": 1,
+      "price": 1.25,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 48017,
+      "id": 4627170728,
+      "name": "Becerril"
+    },
+    {
+      "typeId": 3,
+      "price": 3.6,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 1267451,
+      "id": 4627170729,
+      "name": "CD Villamuriel"
+    },
+    {
+      "typeId": 12,
+      "price": 1.6667,
+      "isMB": true,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4627170590,
+      "name": "Peste 2.5"
+    },
+    {
+      "typeId": 13,
+      "price": 2.1,
+      "isMB": true,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4627170591,
+      "name": "Sub 2.5"
+    },
+    {
+      "typeId": 74,
+      "price": 1.7,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4627170694,
+      "name": "Da"
+    },
+    {
+      "typeId": 76,
+      "price": 2.05,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4627170695,
+      "name": "Nu"
+    },
+    {
+      "typeId": 1,
+      "price": 1.8667,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 48087,
+      "isDBB": true,
+      "id": 4538073026,
+      "name": "Padova"
+    },
+    {
+      "typeId": 2,
+      "price": 3.25,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4538073027,
+      "name": "Egal"
+    },
+    {
+      "typeId": 3,
+      "price": 4.5,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 48088,
+      "isDBB": true,
+      "id": 4538073028,
+      "name": "Carrarese"
+    },
+    {
+      "typeId": 1,
+      "price": 1.5715,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 48087,
+      "isDBB": true,
+      "id": 4538073099,
+      "name": "Padova"
+    },
+    {
+      "typeId": 7,
+      "price": 10,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4538073101,
+      "name": "Niciunul"
+    },
+    {
+      "typeId": 3,
+      "price": 2.5455,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 48088,
+      "isDBB": true,
+      "id": 4538073100,
+      "name": "Carrarese"
+    },
+    {
+      "typeId": 9,
+      "price": 1.2,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 48087,
+      "isDBB": true,
+      "id": 4538072876,
+      "name": "Padova sau egal"
+    },
+    {
+      "typeId": 10,
+      "price": 1.2858,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4538072874,
+      "name": "Padova sau Carrarese"
+    },
+    {
+      "typeId": 11,
+      "price": 1.76,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 48088,
+      "isDBB": true,
+      "id": 4538072875,
+      "name": "Egal sau Carrarese"
+    },
+    {
+      "typeId": 1,
+      "price": 1.3334,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 48087,
+      "id": 4538072913,
+      "name": "Padova"
+    },
+    {
+      "typeId": 3,
+      "price": 3.1,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 48088,
+      "id": 4538072914,
+      "name": "Carrarese"
+    },
+    {
+      "typeId": 12,
+      "price": 1.8182,
+      "isMB": true,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4538072738,
+      "name": "Peste 2.5"
+    },
+    {
+      "typeId": 13,
+      "price": 1.9231,
+      "isMB": true,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4538072739,
+      "name": "Sub 2.5"
+    },
+    {
+      "typeId": 74,
+      "price": 1.7143,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4538072806,
+      "name": "Da"
+    },
+    {
+      "typeId": 76,
+      "price": 2,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4538072807,
+      "name": "Nu"
+    },
+    {
+      "typeId": 1,
+      "price": 1.4286,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 43673,
+      "isDBB": true,
+      "id": 4509962949,
+      "name": "Rennes"
+    },
+    {
+      "typeId": 2,
+      "price": 5,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4509962950,
+      "name": "Egal"
+    },
+    {
+      "typeId": 3,
+      "price": 6.6667,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 46566,
+      "isDBB": true,
+      "id": 4509962951,
+      "name": "Auxerre"
+    },
+    {
+      "typeId": 1,
+      "price": 1.35,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 43673,
+      "isDBB": true,
+      "id": 4509963034,
+      "name": "Rennes"
+    },
+    {
+      "typeId": 7,
+      "price": 21,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4509963036,
+      "name": "Niciunul"
+    },
+    {
+      "typeId": 3,
+      "price": 3.1,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 46566,
+      "isDBB": true,
+      "id": 4509963035,
+      "name": "Auxerre"
+    },
+    {
+      "typeId": 9,
+      "price": 1.1112,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 43673,
+      "isDBB": true,
+      "id": 4509962763,
+      "name": "Rennes sau egal"
+    },
+    {
+      "typeId": 10,
+      "price": 1.1765,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4509962761,
+      "name": "Rennes sau Auxerre"
+    },
+    {
+      "typeId": 11,
+      "price": 2.5715,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 46566,
+      "isDBB": true,
+      "id": 4509962762,
+      "name": "Egal sau Auxerre"
+    },
+    {
+      "typeId": 1,
+      "price": 1.1539,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 43673,
+      "id": 4509962818,
+      "name": "Rennes"
+    },
+    {
+      "typeId": 3,
+      "price": 5.3334,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 46566,
+      "id": 4509962819,
+      "name": "Auxerre"
+    },
+    {
+      "typeId": 12,
+      "price": 2.1429,
+      "isMB": true,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4509962615,
+      "name": "Peste 3.5"
+    },
+    {
+      "typeId": 13,
+      "price": 1.7143,
+      "isMB": true,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4509962616,
+      "name": "Sub 3.5"
+    },
+    {
+      "typeId": 74,
+      "price": 1.6471,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4509962693,
+      "name": "Da"
+    },
+    {
+      "typeId": 76,
+      "price": 2.2,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4509962694,
+      "name": "Nu"
+    },
+    {
+      "typeId": 1,
+      "price": 3.25,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 43703,
+      "isDBB": true,
+      "id": 4491202753,
+      "name": "Liverpool"
+    },
+    {
+      "typeId": 2,
+      "price": 3.75,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4491202755,
+      "name": "Egal"
+    },
+    {
+      "typeId": 3,
+      "price": 2.1,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 43691,
+      "isDBB": true,
+      "id": 4491202757,
+      "name": "Manchester City"
+    },
+    {
+      "typeId": 1,
+      "price": 2.1429,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 43703,
+      "isDBB": true,
+      "id": 4491202983,
+      "name": "Liverpool"
+    },
+    {
+      "typeId": 7,
+      "price": 18,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4491202986,
+      "name": "Niciunul"
+    },
+    {
+      "typeId": 3,
+      "price": 1.7,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 43691,
+      "isDBB": true,
+      "id": 4491202985,
+      "name": "Manchester City"
+    },
+    {
+      "typeId": 9,
+      "price": 1.68,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 43703,
+      "isDBB": true,
+      "id": 4491203175,
+      "name": "Liverpool sau egal"
+    },
+    {
+      "typeId": 10,
+      "price": 1.2728,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4491203171,
+      "name": "Liverpool sau Manchester City"
+    },
+    {
+      "typeId": 11,
+      "price": 1.32,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 43691,
+      "isDBB": true,
+      "id": 4491203173,
+      "name": "Egal sau Manchester City"
+    },
+    {
+      "typeId": 1,
+      "price": 2.4286,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 43703,
+      "id": 4491203394,
+      "name": "Liverpool"
+    },
+    {
+      "typeId": 3,
+      "price": 1.5556,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 43691,
+      "id": 4491203396,
+      "name": "Manchester City"
+    },
+    {
+      "typeId": 12,
+      "price": 1.6,
+      "isMB": true,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4491203980,
+      "name": "Peste 2.5"
+    },
+    {
+      "typeId": 13,
+      "price": 2.3637,
+      "isMB": true,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4491203983,
+      "name": "Sub 2.5"
+    },
+    {
+      "typeId": 74,
+      "price": 1.5264,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4491203043,
+      "name": "Da"
+    },
+    {
+      "typeId": 76,
+      "price": 2.4,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4491203045,
+      "name": "Nu"
+    }
+  ],
+  "competitors": [
+    {
+      "abbreviation": "KOE",
+      "id": 43983,
+      "name": "Cologne"
+    },
+    {
+      "abbreviation": "BMG",
+      "id": 43734,
+      "name": "Monchengladbach"
+    },
+    {
+      "abbreviation": "ALM",
+      "id": 47411,
+      "name": "Almeria"
+    },
+    {
+      "abbreviation": "LEG",
+      "id": 43618,
+      "name": "CD Leganes"
+    },
+    {
+      "abbreviation": "RSO",
+      "id": 43603,
+      "name": "Real Sociedad"
+    },
+    {
+      "abbreviation": "DEP",
+      "id": 44232,
+      "name": "Deportivo La Coruna"
+    },
+    {
+      "abbreviation": "AAC",
+      "id": 48123,
+      "name": "Alemannia Aachen"
+    },
+    {
+      "abbreviation": "VIK",
+      "id": 46351,
+      "name": "FC Viktoria Cologne"
+    },
+    {
+      "abbreviation": "BEC",
+      "id": 48017,
+      "name": "Becerril"
+    },
+    {
+      "abbreviation": "VIL",
+      "id": 1267451,
+      "name": "CD Villamuriel"
+    },
+    {
+      "abbreviation": "PAD",
+      "id": 48087,
+      "name": "Padova"
+    },
+    {
+      "abbreviation": "CAR",
+      "id": 48088,
+      "name": "Carrarese"
+    },
+    {
+      "abbreviation": "REN",
+      "id": 43673,
+      "name": "Rennes"
+    },
+    {
+      "abbreviation": "AUX",
+      "id": 46566,
+      "name": "Auxerre"
+    },
+    {
+      "abbreviation": "LIV",
+      "id": 43703,
+      "name": "Liverpool"
+    },
+    {
+      "abbreviation": "MNC",
+      "id": 43691,
+      "name": "Manchester City"
+    }
+  ],
+  "categories": [
+    {
+      "champIds": [
+        2950,
+        3044
+      ],
+      "iso": "DEU",
+      "hasLiveEvents": false,
+      "id": 506,
+      "name": "Germany"
+    },
+    {
+      "champIds": [
+        43258,
+        43282,
+        2936,
+        32735,
+        2957,
+        3142,
+        2960,
+        2958,
+        2956,
+        2959,
+        2937
+      ],
+      "iso": "ENG",
+      "hasLiveEvents": false,
+      "id": 497,
+      "name": "England"
+    },
+    {
+      "champIds": [
+        3111,
+        2941,
+        46552
+      ],
+      "iso": "ESP",
+      "hasLiveEvents": false,
+      "id": 501,
+      "name": "Spain"
+    },
+    {
+      "champIds": [
+        3079,
+        41433,
+        2942
+      ],
+      "iso": "ITA",
+      "hasLiveEvents": false,
+      "id": 502,
+      "name": "Italy"
+    },
+    {
+      "champIds": [
+        2943,
+        3143
+      ],
+      "iso": "FRA",
+      "hasLiveEvents": false,
+      "id": 503,
+      "name": "France"
+    }
+  ],
+  "champs": [
+    {
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "hasLiveEvents": false,
+      "id": 2950,
+      "name": "Bundesliga"
+    },
+    {
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "hasLiveEvents": false,
+      "id": 3111,
+      "name": "LaLiga 2"
+    },
+    {
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "hasLiveEvents": false,
+      "id": 2941,
+      "name": "LaLiga"
+    },
+    {
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "hasLiveEvents": false,
+      "id": 3044,
+      "name": "3rd Liga"
+    },
+    {
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "hasLiveEvents": false,
+      "id": 46552,
+      "name": "Regionale Leagues"
+    },
+    {
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "hasLiveEvents": false,
+      "id": 3079,
+      "name": "Serie B"
+    },
+    {
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "hasLiveEvents": false,
+      "id": 2943,
+      "name": "Ligue 1"
+    },
+    {
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "hasLiveEvents": false,
+      "id": 2936,
+      "name": "Premier League"
+    }
+  ],
+  "headers": [
+    {
+      "typeId": 1,
+      "name": "1x2",
+      "mst": 0,
+      "odds": [
+        {
+          "id": 1,
+          "name": "1"
+        },
+        {
+          "id": 2,
+          "name": "X"
+        },
+        {
+          "id": 3,
+          "name": "2"
+        }
+      ]
+    },
+    {
+      "typeId": 18,
+      "name": "Total",
+      "mst": 0,
+      "odds": [
+        {
+          "id": 12,
+          "name": "peste"
+        },
+        {
+          "id": 13,
+          "name": "sub"
+        }
+      ],
+      "specialOdd": {
+        "typeId": 1,
+        "name": "Goluri"
+      }
+    },
+    {
+      "typeId": 29,
+      "name": "Ambele echipe să înscrie",
+      "mst": 0,
+      "odds": [
+        {
+          "id": 74,
+          "name": "da"
+        },
+        {
+          "id": 76,
+          "name": "nu"
+        }
+      ]
+    },
+    {
+      "typeId": 10,
+      "name": "Șansă dublă",
+      "mst": 0,
+      "odds": [
+        {
+          "id": 9,
+          "name": "1X\t"
+        },
+        {
+          "id": 10,
+          "name": "12"
+        },
+        {
+          "id": 11,
+          "name": "X2"
+        }
+      ]
+    },
+    {
+      "typeId": 11,
+      "name": "Egal pariu nul",
+      "mst": 0,
+      "odds": [
+        {
+          "id": 1,
+          "name": "1"
+        },
+        {
+          "id": 3,
+          "name": "2"
+        }
+      ]
+    }
+  ]
+}

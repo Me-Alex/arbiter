@@ -44,11 +44,12 @@ const read = (rel) => readFileSync(join(ROOT_DIR, rel), 'utf8');
  * is not meant to have one" is invisible, and the list becomes a place to hide
  * a third route nobody thought about.
  */
+// Empty on purpose, and the pinned consumer that emptied it is in
+// `the snapshot route is what the source-health rows link to` below. A route
+// with a real UI does not belong here, and an entry that says otherwise is
+// worse than no entry: the closure check skips whatever is listed, so a stale
+// excuse is a hole that reads as coverage.
 const BACKEND_ONLY = [
-  {
-    route: 'GET /api/snapshot/',
-    reason: 'Diagnostic: one book\'s workspace capture verbatim, no matching involved. README "Diagnostic routes". Measured on the writers rather than on a stored sample — the route hands the parsed file straight to sendJson, so the payload is whatever `_serializable` returns: BaseScraper emits 9 keys and 13 adapters override it adding `coverage` (9 of them), `sourceUrl` (7), `transport` (6) and `scrapeLimits` (favbet alone), 13 in all. See test/snapshot-route.test.mjs, which measures that union and pins it. The size argument is measured there too, and it is stated as a property rather than as a figure: across the captures, `events` is the overwhelming majority of every response the route sends and orders of magnitude larger than the metadata beside it, so a page reading this route for provenance alone would pull far more than it displays. What a page cannot do is read the captures as files — the writer stores them pretty-printed while the route serves them compact, so a byte count taken off a file describes bytes no request receives. That distinction is why this paragraph quotes no totals: the numbers that stood here were file sizes, and they were wrong in the direction that flatters nothing, since the real argument needs no figure at all. The property survives the sample\'s age — `events` is passed into the document whole, and nothing else in the writer approaches it.',
-  },
   // `GET /api/odds/` used to sit here: "the same file projected to prices …
   // when /api/event-detail's heuristic matcher is itself under suspicion, a
   // view built on that matcher cannot be the evidence." That was true when the
@@ -57,6 +58,23 @@ const BACKEND_ONLY = [
   // the file reported full closure while its own record of why a route had no
   // UI was wrong. It is removed so the closure check verifies the consumer
   // instead of taking the word of a comment.
+  //
+  // `GET /api/snapshot/` sat here after it, with a longer reason for the same
+  // claim: "Diagnostic … no matching involved … a page reading this route for
+  // provenance alone would pull far more than it displays." It was written from
+  // the payload, never from the pages, and the dashboard has shipped a link to
+  // this route since before it: one download icon per source in the
+  // source-health rows, `href="/api/snapshot/${…sourceId…}"` with `download`,
+  // an aria-label and a title. The reason quoted the size of an answer nobody
+  // asked for while the route was already being asked for, per click, from a
+  // page the census could not read — the href was interpolated and the channel
+  // above stopped at the first quote inside the interpolation.
+  //
+  // So this is the third time the same hole has been dug in this file, in the
+  // same place, for the same reason: a reason about the frontend written
+  // without looking at the frontend. The size argument is not restored here,
+  // because the route now has a consumer and its payload is pinned against a
+  // page that reads it — the union lives in test/snapshot-route.test.mjs.
 ];
 
 function walk(dir, out = []) {
@@ -126,6 +144,26 @@ const CHANNELS = [
   { name: 'fetch', re: /\b(?:window\.)?fetch\(\s*(['"`])([^'"`]+)\1/g, verb: () => 'GET' },
   { name: 'EventSource', re: /new EventSource\(\s*(['"`])([^'"`]+)\1/g, verb: () => 'GET' },
   { name: 'href', re: /\bhref\s*=\s*(['"`])([^'"`]+)\1/g, verb: () => 'GET' },
+  // An href whose value is an interpolation. `normalize` already drops
+  // everything from `${` on, but the channel above cannot match the value in
+  // the first place: its character class stops at the first quote, and an
+  // interpolation like `${source.sourceId || ''}` carries one.
+  //
+  // Measured before this channel existed, over public/ and electron/: eight
+  // hrefs are interpolated and exactly one of them has a static path prefix —
+  // `href="/api/snapshot/${encodeURIComponent(source.sourceId || '')}"` at
+  // public/js/pages/dashboard.js:306. The plain channel reported four hrefs in
+  // that file and none of them was this one, so `GET /api/snapshot/` had one
+  // live UI consumer and the file could not see it. That is how the excuse
+  // below held: not because nothing called the route, but because the one
+  // call was written in the one shape the instrument could not read.
+  //
+  // The prefix is required to be non-empty, and that is the whole of the
+  // safety here. The other seven are `href="${eventLink}"` — fully composed,
+  // with nothing to compare a route against — and a channel that guessed a
+  // path out of them would turn this audit into a machine for not noticing a
+  // capability nobody wired.
+  { name: 'href-interpolated', re: /\bhref\s*=\s*(['"`])(\/[^'"`]*)\$\{/g, verb: () => 'GET', via: 'interpolated href' },
   { name: 'location', re: /\blocation\.href\s*=\s*(['"`])([^'"`]+)\1/g, verb: () => 'GET' },
 ];
 
@@ -242,8 +280,12 @@ function literalBehind(text, expr, depth = 0) {
 function extractConsumers(src, relPath, isJs) {
   const found = [];
   const text = codeOnly(src, isJs);
-  const lines = src.split(/\r?\n/);
-  const at = (m) => lines[0, src.slice(0, m.index).split(/\r?\n/).length - 1];
+  // The 1-based line number the match starts on. `lines[0, n]` is a comma
+  // expression that evaluates to `lines[n]` — the line's text, not its number
+  // — so every message that names a call site used to print the whole source
+  // line there instead of `:306`, and the stale-excuse diff below was unreadable
+  // against a 200-character anchor tag.
+  const at = (m) => src.slice(0, m.index).split(/\r?\n/).length;
   for (const channel of CHANNELS) {
     for (const m of text.matchAll(channel.re)) {
       found.push({
@@ -252,7 +294,11 @@ function extractConsumers(src, relPath, isJs) {
         file: relPath,
         line: at(m),
         channel: channel.name,
-        via: 'literal',
+        // A channel that records a different shape of call says so, so
+        // "no page calls this with a literal" stays a real assertion. Left
+        // unset on every channel above, which is what "spelled out in full"
+        // has meant everywhere in this file until now.
+        via: channel.via || 'literal',
       });
     }
   }
@@ -469,6 +515,42 @@ test('the price board is what keeps the odds route covered, and the check sees i
     [['public/js/pages/live.js', 'public/js/pages/scrape.js']],
     'and these are the pages that reach it by composing the URL');
   assert.ok(served.has('GET /api/odds/'), 'the odds route is in the served set it is being checked against');
+});
+
+test('the snapshot route is what the source-health rows link to, and the check sees it', () => {
+  // The reason `GET /api/snapshot/` left BACKEND_ONLY, in the shape the excuse
+  // it replaces got wrong. The route was excused as "diagnostic, no UI" while
+  // the dashboard was already linking to it — one download icon per source in
+  // the source-health rows. The channel that missed it is named in CHANNELS
+  // above; this is the half that has to be visible when it misses again.
+  //
+  // An interpolation, not a literal: the href carries the source id inside it,
+  // so a page that spelled the route out in full would be a page that cannot
+  // name the book. The first assertion is the same one the price board's test
+  // makes, for the same reason — the consumer must be read out of the
+  // composition, and a literal here would mean the composition stopped.
+  const literalSnapshot = [...consumers.entries()].filter(([path, list]) => path === '/api/snapshot'
+    && list.some((c) => c.via === 'literal'));
+  assert.deepEqual(literalSnapshot.map(([, list]) => list.map((c) => `${c.file}:${c.line}`)), [],
+    'a page now writes the snapshot route out in full — the book id has to travel inside it, so a literal here means the composition stopped');
+
+  const composedSnapshot = [...consumers.entries()].filter(([path, list]) => path === '/api/snapshot'
+    && list.some((c) => c.via === 'interpolated href'));
+  assert.deepEqual(composedSnapshot.map(([, list]) => list.map((c) => c.file)),
+    [['public/js/pages/dashboard.js']],
+    'the snapshot route is reached by an interpolated href, from this page');
+  assert.ok(served.has('GET /api/snapshot/'), 'the snapshot route is in the served set it is being checked against');
+
+  // The link is a download, not a navigation to a page. An `href` to a JSON
+  // capture with no `download` attribute is a navigation the browser renders
+  // instead of saves, which is how a capability ends up wired to something
+  // nobody can use. Read out of the shipped markup's render, where the anchor
+  // is built.
+  const anchor = read('public/js/pages/dashboard.js');
+  assert.match(anchor, /href="\/api\/snapshot\/\$\{[^"]*sourceId[^"]*}"[^>]*\bdownload\b/,
+    'the snapshot anchor no longer downloads what it links to');
+  assert.match(anchor, /href="\/api\/snapshot\/\$\{[^"]*sourceId[^"]*}"[^>]*\baria-label=/,
+    'the snapshot anchor lost its accessible name');
 });
 
 test('every backend-only route still carries the reason it has no UI', () => {

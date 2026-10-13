@@ -22,6 +22,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import vm from 'node:vm';
 import { buildRouter } from '../src/router.mjs';
+import { resolveTerminalStatus } from '../src/scrape-orchestrator.mjs';
 import { codeOnly, functionSource, guardedPropertyReads, objectEntries, objectKeys, objectsWithKey, propertyWrites } from './helpers/code-only.mjs';
 
 const scrapeSource = readFileSync(new URL('../public/js/pages/scrape.js', import.meta.url), 'utf8');
@@ -102,8 +103,51 @@ const SELECT_IDS = new Set(
   [...scrapeHtml.matchAll(/<select\b[^>]*\bid="([^"]+)"/g)].map((m) => m[1]),
 );
 
-function harness(lang = 'ro', { api, form } = {}) {
+/**
+ * Every element the static markup declares, by class token, in document order.
+ *
+ * The harness hands a page's `querySelectorAll` the elements behind a class the
+ * markup really carries, so marking an element and marking nothing stop being
+ * the same observation. It carries `data-step` because the pipeline's stage index
+ * is declared in the markup, and the page reads it off the element.
+ */
+const STATIC_CLASSES = (() => {
+  const map = new Map();
+  for (const [, tag, attrs] of scrapeHtml.matchAll(/<(\w+)\b([^>]*)>/g)) {
+    const classes = (attrs.match(/\bclass="([^"]+)"/) || [null, ''])[1].split(/\s+/).filter(Boolean);
+    const step = (attrs.match(/\bdata-step="([^"]+)"/) || [null, null])[1];
+    for (const token of classes) {
+      if (!map.has(token)) map.set(token, []);
+      map.get(token).push({ tag, step });
+    }
+  }
+  return map;
+})();
+
+/**
+ * A classList that records, so an assertion can see what a page marked.
+ *
+ * The stub the other nodes carry answers `add` and `remove` with nothing and
+ * `contains` with `false` forever, which is why a page could mark four hundred
+ * elements across a whole run and no test here could tell.
+ */
+const classListOver = (el) => {
+  const tokens = () => el.className.split(/\s+/).filter(Boolean);
+  return {
+    add: (...cs) => { el.className = [...new Set([...tokens(), ...cs])].join(' '); el.classLog.push(...cs.map((c) => ['add', c])); },
+    remove: (...cs) => { el.className = tokens().filter((c) => !cs.includes(c)).join(' '); el.classLog.push(...cs.map((c) => ['remove', c])); },
+    toggle: (c, force) => {
+      const on = force === undefined ? !tokens().includes(c) : Boolean(force);
+      if (on) this.add(c); else this.remove(c);
+      return on;
+    },
+    contains: (c) => tokens().includes(c),
+  };
+};
+
+function harness(lang = 'ro', { api, form, reducedMotion = true } = {}) {
   const nodes = new Map();
+  const timers = [];
   const make = (id) => {
     const stub = {
       id,
@@ -194,7 +238,32 @@ function harness(lang = 'ro', { api, form } = {}) {
     // handler. Nothing is parsed here, so an empty list is the honest answer:
     // the assertions are on the markup this function produced, which is
     // captured on `bookmaker-list` before any of this runs.
-    querySelectorAll: () => [],
+    querySelectorAll: (selector) => {
+      const sel = String(selector);
+      const compounds = sel.trim().split(/\s+/);
+      const wanted = [...compounds[compounds.length - 1].matchAll(/\.([A-Za-z_][\w-]*)/g)].map((m) => m[1]);
+      // No class in the selector, or a class the static markup does not carry:
+      // `[]`, which is also what the containers the page fills itself would
+      // answer on the first paint. Those classes are in the page's own markup.
+      if (wanted.length === 0 || !STATIC_CLASSES.has(wanted[0])) return [];
+      // The one list this answers is a real one, which is the whole point: a
+      // selector naming markup that is not there must be able to look different
+      // from one that is. It was `[]` for everything, so `updateStepper` marking
+      // five stages and marking none of them were the same observation.
+      const key = `all:${sel}`;
+      if (!nodes.has(key)) {
+        nodes.set(key, (STATIC_CLASSES.get(wanted[0]) || []).map((desc, i) => {
+          const el = make(`${sel}[${i}]`);
+          el.tagName = desc.tag.toUpperCase();
+          el.className = wanted.join(' ');
+          el.dataset.step = desc.step;
+          el.classLog = [];
+          el.classList = classListOver(el);
+          return el;
+        }));
+      }
+      return nodes.get(key);
+    },
     // refreshLastRun writes into the table body by selector rather than by id,
     // so the seam has to resolve one. The id is checked against scrape.html,
     // which is what keeps a selector pointing at a removed element from
@@ -221,15 +290,21 @@ function harness(lang = 'ro', { api, form } = {}) {
     document,
     console,
     localStorage: { getItem: () => null, setItem() {} },
-    // renderState flashes the KPI cards through setTimeout on every update
-    // after the first. Stubbed to a no-op: nothing in this file asserts on the
-    // flash, and a real timer would keep the test process alive.
-    setTimeout() {},
+    // renderState flashes the KPI cards through setTimeout on every update after
+    // the first. Held rather than dropped: a dropped callback is an unobservable
+    // one, and the flash is the only thing that class does. `flush()` runs what
+    // is pending, which is what a test asserting on the flash needs. A real timer
+    // would also keep the test process alive, so it stays out.
+    setTimeout: (fn) => { timers.push(fn); return 0; },
     // countUp animates a KPI toward its target unless the reader has asked for
     // reduced motion, in which case it writes the value outright. Taking that
     // path keeps every number in these tests the real target rather than
     // whatever point of a 450ms animation the test happened to interrupt.
-    matchMedia: (query) => ({ matches: /prefers-reduced-motion/.test(query), media: query }),
+    //
+    // Default, not the only path: `reducedMotion: false` is how a test reaches
+    // the animated branch, which is the only way the stepper's step-done pop can
+    // be seen at all.
+    matchMedia: (query) => ({ matches: /prefers-reduced-motion/.test(query) && reducedMotion, media: query }),
     // The real api.js is an IIFE over fetch; only the scheduler readouts are
     // under test, so the seam is the one global it installs.
     ...(api ? { arbiterApi: api } : {}),
@@ -265,6 +340,13 @@ function harness(lang = 'ro', { api, form } = {}) {
     list: () => nodes.get('bookmaker-list').innerHTML,
     /** The node a selector resolved to, for assertions on a selector write. */
     sel: (selector) => nodes.get(selector),
+    /**
+     * The elements behind a class selector, as the page's own querySelectorAll
+     * answers it. The pipeline's five stages and the KPI band's five cards.
+     */
+    all: (selector) => document.querySelectorAll(selector),
+    /** Runs whatever the page deferred, in the order it deferred it. */
+    flush: () => { const ran = timers.splice(0, timers.length); for (const fn of ran) fn(); return ran.length; },
   };
 }
 
@@ -686,10 +768,16 @@ test('a row is marked live from either the event or the market', async () => {
 
 test('an event the adapter could not name is a row without names, not a row of separators', async () => {
   // `validate` rejects an event with no id or no eventKey and never asks for a
-  // team name (src/scrapers/base.mjs:229-234), and one adapter builds its own
-  // fallback id out of two empty names (src/scrapers/altenar-provider.mjs:74).
-  // So a capture can carry an event the board cannot name, and a row built by
-  // gluing the two names with a dash prints that dash as the whole cell.
+  // team name (src/scrapers/base.mjs:229-234) — the same blindness the row
+  // builder's own comment runs on (public/js/pages/scrape.js:555-557). The
+  // adapter this comment used to cite, which built a fallback id out of the two
+  // names, was deleted with the dead Altenar adapter (ac6f7df), and what keeps
+  // unnamed teams out today lives in the adapters, not in validate — e.g.
+  // src/scrapers/tinyfish-scraper.mjs:173 skips one, and 0 of the 24829 events
+  // in the captures under data-market-run/workspace carry an empty team name.
+  // So validate promises this row a name no more than it did then, and a row
+  // built by gluing the two names with a dash would print that dash as the
+  // whole cell.
   const h = harness('en', {
     form: { 'odds-book': { value: 'winner' } },
     api: {
@@ -841,7 +929,7 @@ test('the board is translated, note and empty row alike', async () => {
 test('the note names the book the payload is about, and the selector can disagree with it', async () => {
   // What the published `sourceId` is for, and a second claim that only became
   // true with the serial token. Four `change` listeners each start a load and
-  // none of them awaits one (scrape.js:765), so two requests are in flight at
+  // none of them awaits one (scrape.js:806), so two requests are in flight at
   // once and whichever response lands last used to be the one on screen. The
   // route answers with the name it served; the note says it, so a table that no
   // longer belongs to the selected book announces itself instead of passing for
@@ -1068,7 +1156,7 @@ const READ = {
  * machine-only, the excuse is stale and the test says so.
  */
 const ODDS_UNREAD = new Map([
-  ['results[].id', "The book's own event id, published so a reader can find that event inside the raw capture. The board prints none of it: the name the tree gives that id is `providerEventId`, and 0 occurrences of it sit anywhere under public/js, so the value stops at the machine. What it does not stop at is the rest of the backend: 3 of the modules under src/ read it and 2 write it, and the paragraph used to call the scanner engine the only place it appears at all, which is why it read that way. Measured, and re-measured by the test below: engine.mjs:57 and :484, scanner.mjs:133 and :136, verification.mjs:224, and altenar-public.mjs:362 as a writer. Every reader is machine-to-machine, a scan fingerprint and a verification leg match, which is the same reason the panel has nothing to draw. What the row prints instead is the app's own way of naming an event, teams at public/js/pages/event-detail.js:44-46 and sport, kickoff and league in the meta line at :49-52; and the only handle this panel can act on is eventKey, which it already reads into both filter lists (public/js/pages/scrape.js:514 and :579). Measured on the captures rather than on the fixture above: 12390 distinct ids over 24829 events in the 22 files under data-market-run/workspace, and re-measured as three claims by test/snapshot-route.test.mjs rather than trusted as a figure. The id is not a handle a page could look an event up in, and the reason is not the one this paragraph used to give. It never repeats between two files of the same book (0 of 12390), so it is not an address inside one capture either, and it is not unique to a book: 4474 ids are shared by two or more books and 834 of those stand for different eventKeys. What it is, inside one book, is a one-to-one stand-in for eventKey, over all 24829 pairs. So the field says exactly what the handle the panel already keys on says, which is why there is nothing for it to add here."],
+  ['results[].id', "The book's own event id, published so a reader can find that event inside the raw capture. The board prints none of it: the name the tree gives that id is `providerEventId`, and 0 occurrences of it sit anywhere under public/js, so the value stops at the machine. What it does not stop at is the rest of the backend: 3 of the modules under src/ read it and 2 write it, and the paragraph used to call the scanner engine the only place it appears at all, which is why it read that way. Measured, and re-measured by the test below: engine.mjs:57 and :484, scanner.mjs:133 and :136, verification.mjs:224, and altenar-public.mjs:362 as a writer. Every reader is machine-to-machine, a scan fingerprint and a verification leg match, which is the same reason the panel has nothing to draw. What the row prints instead is the app's own way of naming an event, teams at public/js/pages/event-detail.js:44-46 and sport, kickoff and league in the meta line at :49-52; and the only handle this panel can act on is eventKey, which it already reads into both filter lists (public/js/pages/scrape.js:524 and :582). Measured on the captures rather than on the fixture above: 12390 distinct ids over 24829 events in the 22 files under data-market-run/workspace, and re-measured as three claims by test/snapshot-route.test.mjs rather than trusted as a figure. The id is not a handle a page could look an event up in, and the reason is not the one this paragraph used to give. It never repeats between two files of the same book (0 of 12390), so it is not an address inside one capture either, and it is not unique to a book: 4474 ids are shared by two or more books and 834 of those stand for different eventKeys. What it is, inside one book, is a one-to-one stand-in for eventKey, over all 24829 pairs. So the field says exactly what the handle the panel already keys on says, which is why there is nothing for it to add here."],
 ]);
 
 let CENSUS = null;
@@ -2533,8 +2621,23 @@ test('the census instrument sees reads, not mentions, in both directions', () =>
   // And it cannot answer over nothing: a name that is not there is a loud
   // failure, because a census over an empty fragment reports every published
   // field as unread, which is the one answer it must not be able to give.
-  assert.throws(() => functionSource(tiny, 'absent'), /no function declaration named absent/,
-    'a method name is not a declaration, and asking for one must not answer with an empty fragment');
+  assert.throws(() => functionSource(tiny, 'absent'), /no function or method named absent/,
+    'a name that is not there must not answer with an empty fragment');
+
+  // A class method is found, which it was not until a census asked for
+  // `restoreState` and was told no function declaration of that name was in the
+  // file — the method was on line 40 of it. The keyword is put back so the
+  // fragment parses, and the assertion is on the body rather than on the whole
+  // text, because the name costs nine characters of offset either way.
+  const withMethod = 'class C { async restore() { return this.state.status; } }';
+  const cut = functionSource(withMethod, 'restore');
+  assert.equal(cut.line, 1, 'the method is found at all');
+  assert.deepEqual(guardedPropertyReads(cut.text, ['this.state']).map((r) => r.key), ['status'],
+    'and the fragment it returns is the method\'s own body, not an empty one');
+  // The other direction, which is the one that made this worth changing: a name
+  // that is neither still throws rather than resolving to some other member.
+  assert.throws(() => functionSource(withMethod, 'nope'), /no function or method named nope/,
+    'and a name the class does not have is still a loud failure');
 });
 
 // ---- the field census of GET /api/scrape/state --------------------------------
@@ -2837,8 +2940,12 @@ test('startedAt and finishedAt are excused: the row has one time column and it i
   assert.equal((head.match(/<th[^>]*>(?:(?!<\/th>).)*Timp/s) || []).length, 1,
     'and exactly one of them is a time column');
 
-  // `envelope` is a class method, and functionSource refuses those on purpose, so
-  // the literal is found by the key it carries instead of by the method name.
+  // `envelope` is a class method, and it is found by the key it carries rather
+  // than by the method name — which is how this file located it before
+  // functionSource learned to cut methods out, and still the cheaper question
+  // here: the test wants the literal that publishes a duration, and asking for
+  // that key answers it directly. Kept as-is after the helper changed, because a
+  // comment that has stopped being true is worse than a roundabout call.
   const base = readFileSync(new URL('../src/scrapers/base.mjs', import.meta.url), 'utf8');
   const envelope = objectsWithKey(base, 'durationMs');
   assert.equal(envelope.length, 1, 'exactly one literal publishes a duration');
@@ -2854,6 +2961,281 @@ test('startedAt and finishedAt are excused: the row has one time column and it i
   assert.match(codeOnly(base), /const startedAt = new Date\(\)\.toISOString\(\);\s*const started = Date\.now\(\);/,
     'the two clock reads that bracket the work are taken as a pair');
   assert.ok(JOB_READS.has('durationMs'), 'and the column is filled from durationMs, which the row prints');
+});
+
+/**
+ * The exact text of a plain single-quoted string literal, or null.
+ *
+ * Not a scan: the whole value has to match, so a template, a call or a
+ * concatenation is null rather than a first quoted run pulled out of it. That
+ * distinction is the one this census turns on — a probe that reached for a
+ * quoted run inside a line of code found four of the seven run statuses and
+ * reported the other three unreachable, which is a finding invented by the
+ * instrument.
+ */
+const plainString = (expr) => {
+  const m = /^'([^']*)'$/.exec(String(expr ?? '').trim());
+  return m ? m[1] : null;
+};
+
+/** Every module under src/, walked once and remembered. */
+let SRC_MODULES = null;
+function srcModules() {
+  if (SRC_MODULES) return SRC_MODULES;
+  const out = [];
+  const walk = (dir) => {
+    for (const e of readdirSync(new URL(`../src/${dir}`, import.meta.url), { withFileTypes: true })) {
+      if (e.isDirectory()) walk(dir ? `${dir}/${e.name}` : e.name);
+      else if (e.name.endsWith('.mjs')) out.push(dir ? `${dir}/${e.name}` : e.name);
+    }
+  };
+  walk('');
+  // A walk that found nothing makes every "no module does X" sentence below true
+  // of an empty tree, so it is a failure here rather than an empty result.
+  if (out.length === 0) throw new Error('the walk over src/ returned no modules');
+  SRC_MODULES = out;
+  return SRC_MODULES;
+}
+
+/**
+ * Every single-quoted name a fragment mentions, in order, duplicates kept.
+ *
+ * Comments are blanked first, because the trap runs the other way here too: a
+ * name written inside a comment is not a consumer, but a regex over raw text
+ * cannot tell that from a literal, so documenting a status beside the list would
+ * silently add it to the set. Repaired on this file rather than believed — the
+ * rule this repo already follows for comments (`api-surface.test.mjs`: a name in
+ * an assertion is not a consumer) cuts the same way here.
+ *
+ * A fragment, not a slice of one: blanking comments means tokenizing, and an
+ * expression like `'done' : 'error'` — both branches of a ternary, which is what
+ * a caller wanting the branches has — is not a program. Blank the source once,
+ * then read the words out of it.
+ */
+const quotedIn = (text) => [...codeOnly(text).matchAll(/'([^']+)'/g)].map((m) => m[1]);
+
+/** Every write onto the run's own `status`, from wherever it is written. */
+const STATUS_WRITES = [
+  ...STATE_WRITES.filter((w) => w.key === 'status'),
+  // `restoreState` binds the state to a local and writes the field through it,
+  // so a census that watched `this.scrapeState` alone would miss that one.
+  ...propertyWrites(functionSource(orchestratorSource, 'restoreState').text, ['s'])
+    .filter((w) => w.key === 'status')
+    .map((w) => ({ ...w, line: `restoreState:${w.line}` })),
+];
+
+/**
+ * The three values the terminal resolver can answer, RUN rather than read.
+ *
+ * `completed` is in none of the literals on the state — it exists only as a
+ * return of `resolveTerminalStatus`, so a vocabulary built from literals alone
+ * would have been short one value and every assertion below would still have
+ * passed on the six it did see.
+ */
+const TERMINAL_STATUSES = [...new Set([
+  { scanFailed: false, verifyFailed: false, jobs: [{ valid: true, status: 'ok' }] },
+  { scanFailed: false, verifyFailed: false, jobs: [] },
+  { scanFailed: true, verifyFailed: false, jobs: [] },
+  { scanFailed: false, verifyFailed: true, jobs: [] },
+  { scanFailed: false, verifyFailed: false, jobs: [{ valid: false, status: 'failed' }] },
+].map((input) => resolveTerminalStatus(input)))];
+
+/** Every status a run can hold: the opening literal, the writes, the resolver. */
+const RUN_STATUSES = [...new Set([
+  plainString(LAUNCH.status),
+  ...STATUS_WRITES.map((w) => plainString(w.value)),
+  ...TERMINAL_STATUSES,
+].filter(Boolean))].sort();
+
+/** A run in one of those states, built off the launch literal's own key set. */
+const runState = (status, extra = {}) => ({
+  runId: '2026-10-06T10:00:00.000Z',
+  startedAt: '2026-10-06T10:00:00.000Z',
+  finishedAt: ['running', 'cancelling'].includes(status) ? null : '2026-10-06T10:01:40.000Z',
+  ...Object.fromEntries(Object.keys(LAUNCH)
+    .filter((k) => !['runId', 'startedAt', 'finishedAt'].includes(k))
+    .map((k) => [k, k === 'status' ? status : null])),
+  jobs: [],
+  ...extra,
+});
+
+test('every status a run can hold has a word on the page, in the reader\'s language', () => {
+  // Seven values, three of which the page could speak and four of which it
+  // printed as the raw token — `locked` and `cancelled` being terminal states
+  // the operator is left to decode, and `running` the one they watch for an
+  // hour. The dictionary already had a word for six of the seven; only
+  // `cancelling` had none, and it is the shortest-lived of them.
+  assert.deepEqual(RUN_STATUSES,
+    ['cancelled', 'cancelling', 'completed', 'completed-with-errors', 'failed', 'locked', 'running'],
+    'the run status vocabulary has been re-measured — re-derive the page below');
+  // Every write is accounted for. A new one that is not a literal would drop out
+  // of the vocabulary silently, and a vocabulary that is short a value is a
+  // census that passes on what it happens to see.
+  assert.deepEqual(STATUS_WRITES.filter((w) => plainString(w.value) === null)
+    .map((w) => `${w.line}: ${w.value}`),
+  ['395: resolveTerminalStatus({ scanFailed, verifyFailed, jobs: this.scrapeState.jobs })'],
+  'the only non-literal status write is the one this census runs');
+  assert.ok(TERMINAL_STATUSES.length > 0, 'the resolver answered nothing, so three statuses would be missing');
+
+  const raw = [];
+  for (const lang of ['ro', 'en']) {
+    for (const status of RUN_STATUSES) {
+      const h = harness(lang);
+      h.run(`renderState(${JSON.stringify(runState(status))})`);
+      const head = h.nodes.get('head-status').textContent;
+      const pill = h.nodes.get('m-status').innerHTML;
+      if (!head || head === status) raw.push(`${lang}/${status}: head reads ${JSON.stringify(head)}`);
+      // The class has to stay the raw token or the stylesheet cannot match it,
+      // so the tooltip is where a reader meets the word instead.
+      if (!pill.includes(`class="status ${status}"`)) raw.push(`${lang}/${status}: pill carries no .status.${status}`);
+      if (!pill.includes(`title="${head}"`)) raw.push(`${lang}/${status}: pill tooltip reads the raw token, not the label`);
+    }
+  }
+  assert.deepEqual(raw, [],
+    'the page prints a status the backend can hold instead of a word for it:\n  ' + raw.join('\n  '));
+
+  // And the words really are the reader's, not one language leaking into the
+  // other — two statuses whose Romanian differs from their English.
+  const shown = (lang, status) => {
+    const h = harness(lang);
+    h.run(`renderState(${JSON.stringify(runState(status))})`);
+    return h.nodes.get('head-status').textContent;
+  };
+  assert.equal(shown('ro', 'locked'), DICTS.ro.t('locked'));
+  assert.equal(shown('en', 'locked'), DICTS.en.t('locked'));
+  assert.equal(shown('ro', 'running'), DICTS.ro.t('running'));
+  assert.notEqual(DICTS.ro.t('locked'), DICTS.en.t('locked'),
+    'and the two dictionaries really do disagree here, so the check can see a leak');
+});
+
+test('every status a run can hold has a badge the scrape stylesheet draws', () => {
+  // The same seven, asked of the stylesheet rather than of the label chain. An
+  // unstyled `.status.<token>` is a pill with no background and no colour of its
+  // own beside three that are filled — which is exactly what `cancelled` was
+  // doing until css/scrape.css:580 gave it a wash, and exactly what `cancelling`
+  // was still doing here.
+  // `(?![-\w])` and not `\b`, which was the first version and was wrong in the
+  // direction that invents coverage: `\b` matches between `cancelling` and the
+  // `-` of a longer class name, so renaming the rule to `.status.cancelling-x`
+  // left this test green with no rule for `cancelling` at all. A class name goes
+  // on past a dash, so a rule has to end where the name ends.
+  const css = ['../public/css/theme.css', '../public/css/scrape.css']
+    .map((p) => codeOnly(readFileSync(new URL(p, import.meta.url), 'utf8'), false)).join('\n');
+  const unstyled = RUN_STATUSES.filter((s) => !new RegExp(`\\.status\\.${s}(?![-\\w])`).test(css));
+  assert.deepEqual(unstyled, [], 'a status the run can hold has no rule in either stylesheet');
+});
+
+test('the activity line is the reader\'s language, not the backend\'s', () => {
+  // `currentActivity` is the one field on the state the backend fills with
+  // finished English prose — `scrape cancelled`, `cancelling active scrape`,
+  // `scraping <book>` — and the page wrote it into two visible nodes verbatim.
+  // The step labels beside them (`Scraping`, `Scanning`, …) are the same prose
+  // from the same file, arriving through `_setStep`.
+  const activities = propertyWrites(orchestratorSource, ['this.scrapeState', 'state'])
+    .filter((w) => w.key === 'currentActivity');
+  assert.ok(activities.length > 0, 'nothing writes currentActivity, so this census cannot see anything');
+
+  // After the repair this is one line, and the whole repair is on that line:
+  // the three bare reads the page used to have are now one read that hands the
+  // value to the dictionary. Asserted on the line's own text rather than on its
+  // number or its count, because the count was two before it was one — the line
+  // reads the field once to test it and once to pass it — and a count of reads
+  // is not a count of places.
+  const pageWrites = guardedPropertyReads(scrapeSource, ['state']).filter((r) => r.key === 'currentActivity');
+  const lines = [...new Set(pageWrites.map((r) => r.text))];
+  assert.equal(lines.length, 1,
+    `currentActivity is read on ${lines.length} lines of the page, and every one of them has to go through the dictionary`);
+  assert.match(lines[0], /t\(\s*state\.currentActivity\s*\)/,
+    'and the one line that reads it hands it to the dictionary rather than printing it');
+
+  for (const lang of ['ro', 'en']) {
+    const h = harness(lang);
+    // The value the backend actually sends on a cancel, taken from its write.
+    const onCancel = plainString(activities.find((w) => String(w.value).includes('cancelled'))?.value);
+    h.run(`renderState(${JSON.stringify(runState('cancelled', { currentActivity: onCancel }))})`);
+    const line = h.nodes.get('act-line').textContent;
+    assert.notEqual(line, onCancel, `${lang}: the activity line shows the backend's own words`);
+    assert.equal(line, DICTS[lang].t('cancelled'), `${lang}: and it shows the reader's word for them`);
+  }
+});
+
+test('every job status that ends a run counts as finished in the progress readout', () => {
+  // `countDoneJobs` counted five of the eight real job statuses, and one word
+  // that is not a job status at all. The two it left out are the ones that
+  // reach a job only on an envelope -- and an envelope is by construction a job
+  // that has ended -- so a run the operator cancelled, and a run whose books all
+  // resolved to no scraper, each reported zero of N done while the header said
+  // the run was over. The extra word, `locked`, is the run's own status for a
+  // refused lock.
+  //
+  // Terminal is a structural distinction here, not a list. A job is in flight
+  // in exactly two states, and both are named by the two places that assign a
+  // status before any producer has been asked: `toProgressJob` opens every job
+  // as `pending`, and the orchestrator sets `running` on job-start. Everything
+  // else reaches `j.status` copied off a producer's envelope — including the
+  // `pending` literal, which is why opening a job cannot be recognised by the
+  // word and has to be recognised by the function that writes it.
+  const envelopeStatuses = [];
+  for (const file of srcModules()) {
+    const src = readFileSync(new URL(`../src/${file}`, import.meta.url), 'utf8');
+    const opening = file === 'scraper-service.mjs'
+      ? functionSource(src, 'toProgressJob').text : null;
+    for (const { entries } of objectsWithKey(src, 'status')) {
+      if (!entries.some((e) => e.key === 'valid')) continue;
+      const value = entries.find((e) => e.key === 'status').value;
+      if (opening && opening.includes(value)) continue;
+      // One producer writes a ternary over the two outcomes it can have.
+      envelopeStatuses.push(...[...value.matchAll(/'([a-z-]+)'/g)].map((m) => m[1]));
+    }
+  }
+  const openStatus = plainString(objectEntries(functionSource(serviceSource, 'toProgressJob').text, 'return {')
+    .find((e) => e.key === 'status').value);
+  const jobWrites = propertyWrites(functionSource(orchestratorSource, '_handleScrapeEvent').text, ['j'])
+    .filter((w) => w.key === 'status');
+  const inFlight = new Set([openStatus, ...jobWrites.map((w) => plainString(w.value)).filter(Boolean)]);
+  // The other two writes copy a value off a result rather than naming one, and
+  // a third state hiding in a call would drop out of `inFlight` and be counted
+  // as terminal — so the two are told apart rather than assumed apart.
+  assert.deepEqual(jobWrites.map((w) => plainString(w.value)).map((v) => v ?? 'copied'), ['running', 'copied', 'copied'],
+    'the orchestrator names exactly one job status itself and copies the other two');
+
+  const TERMINAL_JOB = [...new Set(envelopeStatuses)].filter((s) => !inFlight.has(s)).sort();
+  assert.deepEqual(TERMINAL_JOB, ['cancelled', 'failed', 'ok', 'skipped', 'timeout', 'unknown'],
+    'the job statuses a producer can end a job on have been re-measured');
+
+  const counted = new Set(quotedIn(functionSource(scrapeSource, 'countDoneJobs').text));
+  const uncounted = TERMINAL_JOB.filter((s) => !counted.has(s));
+  assert.deepEqual(uncounted, [],
+    `the progress readout reports these finished jobs as not finished: ${uncounted.join(', ')}`);
+
+  // The third direction, and the one that needs its own assertion: a word here
+  // that no producer emits is a job status the list claims can happen. `locked`
+  // was one -- the run's own status for a refused lock, never a job's -- and a
+  // job-status list written as a shape rather than as the producers' vocabulary
+  // is how the two got confused in the first place. Containment alone cannot see
+  // this one: an unreachable word passes it.
+  //
+  // This also is the control the check needed, so it is not written twice. Both
+  // states a job is *in* -- `pending` and `running` -- are missing from
+  // TERMINAL_JOB by construction, which is the definition of how that set was
+  // derived, so counting a job that has not finished lands here first. An
+  // earlier version asserted it separately, and an injection showed the separate
+  // assertion can never be the one to fail.
+  const unreachable = [...counted].filter((s) => !TERMINAL_JOB.includes(s));
+  assert.deepEqual(unreachable, [],
+    `these are counted as job statuses that no producer ever emits: ${unreachable.join(', ')}`);
+
+  // Then the same thing executed, because a word in a list is not a number on a
+  // progress card. The real function, over one job per status this test derived,
+  // so the readout is measured rather than read off the source.
+  const h = harness('en');
+  const oneOfEach = [...TERMINAL_JOB, ...inFlight].map((status) => ({ status }));
+  assert.equal(h.run(`countDoneJobs(${JSON.stringify(oneOfEach)})`), TERMINAL_JOB.length,
+    'every status a producer can end a job on counts, and neither state a job is in does');
+  for (const status of ['cancelled', 'unknown']) {
+    assert.equal(h.run(`countDoneJobs([{ status: '${status}' }])`), 1,
+      `a job that ended as ${status} counts as finished`);
+  }
 });
 
 test('a machine that has never scraped renders, rather than reading four keys that are not there', async () => {
@@ -3548,4 +3930,138 @@ test('a sport change only ever removes books from the selection', () => {
   // And a change that removes nothing leaves the DOM alone: no redraw, because
   // there is nothing to redraw. The first test above is the positive for this.
   assert.equal(g.list(), 'SENTINEL', 'a filter change that removes nothing does not redraw the chips');
+});
+
+// ---- the selectors the page asks the DOM for --------------------------------
+
+// The rule that no selector this page hands the DOM names a class nobody carries
+// lives in selector-census.test.mjs, which is where the three that did were found
+// and why they were silent. It is the same rule scoped to this page's own markup
+// and this page's own emitted classes, and it reads strictly more: the census
+// blanks attribute selectors, reads the template-literal form, and measures the
+// script against every page that loads it rather than against one page.
+//
+// What stays here is the half the static rule cannot say: that the classes which
+// DO resolve reach the element, that the update lands on the stage it names, and
+// that nothing is left lit. A selector can name a real class and still be applied
+// to an empty list.
+
+test('the stage the run is on is marked on a real element, for every stage it names', () => {
+  // Derived, not written out: the indices are the second argument of every
+  // `_setStep` call in the orchestrator, which is the only thing that ever sets
+  // `currentStep.index`.
+  const STEP_INDICES = [...new Set(
+    [...codeOnly(orchestratorSource).matchAll(/_setStep\(\s*'[^']+'\s*,\s*(\d+)\s*\)/g)].map((m) => Number(m[1])),
+  )].sort((a, b) => a - b);
+  assert.deepEqual(STEP_INDICES, [0, 1, 2, 3, 4], 'the stages a run can be on, read out of the orchestrator');
+
+  // And the markup declares exactly those, one element each. The page reads the
+  // index off `data-step`, so a stage whose attribute disagreed with its position
+  // would move the highlight instead of it.
+  const h = harness('en');
+  const stages = h.all('.sl-stage');
+  assert.equal(stages.length, STEP_INDICES.length,
+    'the markup has one stage element per stage the orchestrator can name');
+  assert.deepEqual(stages.map((el) => Number(el.dataset.step)), STEP_INDICES,
+    'and each declares its own index');
+
+  const marked = (el) => el.className.split(/\s+/).filter((c) => ['active', 'done', 'error'].includes(c));
+
+  // Each index in turn, in the state the orchestrator broadcasts while a run is
+  // in flight: the stage the run is on is marked, it is the one `aria-current`
+  // points at, and the other four are left alone.
+  for (const index of STEP_INDICES) {
+    h.run(`renderState(${JSON.stringify(runState('running', { currentStep: { label: 'scanning', index } }))})`);
+    assert.deepEqual(stages.map(marked), STEP_INDICES.map((i) => (i === index ? ['active'] : [])),
+      `stage ${index} is the active one and no other is`);
+    assert.deepEqual(stages.map((el) => el.getAttribute('aria-current')),
+      STEP_INDICES.map((i) => (i === index ? 'step' : 'false')),
+      `and aria-current names stage ${index} and nothing else`);
+  }
+
+  // The two ways a run ends well, which mark the last stage differently, and the
+  // one that ends badly, which marks whichever stage it stopped on.
+  h.run(`renderState(${JSON.stringify(runState('completed', { currentStep: { label: 'complete', index: 4 } }))})`);
+  assert.deepEqual(marked(stages[4]), ['done'], 'a run that completed marks its last stage done');
+  h.run(`renderState(${JSON.stringify(runState('completed-with-errors', { currentStep: { label: 'complete', index: 4 } }))})`);
+  assert.deepEqual(marked(stages[4]), ['error'], 'and one that completed with errors marks it error');
+  h.run(`renderState(${JSON.stringify(runState('failed', { currentStep: { label: 'verifying', index: 2 }, error: { name: 'Error', message: 'x' } }))})`);
+  assert.deepEqual(stages.map(marked), STEP_INDICES.map((i) => (i === 2 ? ['error'] : [])),
+    'a run that failed marks the stage it stopped on, not the last one');
+
+  // The pop: `step-pop` is added on the transition into done, and only once.
+  // `reducedMotion: false` because the harness asks for reduced motion by
+  // default, and the pop is gated behind asking for less of it.
+  const m = harness('en', { reducedMotion: false });
+  m.run(`renderState(${JSON.stringify(runState('running', { currentStep: { label: 'scraping', index: 0 } }))})`);
+  m.run(`renderState(${JSON.stringify(runState('completed', { currentStep: { label: 'complete', index: 4 } }))})`);
+  const popping = m.all('.sl-stage').filter((el) => el.classList.contains('step-pop'));
+  assert.deepEqual(popping.map((el) => el.dataset.step), ['4'], 'the stage that became done is the one that pops');
+
+  // And not when the reader has asked for reduced motion, which is the branch
+  // every other test in this file runs on.
+  const r = harness('en');
+  r.run(`renderState(${JSON.stringify(runState('running', { currentStep: { label: 'scraping', index: 0 } }))})`);
+  r.run(`renderState(${JSON.stringify(runState('completed', { currentStep: { label: 'complete', index: 4 } }))})`);
+  assert.deepEqual(r.all('.sl-stage').filter((el) => el.classList.contains('step-pop')), [],
+    'while a reader who asked for reduced motion gets the stage marked and nothing moving');
+});
+
+test('every class the page puts on a stage has a rule that styles it', () => {
+  // `.sl-stage` had `active` and `done` and no `error`, and no `step-pop` at
+  // all: so even with the selector repaired, the stage a run failed on would
+  // have looked exactly like the four it never reached. A class nothing styles is
+  // the same defect as a selector matching nothing, and it is invisible for the
+  // same reason -- nothing can fail on it.
+  const stageCode = codeOnly(functionSource(scrapeSource, 'updateStepper').text);
+  // Only what goes through classList. Every other quoted word in this function
+  // is a status or an attribute name, and reading those as classes would have
+  // asserted the stylesheet grows rules for `aria-current`. Comments are already
+  // blank, so a commented-out `add('legacy')` cannot reach the set.
+  const classArgs = [...stageCode.matchAll(/classList\.(?:add|remove)\(([^)]*)\)/g)].map((m) => m[1]);
+  assert.ok(classArgs.length >= 2, 'the stepper marks and unmarks classes, so this found the calls');
+  // Only the branches, never the condition: the terminal state is written
+  // `status === 'completed' ? 'done' : 'error'`, and `completed` is a run status
+  // rather than something that can go on a stage.
+  const wordsIn = (part) => [...part.matchAll(/'([^']+)'/g)].map((m) => m[1]);
+  const added = [...new Set(classArgs.flatMap((arg) => wordsIn(arg.includes('?') ? arg.slice(arg.indexOf('?') + 1) : arg)))];
+  assert.ok(added.includes('active') && added.includes('done') && added.includes('error'),
+    'the three states the stepper can be in are all read out of the page');
+
+  const css = readFileSync(new URL('../public/css/scrape.css', import.meta.url), 'utf8');
+  const unstyled = added.filter((cls) => !new RegExp(`\\.sl-stage\\.${cls}(?![-\\w])`).test(css));
+  assert.deepEqual(unstyled, [],
+    `the page puts these on a stage and no stylesheet rule styles them: ${unstyled.join(', ')}`);
+});
+
+test('the KPI band acknowledges an update, which it never could', () => {
+  // `renderState` has flashed these cards on every update since the band was
+  // written, against `.scrape-kpis .kpi-card` -- two classes this page has never
+  // had -- and `flash` had no rule either, so the band went quiet on every number
+  // it drew. Both halves are checked: the class has to land on a real card, and
+  // the card has to do something with it.
+  const h = harness('en');
+  // The first render is skipped by design, so the flash is a claim about updates.
+  h.run(`renderState(${JSON.stringify(runState('running', { currentStep: { label: 'scraping', index: 0 } }))})`);
+  assert.equal(h.flush(), 0, 'the first render flashes nothing');
+  h.run(`renderState(${JSON.stringify(runState('running', { currentStep: { label: 'scanning', index: 1 } }))})`);
+  assert.ok(h.flush() > 0, 'an update defers a flash');
+
+  const cards = h.all('.sl-stats .sl-stat');
+  assert.equal(cards.length, 5, 'the band has the five cards the markup declares');
+  // The flash is on for 500ms and off again, so looking at the class after the
+  // timers have all run finds nothing: what has to be asserted is that each card
+  // was flashed and then un-flashed, in that order.
+  assert.deepEqual(cards.map((c) => c.classLog.filter(([, k]) => k === 'flash').map(([op]) => op)),
+    cards.map(() => ['add', 'remove']),
+    'every card is flashed and then stops being flashed');
+  // And the end state, which is the part a reader would see: the flash is off
+  // again, not left on. An injection that wrote the class outright and kept only
+  // the removal timer passes the assertion above, because a flush still runs
+  // something -- so the claim is made about what is left, not about how.
+  assert.ok(cards.every((c) => !c.classList.contains('flash')),
+    'and no card is left flashing once the timers have run');
+
+  const css = readFileSync(new URL('../public/css/scrape.css', import.meta.url), 'utf8');
+  assert.match(css, /\.sl-stat\.flash(?![-\w])/, 'and the flash class has a rule that styles it');
 });

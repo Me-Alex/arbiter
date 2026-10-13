@@ -101,9 +101,22 @@ export async function readLatestScrapeRun(dataDir) {
  *                             applies it to its tables: empty exports every
  *                             record, otherwise only records whose own `sport`
  *                             matches. Omit to export every sport.
+ * @param {object} [filters]  The sidebar's other two controls, in the same
+ *                             terms the page applies them:
+ *                             `q` is a free-text term matched against the same
+ *                             haystack the page searches, and `confirmedOnly`
+ *                             keeps only records whose verification says
+ *                             confirmed. Both are off when omitted.
  * @returns {string} CSV text.
  */
-export function buildScanCsv(scan, types = [], sport = '') {
+export function buildScanCsv(scan, types = [], sport = '', filters = {}) {
+  // `filters` is an object rather than two more positional parameters because
+  // the family list and the sport already occupy the first three, and a fourth
+  // and fifth would make `buildScanCsv(scan, types, sport, 'x', true)` a call
+  // nobody can read. The defaults keep every existing caller -- the route, and
+  // the pages' own exports -- answering exactly as they did.
+  const { q = '', confirmedOnly = false } = filters;
+
   // Callers may pass a single comma-joined value ("?type=middles,lowHold") or
   // a list, so split here rather than relying on each route to do it.
   const wanted = new Set(
@@ -125,6 +138,34 @@ export function buildScanCsv(scan, types = [], sport = '') {
   const wantedSport = String(sport ?? '').trim().toLowerCase();
   const sameSport = (o) => !wantedSport || String(o.sport || '').toLowerCase() === wantedSport;
 
+  // The two sidebar controls the route had no parameter for. Both are copied
+  // from public/js/pages/arbitrage.js `visible()` rather than written here in
+  // the page's terms, because two implementations of "which records does this
+  // control keep" is the exact condition that lets the tables and the file
+  // disagree while both are green.
+  //
+  // Mirrored, not improved: the search box does not look at `sport`, so a
+  // +EV row -- which the engine publishes with only a sport and a market --
+  // is findable by its market key and by nothing else. Widening the haystack
+  // here would make the file answer a question the tables do not, which is the
+  // failure this pair of functions exists to prevent. The em dash is the page's
+  // own stand-in for a row with no legs, and it is written as the same escape
+  // so the two strings cannot drift apart in the source either.
+  const wantedQ = String(q ?? '').trim().toLowerCase();
+  const matchesQ = (o) => {
+    if (!wantedQ) return true;
+    const sources = [...new Set(asArray(o?.legs).map((l) => l?.sourceId).filter(Boolean))];
+    const haystack = [o?.homeTeam, o?.awayTeam, o?.league, o?.marketKey, sources.length ? sources.join(' v ') : '\u2014']
+      .join(' ').toLowerCase();
+    return haystack.includes(wantedQ);
+  };
+  // `confirmed only` is the page's `row.verification && ...`, not a truthiness
+  // test: a family that carries no verdict at all is dropped under the box,
+  // which is what the tables do with it and what the operator asked for by
+  // ticking a box that says confirmed.
+  const isConfirmed = (o) => o?.verification?.status === 'confirmed';
+  const keeps = (o) => sameSport(o) && matchesQ(o) && (!confirmedOnly || isConfirmed(o));
+
   // A signal family is exported one row per leg, not one row per opportunity:
   // the per-leg book/selection/odds/stake is what a trader actually places,
   // and opportunity-level totals are repeated so the file stays self-contained.
@@ -132,7 +173,7 @@ export function buildScanCsv(scan, types = [], sport = '') {
 
   if (include('opportunities')) {
     for (const o of asArray(scan?.opportunities)) {
-      if (!sameSport(o)) continue;
+      if (!keeps(o)) continue;
       for (const leg of asArray(o.legs)) {
         rows.push([
           'opportunity',
@@ -154,7 +195,7 @@ export function buildScanCsv(scan, types = [], sport = '') {
 
   if (include('middles')) {
     for (const o of asArray(scan?.middles)) {
-      if (!sameSport(o)) continue;
+      if (!keeps(o)) continue;
       for (const leg of asArray(o.legs)) {
         rows.push([
           'middle',
@@ -173,7 +214,7 @@ export function buildScanCsv(scan, types = [], sport = '') {
 
   if (include('positiveEv')) {
     for (const o of asArray(scan?.positiveEv)) {
-      if (!sameSport(o)) continue;
+      if (!keeps(o)) continue;
       rows.push([
         'positiveEv',
         // Only the sport is published on this family; the other four identity
@@ -194,7 +235,7 @@ export function buildScanCsv(scan, types = [], sport = '') {
 
   if (include('lowHold')) {
     for (const o of asArray(scan?.lowHold)) {
-      if (!sameSport(o)) continue;
+      if (!keeps(o)) continue;
       rows.push([
         'lowHold',
         o.sport, '', '', '', '',

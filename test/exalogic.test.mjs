@@ -2,15 +2,20 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 
-import ExcelBet from '../src/scrapers/excelbet.mjs';
+import ExcelBet, {
+  EXALOGIC_SPORT_ID_MAP,
+  EXALOGIC_SPORT_NAME_TO_ID,
+  EXALOGIC_SPORT_AGGREGATES,
+} from '../src/scrapers/excelbet.mjs';
 import WinBoss from '../src/scrapers/winboss.mjs';
 import LasVegas from '../src/scrapers/las-vegas.mjs';
 import MagnumBet from '../src/scrapers/magnumbet.mjs';
+import Cashpot from '../src/scrapers/cashpot.mjs';
 import { resolveContract, bucketKeyForContract } from '../src/scanner/market-contracts.mjs';
 import { groupByEvent, findArbitrage } from '../src/scanner/engine.mjs';
 
 /**
- * The four Exalogic tenants share one adapter shape and one feed, differing
+ * The Exalogic tenants share one adapter shape and one feed, differing
  * only in host and systemCode.
  *
  * They are siblings, not copies: the constructor assigns what `fetchRaw`
@@ -26,6 +31,7 @@ const TENANTS = [
   { name: 'winboss', Cls: WinBoss, host: /winboss/i, code: 'WINBOSS' },
   { name: 'las-vegas', Cls: LasVegas, host: /lasvegas/i, code: 'LASVEGAS' },
   { name: 'magnumbet', Cls: MagnumBet, host: /magnumbet/i, code: 'MAGNUMBET' },
+  { name: 'cashpot', Cls: Cashpot, host: /cashpot/i, code: 'CASHPOT' },
 ];
 
 for (const { name, Cls, host, code } of TENANTS) {
@@ -74,12 +80,12 @@ test('MagnumBet inherits the adapter but not the parent identity', () => {
   assert.notEqual(s.systemCode, new ExcelBet({}).systemCode);
 });
 
-test('WinBoss and Las Vegas inherit the adapter, not a copy of it', () => {
-  // Both used to be near-verbatim copies of excelbet.mjs. A copy fixes bugs
+test('WinBoss, Las Vegas, MagnumBet, Cashpot inherit the adapter, not a copy of it', () => {
+  // All used to be near-verbatim copies of excelbet.mjs. A copy fixes bugs
   // only if someone remembers to fix it in every copy, and the WinBoss copy's
   // content-type error still said "ExcelBet". Assert on the shared prototype so
   // a future divergence is a test failure rather than silent drift.
-  for (const Cls of [WinBoss, LasVegas, MagnumBet]) {
+  for (const Cls of [WinBoss, LasVegas, MagnumBet, Cashpot]) {
     assert.equal(Cls.prototype.fetchRaw, ExcelBet.prototype.fetchRaw,
       `${Cls.name} must share the one fetchRaw implementation`);
     assert.equal(Cls.prototype.extractEvents, ExcelBet.prototype.extractEvents,
@@ -88,6 +94,7 @@ test('WinBoss and Las Vegas inherit the adapter, not a copy of it', () => {
   assert.notEqual(new WinBoss({}).systemCode, new LasVegas({}).systemCode);
   assert.match(new WinBoss({}).name, /WinBoss/i);
   assert.match(new LasVegas({}).name, /Las Vegas/i);
+  assert.match(new Cashpot({}).name, /Cashpot/i);
 });
 
 test('every Exalogic tenant publishes under its own sourceId, not the parent\'s', () => {
@@ -114,7 +121,7 @@ test('every Exalogic tenant publishes under its own sourceId, not the parent\'s'
     assert.equal(event.markets[0].selections[0].odds, 3.15);
     seen.add(event.sourceId);
   }
-  assert.equal(seen.size, 4, 'four tenants must produce four distinct sourceIds');
+  assert.equal(seen.size, TENANTS.length, 'all tenants must produce distinct sourceIds');
 });
 
 /**
@@ -335,3 +342,289 @@ test('every published Exalogic market resolves through the engine, on its own li
   const found = findArbitrage(groupByEvent(events), {});
   assert.deepEqual(found, [], 'a single book must never find an arbitrage against its own rows');
 });
+
+test('excelbet extracts Both Teams To Score (BTTS cs=18)', () => {
+  const s = new ExcelBet();
+  const raw = [
+    {
+      bid: 888123,
+      dsl: { RO: 'Real Madrid - Barcelona' },
+      ts: '20261025 21:00:00',
+      p: 'La Liga',
+      scs: [
+        { cs: 3, eqs: [{ ce: 1, q: 210 }, { ce: 2, q: 350 }, { ce: 3, q: 320 }] },
+        { cs: 18, d: 'BOTH TEAMS TO SCORE', eqs: [{ ce: 1, q: 175 }, { ce: 2, q: 205 }] },
+      ],
+    },
+  ];
+  const events = s.extractEvents(raw);
+  assert.equal(events.length, 1);
+  const btts = events[0].markets.find((m) => m.key === 'BOTH_TEAMS_SCORE');
+  assert.ok(btts, 'BTTS market must be extracted');
+  assert.equal(btts.selections.length, 2);
+  assert.deepEqual(btts.selections.map((s) => ({ name: s.name, odds: s.odds })), [
+    { name: 'Yes', odds: 1.75 },
+    { name: 'No', odds: 2.05 },
+  ]);
+  const contract = resolveContract(btts);
+  assert.equal(contract.family, 'BTTS');
+});
+
+test('excelbet live stream in-play metadata and league resolution', () => {
+  const s = new ExcelBet({ includeLive: true });
+  const rawLive = [
+    {
+      bid: 999456,
+      dsl: { RO: 'Arsenal - Chelsea' },
+      ts: '20261011 19:30:00',
+      lv: true,
+      league: 'Premier League',
+      sportName: 'Football',
+      scr: { sc: '1 - 0', t: '65', st: '2nd half' },
+      scs: [
+        { cs: 3, eqs: [{ ce: 1, q: 140 }, { ce: 2, q: 450 }, { ce: 3, q: 800 }] },
+      ],
+    },
+  ];
+  const events = s.extractEvents(rawLive);
+  assert.equal(events.length, 1);
+  const ev = events[0];
+  assert.equal(ev.live, true);
+  assert.equal(ev.league, 'Premier League');
+  assert.equal(ev.score, '1 - 0');
+  assert.equal(ev.minute, '65');
+  assert.equal(ev.periodName, '2nd half');
+});
+
+test('excelbet multi-sport: basketball 2-way winner and points totals', () => {
+  const s = new ExcelBet({ sport: 'all', includeLive: true });
+  const rawBasketball = [
+    {
+      bid: 777321,
+      dsl: { RO: 'LA Lakers - Boston Celtics' },
+      ts: '20261015 02:30:00',
+      sportName: 'Basketball',
+      league: 'NBA',
+      scs: [
+        // 2-way moneyline (cs=110)
+        { cs: 110, d: 'WINNER (INCL. OT)', eqs: [{ ce: 1, q: 195 }, { ce: 2, q: 185 }] },
+        // Points total (cs=14863, h=22550 -> 225.5 points)
+        { cs: 14863, d: 'TOTAL POINTS', h: 22550, eqs: [{ ce: 1, q: 190 }, { ce: 2, q: 190 }] },
+      ],
+    },
+  ];
+  const events = s.extractEvents(rawBasketball);
+  assert.equal(events.length, 1);
+  const ev = events[0];
+  assert.equal(ev.sport, 'Basketball');
+  assert.equal(ev.markets.length, 2);
+
+  const moneyline = ev.markets.find((m) => m.key === 'MATCH_ODDS');
+  assert.ok(moneyline);
+  assert.equal(moneyline.selections.length, 2);
+  const mlContract = resolveContract(moneyline);
+  assert.equal(mlContract.family, 'MATCH_ODDS');
+  assert.deepEqual(mlContract.outcomes, ['home', 'away']);
+
+  const pointsTotal = ev.markets.find((m) => m.key === 'OVER_UNDER');
+  assert.ok(pointsTotal);
+  assert.equal(pointsTotal.line, 225.5);
+  const ptContract = resolveContract(pointsTotal);
+  assert.equal(ptContract.family, 'OVER_UNDER');
+  assert.equal(ptContract.subject, 'points');
+});
+
+test('excelbet multi-sport: tennis 2-way winner and games totals', () => {
+  const s = new ExcelBet({ sport: 'tennis' });
+  const rawTennis = [
+    {
+      bid: 888123,
+      dsl: { RO: 'Sinner J. - Alcaraz C.' },
+      ts: '20261016 14:00:00',
+      sportName: 'Tennis',
+      league: 'ATP Roland Garros',
+      scs: [
+        // 2-way match winner (cs=2)
+        { cs: 2, d: 'MATCH WINNER', eqs: [{ ce: 1, q: 185 }, { ce: 2, q: 195 }] },
+        // Games total (cs=13464, h=2250 -> 22.5 games)
+        { cs: 13464, d: 'TOTAL GAMES', h: 2250, eqs: [{ ce: 1, q: 190 }, { ce: 2, q: 180 }] },
+      ],
+    },
+  ];
+  const events = s.extractEvents(rawTennis);
+  assert.equal(events.length, 1);
+  const ev = events[0];
+  assert.equal(ev.sport, 'Tennis');
+  assert.equal(ev.markets.length, 2);
+
+  const moneyline = ev.markets.find((m) => m.key === 'MATCH_ODDS');
+  assert.ok(moneyline);
+  assert.equal(moneyline.selections.length, 2);
+  const mlContract = resolveContract(moneyline);
+  assert.equal(mlContract.family, 'MATCH_ODDS');
+  assert.deepEqual(mlContract.outcomes, ['home', 'away']);
+
+  const gamesTotal = ev.markets.find((m) => m.key === 'OVER_UNDER');
+  assert.ok(gamesTotal);
+  assert.equal(gamesTotal.line, 22.5);
+  assert.equal(gamesTotal.subject, 'games');
+  const gtContract = resolveContract(gamesTotal);
+  assert.equal(gtContract.family, 'OVER_UNDER');
+  assert.equal(gtContract.subject, 'games');
+});
+
+test('excelbet exports sport mapping constants for multi-sport discovery', () => {
+  assert.equal(EXALOGIC_SPORT_ID_MAP[1], 'Football');
+  assert.equal(EXALOGIC_SPORT_ID_MAP[2], 'Basketball');
+  assert.equal(EXALOGIC_SPORT_ID_MAP[5], 'Tennis');
+  assert.equal(EXALOGIC_SPORT_NAME_TO_ID.football, 1);
+  assert.equal(EXALOGIC_SPORT_NAME_TO_ID.basketball, 2);
+  assert.equal(EXALOGIC_SPORT_NAME_TO_ID.tennis, 5);
+  assert.deepEqual(EXALOGIC_SPORT_AGGREGATES[1], [1, 8, 9]);
+  assert.deepEqual(EXALOGIC_SPORT_AGGREGATES[2], [5]);
+  assert.deepEqual(EXALOGIC_SPORT_AGGREGATES[5], [269]);
+});
+
+test('excelbet extracts first-half result market (cs=14) and isolates bucket from full-time 1X2', () => {
+  const s = new ExcelBet({ maxEvents: 10 });
+  const raw = {
+    avs: {
+      avs: [{
+        lv: 0, bid: 9002, ts: '20261015 16:45:00',
+        dsl: { RO: 'Arsenal - Chelsea' }, p: 'Premier League',
+        scs: [
+          { cs: 3, d: 'FINAL', eqs: [{ ce: 1, q: '210' }, { ce: 2, q: '330' }, { ce: 3, q: '350' }] },
+          { cs: 14, d: '1ST HALF', eqs: [{ ce: 1, q: '270' }, { ce: 2, q: '215' }, { ce: 3, q: '390' }] },
+        ],
+      }],
+    },
+  };
+  const [event] = s.extractEvents(s.normalize(raw));
+  assert.ok(event);
+  assert.equal(event.markets.length, 2);
+
+  const ftMarket = event.markets.find((m) => m.period === 'fulltime');
+  const h1Market = event.markets.find((m) => m.period === 'half1');
+
+  assert.ok(ftMarket);
+  assert.ok(h1Market);
+  assert.equal(ftMarket.key, '1x2');
+  assert.equal(h1Market.key, '1x2');
+  assert.equal(h1Market.period, 'half1');
+
+  const ftContract = resolveContract(ftMarket);
+  const h1Contract = resolveContract(h1Market);
+
+  assert.ok(ftContract);
+  assert.ok(h1Contract);
+  assert.equal(ftContract.period, 'fulltime');
+  assert.equal(h1Contract.period, 'half1');
+
+  const ftKey = bucketKeyForContract('ev-ars-che', ftContract);
+  const h1Key = bucketKeyForContract('ev-ars-che', h1Contract);
+
+  assert.equal(ftKey, 'ev-ars-che::MATCH_ODDS::fulltime::_::home+draw+away::_::_');
+  assert.equal(h1Key, 'ev-ars-che::MATCH_ODDS::half1::_::home+draw+away::_::_');
+  assert.notEqual(ftKey, h1Key);
+});
+
+test('excelbet sub-window basketball quarter and tennis set totals dynamically extract period and isolate buckets', () => {
+  const s = new ExcelBet({ maxEvents: 10 });
+  const raw = {
+    avs: {
+      avs: [{
+        lv: 0, bid: 9003, ts: '20261015 20:00:00',
+        dsl: { RO: 'Real Madrid - Barcelona' }, p: 'Euroleague',
+        scs: [
+          { cs: 14863, d: 'TOTAL POINTS', h: 16550, eqs: [{ ce: 1, q: '190' }, { ce: 2, q: '190' }] },
+          { cs: 14863, d: 'Total puncte sfert 1', h: 4150, eqs: [{ ce: 1, q: '185' }, { ce: 2, q: '195' }] },
+          { cs: 13464, d: 'Total game-uri set 1', h: 950, eqs: [{ ce: 1, q: '190' }, { ce: 2, q: '190' }] },
+        ],
+      }],
+    },
+  };
+  const [event] = s.extractEvents(s.normalize(raw));
+  assert.ok(event);
+
+  const ftPoints = event.markets.find((m) => m.line === 165.5);
+  const q1Points = event.markets.find((m) => m.line === 41.5);
+  const set1Games = event.markets.find((m) => m.line === 9.5);
+
+  assert.ok(ftPoints);
+  assert.ok(q1Points);
+  assert.ok(set1Games);
+
+  assert.equal(ftPoints.period, 'fulltime');
+  assert.equal(q1Points.period, 'q1');
+  assert.equal(q1Points.subject, 'points');
+  assert.equal(set1Games.period, 'set1');
+  assert.equal(set1Games.subject, 'games');
+
+  const ftContract = resolveContract(ftPoints, { sport: 'basketball' });
+  const q1Contract = resolveContract(q1Points, { sport: 'basketball' });
+
+  assert.ok(ftContract);
+  assert.ok(q1Contract);
+
+  const ftKey = bucketKeyForContract('ev-bask', ftContract);
+  const q1Key = bucketKeyForContract('ev-bask', q1Contract);
+
+  assert.match(ftKey, /::fulltime::165\.5::/);
+  assert.match(q1Key, /::q1::41\.5::/);
+  assert.notEqual(ftKey, q1Key);
+});
+
+test('excelbet sub-window 2-way moneyline markets extract set1/set2 periods and isolate bucket keys', () => {
+  const s = new ExcelBet({ maxEvents: 10 });
+  const raw = {
+    avs: {
+      avs: [{
+        lv: 0, bid: 9004, ts: '20261015 14:00:00',
+        dsl: { RO: 'Jannik Sinner - Carlos Alcaraz' }, p: 'ATP Masters',
+        scs: [
+          // Match Winner (FT)
+          { cs: 2, d: 'Castigator Meci', eqs: [{ ce: 1, q: '185' }, { ce: 2, q: '195' }] },
+          // Set 1 Winner
+          { cs: 2, d: 'Castigator Set 1', eqs: [{ ce: 1, q: '190' }, { ce: 2, q: '190' }] },
+          // Set 2 Winner
+          { cs: 2, d: 'Castigator Set 2', eqs: [{ ce: 1, q: '180' }, { ce: 2, q: '200' }] },
+        ],
+      }],
+    },
+  };
+  const [event] = s.extractEvents(s.normalize(raw));
+  assert.ok(event);
+  assert.equal(event.markets.length, 3);
+
+  const ftWin = event.markets.find((m) => m.name === 'Castigator Meci');
+  const s1Win = event.markets.find((m) => m.name === 'Castigator Set 1');
+  const s2Win = event.markets.find((m) => m.name === 'Castigator Set 2');
+
+  assert.ok(ftWin);
+  assert.ok(s1Win);
+  assert.ok(s2Win);
+
+  assert.equal(ftWin.period, 'fulltime');
+  assert.equal(s1Win.period, 'set1');
+  assert.equal(s2Win.period, 'set2');
+
+  const ftContract = resolveContract(ftWin, { sport: 'tennis' });
+  const s1Contract = resolveContract(s1Win, { sport: 'tennis' });
+  const s2Contract = resolveContract(s2Win, { sport: 'tennis' });
+
+  assert.equal(ftContract.family, 'MATCH_ODDS');
+  assert.equal(s1Contract.family, 'MATCH_ODDS');
+  assert.equal(s2Contract.family, 'MATCH_ODDS');
+
+  const ftKey = bucketKeyForContract('ev-ten', ftContract);
+  const s1Key = bucketKeyForContract('ev-ten', s1Contract);
+  const s2Key = bucketKeyForContract('ev-ten', s2Contract);
+
+  assert.equal(ftKey, 'ev-ten::MATCH_ODDS::fulltime::_::home+away::_::_');
+  assert.equal(s1Key, 'ev-ten::MATCH_ODDS::set1::_::home+away::_::_');
+  assert.equal(s2Key, 'ev-ten::MATCH_ODDS::set2::_::home+away::_::_');
+
+  assert.notEqual(ftKey, s1Key);
+  assert.notEqual(s1Key, s2Key);
+});
+

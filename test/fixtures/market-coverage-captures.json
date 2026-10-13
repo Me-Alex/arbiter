@@ -1,0 +1,168 @@
+[
+  {
+    "path": "data-market-run/workspace/betano_events.json",
+    "capturedAt": "2026-09-05T08:21:21.126Z",
+    "sourceId": "betano",
+    "event": {
+      "id": "88312154",
+      "sourceId": "betano",
+      "sourceUrl": "https://ro.betano.com/api/home/top-events-v2/",
+      "observedAt": "2026-09-05T08:21:21.065Z",
+      "sport": "Football",
+      "league": "LaLiga",
+      "kickoff": "2026-09-05T14:15:00.000Z",
+      "homeTeam": "Athletic Bilbao",
+      "awayTeam": "Atletico Madrid",
+      "eventKey": "football|laliga|2026-09-05T14:15:00.000Z|athletic bilbao|atletico madrid",
+      "markets": [
+        {
+          "key": "OVER_UNDER_0_5_1H",
+          "name": "Goluri prima repriză Peste/Sub",
+          "selections": [
+            {
+              "id": "10307849010",
+              "name": "Over",
+              "odds": 1.44,
+              "handicap": 0.5,
+              "group": "Main"
+            },
+            {
+              "id": "10307849011",
+              "name": "Under",
+              "odds": 2.75,
+              "handicap": 0.5,
+              "group": "Main"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "path": "data-market-run/workspace/getsbet_events.json",
+    "capturedAt": "2026-09-05T08:25:45.960Z",
+    "sourceId": "getsbet",
+    "event": {
+      "id": "312959797782278144",
+      "sourceId": "getsbet",
+      "sourceUrl": "https://sports2.getsbet.ro/sport#/event/312959797782278144",
+      "observedAt": "2026-09-05T08:25:45.904Z",
+      "sport": "Football",
+      "league": "Liga 2 2026/2027",
+      "kickoff": "2026-09-05T09:30:00.000Z",
+      "homeTeam": "Popesti Leordeni",
+      "awayTeam": "Bihor Oradea",
+      "eventKey": "football|liga 2 2026 2027|2026-09-05T09:30:00.000Z|popesti leordeni|bihor oradea",
+      "markets": [
+        {
+          "key": "OVER_UNDER_2_5",
+          "name": "Total Peste/Sub Timp regulamentar.",
+          "selections": [
+            {
+              "id": "313488256816069376",
+              "name": "Over",
+              "odds": 6.5,
+              "handicap": 2.5,
+              "group": "Main"
+            },
+            {
+              "id": "312962622943608576",
+              "name": "Under",
+              "odds": 1.3,
+              "handicap": 2.5,
+              "group": "Main"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "path": "data/workspace/fortuna_events.json",
+    "capturedAt": "2026-10-07T11:11:09.551Z",
+    "sourceId": "fortuna",
+    "event": {
+      "id": "ufo:mtch:1wo-0ln",
+      "sourceId": "fortuna",
+      "sourceUrl": "https://api.efortuna.ro/offer/structure/api/v1_0/sport/tournaments",
+      "transport": "fortuna-catalogue-v1",
+      "observedAt": "2026-10-07T11:10:50.099Z",
+      "sport": "Futsal",
+      "league": "suedia-1-f-3",
+      "kickoff": "2026-10-08T17:00:00.000Z",
+      "homeTeam": "Warberg IC",
+      "awayTeam": "Pixbo Wallenstam IBK",
+      "eventKey": "futsal|2026-10-08|warberg ic|pixbo wallenstam ibk",
+      "live": false,
+      "markets": [
+        {
+          "id": "ufo:mkt:1wo-0ln-001",
+          "key": "ufo:mtyp:11-01",
+          "name": "Total goluri 9.5",
+          "period": "unknown",
+          "line": null,
+          "selections": [
+            {
+              "id": "ufo:opt:1wo-0ln-001-00",
+              "name": "- 9.5",
+              "odds": 1.84,
+              "handicap": null
+            },
+            {
+              "id": "ufo:opt:1wo-0ln-001-01",
+              "name": "+ 9.5",
+              "odds": 1.84,
+              "handicap": null
+            }
+          ],
+          "live": false
+        }
+      ],
+      "providerEventKey": "futsal|suedia 1 f 3|2026-10-08T17:00:00.000Z|warberg ic|pixbo wallenstam ibk"
+    }
+  },
+  {
+    "path": "data/workspace/fortuna_events.json",
+    "capturedAt": "2026-10-07T11:11:09.551Z",
+    "sourceId": "fortuna",
+    "event": {
+      "id": "ufo:mtch:1wq-04o",
+      "sourceId": "fortuna",
+      "sourceUrl": "https://api.efortuna.ro/offer/structure/api/v1_0/sport/tournaments",
+      "transport": "fortuna-catalogue-v1",
+      "observedAt": "2026-10-07T11:10:50.099Z",
+      "sport": "Rugby",
+      "league": "ru-meciuri-amicale-1",
+      "kickoff": "2026-10-10T06:10:00.000Z",
+      "homeTeam": "Noua Zeelanda",
+      "awayTeam": "Australia",
+      "eventKey": "rugby|2026-10-10|noua zeelanda|australia",
+      "live": false,
+      "markets": [
+        {
+          "id": "ufo:mkt:1wq-04o-00b",
+          "key": "ufo:mtyp:07-05",
+          "name": "Meci: Total puncte 58.5",
+          "period": "unknown",
+          "line": null,
+          "selections": [
+            {
+              "id": "ufo:opt:1wq-04o-00b-01",
+              "name": "- 58.5",
+              "odds": 1.82,
+              "handicap": null
+            },
+            {
+              "id": "ufo:opt:1wq-04o-00b-00",
+              "name": "+ 58.5",
+              "odds": 1.82,
+              "handicap": null
+            }
+          ],
+          "live": false
+        }
+      ],
+      "providerEventKey": "rugby|ru meciuri amicale 1|2026-10-10T06:10:00.000Z|noua zeelanda|australia"
+    }
+  }
+]

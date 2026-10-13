@@ -2,6 +2,7 @@ import ScraperBase from './base.mjs';
 import { normalizeTeamName, canonicalSport } from '../shared/text.mjs';
 import { ValidationError, UpstreamError } from '../shared/errors.mjs';
 import { digitainEventIsLive, markMarketsLive, liveCoverageFor } from './live-status.mjs';
+import { extractPeriodFromName } from '../scanner/market-contracts.mjs';
 
 const DIGITAIN_URL = 'https://micros-prod1-sb.gambling-solutions.ro/api/digitain-fetcher/v2/public/events';
 
@@ -29,11 +30,9 @@ const isLiveStatus = digitainEventIsLive;
  * which keeps the engine from pairing it with a genuine full-time leg.
  */
 function marketPeriod(name) {
-  if (/repriza\s*1|1st\s*half|prima\s*repriza|first\s*half/i.test(name)) return 'firsthalf';
-  if (/repriza\s*2|2nd\s*half|a\s*doua\s*repriza|second\s*half/i.test(name)) return 'secondhalf';
   if (/pauza\s*sau\s*final|half\s*time\s*or\s*full/i.test(name)) return 'half-or-full';
   if (/pauza\s*(?!sau)|half\s*time(?!.*full)/i.test(name)) return 'halftime';
-  return 'fulltime';
+  return extractPeriodFromName(name) || 'fulltime';
 }
 
 /**
@@ -70,13 +69,19 @@ export default class WinnerScraper extends ScraperBase {
 
   constructor(opts = {}) {
     super(opts);
-    this.maxEvents = opts.maxEvents === 'all' ? 5000 : Math.min(Number(opts.maxEvents ?? 100), 5000);
-    if (!Number.isInteger(this.maxEvents) || this.maxEvents < 0 || this.maxEvents > 5000) {
+    this.maxEvents = opts.maxEvents === 'all' ? Infinity : Number(opts.maxEvents ?? Infinity);
+    if ((!Number.isInteger(this.maxEvents) && this.maxEvents !== Infinity) || this.maxEvents < 0) {
       throw new ValidationError('Winner: invalid maxEvents');
     }
     this.transport = 'winner-digitain-public-json';
-    // Pre-match football is the verified contract; `sport: 'all'` is not.
-    this.sportFilter = canonicalSportKey(opts.sport || 'football');
+    // Pre-match football is the default contract; `sport: 'all'` accepts all sports.
+    if (Array.isArray(opts.sports) && opts.sports.length > 0) {
+      this.sportsFilter = opts.sports.map((s) => canonicalSportKey(s));
+      this.sportFilter = null;
+    } else {
+      this.sportsFilter = null;
+      this.sportFilter = opts.sport === 'all' ? null : canonicalSportKey(opts.sport || 'football');
+    }
     this.includeLive = opts.includeLive === true;
     this.includePast = opts.includePast === true;
     this.windowHours = Number(opts.windowHours ?? 168);
@@ -161,14 +166,20 @@ export default class WinnerScraper extends ScraperBase {
       // below drops it a second time — which is what made the flag unusable and
       // left `includeLive` able to collect nothing at all.
       const live = isLiveStatus(e.currentStatus);
-      // Prematch football only. The feed returns 30+ sports and live events in
-      // one payload; without this filter they consumed the event cap and
-      // reached the scan as if they were tradable pre-match football.
+      // Pre-match only unless asked otherwise. The feed returns 30+ sports and
+      // live events in one payload; without this filter they consumed the event
+      // cap and reached the scan as if they were tradable pre-match football.
+      // The sport filter below then selects the one requested sport — football
+      // gets the bundling branch further down, and every other sport falls
+      // through to the generic publisher at the bottom, which is what lets one
+      // crawl serve 25 declared sports from the same payload.
       if (live && !this.includeLive) continue;
       if (!this.includePast && !live && startMs <= nowMs) continue;
       if (startMs > toMs) continue;
       const sport = this._localize(e.sportName, 'Unknown');
-      if (this.sportFilter && canonicalSportKey(sport) !== this.sportFilter) continue;
+      const cSport = canonicalSportKey(sport);
+      if (this.sportsFilter && !this.sportsFilter.includes(cSport)) continue;
+      if (this.sportFilter && cSport !== this.sportFilter) continue;
       const kickoff = new Date(startMs).toISOString();
       const league = this._localize(e.tournamentName, 'Unknown');
       const matchId = String(e.idMatch || e.id);
@@ -203,7 +214,10 @@ export default class WinnerScraper extends ScraperBase {
         // pair settles to a refund rather than covering the outcome. The router
         // refuses those too; skipping them here keeps a non-exhaustive market
         // out of the payload in the first place.
-        if (this.sportFilter === 'football') {
+        const cSport = canonicalSportKey(sport);
+        if (cSport === 'football' || cSport === 'basketball' || cSport === 'tennis') {
+          const isBasketball = cSport === 'basketball';
+          const isTennis = cSport === 'tennis';
           const byLine = new Map();
           let total = true;
           for (const o of outcomes) {
@@ -219,36 +233,58 @@ export default class WinnerScraper extends ScraperBase {
             byLine.get(line)[side] = { id: String(o.idMbo || ''), sideWord, odds };
           }
           if (total && byLine.size > 0) {
-            // The shape alone does not say WHAT is counted, and only goals can be
-            // paired as `total_goals`. Swept across the whole payload
-            // 2026-09-29, every bundled over/under market is under idBet 3 and
-            // takes one of three names: "Total puncte Peste/Sub" (18 — basketball,
-            // American football, rugby union), "Total goluri" (handball and
-            // football) and "Total" (polo, bandy). A points total republished as
-            // goals would be a mislabel that pairs against a real goals line.
-            //
-            // Only football reaches here, and `canonicalSportKey` already drops
-            // the points sports — "Fotbal American" maps to `american-football`,
-            // measured, not assumed. The gate is still terminal rather than
-            // assumed-away: an unrecognised name publishes NOTHING. Falling
-            // through would republish this as one market spanning every line,
-            // which is the multi-line bug this branch exists to prevent.
-            if (!/^total\b/i.test(betName) || !/\bgoluri\b|\bgoals\b/i.test(betName)) continue;
-            for (const [line, sides] of byLine) {
-              // Exactly two opposite sides, or it is not a contract.
-              if (!sides.over || !sides.under) continue;
-              if (line % 1 === 0 || line * 2 !== Math.round(line * 2)) continue;
-              markets.push({
-                key: 'total_goals',
-                name: `${betName} ${line}`,
-                period: marketPeriod(betName),
-                selections: [
-                  { id: sides.over.id, name: `${sides.over.sideWord} ${line}`, odds: sides.over.odds, handicap: null },
-                  { id: sides.under.id, name: `${sides.under.sideWord} ${line}`, odds: sides.under.odds, handicap: null },
-                ],
-              });
+            if (isBasketball) {
+              if (!/^total\b/i.test(betName) || !/\bpuncte\b|\bpoints\b/i.test(betName)) continue;
+              for (const [line, sides] of byLine) {
+                if (!sides.over || !sides.under) continue;
+                if (line % 1 === 0 || line * 2 !== Math.round(line * 2)) continue;
+                markets.push({
+                  key: `POINTS_OVER_UNDER_${String(line).replace('.', '_')}`,
+                  subject: 'points',
+                  name: `${betName} ${line}`,
+                  period: marketPeriod(betName),
+                  selections: [
+                    { id: sides.over.id, name: `${sides.over.sideWord} ${line}`, odds: sides.over.odds, handicap: null },
+                    { id: sides.under.id, name: `${sides.under.sideWord} ${line}`, odds: sides.under.odds, handicap: null },
+                  ],
+                });
+              }
+              continue;
+            } else if (isTennis) {
+              if (!/^total\b/i.test(betName) || !/\bgame-?uri\b|\bgames\b|\bsets\b|\bseturi\b/i.test(betName)) continue;
+              for (const [line, sides] of byLine) {
+                if (!sides.over || !sides.under) continue;
+                if (line % 1 === 0 || line * 2 !== Math.round(line * 2)) continue;
+                markets.push({
+                  key: 'TOTAL_GAMES',
+                  subject: 'games',
+                  name: `${betName} ${line}`,
+                  period: marketPeriod(betName),
+                  selections: [
+                    { id: sides.over.id, name: `${sides.over.sideWord} ${line}`, odds: sides.over.odds, handicap: null },
+                    { id: sides.under.id, name: `${sides.under.sideWord} ${line}`, odds: sides.under.odds, handicap: null },
+                  ],
+                });
+              }
+              continue;
+            } else {
+              if (!/^total\b/i.test(betName) || !/\bgoluri\b|\bgoals\b/i.test(betName)) continue;
+              for (const [line, sides] of byLine) {
+                // Exactly two opposite sides, or it is not a contract.
+                if (!sides.over || !sides.under) continue;
+                if (line % 1 === 0 || line * 2 !== Math.round(line * 2)) continue;
+                markets.push({
+                  key: 'total_goals',
+                  name: `${betName} ${line}`,
+                  period: marketPeriod(betName),
+                  selections: [
+                    { id: sides.over.id, name: `${sides.over.sideWord} ${line}`, odds: sides.over.odds, handicap: null },
+                    { id: sides.under.id, name: `${sides.under.sideWord} ${line}`, odds: sides.under.odds, handicap: null },
+                  ],
+                });
+              }
+              continue;
             }
-            continue;
           }
         }
 
@@ -321,7 +357,7 @@ export default class WinnerScraper extends ScraperBase {
       // question's name, so a feed that can do live looked incapable whenever a
       // prematch run was configured.
       coverage: {
-        sport: this.sportFilter || 'football',
+        sport: this.sportFilter ?? 'all',
         allMarkets: true,
         ...liveCoverageFor(this.id),
         liveCollected: Boolean(this.includeLive),

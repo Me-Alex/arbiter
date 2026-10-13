@@ -9,7 +9,7 @@ export function supportedContractForMarket(marketKey) {
   if (key === 'MATCH_ODDS' || key === '1X2') {
     return { key: 'MATCH_ODDS', outcomes: ['home', 'draw', 'away'] };
   }
-  const totals = key.match(/^OVER_UNDER_([0-9_]+)$/);
+  const totals = key.match(/^(?:(?:CORNERS|CARDS|POINTS|GAMES)_)?OVER_UNDER_([0-9_]+)$/);
   if (totals) return { key, outcomes: ['over', 'under'], line: totals[1].replace('_', '.') };
   return null;
 }
@@ -66,6 +66,9 @@ export function isOpaqueMatchResultKey(marketKey) {
  */
 export function isMatchResultMarket(m = {}) {
   if (!isDeclaredFullTimeMarket(m)) return false;
+  // Encoded totals must not be rescued as MATCH_ODDS by the engine's legacy
+  // fallback after the totals resolver rejects an incomplete/conflicting line.
+  if (/^OVER_UNDER_/i.test(String(m.key || ''))) return false;
   if (supportedContractForMarket(m.key)) return true;
   return isLiteral1x2SelectionSet(m.selections) && isOpaqueMatchResultKey(m.key);
 }
@@ -86,7 +89,7 @@ export function isFullTimeMarket(m = {}) {
   const period = String(m?.period || '').trim().toLowerCase();
   if (!period) return true; // absent period is the common emission; treat as full-time
   if (period === 'unknown' || period === 'unspecified' || period === 'n/a') return true;
-  return period === 'fulltime' || period === 'full time';
+  return period === 'fulltime' || period === 'full time' || period === 'ft';
 }
 
 /**
@@ -116,6 +119,9 @@ const SUB_SETTLEMENT_WORDS = [
   /\bhalf\s*time\s*or\s*full\b/i, /\bpauz[aă]\s*sau\s*final\b/i,
   /\bhalf\s*time\b/i, /\bpauz[aă]\b/i,
   /\bdouble\s*chance\b/i, /\bdubla\s*(?:sansa|sanșa|șansă|chance)\b/i,
+  /\bset\s*[1-5](?![a-z0-9])/i, /\b[1-5]\.?\s*set\b/i, /\b(?:1st|2nd|3rd|4th|5th)\s*set\b/i,
+  /\bsfert(?:ul)?\s*[1-4](?![a-z0-9])/i, /\b[1-4]\.?\s*sfert\b/i, /\bquarter\s*[1-4](?![a-z0-9])/i, /\b[1-4](?:st|nd|rd|th)?\s*quarter\b/i,
+  /\bq[1-4]\b/i,
 ];
 
 /**
@@ -213,14 +219,39 @@ export function roundedArbitrageAllocation(legs, bankroll) {
   }));
   const allocatedTotal = round2(allocated.reduce((sum, leg) => sum + leg.stake, 0));
   const correction = round2(total - allocatedTotal);
-  allocated[0].stake = round2(allocated[0].stake + correction);
+  if (correction !== 0) {
+    // Fold residual cent drift into the largest stake (lowest odds) to minimize
+    // payout distortion, matching arbitrage.js and standard Dutch betting practice.
+    let targetIdx = 0;
+    for (let i = 1; i < allocated.length; i++) {
+      if (allocated[i].stake > allocated[targetIdx].stake) {
+        targetIdx = i;
+      }
+    }
+    allocated[targetIdx].stake = round2(allocated[targetIdx].stake + correction);
+  }
 
   const payouts = allocated.map((leg) => round2(leg.stake * leg.odds));
   const worstCasePayout = Math.min(...payouts);
   const guaranteedProfit = round2(worstCasePayout - total);
 
-  return {
-    legs: allocated.map((leg, index) => ({ ...leg, payout: payouts[index], profit: guaranteedProfit })),
+  const hasLiquidity = allocated.some((leg) => leg.liquidity !== null && leg.liquidity !== undefined);
+  const legsWithFill = allocated.map((leg, index) => {
+    const res = {
+      ...leg,
+      payout: payouts[index],
+      profit: guaranteedProfit,
+    };
+    if (leg.liquidity !== null && leg.liquidity !== undefined && Number.isFinite(Number(leg.liquidity))) {
+      const liquidityVal = Number(leg.liquidity);
+      res.fillVolume = round2(Math.min(leg.stake, liquidityVal));
+      res.fillRate = leg.stake > 0 ? round2(Math.min(1, res.fillVolume / leg.stake)) : 1;
+    }
+    return res;
+  });
+
+  const res = {
+    legs: legsWithFill,
     inverseSum,
     totalStake: total,
     worstCasePayout,
@@ -231,6 +262,19 @@ export function roundedArbitrageAllocation(legs, bankroll) {
     marginPercent: round2((1 - inverseSum) * 100),
     roundingRisk: guaranteedProfit < 0,
   };
+
+  if (hasLiquidity) {
+    res.executableStake = round2(legsWithFill.reduce((sum, leg) => sum + (leg.fillVolume ?? leg.stake), 0));
+    res.isLiquidityConstrained = allocated.some(
+      (leg) => leg.liquidity !== null && leg.liquidity !== undefined && Number.isFinite(Number(leg.liquidity)) && Number(leg.liquidity) < leg.stake,
+    );
+    const limits = allocated
+      .filter((leg) => leg.liquidity !== null && leg.liquidity !== undefined && Number.isFinite(Number(leg.liquidity)) && Number(leg.liquidity) > 0)
+      .map((leg) => Number(leg.liquidity) * Number(leg.odds) * inverseSum);
+    res.maxExecutableBankroll = limits.length > 0 ? round2(Math.min(total, ...limits)) : total;
+  }
+
+  return res;
 }
 
 function round2(value) {
@@ -303,7 +347,7 @@ const SUBJECT_WORDS = [
   // `shots on target` is the English surebet.com renders. The Romanian
   // spelling these books use is NOT in any capture we hold, so it is listed as
   // unverified rather than guessed — see the note on `subjectFor`.
-  ['shots_on_target', /\b(?:shots?\s*on\s*target|tiruri\s*(?:pe|la)\s*poart[aă])(?![a-z0-9])/i],
+  ['shots_on_target', /\b(?:shots?\s*on\s*target|[sș]uturi\s*(?:pe|la)\s*poart[aă]|tiruri\s*(?:pe|la)\s*poart[aă])(?![a-z0-9])/i],
   ['points', /\b(?:points?|puncte)(?![a-z0-9])/i],
   // `games` = tennis/basketball sets, not video games. The captures contain
   // casino URLs containing "games" on the same books, so the class requires the
@@ -312,7 +356,7 @@ const SUBJECT_WORDS = [
   // `goals` LAST: it is the weakest match (a bare "gol" appears inside
   // "goluri") and every other subject here is checked first, so a corners
   // market titled "Cornere / Goluri" resolves to corners.
-  ['goals', /\b(?:goluri|total\s+goluri|gol|goals?)(?![a-z0-9])/i],
+  ['goals', /\b(?:goluri|total\s+goluri|gol|goals?|gole|goli|liczba\s+goli)(?![a-z0-9])/i],
 ];
 
 /**
@@ -330,6 +374,8 @@ const SUBJECT_BY_KEY = new Map([
   ['FTPO', 'points'],    // "Total Puncte"
   ['FOUT', 'points'],    // "Total Puncte"
   ['FTGO', 'games'],     // "Game-uri"
+  ['TOTAL_POINTS', 'points'],
+  ['TOTAL_GAMES', 'games'],
 ]);
 
 /**
@@ -344,6 +390,7 @@ const SUBJECT_BY_KEY = new Map([
  * @returns {string|null}
  */
 export function subjectFor(market = {}) {
+  if (market.subject) return market.subject;
   const key = String(market.key || '').trim().toUpperCase();
   const name = String(market.name || '');
 
@@ -356,6 +403,10 @@ export function subjectFor(market = {}) {
   // goals total is `00-0u` and the two per-team goal totals are `00-10`/`00-13`.
   const feg = /^UFO:MTYP:00-(0U|10|13)$/i.exec(key);
   if (feg) return 'goals';
+
+  if (key.startsWith('CORNERS_')) return 'corners';
+  if (key.startsWith('CARDS_')) return 'cards';
+  if (key.startsWith('POINTS_')) return 'points';
 
   const byKey = SUBJECT_BY_KEY.get(key);
   if (byKey) return byKey;
@@ -384,8 +435,27 @@ export function subjectFor(market = {}) {
  *
  * @returns {'goals'|'corners'|'cards'|'points'|'games'|'shots_on_target'}
  */
-function totalSubject(market) {
-  return subjectFor(market) || 'goals';
+function handicapSubject(market, ctx = {}, key = '') {
+  if (market.subject) return market.subject;
+  const s = subjectFor(market);
+  if (s === 'corners' || s === 'cards') return s;
+  if (/^TGHC$/i.test(key)) return 'games';
+  if (/^(?:POINT_SPREAD|POINTS_HANDICAP|SPREAD|BASKETBALL_HANDICAP)$/i.test(key)) return 'points';
+  const sport = String(market?.sport || ctx?.sport || '').trim().toLowerCase();
+  if (sport === 'basketball') return 'points';
+  if (sport === 'tennis') return 'games';
+  return null;
+}
+
+function totalSubject(market, ctx = {}) {
+  const direct = subjectFor(market);
+  if (direct) return direct;
+  const sport = String(market?.sport || ctx?.sport || '').trim().toLowerCase();
+  if (sport === 'basketball' || sport === 'american-football' || sport === 'rugby') return 'points';
+  if (sport === 'tennis') return 'games';
+  if (sport === 'handball') return 'goals';
+  if (sport === 'ice-hockey' || sport === 'ice_hockey' || sport === 'hockey') return 'goals';
+  return 'goals';
 }
 
 /**
@@ -412,15 +482,15 @@ function totalSubject(market) {
  * @param {object} market the provider market, for subject and side
  * @param {string} [period]
  */
-function ouContract(inline, market, period) {
-  const team = teamFor(market);
+function ouContract(inline, market, period, ctx) {
+  const team = market.team || inline?.team || teamFor(market, ctx);
   if (team === null) return null;
   return {
     family: 'OVER_UNDER',
     period,
     lineKey: inline.lineKey,
     outcomes: ['over', 'under'],
-    subject: totalSubject(market),
+    subject: inline?.subject || totalSubject(market, ctx),
     team,
   };
 }
@@ -443,7 +513,13 @@ function ouContract(inline, market, period) {
  *
  * @returns {'match'|'home'|'away'|null}
  */
-export function teamFor(market = {}) {
+export function teamFor(market = {}, ctx = {}) {
+  if (market.team === 'home' || market.team === 'away' || market.team === 'match') {
+    return market.team;
+  }
+  if (market.side === 'home' || market.side === 'away' || market.side === 'match') {
+    return market.side;
+  }
   const key = String(market.key || '').trim().toUpperCase();
   const hay = `${market.name || ''} ${(market.selections || []).map((s) => s?.name ?? '').join(' ')}`;
 
@@ -451,15 +527,30 @@ export function teamFor(market = {}) {
   if (key === 'UFO:MTYP:00-10') return 'home';
   if (key === 'UFO:MTYP:00-13') return 'away';
 
+  // Superbet per-event detail keys
+  if (key.startsWith('SB:544:') || key.startsWith('SB:2529:')) return 'home';
+  if (key.startsWith('SB:535:') || key.startsWith('SB:2531:')) return 'away';
+
+  // Betano team total keys
+  if (/^H(?:TGOT|CTG)$/i.test(key)) return 'home';
+  if (/^A(?:TGOT|CTG)$/i.test(key)) return 'away';
+
   // Romanian and English side tokens. Checked against the whole market text,
   // which is what lets a total that names its side in the SELECTION ("Over 0.5
   // 2nd team") resolve the same way as one that names it in the market name.
-  // `(?![a-z0-9])` rather than `\b` throughout: an `ă` or `ă`-ending token is a
-  // non-word character to JS, so `\bechipă\b` would never fire on "Echipă".
-  const isHome = /\b(?:echipa\s*1|echipa\s*i|1st\s*team|prim[aă]\s*echip[aă]|home\s*team)(?![a-z0-9])/i.test(hay);
-  const isAway = /\b(?:echipa\s*2|echipa\s*ii|2nd\s*team|a\s*doua\s*echip[aă]|away\s*team)(?![a-z0-9])/i.test(hay);
+  const isHome = /(?:echip[aă]\s*1|echip[aă]\s*i\b|1st\s*team|prim[aă]\s*echip[aă]|home\s*team|gazde|gazd[aă]|echip[aă]\s*gazd[aă])(?![a-z0-9])/i.test(hay);
+  const isAway = /(?:echip[aă]\s*2|echip[aă]\s*ii\b|2nd\s*team|a\s*doua\s*echip[aă]|away\s*team|oaspe[tț]i|oaspete|echip[aă]\s*oaspete)(?![a-z0-9])/i.test(hay);
   if (isHome && !isAway) return 'home';
   if (isAway && !isHome) return 'away';
+
+  const homeTeam = market.homeTeam || ctx?.homeTeam;
+  const awayTeam = market.awayTeam || ctx?.awayTeam;
+  if (homeTeam || awayTeam) {
+    const hasHome = homeTeam && hay.toLowerCase().includes(homeTeam.toLowerCase());
+    const hasAway = awayTeam && hay.toLowerCase().includes(awayTeam.toLowerCase());
+    if (hasHome && !hasAway) return 'home';
+    if (hasAway && !hasHome) return 'away';
+  }
 
   // "Echipă" / "Team" with no number: it IS one team's total, but not a
   // nameable one. null makes the caller refuse rather than guess. The trailing
@@ -467,7 +558,7 @@ export function teamFor(market = {}) {
   // silently returned false for the exact Romanian spelling it was written for,
   // and the market then resolved as a MATCH total, which is the collision the
   // `team` dimension exists to prevent.
-  if (/\b(?:total\s+goluri\s+echip[aă]|team\s+total|team\s+goals?)(?![a-z0-9])/i.test(hay)) return null;
+  if (/(?:total\s+goluri\s+echip[aă]|team\s+total|team\s+goals?)(?![a-z0-9])/i.test(hay)) return null;
 
   return 'match';
 }
@@ -502,13 +593,38 @@ export function teamFor(market = {}) {
  * followed by another word character" test and fires for both spellings.
  */
 const FIRST_HALF_WORDS = [
-  /\bprima\s*repriz[aă](?![a-z0-9])/i, /\brepriz[aă]\s*[1i](?![a-z0-9])/i, /\b[1i]\.?\s*repriz[aă](?![a-z0-9])/i,
-  /\b1st\s*half\b/i, /\bfirst\s*half\b/i,
+  /\bprima\s*rep(?:riz[aă])?(?![a-z0-9])/i, /\brepriz[aă]\s*[1i](?![a-z0-9])/i, /\b[1i]\.?\s*rep(?:riz[aă])?(?![a-z0-9])/i,
+  /\b1st[\s_-]+half\b/i, /\bfirst[\s_-]+half\b/i, /\b1\s*h\b/i,
+  /\bpauz[aă](?!\s*sau\s*final)(?![a-z0-9])/i, /\bhalf[\s_-]*time(?![\s_-]*or[\s_-]*full)\b/i,
+  /\bpr\b(?!\s*sau\s*final)/i,
+  /\b1\.?\s*po[łl]owa(?![a-z0-9])/i, /\bpierwsza\s*po[łl]owa(?![a-z0-9])/i,
 ];
 const SECOND_HALF_WORDS = [
-  /\ba\s*doua\s*repriz[aă](?![a-z0-9])/i, /\brepriz[aă]\s*[2ii](?![a-z0-9])/i, /\b[2ii]\.?\s*repriz[aă](?![a-z0-9])/i,
-  /\b2nd\s*half\b/i, /\bsecond\s*half\b/i,
+  /\ba\s*doua\s*rep(?:riz[aă])?(?![a-z0-9])/i, /\brepriz[aă]\s*[2ii](?![a-z0-9])/i, /\b[2ii]\.?\s*rep(?:riz[aă])?(?![a-z0-9])/i,
+  /\b2nd[\s_-]+half\b/i, /\bsecond[\s_-]+half\b/i, /\b2\s*h\b/i,
+  /\bsr\b/i,
+  /\b2\.?\s*po[łl]owa(?![a-z0-9])/i, /\bdruga\s*po[łl]owa(?![a-z0-9])/i,
 ];
+
+export const TRADABLE_PERIODS = new Set([
+  'fulltime',
+  'half1',
+  'half2',
+  'set1',
+  'set2',
+  'set3',
+  'set4',
+  'set5',
+  'q1',
+  'q2',
+  'q3',
+  'q4',
+  'unknown',
+]);
+
+export function isTradablePeriod(period) {
+  return TRADABLE_PERIODS.has(String(period || '').trim().toLowerCase());
+}
 
 /**
  * A family is `arbEligible: true` when its outcomes are mutually exclusive and
@@ -520,7 +636,54 @@ const SECOND_HALF_WORDS = [
  * bounded by a different (and intractable) formula. The family is still
  * recognized for cataloging and reporting, just not scanned for arbitrage.
  */
+function extractSetPeriod(name) {
+  const setM = /(?:\bset(?:ul)?\s*([1-5])\b|\b([1-5])\.?\s*set\b|\b(1st|2nd|3rd|4th|5th)\s*set\b|\bprimul\s*set\b|\bal\s*doilea\s*set\b|\bal\s*treilea\s*set\b|\bhart[aă]\s*([1-5])(?![a-z0-9])|\b([1-5])\.?\s*hart[aă](?![a-z0-9]))/i.exec(name);
+  if (!setM) return null;
+  let num = setM[1] || setM[2] || (setM[3] ? { '1st': '1', '2nd': '2', '3rd': '3', '4th': '4', '5th': '5' }[setM[3].toLowerCase()] : null) || setM[4] || setM[5];
+  if (!num) {
+    if (/\bprimul\s*set\b/i.test(setM[0])) num = '1';
+    else if (/\bal\s*doilea\s*set\b/i.test(setM[0])) num = '2';
+    else if (/\bal\s*treilea\s*set\b/i.test(setM[0])) num = '3';
+  }
+  return num ? `set${num}` : null;
+}
+
+function extractQuarterPeriod(name) {
+  const qM = /(?:\bsfert(?:ul)?\s*([1-4])\b|\b([1-4])\.?\s*sfert\b|\bquarter\s*([1-4])\b|\b([1-4])(?:st|nd|rd|th)?\s*quarter\b|\bq([1-4])\b|\bprimul\s*sfert\b|\bal\s*doilea\s*sfert\b|\bal\s*treilea\s*sfert\b|\bal\s*patrulea\s*sfert\b)/i.exec(name);
+  if (!qM) return null;
+  let num = qM[1] || qM[2] || qM[3] || qM[4] || qM[5];
+  if (!num) {
+    if (/\bprimul\s*sfert\b/i.test(qM[0])) num = '1';
+    else if (/\bal\s*doilea\s*sfert\b/i.test(qM[0])) num = '2';
+    else if (/\bal\s*treilea\s*sfert\b/i.test(qM[0])) num = '3';
+    else if (/\bal\s*patrulea\s*sfert\b/i.test(qM[0])) num = '4';
+  }
+  return num ? `q${num}` : null;
+}
+
+export function extractPeriodFromName(name) {
+  if (!name || typeof name !== 'string') return null;
+  if (FIRST_HALF_WORDS.some((re) => re.test(name))) return 'half1';
+  if (SECOND_HALF_WORDS.some((re) => re.test(name))) return 'half2';
+  const setPeriod = extractSetPeriod(name);
+  if (setPeriod) return setPeriod;
+  const quarterPeriod = extractQuarterPeriod(name);
+  if (quarterPeriod) return quarterPeriod;
+  return null;
+}
+
 export function canonicalPeriod(market = {}) {
+  const p = String(market?.period || '').trim().toLowerCase();
+  const name = String(market?.name || '').trim();
+
+  // If the period is explicitly set to a half, set, or quarter:
+  if (p === 'half1' || p === '1st_half' || p === 'first_half' || p === 'halftime' || p === 'half_time' || p === '1h' || p === 'ht' || p === 'pr' || /prima[\s_]*rep(?:riza)?|^repriza[\s_]*1\b|^1[\s_]*repriza|1(?:st)?[\s_]*half/.test(p)) return 'half1';
+  if (p === 'half2' || p === '2nd_half' || p === 'second_half' || p === '2h' || p === 'sr' || /a[\s_]*doua[\s_]*rep(?:riza)?|^repriza[\s_]*2\b|^2[\s_]*repriza|2(?:nd)?[\s_]*half/.test(p)) return 'half2';
+  const setP = /^(?:set(?:ul)?|map|hart[aă])[\s_]*([1-5])$|^([1-5])(?:st|nd|rd|th)?[\s_]*(?:set|map|hart[aă])$/i.exec(p);
+  if (setP) return `set${setP[1] || setP[2]}`;
+  const qP = /^(?:q|quarter|sfert(?:ul)?)[\s_]*([1-4])$|^([1-4])(?:st|nd|rd|th)?[\s_]*quarter$/.exec(p);
+  if (qP) return `q${qP[1] || qP[2]}`;
+
   if (isFullTimeMarket(market)) {
     // A declared `fulltime` period is only as trustworthy as the adapter that
     // wrote it, and several adapters stamp it on every market they emit.
@@ -531,10 +694,13 @@ export function canonicalPeriod(market = {}) {
     // pair and the scanner reports an arbitrage over two different settlement
     // windows. The market's own name is the provider's text, so when the two
     // disagree the name wins, the same rule isDeclaredFullTimeMarket applies.
-    const name = String(market.name || '').trim();
     if (name) {
       if (FIRST_HALF_WORDS.some((re) => re.test(name))) return 'half1';
       if (SECOND_HALF_WORDS.some((re) => re.test(name))) return 'half2';
+      const setPeriod = extractSetPeriod(name);
+      if (setPeriod) return setPeriod;
+      const quarterPeriod = extractQuarterPeriod(name);
+      if (quarterPeriod) return quarterPeriod;
       // A declared `fulltime` with an overtime-inclusive name is the same lie,
       // just on the other side of the final whistle: "Câştigă meciul (incl.
       // prelungiri)" labels a different payoff function than the genuine
@@ -544,9 +710,16 @@ export function canonicalPeriod(market = {}) {
     }
     return 'fulltime';
   }
-  const p = String(market?.period || '').trim().toLowerCase();
-  if (p === 'half1' || p === '1st_half' || p === 'first_half' || /prima\s*repriza|^repriza\s*1\b|[12](st|nd)?\s*half/.test(p)) return 'half1';
-  if (p === 'half2' || p === '2nd_half' || p === 'second_half' || /a\s*doua\s*repriza|^repriza\s*2\b|^[2]\s*repriza/.test(p)) return 'half2';
+
+  // Name check when p is neither empty nor recognized above
+  if (name) {
+    if (FIRST_HALF_WORDS.some((re) => re.test(name))) return 'half1';
+    if (SECOND_HALF_WORDS.some((re) => re.test(name))) return 'half2';
+    const setPeriod = extractSetPeriod(name);
+    if (setPeriod) return setPeriod;
+    const quarterPeriod = extractQuarterPeriod(name);
+    if (quarterPeriod) return quarterPeriod;
+  }
   // An explicitly non-full-time period that names no half this function can read
   // is NOT full-time, and it must not be defaulted into one.
   //
@@ -595,13 +768,29 @@ export function canonicalPeriod(market = {}) {
  * is normalised to a canonical string ("2.5" / "-1.5" / "1.5") so OVER 2.5
  * never buckets with OVER 3.5 even when the key is generic.
  */
-export function resolveContract(market = {}) {
+export function resolveContract(market = {}, ctx = {}) {
   const rawKey = String(market.key || '');
   const key = rawKey.toUpperCase();
   const period = canonicalPeriod(market);
 
-  // ---- 1. MATCH_ODDS (3-way: home/draw/away) ----
-  if (key === 'MATCH_ODDS' || key === '1X2' || key === 'MRES') {
+  // The frozen Favbet adapter assigned BOTH_TEAMS_SCORE to three different
+  // propositions. Yes/no labels do not make a goals threshold or a both-halves
+  // condition equivalent to plain BTTS. No independent capture quotes these
+  // variants, so withhold them before any key/selection fallback can reopen them.
+  const title = normalizeTeamName(market.name);
+  if (/^ambele echipe (?:marcheaza mai (?:mult|putin) de 1 5 goluri|sa inscrie in ambele reprize)$/.test(title)) return null;
+
+  // Frozen Betano/EveryMatrix captures carry bare Over/Under labels, with the
+  // line in OVER_UNDER_2_5 (or Betano's _1H suffix) and selection.handicap.
+  // The generic name parser drops all 504 of these markets. This canonical
+  // namespace is authoritative: malformed or conflicting lines stay refused.
+  if (key.startsWith('OVER_UNDER_') || /^(?:CORNERS|CARDS|POINTS|GAMES)_OVER_UNDER_/i.test(key)) return encodedTotalContract(key, market, period, ctx);
+
+  // ---- 1. MATCH_ODDS (3-way: home/draw/away or 2-way: home/away for tennis/basketball) ----
+  if (key === 'MATCH_ODDS' || key === '1X2' || key === 'MRES' || key === 'MR12' || key === 'MONEYLINE' || key === 'MATCH_WINNER' || key === 'HEAD_TO_HEAD' || key === 'WINNER_2WAY' || key === 'WINNER' || key === 'SET_WINNER' || key === 'QUARTER_WINNER' || key === 'HALF_WINNER' || key === 'PERIOD_WINNER' || key === 'MRH1' || key === 'MRH2') {
+    if (market.selections?.length === 2) {
+      return { family: 'MATCH_ODDS', period, lineKey: '_', outcomes: ['home', 'away'] };
+    }
     return { family: 'MATCH_ODDS', period, lineKey: '_', outcomes: ['home', 'draw', 'away'] };
   }
   // Opaque keys (superbet 547, winner 1, netbet default, betano MRES, FEG
@@ -614,7 +803,7 @@ export function resolveContract(market = {}) {
   // FEG publishes double chance per sport via ufo:mtyp:XX-YY where YY – {01, 0t}.
   // The selection shape is the same regardless of sport, so we accept the shape
   // on any FEG key, plus the provider-specific named keys.
-  if (key === 'DOUBLE_CHANCE' || key === 'DBLC') {
+  if (key === 'DOUBLE_CHANCE' || key === 'DBLC' || key === 'DCH1' || key === 'DCH2') {
     if (isDoubleChanceSelectionSet(market.selections)) {
       return { family: 'DOUBLE_CHANCE', period, lineKey: '_', outcomes: ['home_or_draw', 'home_or_away', 'draw_or_away'], arbEligible: false };
     }
@@ -639,7 +828,7 @@ export function resolveContract(market = {}) {
   }
 
   // ---- 3. BTTS (2-way: yes/no) ----
-  if (key === 'BOTH_TEAMS_SCORE' || key === 'BTTS' || key === 'BTSC' || key === 'UFO:MTYP:00-1C') {
+  if (key === 'BOTH_TEAMS_SCORE' || key === 'BTTS' || key === 'BTSC' || key === 'BTH1' || key === 'BTH2' || key === 'UFO:MTYP:00-1C') {
     if (isBttsSelectionSet(market.selections)) {
       return { family: 'BTTS', period, lineKey: '_', outcomes: ['yes', 'no'] };
     }
@@ -666,7 +855,24 @@ export function resolveContract(market = {}) {
   // surebet and then evaporates on any draw. It is catalogued here (arbEligible
   // :false) rather than dropped, so a run can still report that the feed carries
   // it and exactly why it is not a candidate.
-  if (key === 'DRAW_NO_BET' || key === 'DNOB' || key === 'DRAW_NO_BET_2WAY' || key === 'UFO:MTYP:00-03') {
+  const isDnbKey = (
+    key === 'DRAW_NO_BET' ||
+    key === 'DNB' ||
+    key === 'DNOB' ||
+    key === 'DNH1' ||
+    key === 'DNH2' ||
+    key === 'DRAW_NO_BET_2WAY' ||
+    key === 'UFO:MTYP:00-03' ||
+    key === 'ASIAN_HANDICAP_0' ||
+    key === 'AH_0' ||
+    key === 'AH0' ||
+    key === 'HA_0' ||
+    key === 'HANDICAP_0' ||
+    key === 'AH(0)' ||
+    key === 'AH 0'
+  );
+  const isDnbName = /\b(?:draw\s*no\s*bet|victorie\s+f[aă]r[aă]\s+egal|niciun\s+pariu\s+pe\s+egal|f[aă]r[aă]\s+egal|pariu\s+f[aă]r[aă]\s+egal|miz[aă]\s+(?:returnat[aă]|înapoiat[aă]|inapoiat[aă])\s+în\s+caz\s+de\s+egal)\b/i.test(market.name || '');
+  if (isDnbKey || isDnbName) {
     const sides = market.selections || [];
     if (sides.length === 2) {
       return { family: 'DRAW_NO_BET', period, lineKey: '_', outcomes: ['home', 'away'], arbEligible: false };
@@ -723,12 +929,27 @@ export function resolveContract(market = {}) {
   }
 
   // ---- 4. OVER/UNDER and ASIAN_HANDICAP via provider whitelists ----
+  // data/workspace/{fortuna,casa-pariurilor}_events.json: 11-01 is
+  // "Total goluri 9.5" (20 markets), and 07-05 is "Meci: Total puncte 58.5"
+  // (8 markets). Both use bare +/- lines. Route these measured totals before
+  // the broad FEG winner table / generic spread heuristic, carrying the subject.
+  // Do not infer a sport from these ids: some captured sport labels are wrong.
+  if (key === 'UFO:MTYP:11-01' || key === 'UFO:MTYP:07-05') {
+    const title = key === 'UFO:MTYP:11-01'
+      ? /^Total goluri ([0-9]+\.[0-9]+)$/i
+      : /^Meci:\s*Total puncte ([0-9]+\.[0-9]+)$/i;
+    const namedLine = title.exec(String(market.name || '').trim());
+    const inline = classifyAndExtractLine(market.selections, { kind: 'OU' });
+    if (!namedLine || !inline || Number(namedLine[1]) !== Number(inline.lineKey)) return null;
+    const contract = ouContract(inline, market, period, ctx);
+    return hasTotalSides(market, contract) ? contract : null;
+  }
   // FEG routing table — sport-prefix in XX selects the family, market-suffix in
   // YY names the contract shape. This covers the football projection (`00`),
   // its second market namespace (`0c`, see fegRoute), and the tennis, basketball,
   // ice hockey, handball, darts, futsal, rugby and unnamed-id sports the same
   // catalogue walks.
-  const feg = fegRoute(rawKey, market);
+  const feg = fegRoute(rawKey, market, period, ctx);
   if (feg) return { ...feg, period };
 
   // betano whitelisted keys: keys the betano adapter exposes with provider-
@@ -766,8 +987,8 @@ export function resolveContract(market = {}) {
     // opportunity and a quiet market look identical in a scan that reports rows.
     // It showed up as `superbet — single book` in `scripts/market-coverage.mjs`.
     if (declared) {
-      if (declared.family === 'OVER_UNDER') return ouContract(declared, market, period);
-      return { ...declared, period };
+      if (declared.family === 'OVER_UNDER') return ouContract(declared, market, declared.period || period, ctx);
+      return { ...declared, period: declared.period || period };
     }
     return null;
   }
@@ -797,21 +1018,13 @@ export function resolveContract(market = {}) {
   // stake instead of settling it.
   if (key === 'ASIAN_HANDICAP') {
     const declared = classifyAndExtractLine(market.selections, { kind: 'AH' });
-    return declared ? { family: 'ASIAN_HANDICAP', period, lineKey: declared.lineKey, outcomes: declared.outcomes } : null;
+    const subject = handicapSubject(market, ctx, key);
+    return declared ? { family: 'ASIAN_HANDICAP', period, lineKey: declared.lineKey, outcomes: declared.outcomes, ...(subject ? { subject } : {}) } : null;
   }
-  if (key === 'GAME_HANDICAP' || key === 'GOALS_HANDICAP' || key === 'HANDICAP' || key === 'TGHC' || key === 'FAHC' || key === 'HCAP' || key === 'AHCP' || key === 'FHOT') {
+  if (key === 'GAME_HANDICAP' || key === 'GAMES_HANDICAP' || key === 'GOALS_HANDICAP' || key === 'HANDICAP' || key === 'TGHC' || key === 'FAHC' || key === 'HCAP' || key === 'AHCP' || key === 'FHOT' || key === 'POINT_SPREAD' || key === 'POINTS_HANDICAP' || key === 'SPREAD' || key === 'BASKETBALL_HANDICAP') {
     const inline = classifyAndExtractLine(market.selections, { kind: 'AH' });
-    // Authoritative for the same reason ASIAN_HANDICAP above is, and the
-    // fall-through was not harmless. A whole line ("1 (-7)" / "2 (7)") fails
-    // isHalf, so this returned nothing and let the market keep travelling: the
-    // generic line-in-name resolver declines it too, and the last-resort 2-way
-    // match-winner path then accepts "1 (-7)"/"2 (7)" as MATCH_ODDS. That is a
-    // push-capable spread priced as a contract whose two sides cannot tie, so
-    // it pairs against another book's match winner and settles on a refund.
-    // netbet's own capture is half-line only (715 of 715 measured), but
-    // unibet and tinyfish also emit a bare HANDICAP key and neither is
-    // guaranteed to be half-line.
-    return inline ? { family: 'ASIAN_HANDICAP', period, lineKey: inline.lineKey, outcomes: inline.outcomes } : null;
+    const subject = handicapSubject(market, ctx, key);
+    return inline ? { family: 'ASIAN_HANDICAP', period, lineKey: inline.lineKey, outcomes: inline.outcomes, ...(subject ? { subject } : {}) } : null;
   }
   // Goal totals (favbet/netbet style bundled keys + betano *GOT keys + FEG
   // *-0U/-02 totals) — line in name. Non-goal totals (corners, cards, points,
@@ -820,9 +1033,9 @@ export function resolveContract(market = {}) {
   // folding them in here as goals.
   // netbet's TOTAL_180S used to sit in this list; it is a darts 180 count, not
   // a scoring total, and is withheld with the other segment markets in 3c.
-  if (key === 'TOTAL_GOALS' || key === 'TOTAL' || /^H?CTG$/i.test(key) || /^T?GOT$/i.test(key) || /^OUH\d?$/i.test(key) || key === 'OVUN' || key === 'UFO:MTYP:00-0U' || key === 'UFO:MTYP:14-02' || key === 'UFO:MTYP:11-01' || key === 'UFO:MTYP:0C-03' || key === 'UFO:MTYP:35-01' || key === 'UFO:MTYP:02-06') {
+  if (key === 'TOTAL_GOALS' || key === 'TOTAL' || /^H?CTG$/i.test(key) || /^[HA]?T?GOT$/i.test(key) || /^OUH\d?$/i.test(key) || key === 'OVUN' || key === 'UFO:MTYP:00-0U' || key === 'UFO:MTYP:14-02' || key === 'UFO:MTYP:11-01' || key === 'UFO:MTYP:0C-03' || key === 'UFO:MTYP:35-01' || key === 'UFO:MTYP:02-06') {
     const inline = classifyAndExtractLine(market.selections, { kind: 'OU' });
-    if (inline) return ouContract(inline, market, period);
+    if (inline) return ouContract(inline, market, period, ctx);
   }
 
   // ---- 5b. Non-goal totals now RESOLVE, carrying their measured subject ----
@@ -861,12 +1074,12 @@ export function resolveContract(market = {}) {
   // own text and a key id is a label this project would otherwise be guessing
   // at. `totalSubject` falls back to `goals` for a market whose subject nothing
   // proves, which is the pre-existing behaviour rather than a new default.
-  if (/^(CNOU|TCOU|TSMF|FTPO|FOUT|FTGO|TOTP|TSCR|TCOR)$/.test(key)) {
+  if (/^(CNOU|TCOU|TSMF|FTPO|FOUT|FTGO|TOTAL_POINTS|TOTAL_GAMES|TOTP|TSCR|TCOR)$/.test(key)) {
     const subject = subjectFor(market);
     // No measured subject for this key: refuse, exactly as before.
     if (!subject) return null;
     const inline = classifyAndExtractLine(market.selections, { kind: 'OU' });
-    if (inline) return ouContract(inline, market, period);
+    if (inline) return ouContract(inline, market, period, ctx);
     // A named non-goal total whose legs do not carry a legible line is not a
     // two-sided contract, and admitting it with a placeholder line would put it
     // in a bucket no real line occupies. Refuse rather than invent a line.
@@ -916,7 +1129,7 @@ export function resolveContract(market = {}) {
       lineKey: inline.lineKey,
       outcomes: ['over', 'under'],
       subject: 'goals',
-      team: teamFor(market),
+      team: teamFor(market, ctx),
     };
   }
 
@@ -940,8 +1153,9 @@ export function resolveContract(market = {}) {
       // line and a side, and this project's measured history with it is a long
       // record of false pairs (superbet 535, netbet's mirrored legs, betano's
       // player spreads). Widening that family is not part of this change.
-      if (inline.family === 'OVER_UNDER') return ouContract(inline, market, period);
-      return { family: inline.family, period, lineKey: inline.lineKey, outcomes: inline.outcomes };
+      if (inline.family === 'OVER_UNDER') return ouContract(inline, market, period, ctx);
+      const ahSub = handicapSubject(market, ctx, rawKey);
+      return { family: inline.family, period, lineKey: inline.lineKey, outcomes: inline.outcomes, ...(ahSub ? { subject: ahSub } : {}) };
     }
   }
 
@@ -953,6 +1167,43 @@ export function resolveContract(market = {}) {
   if (twoWay) return { ...twoWay, period };
 
   return null;
+}
+
+function hasTotalSides(market, contract) {
+  if (!contract || market.selections?.length !== 2) return false;
+  const outcomes = market.selections.map((s) => canonicalOutcomeFor(s.name, contract));
+  return outcomes.includes('over') && outcomes.includes('under');
+}
+
+function encodedTotalContract(key, market, period, ctx) {
+  const encoded = /^(?:(CORNERS|CARDS|POINTS|GAMES)_)?OVER_UNDER_(\d+)(?:_(\d+))?(_1H)?$/i.exec(key);
+  if (!encoded) return null;
+  const line = Number(`${encoded[2]}.${encoded[3] || '0'}`);
+  if (!Number.isFinite(line) || line % 1 !== 0.5) return null;
+  if (encoded[4]) {
+    if (period !== 'fulltime' && period !== 'half1') return null;
+    period = 'half1';
+  }
+  let altSubject = null;
+  if (encoded[1]) {
+    const s = encoded[1].toUpperCase();
+    if (s === 'CORNERS') altSubject = 'corners';
+    else if (s === 'CARDS') altSubject = 'cards';
+    else if (s === 'POINTS') altSubject = 'points';
+    else if (s === 'GAMES') altSubject = 'games';
+  }
+  const contract = ouContract({ lineKey: normalizeLine(line) }, market, period, ctx);
+  if (!contract) return null;
+  if (altSubject) contract.subject = altSubject;
+  if (!hasTotalSides(market, contract)) return null;
+  // The key supplies a missing line, never overrides contrary provider data.
+  const declaredLines = [market.line, ...market.selections.flatMap((s) =>
+    [s.handicap, extractLineFromName(String(s.name || ''))])];
+  for (const value of declaredLines) {
+    if (value === null || value === undefined) continue;
+    if (String(value).trim() === '' || Number(value) !== line) return null;
+  }
+  return contract;
 }
 
 /**
@@ -976,11 +1227,23 @@ export function resolveContract(market = {}) {
  * points totals ended up filed beside football goal totals in a report that
  * claimed to be about football.
  */
-function fegRoute(rawKey, market) {
+function fegRoute(rawKey, market, period = 'fulltime', ctx = {}) {
   const m = /^ufo:mtyp:([0-9a-z]{2})-([0-9a-z]{2})$/i.exec(rawKey);
   if (!m) return null;
   const sport = m[1].toLowerCase();
   const mtype = m[2].toLowerCase();
+
+  const fegSport = (
+    sport === '00' || sport === '0c' ? 'football' :
+    sport === '01' ? 'tennis' :
+    sport === '02' ? 'basketball' :
+    sport === '03' ? 'ice-hockey' :
+    sport === '04' ? 'handball' :
+    sport === '07' ? 'rugby' :
+    sport === '09' ? 'darts' :
+    sport === '11' ? 'futsal' : null
+  );
+  const fegCtx = { ...ctx, ...(fegSport ? { sport: fegSport } : {}) };
 
   // Football 00-XX — already routed for the 1X2 / DC / totals / DNB cases via
   // the primary matchers above; only the sport-specific extras land here.
@@ -1004,10 +1267,10 @@ function fegRoute(rawKey, market) {
   // in darts as much as in handball, and the market type plus the leg names are
   // what prove it. Basketball and ice hockey are here — measured 2026-09-29,
   // 02-06 is a basketball points total and 03-03 an ice hockey handicap.
-  if (sport === '02' || sport === '03' || sport === '04' || sport === '09' || sport === '11' || sport === '14' || sport === '26' || sport === '27' || sport === '35') {
-    if (mtype === '06') {
+  if (sport === '01' || sport === '02' || sport === '03' || sport === '04' || sport === '09' || sport === '11' || sport === '14' || sport === '26' || sport === '27' || sport === '35') {
+    if (mtype === '06' || mtype === '0u') {
       const inline = classifyAndExtractLine(market.selections, { kind: 'OU' });
-      if (inline) return ouContract(inline, market);
+      if (inline) return ouContract(inline, market, period, fegCtx);
     }
     if (mtype === '00' || mtype === '01' || mtype === '04' || mtype === '05' || mtype === '0u') {
       // 02-04, 04-05, 03-01, 04-01, 09-00, 11-0u, 14-00, 14-01, 27-01, 26-01, 35-XX
@@ -1021,7 +1284,7 @@ function fegRoute(rawKey, market) {
     if (mtype === '02') {
       // total points / total rounds etc., line in name
       const inline = classifyAndExtractLine(market.selections, { kind: 'OU' });
-      if (inline) return ouContract(inline, market);
+      if (inline) return ouContract(inline, market, period, fegCtx);
     }
     if (mtype === '03') {
       // A name that says "Total" beats the key's default family for this slot.
@@ -1041,7 +1304,7 @@ function fegRoute(rawKey, market) {
       // (ufo:mtyp:02-04 / 03-06) still resolves as a match winner.
       if (/\btotal(?![a-z0-9])/i.test(String(market.name || ''))) {
         const asTotal = classifyAndExtractLine(market.selections, { kind: 'OU' });
-        if (asTotal) return ouContract(asTotal, market);
+        if (asTotal) return ouContract(asTotal, market, period, fegCtx);
       }
       // handicap
       const inline = classifyAndExtractLine(market.selections, { kind: 'AH' });
@@ -1075,7 +1338,7 @@ function fegRoute(rawKey, market) {
     }
     if (mtype === '03') {
       const inline = classifyAndExtractLine(market.selections, { kind: 'OU' });
-      if (inline) return ouContract(inline, market);
+      if (inline) return ouContract(inline, market, period, fegCtx);
     }
   }
   return null;
@@ -1140,11 +1403,66 @@ const SUPERBET_DETAIL = new Map([
   ['SB:200734:TOTAL GOLURI', 'OU'],
   ['SB:200735:PRIMA REPRIZĂ - TOTAL GOLURI', 'OU'],
   ['SB:200736:HANDICAP', 'AH'],
+  ['SB:539:AMBELE ECHIPE MARCHEAZĂ (GG)', 'BTTS'],
+  ['SB:562:PRIMA REPRIZĂ - 1X2', '1X2'],
+  ['SB:560:A DOUA REPRIZĂ - 1X2', '1X2'],
+  ['SB:200734:LICZBA GOLI', 'OU'],
+  ['SB:200735:1.POŁOWA - LICZBA GOLI', 'OU'],
+  ['SB:539:OBIE DRUŻYNY STRZELĄ', 'BTTS'],
 ]);
 
 function superbetDetailRoute(key, market) {
+  if (key.startsWith('SB:544:')) {
+    const inline = classifyAndExtractLine(market.selections, { kind: 'OU' });
+    if (!inline) return null;
+    return { family: 'OVER_UNDER', lineKey: inline.lineKey, outcomes: inline.outcomes, team: 'home' };
+  }
+  if (key.startsWith('SB:535:')) {
+    const inline = classifyAndExtractLine(market.selections, { kind: 'OU' });
+    if (!inline) return null;
+    return { family: 'OVER_UNDER', lineKey: inline.lineKey, outcomes: inline.outcomes, team: 'away' };
+  }
+  if (key.startsWith('SB:2529:')) {
+    const inline = classifyAndExtractLine(market.selections, { kind: 'OU' });
+    if (!inline) return null;
+    return { family: 'OVER_UNDER', lineKey: inline.lineKey, outcomes: inline.outcomes, team: 'home', period: 'half1' };
+  }
+  if (key.startsWith('SB:2531:')) {
+    const inline = classifyAndExtractLine(market.selections, { kind: 'OU' });
+    if (!inline) return null;
+    return { family: 'OVER_UNDER', lineKey: inline.lineKey, outcomes: inline.outcomes, team: 'away', period: 'half1' };
+  }
+  if (key.startsWith('SB:201506:')) {
+    const inline = classifyAndExtractLine(market.selections, { kind: 'OU' });
+    if (!inline) return null;
+    return { family: 'OVER_UNDER', lineKey: inline.lineKey, outcomes: inline.outcomes, team: 'home', period: 'half2' };
+  }
+  if (key.startsWith('SB:201507:')) {
+    const inline = classifyAndExtractLine(market.selections, { kind: 'OU' });
+    if (!inline) return null;
+    return { family: 'OVER_UNDER', lineKey: inline.lineKey, outcomes: inline.outcomes, team: 'away', period: 'half2' };
+  }
   const kind = SUPERBET_DETAIL.get(key);
   if (!kind) return null;
+  if (kind === 'BTTS') {
+    if (isBttsSelectionSet(market.selections)) {
+      return { family: 'BTTS', lineKey: '_', outcomes: ['yes', 'no'] };
+    }
+    return null;
+  }
+  if (kind === '1X2') {
+    if (isLiteral1x2SelectionSet(market.selections)) {
+      return { family: 'MATCH_ODDS', lineKey: '_', outcomes: ['home', 'draw', 'away'] };
+    }
+    if (Array.isArray(market.selections) && market.selections.length === 3) {
+      const norm = market.selections.map((s) => normalizeTeamName(s?.name));
+      const hasDraw = norm.some((n) => /^(egal|egalitate|draw|x)$/i.test(n));
+      if (hasDraw && new Set(norm).size === 3) {
+        return { family: 'MATCH_ODDS', lineKey: '_', outcomes: ['home', 'draw', 'away'] };
+      }
+    }
+    return null;
+  }
   const inline = classifyAndExtractLine(market.selections, { kind });
   if (!inline) return null;
   return { family: kind === 'OU' ? 'OVER_UNDER' : 'ASIAN_HANDICAP', lineKey: inline.lineKey, outcomes: inline.outcomes };
@@ -1194,18 +1512,20 @@ function superbetNumericRoute(rawKey, market) {
  * an arb from unrelated sides.
  */
 function resolveTwoWayMatchWinner(rawKey, market) {
+  // Never admit Draw-No-Bet markets as 2-way match winners (draw refunds stake).
+  if (/\b(?:draw\s*no\s*bet|victorie\s+f[aă]r[aă]\s+egal|niciun\s+pariu\s+pe\s+egal|f[aă]r[aă]\s+egal|pariu\s+f[aă]r[aă]\s+egal)\b/i.test(market.name || '')) return null;
   const selNames = (market.selections || []).map((s) => String(s?.name || '').trim());
   if (selNames.length !== 2) return null;
   if (selNames.some((n) => !n)) return null;
   if (selNames[0] === selNames[1]) return null;
   const norm = selNames.map((s) => s.toLowerCase());
-  // Literal "1" + "2" — clean 2-outcome match winner regardless of the market
+  // Literal "1" + "2" or "Gazde" + "Oaspeti" — clean 2-outcome match winner regardless of the market
   // key. Captures superbet 919/521/759, netbet default "Castigator Meci",
   // current_frame_winner "Frame 1 Castigator", and FEG ufo:mtyp:*-02-00/04-01/etc.
-  if (norm[0] === '1' && norm[1] === '2') {
+  if ((norm[0] === '1' && norm[1] === '2') || (norm[0] === 'gazde' && (norm[1] === 'oaspeti' || norm[1] === 'oaspeți'))) {
     return { family: 'MATCH_ODDS', lineKey: '_', outcomes: ['home', 'away'] };
   }
-  if (norm[0] === '2' && norm[1] === '1') {
+  if ((norm[0] === '2' && norm[1] === '1') || ((norm[0] === 'oaspeti' || norm[0] === 'oaspeți') && norm[1] === 'gazde')) {
     return { family: 'MATCH_ODDS', lineKey: '_', outcomes: ['home', 'away'] };
   }
   // Reject role labels for everything else.
@@ -1241,8 +1561,8 @@ export function classifyAndExtractLine(selections, { kind } = {}) {
   const [a, b] = lines;
   const aMag = Math.abs(a), bMag = Math.abs(b);
   const blob = selections.map((s) => String(s?.name || '').toLowerCase()).join(' | ');
-  const ouKeyword = /\b(peste|sub|over|under|total|ma(i|î)\s*mult|pu(t|ț)in)\b/;
-  const ahKeyword = /^[12]\s*(\(|\.|-)?|^\s*[+-]\s*\d|\b(handicap|asiatic|asiatic[ăa]|spread)\b/;
+  const ouKeyword = /\b(peste|sub|over|under|total|ma(i|î)\s*mult|pu(t|ț)in|powyzej|powyżej|ponizej|poniżej)\b/;
+  const ahKeyword = /^(?:[12]|h[12]|ah[12])\s*(\(|\.|-)?|^\s*[+-]\s*\d|\b(handicap|asiatic|asiatic[ăa]|spread)\b/i;
   const isHalf = (x) => x % 1 !== 0 && x * 2 === Math.round(x * 2);
   // The one place an AH lineKey is built, so the two orderings below cannot
   // drift apart.
@@ -1268,8 +1588,7 @@ export function classifyAndExtractLine(selections, { kind } = {}) {
     return ou();
   }
   if (kind === 'AH') {
-    if (a === -b && isHalf(aMag)) return ah();
-    return null;
+    return a === -b && isHalf(aMag) ? ah() : null;
   }
 
   // Auto-detect. AH/O-U keywords win when present.
@@ -1278,8 +1597,7 @@ export function classifyAndExtractLine(selections, { kind } = {}) {
     return ou();
   }
   if (ahKeyword.test(blob)) {
-    if (a === -b && isHalf(aMag)) return ah();
-    return null;
+    return a === -b && isHalf(aMag) ? ah() : null;
   }
   // Fallback heuristic. The SIGN is tested before the magnitude, and the order
   // matters: a two-leg market whose lines are exact negations of each other is
@@ -1317,8 +1635,8 @@ export function classifyAndExtractLine(selections, { kind } = {}) {
 function handicapLineKey(selections, a, b) {
   const isHome = (name) => {
     const s = String(name ?? '').trim();
-    if (/^1\b/.test(s) || /^home\b/i.test(s) || /^h1\b/i.test(s)) return true;
-    if (/^2\b/.test(s) || /^away\b/i.test(s) || /^h2\b/i.test(s)) return false;
+    if (/^(?:1\b|h1\b|ah1\b|home\b|gazde\b)/i.test(s)) return true;
+    if (/^(?:2\b|h2\b|ah2\b|away\b|oaspeti\b|oaspeți\b)/i.test(s)) return false;
     return null;
   };
   const first = isHome(selections[0]?.name);
@@ -1447,9 +1765,9 @@ export function canonicalOutcomeFor(selectionName, contract, ctx = {}) {
   const lower = raw.toLowerCase();
 
   if (contract.family === 'MATCH_ODDS') {
-    if (lower === '1' || lower === 'home' || lower === 'h') return 'home';
-    if (lower === 'x' || lower === 'draw' || lower === 'egalitate' || lower === 'remiza') return 'draw';
-    if (lower === '2' || lower === 'away' || lower === 'a') return 'away';
+    if (lower === '1' || lower === 'home' || lower === 'h' || lower === 'gazde') return 'home';
+    if (lower === 'x' || lower === 'draw' || lower === 'egalitate' || lower === 'remiza' || lower === 'egal') return 'draw';
+    if (lower === '2' || lower === 'away' || lower === 'a' || lower === 'oaspeti' || lower === 'oaspeți') return 'away';
     // 2-way match winner with team/player names: match against home/away from ctx.
     if (contract.outcomes.length === 2) {
       const home = normalizeTeamName(ctx.homeTeam || '');
@@ -1458,6 +1776,19 @@ export function canonicalOutcomeFor(selectionName, contract, ctx = {}) {
       const normSel = normalizeTeamName(stripped);
       if (home && normSel && normSel === home) return 'home';
       if (away && normSel && normSel === away) return 'away';
+      if (home && normSel && (home.includes(normSel) || normSel.includes(home))) return 'home';
+      if (away && normSel && (away.includes(normSel) || normSel.includes(away))) return 'away';
+    }
+    // 3-way match winner with team names
+    if (contract.outcomes.length === 3) {
+      const home = normalizeTeamName(ctx.homeTeam || '');
+      const away = normalizeTeamName(ctx.awayTeam || '');
+      const stripped = raw.replace(/^\s*[12]\s*(?:[.)-]|\([^)]*\))?\s*/i, '');
+      const normSel = normalizeTeamName(stripped);
+      if (home && normSel && normSel === home) return 'home';
+      if (away && normSel && normSel === away) return 'away';
+      if (home && normSel && (home.includes(normSel) || normSel.includes(home))) return 'home';
+      if (away && normSel && (away.includes(normSel) || normSel.includes(away))) return 'away';
     }
     return null;
   }
@@ -1469,9 +1800,23 @@ export function canonicalOutcomeFor(selectionName, contract, ctx = {}) {
     return null;
   }
 
+  if (contract.family === 'DRAW_NO_BET') {
+    if (lower === '1' || lower === 'home' || lower === 'h' || lower === 'gazde' || /^(?:1\b|1\s*\(|home\b|gazde\b)/.test(lower)) return 'home';
+    if (lower === '2' || lower === 'away' || lower === 'a' || lower === 'oaspeti' || lower === 'oaspeți' || /^(?:2\b|2\s*\(|away\b|oaspeti\b|oaspeți\b)/.test(lower)) return 'away';
+    const home = normalizeTeamName(ctx.homeTeam || '');
+    const away = normalizeTeamName(ctx.awayTeam || '');
+    const stripped = raw.replace(/^\s*[12]\s*(?:[.)-]|\([^)]*\))?\s*/i, '');
+    const normSel = normalizeTeamName(stripped);
+    if (home && normSel && normSel === home) return 'home';
+    if (away && normSel && normSel === away) return 'away';
+    if (home && normSel && (home.includes(normSel) || normSel.includes(home))) return 'home';
+    if (away && normSel && (away.includes(normSel) || normSel.includes(away))) return 'away';
+    return null;
+  }
+
   if (contract.family === 'BTTS') {
-    if (['yes', 'da', 'gg', 'y', 'da (gg)', 'gg'].includes(lower)) return 'yes';
-    if (['no', 'nu', 'ng', 'n', 'nu (ng)', 'ng'].includes(lower)) return 'no';
+    if (['yes', 'da', 'gg', 'y', 'da (gg)', 'gg', 'tak'].includes(lower)) return 'yes';
+    if (['no', 'nu', 'ng', 'n', 'nu (ng)', 'ng', 'nie'].includes(lower)) return 'no';
     return null;
   }
 
@@ -1487,8 +1832,8 @@ export function canonicalOutcomeFor(selectionName, contract, ctx = {}) {
     const sign = /^\s*[+]\s*\d/.test(raw) ? '+' : /^\s*[-]\s*\d/.test(raw) ? '-' : null;
     if (sign === '+') return 'over';
     if (sign === '-') return 'under';
-    if (/^(?:over|peste|mai mult)\b/.test(lower)) return 'over';
-    if (/^(?:under|sub|putin)\b/.test(lower)) return 'under';
+    if (/^(?:over|peste|mai mult|powyzej|powyżej)\b/.test(lower)) return 'over';
+    if (/^(?:under|sub|putin|mai\s*(?:putin|pu[tț]in)|ponizej|poniżej)\b/.test(lower)) return 'under';
     // betano TGOT: P X.X = peste / over; S X.X = sub / under
     if (/^p\s/i.test(raw)) return 'over';
     if (/^s\s/i.test(raw)) return 'under';
@@ -1496,11 +1841,13 @@ export function canonicalOutcomeFor(selectionName, contract, ctx = {}) {
   }
 
   if (contract.family === 'ASIAN_HANDICAP') {
-    // Selection is either "1 (-1.5)" / "2 (+1.5)" or a player prefix; the line
+    // Selection is either "1 (-1.5)" / "2 (+1.5)", "H1 -1.5" / "H2 1.5",
+    // "AH1 -1.5" / "AH2 1.5", "Gazde" / "Oaspeti", or a player prefix; the line
     // is in ctx — we just need to label home / away.
-    if (/^[12]\b/.test(raw)) return raw.startsWith('1') ? 'home' : 'away';
-    if (/^home\b/i.test(raw)) return 'home';
-    if (/^away\b/i.test(raw)) return 'away';
+    if (/^(?:1\b|h1\b|ah1\b)/i.test(raw)) return 'home';
+    if (/^(?:2\b|h2\b|ah2\b)/i.test(raw)) return 'away';
+    if (/^(?:home|gazde)\b/i.test(raw)) return 'home';
+    if (/^(?:away|oaspeti|oaspeți)\b/i.test(raw)) return 'away';
     const home = normalizeTeamName(ctx.homeTeam || '');
     const away = normalizeTeamName(ctx.awayTeam || '');
     // The line may LEAD the player name ("-1.5 Alcaraz") or TRAIL it. betano's
@@ -1563,8 +1910,8 @@ function isBttsSelectionSet(selections) {
   // Verify each side carries a yes-marker or no-marker respectively, in any
   // of the spellings the books use (English / Romanian / single-letter
   // shorthand / "GG"/"NG" inline annotation).
-  const hasYes = norm.some((n) => /\b(yes|da|gg|y)\b/.test(n) || /^(yes|da|gg|y)$/.test(n) || /\b(da|gg)\b/i.test(n));
-  const hasNo = norm.some((n) => /\b(no|nu|ng|n)\b/.test(n) || /^(no|nu|ng|n)$/.test(n) || /\b(nu|ng)\b/i.test(n));
+  const hasYes = norm.some((n) => /\b(yes|da|gg|y|tak)\b/.test(n) || /^(yes|da|gg|y|tak)$/.test(n) || /\b(da|gg|tak)\b/i.test(n));
+  const hasNo = norm.some((n) => /\b(no|nu|ng|n|nie)\b/.test(n) || /^(no|nu|ng|n|nie)$/.test(n) || /\b(nu|ng|nie)\b/i.test(n));
   return hasYes && hasNo && new Set(norm).size === 2;
 }
 

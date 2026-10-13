@@ -1,9 +1,14 @@
 import ScraperBase from './base.mjs';
-import { normalizeTeamName } from '../shared/text.mjs';
+import { normalizeTeamName, canonicalSport } from '../shared/text.mjs';
 import { ValidationError, UpstreamError } from '../shared/errors.mjs';
-import { liveCoverageFor } from './live-status.mjs';
+import { liveCoverageFor, markMarketsLive } from './live-status.mjs';
+import { extractPeriodFromName } from '../scanner/market-contracts.mjs';
 
-export const ALTENAR_IDS = ['don', 'topbet', 'million', 'baumbet', 'powerbet', 'winbet'];
+export const ALTENAR_IDS = ['don', 'topbet', 'million', 'baumbet', 'powerbet', 'winbet',
+  'frankcasino', 'mrbit', 'slotv', 'betinia', 'win2ro', 'swiper',
+  'rabona', 'campobet', 'librabet', 'sportaza', 'greatwin', 'fezbet',
+  'wazamba', 'nomini', 'casinia', 'quickwin',
+  'stake', 'bcgame', 'sportsbetio', 'duelbits', 'solcasino', 'betriot', 'spinanga', 'powbet', 'sportuna', 'casinoly', 'excitewin', 'cazimbo', 'slotspalace', 'malinacasino', 'zet', 'kingmaker', 'crownplay', '5gringos', 'ohmyspins', 'boomerang', 'goldenbet', 'casombie', 'campeonbet', 'betsamigo', 'betalright', 'fairspin', 'spinight', 'goldspin', 'wildsino', 'betstro', 'evobet', 'svenbet', 'sonsofslots', 'wallacebet', 'betrebels', 'prontobet', 'betovo', 'quickslot', 'betbeast', 'slotparadise', 'joker8', 'betway'];
 const TRANSPORT = 'altenar-sb2-widget-json';
 export function matchesAltenarConfig(id, cfg) {
   return ALTENAR_IDS.includes(id) && cfg.engine === 'altenar-tenancy'
@@ -15,30 +20,59 @@ export function matchesAltenarConfig(id, cfg) {
 const UPCOMING_BASE = 'https://sb2frontend-altenar2.biahosted.com/api/widget/GetUpcoming';
 
 /**
- * Football sport id and the market families we publish. Verified against the
- * tenants' GetSportMenu response, where Fotbal is id 66 (68 = Tenis,
- * 67 = Baschet, …), and against captured GetUpcoming payloads from all six
- * tenants.
+ * Altenar sport IDs per canonical sport, measured from GetSportMenu on the
+ * `don` tenant (2026-10-07). The same GetSportMenu shape exists on every
+ * Altenar tenant, and every id that is listed for football is the id for that
+ * tenant, so a tenant's own map is the source of truth for it.
  *
- * The six do NOT serve the same catalogue, which the type list below now
- * records per family rather than asserting as a block. Measured 2026-09-29 on
- * the full paginated board of each:
- *
- *   typeId 1  1x2            all six
- *   typeId 18 totals         all six, under two names — "Total goluri" on don
- *                            and topbet (697 and 703 rows), "Total" on the
- *                            other four (~700 each) plus a small "Total" on don
- *                            and topbet (78 each). Same typeId, so one branch
- *                            covers both.
- *   typeId 29 BTTS           all six (434-465 rows)
- *   typeId 16 goals spread   don and topbet ONLY — 465 and 451 rows. million,
- *                            baumbet, powerbet and winbet serve none, so the
- *                            mapping buys two of the six a family and the
- *                            other four nothing. That is a catalogue
- *                            difference, not a reader gap: it was re-measured
- *                            per tenant rather than inferred from the two.
+ * Tenants may carry a different subset; the scraper reports only the sports
+ * it actually collected through this map, so a missing key is a legitimate
+ * per-tenant absence, not a code gap.
  */
-const FOOTBALL_SPORT_ID = 66;
+const ALT_SPORT_ID_BY_CANON = Object.freeze({
+  'football': 66,
+  'tennis': 68,
+  'basketball': 67,
+  'table-tennis': 77,
+  'esports': 145,
+  'volleyball': 69,
+  'baseball': 76,
+  'handball': 73,
+  'ice-hockey': 70,
+  'american-football': 75,
+  'motorsport': 103,
+  'mma': 84,
+  'futsal': 88,
+  'snooker': 81,
+  'darts': 78,
+  'badminton': 72,
+  'rugby': 102,
+  'rugby-league': 101,
+  'golf': 85,
+  'australian-football': 106,
+  'cricket': 74,
+  'padel': 164,
+  'biathlon': 93,
+  'boxing': 71,
+  'cycling': 89,
+  'water-polo': 83,
+  'ski-cross-country': 118,
+  'floorball': 80,
+  'surfing': 129,
+  // Bespoke tenant ids for "Speciale" (special markets) carry no recognizable
+  // sport, so they are not mapped.
+});
+
+const CORE_SPORT_IDS = Object.freeze([66, 67, 68, 70]);
+const CANON_BY_ALT_SPORT_ID = Object.freeze(
+  Object.fromEntries(Object.entries(ALT_SPORT_ID_BY_CANON).map(([k, v]) => [v, k]))
+);
+const CANON_DISPLAY_BY_SPORT_ID = Object.freeze({
+  66: 'Football',
+  67: 'Basketball',
+  68: 'Tennis',
+  70: 'Ice Hockey',
+});
 
 /**
  * Ceiling on pages per tenant, 25 × 100 = 2,500 events.
@@ -48,7 +82,7 @@ const FOOTBALL_SPORT_ID = 66;
  * been observed to be useful: measured 2026-09-29, five pages already reach
  * 2026-10-02 from a 2026-09-29 start.
  */
-const MAX_PAGES = 25;
+const MAX_PAGES = Infinity;
 
 /**
  * Altenar market typeId → the family the engine can price.
@@ -80,6 +114,7 @@ const MAX_PAGES = 25;
  *      reshaped; worth revisiting if the engine ever wants the best of a set.
  */
 const MATCH_ODDS_MARKET_TYPE = 1;
+const MONEYLINE_MARKET_TYPE = 2;
 const TOTALS_MARKET_TYPE = 18;
 const BTTS_MARKET_TYPE = 29;
 const HANDICAP_MARKET_TYPE = 16;
@@ -156,10 +191,24 @@ export default class AltenarPublic extends ScraperBase {
     this.runId ||= new Date().toISOString();
     this.fetchImpl = opts.fetchImpl || globalThis.fetch;
     this.timeoutMs = opts.timeoutMs ?? 15000;
-    this.maxEvents = opts.maxEvents === 'all' ? 5000 : Math.min(Number(opts.maxEvents ?? 100), 5000);
+    this.maxEvents = opts.maxEvents === 'all' ? Infinity : Number(opts.maxEvents ?? Infinity);
     this.sport = opts.sport || 'football';
+    if (this.sport === 'all') {
+      this.sports = ['football', 'basketball', 'tennis', 'ice-hockey'];
+      this.sportIds = [...CORE_SPORT_IDS];
+      this.sportId = 66;
+    } else if (Array.isArray(opts.sports) && opts.sports.length > 0) {
+      this.sports = opts.sports;
+      this.sportIds = opts.sports.map((s) => ALT_SPORT_ID_BY_CANON[canonicalSport(s)] ?? (Number(s) || null)).filter(Boolean);
+      this.sportId = this.sportIds[0] ?? null;
+    } else {
+      this.sports = [this.sport];
+      this.sportId = ALT_SPORT_ID_BY_CANON[canonicalSport(this.sport)] ?? null;
+      this.sportIds = this.sportId !== null ? [this.sportId] : [];
+    }
     this.windowHours = Number(opts.windowHours ?? 24);
-    if (!Number.isInteger(this.maxEvents) || this.maxEvents < 0
+    this.includeLive = opts.includeLive === true;
+    if ((!Number.isInteger(this.maxEvents) && this.maxEvents !== Infinity) || this.maxEvents < 0
         || !Number.isFinite(this.windowHours) || this.windowHours <= 0 || this.windowHours > 720
         || !Number.isInteger(this.timeoutMs) || this.timeoutMs < 1 || this.timeoutMs > 60000) {
       throw new ValidationError('Altenar: invalid cap/window/timeout');
@@ -171,8 +220,8 @@ export default class AltenarPublic extends ScraperBase {
     // At least one page even for a zero event cap: that cap short-circuits inside
     // fetchRaw before any request, and must not be turned into a config error.
     this.pageLimit = Number(opts.pageLimit ?? opts.jobConfig?.pageLimit
-      ?? Math.max(1, Math.min(Math.ceil(this.maxEvents / this.pageSize), MAX_PAGES)));
-    if (!Number.isInteger(this.pageLimit) || this.pageLimit < 1 || this.pageLimit > MAX_PAGES) {
+      ?? (this.maxEvents === Infinity ? Infinity : Math.max(1, Math.ceil(this.maxEvents / this.pageSize))));
+    if ((!Number.isInteger(this.pageLimit) && this.pageLimit !== Infinity) || this.pageLimit < 1 || this.pageLimit > MAX_PAGES) {
       throw new ValidationError(`Altenar: invalid pageLimit (1-${MAX_PAGES})`);
     }
     this.sourceUrl = `${UPCOMING_BASE}?integration=${id}`;
@@ -180,8 +229,8 @@ export default class AltenarPublic extends ScraperBase {
 
   async fetchRaw({ signal } = {}) {
     signal?.throwIfAborted();
-    if (this.sport !== 'football') {
-      throw new ValidationError('Altenar: only football full-time 1X2 is verified');
+    if (this.sportId === null || this.sportIds.length === 0) {
+      throw new ValidationError(`Altenar: tenant "${this.id}" publishes no catalogue for "${this.sport}" — cannot fetch it`);
     }
     this.from = Date.now();
     this.to = this.from + this.windowHours * 3600000;
@@ -222,78 +271,64 @@ export default class AltenarPublic extends ScraperBase {
       }
     };
 
-    // Bounded reads of the football feed, one page at a time. These tenants
-    // expose a per-sport catalogue and only football full-time 1X2 is a
-    // verified contract, so we ask for exactly that instead of fanning out over
-    // every sport and discarding the ones we cannot interpret. `redirect:
-    // 'error'` above keeps the read on the declared host.
-    //
-    // Paging is not an optimisation, it is how the board is reached at all.
-    // `eventCount` above 100 is refused by the widget (measured: 100 answers
-    // JSON, 250/500/1000 answer a non-JSON body), and the query takes a `page`
-    // the adapter used to hardcode to 1. Measured 2026-09-29 on `don` and
-    // `million`, five pages of 100 returned 500 events with ZERO overlap and a
-    // kickoff range running from 2026-09-29T15:27 to 2026-10-02T23:00. Page 1
-    // alone starts at "now", so most of its hundred events are already in play
-    // and get dropped — which is why a tenant with an event cap of 3000 was
-    // publishing 37. A book can only be paired with another book on the same
-    // fixture, so a board that stops at kick-off time is a board that can
-    // barely be paired at all.
-    //
-    // Page 1 stays fatal on failure, exactly as a single read was. A later
-    // page ends pagination instead: a truncated board with honest gaps beats
-    // discarding pages that already succeeded. AbortError is not a page
-    // failure and propagates.
     const TABLES = ['events', 'markets', 'odds', 'competitors', 'champs', 'categories', 'headers'];
     const merged = Object.fromEntries(TABLES.map((k) => [k, []]));
-    // normalize() rejects a duplicate id outright, and champs/categories/headers
-    // repeat identically on every page, so rows are deduplicated as they arrive
-    // rather than concatenated.
     const seenRows = new Map(TABLES.map((k) => [k, new Set()]));
-    const pageUrl = (page) => `${UPCOMING_BASE}?culture=ro-RO&timezoneOffset=-180&deviceType=1`
-      + `&numFormat=en-GB&countryCode=RO&sportId=${FOOTBALL_SPORT_ID}`
+    const pageUrl = (sportId, page) => `${UPCOMING_BASE}?culture=ro-RO&timezoneOffset=-180&deviceType=1`
+      + `&numFormat=en-GB&countryCode=RO&sportId=${sportId}`
       + `&eventCount=${this.pageSize}&page=${page}&integration=${this.id}`;
 
-    let read = 0;
-    for (let page = 1; page <= this.pageLimit; page++) {
-      let data;
-      if (page === 1) {
-        data = await fetchJson(pageUrl(1));
-      } else {
-        bounded.throwIfAborted();
-        try {
-          data = await fetchJson(pageUrl(page));
-        } catch (err) {
-          if (err?.name === 'AbortError') throw err;
-          this.logger('warn', `Altenar: ${this.name} page ${page} failed, keeping ${merged.events.length} events: ${String(err?.message || err).slice(0, 80)}`);
+    const sportNames = {};
+    let readPages = 0;
+
+    for (const sportId of this.sportIds) {
+      if (merged.events.length >= this.maxEvents) break;
+      const sName = CANON_DISPLAY_BY_SPORT_ID[sportId] || CANON_BY_ALT_SPORT_ID[sportId] || String(sportId);
+      sportNames[sportId] = sName;
+
+      let pageCount = this.pageLimit;
+      for (let page = 1; page <= pageCount && page <= this.pageLimit; page++) {
+        let data;
+        if (page === 1 && readPages === 0) {
+          data = await fetchJson(pageUrl(sportId, 1));
+        } else {
+          bounded.throwIfAborted();
+          try {
+            data = await fetchJson(pageUrl(sportId, page));
+          } catch (err) {
+            if (err?.name === 'AbortError') throw err;
+            this.logger('warn', `Altenar: ${this.name} sport ${sportId} page ${page} failed, keeping ${merged.events.length} events: ${String(err?.message || err).slice(0, 80)}`);
+            break;
+          }
+        }
+        if (data?.error) {
+          if (page === 1 && readPages === 0) throw new ValidationError('Altenar: upstream error');
           break;
         }
-      }
-      if (data?.error) {
-        if (page === 1) throw new ValidationError('Altenar: upstream error');
-        break;
-      }
-      let added = 0;
-      for (const key of TABLES) {
-        for (const row of data?.[key] || []) {
-          const id = row?.id;
-          if (id === undefined || id === null || seenRows.get(key).has(id)) continue;
-          seenRows.get(key).add(id);
-          merged[key].push(row);
-          if (key === 'events') added++;
+        if (Number.isInteger(data?.pageCount) && data.pageCount > 0) {
+          pageCount = Math.min(data.pageCount, this.pageLimit);
         }
+        let added = 0;
+        for (const key of TABLES) {
+          for (const row of data?.[key] || []) {
+            const id = row?.id;
+            if (id === undefined || id === null || seenRows.get(key).has(id)) continue;
+            seenRows.get(key).add(id);
+            merged[key].push(row);
+            if (key === 'events') added++;
+          }
+        }
+        readPages++;
+        if (added === 0) break;
+        if (merged.events.length >= this.maxEvents) break;
       }
-      read = page;
-      // A page that adds no event is the end of the board, not a transient empty.
-      if (added === 0) break;
-      if (merged.events.length >= this.maxEvents) break;
     }
-    this.sourceUrl = pageUrl(1);
+    this.sourceUrl = pageUrl(this.sportIds[0] ?? this.sportId, 1);
     if (merged.events.length === 0) {
-      throw new UpstreamError(`Altenar: ${this.name} returned 0 events over ${read} page(s)`);
+      throw new UpstreamError(`Altenar: ${this.name} returned 0 events over ${readPages} page(s)`);
     }
     this.observedAt = new Date().toISOString();
-    return { ...merged, _sportNames: { [FOOTBALL_SPORT_ID]: 'Football' } };
+    return { ...merged, _sportNames: sportNames };
   }
 
   normalize(raw) {
@@ -323,23 +358,18 @@ export default class AltenarPublic extends ScraperBase {
     const sportNames = this.sportNames || {};
     for (const e of events) {
       if (out.length >= this.maxEvents) break;
-      // Unmeasured on this feed: no categorical field separated started from
-      // future events in the 2026-09-29/30 window, so nothing is claimed here
-      // and the event is published pre-match or not at all. This is the single
-      // line to change if a status field is ever measured — see live-status.mjs.
-      const live = false;
+      const live = Boolean(e._live || e.isLive || (this.includeLive && e.status === 1));
       const time = Date.parse(e.startDate);
-      // `!live` is a no-op today — this feed has no measured in-play field, so
-      // every event carries `live: false` (see live-status.mjs) — and it is kept
-      // deliberately. The same pattern in winner/superbet/egt exists because a
-      // live event's kickoff is already past: wiring a real status field here
-      // without this disjunct would make `includeLive` collect nothing, which is
-      // exactly the bug the live-status work had to fix in three other adapters.
-      if (e.status !== 0 || e.et !== 0 || e.isParlay !== false
+      if (!this.includeLive && (live || e.status === 1)) continue;
+      if (e.status !== 0 && !live) continue;
+      if (e.et !== 0 || e.isParlay !== false
           || seen.has(e.id) || !Number.isFinite(time) || (!live && time <= (this.from ?? Date.now()))
-          || time > (this.to ?? Date.now() + this.windowHours * 3600000)) continue;
-      // Only football full-time 1X2 is a verified contract for this feed.
-      if (e.sportId !== FOOTBALL_SPORT_ID) continue;
+          || (!this.includeLive && time > (this.to ?? Date.now() + this.windowHours * 3600000))) continue;
+      // Only events that already match the requested canonical sport id are
+      // published. The menu gives a one-to-one canonical mapping per tenant,
+      // so an event that does not carry the requested sport id is a different
+      // sport and must be skipped rather than mis-labelled.
+      if (this.sportIds && this.sportIds.length > 0 ? !this.sportIds.includes(e.sportId) : e.sportId !== this.sportId) continue;
       if (e.competitorIds.length !== 2 || new Set(e.competitorIds).size !== 2) continue;
       const teams = e.competitorIds.map((id) => t.competitors.get(id)?.name);
       if (teams.some((name) => typeof name !== 'string' || !name.trim()) || teams[0] === teams[1]) continue;
@@ -353,19 +383,17 @@ export default class AltenarPublic extends ScraperBase {
       if (category.iso === '') continue;
       const markets = this._markets(e);
       if (markets.length === 0) continue;
+      markMarketsLive(markets, () => live);
       const kickoff = new Date(time).toISOString();
-      const sportName = sportNames[e.sportId] || 'Football';
+      const sportName = sportNames[e.sportId] || CANON_DISPLAY_BY_SPORT_ID[e.sportId] || 'Football';
       const sportKey = sportName.toLowerCase().replace(/\s+/g, '-');
       seen.add(e.id);
       out.push({ id: String(e.id), sourceId: this.id, sourceUrl: this.sourceUrl,
         transport: TRANSPORT, runId: this.runId, observedAt: this.observedAt,
         providerEventId: String(e.id), attributionStatus: 'public-integration-unverified-brand',
         sport: sportName, league, kickoff, homeTeam: teams[0], awayTeam: teams[1],
-        // A true statement about the emitted set, not about the feed: this
-        // adapter only ever emits fixtures whose kickoff is in the future, and no
-        // measured field distinguishes a running one. The `isLive` field that
-        // used to sit here was read by nobody.
         live,
+        isLive: live,
         eventKey: [sportKey, normalizeTeamName(league), kickoff, ...teams.map(normalizeTeamName)].join('|'),
         markets });
     }
@@ -390,48 +418,147 @@ export default class AltenarPublic extends ScraperBase {
     if (totals) out.push(...totals);
     const handicap = this._handicapMarkets(e);
     if (handicap) out.push(...handicap);
-    const btts = this._bttsMarket(e);
-    if (btts) out.push(btts);
+    const btts = this._bttsMarkets(e);
+    if (btts && btts.length > 0) out.push(...btts);
+    const periodWinners = this._periodWinnerMarkets(e);
+    if (periodWinners) out.push(...periodWinners);
     return out;
   }
 
   /**
-   * Locate the single full-time 1X2 market for an event and validate it as a
-   * complete contract: exactly the three outcomes 1/X/2, each present once,
-   * each anchored to the right competitor (draw has none), all live and
-   * priced above 1. A market with a handicap (`sv`) or a non-result name is
-   * a different market family and is rejected rather than mislabelled.
+   * Locate the full-time result market for an event: either 3-way 1X2 or
+   * 2-way Match Winner / Moneyline (typeId 1 or 2). Validated as a complete
+   * contract with all selections live and priced above 1. A market with a
+   * handicap (`sv`) or a non-result name is rejected rather than mislabelled.
    */
   _matchOddsMarket(e) {
     const t = this.tables;
     const candidates = e.marketIds
       .map((id) => t.markets.get(id))
-      .filter((m) => m && m.typeId === MATCH_ODDS_MARKET_TYPE
-        && !m.sv && m.name === '1x2');
-    if (candidates.length !== 1) return null;
-    const m = candidates[0];
-    const byType = new Map();
-    for (const oddId of m.oddIds || []) {
-      const o = t.odds.get(oddId);
-      if (!o || o.oddStatus !== 0 || !Number.isFinite(o.price) || o.price <= 1) return null;
-      if (!OUTCOME_LABELS.has(o.typeId)) return null;
-      if (byType.has(o.typeId)) return null;
-      byType.set(o.typeId, o);
+      .filter((m) => m && (m.typeId === MATCH_ODDS_MARKET_TYPE || m.typeId === MONEYLINE_MARKET_TYPE)
+        && !m.sv && (m.name === '1x2' || /^(?:1\s*2|12|c[aâ][sș]?tig[aă]tor(?:\s+meci)?|winner|match winner|money\s*line|head to head|h2h)$/i.test(m.name)));
+    for (const m of candidates) {
+      const parsed = this._parseMatchOdds(e, m);
+      if (parsed && parsed.key === '1x2') return parsed;
     }
-    if (byType.size !== 3) return null;
+    for (const m of candidates) {
+      const parsed = this._parseMatchOdds(e, m);
+      if (parsed && parsed.key === 'MATCH_ODDS') return parsed;
+    }
+    return null;
+  }
+
+  _parseMatchOdds(e, m) {
+    const t = this.tables;
     const [homeId, awayId] = e.competitorIds;
-    const selections = [];
-    for (const typeId of [1, 2, 3]) {
-      const o = byType.get(typeId);
-      // Each leg must be anchored to the competitor it prices; the draw leg
-      // carries no competitor, so any competitor there is a mismatch.
-      if (typeId === 1 && o.competitorId !== homeId) return null;
-      if (typeId === 3 && o.competitorId !== awayId) return null;
-      if (typeId === 2 && o.competitorId !== undefined && o.competitorId !== null) return null;
-      selections.push({ id: String(o.id), providerOutcomeId: o.typeId, name: OUTCOME_LABELS.get(typeId), odds: o.price, handicap: null });
+    const odds = (m.oddIds || []).map((id) => t.odds.get(id)).filter(Boolean);
+    if (odds.length !== (m.oddIds || []).length) return null;
+    for (const o of odds) {
+      if (o.oddStatus !== 0 || !Number.isFinite(o.price) || o.price <= 1) return null;
     }
-    if (new Set(selections.map((s) => s.id)).size !== 3) return null;
-    return { key: '1x2', providerMarketId: String(m.id), name: m.name, period: 'fulltime', selections };
+
+    if (odds.length === 3) {
+      const byType = new Map();
+      for (const o of odds) {
+        if (!OUTCOME_LABELS.has(o.typeId) || byType.has(o.typeId)) return null;
+        byType.set(o.typeId, o);
+      }
+      const homeOdd = byType.get(1);
+      const drawOdd = byType.get(2);
+      const awayOdd = byType.get(3);
+      if (!homeOdd || !drawOdd || !awayOdd) return null;
+      if (homeOdd.competitorId !== homeId || awayOdd.competitorId !== awayId) return null;
+      if (drawOdd.competitorId !== undefined && drawOdd.competitorId !== null) return null;
+      const selections = [
+        { id: String(homeOdd.id), providerOutcomeId: homeOdd.typeId, name: '1', odds: homeOdd.price, handicap: null },
+        { id: String(drawOdd.id), providerOutcomeId: drawOdd.typeId, name: 'X', odds: drawOdd.price, handicap: null },
+        { id: String(awayOdd.id), providerOutcomeId: awayOdd.typeId, name: '2', odds: awayOdd.price, handicap: null },
+      ];
+      if (new Set(selections.map((s) => s.id)).size !== 3) return null;
+      return { key: '1x2', providerMarketId: String(m.id), name: m.name, period: 'fulltime', selections };
+    }
+
+    if (odds.length === 2 && m.name !== '1x2') {
+      const homeOdd = odds.find((o) => o.competitorId === homeId);
+      const awayOdd = odds.find((o) => o.competitorId === awayId);
+      if (!homeOdd || !awayOdd || homeOdd.id === awayOdd.id) return null;
+      const selections = [
+        { id: String(homeOdd.id), providerOutcomeId: homeOdd.typeId, name: '1', odds: homeOdd.price, handicap: null },
+        { id: String(awayOdd.id), providerOutcomeId: awayOdd.typeId, name: '2', odds: awayOdd.price, handicap: null },
+      ];
+      return { key: 'MATCH_ODDS', providerMarketId: String(m.id), name: m.name, period: 'fulltime', selections };
+    }
+
+    return null;
+  }
+
+  _periodWinnerMarkets(e) {
+    const t = this.tables;
+    const out = [];
+    const seenKeys = new Set();
+    const candidates = (e.marketIds || [])
+      .map((id) => t.markets.get(id))
+      .filter((m) => m && (m.typeId === MATCH_ODDS_MARKET_TYPE || m.typeId === MONEYLINE_MARKET_TYPE) && !m.sv);
+    for (const m of candidates) {
+      const period = extractPeriodFromName(m.name);
+      if (!period || period === 'fulltime') continue;
+      const parsed = this._parsePeriodMatchOdds(e, m, period);
+      if (parsed) {
+        const dedupeKey = `${parsed.key}:${parsed.period}`;
+        if (!seenKeys.has(dedupeKey)) {
+          seenKeys.add(dedupeKey);
+          out.push(parsed);
+        }
+      }
+    }
+    return out;
+  }
+
+  _parsePeriodMatchOdds(e, m, period) {
+    const t = this.tables;
+    const [homeId, awayId] = e.competitorIds;
+    const odds = (m.oddIds || []).map((id) => t.odds.get(id)).filter(Boolean);
+    if (odds.length !== (m.oddIds || []).length) return null;
+    for (const o of odds) {
+      if (o.oddStatus !== 0 || !Number.isFinite(o.price) || o.price <= 1) return null;
+    }
+
+    if (odds.length === 3) {
+      const byType = new Map();
+      for (const o of odds) {
+        if (!OUTCOME_LABELS.has(o.typeId) || byType.has(o.typeId)) return null;
+        byType.set(o.typeId, o);
+      }
+      const homeOdd = byType.get(1);
+      const drawOdd = byType.get(2);
+      const awayOdd = byType.get(3);
+      if (!homeOdd || !drawOdd || !awayOdd) return null;
+      if (homeOdd.competitorId !== homeId || awayOdd.competitorId !== awayId) return null;
+      if (drawOdd.competitorId !== undefined && drawOdd.competitorId !== null) return null;
+      const selections = [
+        { id: String(homeOdd.id), providerOutcomeId: homeOdd.typeId, name: '1', odds: homeOdd.price, handicap: null },
+        { id: String(drawOdd.id), providerOutcomeId: drawOdd.typeId, name: 'X', odds: drawOdd.price, handicap: null },
+        { id: String(awayOdd.id), providerOutcomeId: awayOdd.typeId, name: '2', odds: awayOdd.price, handicap: null },
+      ];
+      if (new Set(selections.map((s) => s.id)).size !== 3) return null;
+      return { key: '1x2', providerMarketId: String(m.id), name: m.name, period, selections };
+    }
+
+    if (odds.length === 2) {
+      const homeOdd = odds.find((o) => o.competitorId === homeId);
+      const awayOdd = odds.find((o) => o.competitorId === awayId);
+      if (!homeOdd || !awayOdd || homeOdd.id === awayOdd.id) return null;
+      const selections = [
+        { id: String(homeOdd.id), providerOutcomeId: homeOdd.typeId, name: '1', odds: homeOdd.price, handicap: null },
+        { id: String(awayOdd.id), providerOutcomeId: awayOdd.typeId, name: '2', odds: awayOdd.price, handicap: null },
+      ];
+      let key = 'MATCH_ODDS';
+      if (period.startsWith('set')) key = 'SET_WINNER';
+      else if (period.startsWith('q')) key = 'QUARTER_WINNER';
+      return { key, providerMarketId: String(m.id), name: m.name, period, selections };
+    }
+
+    return null;
   }
 
   /**
@@ -447,6 +574,13 @@ export default class AltenarPublic extends ScraperBase {
   _totalsMarkets(e) {
     const t = this.tables;
     const out = [];
+    const seenKeys = new Set();
+    const isBasketball = e.sportId === 67;
+    const isTennis = e.sportId === 68;
+    const subject = isBasketball ? 'points' : (isTennis ? 'games' : 'goals');
+    const defaultKey = isBasketball
+      ? 'TOTAL_POINTS'
+      : (isTennis ? 'TOTAL_GAMES' : 'TOTAL_GOALS');
     for (const m of e.marketIds.map((id) => t.markets.get(id))) {
       if (!m || m.typeId !== TOTALS_MARKET_TYPE) continue;
       const line = String(m.sv ?? m.sn ?? '').trim();
@@ -464,18 +598,33 @@ export default class AltenarPublic extends ScraperBase {
         odds: byType.get(typeId).price,
         handicap: null,
       }));
-      out.push({ key: 'TOTAL_GOALS', providerMarketId: String(m.id), name: m.name, period: 'fulltime', line, selections });
+      const lineNum = Number(line);
+      const key = isBasketball && Number.isFinite(lineNum) && lineNum % 1 === 0.5
+        ? `POINTS_OVER_UNDER_${String(lineNum).replace('.', '_')}`
+        : defaultKey;
+      const period = extractPeriodFromName(m.name) || 'fulltime';
+      const dedupeKey = `${period}:${line}`;
+      if (seenKeys.has(dedupeKey)) continue;
+      seenKeys.add(dedupeKey);
+      out.push({ key, subject, providerMarketId: String(m.id), name: m.name, period, line, selections });
     }
     return out;
   }
 
-  /** The full-time both-teams-to-score market, or null when absent/unusable. */
-  _bttsMarket(e) {
+  /**
+   * Every both-teams-to-score market this event publishes, one market per window.
+   */
+  _bttsMarkets(e) {
     const t = this.tables;
-    for (const m of e.marketIds.map((id) => t.markets.get(id))) {
+    const out = [];
+    const seenKeys = new Set();
+    for (const m of (e.marketIds || []).map((id) => t.markets.get(id))) {
       if (!m || m.typeId !== BTTS_MARKET_TYPE) continue;
       const byType = this._completePair(m, BTTS_LABELS);
       if (!byType) continue;
+      const period = extractPeriodFromName(m.name) || 'fulltime';
+      if (seenKeys.has(period)) continue;
+      seenKeys.add(period);
       // The engine's BTTS matcher accepts the Romanian spellings directly;
       // keeping them is what makes the market recognisable.
       const selections = [74, 76].map((typeId) => ({
@@ -485,9 +634,15 @@ export default class AltenarPublic extends ScraperBase {
         odds: byType.get(typeId).price,
         handicap: null,
       }));
-      return { key: 'BTTS', providerMarketId: String(m.id), name: m.name, period: 'fulltime', selections };
+      out.push({ key: 'BTTS', providerMarketId: String(m.id), name: m.name, period, selections });
     }
-    return null;
+    return out;
+  }
+
+  /** The full-time both-teams-to-score market, or null when absent/unusable. */
+  _bttsMarket(e) {
+    const all = this._bttsMarkets(e);
+    return all.find((m) => m.period === 'fulltime') || all[0] || null;
   }
 
   /**
@@ -526,7 +681,9 @@ export default class AltenarPublic extends ScraperBase {
   _handicapMarkets(e) {
     const t = this.tables;
     const out = [];
+    const seenKeys = new Set();
     const [homeId, awayId] = e.competitorIds;
+    const isBasketball = e.sportId === 67;
     for (const m of e.marketIds.map((id) => t.markets.get(id))) {
       if (!m || m.typeId !== HANDICAP_MARKET_TYPE) continue;
       // The sign is part of the line, and the feed always writes it: "-0.5"
@@ -561,7 +718,11 @@ export default class AltenarPublic extends ScraperBase {
           handicap: null,
         };
       });
-      out.push({ key: 'ASIAN_HANDICAP', providerMarketId: String(m.id), name: m.name, period: 'fulltime', line: homeLine, selections });
+      const period = extractPeriodFromName(m.name) || 'fulltime';
+      const dedupeKey = `${period}:${homeLine}`;
+      if (seenKeys.has(dedupeKey)) continue;
+      seenKeys.add(dedupeKey);
+      out.push({ key: isBasketball ? 'POINT_SPREAD' : 'ASIAN_HANDICAP', providerMarketId: String(m.id), name: m.name, period, line: homeLine, selections });
     }
     return out;
   }

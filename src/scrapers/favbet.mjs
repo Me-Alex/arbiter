@@ -3,6 +3,39 @@ import { normalizeTeamName } from '../shared/text.mjs';
 import { UpstreamError, ValidationError } from '../shared/errors.mjs';
 import { limitReached, maxEvents, serializedMaxEvents } from '../shared/event-limit.mjs';
 import { readBoundedJson, DEFAULT_MAX_BODY_BYTES } from '../shared/bounded-json.mjs';
+import { canonicalSportName } from '../sports/registry.mjs';
+import { markMarketsLive } from './live-status.mjs';
+import { extractPeriodFromName } from '../scanner/market-contracts.mjs';
+
+export const FAVBET_SPORT_ID_MAP = Object.freeze({
+  1: 'Football',
+  2: 'Tennis',
+  20: 'Handball',
+  23: 'Basketball',
+  24: 'American Football',
+  26: 'Baseball',
+  39: 'Ice Hockey',
+  51: 'Volleyball',
+  60: 'Snooker',
+  65: 'Darts',
+  85: 'Esports',
+  89: 'MMA',
+});
+
+export const FAVBET_SPORT_NAME_TO_ID = Object.freeze({
+  football: 1,
+  tennis: 2,
+  handball: 20,
+  basketball: 23,
+  'american-football': 24,
+  baseball: 26,
+  'ice-hockey': 39,
+  volleyball: 51,
+  snooker: 60,
+  darts: 65,
+  esports: 85,
+  mma: 89,
+});
 
 /**
  * Favbet (Romania) — ErlyLine/Betinvest JSON-RPC gateway.
@@ -79,6 +112,24 @@ export default class FavbetScraper extends ProviderContract {
     this.maxEvents = maxEvents(opts.maxEvents, 120, 1000);
     this.rpcUrl = 'https://www.favbet.ro/service/lineout/frontend_api2/';
     this.lang = 'ro';
+    if (opts.sport === 'all' || opts.sports === 'all') {
+      this.sport = 'all';
+      this.sports = Object.keys(FAVBET_SPORT_NAME_TO_ID);
+      this.sportId = null;
+    } else if (typeof opts.sport === 'string' && opts.sport) {
+      this.sport = opts.sport.toLowerCase();
+      this.sportId = opts.sportId ?? (FAVBET_SPORT_NAME_TO_ID[this.sport] || (this.sport === 'football' ? 1 : null));
+    } else if (Array.isArray(opts.sports) && opts.sports.length > 0) {
+      this.sports = opts.sports.map((s) => String(s).toLowerCase());
+      this.sport = this.sports.length === 1 ? this.sports[0] : 'all';
+      this.sportId = this.sports.length === 1 ? (FAVBET_SPORT_NAME_TO_ID[this.sports[0]] || null) : null;
+    } else {
+      this.sport = 'football';
+      this.sportId = 1;
+    }
+    this.maxPages = Number(opts.maxPages ?? (this.maxEvents === Infinity ? 10 : 1));
+    this.includeLive = Boolean(opts.includeLive);
+    this.serviceId = opts.serviceId !== undefined ? Number(opts.serviceId) : (opts.liveOnly ? 1 : 0);
     // event/get answers with ~14 MB, so the shared 16 MB ceiling leaves headroom
     // without letting a runaway response exhaust the process.
     this.maxBodyBytes = Number(opts.maxBodyBytes ?? DEFAULT_MAX_BODY_BYTES);
@@ -115,26 +166,30 @@ export default class FavbetScraper extends ProviderContract {
     // The gateway exposes numeric offset pagination. All-mode walks the four
     // observed pages (240 + 240 + 240 + 92 rows); bounded runs use one page.
     const pageSize = 240;
-    const pages = this.maxEvents === Infinity ? 4 : 1;
+    const pages = this.maxPages;
     const eventMap = new Map();
-    for (let page = 0; page < pages; page += 1) {
-      const pageEvents = await this.rpc('frontend/event/get', {
-        by: {
+    const serviceIds = this.includeLive ? [0, 1] : [this.serviceId ?? 0];
+    for (const service_id of serviceIds) {
+      for (let page = 0; page < pages; page += 1) {
+        const byFilter = {
           lang: this.lang,
-          service_id: 0,
-          sport_id: 1,
+          service_id,
           limit: this.maxEvents === Infinity ? pageSize : this.maxEvents * 2,
           ...(this.maxEvents === Infinity ? { offset: page * pageSize } : {}),
-        },
-      }, { signal });
-      if (!Array.isArray(pageEvents)) {
-        throw new UpstreamError('favbet event/get returned an invalid page');
+        };
+        if (this.sport !== 'all' && this.sportId !== null) {
+          byFilter.sport_id = this.sportId;
+        }
+        const pageEvents = await this.rpc('frontend/event/get', { by: byFilter }, { signal });
+        if (!Array.isArray(pageEvents)) {
+          throw new UpstreamError('favbet event/get returned an invalid page');
+        }
+        for (const event of pageEvents) {
+          const id = String(event?.event_id ?? '');
+          if (id) eventMap.set(id, { ...event, service_id });
+        }
+        if (this.maxEvents === Infinity && pageEvents.length < pageSize) break;
       }
-      for (const event of pageEvents) {
-        const id = String(event?.event_id ?? '');
-        if (id) eventMap.set(id, event);
-      }
-      if (this.maxEvents === Infinity && pageEvents.length < pageSize) break;
     }
     const events = [...eventMap.values()];
     if (events.length === 0) throw new UpstreamError('favbet event/get returned no events');
@@ -147,7 +202,7 @@ export default class FavbetScraper extends ProviderContract {
         const ev = queue.shift();
         try {
           const markets = await this.rpc('frontend/market/get', {
-            by: { lang: this.lang, service_id: 0, event_id: Number(ev.event_id) },
+            by: { lang: this.lang, service_id: ev.service_id ?? 0, event_id: Number(ev.event_id) },
           }, { signal });
           results.push({ event: ev, markets: markets || {} });
         } catch (err) {
@@ -204,14 +259,25 @@ export default class FavbetScraper extends ProviderContract {
       const away = ev.participants?.find((p) => p.participant_number === 2)?.participant_name || '';
       if (!home || !away) continue;
       const kickoffMs = Number(ev.event_dt) * 1000;
-      if (!Number.isFinite(kickoffMs) || kickoffMs <= nowMs) continue;
-      if (ev.event_status_type && ev.event_status_type !== 'notstarted') continue;
+      const isLive = ev.service_id === 1 || ev.event_status_type === 'live' || ev.event_status_type === 'inprogress' || (Number.isFinite(kickoffMs) && kickoffMs <= nowMs);
+      if (!this.includeLive) {
+        if (!Number.isFinite(kickoffMs) || kickoffMs <= nowMs) continue;
+        if (ev.event_status_type && ev.event_status_type !== 'notstarted') continue;
+      }
 
       // Market result may be keyed by event_id or a bare array.
       const mr = item.markets || {};
       const list = Array.isArray(mr) ? mr : Object.values(mr).flatMap((v) => (Array.isArray(v) ? v : [v]));
       const priced = list.filter((m) => m.market_suspend === false);
-      const matchOdds = priced.find((m) => Number(m.market_template_id) === 1);
+      let matchOdds = priced.find((m) => Number(m.market_template_id) === 1);
+      if (!matchOdds) {
+        matchOdds = priced.find((m) => {
+          const tId = Number(m.market_template_id);
+          const name = String(m.market_name || '').toLowerCase();
+          return (tId === 2 || tId === 206 || /castigator|winner|rezultat\s*meci/i.test(name))
+            && Array.isArray(m.outcomes) && m.outcomes.length >= 2;
+        });
+      }
       if (!matchOdds) continue;
       // A fixture quoted as an aggregate over N matches settles on the tie, not
       // on the match, and the provider says so in the 1X2's own outcome text.
@@ -220,13 +286,44 @@ export default class FavbetScraper extends ProviderContract {
       // as publishing a spread as a result.
       if (isMultiMatchTie(matchOdds)) continue;
       const byKind = new Map();
+      const normHome = normalizeTeamName(home);
+      const normAway = normalizeTeamName(away);
       for (const s of matchOdds.outcomes || []) {
         const odds = Number(s.outcome_coef);
         if (!Number.isFinite(odds) || odds <= 1) continue;
         const kind = String(s.outcome_tag || s.outcome_short_name).toUpperCase();
-        if (['1', 'X', '2'].includes(kind)) byKind.set(kind, s);
+        if (['1', 'X', '2'].includes(kind)) {
+          byKind.set(kind, s);
+        } else if (matchOdds.outcomes.length === 2) {
+          const sName = normalizeTeamName(s.outcome_name || s.outcome_short_name || '');
+          if (normHome && sName === normHome) byKind.set('1', s);
+          else if (normAway && sName === normAway) byKind.set('2', s);
+        }
       }
-      if (!byKind.has('1') || !byKind.has('X') || !byKind.has('2')) continue;
+
+      const sportId = Number(ev.sport_id);
+      const rawSportName = typeof ev.sport_name === 'string' ? ev.sport_name : '';
+      const sport = FAVBET_SPORT_ID_MAP[sportId]
+        || (rawSportName ? canonicalSportName(rawSportName) : null)
+        || 'Football';
+      const sportKey = sport.toLowerCase();
+      const is3WaySport = sportKey === 'football' || sportKey === 'ice hockey' || sportKey === 'handball';
+
+      const is3Way = byKind.has('1') && byKind.has('X') && byKind.has('2');
+      const is2Way = byKind.has('1') && byKind.has('2');
+
+      if (is3WaySport && !is3Way) continue;
+      if (!is3WaySport && !is2Way) continue;
+
+      const mainSelections = is3Way
+        ? ['1', 'X', '2'].map((kind) => {
+            const s = byKind.get(kind);
+            return { id: String(s.outcome_id), name: kind, odds: Number(s.outcome_coef), group: 'Main' };
+          })
+        : ['1', '2'].map((kind) => {
+            const s = byKind.get(kind);
+            return { id: String(s.outcome_id), name: kind === '1' ? home : away, odds: Number(s.outcome_coef), group: 'Main' };
+          });
 
       // The two goals families, read from the line in each leg's own text.
       // They are handled before the generic mapper on purpose: that mapper
@@ -240,7 +337,7 @@ export default class FavbetScraper extends ProviderContract {
       for (const m of priced) {
         const template = Number(m.market_template_id);
         if (template === GOALS_TOTAL_TEMPLATE) {
-          const mapped = goalsTotalMarket(m);
+          const mapped = goalsTotalMarket(m, sport);
           if (mapped) measuredMarkets.push(mapped);
         } else if (template === GOALS_HANDICAP_TEMPLATE) {
           const mapped = goalsHandicapMarket(m, homeKey, awayKey);
@@ -256,33 +353,43 @@ export default class FavbetScraper extends ProviderContract {
       const additionalMarkets = [];
       for (const m of priced) {
         if (String(m.market_id) === String(matchOdds.market_id)) continue;
-        const mapped = mapFavbetMarket(m);
+        const mapped = mapFavbetMarket(m, sport, home, away);
         if (mapped) additionalMarkets.push(mapped);
       }
 
       const league = ev.tournament_name || ev.category_name || 'Unknown';
-      const kickoff = new Date(kickoffMs).toISOString();
+      const kickoff = Number.isFinite(kickoffMs) ? new Date(kickoffMs).toISOString() : new Date().toISOString();
       const directUrl = `https://www.favbet.ro/ro/sports/event/${ev.tournament_id || 'fotbal'}/${eventId}/`;
-      out.push({
+      const eventObj = {
         id: eventId,
         sourceId: 'favbet',
         sourceUrl: directUrl,
         observedAt: this._lastObservedAt,
-        sport: 'Football',
+        sport,
         league,
         kickoff,
         homeTeam: home,
         awayTeam: away,
-        eventKey: ['football', normalizeTeamName(league), kickoff, normalizeTeamName(home), normalizeTeamName(away)].join('|'),
-        markets: [{
+        live: isLive,
+        eventKey: [sportKey, normalizeTeamName(league), kickoff, normalizeTeamName(home), normalizeTeamName(away)].join('|'),
+        markets: markMarketsLive([{
           key: 'MATCH_ODDS',
-          name: matchOdds.market_name || 'Match Odds',
-          selections: ['1', 'X', '2'].map((kind) => {
-            const s = byKind.get(kind);
-            return { id: String(s.outcome_id), name: kind, odds: Number(s.outcome_coef), group: 'Main' };
-          }),
-        }, ...measuredMarkets, ...additionalMarkets],
-      });
+          name: matchOdds.market_name || (is3Way ? 'Match Odds' : 'Match Winner'),
+          period: 'fulltime',
+          selections: mainSelections,
+        }, ...measuredMarkets, ...additionalMarkets], () => isLive),
+      };
+
+      if (isLive) {
+        const liveScore = ev.score || ev.current_result || ev.event_score || null;
+        if (liveScore) eventObj.score = String(liveScore).trim();
+        const liveMinute = ev.minute || ev.match_time || null;
+        if (liveMinute) eventObj.minute = String(liveMinute).trim();
+        const livePeriod = ev.period_name || ev.current_period || null;
+        if (livePeriod) eventObj.periodName = String(livePeriod).trim();
+      }
+
+      out.push(eventObj);
       if (limitReached(out.length, this.maxEvents)) break;
     }
     return out;
@@ -303,7 +410,7 @@ export default class FavbetScraper extends ProviderContract {
  * Outcome sides are resolved from each outcome's tag/short name. Markets whose
  * outcome sides cannot be determined are skipped rather than emitted wrong.
  */
-function mapFavbetMarket(market) {
+function mapFavbetMarket(market, sport = 'Football', home = '', away = '') {
   if (!market || !Array.isArray(market.outcomes)) return null;
   const name = String(market.market_name || market.market_type_name || '').trim();
   const valid = market.outcomes
@@ -382,12 +489,29 @@ function mapFavbetMarket(market) {
     && !/ambele\s+(?:reprize|in\s+ambele)/i.test(label)
     && !/penalty|penalt/i.test(label);
 
-  if (period === 'half1' && /1x2|rezultat|winner|final/i.test(name)) {
+  if ((period === 'half1' || period === 'half2') && /1x2|rezultat|winner|final/i.test(name)) {
     const byKind = new Map(valid.map((s) => [s.tag.toUpperCase(), s]));
     if (['1', 'X', '2'].every((k) => byKind.has(k))) {
       // Bare key for the same reason as the families below: the resolver matches
-      // `MATCH_ODDS` exactly and buckets this apart on `period: 'half1'`.
+      // `MATCH_ODDS` exactly and buckets this apart on `period: 'half1'` or `'half2'`.
       return { key: 'MATCH_ODDS', name, period, selections: ['1', 'X', '2'].map((k) => ({ id: byKind.get(k).id, name: k, odds: byKind.get(k).odds, group: 'Main' })) };
+    }
+  }
+  if ((period.startsWith('set') || period.startsWith('q') || period === 'half1' || period === 'half2') && /c[aâ][sș]?tig[aă]tor|winner|rezultat|1\s*2/iu.test(name)) {
+    const byKind = new Map(valid.map((s) => [s.tag.toUpperCase(), s]));
+    let s1 = byKind.get('1');
+    let s2 = byKind.get('2');
+    if ((!s1 || !s2) && valid.length === 2 && home && away) {
+      const normH = normalizeTeamName(home);
+      const normA = normalizeTeamName(away);
+      for (const s of valid) {
+        const sText = normalizeTeamName(s.side || s.tag || '');
+        if (normH && sText === normH) s1 = s;
+        else if (normA && sText === normA) s2 = s;
+      }
+    }
+    if (s1 && s2 && valid.length === 2) {
+      return { key: 'MATCH_ODDS', name, period, selections: [{ id: s1.id, name: '1', odds: s1.odds, group: 'Main' }, { id: s2.id, name: '2', odds: s2.odds, group: 'Main' }] };
     }
   }
   if (/fara\s*egal|draw\s*no\s*bet|dnb/i.test(name)) {
@@ -396,16 +520,33 @@ function mapFavbetMarket(market) {
       return { key: 'DRAW_NO_BET', name, period, selections: ['1', '2'].map((k) => ({ id: byKind.get(k).id, name: k, odds: byKind.get(k).odds, group: 'Main' })) };
     }
   }
-  const line = extractNumber(name);
   if (/peste|sub|over|under|total/i.test(name)) {
-    if (line === null || valid.length < 2) return null;
-    const over = valid.find((s) => /^(over|peste)\b/i.test(s.tag));
-    const under = valid.find((s) => /^(under|sub)\b/i.test(s.tag));
+    if (valid.length < 2) return null;
+    const over = valid.find((s) => /^(over|peste)\b/i.test(s.tag) || /^(over|peste)\b/i.test(s.side));
+    const under = valid.find((s) => /^(under|sub)\b/i.test(s.tag) || /^(under|sub)\b/i.test(s.side));
     if (!over || !under) return null;
-    return { key: `OVER_UNDER_${String(line).replace('.', '_')}`, name, period, selections: [
-      { id: over.id, name: 'Over', odds: over.odds, handicap: line, group: 'Main' },
-      { id: under.id, name: 'Under', odds: under.odds, handicap: line, group: 'Main' },
-    ] };
+    const overLine = legLine(over.side);
+    const underLine = legLine(under.side);
+    const outcomeLine = (overLine !== null && overLine === underLine) ? overLine : null;
+    const line = outcomeLine ?? extractNumber(name);
+    if (line === null) return null;
+    const sportLower = String(sport || '').toLowerCase();
+    const isBasketball = sportLower === 'basketball' || sportLower === 'american football' || /puncte|points/i.test(name);
+    const isTennis = sportLower === 'tennis' || /game-?uri|sets?/i.test(name);
+    const subject = isBasketball ? 'points' : (isTennis ? 'games' : undefined);
+    const key = isBasketball
+      ? `POINTS_OVER_UNDER_${String(line).replace('.', '_')}`
+      : (isTennis ? `GAMES_OVER_UNDER_${String(line).replace('.', '_')}` : `OVER_UNDER_${String(line).replace('.', '_')}`);
+    return {
+      key,
+      name,
+      period,
+      ...(subject ? { subject } : {}),
+      selections: [
+        { id: over.id, name: 'Over', odds: over.odds, handicap: line, group: 'Main' },
+        { id: under.id, name: 'Under', odds: under.odds, handicap: line, group: 'Main' },
+      ],
+    };
   }
   if (/ambele.*(?:[iî]nscriu|marcheaz|echipe)|both teams|btts|gg[\s/]*ng/iu.test(name)) {
     const yes = valid.find((s) => /^(yes|da|gg)$/.test(s.side) || /^(yes|da|gg)\b/i.test(s.tag));
@@ -466,6 +607,7 @@ function mapFavbetMarket(market) {
     return { key: 'DOUBLE_CHANCE', name, period, selections: combined.map((s) => ({ id: s.id, name: s.tag.toUpperCase(), odds: s.odds, group: 'Main' })) };
   }
   if (/handicap/i.test(name)) {
+    const line = extractNumber(name);
     if (line === null) return null;
     const threeWay = valid.some((s) => /^(x|draw|egal)$/.test(s.tag));
     const key = `${threeWay ? 'HANDICAP' : 'AH'}_${String(Math.abs(line)).replace('.', '_')}`;
@@ -485,9 +627,10 @@ function mapFavbetMarket(market) {
   }
   // Corners Over/Under
   if (/cornere|corners|corner/i.test(name)) {
+    const line = extractNumber(name);
     if (line === null || valid.length < 2) return null;
-    const over = valid.find((s) => /^(over|peste)\b/i.test(s.tag));
-    const under = valid.find((s) => /^(under|sub)\b/i.test(s.tag));
+    const over = valid.find((s) => /^(over|peste)\b/i.test(s.tag) || /^(over|peste)\b/i.test(s.side));
+    const under = valid.find((s) => /^(under|sub)\b/i.test(s.tag) || /^(under|sub)\b/i.test(s.side));
     if (!over || !under) return null;
     return { key: `CORNERS_OVER_UNDER_${String(line).replace('.', '_')}`, name, period, selections: [
       { id: over.id, name: 'Over', odds: over.odds, handicap: line, group: 'Main' },
@@ -496,9 +639,10 @@ function mapFavbetMarket(market) {
   }
   // Cards Over/Under
   if (/cartonase|cards|yellow|red/i.test(name)) {
+    const line = extractNumber(name);
     if (line === null || valid.length < 2) return null;
-    const over = valid.find((s) => /^(over|peste)\b/i.test(s.tag));
-    const under = valid.find((s) => /^(under|sub)\b/i.test(s.tag));
+    const over = valid.find((s) => /^(over|peste)\b/i.test(s.tag) || /^(over|peste)\b/i.test(s.side));
+    const under = valid.find((s) => /^(under|sub)\b/i.test(s.tag) || /^(under|sub)\b/i.test(s.side));
     if (!over || !under) return null;
     return { key: `CARDS_OVER_UNDER_${String(line).replace('.', '_')}`, name, period, selections: [
       { id: over.id, name: 'Over', odds: over.odds, handicap: line, group: 'Main' },
@@ -580,10 +724,19 @@ function isPriced(outcome) {
  */
 function favbetPeriod(market) {
   const label = String(market?.result_type_name || market?.result_type_short_name || '').trim();
-  if (!label) return null;
-  if (/prima\s*repriz|\brepriz\s*1|1st\s*half|first\s*half|\b1\b\s*repriz/i.test(label)) return 'half1';
-  if (/a\s*doua\s*repriz|\brepriz\s*2|2nd\s*half|second\s*half|\b2\b\s*repriz/i.test(label)) return 'half2';
-  if (/timp\s*regulamentar|\btr\b|full\s*time|fulltime|match\s*time/i.test(label)) return 'fulltime';
+  if (label) {
+    if (/prima\s*repriz|\brepriz\s*1|1st\s*half|first\s*half|\b1\b\s*repriz|\brp1\b|\b1r\b/i.test(label)) return 'half1';
+    if (/a\s*doua\s*repriz|\brepriz\s*2|2nd\s*half|second\s*half|\b2\b\s*repriz|\brp2\b|\b2r\b/i.test(label)) return 'half2';
+    if (/timp\s*regulamentar|\btr\b|full\s*time|fulltime|match\s*time/i.test(label)) return 'fulltime';
+    const qM = /(?:\b([1-4])q\b|\bq([1-4])\b|\bsf(?:ert(?:ul)?)?\s*([1-4])\b)/i.exec(label);
+    if (qM) return `q${qM[1] || qM[2] || qM[3]}`;
+    const sM = /(?:\b([1-5])s\b|\bs([1-5])\b|\bset(?:ul)?\s*([1-5])\b)/i.exec(label);
+    if (sM) return `set${sM[1] || sM[2] || sM[3]}`;
+    const extracted = extractPeriodFromName(label);
+    if (extracted) return extracted;
+  }
+  const fromName = extractPeriodFromName(market?.market_name);
+  if (fromName) return fromName;
   return null;
 }
 
@@ -628,7 +781,7 @@ function isMultiMatchTie(marketOdds) {
  * separate contract, so full-time and first-half are both admitted explicitly;
  * second-half remains withheld until it has an independent counterpart.
  */
-function goalsTotalMarket(market) {
+function goalsTotalMarket(market, sport = 'Football') {
   const period = favbetPeriod(market);
   if (period !== 'fulltime' && period !== 'half1') return null;
   const legs = (market.outcomes || []).filter(isPriced);
@@ -641,11 +794,20 @@ function goalsTotalMarket(market) {
   if (overLine === null || overLine !== underLine) return null;
   const line = halfGoalLine(overLine);
   if (line === null) return null;
+
+  const sportLower = String(sport || '').toLowerCase();
+  const isBasketball = sportLower === 'basketball' || sportLower === 'american football';
+  const isTennis = sportLower === 'tennis';
+  const subject = isBasketball ? 'points' : (isTennis ? 'games' : 'goals');
+  const key = isBasketball ? 'TOTAL_POINTS' : (isTennis ? 'TOTAL_GAMES' : 'TOTAL_GOALS');
+  const defaultName = isBasketball ? 'Total Puncte' : (isTennis ? 'Total Game-uri' : 'Peste / Sub');
+
   return {
-    key: 'TOTAL_GOALS',
+    key,
     providerMarketId: `${GOALS_TOTAL_TEMPLATE}:${overLine}`,
-    name: String(market.market_name || 'Peste / Sub'),
+    name: String(market.market_name || defaultName),
     period,
+    subject,
     line,
     selections: [
       { id: String(over.outcome_id), name: `Over ${line}`, odds: Number(over.outcome_coef), group: 'Main' },

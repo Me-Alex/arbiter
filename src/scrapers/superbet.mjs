@@ -2,6 +2,7 @@ import ScraperBase from './base.mjs';
 import { normalizeTeamName, canonicalSport } from '../shared/text.mjs';
 import { ValidationError, UpstreamError } from '../shared/errors.mjs';
 import { superbetEventIsLive, markMarketsLive, liveCoverageFor } from './live-status.mjs';
+import { extractPeriodFromName } from '../scanner/market-contracts.mjs';
 
 const HOST = 'https://production-superbet-offer-ro.freetls.fastly.net';
 
@@ -90,6 +91,10 @@ const DETAIL_MARKETS = new Map([
   ['200734|Total goluri', 'OVER_UNDER'],
   ['200735|Prima repriză - Total goluri', 'OVER_UNDER'],
   ['200736|Handicap', 'ASIAN_HANDICAP'],
+  ['539|Ambele echipe marchează (GG)', 'BTTS'],
+  ['200734|Liczba goli', 'OVER_UNDER'],
+  ['200735|1.połowa - liczba goli', 'OVER_UNDER'],
+  ['539|Obie drużyny strzelą', 'BTTS'],
 ]);
 
 /** The provider's key for one (marketId, marketName) pair, as emitted. */
@@ -145,11 +150,21 @@ function sideTokenFor(name, teams) {
  * `teams` is the [home, away] pair from the index, already normalised. It is
  * what lets the handicap legs be re-labelled with a side; see sideTokenFor.
  */
-function marketsFromDetail(odds, teams) {
+function marketsFromDetail(odds, teams, sport = 'football') {
   if (!Array.isArray(odds)) return [];
   const wanted = new Map();
   for (const o of odds) {
-    const family = DETAIL_MARKETS.get(`${o?.marketId}|${o?.marketName}`);
+    let family = DETAIL_MARKETS.get(`${o?.marketId}|${o?.marketName}`);
+    let team = undefined;
+    const mid = String(o?.marketId || '');
+    if (!family) {
+      if (mid === '544') { family = 'OVER_UNDER'; team = 'home'; }
+      else if (mid === '535') { family = 'OVER_UNDER'; team = 'away'; }
+      else if (mid === '2529') { family = 'OVER_UNDER'; team = 'home'; }
+      else if (mid === '2531') { family = 'OVER_UNDER'; team = 'away'; }
+      else if (mid === '201506') { family = 'OVER_UNDER'; team = 'home'; }
+      else if (mid === '201507') { family = 'OVER_UNDER'; team = 'away'; }
+    }
     if (!family) continue;
     if (o.status !== 'active' || o.offerStateId !== 1) continue;
     let name = String(o.name || '').trim();
@@ -161,16 +176,42 @@ function marketsFromDetail(odds, teams) {
       // has no side, and a spread with only one keyed leg is the shape that
       // merges with the reciprocal line.
       if (!name) continue;
+    } else if (family === '1X2') {
+      const norm = normalizeTeamName(name);
+      if (teams && norm === teams[0]) {
+        name = '1';
+      } else if (teams && norm === teams[1]) {
+        name = '2';
+      } else if (/^(egal|egalitate|draw|x|remis)$/i.test(norm) || name.toUpperCase() === 'X') {
+        name = 'X';
+      } else {
+        continue;
+      }
+    } else if (family === 'BTTS') {
+      const lower = name.toLowerCase();
+      if (lower === 'tak' || lower === 'da') name = 'Da';
+      else if (lower === 'nie' || lower === 'nu') name = 'Nu';
     }
     const k = `${o.marketId}|${o.marketName}|${o.marketUuid}`;
-    if (!wanted.has(k)) wanted.set(k, { family, marketId: o.marketId, marketName: o.marketName, selections: [] });
+    if (!wanted.has(k)) wanted.set(k, { family, marketId: o.marketId, marketName: o.marketName, team, selections: [] });
     wanted.get(k).selections.push({ id: o.uuid, name, odds: price, handicap: null });
   }
   const out = [];
+  const s = String(sport || '').toLowerCase();
   for (const m of wanted.values()) {
     // Both sides or nothing: a half-line pair is a contract, and one surviving
     // leg of it is an orphan the engine would hold open against nothing.
-    if (m.selections.length !== 2) continue;
+    // 1X2 requires all 3 sides (1, X, 2).
+    if (m.family === '1X2') {
+      if (m.selections.length !== 3) continue;
+    } else {
+      if (m.selections.length !== 2) continue;
+    }
+    let subject;
+    if (s === 'basketball') subject = 'points';
+    else if (s === 'tennis') subject = 'games';
+    else if (m.family === 'OVER_UNDER') subject = 'goals';
+
     out.push({
       key: detailKey(m.marketId, m.marketName),
       // The exact-name gate decides which provider contracts are safe to emit.
@@ -178,8 +219,14 @@ function marketsFromDetail(odds, teams) {
       // goals, so write that fact explicitly instead of relying on a downstream
       // label parser to correct a full-time default.
       name: m.marketName,
-      period: String(m.marketId) === '200735' ? 'half1' : 'fulltime',
-      family: m.family,
+      period: extractPeriodFromName(m.marketName) || (
+        (String(m.marketId) === '2529' || String(m.marketId) === '2531') ? 'half1'
+          : (String(m.marketId) === '201506' || String(m.marketId) === '201507') ? 'half2'
+            : 'fulltime'
+      ),
+      family: m.family === '1X2' ? 'MATCH_ODDS' : m.family,
+      team: m.team,
+      ...(subject ? { subject } : {}),
       selections: m.selections,
     });
   }
@@ -194,14 +241,19 @@ export default class SuperbetScraper extends ScraperBase {
 
   constructor(opts = {}) {
     super(opts);
+    this.host = opts.host || HOST;
+    this.locale = opts.locale || 'ro-RO';
+    if (opts.id) this.id = opts.id;
+    if (opts.name) this.name = opts.name;
+    if (opts.sourceIds) this.sourceIds = opts.sourceIds;
     this.runId ||= new Date().toISOString();
     this.fetchImpl = opts.fetchImpl || globalThis.fetch;
     // The detail payload is ~750 KB of JSON per event (85 KB gzipped), so the
     // 15 s the index calls were tuned for is a thin margin on a full response.
     this.timeoutMs = opts.timeoutMs ?? 30000;
-    this.maxEvents = opts.maxEvents === 'all' ? 5000 : Number(opts.maxEvents ?? 100);
-    if (!Number.isInteger(this.maxEvents) || this.maxEvents < 0) {
-      throw new ValidationError('superbet: maxEvents must be a non-negative integer');
+    this.maxEvents = opts.maxEvents === 'all' ? Infinity : Number(opts.maxEvents ?? Infinity);
+    if ((!Number.isInteger(this.maxEvents) && this.maxEvents !== Infinity) || this.maxEvents < 0) {
+      throw new ValidationError(`${this.id}: maxEvents must be a non-negative integer`);
     }
     this.sport = opts.sport || 'all';
     // A filter is only applied when the caller actually asked for one sport;
@@ -214,13 +266,15 @@ export default class SuperbetScraper extends ScraperBase {
     // market and Superbet contributing goals totals and handicaps, so it is
     // configured per job rather than hardcoded on.
     this.fullMarkets = Boolean(opts.fullMarkets ?? opts.jobConfig?.fullMarkets);
-    this.detailLimit = Number.isInteger(opts.detailLimit)
-      ? opts.detailLimit
-      : Number.isInteger(opts.jobConfig?.detailLimit)
-        ? opts.jobConfig.detailLimit
-        : this.maxEvents;
-    if (!Number.isInteger(this.detailLimit) || this.detailLimit < 0) {
-      throw new ValidationError('superbet: invalid detailLimit');
+    this.detailLimit = String(opts.detailLimit ?? opts.jobConfig?.detailLimit ?? '').toLowerCase() === 'all'
+      ? Infinity
+      : Number.isInteger(opts.detailLimit)
+        ? opts.detailLimit
+        : Number.isInteger(opts.jobConfig?.detailLimit)
+          ? opts.jobConfig.detailLimit
+          : this.maxEvents;
+    if ((!Number.isInteger(this.detailLimit) && this.detailLimit !== Infinity) || this.detailLimit < 0) {
+      throw new ValidationError(`${this.id}: invalid detailLimit`);
     }
     this.concurrency = Math.max(1, Number(opts.concurrency ?? opts.jobConfig?.concurrency ?? 4));
     // The feed publishes in-play events and names them, so the flag is honoured
@@ -236,18 +290,19 @@ export default class SuperbetScraper extends ScraperBase {
     const start = new Date();
     start.setUTCMinutes(0, 0, 0);
     const windowHours = Number(this.windowHours ?? 168);
-    const url = new URL(`${HOST}/v3/ro-RO/events`);
+    const url = new URL(`${this.host}/v3/${this.locale}/events`);
     url.search = new URLSearchParams({
-      index: 'active-prematch', startDate: start.toISOString(),
+      index: this.includeLive ? 'active-live' : 'active-prematch',
+      startDate: start.toISOString(),
       endDate: new Date(+start + windowHours * 3600000).toISOString(),
     });
     this.sourceUrl = url.href;
     const get = async (address) => {
       requestSignal.throwIfAborted();
       const response = await this.fetchImpl(address, { signal: requestSignal, headers: { accept: 'application/json' } });
-      if (!response.ok) throw new UpstreamError(`superbet: HTTP ${response.status} on ${address}`, { status: response.status });
+      if (!response.ok) throw new UpstreamError(`${this.id}: HTTP ${response.status} on ${address}`, { status: response.status });
       if (!response.headers.get('content-type')?.includes('json')) {
-        throw new ValidationError('superbet: expected public JSON, received non-JSON response');
+        throw new ValidationError(`${this.id}: expected public JSON, received non-JSON response`);
       }
       return response.json();
     };
@@ -257,7 +312,7 @@ export default class SuperbetScraper extends ScraperBase {
     // Widen the window only while the event cap still has room. The feed is
     // paginated by time, so a cap of 1 must not pay for four 168h reads.
     for (let w = 1; w < 4 && raw.events.length < this.maxEvents; w++) {
-      const wUrl = new URL(`${HOST}/v3/ro-RO/events`);
+      const wUrl = new URL(`${this.host}/v3/${this.locale}/events`);
       wUrl.search = new URLSearchParams({
         index: 'active-prematch',
         startDate: new Date(+start + w * windowHours * 3600000).toISOString(),
@@ -268,11 +323,11 @@ export default class SuperbetScraper extends ScraperBase {
         if (Array.isArray(raw2?.events)) raw.events.push(...raw2.events);
       } catch { /* window is optional */ }
     }
-    const structure = await get(`${HOST}/v2/ro-RO/struct`);
+    const structure = await get(`${this.host}/v2/${this.locale}/struct`);
     if (!Array.isArray(structure?.data?.tournaments)) {
-      throw new ValidationError('superbet: structure missing data.tournaments');
+      throw new ValidationError(`${this.id}: structure missing data.tournaments`);
     }
-    this.tournaments = new Map(structure.data.tournaments.map((t) => [String(t.id), t.localNames?.['ro-RO']]));
+    this.tournaments = new Map(structure.data.tournaments.map((t) => [String(t.id), t.localNames?.[this.locale] || t.localNames?.['ro-RO'] || t.localNames?.['pl-PL'] || t.name]));
     if (this.fullMarkets) await this._enrichMarkets(raw.events, get, requestSignal);
     requestSignal.throwIfAborted();
     this.observedAt = new Date().toISOString();
@@ -314,7 +369,7 @@ export default class SuperbetScraper extends ScraperBase {
           const { e } = candidates.shift();
           let page;
           try {
-            page = await get(`${HOST}/v2/ro-RO/events/${encodeURIComponent(e.event_id)}`);
+            page = await get(`${this.host}/v2/${this.locale}/events/${encodeURIComponent(e.event_id)}`);
           } catch (err) {
             // A cancelled run is not a per-event failure. A timeout, a 404 and
             // a truncated body are: the event keeps its index-only markets,
@@ -327,20 +382,21 @@ export default class SuperbetScraper extends ScraperBase {
           // are the names the handicap legs are written against.
           const names = e.fixture?.event_name?.split('·').map((s) => normalizeTeamName(s.trim()));
           const teams = names?.length === 2 && names.every(Boolean) ? names : null;
-          const markets = marketsFromDetail(detail?.odds, teams);
+          const sportName = SPORT_NAMES[e.fixture?.sport_id] || 'Football';
+          const markets = marketsFromDetail(detail?.odds, teams, sportName);
           if (markets.length === 0) continue;
           e._detailMarkets = markets;
           enriched += 1;
         }
       }),
     );
-    this.logger('info', `superbet: deep markets — ${enriched} events expanded beyond 1X2`);
+    this.logger('info', `${this.id}: deep markets — ${enriched} events expanded beyond 1X2`);
     return enriched;
   }
 
   normalize(raw) {
     if (!raw || raw.error || !Array.isArray(raw.events)) {
-      throw new ValidationError('superbet: payload missing events array', { field: 'events' });
+      throw new ValidationError(`${this.id}: payload missing events array`, { field: 'events' });
     }
     return raw.events;
   }
@@ -365,35 +421,42 @@ export default class SuperbetScraper extends ScraperBase {
       const live = superbetEventIsLive(event);
       if (teams?.length !== 2 || teams.some((s) => !s) || !Number.isFinite(+date)
           || (!this.includePast && !live && +date <= Date.now()) || !event.event_id) continue;
+      const sportName = SPORT_NAMES[f.sport_id] || 'Unknown';
       // Extract ALL markets with valid odds from the event
-      const markets = (event.markets || [])
-        .map((m) => {
-          if (!Array.isArray(m.odds) || m.odds.length < 2) return null;
-          // Group odds by market_line_uuid; each group is one set of outcomes
-          const lines = new Map();
-          for (const o of m.odds) {
-            const lineId = o.metadata?.market_line_uuid || 'default';
-            if (!lines.has(lineId)) lines.set(lineId, []);
-            lines.get(lineId).push(o);
+      const markets = [];
+      for (const m of event.markets || []) {
+        if (!Array.isArray(m.odds) || m.odds.length < 2) continue;
+        // Group odds by market_line_uuid; each group is one set of outcomes
+        const lines = new Map();
+        for (const o of m.odds) {
+          const lineId = o.metadata?.market_line_uuid || 'default';
+          if (!lines.has(lineId)) lines.set(lineId, []);
+          lines.get(lineId).push(o);
+        }
+        for (const [, odds] of lines) {
+          const selections = odds
+            .map((o) => {
+              const name = String(o.metadata?.name || '').trim();
+              const price = Number(o.price);
+              if (!name || !Number.isFinite(price) || price <= 1) return null;
+              if (o.status !== 1 || o.display !== true || o.metadata?.offer_state_id !== 1) return null;
+              return { id: o.uuid, name, odds: price, handicap: null };
+            })
+            .filter(Boolean);
+          if (selections.length >= 2) {
+            let subject;
+            if (sportName === 'Basketball') subject = 'points';
+            else if (sportName === 'Tennis') subject = 'games';
+            markets.push({
+              key: String(m.id),
+              name: m.name || `Market ${m.id}`,
+              period: extractPeriodFromName(m.name) || 'fulltime',
+              ...(subject ? { subject } : {}),
+              selections,
+            });
           }
-          // Pick the first line that has valid selections
-          for (const [, odds] of lines) {
-            const selections = odds
-              .map((o) => {
-                const name = String(o.metadata?.name || '').trim();
-                const price = Number(o.price);
-                if (!name || !Number.isFinite(price) || price <= 1) return null;
-                if (o.status !== 1 || o.display !== true || o.metadata?.offer_state_id !== 1) return null;
-                return { id: o.uuid, name, odds: price, handicap: null };
-              })
-              .filter(Boolean);
-            if (selections.length >= 2) {
-              return { key: String(m.id), name: m.name || `Market ${m.id}`, period: 'fulltime', selections };
-            }
-          }
-          return null;
-        })
-        .filter(Boolean);
+        }
+      }
       // The deep pass attaches its markets to the raw event (the same way
       // Unibet replaces `contest.propositions` in place), so the index-only
       // path and the detail path stay additive. Checked AFTER the merge: an
@@ -404,7 +467,6 @@ export default class SuperbetScraper extends ScraperBase {
       if (markets.length === 0) continue;
       const kickoff = date.toISOString();
       const league = this.tournaments?.get(String(f.tournament_id)) || `Tournament ${f.tournament_id}`;
-      const sportName = SPORT_NAMES[f.sport_id] || 'Unknown';
       // Honour the sport filter. It was stored on the instance and never read,
       // so a run filtered to football still emitted every other sport the feed
       // carried, and they consumed the event cap.

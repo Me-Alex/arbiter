@@ -179,8 +179,9 @@ async function loadSettingsPage(scheduler) {
   const makeElement = (id) => {
     if (elements.has(id)) return elements.get(id);
     const byType = new Map();
+    let rawValue = '';
     const el = {
-      id, value: '', checked: false, textContent: '', innerHTML: '', className: '',
+      id, checked: false, textContent: '', innerHTML: '', className: '',
       style: {}, dataset: {}, children: [],
       classList: { add() {}, remove() {}, toggle() {}, contains: () => false },
       setAttribute() {}, getAttribute: () => null,
@@ -192,6 +193,18 @@ async function loadSettingsPage(scheduler) {
       removeEventListener() {},
       querySelector: () => null, querySelectorAll: () => [],
     };
+    // `input.value` is a string in a browser, always. `renderFields` writes the
+    // scheduler's numbers straight into it, so without this the harness handed
+    // the page a number and `scanOptionsFromForm`'s `.value.trim()` threw — the
+    // launch failed, and the page reported it as a toast rather than as a crash.
+    // A harness defect that reads as a page defect is the one thing this
+    // harness must not do.
+    Object.defineProperty(el, 'value', {
+      get: () => rawValue,
+      set: (v) => { rawValue = v === null || v === undefined ? '' : String(v); },
+      enumerable: true,
+      configurable: true,
+    });
     elements.set(id, el);
     handlers.set(id, byType);
     return el;
@@ -300,4 +313,61 @@ test('a save while the schedule is off refuses in words instead of posting', asy
   // Spread first: the payload was built inside the vm context, and a vm Array
   // fails deepStrictEqual against a host one on its prototype, not its items.
   assert.deepEqual([...page.posts[0].payload.bookIds], ['fortuna'], 'with the book the form holds');
+});
+
+test('a scrape launched from this page runs with the options this page shows', async () => {
+  // The blind spot of the test above it. That one censuses the KEYS the form
+  // posts; this page also has to answer where they are posted TO. It saved them
+  // to /api/scheduler and launched with `bookIds` alone, so `resolveScanRequest({})`
+  // answered with its defaults and a run started from the page that owns these
+  // six fields ignored every one of them. Over the real router, eight of eight
+  // configured options dropped.
+  //
+  // The control is the same POST one line later carrying the options: the route
+  // and the orchestrator keep all eight, so the equality below is about the
+  // request the page builds and not about a backend that ignores them anyway.
+  const CONFIGURED = {
+    bankroll: 77777,
+    minMarginPercent: 8.5,
+    minEvPercent: 9.5,
+    maxStake: 4321,
+    maxAgeMinutes: 30,
+    includePast: true,
+    // Not this form's: `maxMiddleRiskPercent`, `minMiddleRoiPercent` and
+    // `includeLive` have no input here and must ride along from what is stored,
+    // alongside `sport` and `maxEvents`. Dropping the stored half is the other
+    // half of the same defect.
+    maxMiddleRiskPercent: 6,
+    minMiddleRoiPercent: 4,
+    sport: 'tennis',
+    maxEvents: 120,
+  };
+  const scheduler = {
+    enabled: true, intervalMinutes: 15, bookIds: ['fortuna'], scanOptions: { ...CONFIGURED },
+  };
+  const page = await loadSettingsPage(scheduler);
+  page.elements.get('set-book').value = 'fortuna';
+
+  const scrapePosts = () => page.posts.filter((p) => p.url === '/api/scrape');
+
+  page.fire('btn-scrape-now', 'click');
+  await page.flush();
+  assert.equal(scrapePosts().length, 1,
+    `the button did not launch a scrape; what the page said: ${JSON.stringify(page.toasts)}`);
+
+  const options = scrapePosts()[0].payload.scanOptions;
+  assert.ok(options, 'the launch carried no scanOptions, so the route fell back to its defaults');
+  for (const [key, value] of Object.entries(CONFIGURED)) {
+    assert.equal(options[key], value,
+      `the launch ignored the configured ${key}: sent ${JSON.stringify(options[key])}`);
+  }
+
+  // The save and the launch must answer the same question. Asserted rather than
+  // assumed: the two were separate expressions, and one of them was left out.
+  page.fire('set-min-ev', 'change');
+  await page.flush();
+  const saved = page.posts.filter((p) => p.url === '/api/scheduler').at(-1);
+  assert.ok(saved, 'the save did not post');
+  assert.deepEqual({ ...saved.payload.scanOptions }, { ...options },
+    'the schedule is saved under one set of options and the run launched under another');
 });

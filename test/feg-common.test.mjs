@@ -7,6 +7,7 @@ import Casa from '../src/scrapers/casa-pariurilor.mjs';
 import Fortuna from '../src/scrapers/fortuna.mjs';
 import { describeError, summariseReasons } from '../src/scrapers/feg-common.mjs';
 import { canonicalSport } from '../src/shared/text.mjs';
+import { resolveContract, bucketKeyForContract } from '../src/scanner/market-contracts.mjs';
 
 for (const Adapter of [Casa, Fortuna]) {
   test(`${Adapter.name} preserves unknown settlement and provider identifiers`, () => {
@@ -325,5 +326,136 @@ for (const { id, Cls } of BRANDS) {
     }));
     assert.deepEqual(event.markets.map((m) => m.key), ['ufo:mtyp:00-00', 'ufo:mtyp:00-0u'],
       'the match result and the match total both survive');
+  });
+
+  test(`${id} propagates markMarketsLive and tags points/games subjects`, () => {
+    const fxLive = fixture({ id: 'fx-live', sportId: 'ufo:sprt:02', treeSport: 'Basketball', home: 'Lakers', away: 'Warriors', tournament: 'NBA' });
+    const adapter = new Cls({ includeLive: true });
+    const [event] = adapter.extractEvents(adapter.normalize({
+      fixtures: [fxLive],
+      marketsByFixture: new Map([['fx-live', [
+        { id: 'm-live-1', kind: 'LIVE', marketTypeId: 'ufo:mtyp:02-00', name: 'Castigator', period: 'FT',
+          outcomes: [{ id: 'o1', name: '1', odds: 1.85 }, { id: 'o2', name: '2', odds: 1.95 }] },
+        { id: 'm-live-2', kind: 'LIVE', marketTypeId: 'ufo:mtyp:02-0u', name: 'Total puncte', period: 'FT',
+          outcomes: [{ id: 'p+', name: 'Peste 220.5', odds: 1.90 }, { id: 'p-', name: 'Sub 220.5', odds: 1.90 }] },
+      ]]]),
+    }));
+
+    assert.equal(event.live, true);
+    assert.equal(event.markets[0].live, true);
+    assert.equal(event.markets[1].live, true);
+    assert.equal(event.markets[1].subject, 'points');
+  });
+
+  test(`${id} dynamically extracts canonical periods for sub-window markets and isolates bucket keys`, () => {
+    const fx = fixture({ id: 'fx-sub', sportId: 'ufo:sprt:02', treeSport: 'Basketball', home: 'Celtics', away: 'Heat', tournament: 'NBA' });
+    const adapter = new Cls();
+    const [event] = adapter.extractEvents(adapter.normalize({
+      fixtures: [fx],
+      marketsByFixture: new Map([['fx-sub', [
+        { id: 'm-ft', marketTypeId: 'ufo:mtyp:02-0u', name: 'Total puncte', period: 'FT',
+          outcomes: [{ id: 'p1', name: 'Peste 210.5', odds: 1.90 }, { id: 'p2', name: 'Sub 210.5', odds: 1.90 }] },
+        { id: 'm-q1', marketTypeId: 'ufo:mtyp:02-0u', name: 'Total puncte sfert 1',
+          outcomes: [{ id: 'q1', name: 'Peste 52.5', odds: 1.88 }, { id: 'q2', name: 'Sub 52.5', odds: 1.92 }] },
+        { id: 'm-h1', marketTypeId: 'ufo:mtyp:02-0u', name: 'Total puncte repriza 1',
+          outcomes: [{ id: 'h1', name: 'Peste 105.5', odds: 1.85 }, { id: 'h2', name: 'Sub 105.5', odds: 1.95 }] },
+        { id: 'm-set1', marketTypeId: 'ufo:mtyp:01-0u', name: 'Total game-uri set 1',
+          outcomes: [{ id: 's1', name: 'Peste 9.5', odds: 1.91 }, { id: 's2', name: 'Sub 9.5', odds: 1.91 }] },
+        { id: 'm-map1', marketTypeId: 'ufo:mtyp:02-04', name: 'Harta 1. castigator',
+          outcomes: [{ id: 'm1', name: '1', odds: 1.70 }, { id: 'm2', name: '2', odds: 2.10 }] },
+      ]]]),
+    }));
+
+    const ftMarket = event.markets.find((m) => m.id === 'm-ft');
+    const q1Market = event.markets.find((m) => m.id === 'm-q1');
+    const h1Market = event.markets.find((m) => m.id === 'm-h1');
+    const set1Market = event.markets.find((m) => m.id === 'm-set1');
+    const map1Market = event.markets.find((m) => m.id === 'm-map1');
+
+    assert.equal(ftMarket.period, 'FT');
+    assert.equal(q1Market.period, 'q1');
+    assert.equal(q1Market.subject, 'points');
+    assert.equal(h1Market.period, 'half1');
+    assert.equal(h1Market.subject, 'points');
+    assert.equal(set1Market.period, 'set1');
+    assert.equal(set1Market.subject, 'games');
+    assert.equal(map1Market.period, 'set1');
+
+    const ftContract = resolveContract(ftMarket, { sport: 'basketball' });
+    const q1Contract = resolveContract(q1Market, { sport: 'basketball' });
+    const h1Contract = resolveContract(h1Market, { sport: 'basketball' });
+
+    assert.ok(ftContract);
+    assert.ok(q1Contract);
+    assert.ok(h1Contract);
+
+    const ftKey = bucketKeyForContract('ev1', ftContract);
+    const q1Key = bucketKeyForContract('ev1', q1Contract);
+    const h1Key = bucketKeyForContract('ev1', h1Contract);
+
+    assert.match(ftKey, /::fulltime::210\.5::/);
+    assert.match(q1Key, /::q1::52\.5::/);
+    assert.match(h1Key, /::half1::105\.5::/);
+
+    assert.notEqual(ftKey, q1Key);
+    assert.notEqual(ftKey, h1Key);
+    assert.notEqual(q1Key, h1Key);
+  });
+
+  test(`${id} correctly normalizes Romanian PR and SR sub-window periods with bucket key isolation`, () => {
+    const fx = fixture({ id: 'fx-prsr', sportId: 'ufo:sprt:00', treeSport: 'Football', home: 'FCSB', away: 'CFR Cluj', tournament: 'Liga 1' });
+    const adapter = new Cls();
+    const [event] = adapter.extractEvents(adapter.normalize({
+      fixtures: [fx],
+      marketsByFixture: new Map([['fx-prsr', [
+        { id: 'm-pr-1x2', marketTypeId: 'ufo:mtyp:00-00', name: 'PR 1X2',
+          outcomes: [{ id: 'pr1', name: '1', odds: 2.80 }, { id: 'prx', name: 'X', odds: 2.10 }, { id: 'pr2', name: '2', odds: 3.20 }] },
+        { id: 'm-sr-1x2', marketTypeId: 'ufo:mtyp:00-00', name: 'SR 1X2',
+          outcomes: [{ id: 'sr1', name: '1', odds: 2.70 }, { id: 'srx', name: 'X', odds: 2.20 }, { id: 'sr2', name: '2', odds: 3.10 }] },
+        { id: 'm-ft-1x2', marketTypeId: 'ufo:mtyp:00-00', name: 'Meci', period: 'FT',
+          outcomes: [{ id: 'ft1', name: '1', odds: 2.10 }, { id: 'ftx', name: 'X', odds: 3.30 }, { id: 'ft2', name: '2', odds: 3.40 }] },
+        { id: 'm-pr-ou', marketTypeId: 'ufo:mtyp:00-0u', name: 'Prima rep - Total goluri',
+          outcomes: [{ id: 'pro', name: 'Peste 0.5', odds: 1.45 }, { id: 'pru', name: 'Sub 0.5', odds: 2.55 }] },
+      ]]]),
+    }));
+
+    const pr1x2Market = event.markets.find((m) => m.id === 'm-pr-1x2');
+    const sr1x2Market = event.markets.find((m) => m.id === 'm-sr-1x2');
+    const ft1x2Market = event.markets.find((m) => m.id === 'm-ft-1x2');
+    const prOuMarket = event.markets.find((m) => m.id === 'm-pr-ou');
+
+    assert.equal(pr1x2Market.period, 'half1');
+    assert.equal(sr1x2Market.period, 'half2');
+    assert.equal(ft1x2Market.period, 'FT');
+    assert.equal(prOuMarket.period, 'half1');
+
+    const prContract = resolveContract(pr1x2Market);
+    const srContract = resolveContract(sr1x2Market);
+    const ftContract = resolveContract(ft1x2Market);
+    const prOuContract = resolveContract(prOuMarket);
+
+    assert.ok(prContract);
+    assert.ok(srContract);
+    assert.ok(ftContract);
+    assert.ok(prOuContract);
+
+    assert.equal(prContract.period, 'half1');
+    assert.equal(srContract.period, 'half2');
+    assert.equal(ftContract.period, 'fulltime');
+    assert.equal(prOuContract.period, 'half1');
+
+    const prKey = bucketKeyForContract('evFCSB', prContract);
+    const srKey = bucketKeyForContract('evFCSB', srContract);
+    const ftKey = bucketKeyForContract('evFCSB', ftContract);
+    const prOuKey = bucketKeyForContract('evFCSB', prOuContract);
+
+    assert.equal(prKey, 'evFCSB::MATCH_ODDS::half1::_::home+draw+away::_::_');
+    assert.equal(srKey, 'evFCSB::MATCH_ODDS::half2::_::home+draw+away::_::_');
+    assert.equal(ftKey, 'evFCSB::MATCH_ODDS::fulltime::_::home+draw+away::_::_');
+    assert.equal(prOuKey, 'evFCSB::OVER_UNDER::half1::0.5::over+under::goals::match');
+
+    assert.notEqual(prKey, srKey);
+    assert.notEqual(prKey, ftKey);
+    assert.notEqual(srKey, ftKey);
   });
 }

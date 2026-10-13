@@ -1,0 +1,2526 @@
+{
+  "dates": [
+    {
+      "dateTime": "2026-10-10T21:00:00Z",
+      "eventIds": [
+        15516420,
+        17785962,
+        17945408,
+        17969241,
+        17976600,
+        17976717,
+        17926260,
+        17926302,
+        17926478,
+        17969243
+      ]
+    }
+  ],
+  "topSports": [
+    {
+      "id": 66,
+      "name": "Soccer",
+      "iconName": "soccer",
+      "hasStream": false,
+      "count": 1509
+    },
+    {
+      "id": 67,
+      "name": "Basketball",
+      "iconName": "basketball",
+      "hasStream": false,
+      "count": 278
+    },
+    {
+      "id": 68,
+      "name": "Tennis",
+      "iconName": "tennis",
+      "hasStream": false,
+      "count": 232
+    },
+    {
+      "id": 70,
+      "name": "Ice Hockey",
+      "iconName": "ice-hockey",
+      "hasStream": false,
+      "count": 150
+    },
+    {
+      "id": 73,
+      "name": "Handball",
+      "iconName": "handball",
+      "hasStream": false,
+      "count": 57
+    },
+    {
+      "id": 69,
+      "name": "Volleyball",
+      "iconName": "volleyball",
+      "hasStream": false,
+      "count": 57
+    },
+    {
+      "id": 77,
+      "name": "Table Tennis",
+      "iconName": "table-tennis",
+      "hasStream": false,
+      "count": 293
+    },
+    {
+      "id": -1,
+      "name": "Other",
+      "iconName": "Other",
+      "hasStream": false,
+      "count": 433
+    }
+  ],
+  "headers": [
+    {
+      "typeId": 1,
+      "name": "1x2",
+      "mst": 0,
+      "odds": [
+        {
+          "id": 1,
+          "name": "1"
+        },
+        {
+          "id": 2,
+          "name": "X"
+        },
+        {
+          "id": 3,
+          "name": "2"
+        }
+      ]
+    },
+    {
+      "typeId": 18,
+      "name": "Total",
+      "mst": 0,
+      "odds": [
+        {
+          "id": 12,
+          "name": "peste"
+        },
+        {
+          "id": 13,
+          "name": "sub"
+        }
+      ],
+      "specialOdd": {
+        "typeId": 1,
+        "name": "Goluri"
+      }
+    },
+    {
+      "typeId": 29,
+      "name": "Ambele echipe să înscrie",
+      "mst": 0,
+      "odds": [
+        {
+          "id": 74,
+          "name": "da"
+        },
+        {
+          "id": 76,
+          "name": "nu"
+        }
+      ]
+    },
+    {
+      "typeId": 10,
+      "name": "Șansă dublă",
+      "mst": 0,
+      "odds": [
+        {
+          "id": 9,
+          "name": "1X\t"
+        },
+        {
+          "id": 10,
+          "name": "12"
+        },
+        {
+          "id": 11,
+          "name": "X2"
+        }
+      ]
+    },
+    {
+      "typeId": 11,
+      "name": "Egal pariu nul",
+      "mst": 0,
+      "odds": [
+        {
+          "id": 1,
+          "name": "1"
+        },
+        {
+          "id": 3,
+          "name": "2"
+        }
+      ]
+    }
+  ],
+  "pageCount": 148,
+  "page": 1,
+  "markets": [
+    {
+      "oddIds": [
+        4536589788,
+        4536589789,
+        4536589790
+      ],
+      "typeId": 1,
+      "sportMarketId": 70472,
+      "id": 1743588338,
+      "name": "1x2"
+    },
+    {
+      "oddIds": [
+        4536589861,
+        4536589863,
+        4536589862
+      ],
+      "variant": 9,
+      "lines": [],
+      "typeId": 8,
+      "sportMarketId": 70491,
+      "sv": "1",
+      "sn": "Primul",
+      "id": 1743588388,
+      "name": "Golul primul"
+    },
+    {
+      "oddIds": [
+        4536589638,
+        4536589636,
+        4536589637
+      ],
+      "typeId": 10,
+      "sportMarketId": 70495,
+      "id": 1743588247,
+      "name": "Șansă dublă"
+    },
+    {
+      "oddIds": [
+        4536589675,
+        4536589676
+      ],
+      "typeId": 11,
+      "sportMarketId": 70500,
+      "id": 1743588263,
+      "name": "Egal pariu nul"
+    },
+    {
+      "oddIds": [
+        4536589498,
+        4536589499
+      ],
+      "typeId": 18,
+      "sportMarketId": 70520,
+      "sv": "3.5",
+      "sn": "3.5",
+      "id": 1743588166,
+      "name": "Total"
+    },
+    {
+      "oddIds": [
+        4536589568,
+        4536589569
+      ],
+      "typeId": 29,
+      "sportMarketId": 70545,
+      "id": 1743588231,
+      "name": "Ambele echipe să înscrie"
+    },
+    {
+      "oddIds": [
+        4600018677,
+        4600018678,
+        4600018679
+      ],
+      "typeId": 1,
+      "sportMarketId": 70472,
+      "id": 1764063907,
+      "name": "1x2"
+    },
+    {
+      "oddIds": [
+        4600018716,
+        4600018718,
+        4600018717
+      ],
+      "variant": 9,
+      "lines": [],
+      "typeId": 8,
+      "sportMarketId": 70491,
+      "sv": "1",
+      "sn": "Primul",
+      "id": 1764063920,
+      "name": "Golul primul"
+    },
+    {
+      "oddIds": [
+        4600018620,
+        4600018618,
+        4600018619
+      ],
+      "typeId": 10,
+      "sportMarketId": 70495,
+      "id": 1764063891,
+      "name": "Șansă dublă"
+    },
+    {
+      "oddIds": [
+        4600018627,
+        4600018628
+      ],
+      "typeId": 11,
+      "sportMarketId": 70500,
+      "id": 1764063894,
+      "name": "Egal pariu nul"
+    },
+    {
+      "oddIds": [
+        4600018528,
+        4600018529
+      ],
+      "typeId": 18,
+      "sportMarketId": 70520,
+      "sv": "2.5",
+      "sn": "2.5",
+      "id": 1764063858,
+      "name": "Total"
+    },
+    {
+      "oddIds": [
+        4620591769,
+        4620591770,
+        4620591771
+      ],
+      "typeId": 1,
+      "sportMarketId": 70472,
+      "id": 1770678742,
+      "name": "1x2"
+    },
+    {
+      "oddIds": [
+        4620591793,
+        4620591795,
+        4620591794
+      ],
+      "variant": 9,
+      "lines": [],
+      "typeId": 8,
+      "sportMarketId": 70491,
+      "sv": "1",
+      "sn": "Primul",
+      "id": 1770678749,
+      "name": "Golul primul"
+    },
+    {
+      "oddIds": [
+        4620591740,
+        4620591738,
+        4620591739
+      ],
+      "typeId": 10,
+      "sportMarketId": 70495,
+      "id": 1770678733,
+      "name": "Șansă dublă"
+    },
+    {
+      "oddIds": [
+        4620591741,
+        4620591742
+      ],
+      "typeId": 11,
+      "sportMarketId": 70500,
+      "id": 1770678734,
+      "name": "Egal pariu nul"
+    },
+    {
+      "oddIds": [
+        4620591674,
+        4620591675
+      ],
+      "typeId": 18,
+      "sportMarketId": 70520,
+      "sv": "2.5",
+      "sn": "2.5",
+      "id": 1770678701,
+      "name": "Total"
+    },
+    {
+      "oddIds": [
+        4627662705,
+        4627662707,
+        4627662710
+      ],
+      "typeId": 1,
+      "sportMarketId": 70472,
+      "id": 1773085645,
+      "name": "1x2"
+    },
+    {
+      "oddIds": [
+        4627662766,
+        4627662770,
+        4627662768
+      ],
+      "variant": 9,
+      "lines": [],
+      "typeId": 8,
+      "sportMarketId": 70491,
+      "sv": "1",
+      "sn": "Primul",
+      "id": 1773085654,
+      "name": "Golul primul"
+    },
+    {
+      "oddIds": [
+        4627662350,
+        4627662345,
+        4627662348
+      ],
+      "typeId": 10,
+      "sportMarketId": 70495,
+      "id": 1773085573,
+      "name": "Șansă dublă"
+    },
+    {
+      "oddIds": [
+        4627662422,
+        4627662424
+      ],
+      "typeId": 11,
+      "sportMarketId": 70500,
+      "id": 1773085591,
+      "name": "Egal pariu nul"
+    },
+    {
+      "oddIds": [
+        4627662518,
+        4627662519
+      ],
+      "typeId": 18,
+      "sportMarketId": 70520,
+      "sv": "2.5",
+      "sn": "2.5",
+      "id": 1773085608,
+      "name": "Total"
+    },
+    {
+      "oddIds": [
+        4627950980,
+        4627950981,
+        4627950982
+      ],
+      "typeId": 1,
+      "sportMarketId": 70472,
+      "id": 1773207029,
+      "name": "1x2"
+    },
+    {
+      "oddIds": [
+        4627950934,
+        4627950932,
+        4627950933
+      ],
+      "typeId": 10,
+      "sportMarketId": 70495,
+      "id": 1773207016,
+      "name": "Șansă dublă"
+    },
+    {
+      "oddIds": [
+        4627950842,
+        4627950843
+      ],
+      "typeId": 18,
+      "sportMarketId": 70520,
+      "sv": "2.5",
+      "sn": "2.5",
+      "id": 1773206983,
+      "name": "Total"
+    },
+    {
+      "oddIds": [
+        4625997091,
+        4625997092,
+        4625997093
+      ],
+      "typeId": 1,
+      "sportMarketId": 70472,
+      "id": 1772454734,
+      "name": "1x2"
+    },
+    {
+      "oddIds": [
+        4625997022,
+        4625997020,
+        4625997021
+      ],
+      "typeId": 10,
+      "sportMarketId": 70495,
+      "id": 1772454716,
+      "name": "Șansă dublă"
+    },
+    {
+      "oddIds": [
+        4625996918,
+        4625996919
+      ],
+      "typeId": 18,
+      "sportMarketId": 70520,
+      "sv": "3.5",
+      "sn": "3.5",
+      "id": 1772454679,
+      "name": "Total"
+    },
+    {
+      "oddIds": [
+        4625996986,
+        4625996987
+      ],
+      "typeId": 29,
+      "sportMarketId": 70545,
+      "id": 1772454713,
+      "name": "Ambele echipe să înscrie"
+    },
+    {
+      "oddIds": [
+        4594348776,
+        4594348780,
+        4594348783
+      ],
+      "typeId": 1,
+      "sportMarketId": 70472,
+      "id": 1762184967,
+      "name": "1x2"
+    },
+    {
+      "oddIds": [
+        4594348880,
+        4594348884,
+        4594348882
+      ],
+      "variant": 9,
+      "lines": [],
+      "typeId": 8,
+      "sportMarketId": 70491,
+      "sv": "1",
+      "sn": "Primul",
+      "id": 1762184980,
+      "name": "Golul primul"
+    },
+    {
+      "oddIds": [
+        4594348607,
+        4594348602,
+        4594348605
+      ],
+      "typeId": 10,
+      "sportMarketId": 70495,
+      "id": 1762184951,
+      "name": "Șansă dublă"
+    },
+    {
+      "oddIds": [
+        4594348629,
+        4594348631
+      ],
+      "typeId": 11,
+      "sportMarketId": 70500,
+      "id": 1762184954,
+      "name": "Egal pariu nul"
+    },
+    {
+      "oddIds": [
+        4594348262,
+        4594348264
+      ],
+      "typeId": 18,
+      "sportMarketId": 70520,
+      "sv": "2.5",
+      "sn": "2.5",
+      "id": 1762184918,
+      "name": "Total"
+    },
+    {
+      "oddIds": [
+        4594348519,
+        4594348522
+      ],
+      "typeId": 29,
+      "sportMarketId": 70545,
+      "id": 1762184949,
+      "name": "Ambele echipe să înscrie"
+    },
+    {
+      "oddIds": [
+        4594347090,
+        4594347091,
+        4594347092
+      ],
+      "typeId": 1,
+      "sportMarketId": 70472,
+      "id": 1762185375,
+      "name": "1x2"
+    },
+    {
+      "oddIds": [
+        4594347129,
+        4594347131,
+        4594347130
+      ],
+      "variant": 9,
+      "lines": [],
+      "typeId": 8,
+      "sportMarketId": 70491,
+      "sv": "1",
+      "sn": "Primul",
+      "id": 1762185388,
+      "name": "Golul primul"
+    },
+    {
+      "oddIds": [
+        4594347033,
+        4594347031,
+        4594347032
+      ],
+      "typeId": 10,
+      "sportMarketId": 70495,
+      "id": 1762185359,
+      "name": "Șansă dublă"
+    },
+    {
+      "oddIds": [
+        4594347040,
+        4594347041
+      ],
+      "typeId": 11,
+      "sportMarketId": 70500,
+      "id": 1762185362,
+      "name": "Egal pariu nul"
+    },
+    {
+      "oddIds": [
+        4594346939,
+        4594346940
+      ],
+      "typeId": 18,
+      "sportMarketId": 70520,
+      "sv": "2.5",
+      "sn": "2.5",
+      "id": 1762185325,
+      "name": "Total"
+    },
+    {
+      "oddIds": [
+        4594347003,
+        4594347004
+      ],
+      "typeId": 29,
+      "sportMarketId": 70545,
+      "id": 1762185357,
+      "name": "Ambele echipe să înscrie"
+    },
+    {
+      "oddIds": [
+        4597416909,
+        4597416910,
+        4597416911
+      ],
+      "typeId": 1,
+      "sportMarketId": 70472,
+      "id": 1763297497,
+      "name": "1x2"
+    },
+    {
+      "oddIds": [
+        4597416489,
+        4597416491,
+        4597416490
+      ],
+      "variant": 9,
+      "lines": [],
+      "typeId": 8,
+      "sportMarketId": 70491,
+      "sv": "1",
+      "sn": "Primul",
+      "id": 1763297398,
+      "name": "Golul primul"
+    },
+    {
+      "oddIds": [
+        4597416852,
+        4597416850,
+        4597416851
+      ],
+      "typeId": 10,
+      "sportMarketId": 70495,
+      "id": 1763297481,
+      "name": "Șansă dublă"
+    },
+    {
+      "oddIds": [
+        4597416859,
+        4597416860
+      ],
+      "typeId": 11,
+      "sportMarketId": 70500,
+      "id": 1763297484,
+      "name": "Egal pariu nul"
+    },
+    {
+      "oddIds": [
+        4597416756,
+        4597416757
+      ],
+      "typeId": 18,
+      "sportMarketId": 70520,
+      "sv": "2.5",
+      "sn": "2.5",
+      "id": 1763297446,
+      "name": "Total"
+    },
+    {
+      "oddIds": [
+        4597416822,
+        4597416823
+      ],
+      "typeId": 29,
+      "sportMarketId": 70545,
+      "id": 1763297479,
+      "name": "Ambele echipe să înscrie"
+    },
+    {
+      "oddIds": [
+        4627662588,
+        4627662594,
+        4627662596
+      ],
+      "typeId": 1,
+      "sportMarketId": 70472,
+      "id": 1773085956,
+      "name": "1x2"
+    },
+    {
+      "oddIds": [
+        4627662630,
+        4627662632,
+        4627662631
+      ],
+      "variant": 9,
+      "lines": [],
+      "typeId": 8,
+      "sportMarketId": 70491,
+      "sv": "1",
+      "sn": "Primul",
+      "id": 1773085962,
+      "name": "Golul primul"
+    },
+    {
+      "oddIds": [
+        4629074039,
+        4629074037,
+        4629074038
+      ],
+      "typeId": 10,
+      "sportMarketId": 70495,
+      "id": 1773654758,
+      "name": "Șansă dublă"
+    },
+    {
+      "oddIds": [
+        4627662296,
+        4627662297
+      ],
+      "typeId": 18,
+      "sportMarketId": 70520,
+      "sv": "4.5",
+      "sn": "4.5",
+      "id": 1773085909,
+      "name": "Total"
+    }
+  ],
+  "odds": [
+    {
+      "typeId": 1,
+      "price": 1.8889,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 67289,
+      "isDBB": true,
+      "id": 4536589788,
+      "name": "Colorado Rapids"
+    },
+    {
+      "typeId": 2,
+      "price": 3.8,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4536589789,
+      "name": "Egal"
+    },
+    {
+      "typeId": 3,
+      "price": 3.6667,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 68135,
+      "isDBB": true,
+      "id": 4536589790,
+      "name": "San Jose Earthquakes"
+    },
+    {
+      "typeId": 1,
+      "price": 1.5834,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 67289,
+      "isDBB": true,
+      "id": 4536589861,
+      "name": "Colorado Rapids"
+    },
+    {
+      "typeId": 7,
+      "price": 18,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4536589863,
+      "name": "Niciunul"
+    },
+    {
+      "typeId": 3,
+      "price": 2.25,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 68135,
+      "isDBB": true,
+      "id": 4536589862,
+      "name": "San Jose Earthquakes"
+    },
+    {
+      "typeId": 9,
+      "price": 1.2308,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 67289,
+      "isDBB": true,
+      "id": 4536589638,
+      "name": "Colorado Rapids sau egal"
+    },
+    {
+      "typeId": 10,
+      "price": 1.25,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4536589636,
+      "name": "Colorado Rapids sau San Jose Earthquakes"
+    },
+    {
+      "typeId": 11,
+      "price": 1.76,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 68135,
+      "isDBB": true,
+      "id": 4536589637,
+      "name": "Egal sau San Jose Earthquakes"
+    },
+    {
+      "typeId": 1,
+      "price": 1.4167,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 67289,
+      "id": 4536589675,
+      "name": "Colorado Rapids"
+    },
+    {
+      "typeId": 3,
+      "price": 2.7,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 68135,
+      "id": 4536589676,
+      "name": "San Jose Earthquakes"
+    },
+    {
+      "typeId": 12,
+      "price": 2.3334,
+      "isMB": true,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4536589498,
+      "name": "Peste 3.5"
+    },
+    {
+      "typeId": 13,
+      "price": 1.5556,
+      "isMB": true,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4536589499,
+      "name": "Sub 3.5"
+    },
+    {
+      "typeId": 74,
+      "price": 1.5264,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4536589568,
+      "name": "Da"
+    },
+    {
+      "typeId": 76,
+      "price": 2.4,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4536589569,
+      "name": "Nu"
+    },
+    {
+      "typeId": 1,
+      "price": 3,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 55061,
+      "isDBB": true,
+      "id": 4600018677,
+      "name": "Lobos UPNFM"
+    },
+    {
+      "typeId": 2,
+      "price": 3.1,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4600018678,
+      "name": "Egal"
+    },
+    {
+      "typeId": 3,
+      "price": 2.2,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 55060,
+      "isDBB": true,
+      "id": 4600018679,
+      "name": "Marathon"
+    },
+    {
+      "typeId": 1,
+      "price": 2.0834,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 55061,
+      "isDBB": true,
+      "id": 4600018716,
+      "name": "Lobos UPNFM"
+    },
+    {
+      "typeId": 7,
+      "price": 10,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4600018718,
+      "name": "Niciunul"
+    },
+    {
+      "typeId": 3,
+      "price": 1.75,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 55060,
+      "isDBB": true,
+      "id": 4600018717,
+      "name": "Marathon"
+    },
+    {
+      "typeId": 9,
+      "price": 1.52,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 55061,
+      "isDBB": true,
+      "id": 4600018620,
+      "name": "Lobos UPNFM sau egal"
+    },
+    {
+      "typeId": 10,
+      "price": 1.3,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4600018618,
+      "name": "Lobos UPNFM sau Marathon"
+    },
+    {
+      "typeId": 11,
+      "price": 1.3,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 55060,
+      "isDBB": true,
+      "id": 4600018619,
+      "name": "Egal sau Marathon"
+    },
+    {
+      "typeId": 1,
+      "price": 2.2,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 55061,
+      "id": 4600018627,
+      "name": "Lobos UPNFM"
+    },
+    {
+      "typeId": 3,
+      "price": 1.6,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 55060,
+      "id": 4600018628,
+      "name": "Marathon"
+    },
+    {
+      "typeId": 12,
+      "price": 1.8334,
+      "isMB": true,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4600018528,
+      "name": "Peste 2.5"
+    },
+    {
+      "typeId": 13,
+      "price": 1.8334,
+      "isMB": true,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4600018529,
+      "name": "Sub 2.5"
+    },
+    {
+      "typeId": 1,
+      "price": 2.375,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 73599,
+      "isDBB": true,
+      "id": 4620591769,
+      "name": "AD Cariari Pococi"
+    },
+    {
+      "typeId": 2,
+      "price": 3.25,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4620591770,
+      "name": "Egal"
+    },
+    {
+      "typeId": 3,
+      "price": 2.625,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 57478,
+      "isDBB": true,
+      "id": 4620591771,
+      "name": "Consultants Desamparados"
+    },
+    {
+      "typeId": 1,
+      "price": 1.8334,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 73599,
+      "isDBB": true,
+      "id": 4620591793,
+      "name": "AD Cariari Pococi"
+    },
+    {
+      "typeId": 7,
+      "price": 11,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4620591795,
+      "name": "Niciunul"
+    },
+    {
+      "typeId": 3,
+      "price": 1.95,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 57478,
+      "isDBB": true,
+      "id": 4620591794,
+      "name": "Consultants Desamparados"
+    },
+    {
+      "typeId": 9,
+      "price": 1.375,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 73599,
+      "isDBB": true,
+      "id": 4620591740,
+      "name": "AD Cariari Pococi sau egal"
+    },
+    {
+      "typeId": 10,
+      "price": 1.2728,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4620591738,
+      "name": "AD Cariari Pococi sau Consultants Desamparados"
+    },
+    {
+      "typeId": 11,
+      "price": 1.4546,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 57478,
+      "isDBB": true,
+      "id": 4620591739,
+      "name": "Egal sau Consultants Desamparados"
+    },
+    {
+      "typeId": 1,
+      "price": 1.75,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 73599,
+      "id": 4620591741,
+      "name": "AD Cariari Pococi"
+    },
+    {
+      "typeId": 3,
+      "price": 1.95,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 57478,
+      "id": 4620591742,
+      "name": "Consultants Desamparados"
+    },
+    {
+      "typeId": 12,
+      "price": 1.8,
+      "isMB": true,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4620591674,
+      "name": "Peste 2.5"
+    },
+    {
+      "typeId": 13,
+      "price": 1.85,
+      "isMB": true,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4620591675,
+      "name": "Sub 2.5"
+    },
+    {
+      "typeId": 1,
+      "price": 2.5715,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 335754,
+      "isDBB": true,
+      "id": 4627662705,
+      "name": "Fencibles United AFC Women"
+    },
+    {
+      "typeId": 2,
+      "price": 3.5,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4627662707,
+      "name": "Egal"
+    },
+    {
+      "typeId": 3,
+      "price": 2.4,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 196339,
+      "isDBB": true,
+      "id": 4627662710,
+      "name": "Wellington United Diamonds"
+    },
+    {
+      "typeId": 1,
+      "price": 1.875,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 335754,
+      "isDBB": true,
+      "id": 4627662766,
+      "name": "Fencibles United AFC Women"
+    },
+    {
+      "typeId": 7,
+      "price": 15,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4627662770,
+      "name": "Niciunul"
+    },
+    {
+      "typeId": 3,
+      "price": 1.8182,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 196339,
+      "isDBB": true,
+      "id": 4627662768,
+      "name": "Wellington United Diamonds"
+    },
+    {
+      "typeId": 9,
+      "price": 1.4616,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 335754,
+      "isDBB": true,
+      "id": 4627662350,
+      "name": "Fencibles United AFC Women sau egal"
+    },
+    {
+      "typeId": 10,
+      "price": 1.25,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4627662345,
+      "name": "Fencibles United AFC Women sau Wellington United Diamonds"
+    },
+    {
+      "typeId": 11,
+      "price": 1.4,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 196339,
+      "isDBB": true,
+      "id": 4627662348,
+      "name": "Egal sau Wellington United Diamonds"
+    },
+    {
+      "typeId": 1,
+      "price": 1.9,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 335754,
+      "id": 4627662422,
+      "name": "Fencibles United AFC Women"
+    },
+    {
+      "typeId": 3,
+      "price": 1.8,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 196339,
+      "id": 4627662424,
+      "name": "Wellington United Diamonds"
+    },
+    {
+      "typeId": 12,
+      "price": 1.6,
+      "isMB": true,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4627662518,
+      "name": "Peste 2.5"
+    },
+    {
+      "typeId": 13,
+      "price": 2.1,
+      "isMB": true,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4627662519,
+      "name": "Sub 2.5"
+    },
+    {
+      "typeId": 1,
+      "price": 1.625,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 55063,
+      "isDBB": true,
+      "id": 4627950980,
+      "name": "CD Vida"
+    },
+    {
+      "typeId": 2,
+      "price": 3.4,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4627950981,
+      "name": "Egal"
+    },
+    {
+      "typeId": 3,
+      "price": 4.5,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 3559472,
+      "isDBB": true,
+      "id": 4627950982,
+      "name": "Municipal San Esteban"
+    },
+    {
+      "typeId": 9,
+      "price": 1.1667,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 55063,
+      "isDBB": true,
+      "id": 4627950934,
+      "name": "CD Vida sau egal"
+    },
+    {
+      "typeId": 10,
+      "price": 1.2308,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4627950932,
+      "name": "CD Vida sau Municipal San Esteban"
+    },
+    {
+      "typeId": 11,
+      "price": 1.8889,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 3559472,
+      "isDBB": true,
+      "id": 4627950933,
+      "name": "Egal sau Municipal San Esteban"
+    },
+    {
+      "typeId": 12,
+      "price": 1.95,
+      "isMB": true,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4627950842,
+      "name": "Peste 2.5"
+    },
+    {
+      "typeId": 13,
+      "price": 1.7,
+      "isMB": true,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4627950843,
+      "name": "Sub 2.5"
+    },
+    {
+      "typeId": 1,
+      "price": 1.3334,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 46245,
+      "isDBB": true,
+      "id": 4625997091,
+      "name": "Brisbane Road"
+    },
+    {
+      "typeId": 2,
+      "price": 5.3334,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4625997092,
+      "name": "Egal"
+    },
+    {
+      "typeId": 3,
+      "price": 5.75,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 102561,
+      "isDBB": true,
+      "id": 4625997093,
+      "name": "Broadmeadow Magic FC"
+    },
+    {
+      "typeId": 9,
+      "price": 1.056,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 46245,
+      "isDBB": true,
+      "id": 4625997022,
+      "name": "Brisbane Road sau egal"
+    },
+    {
+      "typeId": 10,
+      "price": 1.0715,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4625997020,
+      "name": "Brisbane Road sau Broadmeadow Magic FC"
+    },
+    {
+      "typeId": 11,
+      "price": 2.7143,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 102561,
+      "isDBB": true,
+      "id": 4625997021,
+      "name": "Egal sau Broadmeadow Magic FC"
+    },
+    {
+      "typeId": 12,
+      "price": 1.76,
+      "isMB": true,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4625996918,
+      "name": "Peste 3.5"
+    },
+    {
+      "typeId": 13,
+      "price": 1.9231,
+      "isMB": true,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4625996919,
+      "name": "Sub 3.5"
+    },
+    {
+      "typeId": 74,
+      "price": 1.48,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4625996986,
+      "name": "Da"
+    },
+    {
+      "typeId": 76,
+      "price": 2.375,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4625996987,
+      "name": "Nu"
+    },
+    {
+      "typeId": 1,
+      "price": 1.9334,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 73262,
+      "isDBB": true,
+      "id": 4594348776,
+      "name": "Sacramento Republic FC"
+    },
+    {
+      "typeId": 2,
+      "price": 3.4,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4594348780,
+      "name": "Egal"
+    },
+    {
+      "typeId": 3,
+      "price": 3.6,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 73259,
+      "isDBB": true,
+      "id": 4594348783,
+      "name": "Colorado Springs Switchbacks FC"
+    },
+    {
+      "typeId": 1,
+      "price": 1.6364,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 73262,
+      "isDBB": true,
+      "id": 4594348880,
+      "name": "Sacramento Republic FC"
+    },
+    {
+      "typeId": 7,
+      "price": 10,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4594348884,
+      "name": "Niciunul"
+    },
+    {
+      "typeId": 3,
+      "price": 2.3334,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 73259,
+      "isDBB": true,
+      "id": 4594348882,
+      "name": "Colorado Springs Switchbacks FC"
+    },
+    {
+      "typeId": 9,
+      "price": 1.25,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 73262,
+      "isDBB": true,
+      "id": 4594348607,
+      "name": "Sacramento Republic FC sau egal"
+    },
+    {
+      "typeId": 10,
+      "price": 1.2667,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4594348602,
+      "name": "Sacramento Republic FC sau Colorado Springs Switchbacks FC"
+    },
+    {
+      "typeId": 11,
+      "price": 1.6924,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 73259,
+      "isDBB": true,
+      "id": 4594348605,
+      "name": "Egal sau Colorado Springs Switchbacks FC"
+    },
+    {
+      "typeId": 1,
+      "price": 1.4546,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 73262,
+      "id": 4594348629,
+      "name": "Sacramento Republic FC"
+    },
+    {
+      "typeId": 3,
+      "price": 2.5455,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 73259,
+      "id": 4594348631,
+      "name": "Colorado Springs Switchbacks FC"
+    },
+    {
+      "typeId": 12,
+      "price": 1.95,
+      "isMB": true,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4594348262,
+      "name": "Peste 2.5"
+    },
+    {
+      "typeId": 13,
+      "price": 1.75,
+      "isMB": true,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4594348264,
+      "name": "Sub 2.5"
+    },
+    {
+      "typeId": 74,
+      "price": 1.8334,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4594348519,
+      "name": "Da"
+    },
+    {
+      "typeId": 76,
+      "price": 1.8334,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4594348522,
+      "name": "Nu"
+    },
+    {
+      "typeId": 1,
+      "price": 2.3,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 80449,
+      "isDBB": true,
+      "id": 4594347090,
+      "name": "Oakland Roots SC"
+    },
+    {
+      "typeId": 2,
+      "price": 3.3334,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4594347091,
+      "name": "Egal"
+    },
+    {
+      "typeId": 3,
+      "price": 2.8,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 67291,
+      "isDBB": true,
+      "id": 4594347092,
+      "name": "San Antonio FC"
+    },
+    {
+      "typeId": 1,
+      "price": 1.8182,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 80449,
+      "isDBB": true,
+      "id": 4594347129,
+      "name": "Oakland Roots SC"
+    },
+    {
+      "typeId": 7,
+      "price": 11,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4594347131,
+      "name": "Niciunul"
+    },
+    {
+      "typeId": 3,
+      "price": 2,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 67291,
+      "isDBB": true,
+      "id": 4594347130,
+      "name": "San Antonio FC"
+    },
+    {
+      "typeId": 9,
+      "price": 1.375,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 80449,
+      "isDBB": true,
+      "id": 4594347033,
+      "name": "Oakland Roots SC sau egal"
+    },
+    {
+      "typeId": 10,
+      "price": 1.2728,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4594347031,
+      "name": "Oakland Roots SC sau San Antonio FC"
+    },
+    {
+      "typeId": 11,
+      "price": 1.5,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 67291,
+      "isDBB": true,
+      "id": 4594347032,
+      "name": "Egal sau San Antonio FC"
+    },
+    {
+      "typeId": 1,
+      "price": 1.7,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 80449,
+      "id": 4594347040,
+      "name": "Oakland Roots SC"
+    },
+    {
+      "typeId": 3,
+      "price": 2.05,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 67291,
+      "id": 4594347041,
+      "name": "San Antonio FC"
+    },
+    {
+      "typeId": 12,
+      "price": 1.95,
+      "isMB": true,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4594346939,
+      "name": "Peste 2.5"
+    },
+    {
+      "typeId": 13,
+      "price": 1.75,
+      "isMB": true,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4594346940,
+      "name": "Sub 2.5"
+    },
+    {
+      "typeId": 74,
+      "price": 1.8,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4594347003,
+      "name": "Da"
+    },
+    {
+      "typeId": 76,
+      "price": 1.9,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4594347004,
+      "name": "Nu"
+    },
+    {
+      "typeId": 1,
+      "price": 1.8334,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 63657,
+      "isDBB": true,
+      "id": 4597416909,
+      "name": "Phoenix Rising FC"
+    },
+    {
+      "typeId": 2,
+      "price": 3.75,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4597416910,
+      "name": "Egal"
+    },
+    {
+      "typeId": 3,
+      "price": 3.6,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 74009,
+      "isDBB": true,
+      "id": 4597416911,
+      "name": "Las Vegas Lights"
+    },
+    {
+      "typeId": 1,
+      "price": 1.5834,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 63657,
+      "isDBB": true,
+      "id": 4597416489,
+      "name": "Phoenix Rising FC"
+    },
+    {
+      "typeId": 7,
+      "price": 16,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4597416491,
+      "name": "Niciunul"
+    },
+    {
+      "typeId": 3,
+      "price": 2.25,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 74009,
+      "isDBB": true,
+      "id": 4597416490,
+      "name": "Las Vegas Lights"
+    },
+    {
+      "typeId": 9,
+      "price": 1.25,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 63657,
+      "isDBB": true,
+      "id": 4597416852,
+      "name": "Phoenix Rising FC sau egal"
+    },
+    {
+      "typeId": 10,
+      "price": 1.2308,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4597416850,
+      "name": "Phoenix Rising FC sau Las Vegas Lights"
+    },
+    {
+      "typeId": 11,
+      "price": 1.76,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 74009,
+      "isDBB": true,
+      "id": 4597416851,
+      "name": "Egal sau Las Vegas Lights"
+    },
+    {
+      "typeId": 1,
+      "price": 1.4,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 63657,
+      "id": 4597416859,
+      "name": "Phoenix Rising FC"
+    },
+    {
+      "typeId": 3,
+      "price": 2.7143,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 74009,
+      "id": 4597416860,
+      "name": "Las Vegas Lights"
+    },
+    {
+      "typeId": 12,
+      "price": 1.6,
+      "isMB": true,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4597416756,
+      "name": "Peste 2.5"
+    },
+    {
+      "typeId": 13,
+      "price": 2.2,
+      "isMB": true,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4597416757,
+      "name": "Sub 2.5"
+    },
+    {
+      "typeId": 74,
+      "price": 1.6,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4597416822,
+      "name": "Da"
+    },
+    {
+      "typeId": 76,
+      "price": 2.2,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4597416823,
+      "name": "Nu"
+    },
+    {
+      "typeId": 1,
+      "price": 1.0667,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 114738,
+      "isDBB": true,
+      "id": 4627662588,
+      "name": "Auckland Football (F)"
+    },
+    {
+      "typeId": 2,
+      "price": 10,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4627662594,
+      "name": "Egal"
+    },
+    {
+      "typeId": 3,
+      "price": 19,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 114739,
+      "isDBB": true,
+      "id": 4627662596,
+      "name": "Canterbury United (W)"
+    },
+    {
+      "typeId": 1,
+      "price": 1.1334,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 114738,
+      "isDBB": true,
+      "id": 4627662630,
+      "name": "Auckland Football (F)"
+    },
+    {
+      "typeId": 7,
+      "price": 31,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4627662632,
+      "name": "Niciunul"
+    },
+    {
+      "typeId": 3,
+      "price": 4,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 114739,
+      "isDBB": true,
+      "id": 4627662631,
+      "name": "Canterbury United (W)"
+    },
+    {
+      "typeId": 9,
+      "price": 1.01,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 114738,
+      "isDBB": true,
+      "id": 4629074039,
+      "name": "Auckland Football (F) sau egal"
+    },
+    {
+      "typeId": 10,
+      "price": 1.02,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4629074037,
+      "name": "Auckland Football (F) sau Canterbury United (W)"
+    },
+    {
+      "typeId": 11,
+      "price": 4.3334,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 114739,
+      "isDBB": true,
+      "id": 4629074038,
+      "name": "Egal sau Canterbury United (W)"
+    },
+    {
+      "typeId": 12,
+      "price": 1.6667,
+      "isMB": true,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4627662296,
+      "name": "Peste 4.5"
+    },
+    {
+      "typeId": 13,
+      "price": 2,
+      "isMB": true,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4627662297,
+      "name": "Sub 4.5"
+    }
+  ],
+  "events": [
+    {
+      "marketIds": [
+        1743588338,
+        1743588388,
+        1743588247,
+        1743588263,
+        1743588166,
+        1743588231
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "offers": [
+        {
+          "type": 5
+        },
+        {
+          "type": 6
+        }
+      ],
+      "code": 1112,
+      "hasStream": false,
+      "extId": "fp32_ar:match:652047",
+      "sc": 15988,
+      "mc": 376,
+      "rc": false,
+      "pId": 32,
+      "et": 0,
+      "hasStats": false,
+      "competitorIds": [
+        67289,
+        68135
+      ],
+      "sportId": 66,
+      "catId": 882,
+      "champId": 4610,
+      "status": 0,
+      "startDate": "2026-09-21T20:00:00Z",
+      "id": 15516420,
+      "name": "Colorado Rapids vs. San Jose Earthquakes"
+    },
+    {
+      "marketIds": [
+        1764063907,
+        1764063920,
+        1764063891,
+        1764063894,
+        1764063858
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "code": 2015,
+      "hasStream": false,
+      "extId": "fp32_ar:match:666992",
+      "sc": 1300,
+      "mc": 123,
+      "rc": false,
+      "pId": 32,
+      "et": 0,
+      "hasStats": false,
+      "competitorIds": [
+        55061,
+        55060
+      ],
+      "sportId": 66,
+      "catId": 759,
+      "champId": 3685,
+      "status": 0,
+      "startDate": "2026-09-21T20:00:00Z",
+      "id": 17785962,
+      "name": "Lobos UPNFM vs. Marathon"
+    },
+    {
+      "marketIds": [
+        1770678742,
+        1770678749,
+        1770678733,
+        1770678734,
+        1770678701
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "code": 2571,
+      "hasStream": false,
+      "extId": "fp32_ar:match:686744",
+      "sc": 919,
+      "mc": 87,
+      "rc": false,
+      "pId": 32,
+      "et": 0,
+      "hasStats": false,
+      "competitorIds": [
+        73599,
+        57478
+      ],
+      "sportId": 66,
+      "catId": 727,
+      "champId": 3818,
+      "status": 0,
+      "startDate": "2026-09-21T20:00:00Z",
+      "id": 17945408,
+      "name": "AD Cariari Pococi vs. Consultants Desamparados"
+    },
+    {
+      "marketIds": [
+        1773085645,
+        1773085654,
+        1773085573,
+        1773085591,
+        1773085608
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "code": 3067,
+      "hasStream": false,
+      "extId": "fp32_ar:match:691286",
+      "sc": 770,
+      "mc": 73,
+      "rc": false,
+      "pId": 32,
+      "et": 0,
+      "hasStats": false,
+      "competitorIds": [
+        335754,
+        196339
+      ],
+      "sportId": 66,
+      "catId": 775,
+      "champId": 10165,
+      "status": 0,
+      "startDate": "2026-09-21T20:00:00Z",
+      "id": 17969241,
+      "name": "Fencibles United AFC Women vs. Wellington United Diamonds"
+    },
+    {
+      "marketIds": [
+        1773207029,
+        1773207016,
+        1773206983
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "code": 7163,
+      "hasStream": false,
+      "extId": "fp32_ar:match:691407",
+      "sc": 741,
+      "mc": 69,
+      "rc": false,
+      "pId": 32,
+      "et": 0,
+      "hasStats": false,
+      "competitorIds": [
+        55063,
+        3559472
+      ],
+      "sportId": 66,
+      "catId": 759,
+      "champId": 21896,
+      "status": 0,
+      "startDate": "2026-09-21T20:00:00Z",
+      "id": 17976600,
+      "name": "CD Vida vs. Municipal San Esteban"
+    },
+    {
+      "marketIds": [
+        1762184967,
+        1762184980,
+        1762184951,
+        1762184954,
+        1762184918,
+        1762184949
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "code": 1066,
+      "hasStream": false,
+      "extId": "fp32_ar:match:683049",
+      "sc": 1537,
+      "mc": 130,
+      "rc": false,
+      "pId": 32,
+      "et": 0,
+      "hasStats": false,
+      "competitorIds": [
+        73262,
+        73259
+      ],
+      "sportId": 66,
+      "catId": 882,
+      "champId": 5005,
+      "status": 0,
+      "startDate": "2026-09-21T20:00:00Z",
+      "id": 17926260,
+      "name": "Sacramento Republic FC vs. Colorado Springs Switchbacks FC"
+    },
+    {
+      "marketIds": [
+        1762185375,
+        1762185388,
+        1762185359,
+        1762185362,
+        1762185325,
+        1762185357
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "code": 1078,
+      "hasStream": false,
+      "extId": "fp32_ar:match:683045",
+      "sc": 1544,
+      "mc": 130,
+      "rc": false,
+      "pId": 32,
+      "et": 0,
+      "hasStats": false,
+      "competitorIds": [
+        80449,
+        67291
+      ],
+      "sportId": 66,
+      "catId": 882,
+      "champId": 5005,
+      "status": 0,
+      "startDate": "2026-09-21T20:00:00Z",
+      "id": 17926302,
+      "name": "Oakland Roots SC vs. San Antonio FC"
+    },
+    {
+      "marketIds": [
+        1763297497,
+        1763297398,
+        1763297481,
+        1763297484,
+        1763297446,
+        1763297479
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "code": 4360,
+      "hasStream": false,
+      "extId": "fp32_ar:match:683938",
+      "sc": 1570,
+      "mc": 130,
+      "rc": false,
+      "pId": 32,
+      "et": 0,
+      "hasStats": false,
+      "competitorIds": [
+        63657,
+        74009
+      ],
+      "sportId": 66,
+      "catId": 882,
+      "champId": 5005,
+      "status": 0,
+      "startDate": "2026-09-21T20:00:00Z",
+      "id": 17926478,
+      "name": "Phoenix Rising FC vs. Las Vegas Lights"
+    },
+    {
+      "marketIds": [
+        1773085956,
+        1773085962,
+        1773654758,
+        1773085909
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "code": 6616,
+      "hasStream": false,
+      "extId": "fp32_ar:match:691287",
+      "sc": 790,
+      "mc": 69,
+      "rc": false,
+      "pId": 32,
+      "et": 0,
+      "hasStats": false,
+      "competitorIds": [
+        114738,
+        114739
+      ],
+      "sportId": 66,
+      "catId": 775,
+      "champId": 10165,
+      "status": 0,
+      "startDate": "2026-09-21T20:00:00Z",
+      "id": 17969243,
+      "name": "Auckland Football (F) vs. Canterbury United (W)"
+    }
+  ],
+  "sports": [
+    {
+      "catIds": [
+        882,
+        759,
+        727,
+        775,
+        1134
+      ],
+      "typeId": 1,
+      "iconName": "soccer",
+      "hasLiveEvents": false,
+      "id": 66,
+      "name": "Soccer"
+    }
+  ],
+  "categories": [
+    {
+      "champIds": [
+        4610,
+        5005
+      ],
+      "iso": "USA",
+      "hasLiveEvents": false,
+      "id": 882,
+      "name": "USA"
+    },
+    {
+      "champIds": [
+        3685,
+        21896
+      ],
+      "iso": "HND",
+      "hasLiveEvents": false,
+      "id": 759,
+      "name": "Honduras"
+    },
+    {
+      "champIds": [
+        3818
+      ],
+      "iso": "CRI",
+      "hasLiveEvents": false,
+      "id": 727,
+      "name": "Costa Rica"
+    },
+    {
+      "champIds": [
+        10165
+      ],
+      "iso": "NZL",
+      "hasLiveEvents": false,
+      "id": 775,
+      "name": "New Zealand"
+    },
+    {
+      "champIds": [
+        2932
+      ],
+      "hasLiveEvents": false,
+      "id": 1134,
+      "name": "World"
+    }
+  ],
+  "champs": [
+    {
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "hasLiveEvents": false,
+      "id": 4610,
+      "name": "Major League Soccer"
+    },
+    {
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "hasLiveEvents": false,
+      "id": 3685,
+      "name": "Liga Nacional"
+    },
+    {
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "hasLiveEvents": false,
+      "id": 3818,
+      "name": "Liga de Ascenso"
+    },
+    {
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "hasLiveEvents": false,
+      "id": 10165,
+      "name": "New Zealand National League Women"
+    },
+    {
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "hasLiveEvents": false,
+      "id": 21896,
+      "name": "Liga de Ascenso"
+    },
+    {
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "hasLiveEvents": false,
+      "id": 2932,
+      "name": "Club Friendly Games"
+    },
+    {
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "hasLiveEvents": false,
+      "id": 5005,
+      "name": "USL Championship"
+    }
+  ],
+  "competitors": [
+    {
+      "abbreviation": "COL",
+      "id": 67289,
+      "name": "Colorado Rapids"
+    },
+    {
+      "abbreviation": "SJ",
+      "id": 68135,
+      "name": "San Jose Earthquakes"
+    },
+    {
+      "abbreviation": "UPN",
+      "id": 55061,
+      "name": "Lobos UPNFM"
+    },
+    {
+      "abbreviation": "CDM",
+      "id": 55060,
+      "name": "Marathon"
+    },
+    {
+      "abbreviation": "CAP",
+      "id": 73599,
+      "name": "AD Cariari Pococi"
+    },
+    {
+      "abbreviation": "FCD",
+      "id": 57478,
+      "name": "Consultants Desamparados"
+    },
+    {
+      "id": 335754,
+      "name": "Fencibles United AFC Women"
+    },
+    {
+      "abbreviation": "WEL",
+      "id": 196339,
+      "name": "Wellington United Diamonds"
+    },
+    {
+      "abbreviation": "VID",
+      "id": 55063,
+      "name": "CD Vida"
+    },
+    {
+      "id": 3559472,
+      "name": "Municipal San Esteban"
+    },
+    {
+      "abbreviation": "BRR",
+      "id": 46245,
+      "name": "Brisbane Road"
+    },
+    {
+      "abbreviation": "BRO",
+      "id": 102561,
+      "name": "Broadmeadow Magic FC"
+    },
+    {
+      "abbreviation": "SRP",
+      "id": 73262,
+      "name": "Sacramento Republic FC"
+    },
+    {
+      "abbreviation": "CSS",
+      "id": 73259,
+      "name": "Colorado Springs Switchbacks FC"
+    },
+    {
+      "abbreviation": "OAK",
+      "id": 80449,
+      "name": "Oakland Roots SC"
+    },
+    {
+      "abbreviation": "SAN",
+      "id": 67291,
+      "name": "San Antonio FC"
+    },
+    {
+      "abbreviation": "PHO",
+      "id": 63657,
+      "name": "Phoenix Rising FC"
+    },
+    {
+      "abbreviation": "LAS",
+      "id": 74009,
+      "name": "Las Vegas Lights"
+    },
+    {
+      "abbreviation": "AUC",
+      "id": 114738,
+      "name": "Auckland Football (F)"
+    },
+    {
+      "abbreviation": "CAN",
+      "id": 114739,
+      "name": "Canterbury United (W)"
+    }
+  ]
+}

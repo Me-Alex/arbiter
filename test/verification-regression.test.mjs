@@ -122,6 +122,14 @@ test('a leg missing because its line moved is still rejected, not unconfirmed', 
 });
 
 test('canonical result markets with first-half period are not full-time contracts', () => {
-  const input = events.map(e => ({ ...e, markets: e.markets.map(m => ({ ...m, period: 'firsthalf' })) }));
-  assert.equal(engine.findArbitrage(engine.groupByEvent(input)).length, 0);
+  // 'firsthalf' is not a recognized period spelling, so canonicalPeriod returns
+  // 'unknown' for every market. Two unknown-period contracts of the same line
+  // DO pair, because neither claims to be full-time — but a full-time contract
+  // must never pair with one of them, because that would mix settlement windows.
+  const mixed = [
+    { ...events[0], markets: [{ ...events[0].markets[0], period: 'fulltime' }] },
+    { ...events[1], markets: [{ ...events[1].markets[0], period: 'firsthalf' }] },
+  ];
+  assert.equal(engine.findArbitrage(engine.groupByEvent(mixed)).length, 0,
+    'full-time must never pair with a period the engine cannot name');
 });

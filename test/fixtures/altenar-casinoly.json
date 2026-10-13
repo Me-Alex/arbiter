@@ -1,0 +1,1001 @@
+{
+  "dates": [
+    {
+      "dateTime": "2026-10-12T21:00:00Z",
+      "eventIds": [
+        18023123,
+        18018647,
+        18018671,
+        18023834,
+        18018867,
+        18013149,
+        18013164,
+        18018877,
+        18019193,
+        18019197,
+        18023124,
+        18022898,
+        18019033,
+        18019035,
+        17668800,
+        18018589,
+        18011201,
+        18007240,
+        17975467,
+        17962019,
+        17962017,
+        17668799,
+        17802276,
+        17802277,
+        17898779,
+        17913941,
+        17913942,
+        17913943,
+        17913944,
+        17946260,
+        17962007,
+        17962008,
+        17962018,
+        17962016,
+        17962010,
+        17962015,
+        17962011,
+        17962012,
+        17962014,
+        17962013,
+        18018648,
+        18013153,
+        18013156,
+        18018654,
+        18023122,
+        18018869,
+        18018864,
+        18023852,
+        18023382,
+        18023494
+      ]
+    }
+  ],
+  "topSports": [
+    {
+      "id": 66,
+      "name": "Soccer",
+      "iconName": "soccer",
+      "hasStream": false,
+      "count": 1260
+    },
+    {
+      "id": 68,
+      "name": "Tennis",
+      "iconName": "tennis",
+      "hasStream": false,
+      "count": 435
+    },
+    {
+      "id": 67,
+      "name": "Basketball",
+      "iconName": "basketball",
+      "hasStream": false,
+      "count": 201
+    },
+    {
+      "id": 70,
+      "name": "Ice Hockey",
+      "iconName": "ice-hockey",
+      "hasStream": false,
+      "count": 176
+    },
+    {
+      "id": 77,
+      "name": "Table Tennis",
+      "iconName": "table-tennis",
+      "hasStream": false,
+      "count": 394
+    },
+    {
+      "id": 69,
+      "name": "Volleyball",
+      "iconName": "volleyball",
+      "hasStream": false,
+      "count": 53
+    },
+    {
+      "id": 75,
+      "name": "American Football",
+      "iconName": "american-football",
+      "hasStream": false,
+      "count": 73
+    },
+    {
+      "id": 76,
+      "name": "Baseball",
+      "iconName": "baseball",
+      "hasStream": false,
+      "count": 18
+    },
+    {
+      "id": 101,
+      "name": "Rugby League",
+      "iconName": "rugby-league",
+      "hasStream": false,
+      "count": 9
+    },
+    {
+      "id": 106,
+      "name": "Aussie Rules",
+      "iconName": "aussie-rules",
+      "hasStream": false,
+      "count": 9
+    },
+    {
+      "id": -1,
+      "name": "Other",
+      "iconName": "Other",
+      "hasStream": false,
+      "count": 447
+    }
+  ],
+  "headers": [
+    {
+      "typeId": 1,
+      "name": "1x2",
+      "mst": 0,
+      "odds": [
+        {
+          "id": 1,
+          "name": "1"
+        },
+        {
+          "id": 2,
+          "name": "X"
+        },
+        {
+          "id": 3,
+          "name": "2"
+        }
+      ]
+    },
+    {
+      "typeId": 18,
+      "name": "Total",
+      "mst": 0,
+      "odds": [
+        {
+          "id": 12,
+          "name": "peste"
+        },
+        {
+          "id": 13,
+          "name": "sub"
+        }
+      ]
+    },
+    {
+      "typeId": 29,
+      "name": "Ambele echipe să înscrie",
+      "mst": 0,
+      "odds": [
+        {
+          "id": 74,
+          "name": "da"
+        },
+        {
+          "id": 76,
+          "name": "nu"
+        }
+      ]
+    }
+  ],
+  "pageCount": 1,
+  "page": 1,
+  "markets": [
+    {
+      "oddIds": [
+        4604903084,
+        4604903085,
+        4604903086
+      ],
+      "typeId": 1,
+      "sportMarketId": 70472,
+      "id": 1765828547,
+      "name": "1x2"
+    },
+    {
+      "oddIds": [
+        4604903148,
+        4604903150,
+        4604903149
+      ],
+      "variant": 9,
+      "lines": [],
+      "typeId": 8,
+      "sportMarketId": 70491,
+      "sv": "1",
+      "sn": "Primul",
+      "id": 1765828570,
+      "name": "Golul 1"
+    },
+    {
+      "oddIds": [
+        4604902834,
+        4604902835
+      ],
+      "typeId": 18,
+      "sportMarketId": 70520,
+      "sv": "0.5",
+      "sn": "0.5",
+      "id": 1765828478,
+      "name": "Total goluri"
+    },
+    {
+      "oddIds": [
+        4604902894,
+        4604902895
+      ],
+      "typeId": 29,
+      "sportMarketId": 70545,
+      "id": 1765828508,
+      "name": "Ambele echipe să înscrie"
+    },
+    {
+      "oddIds": [
+        4637424330,
+        4637424331,
+        4637424332
+      ],
+      "typeId": 1,
+      "sportMarketId": 70472,
+      "id": 1776475093,
+      "name": "1x2"
+    },
+    {
+      "oddIds": [
+        4637424373,
+        4637424375,
+        4637424374
+      ],
+      "variant": 9,
+      "lines": [],
+      "typeId": 8,
+      "sportMarketId": 70491,
+      "sv": "1",
+      "sn": "Primul",
+      "id": 1776475107,
+      "name": "Golul 1"
+    },
+    {
+      "oddIds": [
+        4637424169,
+        4637424170
+      ],
+      "typeId": 18,
+      "sportMarketId": 70520,
+      "sv": "1.5",
+      "sn": "1.5",
+      "id": 1776475044,
+      "name": "Total goluri"
+    },
+    {
+      "oddIds": [
+        4605367366,
+        4605367367,
+        4605367368
+      ],
+      "typeId": 1,
+      "sportMarketId": 70472,
+      "id": 1765972452,
+      "name": "1x2"
+    },
+    {
+      "oddIds": [
+        4605367430,
+        4605367432,
+        4605367431
+      ],
+      "variant": 9,
+      "lines": [],
+      "typeId": 8,
+      "sportMarketId": 70491,
+      "sv": "1",
+      "sn": "Primul",
+      "id": 1765972475,
+      "name": "Golul 1"
+    },
+    {
+      "oddIds": [
+        4605367114,
+        4605367115
+      ],
+      "typeId": 18,
+      "sportMarketId": 70520,
+      "sv": "0.5",
+      "sn": "0.5",
+      "id": 1765972382,
+      "name": "Total goluri"
+    },
+    {
+      "oddIds": [
+        4605367176,
+        4605367177
+      ],
+      "typeId": 29,
+      "sportMarketId": 70545,
+      "id": 1765972413,
+      "name": "Ambele echipe să înscrie"
+    },
+    {
+      "oddIds": [
+        4615642681,
+        4615642682,
+        4615642683
+      ],
+      "typeId": 1,
+      "sportMarketId": 70472,
+      "id": 1769120448,
+      "name": "1x2"
+    },
+    {
+      "oddIds": [
+        4632143305,
+        4632143307,
+        4632143306
+      ],
+      "variant": 9,
+      "lines": [],
+      "typeId": 8,
+      "sportMarketId": 70491,
+      "sv": "1",
+      "sn": "Primul",
+      "id": 1774695109,
+      "name": "Golul 1"
+    },
+    {
+      "oddIds": [
+        4615642559,
+        4615642560
+      ],
+      "typeId": 18,
+      "sportMarketId": 70520,
+      "sv": "0.5",
+      "sn": "0.5",
+      "id": 1769120393,
+      "name": "Total goluri"
+    },
+    {
+      "oddIds": [
+        4637715785,
+        4637715786
+      ],
+      "typeId": 29,
+      "sportMarketId": 70545,
+      "id": 1776590363,
+      "name": "Ambele echipe să înscrie"
+    }
+  ],
+  "odds": [
+    {
+      "typeId": 1,
+      "price": 1.8334,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 68684,
+      "isDBB": true,
+      "id": 4604903084,
+      "name": "Abo Qair Semads"
+    },
+    {
+      "typeId": 2,
+      "price": 2.9,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4604903085,
+      "name": "X"
+    },
+    {
+      "typeId": 3,
+      "price": 5,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 111075,
+      "isDBB": true,
+      "id": 4604903086,
+      "name": "Asyut Petroleum"
+    },
+    {
+      "typeId": 1,
+      "price": 1.6,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 68684,
+      "isDBB": true,
+      "id": 4604903148,
+      "name": "Abo Qair Semads"
+    },
+    {
+      "typeId": 7,
+      "price": 5.5,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4604903150,
+      "name": "Niciunul"
+    },
+    {
+      "typeId": 3,
+      "price": 3,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 111075,
+      "isDBB": true,
+      "id": 4604903149,
+      "name": "Asyut Petroleum"
+    },
+    {
+      "typeId": 12,
+      "price": 1.1112,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4604902834,
+      "name": "Peste 0.5"
+    },
+    {
+      "typeId": 13,
+      "price": 5.3334,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4604902835,
+      "name": "Sub 0.5"
+    },
+    {
+      "typeId": 74,
+      "price": 2.4,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4604902894,
+      "name": "Da"
+    },
+    {
+      "typeId": 76,
+      "price": 1.5,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4604902895,
+      "name": "Nu"
+    },
+    {
+      "typeId": 1,
+      "price": 2.4286,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 439334,
+      "isDBB": true,
+      "id": 4637424330,
+      "name": "Koléa"
+    },
+    {
+      "typeId": 2,
+      "price": 2.6667,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4637424331,
+      "name": "X"
+    },
+    {
+      "typeId": 3,
+      "price": 3.1,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 249077,
+      "isDBB": true,
+      "id": 4637424332,
+      "name": "ES Mostaganem"
+    },
+    {
+      "typeId": 1,
+      "price": 1.9091,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 439334,
+      "isDBB": true,
+      "id": 4637424373,
+      "name": "Koléa"
+    },
+    {
+      "typeId": 7,
+      "price": 6,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4637424375,
+      "name": "Niciunul"
+    },
+    {
+      "typeId": 3,
+      "price": 2.1667,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 249077,
+      "isDBB": true,
+      "id": 4637424374,
+      "name": "ES Mostaganem"
+    },
+    {
+      "typeId": 12,
+      "price": 1.4546,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4637424169,
+      "name": "Peste 1.5"
+    },
+    {
+      "typeId": 13,
+      "price": 2.4,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4637424170,
+      "name": "Sub 1.5"
+    },
+    {
+      "typeId": 1,
+      "price": 1.8889,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 57826,
+      "isDBB": true,
+      "id": 4605367366,
+      "name": "National Bank"
+    },
+    {
+      "typeId": 2,
+      "price": 2.8572,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4605367367,
+      "name": "X"
+    },
+    {
+      "typeId": 3,
+      "price": 4.75,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 50750,
+      "isDBB": true,
+      "id": 4605367368,
+      "name": "El Gaish"
+    },
+    {
+      "typeId": 1,
+      "price": 1.6154,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 57826,
+      "isDBB": true,
+      "id": 4605367430,
+      "name": "National Bank"
+    },
+    {
+      "typeId": 7,
+      "price": 6,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4605367432,
+      "name": "Niciunul"
+    },
+    {
+      "typeId": 3,
+      "price": 2.8334,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 50750,
+      "isDBB": true,
+      "id": 4605367431,
+      "name": "El Gaish"
+    },
+    {
+      "typeId": 12,
+      "price": 1.1,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4605367114,
+      "name": "Peste 0.5"
+    },
+    {
+      "typeId": 13,
+      "price": 5.5,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4605367115,
+      "name": "Sub 0.5"
+    },
+    {
+      "typeId": 74,
+      "price": 2.2,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4605367176,
+      "name": "Da"
+    },
+    {
+      "typeId": 76,
+      "price": 1.6,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4605367177,
+      "name": "Nu"
+    },
+    {
+      "typeId": 1,
+      "price": 1.9334,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 55718,
+      "isDBB": true,
+      "id": 4615642681,
+      "name": "Sariyer SK"
+    },
+    {
+      "typeId": 2,
+      "price": 3,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4615642682,
+      "name": "X"
+    },
+    {
+      "typeId": 3,
+      "price": 4.2,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 57439,
+      "isDBB": true,
+      "id": 4615642683,
+      "name": "Bodrum Belediyesi Bodrumspor"
+    },
+    {
+      "typeId": 1,
+      "price": 1.6471,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 55718,
+      "isDBB": true,
+      "id": 4632143305,
+      "name": "Sariyer SK"
+    },
+    {
+      "typeId": 7,
+      "price": 7,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4632143307,
+      "name": "Niciunul"
+    },
+    {
+      "typeId": 3,
+      "price": 2.5715,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 57439,
+      "isDBB": true,
+      "id": 4632143306,
+      "name": "Bodrum Belediyesi Bodrumspor"
+    },
+    {
+      "typeId": 12,
+      "price": 1.0834,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4615642559,
+      "name": "Peste 0.5"
+    },
+    {
+      "typeId": 13,
+      "price": 6,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4615642560,
+      "name": "Sub 0.5"
+    },
+    {
+      "typeId": 74,
+      "price": 2.05,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4637715785,
+      "name": "Da"
+    },
+    {
+      "typeId": 76,
+      "price": 1.7,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4637715786,
+      "name": "Nu"
+    }
+  ],
+  "events": [
+    {
+      "marketIds": [
+        1765828547,
+        1765828570,
+        1765828478,
+        1765828508
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "code": 732,
+      "hasStream": false,
+      "extId": "fp32_ar:match:683955",
+      "sc": 1464,
+      "mc": 184,
+      "rc": false,
+      "pId": 32,
+      "et": 0,
+      "hasStats": false,
+      "competitorIds": [
+        68684,
+        111075
+      ],
+      "sportId": 66,
+      "catId": 517,
+      "champId": 2974,
+      "status": 0,
+      "startDate": "2026-09-21T20:00:00Z",
+      "id": 17668800,
+      "name": "Abo Qair Semads vs. Asyut Petroleum"
+    },
+    {
+      "marketIds": [
+        1776475093,
+        1776475107,
+        1776475044
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "code": 199,
+      "hasStream": false,
+      "extId": "fp32_ar:match:693902",
+      "sc": 1223,
+      "mc": 116,
+      "rc": false,
+      "pId": 32,
+      "et": 0,
+      "hasStats": true,
+      "competitorIds": [
+        439334,
+        249077
+      ],
+      "sportId": 66,
+      "catId": 499,
+      "champId": 4118,
+      "status": 0,
+      "startDate": "2026-09-21T20:00:00Z",
+      "id": 17962017,
+      "name": "Koléa vs. ES Mostaganem"
+    },
+    {
+      "marketIds": [
+        1765972452,
+        1765972475,
+        1765972382,
+        1765972413
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "code": 654,
+      "hasStream": false,
+      "extId": "fp32_ar:match:686419",
+      "sc": 1479,
+      "mc": 184,
+      "rc": false,
+      "pId": 32,
+      "et": 0,
+      "hasStats": false,
+      "competitorIds": [
+        57826,
+        50750
+      ],
+      "sportId": 66,
+      "catId": 517,
+      "champId": 2974,
+      "status": 0,
+      "startDate": "2026-09-21T20:00:00Z",
+      "id": 17668799,
+      "name": "National Bank vs. El Gaish"
+    },
+    {
+      "marketIds": [
+        1769120448,
+        1774695109,
+        1769120393,
+        1776590363
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "code": 8283,
+      "hasStream": false,
+      "extId": "fp32_ar:match:688293",
+      "sc": 948,
+      "mc": 90,
+      "rc": false,
+      "pId": 32,
+      "et": 0,
+      "hasStats": true,
+      "competitorIds": [
+        55718,
+        57439
+      ],
+      "sportId": 66,
+      "catId": 507,
+      "champId": 3113,
+      "status": 0,
+      "startDate": "2026-09-21T20:00:00Z",
+      "id": 17946260,
+      "name": "Sariyer SK vs. Bodrum Belediyesi Bodrumspor"
+    }
+  ],
+  "sports": [
+    {
+      "catIds": [
+        1571,
+        1728,
+        517,
+        1134,
+        574,
+        499,
+        1133,
+        502,
+        582,
+        507
+      ],
+      "typeId": 318,
+      "iconName": "soccer",
+      "hasLiveEvents": false,
+      "id": 66,
+      "name": "Soccer"
+    }
+  ],
+  "categories": [
+    {
+      "champIds": [
+        2974
+      ],
+      "iso": "EGY",
+      "hasLiveEvents": false,
+      "id": 517,
+      "name": "Egypt"
+    },
+    {
+      "champIds": [
+        4118,
+        2939
+      ],
+      "iso": "DZA",
+      "hasLiveEvents": false,
+      "id": 499,
+      "name": "Algeria"
+    },
+    {
+      "champIds": [
+        3113
+      ],
+      "iso": "TUR",
+      "hasLiveEvents": false,
+      "id": 507,
+      "name": "Turkey"
+    }
+  ],
+  "champs": [
+    {
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "hasLiveEvents": false,
+      "id": 2974,
+      "name": "Premier League"
+    },
+    {
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "hasLiveEvents": false,
+      "id": 4118,
+      "name": "Ligue 2"
+    },
+    {
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "hasLiveEvents": false,
+      "id": 3113,
+      "name": "1. Lig"
+    }
+  ],
+  "competitors": [
+    {
+      "abbreviation": "AQS",
+      "id": 68684,
+      "name": "Abo Qair Semads"
+    },
+    {
+      "abbreviation": "ASY",
+      "id": 111075,
+      "name": "Asyut Petroleum"
+    },
+    {
+      "abbreviation": "KOL",
+      "id": 439334,
+      "name": "Koléa"
+    },
+    {
+      "abbreviation": "MOS",
+      "id": 249077,
+      "name": "ES Mostaganem"
+    },
+    {
+      "abbreviation": "NBE",
+      "id": 57826,
+      "name": "National Bank"
+    },
+    {
+      "abbreviation": "GAI",
+      "id": 50750,
+      "name": "El Gaish"
+    },
+    {
+      "abbreviation": "SAR",
+      "id": 55718,
+      "name": "Sariyer SK"
+    },
+    {
+      "abbreviation": "BBB",
+      "id": 57439,
+      "name": "Bodrum Belediyesi Bodrumspor"
+    }
+  ]
+}

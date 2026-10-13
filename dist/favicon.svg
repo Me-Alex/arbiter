@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Arbiter">
+  <!--
+    A balance scale: the project is a sports-arbiter, and the brand accent
+    (#80cfc0) comes from design-tokens.css. Drawn to stay legible at 16px,
+    so the strokes are wide and the shapes are large and few.
+  -->
+  <rect width="64" height="64" rx="14" fill="#14201f"/>
+  <g fill="none" stroke="#80cfc0" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+    <!-- upright + beam -->
+    <path d="M32 14v34"/>
+    <path d="M17 22h30"/>
+    <!-- base -->
+    <path d="M22 48h20"/>
+    <!-- two pans, one tipped against the other: the imbalance being arbitraged -->
+    <path d="M17 22 10 34h14z"/>
+    <path d="M47 22 40 30h14z"/>
+  </g>
+</svg>

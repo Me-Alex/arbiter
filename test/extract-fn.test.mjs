@@ -35,6 +35,10 @@ const SOURCES = {
   'public/js/connection-status.js': read('public/js/connection-status.js'),
   'public/js/pages/dashboard.js': read('public/js/pages/dashboard.js'),
   'public/js/pages/event-detail-modal.js': read('public/js/pages/event-detail-modal.js'),
+  // The two money formatters. The card prints cents and the whole-unit
+  // formatter is the one that used to undo it, so a test has to be able to
+  // extract both and compare them on the same stake.
+  'public/js/format.js': read('public/js/format.js'),
   // Comment-blanked, the way source-health-list.test.mjs hands it over: an
   // extracted function has to eval in a context that has no DOM.
   'src/scanner/scanner.mjs': codeOnly(read('src/scanner/scanner.mjs'), true),
@@ -60,8 +64,12 @@ const PAIRS = [
   ['public/js/pages/dashboard.js', 'dashLiveBadge'],
   ['public/js/pages/dashboard.js', 'sourceHealthRows'],
   ['public/js/pages/event-detail-modal.js', 'collectCardLegs'],
+  ['public/js/pages/event-detail-modal.js', 'renderLeg'],
   ['public/js/pages/event-detail-modal.js', 'isEventUrl'],
   ['public/js/pages/event-detail-modal.js', 'buildFallbackFromLegs'],
+  ['public/js/format.js', 'fmtStake'],
+  ['public/js/format.js', 'fmtMoney'],
+  ['public/js/format.js', 'fmtOdds'],
   ['src/scanner/scanner.mjs', 'loadWorkspace'],
 ];
 

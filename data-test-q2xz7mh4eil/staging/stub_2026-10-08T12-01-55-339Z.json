@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 2,
+  "runId": null,
+  "sourceId": "stub",
+  "capturedAt": "2026-10-08T12:01:55.342Z",
+  "observedAt": "2026-10-08T12:01:55.342Z",
+  "dataStatus": "fresh",
+  "discovery": null,
+  "extraction": null,
+  "events": [
+    {
+      "id": "1",
+      "eventKey": "|unknown||",
+      "markets": [
+        {
+          "key": "MATCH_ODDS",
+          "selections": [
+            {
+              "name": "H",
+              "odds": 1.85
+            }
+          ]
+        }
+      ],
+      "providerEventKey": "k1"
+    }
+  ]
+}

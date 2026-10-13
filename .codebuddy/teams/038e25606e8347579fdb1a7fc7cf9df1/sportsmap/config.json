@@ -1,0 +1,67 @@
+{
+  "name": "sportsmap",
+  "mainConversationId": "038e25606e8347579fdb1a7fc7cf9df1",
+  "workspacePath": "e:/AI Folder Projects/arbiter",
+  "createdAt": "2026-10-07T20:03:46.331Z",
+  "options": {
+    "workspacePath": "e:/AI Folder Projects/arbiter"
+  },
+  "members": [
+    {
+      "memberId": "netbet-crawl@sportsmap",
+      "name": "netbet-crawl",
+      "role": "Crawl netbet.ro for all sports offered",
+      "sessionId": "8274b1c48c834b2592d1bfbc57eea629",
+      "status": "completed"
+    },
+    {
+      "memberId": "unibet-crawl@sportsmap",
+      "name": "unibet-crawl",
+      "role": "Crawl unibet.ro for all sports",
+      "sessionId": "deec8ccd0a4b45749c80f1f43a3245a2",
+      "status": "completed"
+    },
+    {
+      "memberId": "betano-crawl@sportsmap",
+      "name": "betano-crawl",
+      "role": "Crawl betano.ro for all sports",
+      "sessionId": "5cebd5f452cb4980af9109d52600be53",
+      "status": "running"
+    },
+    {
+      "memberId": "fortuna-crawl@sportsmap",
+      "name": "fortuna-crawl",
+      "role": "Crawl fortuna for sports offered",
+      "sessionId": "513b33af4f2441489f95c6afb4417a27",
+      "status": "completed"
+    },
+    {
+      "memberId": "casa-crawl@sportsmap",
+      "name": "casa-crawl",
+      "role": "Crawl casa-pariurilor.ro for sports",
+      "sessionId": "d5abfbf8b26b484e9afbabf90ea10a38",
+      "status": "running"
+    },
+    {
+      "memberId": "winner-crawl@sportsmap",
+      "name": "winner-crawl",
+      "role": "Crawl winner.ro for sports",
+      "sessionId": "f841e45bfd9c40bab2785e198de3f589",
+      "status": "running"
+    },
+    {
+      "memberId": "favbet-crawl@sportsmap",
+      "name": "favbet-crawl",
+      "role": "Crawl favbet for sports",
+      "sessionId": "1e2811b900b9401f8c1b57d9386458a4",
+      "status": "running"
+    },
+    {
+      "memberId": "workspace-analysis@sportsmap",
+      "name": "workspace-analysis",
+      "role": "Analyze workspace data for sport catalog",
+      "sessionId": "de2857442adb445189e24dd62122fb1c",
+      "status": "running"
+    }
+  ]
+}

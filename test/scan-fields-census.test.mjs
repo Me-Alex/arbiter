@@ -440,11 +440,11 @@ const PAGE_FILES = SCAN_CONSUMERS.filter((f) => !LIFTED_READERS[f]);
  *
  * Each reader gets its own copy of the document, and that is a measurement
  * decision rather than tidiness. The pages sort the arrays they are handed in
- * place — `scanner.js:648` sorts `scan.middles` straight through the proxy the
+ * place — `scanner.js:660` sorts `scan.middles` straight through the proxy the
  * probe wrapped around it — so a single shared payload let one reader rewrite
  * the document the next one was about to be shown. Measured: on one shared
  * payload scanner.js read 75 paths and reported `middles[].legs[].handicap`
- * unread, while `middles[].legs[].handicap` is read at scanner.js:653 and the
+ * unread, while `middles[].legs[].handicap` is read at scanner.js:665 and the
  * same run reads the whole middles family the moment each page is handed its
  * own copy (259 paths). A census that lets the previous reader decide the
  * next one's reads is measuring the order of the list, not the pages.
@@ -683,11 +683,11 @@ const UNREAD_BY_DESIGN = [
     id: 'requote-record',
     covers: [
       ...['currentOdds', 'eventKey', 'eventUrl', 'handicap', 'kickoff', 'live', 'marketId', 'marketKey', 'odds', 'outcome', 'payout', 'profit', 'providerEventId', 'selection', 'selectionId', 'sourceId', 'stake'].map((f) => `opportunities[].verification.legs[].${f}`),
-      ...['currentOdds', 'eventKey', 'eventUrl', 'handicap', 'live', 'marketKey', 'odds', 'payout', 'selection', 'sourceId', 'stake'].map((f) => `middles[].verification.legs[].${f}`),
+      ...['currentOdds', 'eventKey', 'eventUrl', 'handicap', 'live', 'marketKey', 'odds', 'payout', 'selection', 'side', 'sourceId', 'stake'].map((f) => `middles[].verification.legs[].${f}`),
     ],
     reason: [
       'The pass writes verification.legs and then reads it again nowhere: it is the input legs plus',
-      'currentOdds, the prices the books actually quoted at confirmation time. 28 leaves, 0 readers,',
+      'currentOdds, the prices the books actually quoted at confirmation time. 29 leaves, 0 readers,',
       'and the page deliberately shows the verdict instead — scanner.js puts the reason on the status',
       'chip and ai.js renders only confirmed cards.',
     ].join(' '),
@@ -706,16 +706,6 @@ const UNREAD_BY_DESIGN = [
       'is the price the EV was computed from.',
     ].join(' '),
     measuredBy: 'the positive-EV leg restates its parent on every driven record',
-  },
-  {
-    id: 'family-discriminator',
-    covers: ['opportunities[].type', 'middles[].type', 'positiveEv[].type', 'lowHold[].type'],
-    reason: [
-      'One distinct value per family across the driven scan — arb, middle, positive_ev, low_hold,',
-      '1 each — because each array has exactly one producer. The page gives each family its own table',
-      'and the kind of signal is therefore structural, not a field it has to branch on.',
-    ].join(' '),
-    measuredBy: 'every family carries exactly one type value',
   },
   {
     id: 'envelope-marker',
@@ -828,11 +818,11 @@ test('every family is populated, so an empty one cannot hide a leaf behind it', 
   assert.equal(Object.keys(scan).length, 15, 'the envelope, the five families, the summary and the route flag');
 });
 
-test('the published set is 169 leaves, and the reader is not reporting zeros', async () => {
+test('the published set is 172 leaves, and the reader is not reporting zeros', async () => {
   const doc = await publishedScan();
   const published = new Set();
   leaves(doc, '', published);
-  assert.equal(published.size, 169, 'the leaf count moved: a field was added or dropped upstream');
+  assert.equal(published.size, 172, 'the leaf count moved: a field was added or dropped upstream');
 
   const { perPage } = await readPaths();
   // A reader that threw records almost nothing, and a census built on its
@@ -969,7 +959,13 @@ test('every field the scan publishes is read by a page, or is named with a reaso
   }
   // 73 was 8 excused leg fields of which 3 turned out to have a reader once the
   // harness could actually run the pages, so 70 is 73 minus exactly those 3.
-  assert.equal(unread.length, 70, `the unread set moved: ${unread.length} — ${unread.join(', ')}`);
+  // 66 is then 70 minus the 4 `type` fields: the console classifies every row it
+  // draws - that classification picks the card colour and the market chip - so
+  // the kind of signal stopped being structural and became a field it reads.
+  // 67 adds middles[].verification.legs[].side, which rides along inside the
+  // re-quote overlay: the pass copies the input legs there and the page shows
+  // the verdict, not the legs it was handed.
+  assert.equal(unread.length, 67, `the unread set moved: ${unread.length} — ${unread.join(', ')}`);
 });
 
 // ---------------------------------------------------------------------------

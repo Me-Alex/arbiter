@@ -27,6 +27,7 @@
   flex-direction: column;
   gap: var(--s-4);
 }
+.sl-main > * + * { margin-top: 0; }
 
 /* ── Header ────────────────────────────────────────────────────────────── */
 
@@ -418,8 +419,44 @@
 }
 
 .sl-sources .chip.green { color: var(--sl-text); }
-.sl-sources .chip.green .dot { background: var(--sl-ok); }
-.sl-sources .chip:not(.green) .dot { background: var(--sl-idle); }
+
+/* Measured in chromium against these stylesheets, not argued from
+ * specificity: this pair used to decide the dot's colour on its own. Both were
+ * more specific than `.dot.live` / `.dot.busy` / `.dot.error` in theme.css, so
+ * `statusDotClass` (scrape.js:165) put a class on the element and the class had
+ * no say — a validated book whose last job failed, timed out or resolved to no
+ * scraper painted the same green as one that worked, and because `error`
+ * carries no animation either, `error` and "no job at all" were one and the
+ * same pixel. `running` was legible only as a pulse.
+ *
+ * `:where()` takes the validated/experimental test out of the specificity
+ * count, dropping both rules to (0,3,0) so the state rules below win on
+ * specificity alone instead of on which of the two happens to be written last.
+ * Validation is not lost by it: `.sl-sources .chip.green` above already carries
+ * it in the chip's own text colour, one property away from the dot.
+ */
+.sl-sources .chip:where(.green) .dot { background: var(--sl-ok); }
+.sl-sources .chip:where(:not(.green)) .dot { background: var(--sl-idle); }
+
+/* The three classes `statusDotClass` actually emits, at (0,4,0). Only the
+ * background is restated; theme.css still owns the pulse and its box-shadow,
+ * which is why `live` and `busy` read as motion while `error` reads as a
+ * colour. `warn` and `ok` are left to theme.css as well — nothing on this page
+ * emits them. */
+.sl-sources .chip .dot.live { background: var(--sl-ok); }
+.sl-sources .chip .dot.busy { background: var(--sl-warn); }
+.sl-sources .chip .dot.error { background: var(--sl-bad); }
+
+/* `updateChipStatus` (scrape.js:456) adds `pop` to a bookmaker dot when its
+ * status changes and takes it off again 500ms later, having already skipped
+ * the whole thing under reduced motion. It had no rule in any stylesheet, so
+ * the acknowledgement was written and then never drawn — the same shape as
+ * `.sl-stage.step-pop` further down, and resolved the same way. */
+.sl-sources .chip .dot.pop { animation: sl-dot-pop 0.5s var(--ease-out); }
+
+@keyframes sl-dot-pop {
+  50% { transform: scale(1.7); }
+}
 
 /* ── Readouts ──────────────────────────────────────────────────────────── */
 
@@ -476,6 +513,17 @@
 
 .sl-stat[data-tone="bad"] { background: var(--sl-bad-wash); }
 .sl-stat[data-tone="bad"] .sl-stat-value { color: var(--sl-bad); }
+
+/* What `renderState` asks for when a value it just drew has changed. It has been
+   adding this class since the KPI band existed, against selectors that matched
+   nothing, and the class had no rule either -- so the band never acknowledged an
+   update. The wash and the duration follow dashboard.css's own `.flash`. */
+.sl-stat.flash { animation: sl-flash 0.8s var(--ease-out); }
+
+@keyframes sl-flash {
+  0% { background: var(--sl-accent-wash); }
+  100% { background: transparent; }
+}
 
 /* ── Status pills ──────────────────────────────────────────────────────── */
 
@@ -536,6 +584,18 @@
   border-color: var(--sl-warn-line);
 }
 
+/* `cancelling` is the state between those two — cancel pressed, cancel not yet
+   finished — and it was the one value of the seven a run can hold that neither
+   file styled, while the run status pill had just been given a word to print
+   for it. So a run in the one state where the operator is waiting on the page
+   drew an unfilled pill beside three filled ones. The warn wash again: the run
+   is going to end cancelled, which is what that colour already means here. */
+.status.cancelling {
+  background: var(--sl-warn-wash);
+  color: var(--sl-warn);
+  border-color: var(--sl-warn-line);
+}
+
 /* ── Alert ─────────────────────────────────────────────────────────────── */
 
 .sl-alert {
@@ -548,6 +608,14 @@
 }
 
 .sl-alert.hidden { display: none; }
+
+/* completed-with-errors prints in amber, not red: the run finished, some jobs
+ * did not. UpdateErrorBox sets `sl-alert warn` for it. */
+.sl-alert.warn {
+  background: var(--sl-warn-wash);
+  border-color: var(--sl-warn-line);
+  color: var(--sl-warn);
+}
 
 /* ── Progress ──────────────────────────────────────────────────────────── */
 
@@ -660,6 +728,24 @@
 
 .sl-stage.done { color: var(--sl-text-dim); }
 .sl-stage.done i { border-color: var(--sl-ok-line); color: var(--sl-ok); background: var(--sl-ok-wash); }
+
+/* The stage a run stopped on when it ended badly. `updateStepper` has always put
+   this class on the last step, and there has never been a rule for it: the stage
+   that failed looked exactly like the four that were never reached. Same shape as
+   the two above it, in the colour this page already uses for a failure. */
+.sl-stage.error { color: var(--sl-bad); }
+.sl-stage.error i { border-color: var(--sl-bad-line); color: var(--sl-bad); background: var(--sl-bad-wash); }
+.sl-stage.error::after { background: var(--sl-bad-line); }
+
+/* The one the code could not reach while it named a layout this page has never
+   had: `.sl-stage` has no `step-pop` rule either, so the brief scale on a stage
+   becoming done had nothing to scale. Gated in the page by prefers-reduced-motion
+   before the class is ever added. */
+.sl-stage.step-pop i { animation: sl-step-pop 0.24s var(--ease-out); }
+
+@keyframes sl-step-pop {
+  50% { transform: scale(1.18); }
+}
 
 /* ── Live readouts ─────────────────────────────────────────────────────── */
 

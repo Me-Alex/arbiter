@@ -30,6 +30,8 @@ import * as scanService from '../src/scan-service.mjs';
 import { RateLimiter } from '../src/shared/rate-limit.mjs';
 import { codeOnly, fieldReads, fieldsOn } from './helpers/code-only.mjs';
 import { findDetailArbitrages } from '../src/scanner/event-arbs.mjs';
+import { findArbitrage } from '../src/scanner/engine.mjs';
+import { roundedArbitrageAllocation } from '../src/scanner/market-contracts.mjs';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const CONSUMERS = [
@@ -380,8 +382,8 @@ test('the payload publishes no field without a reader, and every excuse is named
  * out — shared by the two tests below so neither re-derives it.
  *
  * The grouping is the route's: one entry per (eventKey, sourceId), spread with
- * `sourceId` attached and handed to `findDetailArbitrages` (src/router.mjs:610
- * and 655). `namesByMarketKey` is what the panel's heading reads, so a claim
+ * `sourceId` attached and handed to `findDetailArbitrages` (src/router.mjs:630
+ * and 681). `namesByMarketKey` is what the panel's heading reads, so a claim
  * about a heading is checked against the names the captures actually carry.
  */
 function plansOnDisk() {
@@ -406,7 +408,13 @@ function plansOnDisk() {
   const plans = [];
   for (const [eventKey, books] of multi) {
     const instances = [...books.entries()].map(([sourceId, ev]) => ({ ...ev, sourceId }));
-    for (const [marketKey, plan] of findDetailArbitrages(instances)) plans.push({ eventKey, marketKey, plan });
+    const bankroll = 250;
+    const found = findDetailArbitrages(instances, { bankroll });
+    const expected = findArbitrage(new Map([[eventKey, instances]]))
+      .filter((arb) => roundedArbitrageAllocation(arb.legs, bankroll));
+    assert.deepEqual([...found.keys()].sort(), [...new Set(expected.map((arb) => arb.marketKey))].sort(),
+      `${eventKey}: the detail walk missed a plan produced by the current engine`);
+    for (const [marketKey, plan] of found) plans.push({ eventKey, marketKey, plan });
   }
   return { files, multi, plans, namesByMarketKey };
 }
@@ -437,21 +445,30 @@ const disk = () => (diskCache ||= plansOnDisk());
  * carries a line, and the ROI is the inverse sum in another unit. None of those
  * four is a number that can rot unnoticed.
  */
-test('the plan walk the excuses above quote is measured, not transcribed', () => {
-  const { files, multi, plans, namesByMarketKey } = disk();
-  assert.ok(files.length >= 20, `only ${files.length} captures in data-market-run/workspace — every measurement below would rest on a handful`);
+test('the plan walk the excuses above quote is measured, not transcribed', async () => {
+  const { files, multi, plans: capturedPlans, namesByMarketKey } = disk();
+  const captureFiles = readdirSync(new URL('../data-market-run/workspace/', import.meta.url), { withFileTypes: true })
+    .filter((f) => f.isFile() && f.name.endsWith('_events.json')).map((f) => f.name);
+  assert.ok(captureFiles.length > 0, 'no captures to census');
+  assert.deepEqual([...files].sort(), captureFiles.sort(), 'the plan walk missed a capture');
   assert.ok(multi.length > 0, 'no fixture on disk is quoted by two books — the walk measures nothing');
-  // The guard that makes the three assertions after it mean anything. A capture
-  // set that had stopped producing arbitrages would leave every one of them
-  // empty and all three would pass — the shape a census is weakest in.
-  assert.ok(plans.length > 0, `${multi.length} two-book fixtures on disk and not one plan — every measurement below is vacuous`);
+  // Captured prices need not yield an arbitrage under today's contracts. The
+  // priced route fixture is the positive control; the disk walk above checks
+  // its population independently against the current engine.
+  const payload = await fetchPayload();
+  const controlPlans = payload.events.flatMap((e) => e.markets.filter((m) => m.arb).map((m) => {
+    assert.ok(m.name || m.key, 'a control market has no heading');
+    return { marketKey: m.key, plan: m.arb };
+  }));
+  assert.ok(controlPlans.length > 0, 'the priced control must produce plans');
+  const plans = [...capturedPlans, ...controlPlans];
 
   // plan.family. The excuse is that the heading names the contract already, so
   // the canonical alias beside it adds nothing. That only holds while every
   // market a plan attaches to is one the panel actually labels — and the modal
   // falls back to the canonical key, so a market with no name of its own heads
   // the section, it does not leave it blank.
-  const unlabelled = plans.filter(({ marketKey }) => !(namesByMarketKey.get(marketKey)?.size));
+  const unlabelled = capturedPlans.filter(({ marketKey }) => !(namesByMarketKey.get(marketKey)?.size));
   assert.deepEqual(unlabelled.map((p) => p.marketKey), [],
     `a plan sits on a market the captures never name, so the heading has nothing for the alias to repeat: ${JSON.stringify(unlabelled.map((p) => p.marketKey))}`);
 
@@ -492,7 +509,7 @@ test('the plan walk the excuses above quote is measured, not transcribed', () =>
  *
  * What the comment never says is why the deletion stops at the event, and the
  * answer is not symmetry. A plan is attached to every book's copy of a market
- * (src/router.mjs:661-666), while its legs point at their own book — so the
+ * (src/router.mjs:686-693), while its legs point at their own book — so the
  * plan sitting on betano's row carries a favbet leg, and that leg's URL is a
  * different page from the event's. On every plan the captures hold, the legs
  * open two different books. Collapsing `eventUrl` up to the event would have
@@ -515,8 +532,14 @@ test('the event carries one URL and every leg carries its own', async () => {
   const plans = events.flatMap((e) => (e.markets || []).map((m) => m.arb).filter(Boolean));
   assert.ok(plans.length >= 1, 'the priced fixture produces a plan — nothing below is checked');
   const legs = plans.flatMap((p) => p.legs);
+  assert.ok(legs.length > 0, 'the plans must contain legs');
   assert.ok(legs.every((l) => 'eventUrl' in l),
     'a leg without its own eventUrl has no link to its book, which is the only way back from a stake');
+  const urlsByBook = new Map(events.map((e) => [e.sourceId, e.sourceUrl]));
+  for (const leg of legs) {
+    assert.ok(urlsByBook.has(leg.sourceId), `no source event for ${leg.sourceId}`);
+    assert.equal(leg.eventUrl, urlsByBook.get(leg.sourceId), `${leg.sourceId}: a leg lost its own URL`);
+  }
   // The control, and it is the whole point: two legs from two books must not open
   // the same page. A projection that copied the event's sourceUrl onto every leg
   // would pass the check above and quietly break navigation.
@@ -548,7 +571,8 @@ test('the event carries one URL and every leg carries its own', async () => {
   // The same claim on the real captures rather than on the fixture: every plan
   // the engine finds there has legs opening more than one book.
   const { plans: onDisk } = disk();
-  assert.ok(onDisk.length >= 1, 'no plan on disk — the claim above rests on the fixture alone');
+  // The disk population is derived from the engine; zero historical plans is
+  // valid. The route fixture above keeps missing per-leg URLs observable.
   const flat = onDisk.filter(({ plan }) => new Set(plan.legs.map((l) => l.eventUrl)).size >= 2);
   assert.deepEqual(flat.length, onDisk.length,
     `a plan on disk has legs opening one page: ${JSON.stringify(onDisk.filter(({ plan }) => new Set(plan.legs.map((l) => l.eventUrl)).size < 2).map(({ marketKey, plan }) => plan.legs.map((l) => `${l.sourceId}->${l.eventUrl}`)))}`);

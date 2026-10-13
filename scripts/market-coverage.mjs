@@ -31,6 +31,9 @@
  * Usage:
  *   npm run market:coverage
  *   npm run market:coverage -- fortuna,admiral,excelbet
+ *   npm run market:coverage -- --workspace data-market-run/workspace football
+ * Workspace mode measures historical coverage only; it does not publish a scan
+ * or make the saved prices fresh/actionable.
  *
  * Exits 0 even when nothing is arbitrable: a thin market is a finding, not a
  * failure.
@@ -43,9 +46,11 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import { instantiate } from '../src/scrapers/index.mjs';
 import { isSharedFeed } from '../src/scanner/feed-groups.mjs';
 import { canonicalSport, eventIdentityKey } from '../src/shared/text.mjs';
+import { groupByEvent } from '../src/scanner/engine.mjs';
 import {
   resolveContract,
   bucketKeyForContract,
+  isTradablePeriod,
 } from '../src/scanner/market-contracts.mjs';
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url));
@@ -63,12 +68,19 @@ const ROOT = fileURLToPath(new URL('..', import.meta.url));
 const DEFAULT_BOOKS = 'fortuna,casa-pariurilor,admiral,maxbet,excelbet,winboss,superbet,netbet,don,unibet,betano';
 
 const args = process.argv.slice(2);
-const wanted = (args[0] || DEFAULT_BOOKS).split(',').map((b) => b.trim()).filter(Boolean);
+const workspaceMode = args[0] === '--workspace';
+if (workspaceMode && !args[1]) throw new Error('Usage: --workspace <directory> [sport]');
+const workspace = workspaceMode ? args[1] : null;
+const wanted = workspace
+  ? (await fs.readdir(workspace)).filter((f) => f.endsWith('_events.json')).sort().map((f) => f.slice(0, -12))
+  : (args[0] || DEFAULT_BOOKS).split(',').map((b) => b.trim()).filter(Boolean);
 const maxEvents = Number(args[1]) || 200;
-// The one sport this project has live, verified adapters for. Every enabled job
-// declares it, and the scrape service always supplies a sport — so it is the
-// only correct default for a report about football arbitrage.
-const SPORT = 'football';
+// The sport to measure. Pass as the third positional argument:
+//   npm run market:coverage -- fortuna,netbet,unibet,betano 200 basketball
+// The scrape service always supplies a sport, so the adapters receive the same
+// request this report makes. Counting the same fixture under one sport label
+// across books is what proves two independent feeds quote the same contract.
+const SPORT = String(args[2] || 'football').trim().toLowerCase();
 
 const cfg = JSON.parse(await fs.readFile(join(ROOT, 'config', 'scrapers.json'), 'utf8'));
 const byId = new Map(cfg.jobs.map((j) => [j.id, j]));
@@ -82,6 +94,10 @@ const byId = new Map(cfg.jobs.map((j) => [j.id, j]));
  * @returns {Promise<Map<string, {events: Set<string>, keys: Set<string>}>>}
  */
 async function loadBook(id) {
+  if (workspace) {
+    const snapshot = JSON.parse(await fs.readFile(join(workspace, `${id}_events.json`), 'utf8'));
+    return indexEventsByContract((snapshot.events || []).filter((e) => canonicalSport(e.sport) === SPORT));
+  }
   const job = byId.get(id);
   if (!job || job.enabled === false) return null;
   // `sport` mirrors what the scrape service passes in production
@@ -176,11 +192,11 @@ export function indexEventsByContract(events) {
       // betano-only, 1 publisher and 0 pairs, on lines three independent feeds
       // were quoting. The guard is now the engine's, so the report can only be
       // filled by markets the scanner would actually pair.
-      if (contract.period !== 'fulltime' && contract.period !== 'half1' && contract.period !== 'half2') continue;
+      if (!isTradablePeriod(contract.period)) continue;
       // The engine's own key, with the (unused here) event component dropped:
       // this report pairs publishers across books, not within one event.
       const key = bucketKeyForContract('', contract).replace(/^::/, '');
-      if (!byMarket.has(key)) byMarket.set(key, { events: new Set(), keys: new Set() });
+      if (!byMarket.has(key)) byMarket.set(key, { events: new Set(), keys: new Set(), fixtures: new Set() });
       // The event is recorded under the SAME key the engine groups by, not under
       // the adapter's own `eventKey`. This is what makes the `overlapping`
       // column mean "these two books really quote this line on the same match".
@@ -201,6 +217,7 @@ export function indexEventsByContract(events) {
       // The identity key is the engine's own (`shared/text.mjs`), so the report
       // cannot drift from the grouping it is reporting on.
       byMarket.get(key).events.add(eventIdentityKey(e));
+      byMarket.get(key).fixtures.add(e);
       byMarket.get(key).keys.add(m.key);
     }
   }
@@ -240,12 +257,28 @@ export function independentPairs(publishers) {
  * @returns {object[]}
  */
 export function buildCoverageRows(books) {
+  // Group the full cohort once, exactly as the scanner does. Per-book rounded
+  // timestamp keys cannot express a sliding window or detect rematch ambiguity.
+  const originals = new Map();
+  for (const [book, index] of books) for (const entry of index.values()) {
+    for (const event of entry.fixtures || []) {
+      if (!originals.has(event)) originals.set(event, {
+        ...event, sourceId: event.sourceId || book, eventKey: event.eventKey || eventIdentityKey(event),
+      });
+    }
+  }
+  const fixtureKeys = new Map();
+  for (const [key, events] of groupByEvent([...originals.values()])) {
+    for (const event of events) fixtureKeys.set(event, key);
+  }
   // contract key -> book -> { events, keys }
   const markets = new Map();
   for (const [book, byMarket] of books) {
     for (const [key, entry] of byMarket) {
       if (!markets.has(key)) markets.set(key, new Map());
-      markets.get(key).set(book, entry);
+      markets.get(key).set(book, entry.fixtures ? { ...entry,
+        events: new Set([...entry.fixtures].map((event) => fixtureKeys.get(originals.get(event)))),
+      } : entry);
     }
   }
 
@@ -286,6 +319,7 @@ export function buildCoverageRows(books) {
 // fired 11 network requests; exporting the two pure functions above is what lets
 // the event-key choice be pinned by a test instead of by inspection.
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  if (workspace) console.log(`Historical coverage only: ${workspace}. Saved prices are not live opportunities.`);
   const books = new Map();
   const failures = [];
 

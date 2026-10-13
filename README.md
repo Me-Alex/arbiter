@@ -1,6 +1,6 @@
 # Arbiter
 
-Local-first sports arbitrage scanner with configuration and support for 24 Romanian bookmakers.
+Local-first sports arbitrage scanner with configuration and support for 28 Romanian bookmakers.
 Binds to `127.0.0.1` and stores all application state locally. Bookmaker discovery uses Playwright and native public HTTP feeds.
 
 ## Stack
@@ -195,7 +195,7 @@ the running app:
 
 A source uses a bookmaker's own public, unauthenticated, read-only offer feed, reached either by a plain HTTP client or — where the host gates a bare request — from a real browser navigation context, exactly as a visitor's browser would load it. No credentials are used, and no challenge or access control is bypassed.
 
-23 jobs are enabled across six platform families, and 22 of those brands resolve to **11 independent price sources**. The platform, not the brand, is what decides whether a source is worth adding: `src/scanner/feed-groups.mjs` refuses to pair two brands that resell one upstream feed, because a price gap between them is a capture artifact rather than an edge.
+28 jobs are enabled across twelve platform families, and those 28 brands resolve to **12 independent price sources**. The platform, not the brand, is what decides whether a source is worth adding: `src/scanner/feed-groups.mjs` refuses to pair two brands that resell one upstream feed, because a price gap between them is a capture artifact rather than an edge.
 
 | Platform | Enabled brands | Independent? |
 |---|---|---|
@@ -204,9 +204,8 @@ A source uses a bookmaker's own public, unauthenticated, read-only offer feed, r
 | Altenar | don, topbet, million, baumbet, powerbet, winbet | one feed |
 | Fortuna BFF | fortuna, casa-pariurilor | one feed |
 | EveryMatrix WAMP | getsbet, contibet | one feed |
-| Superbet, Betano, NetBet, Favbet, Winner | one each | independent |
-
-Two further sources are implemented and **disabled** because measurement showed they add no independent pricing: EGT Digital (prowin, ultrabet, vipbet — all one upstream feed, grouped in `feed-groups.mjs`) and Unibet (its REST offer endpoint is retired; prices moved to a realtime MQTT socket, so re-enabling it is a build rather than a configuration change).
+| Digitain | winner, bet7, mrplay, 888sport | one feed |
+| Superbet, Betano, NetBet, Favbet, EGT Digital (vipbet), Unibet | one each | independent |
 
 Evidence for each platform, including the negative results and the measurements behind each grouping, is recorded in `data/endpoints/` and `docs/platform-findings.json`.
 
@@ -214,11 +213,11 @@ Evidence for each platform, including the negative results and the measurements 
 
 Set `ARBITER_MAX_EVENTS_PER_BOOK` to a positive integer for a bounded per-book result count, or to `all` to retain every qualifying event available from each provider's bounded public feed/window. `all` does not fabricate events or bypass upstream pagination, browser gating, lookahead windows, rate limits, or abort/timeouts; provider availability determines the actual count.
 
-As of 2026-09-26, **22 of the 23 configured jobs are enabled**; `SCRAPER-TASKS.md`
-carries the per-book status and what each one rests on. Unibet is the exception:
-its adapter targets a Kambi REST endpoint that now returns 404, and the
-config's `validationReason` records that prices moved to a realtime MQTT feed,
-so re-enabling it needs an MQTT client rather than a URL change.
+As of 2026-10-08, **28 of the 30 configured jobs are enabled**; `SCRAPER-TASKS.md`
+carries the per-book status and what each one rests on. Unibet was re-enabled on
+2026-09-28 after recovering a pollable REST offer surface (az-menu → lobby →
+lobby, with the site's own tenant headers); its `fullMarkets` detail pass is
+what lets it compare totals, BTTS and handicaps rather than the result market.
 
 Arbiter neither bypasses a provider's protections nor reports an unavailable
 source as an empty one. `npm run smoke:live` exists precisely because the two
@@ -309,17 +308,34 @@ that cannot be served.
 | Sport | Draw outcome | Scraper status | Key markets |
 |---|---|---|---|
 | Football | draw | Active (bookmaker-specific scrapers) | MATCH_ODDS, OVER_UNDER, DOUBLE_CHANCE, BTTS, HANDICAP |
+| 42 further sports (tennis, basketball, ice-hockey, volleyball, handball, American football, table-tennis, esports, darts, rugby, futsal, …) | per registry | Active (multi-sport adapters) | MATCH_ODDS, OVER_UNDER, HANDICAP |
 
-Football is the only registered sport. Every feed in `config/scrapers.json`
-currently returns prematch football, and each active job declares
-`"supportedSports": ["football"]` — that array is what the orchestrator's sport
-filter matches on.
+The registry carries 43 sports, and every one of them is declared by at least one
+enabled, validated job in `config/scrapers.json` — that array is what the
+orchestrator's sport filter matches on, and
+`test/sport-registry-consistency.test.mjs` checks the two files against each
+other in both directions, because a registry id no job declares is a dropdown
+option that always fails and a declaration outside the registry makes every
+scan naming it fail before a job runs.
 
-Tennis, basketball, ice hockey, volleyball and handball are deliberately not
-served. Registering them made the dropdown offer options that always failed:
-those jobs are `sport-generic` stubs with no adapter file, so selecting one
-returned `no enabled bookmaker jobs selected` (HTTP 400). They remain in the
-config, disabled, as the placeholders for when real adapters land.
+That is the state after 2026-10-08, and it is worth being precise about what
+changed and what did not: the adapters were already ahead of the registry.
+superbet's offer-v3 fetches a multi-sport feed, betano crawls 36 Betano sport
+ids, Altenar walks a per-tenant `GetSportMenu` (id map in
+`src/scrapers/altenar-public.mjs`), Unibet crawls its az-menu, Winner reads a
+sport filter over a 30-sport payload, and the FEG feed publishes a per-sport
+market namespace (`ufo:mtyp:02-*` basketball, `01-*` and `14-*` tennis, …).
+Measured over the saved `data/workspace` capture, the books had already
+collected 146,393 football markets alongside 4,558 markets across the other
+sports before any of them could be selected.
+
+Multi-sport scans are measured rather than assumed: `node
+scripts/market-coverage.mjs --workspace data/workspace <sport>` reports 25
+arbitrable contract lines for tennis, 77 for basketball and 13 for ice-hockey,
+with MATCH_ODDS pair-able across five independent books in tennis — so a
+non-football scan has something to find, not just something to try. Because the
+books map sport ids themselves, the datetime filter stays tenant-local and a
+scan still escapes an odd UTC minute.
 
 ### How it works
 
@@ -556,11 +572,14 @@ Why a scan may legitimately come back empty is measured, not assumed: see
 finds the best available cross-feed return to be negative — the market is
 arbitraged, not mis-scanned.
 
-Status as of this writing: 23 of the 26 configured jobs are enabled and
-implemented against verified public endpoints. `unibet`, `prowin` and
-`ultrabet` stay disabled for different reasons — Unibet's REST offer endpoint is
-retired in favour of a realtime MQTT socket, and the two EGT brands are disabled
-because all three of their brands are one upstream feed, so enabling them would
-add coverage without adding an independent price source. `SCRAPER-TASKS.md`
-tracks per-book status and `docs/platform-findings.json` holds the evidence.
+Status as of 2026-10-08: 28 of the 30 configured jobs are enabled and
+implemented against verified public endpoints. Only `prowin` and `ultrabet`
+stay disabled — the two EGT resellers, disabled because all three EGT brands
+are one upstream feed, so enabling them would add coverage without adding an
+independent price source; `vipbet`, the EGT brand that was kept, is measured
+daily (0.5–4.2s) and now supplies fresh football prices everything else on that
+platform lacks. Unibet, which was disabled pending a repeatability check of its
+crawl, re-ran green on 2026-10-08 and is enabled, taking the independent-source
+count to 12. `SCRAPER-TASKS.md` tracks per-book status and
+`docs/platform-findings.json` holds the evidence.
 

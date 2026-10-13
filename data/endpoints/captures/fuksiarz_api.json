@@ -1,0 +1,2193 @@
+{
+  "url": "https://fuksiarz.pl/rest/market/categories/multi/265,625/events",
+  "capturedAt": "2026-10-12T20:47:55.748Z",
+  "sample": [
+    {
+      "eventId": 23150096,
+      "eventName": "Wieczysta Kraków - Raków Częstochowa",
+      "eventStart": 1792166400000,
+      "eventType": 1,
+      "category3Id": 265,
+      "category2Id": 264,
+      "category1Id": 1,
+      "category3Name": "Ekstraklasa",
+      "category2Name": "Polska",
+      "category1Name": "Piłka nożna",
+      "eventCodeId": 0,
+      "gamesCount": 200,
+      "eventGames": [
+        {
+          "gameId": 920394207,
+          "gameName": "1X2",
+          "gameType": 1,
+          "gameCode": 0,
+          "argument": null,
+          "combinationType": 1,
+          "marketTypes": [
+            6
+          ],
+          "gameLayout": 1,
+          "eventLayout": 1,
+          "outcomes": [
+            {
+              "outcomeId": 696768883,
+              "outcomeName": "Wieczysta Kraków",
+              "outcomeOdds": 2.28,
+              "outcomePosition": 0,
+              "status": 100
+            },
+            {
+              "outcomeId": 696768884,
+              "outcomeName": "X",
+              "outcomeOdds": 3.8,
+              "outcomePosition": 1,
+              "status": 100
+            },
+            {
+              "outcomeId": 696768885,
+              "outcomeName": "Raków Częstochowa",
+              "outcomeOdds": 2.7,
+              "outcomePosition": 2,
+              "status": 100
+            }
+          ],
+          "combinationTypes": [
+            1
+          ]
+        },
+        {
+          "gameId": 920394221,
+          "gameName": "Podwójna szansa",
+          "gameType": 4,
+          "gameCode": 0,
+          "argument": null,
+          "combinationType": 1,
+          "marketTypes": [
+            6
+          ],
+          "gameLayout": 3,
+          "eventLayout": 14,
+          "outcomes": [
+            {
+              "outcomeId": 696768954,
+              "outcomeName": "1/X",
+              "outcomeOdds": 1.42,
+              "outcomePosition": 0,
+              "status": 100
+            },
+            {
+              "outcomeId": 696768955,
+              "outcomeName": "1/2",
+              "outcomeOdds": 1.24,
+              "outcomePosition": 1,
+              "status": 100
+            },
+            {
+              "outcomeId": 696768956,
+              "outcomeName": "X/2",
+              "outcomeOdds": 1.55,
+              "outcomePosition": 2,
+              "status": 100
+            }
+          ],
+          "combinationTypes": [
+            1
+          ]
+        },
+        {
+          "gameId": 920394220,
+          "gameName": "Obie drużyny strzelą gola",
+          "gameType": 98,
+          "gameCode": 0,
+          "argument": null,
+          "combinationType": 1,
+          "marketTypes": [
+            6
+          ],
+          "gameLayout": 2,
+          "eventLayout": 6,
+          "outcomes": [
+            {
+              "outcomeId": 696768952,
+              "outcomeName": "tak",
+              "outcomeOdds": 1.43,
+              "outcomePosition": 0,
+              "status": 100
+            },
+            {
+              "outcomeId": 696768953,
+              "outcomeName": "nie",
+              "outcomeOdds": 2.6,
+              "outcomePosition": 1,
+              "status": 100
+            }
+          ],
+          "combinationTypes": [
+            1
+          ]
+        },
+        {
+          "gameId": 920395590,
+          "gameName": "Liczba goli",
+          "gameType": 8,
+          "gameCode": 0,
+          "argument": 1,
+          "combinationType": 1,
+          "marketTypes": [
+            3
+          ],
+          "gameLayout": 20,
+          "eventLayout": 6,
+          "outcomes": [
+            {
+              "outcomeId": 696773416,
+              "outcomeName": "poniżej 1",
+              "outcomeOdds": 10,
+              "outcomePosition": 0,
+              "status": 100
+            },
+            {
+              "outcomeId": 696773417,
+              "outcomeName": "powyżej 1",
+              "outcomeOdds": 1.02,
+              "outcomePosition": 1,
+              "status": 100
+            }
+          ],
+          "combinationTypes": [
+            1
+          ]
+        },
+        {
+          "gameId": 920395614,
+          "gameName": "Liczba goli",
+          "gameType": 8,
+          "gameCode": 0,
+          "argument": 1.5,
+          "combinationType": 1,
+          "marketTypes": [
+            3
+          ],
+          "gameLayout": 20,
+          "eventLayout": 6,
+          "outcomes": [
+            {
+              "outcomeId": 696773477,
+              "outcomeName": "poniżej 1.5",
+              "outcomeOdds": 4.9,
+              "outcomePosition": 0,
+              "status": 100
+            },
+            {
+              "outcomeId": 696773478,
+              "outcomeName": "powyżej 1.5",
+              "outcomeOdds": 1.14,
+              "outcomePosition": 1,
+              "status": 100
+            }
+          ],
+          "combinationTypes": [
+            1
+          ]
+        },
+        {
+          "gameId": 920395615,
+          "gameName": "Liczba goli",
+          "gameType": 8,
+          "gameCode": 0,
+          "argument": 2,
+          "combinationType": 1,
+          "marketTypes": [
+            3
+          ],
+          "gameLayout": 20,
+          "eventLayout": 6,
+          "outcomes": [
+            {
+              "outcomeId": 696773479,
+              "outcomeName": "poniżej 2",
+              "outcomeOdds": 4.05,
+              "outcomePosition": 0,
+              "status": 100
+            },
+            {
+              "outcomeId": 696773480,
+              "outcomeName": "powyżej 2",
+              "outcomeOdds": 1.2,
+              "outcomePosition": 1,
+              "status": 100
+            }
+          ],
+          "combinationTypes": [
+            1
+          ]
+        },
+        {
+          "gameId": 920395592,
+          "gameName": "Liczba goli",
+          "gameType": 8,
+          "gameCode": 0,
+          "argument": 2.5,
+          "combinationType": 1,
+          "marketTypes": [
+            3
+          ],
+          "gameLayout": 20,
+          "eventLayout": 6,
+          "outcomes": [
+            {
+              "outcomeId": 696773420,
+              "outcomeName": "poniżej 2.5",
+              "outcomeOdds": 2.5,
+              "outcomePosition": 0,
+              "status": 100
+            },
+            {
+              "outcomeId": 696773421,
+              "outcomeName": "powyżej 2.5",
+              "outcomeOdds": 1.47,
+              "outcomePosition": 1,
+              "status": 100
+            }
+          ],
+          "combinationTypes": [
+            1
+          ]
+        },
+        {
+          "gameId": 920395594,
+          "gameName": "Liczba goli",
+          "gameType": 8,
+          "gameCode": 0,
+          "argument": 3,
+          "combinationType": 1,
+          "marketTypes": [
+            3
+          ],
+          "gameLayout": 20,
+          "eventLayout": 6,
+          "outcomes": [
+            {
+              "outcomeId": 696773424,
+              "outcomeName": "poniżej 3",
+              "outcomeOdds": 2,
+              "outcomePosition": 0,
+              "status": 100
+            },
+            {
+              "outcomeId": 696773426,
+              "outcomeName": "powyżej 3",
+              "outcomeOdds": 1.73,
+              "outcomePosition": 1,
+              "status": 100
+            }
+          ],
+          "combinationTypes": [
+            1
+          ]
+        },
+        {
+          "gameId": 920395596,
+          "gameName": "Liczba goli",
+          "gameType": 8,
+          "gameCode": 0,
+          "argument": 3.5,
+          "combinationType": 1,
+          "marketTypes": [
+            3
+          ],
+          "gameLayout": 20,
+          "eventLayout": 6,
+          "outcomes": [
+            {
+              "outcomeId": 696773428,
+              "outcomeName": "poniżej 3.5",
+              "outcomeOdds": 1.6,
+              "outcomePosition": 0,
+              "status": 100
+            },
+            {
+              "outcomeId": 696773430,
+              "outcomeName": "powyżej 3.5",
+              "outcomeOdds": 2.2,
+              "outcomePosition": 1,
+              "status": 100
+            }
+          ],
+          "combinationTypes": [
+            1
+          ]
+        },
+        {
+          "gameId": 920395649,
+          "gameName": "Liczba goli",
+          "gameType": 8,
+          "gameCode": 0,
+          "argument": 4,
+          "combinationType": 1,
+          "marketTypes": [
+            3
+          ],
+          "gameLayout": 20,
+          "eventLayout": 6,
+          "outcomes": [
+            {
+              "outcomeId": 696773576,
+              "outcomeName": "poniżej 4",
+              "outcomeOdds": 1.32,
+              "outcomePosition": 0,
+              "status": 100
+            },
+            {
+              "outcomeId": 696773577,
+              "outcomeName": "powyżej 4",
+              "outcomeOdds": 3.1,
+              "outcomePosition": 1,
+              "status": 100
+            }
+          ],
+          "combinationTypes": [
+            1
+          ]
+        },
+        {
+          "gameId": 920395598,
+          "gameName": "Liczba goli",
+          "gameType": 8,
+          "gameCode": 0,
+          "argument": 4.5,
+          "combinationType": 1,
+          "marketTypes": [
+            3
+          ],
+          "gameLayout": 20,
+          "eventLayout": 6,
+          "outcomes": [
+            {
+              "outcomeId": 696773432,
+              "outcomeName": "poniżej 4.5",
+              "outcomeOdds": 1.24,
+              "outcomePosition": 0,
+              "status": 100
+            },
+            {
+              "outcomeId": 696773433,
+              "outcomeName": "powyżej 4.5",
+              "outcomeOdds": 3.65,
+              "outcomePosition": 1,
+              "status": 100
+            }
+          ],
+          "combinationTypes": [
+            1
+          ]
+        },
+        {
+          "gameId": 920395616,
+          "gameName": "Liczba goli",
+          "gameType": 8,
+          "gameCode": 0,
+          "argument": 5,
+          "combinationType": 1,
+          "marketTypes": [
+            3
+          ],
+          "gameLayout": 20,
+          "eventLayout": 6,
+          "outcomes": [
+            {
+              "outcomeId": 696773481,
+              "outcomeName": "poniżej 5",
+              "outcomeOdds": 1.1,
+              "outcomePosition": 0,
+              "status": 100
+            },
+            {
+              "outcomeId": 696773482,
+              "outcomeName": "powyżej 5",
+              "outcomeOdds": 5.85,
+              "outcomePosition": 1,
+              "status": 100
+            }
+          ],
+          "combinationTypes": [
+            1
+          ]
+        },
+        {
+          "gameId": 920395599,
+          "gameName": "Liczba goli",
+          "gameType": 8,
+          "gameCode": 0,
+          "argument": 5.5,
+          "combinationType": 1,
+          "marketTypes": [
+            3
+          ],
+          "gameLayout": 20,
+          "eventLayout": 6,
+          "outcomes": [
+            {
+              "outcomeId": 696773434,
+              "outcomeName": "poniżej 5.5",
+              "outcomeOdds": 1.08,
+              "outcomePosition": 0,
+              "status": 100
+            },
+            {
+              "outcomeId": 696773435,
+              "outcomeName": "powyżej 5.5",
+              "outcomeOdds": 6.5,
+              "outcomePosition": 1,
+              "status": 100
+            }
+          ],
+          "combinationTypes": [
+            1
+          ]
+        },
+        {
+          "gameId": 920395527,
+          "gameName": "1. połowa - 1X2",
+          "gameType": 3,
+          "gameCode": 0,
+          "argument": null,
+          "combinationType": 1,
+          "marketTypes": [
+            32
+          ],
+          "gameLayout": 1,
+          "eventLayout": 3,
+          "outcomes": [
+            {
+              "outcomeId": 696773247,
+              "outcomeName": "Wieczysta Kraków",
+              "outcomeOdds": 2.7,
+              "outcomePosition": 0,
+              "status": 100
+            },
+            {
+              "outcomeId": 696773248,
+              "outcomeName": "X",
+              "outcomeOdds": 2.47,
+              "outcomePosition": 1,
+              "status": 100
+            },
+            {
+              "outcomeId": 696773249,
+              "outcomeName": "Raków Częstochowa",
+              "outcomeOdds": 3.15,
+              "outcomePosition": 2,
+              "status": 100
+            }
+          ],
+          "combinationTypes": [
+            1
+          ]
+        },
+        {
+          "gameId": 920395547,
+          "gameName": "1. połowa - podwójna szansa",
+          "gameType": 27,
+          "gameCode": 0,
+          "argument": null,
+          "combinationType": 1,
+          "marketTypes": [
+            32
+          ],
+          "gameLayout": 1,
+          "eventLayout": 3,
+          "outcomes": [
+            {
+              "outcomeId": 696773306,
+              "outcomeName": "1/X",
+              "outcomeOdds": 1.29,
+              "outcomePosition": 0,
+              "status": 100
+            },
+            {
+              "outcomeId": 696773308,
+              "outcomeName": "1/2",
+              "outcomeOdds": 1.44,
+              "outcomePosition": 1,
+              "status": 100
+            },
+            {
+              "outcomeId": 696773310,
+              "outcomeName": "X/2",
+              "outcomeOdds": 1.37,
+              "outcomePosition": 2,
+              "status": 100
+            }
+          ],
+          "combinationTypes": [
+            1
+          ]
+        },
+        {
+          "gameId": 920395258,
+          "gameName": "1. połowa - obie drużyny strzelą gola",
+          "gameType": 120,
+          "gameCode": 0,
+          "argument": null,
+          "combinationType": 1,
+          "marketTypes": [
+            32
+          ],
+          "gameLayout": 2,
+          "eventLayout": 5,
+          "outcomes": [
+            {
+              "outcomeId": 696772364,
+              "outcomeName": "tak",
+              "outcomeOdds": 3.3,
+              "outcomePosition": 0,
+              "status": 100
+            },
+            {
+              "outcomeId": 696772365,
+              "outcomeName": "nie",
+              "outcomeOdds": 1.29,
+              "outcomePosition": 1,
+              "status": 100
+            }
+          ],
+          "combinationTypes": [
+            1
+          ]
+        },
+        {
+          "gameId": 920395723,
+          "gameName": "2. połowa - 1X2",
+          "gameType": 111,
+          "gameCode": 0,
+          "argument": null,
+          "combinationType": 1,
+          "marketTypes": [
+            33
+          ],
+          "gameLayout": 3,
+          "eventLayout": 3,
+          "outcomes": [
+            {
+              "outcomeId": 696773750,
+              "outcomeName": "Wieczysta Kraków",
+              "outcomeOdds": 2.6,
+              "outcomePosition": 0,
+              "status": 100
+            },
+            {
+              "outcomeId": 696773751,
+              "outcomeName": "X",
+              "outcomeOdds": 2.8,
+              "outcomePosition": 1,
+              "status": 100
+            },
+            {
+              "outcomeId": 696773752,
+              "outcomeName": "Raków Częstochowa",
+              "outcomeOdds": 2.9,
+              "outcomePosition": 2,
+              "status": 100
+            }
+          ],
+          "combinationTypes": [
+            1
+          ]
+        },
+        {
+          "gameId": 920395529,
+          "gameName": "2. połowa - podwójna szansa",
+          "gameType": -188,
+          "gameCode": 0,
+          "argument": null,
+          "combinationType": 1,
+          "marketTypes": [
+            33
+          ],
+          "gameLayout": 1,
+          "eventLayout": 3,
+          "outcomes": [
+            {
+              "outcomeId": 696773252,
+              "outcomeName": "1/X",
+              "outcomeOdds": 1.33,
+              "outcomePosition": 0,
+              "status": 100
+            },
+            {
+              "outcomeId": 696773253,
+              "outcomeName": "1/2",
+              "outcomeOdds": 1.35,
+              "outcomePosition": 1,
+              "status": 100
+            },
+            {
+              "outcomeId": 696773254,
+              "outcomeName": "X/2",
+              "outcomeOdds": 1.41,
+              "outcomePosition": 2,
+              "status": 100
+            }
+          ],
+          "combinationTypes": [
+            1
+          ]
+        },
+        {
+          "gameId": 920395437,
+          "gameName": "2. połowa - obie drużyny strzelą gola",
+          "gameType": 121,
+          "gameCode": 0,
+          "argument": null,
+          "combinationType": 1,
+          "marketTypes": [
+            33
+          ],
+          "gameLayout": 2,
+          "eventLayout": 5,
+          "outcomes": [
+            {
+              "outcomeId": 696772944,
+              "outcomeName": "tak",
+              "outcomeOdds": 2.5,
+              "outcomePosition": 0,
+              "status": 100
+            },
+            {
+              "outcomeId": 696772945,
+              "outcomeName": "nie",
+              "outcomeOdds": 1.47,
+              "outcomePosition": 1,
+              "status": 100
+            }
+          ],
+          "combinationTypes": [
+            1
+          ]
+        },
+        {
+          "gameId": 920394632,
+          "gameName": "Połowa z większą liczbą goli",
+          "gameType": 38,
+          "gameCode": 0,
+          "argument": null,
+          "combinationType": 1,
+          "marketTypes": [
+            37
+          ],
+          "gameLayout": 1,
+          "eventLayout": 2,
+          "outcomes": [
+            {
+              "outcomeId": 696770335,
+              "outcomeName": "1. połowa",
+              "outcomeOdds": 2.95,
+              "outcomePosition": 0,
+              "status": 100
+            },
+            {
+              "outcomeId": 696770336,
+              "outcomeName": "równo",
+              "outcomeOdds": 3.75,
+              "outcomePosition": 1,
+              "status": 100
+            },
+            {
+              "outcomeId": 696770337,
+              "outcomeName": "2. połowa",
+              "outcomeOdds": 2.03,
+              "outcomePosition": 2,
+              "status": 100
+            }
+          ],
+          "combinationTypes": [
+            1
+          ]
+        }
+      ],
+      "treatAsSport": 1,
+      "category3AggregatedId": 0,
+      "eventExtendedData": {
+        "feedProviderId": "2",
+        "remoteCategoryId": "160"
+      },
+      "participants": [
+        {
+          "localId": 127459,
+          "remoteId": 575451,
+          "rawRemoteId": "575451",
+          "name": "Wieczysta Kraków",
+          "number": 1
+        },
+        {
+          "localId": 88706,
+          "remoteId": 139946,
+          "rawRemoteId": "139946",
+          "name": "Raków Częstochowa",
+          "number": 2
+        }
+      ],
+      "isCustomBetAvailable": false,
+      "customBetAvailable": false
+    },
+    {
+      "eventId": 23152347,
+      "eventName": "Widzew Łódź - Wisła Kraków",
+      "eventStart": 1792175400000,
+      "eventType": 1,
+      "category3Id": 265,
+      "category2Id": 264,
+      "category1Id": 1,
+      "category3Name": "Ekstraklasa",
+      "category2Name": "Polska",
+      "category1Name": "Piłka nożna",
+      "eventCodeId": 0,
+      "gamesCount": 200,
+      "eventGames": [
+        {
+          "gameId": 920512509,
+          "gameName": "1X2",
+          "gameType": 1,
+          "gameCode": 0,
+          "argument": null,
+          "combinationType": 1,
+          "marketTypes": [
+            6
+          ],
+          "gameLayout": 1,
+          "eventLayout": 1,
+          "outcomes": [
+            {
+              "outcomeId": 697132167,
+              "outcomeName": "Widzew Łódź",
+              "outcomeOdds": 2.3,
+              "outcomePosition": 0,
+              "status": 100
+            },
+            {
+              "outcomeId": 697132168,
+              "outcomeName": "X",
+              "outcomeOdds": 3.65,
+              "outcomePosition": 1,
+              "status": 100
+            },
+            {
+              "outcomeId": 697132169,
+              "outcomeName": "Wisła Kraków",
+              "outcomeOdds": 2.75,
+              "outcomePosition": 2,
+              "status": 100
+            }
+          ],
+          "combinationTypes": [
+            1
+          ]
+        },
+        {
+          "gameId": 920512465,
+          "gameName": "Podwójna szansa",
+          "gameType": 4,
+          "gameCode": 0,
+          "argument": null,
+          "combinationType": 1,
+          "marketTypes": [
+            6
+          ],
+          "gameLayout": 3,
+          "eventLayout": 14,
+          "outcomes": [
+            {
+              "outcomeId": 697132037,
+              "outcomeName": "1/X",
+              "outcomeOdds": 1.4,
+              "outcomePosition": 0,
+              "status": 100
+            },
+            {
+              "outcomeId": 697132038,
+              "outcomeName": "1/2",
+              "outcomeOdds": 1.25,
+              "outcomePosition": 1,
+              "status": 100
+            },
+            {
+              "outcomeId": 697132039,
+              "outcomeName": "X/2",
+              "outcomeOdds": 1.55,
+              "outcomePosition": 2,
+              "status": 100
+            }
+          ],
+          "combinationTypes": [
+            1
+          ]
+        },
+        {
+          "gameId": 920512520,
+          "gameName": "Obie drużyny strzelą gola",
+          "gameType": 98,
+          "gameCode": 0,
+          "argument": null,
+          "combinationType": 1,
+          "marketTypes": [
+            6
+          ],
+          "gameLayout": 2,
+          "eventLayout": 6,
+          "outcomes": [
+            {
+              "outcomeId": 697132196,
+              "outcomeName": "tak",
+              "outcomeOdds": 1.55,
+              "outcomePosition": 0,
+              "status": 100
+            },
+            {
+              "outcomeId": 697132197,
+              "outcomeName": "nie",
+              "outcomeOdds": 2.3,
+              "outcomePosition": 1,
+              "status": 100
+            }
+          ],
+          "combinationTypes": [
+            1
+          ]
+        },
+        {
+          "gameId": 920513101,
+          "gameName": "Liczba goli",
+          "gameType": 8,
+          "gameCode": 0,
+          "argument": 1,
+          "combinationType": 1,
+          "marketTypes": [
+            3
+          ],
+          "gameLayout": 20,
+          "eventLayout": 6,
+          "outcomes": [
+            {
+              "outcomeId": 697134157,
+              "outcomeName": "poniżej 1",
+              "outcomeOdds": 9,
+              "outcomePosition": 0,
+              "status": 100
+            },
+            {
+              "outcomeId": 697134160,
+              "outcomeName": "powyżej 1",
+              "outcomeOdds": 1.03,
+              "outcomePosition": 1,
+              "status": 100
+            }
+          ],
+          "combinationTypes": [
+            1
+          ]
+        },
+        {
+          "gameId": 920513175,
+          "gameName": "Liczba goli",
+          "gameType": 8,
+          "gameCode": 0,
+          "argument": 1.5,
+          "combinationType": 1,
+          "marketTypes": [
+            3
+          ],
+          "gameLayout": 20,
+          "eventLayout": 6,
+          "outcomes": [
+            {
+              "outcomeId": 697134349,
+              "outcomeName": "poniżej 1.5",
+              "outcomeOdds": 4.05,
+              "outcomePosition": 0,
+              "status": 100
+            },
+            {
+              "outcomeId": 697134350,
+              "outcomeName": "powyżej 1.5",
+              "outcomeOdds": 1.2,
+              "outcomePosition": 1,
+              "status": 100
+            }
+          ],
+          "combinationTypes": [
+            1
+          ]
+        },
+        {
+          "gameId": 920513176,
+          "gameName": "Liczba goli",
+          "gameType": 8,
+          "gameCode": 0,
+          "argument": 2,
+          "combinationType": 1,
+          "marketTypes": [
+            3
+          ],
+          "gameLayout": 20,
+          "eventLayout": 6,
+          "outcomes": [
+            {
+              "outcomeId": 697134351,
+              "outcomeName": "poniżej 2",
+              "outcomeOdds": 3.3,
+              "outcomePosition": 0,
+              "status": 100
+            },
+            {
+              "outcomeId": 697134352,
+              "outcomeName": "powyżej 2",
+              "outcomeOdds": 1.29,
+              "outcomePosition": 1,
+              "status": 100
+            }
+          ],
+          "combinationTypes": [
+            1
+          ]
+        },
+        {
+          "gameId": 920513162,
+          "gameName": "Liczba goli",
+          "gameType": 8,
+          "gameCode": 0,
+          "argument": 2.5,
+          "combinationType": 1,
+          "marketTypes": [
+            3
+          ],
+          "gameLayout": 20,
+          "eventLayout": 6,
+          "outcomes": [
+            {
+              "outcomeId": 697134321,
+              "outcomeName": "poniżej 2.5",
+              "outcomeOdds": 2.15,
+              "outcomePosition": 0,
+              "status": 100
+            },
+            {
+              "outcomeId": 697134322,
+              "outcomeName": "powyżej 2.5",
+              "outcomeOdds": 1.62,
+              "outcomePosition": 1,
+              "status": 100
+            }
+          ],
+          "combinationTypes": [
+            1
+          ]
+        },
+        {
+          "gameId": 920513163,
+          "gameName": "Liczba goli",
+          "gameType": 8,
+          "gameCode": 0,
+          "argument": 3,
+          "combinationType": 1,
+          "marketTypes": [
+            3
+          ],
+          "gameLayout": 20,
+          "eventLayout": 6,
+          "outcomes": [
+            {
+              "outcomeId": 697134323,
+              "outcomeName": "poniżej 3",
+              "outcomeOdds": 1.7,
+              "outcomePosition": 0,
+              "status": 100
+            },
+            {
+              "outcomeId": 697134324,
+              "outcomeName": "powyżej 3",
+              "outcomeOdds": 2.05,
+              "outcomePosition": 1,
+              "status": 100
+            }
+          ],
+          "combinationTypes": [
+            1
+          ]
+        },
+        {
+          "gameId": 920513177,
+          "gameName": "Liczba goli",
+          "gameType": 8,
+          "gameCode": 0,
+          "argument": 3.5,
+          "combinationType": 1,
+          "marketTypes": [
+            3
+          ],
+          "gameLayout": 20,
+          "eventLayout": 6,
+          "outcomes": [
+            {
+              "outcomeId": 697134353,
+              "outcomeName": "poniżej 3.5",
+              "outcomeOdds": 1.43,
+              "outcomePosition": 0,
+              "status": 100
+            },
+            {
+              "outcomeId": 697134354,
+              "outcomeName": "powyżej 3.5",
+              "outcomeOdds": 2.6,
+              "outcomePosition": 1,
+              "status": 100
+            }
+          ],
+          "combinationTypes": [
+            1
+          ]
+        },
+        {
+          "gameId": 920513164,
+          "gameName": "Liczba goli",
+          "gameType": 8,
+          "gameCode": 0,
+          "argument": 4,
+          "combinationType": 1,
+          "marketTypes": [
+            3
+          ],
+          "gameLayout": 20,
+          "eventLayout": 6,
+          "outcomes": [
+            {
+              "outcomeId": 697134325,
+              "outcomeName": "poniżej 4",
+              "outcomeOdds": 1.21,
+              "outcomePosition": 0,
+              "status": 100
+            },
+            {
+              "outcomeId": 697134326,
+              "outcomeName": "powyżej 4",
+              "outcomeOdds": 3.95,
+              "outcomePosition": 1,
+              "status": 100
+            }
+          ],
+          "combinationTypes": [
+            1
+          ]
+        },
+        {
+          "gameId": 920513165,
+          "gameName": "Liczba goli",
+          "gameType": 8,
+          "gameCode": 0,
+          "argument": 4.5,
+          "combinationType": 1,
+          "marketTypes": [
+            3
+          ],
+          "gameLayout": 20,
+          "eventLayout": 6,
+          "outcomes": [
+            {
+              "outcomeId": 697134327,
+              "outcomeName": "poniżej 4.5",
+              "outcomeOdds": 1.16,
+              "outcomePosition": 0,
+              "status": 100
+            },
+            {
+              "outcomeId": 697134328,
+              "outcomeName": "powyżej 4.5",
+              "outcomeOdds": 4.6,
+              "outcomePosition": 1,
+              "status": 100
+            }
+          ],
+          "combinationTypes": [
+            1
+          ]
+        },
+        {
+          "gameId": 920513108,
+          "gameName": "Liczba goli",
+          "gameType": 8,
+          "gameCode": 0,
+          "argument": 5,
+          "combinationType": 1,
+          "marketTypes": [
+            3
+          ],
+          "gameLayout": 20,
+          "eventLayout": 6,
+          "outcomes": [
+            {
+              "outcomeId": 697134187,
+              "outcomeName": "poniżej 5",
+              "outcomeOdds": 1.05,
+              "outcomePosition": 0,
+              "status": 100
+            },
+            {
+              "outcomeId": 697134191,
+              "outcomeName": "powyżej 5",
+              "outcomeOdds": 7.8,
+              "outcomePosition": 1,
+              "status": 100
+            }
+          ],
+          "combinationTypes": [
+            1
+          ]
+        },
+        {
+          "gameId": 922523242,
+          "gameName": "Liczba goli",
+          "gameType": 8,
+          "gameCode": 0,
+          "argument": 5.5,
+          "combinationType": 1,
+          "marketTypes": [
+            3
+          ],
+          "gameLayout": 20,
+          "eventLayout": 6,
+          "outcomes": [
+            {
+              "outcomeId": 703395761,
+              "outcomeName": "poniżej 5.5",
+              "outcomeOdds": 1.04,
+              "outcomePosition": 0,
+              "status": 100
+            },
+            {
+              "outcomeId": 703395762,
+              "outcomeName": "powyżej 5.5",
+              "outcomeOdds": 8.4,
+              "outcomePosition": 1,
+              "status": 100
+            }
+          ],
+          "combinationTypes": [
+            1
+          ]
+        },
+        {
+          "gameId": 920512874,
+          "gameName": "1. połowa - 1X2",
+          "gameType": 3,
+          "gameCode": 0,
+          "argument": null,
+          "combinationType": 1,
+          "marketTypes": [
+            32
+          ],
+          "gameLayout": 1,
+          "eventLayout": 3,
+          "outcomes": [
+            {
+              "outcomeId": 697133395,
+              "outcomeName": "Widzew Łódź",
+              "outcomeOdds": 2.85,
+              "outcomePosition": 0,
+              "status": 100
+            },
+            {
+              "outcomeId": 697133400,
+              "outcomeName": "X",
+              "outcomeOdds": 2.36,
+              "outcomePosition": 1,
+              "status": 100
+            },
+            {
+              "outcomeId": 697133402,
+              "outcomeName": "Wisła Kraków",
+              "outcomeOdds": 3.2,
+              "outcomePosition": 2,
+              "status": 100
+            }
+          ],
+          "combinationTypes": [
+            1
+          ]
+        },
+        {
+          "gameId": 920512640,
+          "gameName": "1. połowa - podwójna szansa",
+          "gameType": 27,
+          "gameCode": 0,
+          "argument": null,
+          "combinationType": 1,
+          "marketTypes": [
+            32
+          ],
+          "gameLayout": 1,
+          "eventLayout": 3,
+          "outcomes": [
+            {
+              "outcomeId": 697132554,
+              "outcomeName": "1/X",
+              "outcomeOdds": 1.28,
+              "outcomePosition": 0,
+              "status": 100
+            },
+            {
+              "outcomeId": 697132555,
+              "outcomeName": "1/2",
+              "outcomeOdds": 1.48,
+              "outcomePosition": 1,
+              "status": 100
+            },
+            {
+              "outcomeId": 697132556,
+              "outcomeName": "X/2",
+              "outcomeOdds": 1.35,
+              "outcomePosition": 2,
+              "status": 100
+            }
+          ],
+          "combinationTypes": [
+            1
+          ]
+        },
+        {
+          "gameId": 920512744,
+          "gameName": "1. połowa - obie drużyny strzelą gola",
+          "gameType": 120,
+          "gameCode": 0,
+          "argument": null,
+          "combinationType": 1,
+          "marketTypes": [
+            32
+          ],
+          "gameLayout": 2,
+          "eventLayout": 5,
+          "outcomes": [
+            {
+              "outcomeId": 697132957,
+              "outcomeName": "tak",
+              "outcomeOdds": 3.55,
+              "outcomePosition": 0,
+              "status": 100
+            },
+            {
+              "outcomeId": 697132958,
+              "outcomeName": "nie",
+              "outcomeOdds": 1.25,
+              "outcomePosition": 1,
+              "status": 100
+            }
+          ],
+          "combinationTypes": [
+            1
+          ]
+        },
+        {
+          "gameId": 920512742,
+          "gameName": "2. połowa - 1X2",
+          "gameType": 111,
+          "gameCode": 0,
+          "argument": null,
+          "combinationType": 1,
+          "marketTypes": [
+            33
+          ],
+          "gameLayout": 3,
+          "eventLayout": 3,
+          "outcomes": [
+            {
+              "outcomeId": 697132934,
+              "outcomeName": "Widzew Łódź",
+              "outcomeOdds": 2.65,
+              "outcomePosition": 0,
+              "status": 100
+            },
+            {
+              "outcomeId": 697132936,
+              "outcomeName": "X",
+              "outcomeOdds": 2.6,
+              "outcomePosition": 1,
+              "status": 100
+            },
+            {
+              "outcomeId": 697132937,
+              "outcomeName": "Wisła Kraków",
+              "outcomeOdds": 3.05,
+              "outcomePosition": 2,
+              "status": 100
+            }
+          ],
+          "combinationTypes": [
+            1
+          ]
+        },
+        {
+          "gameId": 920512563,
+          "gameName": "2. połowa - podwójna szansa",
+          "gameType": -188,
+          "gameCode": 0,
+          "argument": null,
+          "combinationType": 1,
+          "marketTypes": [
+            33
+          ],
+          "gameLayout": 1,
+          "eventLayout": 3,
+          "outcomes": [
+            {
+              "outcomeId": 697132330,
+              "outcomeName": "1/X",
+              "outcomeOdds": 1.31,
+              "outcomePosition": 0,
+              "status": 100
+            },
+            {
+              "outcomeId": 697132331,
+              "outcomeName": "1/2",
+              "outcomeOdds": 1.4,
+              "outcomePosition": 1,
+              "status": 100
+            },
+            {
+              "outcomeId": 697132332,
+              "outcomeName": "X/2",
+              "outcomeOdds": 1.39,
+              "outcomePosition": 2,
+              "status": 100
+            }
+          ],
+          "combinationTypes": [
+            1
+          ]
+        },
+        {
+          "gameId": 920513166,
+          "gameName": "2. połowa - obie drużyny strzelą gola",
+          "gameType": 121,
+          "gameCode": 0,
+          "argument": null,
+          "combinationType": 1,
+          "marketTypes": [
+            33
+          ],
+          "gameLayout": 2,
+          "eventLayout": 5,
+          "outcomes": [
+            {
+              "outcomeId": 697134329,
+              "outcomeName": "tak",
+              "outcomeOdds": 2.8,
+              "outcomePosition": 0,
+              "status": 100
+            },
+            {
+              "outcomeId": 697134330,
+              "outcomeName": "nie",
+              "outcomeOdds": 1.38,
+              "outcomePosition": 1,
+              "status": 100
+            }
+          ],
+          "combinationTypes": [
+            1
+          ]
+        },
+        {
+          "gameId": 920512598,
+          "gameName": "Połowa z większą liczbą goli",
+          "gameType": 38,
+          "gameCode": 0,
+          "argument": null,
+          "combinationType": 1,
+          "marketTypes": [
+            37
+          ],
+          "gameLayout": 1,
+          "eventLayout": 2,
+          "outcomes": [
+            {
+              "outcomeId": 697132429,
+              "outcomeName": "1. połowa",
+              "outcomeOdds": 2.9,
+              "outcomePosition": 0,
+              "status": 100
+            },
+            {
+              "outcomeId": 697132431,
+              "outcomeName": "równo",
+              "outcomeOdds": 3.55,
+              "outcomePosition": 1,
+              "status": 100
+            },
+            {
+              "outcomeId": 697132432,
+              "outcomeName": "2. połowa",
+              "outcomeOdds": 2.1,
+              "outcomePosition": 2,
+              "status": 100
+            }
+          ],
+          "combinationTypes": [
+            1
+          ]
+        }
+      ],
+      "treatAsSport": 1,
+      "category3AggregatedId": 0,
+      "eventExtendedData": {
+        "feedProviderId": "2",
+        "remoteCategoryId": "160"
+      },
+      "participants": [
+        {
+          "localId": 85322,
+          "remoteId": 110065,
+          "rawRemoteId": "110065",
+          "name": "Widzew Łódź",
+          "number": 1
+        },
+        {
+          "localId": 99008,
+          "remoteId": 110428,
+          "rawRemoteId": "110428",
+          "name": "Wisła Kraków",
+          "number": 2
+        }
+      ],
+      "isCustomBetAvailable": false,
+      "customBetAvailable": false
+    },
+    {
+      "eventId": 23167862,
+      "eventName": "Motor Lublin - Śląsk Wrocław",
+      "eventStart": 1792241100000,
+      "eventType": 1,
+      "category3Id": 265,
+      "category2Id": 264,
+      "category1Id": 1,
+      "category3Name": "Ekstraklasa",
+      "category2Name": "Polska",
+      "category1Name": "Piłka nożna",
+      "eventCodeId": 0,
+      "gamesCount": 200,
+      "eventGames": [
+        {
+          "gameId": 921206134,
+          "gameName": "1X2",
+          "gameType": 1,
+          "gameCode": 0,
+          "argument": null,
+          "combinationType": 1,
+          "marketTypes": [
+            6
+          ],
+          "gameLayout": 1,
+          "eventLayout": 1,
+          "outcomes": [
+            {
+              "outcomeId": 699301905,
+              "outcomeName": "Motor Lublin",
+              "outcomeOdds": 1.99,
+              "outcomePosition": 0,
+              "status": 100
+            },
+            {
+              "outcomeId": 699301906,
+              "outcomeName": "X",
+              "outcomeOdds": 3.8,
+              "outcomePosition": 1,
+              "status": 100
+            },
+            {
+              "outcomeId": 699301907,
+              "outcomeName": "Śląsk Wrocław",
+              "outcomeOdds": 3.3,
+              "outcomePosition": 2,
+              "status": 100
+            }
+          ],
+          "combinationTypes": [
+            1
+          ]
+        },
+        {
+          "gameId": 921206148,
+          "gameName": "Podwójna szansa",
+          "gameType": 4,
+          "gameCode": 0,
+          "argument": null,
+          "combinationType": 1,
+          "marketTypes": [
+            6
+          ],
+          "gameLayout": 3,
+          "eventLayout": 14,
+          "outcomes": [
+            {
+              "outcomeId": 699301979,
+              "outcomeName": "1/X",
+              "outcomeOdds": 1.28,
+              "outcomePosition": 0,
+              "status": 100
+            },
+            {
+              "outcomeId": 699301980,
+              "outcomeName": "1/2",
+              "outcomeOdds": 1.24,
+              "outcomePosition": 1,
+              "status": 100
+            },
+            {
+              "outcomeId": 699301981,
+              "outcomeName": "X/2",
+              "outcomeOdds": 1.73,
+              "outcomePosition": 2,
+              "status": 100
+            }
+          ],
+          "combinationTypes": [
+            1
+          ]
+        },
+        {
+          "gameId": 921206221,
+          "gameName": "Obie drużyny strzelą gola",
+          "gameType": 98,
+          "gameCode": 0,
+          "argument": null,
+          "combinationType": 1,
+          "marketTypes": [
+            6
+          ],
+          "gameLayout": 2,
+          "eventLayout": 6,
+          "outcomes": [
+            {
+              "outcomeId": 699302187,
+              "outcomeName": "tak",
+              "outcomeOdds": 1.5,
+              "outcomePosition": 0,
+              "status": 100
+            },
+            {
+              "outcomeId": 699302188,
+              "outcomeName": "nie",
+              "outcomeOdds": 2.4,
+              "outcomePosition": 1,
+              "status": 100
+            }
+          ],
+          "combinationTypes": [
+            1
+          ]
+        },
+        {
+          "gameId": 921206229,
+          "gameName": "Liczba goli",
+          "gameType": 8,
+          "gameCode": 0,
+          "argument": 1,
+          "combinationType": 1,
+          "marketTypes": [
+            3
+          ],
+          "gameLayout": 20,
+          "eventLayout": 6,
+          "outcomes": [
+            {
+              "outcomeId": 699302227,
+              "outcomeName": "poniżej 1",
+              "outcomeOdds": 10,
+              "outcomePosition": 0,
+              "status": 100
+            },
+            {
+              "outcomeId": 699302228,
+              "outcomeName": "powyżej 1",
+              "outcomeOdds": 1.02,
+              "outcomePosition": 1,
+              "status": 100
+            }
+          ],
+          "combinationTypes": [
+            1
+          ]
+        },
+        {
+          "gameId": 921206231,
+          "gameName": "Liczba goli",
+          "gameType": 8,
+          "gameCode": 0,
+          "argument": 1.5,
+          "combinationType": 1,
+          "marketTypes": [
+            3
+          ],
+          "gameLayout": 20,
+          "eventLayout": 6,
+          "outcomes": [
+            {
+              "outcomeId": 699302231,
+              "outcomeName": "poniżej 1.5",
+              "outcomeOdds": 4.3,
+              "outcomePosition": 0,
+              "status": 100
+            },
+            {
+              "outcomeId": 699302232,
+              "outcomeName": "powyżej 1.5",
+              "outcomeOdds": 1.18,
+              "outcomePosition": 1,
+              "status": 100
+            }
+          ],
+          "combinationTypes": [
+            1
+          ]
+        },
+        {
+          "gameId": 921206261,
+          "gameName": "Liczba goli",
+          "gameType": 8,
+          "gameCode": 0,
+          "argument": 2,
+          "combinationType": 1,
+          "marketTypes": [
+            3
+          ],
+          "gameLayout": 20,
+          "eventLayout": 6,
+          "outcomes": [
+            {
+              "outcomeId": 699302316,
+              "outcomeName": "poniżej 2",
+              "outcomeOdds": 3.55,
+              "outcomePosition": 0,
+              "status": 100
+            },
+            {
+              "outcomeId": 699302317,
+              "outcomeName": "powyżej 2",
+              "outcomeOdds": 1.25,
+              "outcomePosition": 1,
+              "status": 100
+            }
+          ],
+          "combinationTypes": [
+            1
+          ]
+        },
+        {
+          "gameId": 921206262,
+          "gameName": "Liczba goli",
+          "gameType": 8,
+          "gameCode": 0,
+          "argument": 2.5,
+          "combinationType": 1,
+          "marketTypes": [
+            3
+          ],
+          "gameLayout": 20,
+          "eventLayout": 6,
+          "outcomes": [
+            {
+              "outcomeId": 699302318,
+              "outcomeName": "poniżej 2.5",
+              "outcomeOdds": 2.3,
+              "outcomePosition": 0,
+              "status": 100
+            },
+            {
+              "outcomeId": 699302319,
+              "outcomeName": "powyżej 2.5",
+              "outcomeOdds": 1.55,
+              "outcomePosition": 1,
+              "status": 100
+            }
+          ],
+          "combinationTypes": [
+            1
+          ]
+        },
+        {
+          "gameId": 921206232,
+          "gameName": "Liczba goli",
+          "gameType": 8,
+          "gameCode": 0,
+          "argument": 3,
+          "combinationType": 1,
+          "marketTypes": [
+            3
+          ],
+          "gameLayout": 20,
+          "eventLayout": 6,
+          "outcomes": [
+            {
+              "outcomeId": 699302233,
+              "outcomeName": "poniżej 3",
+              "outcomeOdds": 1.78,
+              "outcomePosition": 0,
+              "status": 100
+            },
+            {
+              "outcomeId": 699302234,
+              "outcomeName": "powyżej 3",
+              "outcomeOdds": 1.93,
+              "outcomePosition": 1,
+              "status": 100
+            }
+          ],
+          "combinationTypes": [
+            1
+          ]
+        },
+        {
+          "gameId": 921206263,
+          "gameName": "Liczba goli",
+          "gameType": 8,
+          "gameCode": 0,
+          "argument": 3.5,
+          "combinationType": 1,
+          "marketTypes": [
+            3
+          ],
+          "gameLayout": 20,
+          "eventLayout": 6,
+          "outcomes": [
+            {
+              "outcomeId": 699302320,
+              "outcomeName": "poniżej 3.5",
+              "outcomeOdds": 1.48,
+              "outcomePosition": 0,
+              "status": 100
+            },
+            {
+              "outcomeId": 699302321,
+              "outcomeName": "powyżej 3.5",
+              "outcomeOdds": 2.45,
+              "outcomePosition": 1,
+              "status": 100
+            }
+          ],
+          "combinationTypes": [
+            1
+          ]
+        },
+        {
+          "gameId": 921206264,
+          "gameName": "Liczba goli",
+          "gameType": 8,
+          "gameCode": 0,
+          "argument": 4,
+          "combinationType": 1,
+          "marketTypes": [
+            3
+          ],
+          "gameLayout": 20,
+          "eventLayout": 6,
+          "outcomes": [
+            {
+              "outcomeId": 699302322,
+              "outcomeName": "poniżej 4",
+              "outcomeOdds": 1.25,
+              "outcomePosition": 0,
+              "status": 100
+            },
+            {
+              "outcomeId": 699302323,
+              "outcomeName": "powyżej 4",
+              "outcomeOdds": 3.55,
+              "outcomePosition": 1,
+              "status": 100
+            }
+          ],
+          "combinationTypes": [
+            1
+          ]
+        },
+        {
+          "gameId": 921206233,
+          "gameName": "Liczba goli",
+          "gameType": 8,
+          "gameCode": 0,
+          "argument": 4.5,
+          "combinationType": 1,
+          "marketTypes": [
+            3
+          ],
+          "gameLayout": 20,
+          "eventLayout": 6,
+          "outcomes": [
+            {
+              "outcomeId": 699302235,
+              "outcomeName": "poniżej 4.5",
+              "outcomeOdds": 1.19,
+              "outcomePosition": 0,
+              "status": 100
+            },
+            {
+              "outcomeId": 699302236,
+              "outcomeName": "powyżej 4.5",
+              "outcomeOdds": 4.15,
+              "outcomePosition": 1,
+              "status": 100
+            }
+          ],
+          "combinationTypes": [
+            1
+          ]
+        },
+        {
+          "gameId": 921206282,
+          "gameName": "Liczba goli",
+          "gameType": 8,
+          "gameCode": 0,
+          "argument": 5,
+          "combinationType": 1,
+          "marketTypes": [
+            3
+          ],
+          "gameLayout": 20,
+          "eventLayout": 6,
+          "outcomes": [
+            {
+              "outcomeId": 699302394,
+              "outcomeName": "poniżej 5",
+              "outcomeOdds": 1.06,
+              "outcomePosition": 0,
+              "status": 100
+            },
+            {
+              "outcomeId": 699302395,
+              "outcomeName": "powyżej 5",
+              "outcomeOdds": 7.3,
+              "outcomePosition": 1,
+              "status": 100
+            }
+          ],
+          "combinationTypes": [
+            1
+          ]
+        },
+        {
+          "gameId": 921206234,
+          "gameName": "Liczba goli",
+          "gameType": 8,
+          "gameCode": 0,
+          "argument": 5.5,
+          "combinationType": 1,
+          "marketTypes": [
+            3
+          ],
+          "gameLayout": 20,
+          "eventLayout": 6,
+          "outcomes": [
+            {
+              "outcomeId": 699302237,
+              "outcomeName": "poniżej 5.5",
+              "outcomeOdds": 1.05,
+              "outcomePosition": 0,
+              "status": 100
+            },
+            {
+              "outcomeId": 699302238,
+              "outcomeName": "powyżej 5.5",
+              "outcomeOdds": 7.8,
+              "outcomePosition": 1,
+              "status": 100
+            }
+          ],
+          "combinationTypes": [
+            1
+          ]
+        },
+        {
+          "gameId": 921206283,
+          "gameName": "1. połowa - 1X2",
+          "gameType": 3,
+          "gameCode": 0,
+          "argument": null,
+          "combinationType": 1,
+          "marketTypes": [
+            32
+          ],
+          "gameLayout": 1,
+          "eventLayout": 3,
+          "outcomes": [
+            {
+              "outcomeId": 699302396,
+              "outcomeName": "Motor Lublin",
+              "outcomeOdds": 2.5,
+              "outcomePosition": 0,
+              "status": 100
+            },
+            {
+              "outcomeId": 699302397,
+              "outcomeName": "X",
+              "outcomeOdds": 2.43,
+              "outcomePosition": 1,
+              "status": 100
+            },
+            {
+              "outcomeId": 699302398,
+              "outcomeName": "Śląsk Wrocław",
+              "outcomeOdds": 3.6,
+              "outcomePosition": 2,
+              "status": 100
+            }
+          ],
+          "combinationTypes": [
+            1
+          ]
+        },
+        {
+          "gameId": 921206341,
+          "gameName": "1. połowa - podwójna szansa",
+          "gameType": 27,
+          "gameCode": 0,
+          "argument": null,
+          "combinationType": 1,
+          "marketTypes": [
+            32
+          ],
+          "gameLayout": 1,
+          "eventLayout": 3,
+          "outcomes": [
+            {
+              "outcomeId": 699302533,
+              "outcomeName": "1/X",
+              "outcomeOdds": 1.23,
+              "outcomePosition": 0,
+              "status": 100
+            },
+            {
+              "outcomeId": 699302534,
+              "outcomeName": "1/2",
+              "outcomeOdds": 1.45,
+              "outcomePosition": 1,
+              "status": 100
+            },
+            {
+              "outcomeId": 699302535,
+              "outcomeName": "X/2",
+              "outcomeOdds": 1.43,
+              "outcomePosition": 2,
+              "status": 100
+            }
+          ],
+          "combinationTypes": [
+            1
+          ]
+        },
+        {
+          "gameId": 921206180,
+          "gameName": "1. połowa - obie drużyny strzelą gola",
+          "gameType": 120,
+          "gameCode": 0,
+          "argument": null,
+          "combinationType": 1,
+          "marketTypes": [
+            32
+          ],
+          "gameLayout": 2,
+          "eventLayout": 5,
+          "outcomes": [
+            {
+              "outcomeId": 699302075,
+              "outcomeName": "tak",
+              "outcomeOdds": 3.4,
+              "outcomePosition": 0,
+              "status": 100
+            },
+            {
+              "outcomeId": 699302076,
+              "outcomeName": "nie",
+              "outcomeOdds": 1.27,
+              "outcomePosition": 1,
+              "status": 100
+            }
+          ],
+          "combinationTypes": [
+            1
+          ]
+        },
+        {
+          "gameId": 921206398,
+          "gameName": "2. połowa - 1X2",
+          "gameType": 111,
+          "gameCode": 0,
+          "argument": null,
+          "combinationType": 1,
+          "marketTypes": [
+            33
+          ],
+          "gameLayout": 3,
+          "eventLayout": 3,
+          "outcomes": [
+            {
+              "outcomeId": 699302675,
+              "outcomeName": "Motor Lublin",
+              "outcomeOdds": 2.33,
+              "outcomePosition": 0,
+              "status": 100
+            },
+            {
+              "outcomeId": 699302676,
+              "outcomeName": "X",
+              "outcomeOdds": 2.7,
+              "outcomePosition": 1,
+              "status": 100
+            },
+            {
+              "outcomeId": 699302677,
+              "outcomeName": "Śląsk Wrocław",
+              "outcomeOdds": 3.45,
+              "outcomePosition": 2,
+              "status": 100
+            }
+          ],
+          "combinationTypes": [
+            1
+          ]
+        },
+        {
+          "gameId": 921206368,
+          "gameName": "2. połowa - podwójna szansa",
+          "gameType": -188,
+          "gameCode": 0,
+          "argument": null,
+          "combinationType": 1,
+          "marketTypes": [
+            33
+          ],
+          "gameLayout": 1,
+          "eventLayout": 3,
+          "outcomes": [
+            {
+              "outcomeId": 699302596,
+              "outcomeName": "1/X",
+              "outcomeOdds": 1.24,
+              "outcomePosition": 0,
+              "status": 100
+            },
+            {
+              "outcomeId": 699302597,
+              "outcomeName": "1/2",
+              "outcomeOdds": 1.38,
+              "outcomePosition": 1,
+              "status": 100
+            },
+            {
+              "outcomeId": 699302598,
+              "outcomeName": "X/2",
+              "outcomeOdds": 1.49,
+              "outcomePosition": 2,
+              "status": 100
+            }
+          ],
+          "combinationTypes": [
+            1
+          ]
+        },
+        {
+          "gameId": 921206242,
+          "gameName": "2. połowa - obie drużyny strzelą gola",
+          "gameType": 121,
+          "gameCode": 0,
+          "argument": null,
+          "combinationType": 1,
+          "marketTypes": [
+            33
+          ],
+          "gameLayout": 2,
+          "eventLayout": 5,
+          "outcomes": [
+            {
+              "outcomeId": 699302261,
+              "outcomeName": "tak",
+              "outcomeOdds": 2.75,
+              "outcomePosition": 0,
+              "status": 100
+            },
+            {
+              "outcomeId": 699302262,
+              "outcomeName": "nie",
+              "outcomeOdds": 1.4,
+              "outcomePosition": 1,
+              "status": 100
+            }
+          ],
+          "combinationTypes": [
+            1
+          ]
+        },
+        {
+          "gameId": 921206227,
+          "gameName": "Połowa z większą liczbą goli",
+          "gameType": 38,
+          "gameCode": 0,
+          "argument": null,
+          "combinationType": 1,
+          "marketTypes": [
+            37
+          ],
+          "gameLayout": 1,
+          "eventLayout": 2,
+          "outcomes": [
+            {
+              "outcomeId": 699302206,
+              "outcomeName": "1. połowa",
+              "outcomeOdds": 2.85,
+              "outcomePosition": 0,
+              "status": 100
+            },
+            {
+              "outcomeId": 699302207,
+              "outcomeName": "równo",
+              "outcomeOdds": 3.65,
+              "outcomePosition": 1,
+              "status": 100
+            },
+            {
+              "outcomeId": 699302208,
+              "outcomeName": "2. połowa",
+              "outcomeOdds": 2.11,
+              "outcomePosition": 2,
+              "status": 100
+            }
+          ],
+          "combinationTypes": [
+            1
+          ]
+        }
+      ],
+      "treatAsSport": 1,
+      "category3AggregatedId": 0,
+      "eventExtendedData": {
+        "feedProviderId": "2",
+        "remoteCategoryId": "160"
+      },
+      "participants": [
+        {
+          "localId": 82137,
+          "remoteId": 128335,
+          "rawRemoteId": "128335",
+          "name": "Motor Lublin",
+          "number": 1
+        },
+        {
+          "localId": 98401,
+          "remoteId": 128344,
+          "rawRemoteId": "128344",
+          "name": "Śląsk Wrocław",
+          "number": 2
+        }
+      ],
+      "isCustomBetAvailable": false,
+      "customBetAvailable": false
+    }
+  ]
+}

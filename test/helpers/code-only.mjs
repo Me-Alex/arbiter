@@ -325,7 +325,7 @@ export function guardedPropertyReads(src, receivers = ['window.arbiterFormat'], 
  * @param {string} src whole source file
  * @param {string[]} [receivers] dotted receiver names
  * @param {boolean} [isJs]
- * @returns {{key: string, line: number, op: string, text: string}[]}
+ * @returns {{key: string, line: number, op: string, text: string, value: string|null}[]}
  */
 export function propertyWrites(src, receivers = ['window.arbiterFormat'], isJs = true) {
   for (const r of receivers) {
@@ -345,6 +345,13 @@ export function propertyWrites(src, receivers = ['window.arbiterFormat'], isJs =
       line: node.loc.start.line,
       op,
       text: (src.split('\n')[node.loc.start.line - 1] || '').trim(),
+      // The right-hand side as source text, so a caller asking "which values does
+      // this key ever hold" reads them off the tree instead of pulling a quoted
+      // run out of `text` with a regular expression — which is how a probe for
+      // the scrape status vocabulary found four of seven and reported the rest
+      // as unreachable. `null` for an update expression, which has no right-hand
+      // side rather than an empty one.
+      value: node.type === 'AssignmentExpression' ? src.slice(node.right.range[0], node.right.range[1]).trim() : null,
     });
   };
   visit(parseAny(src, isJs), (n) => {
@@ -488,26 +495,52 @@ export function objectsWithKey(src, key, isJs = true) {
  * expression, and the hand-written scanner in api-surface that did it that way
  * blanked the rest of a 700-line file over one backtick.
  *
+ * A class method counts, and not because it is a nicety: asked for
+ * `restoreState` on src/scrape-orchestrator.mjs, the version that matched
+ * FunctionDeclaration only threw — and the method is right there, on line 40,
+ * holding the one assignment that decides what a dead process leaves behind.
+ * The throw is correct behaviour for a name that is absent and wrong for one
+ * that is a method, and the caller cannot tell the two apart: both are "no
+ * function declaration named X". A method is found by its key, computed keys
+ * excluded, since `[name]() {}` has a name no identifier can be compared to.
+ *
+ * A declaration wins over a method of the same name, because that is the one a
+ * caller naming a bare function almost always means, and the file is searched
+ * for declarations before methods rather than taking whichever came first.
+ *
  * @param {string} src whole source file
  * @param {string} name the function's own name
  * @param {boolean} [isJs]
  * @returns {{text: string, line: number, endLine: number}}
- * @throws when no function declaration of that name is in the file — a census
+ * @throws when no function or method of that name is in the file — a census
  *   over an empty fragment reports every published field as unread, which is the
  *   one answer this instrument must not be able to give.
  */
 export function functionSource(src, name, isJs = true) {
   if (!/^\w+$/.test(name)) throw new Error(`function name must be an identifier, got ${name}`);
-  let found = null;
+  let declaration = null;
+  let method = null;
   visit(parseAny(src, isJs), (n) => {
-    if (!found && n.type === 'FunctionDeclaration' && n.id && n.id.name === name) found = n;
+    if (n.type === 'FunctionDeclaration' && !declaration && n.id && n.id.name === name) declaration = n;
+    else if (n.type === 'MethodDefinition' && !method && !n.computed
+      && n.key?.type === 'Identifier' && n.key.name === name) method = n;
   });
-  if (!found) throw new Error(`no function declaration named ${name} is in this source`);
-  return {
-    text: src.slice(found.range[0], found.range[1]),
-    line: found.loc.start.line,
-    endLine: found.loc.end.line,
-  };
+  const found = declaration || method;
+  if (!found) throw new Error(`no function or method named ${name} is in this source`);
+  const raw = src.slice(found.range[0], found.range[1]);
+  // A method is not a statement: `async restoreState() { … }` fails to parse on
+  // its own, because `async` there is a modifier only in front of `function`.
+  // Put the keyword back so the fragment is a function declaration of the same
+  // name, which parses and means the same thing. This shifts every offset in
+  // the fragment by a constant — already true of any fragment's own line
+  // numbers, and the file's line comes from `found.loc` either way.
+  const text = declaration ? raw
+    : (/^async\s/.test(raw) ? `async function ${raw.replace(/^async\s+/, '')}` : `function ${raw}`);
+  // Checked rather than assumed. `static foo() {}` and `get foo() {}` do not
+  // parse even after this, and handing one back would fail later inside
+  // somebody else's `propertyWrites`, naming the wrong file.
+  parseAny(text, isJs);
+  return { text, line: found.loc.start.line, endLine: found.loc.end.line };
 }
 
 /**
@@ -521,4 +554,193 @@ export function functionSource(src, name, isJs = true) {
  */
 export function objectKeys(src, marker, isJs = true) {
   return [...new Set(objectEntries(src, marker, isJs).map((e) => e.key))].sort();
+}
+
+/**
+ * Every write a page makes through the API client: method, path, and the keys of
+ * the body.
+ *
+ * The answer to "what does this page actually send the server" was being worked
+ * out by hand, one call site at a time, and the hand answers were right every
+ * time — which is exactly why they were a liability. A census that is read off
+ * the tree stops being true quietly when a page adds a key, and the audit this
+ * file exists for is the one that has to notice.
+ *
+ * A brace counter cannot do this. The bodies are nested literals
+ * (`{ selection, odds, … }` beside `{ …, scanOptions: { … } }`), and the first
+ * version of this walked the file with a regex over `[{,]\s*(\w+)` and reported
+ * forty-one keys for a five-key body, having run past the closing brace into the
+ * rest of the file. Nesting is the parser's job — the same argument that put
+ * `fieldsOn` here instead of in a line scanner.
+ *
+ * A body that is a name rather than a literal is reported as that name with no
+ * keys in `keys`, never as an empty body. `{ preferences: wanted }` and
+ * `payload` are both ordinary here, and the settings defect this census was
+ * written after lived inside one of them: `assembledScanOptions()` returning
+ * the wrong thing was invisible from the call site and obvious only after
+ * following the name. So the name is followed too, into `namedBody`, which is
+ * that declaration's line and its keys when the declaration is an object
+ * literal in the scope holding the call — and `null` when it is not, which is a
+ * different answer from "sends nothing" and a caller can tell the two apart.
+ *
+ * That `null` is load-bearing and is why the two are separate fields. An empty
+ * `keys` says the body is empty; a null `namedBody` says the body is a name
+ * this cannot follow, and the two need different sentences — one is a defect,
+ * the other is the edge of the instrument. Folding them would have made every
+ * unfollowable name read as a deliberate empty body.
+ *
+ * Spread properties are reported separately and never folded into `keys`, because
+ * silently dropping them is how this first reported a page as not sending `sport`
+ * when the very next line spread it in. `...(cond ? { sport: v } : {})` is a
+ * `SpreadElement`, not a `Property`; reading the object as a key list left it out
+ * and the omission read as a finding. An unresolved spread is named, so the
+ * caller is told there is something here it cannot see.
+ *
+ * A spread of a conditional is resolved as the union of its branches, which is
+ * the honest answer to "can this call send `sport`" — yes, on the arm where the
+ * control holds. A spread of a name stays `null`, because those keys are
+ * whatever the function returns at the time and only running it would say.
+ *
+ * @param {string} src whole source file
+ * @param {string} [client] the API client identifier
+ * @returns {{method: string, path: string|null, pathText: string, line: number,
+ *            keys: string[], dropped: string[], spreads: {keys: string[]|null, text: string}[],
+ *            bodyName: string|null, namedBody: {line: number, keys: string[], dropped: string[]}|null}[]}
+ */
+export function writeCallSites(src, client = 'arbiterApi') {
+  if (!/^\w+$/.test(client)) throw new Error(`client must be an identifier, got ${client}`);
+
+  /** The keys a spread could contribute, or null when only running it would say. */
+  const spreadKeys = (node) => {
+    if (!node) return null;
+    if (node.type === 'ObjectExpression') return entriesOf(src, node).map((e) => e.key);
+    if (node.type === 'ConditionalExpression') {
+      const yes = spreadKeys(node.consequent);
+      const no = spreadKeys(node.alternate);
+      return yes === null || no === null ? null : [...new Set([...yes, ...no])];
+    }
+    if (node.type === 'LogicalExpression') {
+      const left = spreadKeys(node.left);
+      const right = spreadKeys(node.right);
+      return left === null || right === null ? null : [...new Set([...left, ...right])];
+    }
+    if (node.type === 'ParenthesizedExpression') return spreadKeys(node.expression);
+    return null;
+  };
+
+  /**
+   * Properties that are written and never arrive.
+   *
+   * `{ scanOptions: undefined }` reads as a body that carries the key, and a
+   * census of key names calls it sent. `JSON.stringify` does not: an undefined
+   * value is omitted, so the route receives the body without it — which is the
+   * exact shape of the settings scrape bug, one layer down from the missing key
+   * it started as. A function or a class is dropped the same way.
+   */
+  const droppedKeys = (literal) => literal.properties.flatMap((p) => {
+    if (p.type !== 'Property' || p.computed) return [];
+    const key = p.key.type === 'Identifier' ? p.key.name
+      : (p.key.type === 'Literal' && typeof p.key.value === 'string' ? p.key.value : null);
+    if (key === null) return [];
+    const v = p.value;
+    const gone = (v.type === 'Identifier' && v.name === 'undefined')
+      || (v.type === 'UnaryExpression' && v.operator === 'void')
+      || ['FunctionExpression', 'ArrowFunctionExpression', 'ClassExpression'].includes(v.type);
+    return gone ? [key] : [];
+  }).sort();
+
+  /**
+   * The nearest function, or the file, around a node — the only thing that
+   * decides which `payload` a call means.
+   */
+  const scopeOf = (ancestors) => {
+    for (let i = ancestors.length - 1; i >= 0; i -= 1) {
+      const a = ancestors[i];
+      if (['FunctionDeclaration', 'FunctionExpression', 'ArrowFunctionExpression', 'Program'].includes(a.type)) return a;
+    }
+    return null;
+  };
+
+  /**
+   * The literal a named body stands for, in the scope that holds the call.
+   *
+   * By scope, not by name across the file. `public/js/pages/live.js` declares
+   * `payload` twice — once inside `loadEvents`, for a GET result that is
+   * `outcome.value` and not a literal at all, and once inside the apply
+   * listener — and a file-wide lookup by name picks the first declaration. It
+   * would then either report the send as unresolvable or, once the lookup grew
+   * a fallback, credit it with a body it does not carry. Both are the kind of
+   * false clean this file exists to delete, and both are silent.
+   *
+   * `null` when the name has no literal in that scope, and also when two
+   * declarations of it in the SAME scope would answer — a name rebound before
+   * the call is not this instrument's to resolve, and only running the page
+   * would say which one is sent.
+   *
+   * A reassignment counts as a second declaration here, which it did not in the
+   * first version of this and had to be taught by injection: `let payload =
+   * { a: 1 }; payload = { b: 2 };` has exactly ONE `VariableDeclarator`, so the
+   * declarator count said "unambiguous" and the answer was `{ a: 1 }` — the
+   * literal the second assignment had already replaced, reported as if it were
+   * the one on the wire. The instrument only looks for declarators because that
+   * is the shape it was written for, and a hole shaped like the thing it was
+   * written for is the kind that passes review. An assignment to the bare name
+   * in the call's scope therefore refuses the resolution.
+   */
+  const resolveNamedBody = (name, siteRange) => {
+    const hits = [];
+    let reassigned = false;
+    visit(ast, (n, ancestors) => {
+      if (n.type !== 'VariableDeclarator' && n.type !== 'AssignmentExpression') return;
+      const bound = n.type === 'VariableDeclarator' ? n.id : n.left;
+      if (bound?.type !== 'Identifier' || bound.name !== name) return;
+      const scope = scopeOf(ancestors);
+      if (!scope || !(scope.range[0] <= siteRange[0] && siteRange[1] <= scope.range[1])) return;
+      if (n.type === 'AssignmentExpression') reassigned = true;
+      else hits.push(n);
+    });
+    if (reassigned || hits.length !== 1 || hits[0].init?.type !== 'ObjectExpression') return null;
+    return {
+      line: hits[0].loc.start.line,
+      keys: entriesOf(src, hits[0].init).map((e) => e.key).sort(),
+      dropped: droppedKeys(hits[0].init),
+    };
+  };
+
+  const ast = parseAny(src, true);
+  const out = [];
+  visit(ast, (n, ancestors) => {
+    if (n.type !== 'CallExpression') return;
+    const callee = n.callee;
+    if (callee?.type !== 'MemberExpression' || callee.computed) return;
+    if (callee.object?.type !== 'Identifier' || callee.object.name !== client) return;
+    if (callee.property?.type !== 'Identifier') return;
+    if (!['post', 'put', 'del', 'delete', 'patch'].includes(callee.property.name)) return;
+
+    const [first, second] = n.arguments;
+    const body = second ?? null;
+    const literal = body?.type === 'ObjectExpression' ? body : null;
+    const spreads = literal
+      ? literal.properties
+        .filter((p) => p.type === 'SpreadElement' || p.type === 'ExperimentalSpreadProperty')
+        .map((p) => ({
+          keys: spreadKeys(p.argument)?.sort() ?? null,
+          text: src.slice(p.range[0], p.range[1]).replace(/\s+/g, ' ').slice(0, 80),
+        }))
+      : [];
+    out.push({
+      method: callee.property.name === 'del' ? 'delete' : callee.property.name,
+      path: first?.type === 'Literal' && typeof first.value === 'string' ? first.value : null,
+      pathText: first ? src.slice(first.range[0], first.range[1]) : '',
+      line: n.loc.start.line,
+      keys: literal ? entriesOf(src, literal).map((e) => e.key).sort() : [],
+      dropped: literal ? droppedKeys(literal) : [],
+      spreads,
+      bodyName: literal ? null
+        : (body?.type === 'Identifier' ? body.name
+          : body ? src.slice(body.range[0], body.range[1]).split('\n')[0].trim() : null),
+      namedBody: literal || body?.type !== 'Identifier' ? null : resolveNamedBody(body.name, n.range),
+    });
+  });
+  return out.sort((a, b) => a.line - b.line);
 }

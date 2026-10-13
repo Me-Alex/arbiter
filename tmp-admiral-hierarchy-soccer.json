@@ -1,0 +1,2179 @@
+{
+  "items": [
+    {
+      "type": "CATEGORY",
+      "path": "pilka_nozna/miedzynarodowe_klubow",
+      "nodeId": "miedzynarodowe_klubow",
+      "id": "393",
+      "parentNodeId": "pilka_nozna",
+      "parentPath": "pilka_nozna",
+      "children": null,
+      "name": {
+        "name": "International Clubs",
+        "localizedName": {
+          "de": "Internationale Klubturniere",
+          "en": "International Clubs",
+          "it": "Clubs Internazionali",
+          "pl": "Międzynarodowe Klubów"
+        }
+      },
+      "order": 1,
+      "icon": "InternationalClubs",
+      "iconType": "NPSCountryFlags",
+      "prematchCounter": 71,
+      "outrightCounter": 3,
+      "liveCounter": 0,
+      "nextEventStartTime": "2026-10-13T07:45:00Z",
+      "sportId": null,
+      "categoryId": "393",
+      "competitionId": null
+    },
+    {
+      "type": "CATEGORY",
+      "path": "pilka_nozna/polska",
+      "nodeId": "polska",
+      "id": "47",
+      "parentNodeId": "pilka_nozna",
+      "parentPath": "pilka_nozna",
+      "children": null,
+      "name": {
+        "name": "Poland",
+        "localizedName": {
+          "de": "Poland",
+          "en": "Poland",
+          "it": "Polonia",
+          "pl": "Polska"
+        }
+      },
+      "order": 2,
+      "icon": "Poland",
+      "iconType": "NPSCountryFlags",
+      "prematchCounter": 37,
+      "outrightCounter": 1,
+      "liveCounter": 0,
+      "nextEventStartTime": "2026-10-15T16:30:00Z",
+      "sportId": null,
+      "categoryId": "47",
+      "competitionId": null
+    },
+    {
+      "type": "CATEGORY",
+      "path": "pilka_nozna/hiszpania",
+      "nodeId": "hiszpania",
+      "id": "32",
+      "parentNodeId": "pilka_nozna",
+      "parentPath": "pilka_nozna",
+      "children": null,
+      "name": {
+        "name": "Spain",
+        "localizedName": {
+          "de": "Spain",
+          "en": "Spain",
+          "it": "Spagna",
+          "pl": "Hiszpania"
+        }
+      },
+      "order": 3,
+      "icon": "Spain",
+      "iconType": "NPSCountryFlags",
+      "prematchCounter": 32,
+      "outrightCounter": 1,
+      "liveCounter": 0,
+      "nextEventStartTime": "2026-10-16T18:30:00Z",
+      "sportId": null,
+      "categoryId": "32",
+      "competitionId": null
+    },
+    {
+      "type": "CATEGORY",
+      "path": "pilka_nozna/anglia",
+      "nodeId": "anglia",
+      "id": "1",
+      "parentNodeId": "pilka_nozna",
+      "parentPath": "pilka_nozna",
+      "children": null,
+      "name": {
+        "name": "England",
+        "localizedName": {
+          "de": "England",
+          "en": "England",
+          "it": "Inghilterra",
+          "pl": "Anglia"
+        }
+      },
+      "order": 4,
+      "icon": "England",
+      "iconType": "NPSCountryFlags",
+      "prematchCounter": 94,
+      "outrightCounter": 4,
+      "liveCounter": 0,
+      "nextEventStartTime": "2026-10-13T18:00:00Z",
+      "sportId": null,
+      "categoryId": "1",
+      "competitionId": null
+    },
+    {
+      "type": "CATEGORY",
+      "path": "pilka_nozna/wlochy",
+      "nodeId": "wlochy",
+      "id": "31",
+      "parentNodeId": "pilka_nozna",
+      "parentPath": "pilka_nozna",
+      "children": null,
+      "name": {
+        "name": "Italy",
+        "localizedName": {
+          "de": "Italy",
+          "en": "Italy",
+          "it": "Italia",
+          "pl": "Włochy"
+        }
+      },
+      "order": 5,
+      "icon": "Italy",
+      "iconType": "NPSCountryFlags",
+      "prematchCounter": 32,
+      "outrightCounter": 2,
+      "liveCounter": 0,
+      "nextEventStartTime": "2026-10-13T13:00:00Z",
+      "sportId": null,
+      "categoryId": "31",
+      "competitionId": null
+    },
+    {
+      "type": "CATEGORY",
+      "path": "pilka_nozna/niemcy",
+      "nodeId": "niemcy",
+      "id": "30",
+      "parentNodeId": "pilka_nozna",
+      "parentPath": "pilka_nozna",
+      "children": null,
+      "name": {
+        "name": "Germany",
+        "localizedName": {
+          "de": "Deutschland",
+          "en": "Germany",
+          "it": "Germania",
+          "pl": "Niemcy"
+        }
+      },
+      "order": 6,
+      "icon": "Germany",
+      "iconType": "NPSCountryFlags",
+      "prematchCounter": 60,
+      "outrightCounter": 3,
+      "liveCounter": 0,
+      "nextEventStartTime": "2026-10-13T17:00:00Z",
+      "sportId": null,
+      "categoryId": "30",
+      "competitionId": null
+    },
+    {
+      "type": "CATEGORY",
+      "path": "pilka_nozna/francja",
+      "nodeId": "francja",
+      "id": "7",
+      "parentNodeId": "pilka_nozna",
+      "parentPath": "pilka_nozna",
+      "children": null,
+      "name": {
+        "name": "France",
+        "localizedName": {
+          "de": "Frankreich",
+          "en": "France",
+          "it": "Francia",
+          "pl": "Francja"
+        }
+      },
+      "order": 7,
+      "icon": "France",
+      "iconType": "NPSCountryFlags",
+      "prematchCounter": 36,
+      "outrightCounter": 1,
+      "liveCounter": 0,
+      "nextEventStartTime": "2026-10-15T18:45:00Z",
+      "sportId": null,
+      "categoryId": "7",
+      "competitionId": null
+    },
+    {
+      "type": "CATEGORY",
+      "path": "pilka_nozna/portugalia",
+      "nodeId": "portugalia",
+      "id": "44",
+      "parentNodeId": "pilka_nozna",
+      "parentPath": "pilka_nozna",
+      "children": null,
+      "name": {
+        "name": "Portugal",
+        "localizedName": {
+          "de": "Portugal",
+          "en": "Portugal",
+          "it": "Portogallo",
+          "pl": "Portugalia"
+        }
+      },
+      "order": 8,
+      "icon": "Portugal",
+      "iconType": "NPSCountryFlags",
+      "prematchCounter": 12,
+      "outrightCounter": 0,
+      "liveCounter": 0,
+      "nextEventStartTime": "2026-10-13T10:00:00Z",
+      "sportId": null,
+      "categoryId": "44",
+      "competitionId": null
+    },
+    {
+      "type": "CATEGORY",
+      "path": "pilka_nozna/belgia",
+      "nodeId": "belgia",
+      "id": "33",
+      "parentNodeId": "pilka_nozna",
+      "parentPath": "pilka_nozna",
+      "children": null,
+      "name": {
+        "name": "Belgium",
+        "localizedName": {
+          "de": "Belgien",
+          "en": "Belgium",
+          "it": "Belgio",
+          "pl": "Belgia"
+        }
+      },
+      "order": 9,
+      "icon": "Belgium",
+      "iconType": "NPSCountryFlags",
+      "prematchCounter": 0,
+      "outrightCounter": 1,
+      "liveCounter": 0,
+      "nextEventStartTime": null,
+      "sportId": null,
+      "categoryId": "33",
+      "competitionId": null
+    },
+    {
+      "type": "CATEGORY",
+      "path": "pilka_nozna/holandia",
+      "nodeId": "holandia",
+      "id": "35",
+      "parentNodeId": "pilka_nozna",
+      "parentPath": "pilka_nozna",
+      "children": null,
+      "name": {
+        "name": "Netherlands",
+        "localizedName": {
+          "de": "Netherlands",
+          "en": "Netherlands",
+          "it": "Paesi Bassi",
+          "pl": "Holandia"
+        }
+      },
+      "order": 10,
+      "icon": "Netherlands",
+      "iconType": "NPSCountryFlags",
+      "prematchCounter": 29,
+      "outrightCounter": 1,
+      "liveCounter": 0,
+      "nextEventStartTime": "2026-10-13T12:00:00Z",
+      "sportId": null,
+      "categoryId": "35",
+      "competitionId": null
+    },
+    {
+      "type": "CATEGORY",
+      "path": "pilka_nozna/turcja",
+      "nodeId": "turcja",
+      "id": "46",
+      "parentNodeId": "pilka_nozna",
+      "parentPath": "pilka_nozna",
+      "children": null,
+      "name": {
+        "name": "Turkey",
+        "localizedName": {
+          "de": "Turkey",
+          "en": "Turkey",
+          "it": "Turchia",
+          "pl": "Turcja"
+        }
+      },
+      "order": 11,
+      "icon": "Turkey",
+      "iconType": "NPSCountryFlags",
+      "prematchCounter": 19,
+      "outrightCounter": 0,
+      "liveCounter": 0,
+      "nextEventStartTime": "2026-10-13T11:30:00Z",
+      "sportId": null,
+      "categoryId": "46",
+      "competitionId": null
+    },
+    {
+      "type": "CATEGORY",
+      "path": "pilka_nozna/usa",
+      "nodeId": "usa",
+      "id": "26",
+      "parentNodeId": "pilka_nozna",
+      "parentPath": "pilka_nozna",
+      "children": null,
+      "name": {
+        "name": "USA",
+        "localizedName": {
+          "de": "USA",
+          "en": "USA",
+          "it": "Stati Uniti",
+          "pl": "USA"
+        }
+      },
+      "order": 12,
+      "icon": "USA",
+      "iconType": "NPSCountryFlags",
+      "prematchCounter": 53,
+      "outrightCounter": 0,
+      "liveCounter": 0,
+      "nextEventStartTime": "2026-10-14T23:00:00Z",
+      "sportId": null,
+      "categoryId": "26",
+      "competitionId": null
+    },
+    {
+      "type": "CATEGORY",
+      "path": "pilka_nozna/miedzynarodowe",
+      "nodeId": "miedzynarodowe",
+      "id": "4",
+      "parentNodeId": "pilka_nozna",
+      "parentPath": "pilka_nozna",
+      "children": null,
+      "name": {
+        "name": "International",
+        "localizedName": {
+          "de": "International",
+          "en": "International",
+          "it": "Internazionale",
+          "pl": "Międzynarodowe"
+        }
+      },
+      "order": 13,
+      "icon": "International",
+      "iconType": "NPSCountryFlags",
+      "prematchCounter": 33,
+      "outrightCounter": 1,
+      "liveCounter": 0,
+      "nextEventStartTime": "2026-10-13T15:00:00Z",
+      "sportId": null,
+      "categoryId": "4",
+      "competitionId": null
+    },
+    {
+      "type": "CATEGORY",
+      "path": "pilka_nozna/miedzynarodowe_mlodziezowe",
+      "nodeId": "miedzynarodowe_mlodziezowe",
+      "id": "392",
+      "parentNodeId": "pilka_nozna",
+      "parentPath": "pilka_nozna",
+      "children": null,
+      "name": {
+        "name": "International Youth",
+        "localizedName": {
+          "de": "Jugend International",
+          "en": "International Youth",
+          "it": "Internazionali Giovanili",
+          "pl": "Międzynarodowe Młodzieżowe"
+        }
+      },
+      "order": 14,
+      "icon": "InternationalYouth",
+      "iconType": "NPSCountryFlags",
+      "prematchCounter": 12,
+      "outrightCounter": 0,
+      "liveCounter": 0,
+      "nextEventStartTime": "2026-10-13T10:00:00Z",
+      "sportId": null,
+      "categoryId": "392",
+      "competitionId": null
+    },
+    {
+      "type": "CATEGORY",
+      "path": "pilka_nozna/arabia_saudyjska",
+      "nodeId": "arabia_saudyjska",
+      "id": "310",
+      "parentNodeId": "pilka_nozna",
+      "parentPath": "pilka_nozna",
+      "children": null,
+      "name": {
+        "name": "Saudi Arabia",
+        "localizedName": {
+          "de": "Saudi Arabien",
+          "en": "Saudi Arabia",
+          "it": "Arabia Saudita",
+          "pl": "Arabia Saudyjska"
+        }
+      },
+      "order": 15,
+      "icon": "SaudiArabia",
+      "iconType": "NPSCountryFlags",
+      "prematchCounter": 16,
+      "outrightCounter": 0,
+      "liveCounter": 0,
+      "nextEventStartTime": "2026-10-13T15:15:00Z",
+      "sportId": null,
+      "categoryId": "310",
+      "competitionId": null
+    },
+    {
+      "type": "CATEGORY",
+      "path": "pilka_nozna/algieria",
+      "nodeId": "algieria",
+      "id": "304",
+      "parentNodeId": "pilka_nozna",
+      "parentPath": "pilka_nozna",
+      "children": null,
+      "name": {
+        "name": "Algeria",
+        "localizedName": {
+          "de": "Algerien",
+          "en": "Algeria",
+          "it": "Algeria",
+          "pl": "Algieria"
+        }
+      },
+      "order": 17,
+      "icon": "Algeria",
+      "iconType": "NPSCountryFlags",
+      "prematchCounter": 17,
+      "outrightCounter": 0,
+      "liveCounter": 0,
+      "nextEventStartTime": "2026-10-13T14:00:00Z",
+      "sportId": null,
+      "categoryId": "304",
+      "competitionId": null
+    },
+    {
+      "type": "CATEGORY",
+      "path": "pilka_nozna/argentyna",
+      "nodeId": "argentyna",
+      "id": "48",
+      "parentNodeId": "pilka_nozna",
+      "parentPath": "pilka_nozna",
+      "children": null,
+      "name": {
+        "name": "Argentina",
+        "localizedName": {
+          "de": "Argentinien",
+          "en": "Argentina",
+          "it": "Argentina",
+          "pl": "Argentyna"
+        }
+      },
+      "order": 18,
+      "icon": "Argentina",
+      "iconType": "NPSCountryFlags",
+      "prematchCounter": 50,
+      "outrightCounter": 0,
+      "liveCounter": 2,
+      "nextEventStartTime": "2026-10-12T22:00:00Z",
+      "sportId": null,
+      "categoryId": "48",
+      "competitionId": null
+    },
+    {
+      "type": "CATEGORY",
+      "path": "pilka_nozna/australia",
+      "nodeId": "australia",
+      "id": "34",
+      "parentNodeId": "pilka_nozna",
+      "parentPath": "pilka_nozna",
+      "children": null,
+      "name": {
+        "name": "Australia",
+        "localizedName": {
+          "de": "Australien",
+          "en": "Australia",
+          "it": "Australia",
+          "pl": "Australia"
+        }
+      },
+      "order": 21,
+      "icon": "Australia",
+      "iconType": "NPSCountryFlags",
+      "prematchCounter": 23,
+      "outrightCounter": 0,
+      "liveCounter": 0,
+      "nextEventStartTime": "2026-10-15T08:30:00Z",
+      "sportId": null,
+      "categoryId": "34",
+      "competitionId": null
+    },
+    {
+      "type": "CATEGORY",
+      "path": "pilka_nozna/austria",
+      "nodeId": "austria",
+      "id": "17",
+      "parentNodeId": "pilka_nozna",
+      "parentPath": "pilka_nozna",
+      "children": null,
+      "name": {
+        "name": "Austria",
+        "localizedName": {
+          "de": "Österreich",
+          "en": "Austria",
+          "it": "Austria",
+          "pl": "Austria"
+        }
+      },
+      "order": 22,
+      "icon": "Austria",
+      "iconType": "NPSCountryFlags",
+      "prematchCounter": 20,
+      "outrightCounter": 0,
+      "liveCounter": 0,
+      "nextEventStartTime": "2026-10-16T16:30:00Z",
+      "sportId": null,
+      "categoryId": "17",
+      "competitionId": null
+    },
+    {
+      "type": "CATEGORY",
+      "path": "pilka_nozna/austria_amatorzy",
+      "nodeId": "austria_amatorzy",
+      "id": "97",
+      "parentNodeId": "pilka_nozna",
+      "parentPath": "pilka_nozna",
+      "children": null,
+      "name": {
+        "name": "Austria Amateur",
+        "localizedName": {
+          "de": "Österreich Amateure",
+          "en": "Austria Amateur",
+          "it": "Austria Amatori",
+          "pl": "Austria Amatorzy"
+        }
+      },
+      "order": 23,
+      "icon": "AustriaAmateur",
+      "iconType": "NPSCountryFlags",
+      "prematchCounter": 5,
+      "outrightCounter": 0,
+      "liveCounter": 0,
+      "nextEventStartTime": "2026-10-13T16:30:00Z",
+      "sportId": null,
+      "categoryId": "97",
+      "competitionId": null
+    },
+    {
+      "type": "CATEGORY",
+      "path": "pilka_nozna/angola",
+      "nodeId": "angola",
+      "id": "500",
+      "parentNodeId": "pilka_nozna",
+      "parentPath": "pilka_nozna",
+      "children": null,
+      "name": {
+        "name": "Angola",
+        "localizedName": {
+          "en": "Angola",
+          "pl": "Angola"
+        }
+      },
+      "order": 24,
+      "icon": "Angola",
+      "iconType": "NPSCountryFlags",
+      "prematchCounter": 1,
+      "outrightCounter": 0,
+      "liveCounter": 0,
+      "nextEventStartTime": "2026-10-13T16:00:00Z",
+      "sportId": null,
+      "categoryId": "500",
+      "competitionId": null
+    },
+    {
+      "type": "CATEGORY",
+      "path": "pilka_nozna/anglia_amatorzy",
+      "nodeId": "anglia_amatorzy",
+      "id": "252",
+      "parentNodeId": "pilka_nozna",
+      "parentPath": "pilka_nozna",
+      "children": null,
+      "name": {
+        "name": "England Amateur",
+        "localizedName": {
+          "de": "England Amateure",
+          "en": "England Amateur",
+          "it": "Inghilterra Amatori",
+          "pl": "Anglia Amatorzy"
+        }
+      },
+      "order": 25,
+      "icon": "EnglandAmateur",
+      "iconType": "NPSCountryFlags",
+      "prematchCounter": 44,
+      "outrightCounter": 0,
+      "liveCounter": 0,
+      "nextEventStartTime": "2026-10-13T12:00:00Z",
+      "sportId": null,
+      "categoryId": "252",
+      "competitionId": null
+    },
+    {
+      "type": "CATEGORY",
+      "path": "pilka_nozna/Belarus-91-123456",
+      "nodeId": "Belarus-91-123456",
+      "id": "91",
+      "parentNodeId": "pilka_nozna",
+      "parentPath": "pilka_nozna",
+      "children": null,
+      "name": {
+        "name": "Belarus",
+        "localizedName": {
+          "en": "Belarus",
+          "pl": "Białoruś"
+        }
+      },
+      "order": 28,
+      "icon": "Belarus",
+      "iconType": "NPSCountryFlags",
+      "prematchCounter": 2,
+      "outrightCounter": 0,
+      "liveCounter": 0,
+      "nextEventStartTime": "2026-10-14T16:00:00Z",
+      "sportId": null,
+      "categoryId": "91",
+      "competitionId": null
+    },
+    {
+      "type": "CATEGORY",
+      "path": "pilka_nozna/brazylia",
+      "nodeId": "brazylia",
+      "id": "13",
+      "parentNodeId": "pilka_nozna",
+      "parentPath": "pilka_nozna",
+      "children": null,
+      "name": {
+        "name": "Brazil",
+        "localizedName": {
+          "de": "Brasilien",
+          "en": "Brazil",
+          "it": "Brasile",
+          "pl": "Brazylia"
+        }
+      },
+      "order": 29,
+      "icon": "Brazil",
+      "iconType": "NPSCountryFlags",
+      "prematchCounter": 29,
+      "outrightCounter": 0,
+      "liveCounter": 1,
+      "nextEventStartTime": "2026-10-12T22:00:00Z",
+      "sportId": null,
+      "categoryId": "13",
+      "competitionId": null
+    },
+    {
+      "type": "CATEGORY",
+      "path": "pilka_nozna/bangladesz",
+      "nodeId": "bangladesz",
+      "id": "469",
+      "parentNodeId": "pilka_nozna",
+      "parentPath": "pilka_nozna",
+      "children": null,
+      "name": {
+        "name": "Bangladesh",
+        "localizedName": {
+          "de": "Bangladesch",
+          "en": "Bangladesh",
+          "it": "Bangladesh",
+          "pl": "Bangladesz"
+        }
+      },
+      "order": 30,
+      "icon": "Bangladesh",
+      "iconType": "NPSCountryFlags",
+      "prematchCounter": 1,
+      "outrightCounter": 0,
+      "liveCounter": 0,
+      "nextEventStartTime": "2026-10-13T08:45:00Z",
+      "sportId": null,
+      "categoryId": "469",
+      "competitionId": null
+    },
+    {
+      "type": "CATEGORY",
+      "path": "pilka_nozna/boliwia",
+      "nodeId": "boliwia",
+      "id": "379",
+      "parentNodeId": "pilka_nozna",
+      "parentPath": "pilka_nozna",
+      "children": null,
+      "name": {
+        "name": "Bolivia",
+        "localizedName": {
+          "de": "Bolivien",
+          "en": "Bolivia",
+          "it": "Bolivia",
+          "pl": "Boliwia"
+        }
+      },
+      "order": 32,
+      "icon": "Bolivia",
+      "iconType": "NPSCountryFlags",
+      "prematchCounter": 8,
+      "outrightCounter": 0,
+      "liveCounter": 1,
+      "nextEventStartTime": "2026-10-16T19:00:00Z",
+      "sportId": null,
+      "categoryId": "379",
+      "competitionId": null
+    },
+    {
+      "type": "CATEGORY",
+      "path": "pilka_nozna/bulgaria",
+      "nodeId": "bulgaria",
+      "id": "78",
+      "parentNodeId": "pilka_nozna",
+      "parentPath": "pilka_nozna",
+      "children": null,
+      "name": {
+        "name": "Bulgaria",
+        "localizedName": {
+          "de": "Bulgarien",
+          "en": "Bulgaria",
+          "it": "Bulgaria",
+          "pl": "Bułgaria"
+        }
+      },
+      "order": 34,
+      "icon": "Bulgaria",
+      "iconType": "NPSCountryFlags",
+      "prematchCounter": 9,
+      "outrightCounter": 0,
+      "liveCounter": 0,
+      "nextEventStartTime": "2026-10-13T15:00:00Z",
+      "sportId": null,
+      "categoryId": "78",
+      "competitionId": null
+    },
+    {
+      "type": "CATEGORY",
+      "path": "pilka_nozna/chile",
+      "nodeId": "chile",
+      "id": "49",
+      "parentNodeId": "pilka_nozna",
+      "parentPath": "pilka_nozna",
+      "children": null,
+      "name": {
+        "name": "Chile",
+        "localizedName": {
+          "de": "Chile",
+          "en": "Chile",
+          "it": "Cile",
+          "pl": "Chile"
+        }
+      },
+      "order": 39,
+      "icon": "Chile",
+      "iconType": "NPSCountryFlags",
+      "prematchCounter": 8,
+      "outrightCounter": 0,
+      "liveCounter": 2,
+      "nextEventStartTime": "2026-10-23T23:00:00Z",
+      "sportId": null,
+      "categoryId": "49",
+      "competitionId": null
+    },
+    {
+      "type": "CATEGORY",
+      "path": "pilka_nozna/chiny",
+      "nodeId": "chiny",
+      "id": "99",
+      "parentNodeId": "pilka_nozna",
+      "parentPath": "pilka_nozna",
+      "children": null,
+      "name": {
+        "name": "China",
+        "localizedName": {
+          "de": "China",
+          "en": "China",
+          "it": "Cina",
+          "pl": "Chiny"
+        }
+      },
+      "order": 40,
+      "icon": "China",
+      "iconType": "NPSCountryFlags",
+      "prematchCounter": 9,
+      "outrightCounter": 0,
+      "liveCounter": 0,
+      "nextEventStartTime": "2026-10-13T11:35:00Z",
+      "sportId": null,
+      "categoryId": "99",
+      "competitionId": null
+    },
+    {
+      "type": "CATEGORY",
+      "path": "pilka_nozna/chorwacja",
+      "nodeId": "chorwacja",
+      "id": "14",
+      "parentNodeId": "pilka_nozna",
+      "parentPath": "pilka_nozna",
+      "children": null,
+      "name": {
+        "name": "Croatia",
+        "localizedName": {
+          "de": "Kroatien",
+          "en": "Croatia",
+          "it": "Croazia",
+          "pl": "Chorwacja"
+        }
+      },
+      "order": 41,
+      "icon": "Croatia",
+      "iconType": "NPSCountryFlags",
+      "prematchCounter": 5,
+      "outrightCounter": 0,
+      "liveCounter": 0,
+      "nextEventStartTime": "2026-10-16T16:00:00Z",
+      "sportId": null,
+      "categoryId": "14",
+      "competitionId": null
+    },
+    {
+      "type": "CATEGORY",
+      "path": "pilka_nozna/cypr",
+      "nodeId": "cypr",
+      "id": "102",
+      "parentNodeId": "pilka_nozna",
+      "parentPath": "pilka_nozna",
+      "children": null,
+      "name": {
+        "name": "Cyprus",
+        "localizedName": {
+          "de": "Zypern",
+          "en": "Cyprus",
+          "it": "Cipro",
+          "pl": "Cypr"
+        }
+      },
+      "order": 42,
+      "icon": "Cyprus",
+      "iconType": "NPSCountryFlags",
+      "prematchCounter": 6,
+      "outrightCounter": 0,
+      "liveCounter": 0,
+      "nextEventStartTime": "2026-10-17T15:00:00Z",
+      "sportId": null,
+      "categoryId": "102",
+      "competitionId": null
+    },
+    {
+      "type": "CATEGORY",
+      "path": "pilka_nozna/czechy",
+      "nodeId": "czechy",
+      "id": "18",
+      "parentNodeId": "pilka_nozna",
+      "parentPath": "pilka_nozna",
+      "children": null,
+      "name": {
+        "name": "Czech Republic",
+        "localizedName": {
+          "de": "Tschechische Republik",
+          "en": "Czech Republic",
+          "it": "Repubblica Ceca",
+          "pl": "Czechy"
+        }
+      },
+      "order": 43,
+      "icon": "CzechRepublic",
+      "iconType": "NPSCountryFlags",
+      "prematchCounter": 10,
+      "outrightCounter": 0,
+      "liveCounter": 0,
+      "nextEventStartTime": "2026-10-13T15:30:00Z",
+      "sportId": null,
+      "categoryId": "18",
+      "competitionId": null
+    },
+    {
+      "type": "CATEGORY",
+      "path": "pilka_nozna/dania",
+      "nodeId": "dania",
+      "id": "8",
+      "parentNodeId": "pilka_nozna",
+      "parentPath": "pilka_nozna",
+      "children": null,
+      "name": {
+        "name": "Denmark",
+        "localizedName": {
+          "de": "Dänemark",
+          "en": "Denmark",
+          "it": "Danimarca",
+          "pl": "Dania"
+        }
+      },
+      "order": 44,
+      "icon": "Denmark",
+      "iconType": "NPSCountryFlags",
+      "prematchCounter": 12,
+      "outrightCounter": 0,
+      "liveCounter": 0,
+      "nextEventStartTime": "2026-10-16T17:00:00Z",
+      "sportId": null,
+      "categoryId": "8",
+      "competitionId": null
+    },
+    {
+      "type": "CATEGORY",
+      "path": "pilka_nozna/ekwador",
+      "nodeId": "ekwador",
+      "id": "165",
+      "parentNodeId": "pilka_nozna",
+      "parentPath": "pilka_nozna",
+      "children": null,
+      "name": {
+        "name": "Ecuador",
+        "localizedName": {
+          "de": "Ecuador",
+          "en": "Ecuador",
+          "it": "Ecuador",
+          "pl": "Ekwador"
+        }
+      },
+      "order": 47,
+      "icon": "Ecuador",
+      "iconType": "NPSCountryFlags",
+      "prematchCounter": 8,
+      "outrightCounter": 0,
+      "liveCounter": 0,
+      "nextEventStartTime": "2026-10-16T20:30:00Z",
+      "sportId": null,
+      "categoryId": "165",
+      "competitionId": null
+    },
+    {
+      "type": "CATEGORY",
+      "path": "pilka_nozna/egipt",
+      "nodeId": "egipt",
+      "id": "305",
+      "parentNodeId": "pilka_nozna",
+      "parentPath": "pilka_nozna",
+      "children": null,
+      "name": {
+        "name": "Egypt",
+        "localizedName": {
+          "de": "Ägypten",
+          "en": "Egypt",
+          "it": "Egitto",
+          "pl": "Egipt"
+        }
+      },
+      "order": 48,
+      "icon": "Egypt",
+      "iconType": "NPSCountryFlags",
+      "prematchCounter": 5,
+      "outrightCounter": 0,
+      "liveCounter": 0,
+      "nextEventStartTime": "2026-10-13T14:00:00Z",
+      "sportId": null,
+      "categoryId": "305",
+      "competitionId": null
+    },
+    {
+      "type": "CATEGORY",
+      "path": "pilka_nozna/estonia",
+      "nodeId": "estonia",
+      "id": "92",
+      "parentNodeId": "pilka_nozna",
+      "parentPath": "pilka_nozna",
+      "children": null,
+      "name": {
+        "name": "Estonia",
+        "localizedName": {
+          "de": "Estland",
+          "en": "Estonia",
+          "it": "Estonia",
+          "pl": "Estonia"
+        }
+      },
+      "order": 49,
+      "icon": "Estonia",
+      "iconType": "NPSCountryFlags",
+      "prematchCounter": 5,
+      "outrightCounter": 0,
+      "liveCounter": 0,
+      "nextEventStartTime": "2026-10-13T15:00:00Z",
+      "sportId": null,
+      "categoryId": "92",
+      "competitionId": null
+    },
+    {
+      "type": "CATEGORY",
+      "path": "pilka_nozna/finlandia",
+      "nodeId": "finlandia",
+      "id": "19",
+      "parentNodeId": "pilka_nozna",
+      "parentPath": "pilka_nozna",
+      "children": null,
+      "name": {
+        "name": "Finland",
+        "localizedName": {
+          "de": "Finnland",
+          "en": "Finland",
+          "it": "Finlandia",
+          "pl": "Finlandia"
+        }
+      },
+      "order": 51,
+      "icon": "Finland",
+      "iconType": "NPSCountryFlags",
+      "prematchCounter": 11,
+      "outrightCounter": 0,
+      "liveCounter": 0,
+      "nextEventStartTime": "2026-10-17T11:00:00Z",
+      "sportId": null,
+      "categoryId": "19",
+      "competitionId": null
+    },
+    {
+      "type": "CATEGORY",
+      "path": "pilka_nozna/grecja",
+      "nodeId": "grecja",
+      "id": "67",
+      "parentNodeId": "pilka_nozna",
+      "parentPath": "pilka_nozna",
+      "children": null,
+      "name": {
+        "name": "Greece",
+        "localizedName": {
+          "de": "Griechenland",
+          "en": "Greece",
+          "it": "Grecia",
+          "pl": "Grecja"
+        }
+      },
+      "order": 57,
+      "icon": "Greece",
+      "iconType": "NPSCountryFlags",
+      "prematchCounter": 20,
+      "outrightCounter": 0,
+      "liveCounter": 0,
+      "nextEventStartTime": "2026-10-17T14:00:00Z",
+      "sportId": null,
+      "categoryId": "67",
+      "competitionId": null
+    },
+    {
+      "type": "CATEGORY",
+      "path": "pilka_nozna/islandia",
+      "nodeId": "islandia",
+      "id": "10",
+      "parentNodeId": "pilka_nozna",
+      "parentPath": "pilka_nozna",
+      "children": null,
+      "name": {
+        "name": "Iceland",
+        "localizedName": {
+          "de": "Island",
+          "en": "Iceland",
+          "it": "Islanda",
+          "pl": "Islandia"
+        }
+      },
+      "order": 61,
+      "icon": "Iceland",
+      "iconType": "NPSCountryFlags",
+      "prematchCounter": 5,
+      "outrightCounter": 0,
+      "liveCounter": 0,
+      "nextEventStartTime": "2026-10-17T14:00:00Z",
+      "sportId": null,
+      "categoryId": "10",
+      "competitionId": null
+    },
+    {
+      "type": "CATEGORY",
+      "path": "pilka_nozna/indie",
+      "nodeId": "indie",
+      "id": "352",
+      "parentNodeId": "pilka_nozna",
+      "parentPath": "pilka_nozna",
+      "children": null,
+      "name": {
+        "name": "India",
+        "localizedName": {
+          "de": "Indien",
+          "en": "India",
+          "it": "India",
+          "pl": "Indie"
+        }
+      },
+      "order": 62,
+      "icon": "India",
+      "iconType": "NPSCountryFlags",
+      "prematchCounter": 5,
+      "outrightCounter": 0,
+      "liveCounter": 0,
+      "nextEventStartTime": "2026-10-13T09:30:00Z",
+      "sportId": null,
+      "categoryId": "352",
+      "competitionId": null
+    },
+    {
+      "type": "CATEGORY",
+      "path": "pilka_nozna/indonezja",
+      "nodeId": "indonezja",
+      "id": "368",
+      "parentNodeId": "pilka_nozna",
+      "parentPath": "pilka_nozna",
+      "children": null,
+      "name": {
+        "name": "Indonesia",
+        "localizedName": {
+          "de": "Indonesien",
+          "en": "Indonesia",
+          "it": "Indonesia",
+          "pl": "Indonezja"
+        }
+      },
+      "order": 63,
+      "icon": "Indonesia",
+      "iconType": "NPSCountryFlags",
+      "prematchCounter": 4,
+      "outrightCounter": 0,
+      "liveCounter": 0,
+      "nextEventStartTime": "2026-10-16T08:30:00Z",
+      "sportId": null,
+      "categoryId": "368",
+      "competitionId": null
+    },
+    {
+      "type": "CATEGORY",
+      "path": "pilka_nozna/iran",
+      "nodeId": "iran",
+      "id": "301",
+      "parentNodeId": "pilka_nozna",
+      "parentPath": "pilka_nozna",
+      "children": null,
+      "name": {
+        "name": "Iran",
+        "localizedName": {
+          "de": "Iran",
+          "en": "Iran",
+          "it": "Iran",
+          "pl": "Iran"
+        }
+      },
+      "order": 64,
+      "icon": "Iran",
+      "iconType": "NPSCountryFlags",
+      "prematchCounter": 3,
+      "outrightCounter": 0,
+      "liveCounter": 0,
+      "nextEventStartTime": "2026-10-13T12:30:00Z",
+      "sportId": null,
+      "categoryId": "301",
+      "competitionId": null
+    },
+    {
+      "type": "CATEGORY",
+      "path": "pilka_nozna/irlandia",
+      "nodeId": "irlandia",
+      "id": "51",
+      "parentNodeId": "pilka_nozna",
+      "parentPath": "pilka_nozna",
+      "children": null,
+      "name": {
+        "name": "Ireland",
+        "localizedName": {
+          "de": "Irland",
+          "en": "Ireland",
+          "it": "Irlanda",
+          "pl": "Irlandia"
+        }
+      },
+      "order": 65,
+      "icon": "Ireland",
+      "iconType": "NPSCountryFlags",
+      "prematchCounter": 12,
+      "outrightCounter": 0,
+      "liveCounter": 0,
+      "nextEventStartTime": "2026-10-16T18:45:00Z",
+      "sportId": null,
+      "categoryId": "51",
+      "competitionId": null
+    },
+    {
+      "type": "CATEGORY",
+      "path": "pilka_nozna/irlandia_polnocna",
+      "nodeId": "irlandia_polnocna",
+      "id": "130",
+      "parentNodeId": "pilka_nozna",
+      "parentPath": "pilka_nozna",
+      "children": null,
+      "name": {
+        "name": "Northern Ireland",
+        "localizedName": {
+          "de": "Nordirland",
+          "en": "Northern Ireland",
+          "it": "Irlanda del Nord",
+          "pl": "Irlandia Północna"
+        }
+      },
+      "order": 66,
+      "icon": "NorthernIreland",
+      "iconType": "NPSCountryFlags",
+      "prematchCounter": 6,
+      "outrightCounter": 0,
+      "liveCounter": 0,
+      "nextEventStartTime": "2026-10-16T18:45:00Z",
+      "sportId": null,
+      "categoryId": "130",
+      "competitionId": null
+    },
+    {
+      "type": "CATEGORY",
+      "path": "pilka_nozna/izrael",
+      "nodeId": "izrael",
+      "id": "66",
+      "parentNodeId": "pilka_nozna",
+      "parentPath": "pilka_nozna",
+      "children": null,
+      "name": {
+        "name": "Israel",
+        "localizedName": {
+          "de": "Israel",
+          "en": "Israel",
+          "it": "Israele",
+          "pl": "Izrael"
+        }
+      },
+      "order": 68,
+      "icon": "Israel",
+      "iconType": "NPSCountryFlags",
+      "prematchCounter": 6,
+      "outrightCounter": 0,
+      "liveCounter": 0,
+      "nextEventStartTime": "2026-10-17T15:45:00Z",
+      "sportId": null,
+      "categoryId": "66",
+      "competitionId": null
+    },
+    {
+      "type": "CATEGORY",
+      "path": "pilka_nozna/jamajka",
+      "nodeId": "jamajka",
+      "id": "502",
+      "parentNodeId": "pilka_nozna",
+      "parentPath": "pilka_nozna",
+      "children": null,
+      "name": {
+        "name": "Jamaica",
+        "localizedName": {
+          "de": "Jamaika",
+          "en": "Jamaica",
+          "it": "Giamaica",
+          "pl": "Jamajka"
+        }
+      },
+      "order": 69,
+      "icon": "Jamaica",
+      "iconType": "NPSCountryFlags",
+      "prematchCounter": 2,
+      "outrightCounter": 0,
+      "liveCounter": 0,
+      "nextEventStartTime": "2026-10-12T22:05:00Z",
+      "sportId": null,
+      "categoryId": "502",
+      "competitionId": null
+    },
+    {
+      "type": "CATEGORY",
+      "path": "pilka_nozna/japonia",
+      "nodeId": "japonia",
+      "id": "52",
+      "parentNodeId": "pilka_nozna",
+      "parentPath": "pilka_nozna",
+      "children": null,
+      "name": {
+        "name": "Japan",
+        "localizedName": {
+          "de": "Japan",
+          "en": "Japan",
+          "it": "Giappone",
+          "pl": "Japonia"
+        }
+      },
+      "order": 70,
+      "icon": "Japan",
+      "iconType": "NPSCountryFlags",
+      "prematchCounter": 20,
+      "outrightCounter": 0,
+      "liveCounter": 0,
+      "nextEventStartTime": "2026-10-17T04:00:00Z",
+      "sportId": null,
+      "categoryId": "52",
+      "competitionId": null
+    },
+    {
+      "type": "CATEGORY",
+      "path": "pilka_nozna/kanada",
+      "nodeId": "kanada",
+      "id": "388",
+      "parentNodeId": "pilka_nozna",
+      "parentPath": "pilka_nozna",
+      "children": null,
+      "name": {
+        "name": "Canada",
+        "localizedName": {
+          "en": "Canada",
+          "pl": "Kanada"
+        }
+      },
+      "order": 73,
+      "icon": "Canada",
+      "iconType": "NPSCountryFlags",
+      "prematchCounter": 4,
+      "outrightCounter": 0,
+      "liveCounter": 1,
+      "nextEventStartTime": "2026-10-16T23:00:00Z",
+      "sportId": null,
+      "categoryId": "388",
+      "competitionId": null
+    },
+    {
+      "type": "CATEGORY",
+      "path": "pilka_nozna/katar",
+      "nodeId": "katar",
+      "id": "353",
+      "parentNodeId": "pilka_nozna",
+      "parentPath": "pilka_nozna",
+      "children": null,
+      "name": {
+        "name": "Qatar",
+        "localizedName": {
+          "de": "Katar",
+          "en": "Qatar",
+          "it": "Qatar",
+          "pl": "Katar"
+        }
+      },
+      "order": 74,
+      "icon": "Qatar",
+      "iconType": "NPSCountryFlags",
+      "prematchCounter": 4,
+      "outrightCounter": 0,
+      "liveCounter": 0,
+      "nextEventStartTime": "2026-10-16T14:30:00Z",
+      "sportId": null,
+      "categoryId": "353",
+      "competitionId": null
+    },
+    {
+      "type": "CATEGORY",
+      "path": "pilka_nozna/kolumbia",
+      "nodeId": "kolumbia",
+      "id": "274",
+      "parentNodeId": "pilka_nozna",
+      "parentPath": "pilka_nozna",
+      "children": null,
+      "name": {
+        "name": "Colombia",
+        "localizedName": {
+          "de": "Kolumbien",
+          "en": "Colombia",
+          "it": "Colombia",
+          "pl": "Kolumbia"
+        }
+      },
+      "order": 75,
+      "icon": "Colombia",
+      "iconType": "NPSCountryFlags",
+      "prematchCounter": 19,
+      "outrightCounter": 0,
+      "liveCounter": 0,
+      "nextEventStartTime": "2026-10-13T23:30:00Z",
+      "sportId": null,
+      "categoryId": "274",
+      "competitionId": null
+    },
+    {
+      "type": "CATEGORY",
+      "path": "pilka_nozna/kazachstan",
+      "nodeId": "kazachstan",
+      "id": "278",
+      "parentNodeId": "pilka_nozna",
+      "parentPath": "pilka_nozna",
+      "children": null,
+      "name": {
+        "name": "Kazakhstan",
+        "localizedName": {
+          "de": "Kasakhstan",
+          "en": "Kazakhstan",
+          "it": "Kazakistan",
+          "pl": "Kazachstan"
+        }
+      },
+      "order": 76,
+      "icon": "Kazakhstan",
+      "iconType": "NPSCountryFlags",
+      "prematchCounter": 6,
+      "outrightCounter": 0,
+      "liveCounter": 0,
+      "nextEventStartTime": "2026-10-14T10:00:00Z",
+      "sportId": null,
+      "categoryId": "278",
+      "competitionId": null
+    },
+    {
+      "type": "CATEGORY",
+      "path": "pilka_nozna/kenia",
+      "nodeId": "kenia",
+      "id": "805",
+      "parentNodeId": "pilka_nozna",
+      "parentPath": "pilka_nozna",
+      "children": null,
+      "name": {
+        "name": "Kenya",
+        "localizedName": {
+          "de": "Kenia",
+          "en": "Kenya",
+          "it": "Kenya",
+          "pl": "Kenia"
+        }
+      },
+      "order": 77,
+      "icon": "Kenya",
+      "iconType": "NPSCountryFlags",
+      "prematchCounter": 2,
+      "outrightCounter": 0,
+      "liveCounter": 0,
+      "nextEventStartTime": "2026-10-13T16:00:00Z",
+      "sportId": null,
+      "categoryId": "805",
+      "competitionId": null
+    },
+    {
+      "type": "CATEGORY",
+      "path": "pilka_nozna/korea_pld",
+      "nodeId": "korea_pld",
+      "id": "291",
+      "parentNodeId": "pilka_nozna",
+      "parentPath": "pilka_nozna",
+      "children": null,
+      "name": {
+        "name": "South Korea",
+        "localizedName": {
+          "de": "Republik Korea",
+          "en": "Republic of Korea",
+          "it": "Repubblica di Corea",
+          "pl": "Korea Płd."
+        }
+      },
+      "order": 78,
+      "icon": "SouthKorea",
+      "iconType": "NPSCountryFlags",
+      "prematchCounter": 14,
+      "outrightCounter": 0,
+      "liveCounter": 0,
+      "nextEventStartTime": "2026-10-17T05:00:00Z",
+      "sportId": null,
+      "categoryId": "291",
+      "competitionId": null
+    },
+    {
+      "type": "CATEGORY",
+      "path": "pilka_nozna/kostaryka",
+      "nodeId": "kostaryka",
+      "id": "289",
+      "parentNodeId": "pilka_nozna",
+      "parentPath": "pilka_nozna",
+      "children": null,
+      "name": {
+        "name": "Costa Rica",
+        "localizedName": {
+          "de": "Costa Rica",
+          "en": "Costa Rica",
+          "it": "Costa Rica",
+          "pl": "Kostaryka"
+        }
+      },
+      "order": 81,
+      "icon": "CostaRica",
+      "iconType": "NPSCountryFlags",
+      "prematchCounter": 6,
+      "outrightCounter": 0,
+      "liveCounter": 0,
+      "nextEventStartTime": "2026-10-13T01:00:00Z",
+      "sportId": null,
+      "categoryId": "289",
+      "competitionId": null
+    },
+    {
+      "type": "CATEGORY",
+      "path": "pilka_nozna/liban",
+      "nodeId": "liban",
+      "id": "428",
+      "parentNodeId": "pilka_nozna",
+      "parentPath": "pilka_nozna",
+      "children": null,
+      "name": {
+        "name": "Lebanon",
+        "localizedName": {
+          "de": "Libanon",
+          "en": "Lebanon",
+          "it": "Libano",
+          "pl": "Liban"
+        }
+      },
+      "order": 82,
+      "icon": "Lebanon",
+      "iconType": "NPSCountryFlags",
+      "prematchCounter": 3,
+      "outrightCounter": 0,
+      "liveCounter": 0,
+      "nextEventStartTime": "2026-10-13T12:00:00Z",
+      "sportId": null,
+      "categoryId": "428",
+      "competitionId": null
+    },
+    {
+      "type": "CATEGORY",
+      "path": "pilka_nozna/lotwa",
+      "nodeId": "lotwa",
+      "id": "163",
+      "parentNodeId": "pilka_nozna",
+      "parentPath": "pilka_nozna",
+      "children": null,
+      "name": {
+        "name": "Latvia",
+        "localizedName": {
+          "en": "Latvia",
+          "pl": "Łotwa"
+        }
+      },
+      "order": 83,
+      "icon": "Latvia",
+      "iconType": "NPSCountryFlags",
+      "prematchCounter": 2,
+      "outrightCounter": 0,
+      "liveCounter": 0,
+      "nextEventStartTime": "2026-10-15T14:00:00Z",
+      "sportId": null,
+      "categoryId": "163",
+      "competitionId": null
+    },
+    {
+      "type": "CATEGORY",
+      "path": "pilka_nozna/meksyk",
+      "nodeId": "meksyk",
+      "id": "12",
+      "parentNodeId": "pilka_nozna",
+      "parentPath": "pilka_nozna",
+      "children": null,
+      "name": {
+        "name": "Mexico",
+        "localizedName": {
+          "de": "Mexiko",
+          "en": "Mexico",
+          "it": "Messico",
+          "pl": "Meksyk"
+        }
+      },
+      "order": 95,
+      "icon": "Mexico",
+      "iconType": "NPSCountryFlags",
+      "prematchCounter": 18,
+      "outrightCounter": 0,
+      "liveCounter": 0,
+      "nextEventStartTime": "2026-10-13T23:00:00Z",
+      "sportId": null,
+      "categoryId": "12",
+      "competitionId": null
+    },
+    {
+      "type": "CATEGORY",
+      "path": "pilka_nozna/kosowo",
+      "nodeId": "kosowo",
+      "id": "565",
+      "parentNodeId": "pilka_nozna",
+      "parentPath": "pilka_nozna",
+      "children": null,
+      "name": {
+        "name": "Kosovo",
+        "localizedName": {
+          "de": "Kosovo",
+          "en": "Kosovo",
+          "it": "Kosovo",
+          "pl": "Kosowo"
+        }
+      },
+      "order": 100,
+      "icon": "Kosovo",
+      "iconType": "NPSCountryFlags",
+      "prematchCounter": 2,
+      "outrightCounter": 0,
+      "liveCounter": 0,
+      "nextEventStartTime": "2026-10-13T12:00:00Z",
+      "sportId": null,
+      "categoryId": "565",
+      "competitionId": null
+    },
+    {
+      "type": "CATEGORY",
+      "path": "pilka_nozna/niemcy_amatorzy",
+      "nodeId": "niemcy_amatorzy",
+      "id": "122",
+      "parentNodeId": "pilka_nozna",
+      "parentPath": "pilka_nozna",
+      "children": null,
+      "name": {
+        "name": "Germany Amateur",
+        "localizedName": {
+          "de": "Deutschland Amateure",
+          "en": "Germany Amateur",
+          "it": "Germania Amatori",
+          "pl": "Niemcy Amatorzy"
+        }
+      },
+      "order": 101,
+      "icon": "GermanyAmateur",
+      "iconType": "NPSCountryFlags",
+      "prematchCounter": 4,
+      "outrightCounter": 0,
+      "liveCounter": 0,
+      "nextEventStartTime": "2026-10-13T16:30:00Z",
+      "sportId": null,
+      "categoryId": "122",
+      "competitionId": null
+    },
+    {
+      "type": "CATEGORY",
+      "path": "pilka_nozna/maroko",
+      "nodeId": "maroko",
+      "id": "303",
+      "parentNodeId": "pilka_nozna",
+      "parentPath": "pilka_nozna",
+      "children": null,
+      "name": {
+        "name": "Morocco",
+        "localizedName": {
+          "de": "Marokko",
+          "en": "Morocco",
+          "it": "Marocco",
+          "pl": "Maroko"
+        }
+      },
+      "order": 102,
+      "icon": "Morocco",
+      "iconType": "NPSCountryFlags",
+      "prematchCounter": 3,
+      "outrightCounter": 0,
+      "liveCounter": 1,
+      "nextEventStartTime": "2026-10-13T18:00:00Z",
+      "sportId": null,
+      "categoryId": "303",
+      "competitionId": null
+    },
+    {
+      "type": "CATEGORY",
+      "path": "pilka_nozna/norwegia",
+      "nodeId": "norwegia",
+      "id": "5",
+      "parentNodeId": "pilka_nozna",
+      "parentPath": "pilka_nozna",
+      "children": null,
+      "name": {
+        "name": "Norway",
+        "localizedName": {
+          "de": "Norwegen",
+          "en": "Norway",
+          "it": "Norvegia",
+          "pl": "Norwegia"
+        }
+      },
+      "order": 109,
+      "icon": "Norway",
+      "iconType": "NPSCountryFlags",
+      "prematchCounter": 8,
+      "outrightCounter": 0,
+      "liveCounter": 0,
+      "nextEventStartTime": "2026-10-17T12:00:00Z",
+      "sportId": null,
+      "categoryId": "5",
+      "competitionId": null
+    },
+    {
+      "type": "CATEGORY",
+      "path": "pilka_nozna/paragwaj",
+      "nodeId": "paragwaj",
+      "id": "280",
+      "parentNodeId": "pilka_nozna",
+      "parentPath": "pilka_nozna",
+      "children": null,
+      "name": {
+        "name": "Paraguay",
+        "localizedName": {
+          "en": "Paraguay",
+          "pl": "Paragwaj"
+        }
+      },
+      "order": 113,
+      "icon": "Paraguay",
+      "iconType": "NPSCountryFlags",
+      "prematchCounter": 8,
+      "outrightCounter": 0,
+      "liveCounter": 1,
+      "nextEventStartTime": "2026-10-12T22:20:00Z",
+      "sportId": null,
+      "categoryId": "280",
+      "competitionId": null
+    },
+    {
+      "type": "CATEGORY",
+      "path": "pilka_nozna/peru",
+      "nodeId": "peru",
+      "id": "20",
+      "parentNodeId": "pilka_nozna",
+      "parentPath": "pilka_nozna",
+      "children": null,
+      "name": {
+        "name": "Peru",
+        "localizedName": {
+          "de": "Peru",
+          "en": "Peru",
+          "it": "Perù",
+          "pl": "Peru"
+        }
+      },
+      "order": 114,
+      "icon": "Peru",
+      "iconType": "NPSCountryFlags",
+      "prematchCounter": 9,
+      "outrightCounter": 0,
+      "liveCounter": 1,
+      "nextEventStartTime": "2026-10-16T18:00:00Z",
+      "sportId": null,
+      "categoryId": "20",
+      "competitionId": null
+    },
+    {
+      "type": "CATEGORY",
+      "path": "pilka_nozna/rumunia",
+      "nodeId": "rumunia",
+      "id": "77",
+      "parentNodeId": "pilka_nozna",
+      "parentPath": "pilka_nozna",
+      "children": null,
+      "name": {
+        "name": "Romania",
+        "localizedName": {
+          "de": "Rumänien",
+          "en": "Romania",
+          "it": "Romania",
+          "pl": "Rumunia"
+        }
+      },
+      "order": 116,
+      "icon": "Romania",
+      "iconType": "NPSCountryFlags",
+      "prematchCounter": 20,
+      "outrightCounter": 0,
+      "liveCounter": 0,
+      "nextEventStartTime": "2026-10-16T15:00:00Z",
+      "sportId": null,
+      "categoryId": "77",
+      "competitionId": null
+    },
+    {
+      "type": "CATEGORY",
+      "path": "pilka_nozna/rpa",
+      "nodeId": "rpa",
+      "id": "322",
+      "parentNodeId": "pilka_nozna",
+      "parentPath": "pilka_nozna",
+      "children": null,
+      "name": {
+        "name": "RPA",
+        "localizedName": {
+          "en": "RPA",
+          "pl": "RPA"
+        }
+      },
+      "order": 117,
+      "icon": "SouthAfrica",
+      "iconType": "NPSCountryFlags",
+      "prematchCounter": 5,
+      "outrightCounter": 0,
+      "liveCounter": 0,
+      "nextEventStartTime": "2026-10-13T13:30:00Z",
+      "sportId": null,
+      "categoryId": "322",
+      "competitionId": null
+    },
+    {
+      "type": "CATEGORY",
+      "path": "pilka_nozna/szkocja",
+      "nodeId": "szkocja",
+      "id": "22",
+      "parentNodeId": "pilka_nozna",
+      "parentPath": "pilka_nozna",
+      "children": null,
+      "name": {
+        "name": "Scotland",
+        "localizedName": {
+          "de": "Schottland",
+          "en": "Scotland",
+          "it": "Scozia",
+          "pl": "Szkocja"
+        }
+      },
+      "order": 121,
+      "icon": "Scotland",
+      "iconType": "NPSCountryFlags",
+      "prematchCounter": 38,
+      "outrightCounter": 1,
+      "liveCounter": 0,
+      "nextEventStartTime": "2026-10-13T18:45:00Z",
+      "sportId": null,
+      "categoryId": "22",
+      "competitionId": null
+    },
+    {
+      "type": "CATEGORY",
+      "path": "pilka_nozna/serbia",
+      "nodeId": "serbia",
+      "id": "152",
+      "parentNodeId": "pilka_nozna",
+      "parentPath": "pilka_nozna",
+      "children": null,
+      "name": {
+        "name": "Serbia",
+        "localizedName": {
+          "de": "Serbien",
+          "en": "Serbia",
+          "it": "Serbia",
+          "pl": "Serbia"
+        }
+      },
+      "order": 122,
+      "icon": "Serbia",
+      "iconType": "NPSCountryFlags",
+      "prematchCounter": 8,
+      "outrightCounter": 0,
+      "liveCounter": 0,
+      "nextEventStartTime": "2026-10-13T13:00:00Z",
+      "sportId": null,
+      "categoryId": "152",
+      "competitionId": null
+    },
+    {
+      "type": "CATEGORY",
+      "path": "pilka_nozna/slowacja",
+      "nodeId": "slowacja",
+      "id": "23",
+      "parentNodeId": "pilka_nozna",
+      "parentPath": "pilka_nozna",
+      "children": null,
+      "name": {
+        "name": "Slovakia",
+        "localizedName": {
+          "de": "Slowakei",
+          "en": "Slovakia",
+          "it": "Slovacchia",
+          "pl": "Słowacja"
+        }
+      },
+      "order": 126,
+      "icon": "Slovakia",
+      "iconType": "NPSCountryFlags",
+      "prematchCounter": 6,
+      "outrightCounter": 0,
+      "liveCounter": 0,
+      "nextEventStartTime": "2026-10-17T13:30:00Z",
+      "sportId": null,
+      "categoryId": "23",
+      "competitionId": null
+    },
+    {
+      "type": "CATEGORY",
+      "path": "pilka_nozna/slowenia",
+      "nodeId": "slowenia",
+      "id": "24",
+      "parentNodeId": "pilka_nozna",
+      "parentPath": "pilka_nozna",
+      "children": null,
+      "name": {
+        "name": "Slovenia",
+        "localizedName": {
+          "de": "Slovenia",
+          "en": "Slovenia",
+          "it": "Slovenia",
+          "pl": "Słowenia"
+        }
+      },
+      "order": 127,
+      "icon": "Slovenia",
+      "iconType": "NPSCountryFlags",
+      "prematchCounter": 5,
+      "outrightCounter": 0,
+      "liveCounter": 0,
+      "nextEventStartTime": "2026-10-16T15:30:00Z",
+      "sportId": null,
+      "categoryId": "24",
+      "competitionId": null
+    },
+    {
+      "type": "CATEGORY",
+      "path": "pilka_nozna/szwecja",
+      "nodeId": "szwecja",
+      "id": "9",
+      "parentNodeId": "pilka_nozna",
+      "parentPath": "pilka_nozna",
+      "children": null,
+      "name": {
+        "name": "Sweden",
+        "localizedName": {
+          "de": "Schweden",
+          "en": "Sweden",
+          "it": "Svezia",
+          "pl": "Szwecja"
+        }
+      },
+      "order": 129,
+      "icon": "Sweden",
+      "iconType": "NPSCountryFlags",
+      "prematchCounter": 15,
+      "outrightCounter": 0,
+      "liveCounter": 0,
+      "nextEventStartTime": "2026-10-13T17:00:00Z",
+      "sportId": null,
+      "categoryId": "9",
+      "competitionId": null
+    },
+    {
+      "type": "CATEGORY",
+      "path": "pilka_nozna/szwajcaria",
+      "nodeId": "szwajcaria",
+      "id": "25",
+      "parentNodeId": "pilka_nozna",
+      "parentPath": "pilka_nozna",
+      "children": null,
+      "name": {
+        "name": "Switzerland",
+        "localizedName": {
+          "de": "Schweiz",
+          "en": "Switzerland",
+          "it": "Svizzera",
+          "pl": "Szwajcaria"
+        }
+      },
+      "order": 131,
+      "icon": "Switzerland",
+      "iconType": "NPSCountryFlags",
+      "prematchCounter": 6,
+      "outrightCounter": 0,
+      "liveCounter": 0,
+      "nextEventStartTime": "2026-10-24T16:00:00Z",
+      "sportId": null,
+      "categoryId": "25",
+      "competitionId": null
+    },
+    {
+      "type": "CATEGORY",
+      "path": "pilka_nozna/tanzania",
+      "nodeId": "tanzania",
+      "id": "803",
+      "parentNodeId": "pilka_nozna",
+      "parentPath": "pilka_nozna",
+      "children": null,
+      "name": {
+        "name": "Tanzania",
+        "localizedName": {
+          "de": "Tansania",
+          "en": "Tanzania",
+          "it": "Tanzania",
+          "pl": "Tanzania"
+        }
+      },
+      "order": 134,
+      "icon": "Tanzania",
+      "iconType": "NPSCountryFlags",
+      "prematchCounter": 1,
+      "outrightCounter": 0,
+      "liveCounter": 0,
+      "nextEventStartTime": "2026-10-13T16:00:00Z",
+      "sportId": null,
+      "categoryId": "803",
+      "competitionId": null
+    },
+    {
+      "type": "CATEGORY",
+      "path": "pilka_nozna/tajlandia",
+      "nodeId": "tajlandia",
+      "id": "485",
+      "parentNodeId": "pilka_nozna",
+      "parentPath": "pilka_nozna",
+      "children": null,
+      "name": {
+        "name": "Thailand",
+        "localizedName": {
+          "de": "Thailand",
+          "en": "Thailand",
+          "it": "Thailandia",
+          "pl": "Tajlandia"
+        }
+      },
+      "order": 136,
+      "icon": "Thailand",
+      "iconType": "NPSCountryFlags",
+      "prematchCounter": 3,
+      "outrightCounter": 0,
+      "liveCounter": 0,
+      "nextEventStartTime": "2026-10-13T11:00:00Z",
+      "sportId": null,
+      "categoryId": "485",
+      "competitionId": null
+    },
+    {
+      "type": "CATEGORY",
+      "path": "pilka_nozna/uganda",
+      "nodeId": "uganda",
+      "id": "824",
+      "parentNodeId": "pilka_nozna",
+      "parentPath": "pilka_nozna",
+      "children": null,
+      "name": {
+        "name": "Uganda",
+        "localizedName": {
+          "de": "Uganda",
+          "en": "Uganda",
+          "it": "Uganda",
+          "pl": "Uganda"
+        }
+      },
+      "order": 140,
+      "icon": "Uganda",
+      "iconType": "NPSCountryFlags",
+      "prematchCounter": 2,
+      "outrightCounter": 0,
+      "liveCounter": 0,
+      "nextEventStartTime": "2026-10-13T13:00:00Z",
+      "sportId": null,
+      "categoryId": "824",
+      "competitionId": null
+    },
+    {
+      "type": "CATEGORY",
+      "path": "pilka_nozna/urugwaj",
+      "nodeId": "urugwaj",
+      "id": "57",
+      "parentNodeId": "pilka_nozna",
+      "parentPath": "pilka_nozna",
+      "children": null,
+      "name": {
+        "name": "Uruguay",
+        "localizedName": {
+          "de": "Uruguay",
+          "en": "Uruguay",
+          "it": "Uruguay",
+          "pl": "Urugwaj"
+        }
+      },
+      "order": 142,
+      "icon": "Uruguay",
+      "iconType": "NPSCountryFlags",
+      "prematchCounter": 10,
+      "outrightCounter": 0,
+      "liveCounter": 0,
+      "nextEventStartTime": "2026-10-13T13:00:00Z",
+      "sportId": null,
+      "categoryId": "57",
+      "competitionId": null
+    },
+    {
+      "type": "CATEGORY",
+      "path": "pilka_nozna/zea",
+      "nodeId": "zea",
+      "id": "299",
+      "parentNodeId": "pilka_nozna",
+      "parentPath": "pilka_nozna",
+      "children": null,
+      "name": {
+        "name": "United Arab Emirates",
+        "localizedName": {
+          "de": "Vereinigte Arabische Emirate",
+          "en": "United Arab Emirates",
+          "it": "Emirati Arabi",
+          "pl": "ZEA"
+        }
+      },
+      "order": 143,
+      "icon": "UnitedArabEmirates",
+      "iconType": "NPSCountryFlags",
+      "prematchCounter": 4,
+      "outrightCounter": 0,
+      "liveCounter": 0,
+      "nextEventStartTime": "2026-10-16T13:05:00Z",
+      "sportId": null,
+      "categoryId": "299",
+      "competitionId": null
+    },
+    {
+      "type": "CATEGORY",
+      "path": "pilka_nozna/uzbekistan",
+      "nodeId": "uzbekistan",
+      "id": "385",
+      "parentNodeId": "pilka_nozna",
+      "parentPath": "pilka_nozna",
+      "children": null,
+      "name": {
+        "name": "Uzbekistan",
+        "localizedName": {
+          "de": "Usbekistan",
+          "en": "Uzbekistan",
+          "it": "Uzbekistan",
+          "pl": "Uzbekistan"
+        }
+      },
+      "order": 144,
+      "icon": "Uzbekistan",
+      "iconType": "NPSCountryFlags",
+      "prematchCounter": 1,
+      "outrightCounter": 0,
+      "liveCounter": 0,
+      "nextEventStartTime": "2026-10-13T11:00:00Z",
+      "sportId": null,
+      "categoryId": "385",
+      "competitionId": null
+    },
+    {
+      "type": "CATEGORY",
+      "path": "pilka_nozna/wegry",
+      "nodeId": "wegry",
+      "id": "11",
+      "parentNodeId": "pilka_nozna",
+      "parentPath": "pilka_nozna",
+      "children": null,
+      "name": {
+        "name": "Hungary",
+        "localizedName": {
+          "de": "Ungarn",
+          "en": "Hungary",
+          "it": "Ungheria",
+          "pl": "Węgry"
+        }
+      },
+      "order": 147,
+      "icon": "Hungary",
+      "iconType": "NPSCountryFlags",
+      "prematchCounter": 7,
+      "outrightCounter": 0,
+      "liveCounter": 0,
+      "nextEventStartTime": "2026-10-13T16:00:00Z",
+      "sportId": null,
+      "categoryId": "11",
+      "competitionId": null
+    }
+  ],
+  "path": "pilka_nozna",
+  "subscriptionId": "d8b7ffc7-4ecb-42d8-bc6b-9b6a2fad38f9",
+  "type": "R_PREMATCH_HIERARCHY"
+}

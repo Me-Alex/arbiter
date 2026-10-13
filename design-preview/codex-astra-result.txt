@@ -1,0 +1,20 @@
+Recovered **104 valid pairings** through fixture-name fixes and removed **one false BTTS pairing**.
+
+| Same-fixture independent-feed pairs | Before | After |
+|---|---:|---:|
+| `data-market-run/workspace` | 138 | **151** |
+| `data/workspace` | 1,449 | **1,539** |
+
+Recovered comparisons on these existing markets:
+
+- Full-time 1X2.
+- Full-time goals O/U: **0.5, 1.5, 3.5, 4.5**.
+- First-half goals O/U: **1.5**.
+- Full-time BTTS.
+- Full-time Asian handicap, home lines: **−1.5, +1.5, +2.5, −3.5, +3.5, −4.5, +4.5**.
+
+**No initially-null market qualified for recovery.** Corners lacked matching fixtures; cards and half-specific BTTS lacked independent publishers. Other candidates lacked complete settlement evidence. Totals retain subject/team/period, and shared-feed exclusions remain intact.
+
+Final pass produced no further gains. **111 tests passed** using `--test-isolation=none`; ordinary test execution hits sandbox `spawn EPERM`. Both coverage runs and lint passed.
+
+[Full audit, per-market counts, and rejected candidates](</E:/AI Folder Projects/arbiter/docs/market-coverage-reaudit.md>).

@@ -47,6 +47,7 @@ const COUNTERS = ['confirmed', 'rejected', 'expired', 'unconfirmed'];
 function seed(dir) {
   const workspace = join(dir, 'workspace');
   mkdirSync(workspace, { recursive: true });
+  writeFileSync(join(dir, 'scrapers.json'), readFileSync(CONFIG, 'utf8'), 'utf8');
   const now = new Date().toISOString();
   const kickoff = new Date(Date.now() + 36 * 3600 * 1000).toISOString();
   const event = (sourceId, yes, no) => ({
@@ -91,7 +92,7 @@ async function postVerify() {
   try {
     const scan = seed(dir);
     const route = buildRouter({
-      dataDir: dir, publicDir: dir, configPath: CONFIG, profilesPath: 'unused',
+      dataDir: dir, publicDir: dir, configPath: join(dir, 'scrapers.json'), profilesPath: 'unused',
       rateLimiter: new RateLimiter({ capacity: 500, refillPerSec: 500 }),
       logger: () => {},
       scanService,

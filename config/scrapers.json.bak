@@ -1,0 +1,914 @@
+{
+  "jobs": [
+    {
+      "id": "superbet",
+      "maxEvents": 500,
+      "name": "Superbet (public offer v3)",
+      "enabled": true,
+      "supportedSports": [
+        "football",
+        "tennis",
+        "basketball",
+        "ice-hockey",
+        "american-football",
+        "handball",
+        "volleyball",
+        "table-tennis",
+        "esports",
+        "counter-strike-2",
+        "australian-football",
+        "badminton",
+        "baseball",
+        "boxing",
+        "cricket",
+        "cycling",
+        "darts",
+        "dota-2",
+        "f1",
+        "floorball",
+        "futsal",
+        "golf",
+        "league-of-legends",
+        "mma",
+        "motorsport",
+        "overwatch",
+        "rainbow-six",
+        "rugby",
+        "water-polo"
+      ],
+      "engine": "public-offer-v3",
+      "transport": "bookmaker-public-json",
+      "script": "superbet.mjs",
+      "sourceIds": [
+        "superbet"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Public offer v3 feed smoke-validated on 2026-09-01; bounded read-only collection with snapshot provenance. The index is a lobby listing, not the offer: /v3 carries exactly one result market per event while the same event advertises marketCount 141 (1400 odds) on /v2/ro-RO/events/{eventId}. fullMarkets adds one detail read per event to pick up the full-time goals total (200734) and the full-time handicap (200736); the two Asian variants superbet also publishes (530, 529) are deliberately not taken, measured over 30 events as 0 of 198 and 0 of 207 line pairs on a half line, so every one of them is push-capable.",
+      "platform": "superbet-offer",
+      "feedStatus": "verified",
+      "fullMarkets": true,
+      "detailLimit": 100,
+      "endpointVerifiedAt": "2026-09-01"
+    },
+    {
+      "id": "betano",
+      "maxEvents": 300,
+      "name": "Betano",
+      "enabled": true,
+      "supportedSports": [
+        "football",
+        "tennis",
+        "basketball",
+        "ice-hockey",
+        "handball",
+        "volleyball",
+        "futsal",
+        "baseball",
+        "table-tennis",
+        "esports",
+        "water-polo",
+        "american-football"
+      ],
+      "engine": "top-events-v2-json",
+      "transport": "betano-top-events-json",
+      "script": "betano.mjs",
+      "sourceIds": [
+        "betano"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Kaizen top-events-v2 JSON feed (ro.betano.com/api/home/top-events-v2/) smoke-validated on 2026-09-02 via headless browser navigation: 16 fresh prematch events with complete 1X2 ('Rezultat final', MRES/typeId 1) markets. The host Cloudflare-challenges bare fetch, so the feed is read in a real Chromium navigation context.",
+      "platform": "kaizen-betano",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-09-01",
+      "unavailableSports": [
+        "top-events-sample"
+      ]
+    },
+    {
+      "id": "fortuna",
+      "maxEvents": 500,
+      "name": "Fortuna",
+      "enabled": true,
+      "supportedSports": [
+        "football",
+        "tennis",
+        "basketball",
+        "ice-hockey",
+        "handball",
+        "rugby",
+        "darts",
+        "futsal"
+      ],
+      "engine": "fortuna-bff-rest",
+      "transport": "fortuna-bff-rest-json",
+      "script": "fortuna.mjs",
+      "sourceIds": [
+        "fortuna"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Targets api.efortuna.ro/offer/bff/graphql with preMatchEvents query; smoke validation pending.",
+      "platform": "fortuna-group",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-09-01"
+    },
+    {
+      "id": "unibet",
+      "name": "Unibet (Kindred sports BFF v2)",
+      "enabled": true,
+      "engine": "public-sports-api-v2",
+      "transport": "bookmaker-public-json",
+      "script": "unibet.mjs",
+      "sourceIds": [
+        "unibet"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Feed recovered 2026-09-28. The MQTT conclusion in the previous revision was wrong: prices are served by a plain pollable REST surface at https://sportsbff-ams.kindredext.net/sports-api/api/v2/. Two undocumented conditions gate it. (1) Every request needs the site's own tenant headers under their plain names - locale, jurisdiction, ksp_jurisdiction, brand - because the load balancer answers 400 InvalidRequestException otherwise; the X-Brand / X-Locale pair belongs to the separate betting client and is rejected here, which is what made this look like a malformed query. (2) There is no bulk fixture list: v2/contests/list, the endpoint whose GetFixtureContestsRequest model carries from/size, answers 503 on every request and is unused by the site. The working bulk path is az-menu for the sport list, then views/lobby per sport for its leagues, then views/lobby per league for its contests. Measured 2026-09-28: Football 697 events over 130 leagues, 2075 prices; the full 30-sport menu yields 1563 events in ~28s. The adapter crawls the 13 high-volume sports by default. fullMarkets is on because the lobby ships only the default 1x2 proposition per contest while the contest object advertises propositionCount 36-150; v2/views/contest-page?contestKey= returns the full menu (totals, BTTS, double chance, handicaps) and is what lets Unibet enter the arbitrage comparison beyond the result market. It costs one extra request per event, so detailLimit caps it.",
+      "platform": "kindred-xns",
+      "feedStatus": "verified",
+      "fullMarkets": true,
+      "detailLimit": 700,
+      "supportedSports": [
+        "football",
+        "tennis",
+        "basketball",
+        "ice-hockey",
+        "american-football",
+        "table-tennis",
+        "esports",
+        "handball",
+        "rugby",
+        "mma",
+        "baseball",
+        "volleyball"
+      ]
+    },
+    {
+      "id": "stanleybet",
+      "maxEvents": 500,
+      "name": "Stanleybet",
+      "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
+      "engine": "nsoft-public-json",
+      "transport": "nsoft-public-sports-json",
+      "script": "stanleybet.mjs",
+      "sourceIds": [
+        "stanleybet"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "NSoft public sports events endpoint smoke-validated on 2026-09-01 with future prematch events and complete 1X2 markets; shares companyUuid with Admiral.",
+      "platform": "nsoft",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-09-01"
+    },
+    {
+      "id": "betmen",
+      "maxEvents": 500,
+      "name": "Betmen (NSoft public JSON)",
+      "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
+      "engine": "nsoft-public-json",
+      "transport": "nsoft-public-sports-json",
+      "script": "nsoft.mjs",
+      "sourceIds": [
+        "betmen"
+      ],
+      "minEvents": 20,
+      "validationStatus": "validated",
+      "validationReason": "NSoft public distribution endpoint, companyUuid 7afdd6f5-f954-43d6-b696-2e0dc0ae4ee2 (a public tenant identifier read from the brand's own page, not a credential — the endpoint answers without authentication). Measured 2026-09-27: football is sportId 18 on this tenant, and the full-time result market is marketId 6 named 'Final' with outcome ids 6:1, 9:X, 12:2 — present on 285 of 285 sampled football events. Contract is tenant-specific, not shared with the Admiral/MaxBet tenants, so it is declared per tenant in src/scrapers/nsoft.mjs. Independence measured rather than assumed: 117 fixtures shared with Admiral, 101 differing, 16 identical; 125 shared with MaxBet, 109 differing, 16 identical. It is therefore NOT in the nsoft-company feed group.",
+      "platform": "nsoft",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-09-27",
+      "oddsFeed": {
+        "url": "https://sportsbook-sm-distribution-api.nsoft.com/api/v1/events?companyUuid=7afdd6f5-f954-43d6-b696-2e0dc0ae4ee2",
+        "method": "GET",
+        "auth": "none",
+        "measuredAt": "2026-09-27T13:08:15.169Z",
+        "eventsIn3DayWindow": 1287,
+        "footballSportId": 18,
+        "eventsWithComplete1x2": 486
+      }
+    },
+    {
+      "id": "prowin",
+      "name": "Prowin (EGT Digital public sports API)",
+      "enabled": false,
+      "supportedSports": [
+        "football"
+      ],
+      "engine": "egt-public-sports-api",
+      "transport": "egt-public-sports-json",
+      "script": "egt.mjs",
+      "sourceIds": [
+        "prowin"
+      ],
+      "validationStatus": "experimental",
+      "validationReason": "Adapter implemented, fixture-covered and tested, but DISABLED because it adds no independent price source. Measured 2026-09-27: prowin, ultrabet and vipbet are all ONE upstream EGT feed — 22 of 31, 33 of 35 and 21 of 30 shared fixtures carry the SAME feedProducerId, and the same producer with different prices is mid-scrape drift, not arbitrage. They are declared as one group in src/scanner/feed-groups.mjs. A first independence measurement claimed these brands were independent; that measurement keyed fixtures as home|away with no kickoff, so two different matches between the same clubs collapsed into one, and it was wrong. Against the feeds already configured, prowin's slate (Brazilian, Argentine and Mexican lower divisions) did not overlap Admiral, betmen or superbet at all in the sampled window, so no pairing opportunity was demonstrated either. Coverage is also thin at 27-36 priced 1X2 against betmen's 486, and the platform publishes no container index, so the thirteen container ids are a hardcoded snapshot that will rot silently. The feed itself is sound: unauthenticated, gated only on three ordinary client locale headers, football is sportId 1001, and the result market is the one the provider names 1X2.",
+      "platform": "egt-digital",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-09-27",
+      "oddsFeed": {
+        "url": "https://pwro-api.egt-digital.com/api/sportsapi/public/containers/v2/lobby/normalized/{containerId}",
+        "method": "GET",
+        "auth": "none (device-header gate only)",
+        "requiredHeaders": {
+          "x-platform-device": "desktop",
+          "x-platform-lang": "ro",
+          "x-platform-tz": "180"
+        },
+        "businessUnit": "PWRO",
+        "measuredAt": "2026-09-27T13:08:18.244Z",
+        "footballSportId": 1001,
+        "priced1x2Found": 31
+      }
+    },
+    {
+      "id": "ultrabet",
+      "name": "Ultrabet (EGT Digital public sports API)",
+      "enabled": false,
+      "supportedSports": [
+        "football"
+      ],
+      "engine": "egt-public-sports-api",
+      "transport": "egt-public-sports-json",
+      "script": "egt.mjs",
+      "sourceIds": [
+        "ultrabet"
+      ],
+      "validationStatus": "experimental",
+      "validationReason": "Same platform and same measured verdict as prowin: one upstream EGT feed shared across prowin, ultrabet and vipbet, grouped in src/scanner/feed-groups.mjs. Registered so the adapter's second tenant is configured and testable, and disabled so it cannot be scraped as if it were a second independent source.",
+      "platform": "egt-digital",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-09-27",
+      "oddsFeed": {
+        "url": "https://ubro-api.egt-digital.com/api/sportsapi/public/containers/v2/lobby/normalized/{containerId}",
+        "method": "GET",
+        "auth": "none (device-header gate only)",
+        "requiredHeaders": {
+          "x-platform-device": "desktop",
+          "x-platform-lang": "ro",
+          "x-platform-tz": "180"
+        },
+        "businessUnit": "UBRO",
+        "measuredAt": "2026-09-27T13:08:21.526Z",
+        "footballSportId": 1001,
+        "priced1x2Found": 37
+      }
+    },
+    {
+      "id": "casa-pariurilor",
+      "maxEvents": 500,
+      "name": "Casa Pariurilor",
+      "enabled": true,
+      "supportedSports": [
+        "football",
+        "tennis",
+        "basketball",
+        "ice-hockey",
+        "handball",
+        "rugby",
+        "darts",
+        "futsal"
+      ],
+      "engine": "fortuna-bff-rest",
+      "transport": "fortuna-bff-rest-json",
+      "script": "casa-pariurilor.mjs",
+      "sourceIds": [
+        "casa-pariurilor"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Shares Fortuna Entertainment Group platform with efortuna.ro; targets api.casapariurilor.ro/offer/bff/graphql via FortunaProvider; smoke validation pending.",
+      "platform": "fortuna-group",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-09-01"
+    },
+    {
+      "id": "excelbet",
+      "maxEvents": 500,
+      "name": "ExcelBet",
+      "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
+      "engine": "exalogic-xsport",
+      "transport": "exalogic-xsport-public-json",
+      "script": "excelbet.mjs",
+      "sourceIds": [
+        "excelbet"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Exalogic XSport getPalinsestoDelGiorno feed (systemCode=EXCELBET) smoke-validated on 2026-09-02 with future football events and complete 1X2 markets.",
+      "platform": "exalogic-xsport",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-09-01"
+    },
+    {
+      "id": "netbet",
+      "maxEvents": 500,
+      "name": "NetBet (Sportify public JSON)",
+      "enabled": true,
+      "supportedSports": [
+        "football",
+        "tennis",
+        "basketball",
+        "ice-hockey",
+        "american-football",
+        "handball",
+        "rugby",
+        "cricket",
+        "baseball",
+        "boxing",
+        "mma",
+        "darts",
+        "volleyball",
+        "futsal",
+        "esports",
+        "billiards",
+        "f1",
+        "motogp",
+        "alpine-skiing",
+        "figure-skating",
+        "kitesurfing",
+        "swimming",
+        "wrestling",
+        "canoeing",
+        "snooker"
+      ],
+      "engine": "sportify-public-json",
+      "transport": "bookmaker-public-json",
+      "script": "netbet.mjs",
+      "sourceIds": [
+        "netbet"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Public Sportify inventory-events feed smoke-validated on 2026-09-01 with future prematch events and complete 1X2 markets.",
+      "platform": "sportify",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-09-01"
+    },
+    {
+      "id": "admiral",
+      "maxEvents": 500,
+      "name": "Admiral (NSoft public JSON)",
+      "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
+      "engine": "nsoft-public-json",
+      "transport": "bookmaker-public-json",
+      "script": "nsoft.mjs",
+      "sourceIds": [
+        "admiral"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "NSoft public sports events endpoint smoke-validated on 2026-09-01 with future prematch events and complete 1X2 markets.",
+      "platform": "nsoft",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-09-01"
+    },
+    {
+      "id": "winboss",
+      "maxEvents": 500,
+      "name": "WinBoss",
+      "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
+      "engine": "exalogic-xsport",
+      "transport": "exalogic-xsport-public-json",
+      "script": "winboss.mjs",
+      "sourceIds": [
+        "winboss"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Exalogic XSport getPalinsestoDelGiorno feed (systemCode=WINBOSS) smoke-validated on 2026-09-02 with future football events and complete 1X2 markets.",
+      "platform": "exalogic-xsport",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-09-01"
+    },
+    {
+      "id": "maxbet",
+      "maxEvents": 500,
+      "name": "MaxBet",
+      "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
+      "engine": "nsoft",
+      "transport": "nsoft-public-sports-json",
+      "script": "maxbet.mjs",
+      "sourceIds": [
+        "maxbet"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "NSoft public events feed (companyUuid=2191e3d6-b0e1-4f06-8b6a-4683203fb2fe) smoke-validated on 2026-09-02 with future football events and complete 1X2 markets.",
+      "platform": "nsoft",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-09-01"
+    },
+    {
+      "id": "las-vegas",
+      "maxEvents": 500,
+      "name": "Las Vegas",
+      "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
+      "engine": "exalogic-xsport",
+      "transport": "exalogic-xsport-public-json",
+      "script": "las-vegas.mjs",
+      "sourceIds": [
+        "las-vegas"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Exalogic XSport getPalinsestoDelGiorno feed (systemCode=LASVEGAS) smoke-validated on 2026-09-02 with future football events and complete 1X2 markets.",
+      "platform": "exalogic-xsport",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-09-01"
+    },
+    {
+      "id": "don",
+      "maxEvents": 500,
+      "name": "Don",
+      "enabled": true,
+      "supportedSports": [
+        "football",
+        "tennis",
+        "basketball",
+        "ice-hockey",
+        "handball",
+        "volleyball",
+        "baseball",
+        "american-football",
+        "futsal",
+        "mma",
+        "darts",
+        "golf",
+        "cricket",
+        "boxing",
+        "badminton",
+        "table-tennis",
+        "motorsport",
+        "snooker",
+        "rugby",
+        "rugby-league",
+        "esports",
+        "australian-football",
+        "padel",
+        "biathlon",
+        "cycling",
+        "water-polo",
+        "floorball",
+        "surfing",
+        "ski-cross-country"
+      ],
+      "engine": "altenar-tenancy",
+      "transport": "altenar-sb2-widget-json",
+      "script": "altenar-sites.mjs",
+      "sourceIds": [
+        "don"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Altenar sb2 widget feed (sb2frontend-altenar2.biahosted.com GetUpcoming) smoke-validated on 2026-09-01 with future prematch events and complete 1X2 markets.",
+      "platform": "altenar-sb2",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-09-01"
+    },
+    {
+      "id": "topbet",
+      "maxEvents": 500,
+      "name": "TopBet",
+      "enabled": true,
+      "supportedSports": [
+        "football",
+        "tennis",
+        "basketball",
+        "ice-hockey",
+        "handball",
+        "volleyball",
+        "baseball",
+        "american-football",
+        "futsal",
+        "mma",
+        "darts",
+        "golf",
+        "cricket",
+        "boxing",
+        "badminton",
+        "table-tennis",
+        "motorsport",
+        "snooker",
+        "rugby",
+        "rugby-league",
+        "esports",
+        "australian-football",
+        "padel",
+        "biathlon",
+        "cycling",
+        "water-polo",
+        "floorball",
+        "surfing",
+        "ski-cross-country"
+      ],
+      "engine": "altenar-tenancy",
+      "transport": "altenar-sb2-widget-json",
+      "script": "altenar-sites.mjs",
+      "sourceIds": [
+        "topbet"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Altenar sb2 widget feed (sb2frontend-altenar2.biahosted.com GetUpcoming) smoke-validated on 2026-09-01 with future prematch events and complete 1X2 markets.",
+      "platform": "altenar-sb2",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-09-01"
+    },
+    {
+      "id": "million",
+      "maxEvents": 500,
+      "name": "Million",
+      "enabled": true,
+      "supportedSports": [
+        "football",
+        "tennis",
+        "basketball",
+        "ice-hockey",
+        "handball",
+        "volleyball",
+        "baseball",
+        "american-football",
+        "futsal",
+        "mma",
+        "darts",
+        "golf",
+        "cricket",
+        "boxing",
+        "badminton",
+        "table-tennis",
+        "motorsport",
+        "snooker",
+        "rugby",
+        "rugby-league",
+        "esports",
+        "australian-football",
+        "padel",
+        "biathlon",
+        "cycling",
+        "water-polo",
+        "floorball",
+        "surfing",
+        "ski-cross-country"
+      ],
+      "engine": "altenar-tenancy",
+      "transport": "altenar-sb2-widget-json",
+      "script": "altenar-sites.mjs",
+      "sourceIds": [
+        "million"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Altenar sb2 widget feed (sb2frontend-altenar2.biahosted.com GetUpcoming, integration=million) smoke-validated on 2026-09-02 with future prematch events and complete 1X2 markets.",
+      "platform": "altenar-sb2",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-09-01"
+    },
+    {
+      "id": "baumbet",
+      "maxEvents": 500,
+      "name": "Baumbet",
+      "enabled": true,
+      "supportedSports": [
+        "football",
+        "tennis",
+        "basketball",
+        "ice-hockey",
+        "handball",
+        "volleyball",
+        "baseball",
+        "american-football",
+        "futsal",
+        "mma",
+        "darts",
+        "golf",
+        "cricket",
+        "boxing",
+        "badminton",
+        "table-tennis",
+        "motorsport",
+        "snooker",
+        "rugby",
+        "rugby-league",
+        "esports",
+        "australian-football",
+        "padel",
+        "biathlon",
+        "cycling",
+        "water-polo",
+        "floorball",
+        "surfing",
+        "ski-cross-country"
+      ],
+      "engine": "altenar-tenancy",
+      "transport": "altenar-sb2-widget-json",
+      "script": "altenar-sites.mjs",
+      "sourceIds": [
+        "baumbet"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Altenar sb2 widget feed (sb2frontend-altenar2.biahosted.com GetUpcoming, integration=baumbet) smoke-validated on 2026-09-02 with future prematch events and complete 1X2 markets.",
+      "platform": "altenar-sb2",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-09-01"
+    },
+    {
+      "id": "powerbet",
+      "maxEvents": 500,
+      "name": "Powerbet",
+      "enabled": true,
+      "supportedSports": [
+        "football",
+        "tennis",
+        "basketball",
+        "ice-hockey",
+        "handball",
+        "volleyball",
+        "baseball",
+        "american-football",
+        "futsal",
+        "mma",
+        "darts",
+        "golf",
+        "cricket",
+        "boxing",
+        "badminton",
+        "table-tennis",
+        "motorsport",
+        "snooker",
+        "rugby",
+        "rugby-league",
+        "esports",
+        "australian-football",
+        "padel",
+        "biathlon",
+        "cycling",
+        "water-polo",
+        "floorball",
+        "surfing",
+        "ski-cross-country"
+      ],
+      "engine": "altenar-tenancy",
+      "transport": "altenar-sb2-widget-json",
+      "script": "altenar-sites.mjs",
+      "sourceIds": [
+        "powerbet"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Altenar sb2 widget feed (sb2frontend-altenar2.biahosted.com GetUpcoming, integration=powerbet) smoke-validated on 2026-09-02 with future prematch events and complete 1X2 markets.",
+      "platform": "altenar-sb2",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-09-01"
+    },
+    {
+      "id": "winbet",
+      "maxEvents": 500,
+      "name": "Winbet",
+      "enabled": true,
+      "supportedSports": [
+        "football",
+        "tennis",
+        "basketball",
+        "ice-hockey",
+        "handball",
+        "volleyball",
+        "baseball",
+        "american-football",
+        "futsal",
+        "mma",
+        "darts",
+        "golf",
+        "cricket",
+        "boxing",
+        "badminton",
+        "table-tennis",
+        "motorsport",
+        "snooker",
+        "rugby",
+        "rugby-league",
+        "esports",
+        "australian-football",
+        "padel",
+        "biathlon",
+        "cycling",
+        "water-polo",
+        "floorball",
+        "surfing",
+        "ski-cross-country"
+      ],
+      "engine": "altenar-tenancy",
+      "transport": "altenar-sb2-widget-json",
+      "script": "altenar-sites.mjs",
+      "sourceIds": [
+        "winbet"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Altenar sb2 widget feed (sb2frontend-altenar2.biahosted.com GetUpcoming, integration=winbet) smoke-validated on 2026-09-02 with future prematch events and complete 1X2 markets.",
+      "platform": "altenar-sb2",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-09-01"
+    },
+    {
+      "id": "getsbet",
+      "name": "Get's Bet",
+      "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
+      "engine": "everymatrix-odds-wamp",
+      "transport": "everymatrix-odds-wamp",
+      "script": "getsbet.mjs",
+      "sourceIds": [
+        "getsbet"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "EveryMatrix ODDS RealtimeDealer WAMP v2 feed (wss://api-online.getsbet.ro/v2, realm online.getsbet.ro, operator 2476) smoke-validated on 2026-09-02: tournaments via /sports/2476/ro/tournaments/1/187, match discovery via tournament-aggregator-groups-overview (groups 2794,2795), 1X2 (bettingTypeId 69) per event via match-odds/market-group/Populare. 33 complete 1X2 events, fresh.",
+      "platform": "everymatrix-odds",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-09-01"
+    },
+    {
+      "id": "favbet",
+      "maxEvents": 500,
+      "name": "Favbet",
+      "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
+      "engine": "erlyline",
+      "transport": "favbet-erlyline-jsonrpc",
+      "script": "favbet.mjs",
+      "sourceIds": [
+        "favbet"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "ErlyLine/Betinvest JSON-RPC gateway (POST /service/lineout/frontend_api2/) smoke-validated on 2026-09-02: frontend/event/get lists prematch football, frontend/market/get returns 1X2 (template 1). 100 complete 1X2 events, fresh.",
+      "platform": "erlyline",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-09-01"
+    },
+    {
+      "id": "winner",
+      "maxEvents": 500,
+      "name": "Winner",
+      "enabled": true,
+      "supportedSports": [
+        "football",
+        "tennis",
+        "basketball",
+        "ice-hockey",
+        "american-football",
+        "baseball",
+        "volleyball",
+        "handball",
+        "rugby",
+        "futsal",
+        "cricket",
+        "darts",
+        "badminton",
+        "table-tennis",
+        "esports",
+        "motorsport",
+        "mma",
+        "golf",
+        "boxing",
+        "water-polo",
+        "australian-football",
+        "cycling",
+        "snooker",
+        "floorball",
+        "rugby-league"
+      ],
+      "engine": "digitain",
+      "transport": "winner-digitain-public-json",
+      "script": "winner.mjs",
+      "sourceIds": [
+        "winner"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Digitain public events POST endpoint at micros-prod1-sb.gambling-solutions.ro smoke-validated on 2026-09-02 with future football events and complete 1X2 markets.",
+      "platform": "digitain",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-09-01"
+    },
+    {
+      "id": "magnumbet",
+      "maxEvents": 500,
+      "name": "MagnumBet",
+      "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
+      "engine": "exalogic-xsport",
+      "transport": "exalogic-xsport-public-json",
+      "script": "magnumbet.mjs",
+      "sourceIds": [
+        "magnumbet"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Exalogic XSport getPalinsestoDelGiorno feed (systemCode=MAGNUMBET) smoke-validated on 2026-09-02 with future football events and complete 1X2 markets.",
+      "platform": "exalogic-xsport",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-09-01"
+    },
+    {
+      "id": "contibet",
+      "name": "Conti Bet",
+      "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
+      "engine": "everymatrix-odds-wamp",
+      "transport": "everymatrix-odds-wamp",
+      "script": "contibet.mjs",
+      "sourceIds": [
+        "contibet"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "EveryMatrix ODDS RealtimeDealer WAMP v2 feed (wss://api.conticazino.ro/v2, realm www.conticazino.ro, operator 2349) smoke-validated on 2026-09-02: same WAMP flow as getsbet. 33 complete 1X2 events, fresh.",
+      "platform": "everymatrix-odds",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-09-01"
+    },
+    {
+      "id": "vipbet",
+      "name": "VipBet",
+      "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
+      "engine": "egt-public-sports-api",
+      "transport": "egt-public-sports-json",
+      "script": "vipbet.mjs",
+      "sourceIds": [
+        "vipbet"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Public endpoint recorded in data/endpoints; real capture + live smoke passed 2026-10-08 (100 events, 1-2.5s). Shared feed: EGT Digital (prowin/ultrabet).",
+      "platform": "egt-digital"
+    },
+    {
+      "id": "mrplay",
+      "maxEvents": 500,
+      "name": "MrPlay",
+      "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
+      "engine": "digitain",
+      "transport": "digitain-public-json",
+      "script": "mrplay.mjs",
+      "sourceIds": [
+        "mrplay"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Public endpoint recorded in data/endpoints; real capture + live smoke passed 2026-10-08 (100 events, 1-2.5s). Shared feed: Digitain (winner/mrplay/888sport/bet7).",
+      "platform": "digitain"
+    },
+    {
+      "id": "888sport",
+      "maxEvents": 500,
+      "name": "888sport",
+      "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
+      "engine": "digitain",
+      "transport": "digitain-public-json",
+      "script": "888sport.mjs",
+      "sourceIds": [
+        "888sport"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Public endpoint recorded in data/endpoints; real capture + live smoke passed 2026-10-08 (100 events, 1-2.5s). Shared feed: Digitain (winner/mrplay/888sport/bet7).",
+      "platform": "digitain"
+    },
+    {
+      "id": "bet7",
+      "maxEvents": 500,
+      "name": "Bet7",
+      "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
+      "engine": "digitain",
+      "transport": "digitain-public-json",
+      "script": "bet7.mjs",
+      "sourceIds": [
+        "bet7"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Public endpoint recorded in data/endpoints; real capture + live smoke passed 2026-10-08 (100 events, 1-2.5s). Shared feed: Digitain (winner/mrplay/888sport/bet7).",
+      "platform": "digitain"
+    }
+  ]
+}

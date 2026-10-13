@@ -1,0 +1,68 @@
+Sari la conținut
+ArbEdge
+TRADING
+Arbitraj
+Arbitraj live
+Case
+SPAȚIU DE LUCRU
+Tablă
+Răzuire
+Scanner
+Analiză
+Scan Insights
+SISTEM
+Setări
+RECONECTARE…
+STARE SISTEM
+RO
+EN
+Temă
+Luminoasă
+Întunecată
+Sistem
+Opportunity Terminal
+
+Cross-book arbitrage, middles and mispricing across every quoted book.
+
+BANKROLL
+—
+Export CSV
+ARBITRAGES
+—
+Guaranteed, result-independent
+GUARANTEED PROFIT
+—
+Summed over every arb below
+MIDDLES
+—
+Conditional on the margin
+POSITIVE EV
+—
+Mispriced against book consensus
+CAPITAL COMMITTED
+—
+Total stake across all arbs
+All
+Arbs
+Middles
++EV
+Low hold
+SPORT
+SEARCH
+BANKROLL (RE-PLAN STAKES)
+Confirmed only
+Sort
+By edge
+By risk
+By stake
+By kickoff
+GUARANTEED ARBITRAGE
+Payout does not depend on the result
+MIDDLES
+BOTH LEGS PAY ONLY IF THE MARGIN LANDS BETWEEN THE LINES
+POSITIVE EXPECTED VALUE
+EVENT	MARKET	BOOK	ODDS	P	EV	STAKE
+LOW HOLD
+EVENT	MARKET	BOOK	SELECTIONS	HOLD
+Created by MiniMax Agent
+×

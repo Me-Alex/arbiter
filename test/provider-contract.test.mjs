@@ -213,3 +213,81 @@ test('the three legacy classes each carry the reason they are kept', async () =>
     );
   }
 });
+
+test('legacy scrapers stamp markMarketsLive on in-play events', () => {
+  const sMaxBet = new MaxBet();
+  const rawMaxBet = [{
+    id: 'mb1', sport: 'Football', league: 'Liga 1', kickoff: '2026-10-12T12:00:00Z',
+    homeTeam: 'FCSB', awayTeam: 'Dinamo', isLive: true,
+    groups: [{ name: 'Main', markets: [{ key: 'HOME', name: 'FCSB', selections: [{ name: 'FCSB', odds: 2.1 }] }, { key: 'DRAW', name: 'Draw', selections: [{ name: 'Draw', odds: 3.2 }] }, { key: 'AWAY', name: 'Dinamo', selections: [{ name: 'Dinamo', odds: 3.5 }] }] }],
+  }];
+  const [mbEv] = sMaxBet.extractEvents(rawMaxBet);
+  assert.equal(mbEv.live, true);
+  assert.equal(mbEv.markets[0].live, true);
+
+  const sAdmiral = new Admiral();
+  const [admEv] = sAdmiral.extractEvents(rawMaxBet);
+  assert.equal(admEv.live, true);
+  assert.equal(admEv.markets[0].live, true);
+
+  const sStanley = new StanleyBet();
+  const [stEv] = sStanley.extractEvents(rawMaxBet);
+  assert.equal(stEv.live, true);
+  assert.equal(stEv.markets[0].live, true);
+});
+
+test('legacy scrapers stamp period fulltime on synthesized MATCH_ODDS and propagate sub-window periods', () => {
+  const sMaxBet = new MaxBet();
+  const sAdmiral = new Admiral();
+  const sStanley = new StanleyBet();
+
+  const rawGroups = [{
+    name: 'Main',
+    markets: [
+      { key: 'HOME', name: 'FCSB', selections: [{ name: 'FCSB', odds: 2.1 }] },
+      { key: 'DRAW', name: 'Draw', selections: [{ name: 'Draw', odds: 3.2 }] },
+      { key: 'AWAY', name: 'Dinamo', selections: [{ name: 'Dinamo', odds: 3.5 }] },
+    ],
+  }];
+
+  const [mbEv] = sMaxBet.extractEvents([{ id: 'mb1', sport: 'Football', league: 'Liga 1', kickoff: '2026-10-12T12:00:00Z', homeTeam: 'FCSB', awayTeam: 'Dinamo', groups: rawGroups }]);
+  const mbMatchOdds = mbEv.markets.find((m) => m.key === 'MATCH_ODDS');
+  assert.ok(mbMatchOdds);
+  assert.equal(mbMatchOdds.period, 'fulltime');
+
+  const [admEv] = sAdmiral.extractEvents([{ id: 'adm1', sport: 'Football', league: 'Liga 1', kickoff: '2026-10-12T12:00:00Z', homeTeam: 'FCSB', awayTeam: 'Dinamo', groups: rawGroups }]);
+  const admMatchOdds = admEv.markets.find((m) => m.key === 'MATCH_ODDS');
+  assert.ok(admMatchOdds);
+  assert.equal(admMatchOdds.period, 'fulltime');
+
+  const parsedStanley = sStanley.parse({
+    events: [{
+      id: 991,
+      home: 'FCSB',
+      away: 'Dinamo',
+      date: '2026-10-12T12:00:00Z',
+      homeOdds: 2.1,
+      drawOdds: 3.2,
+      awayOdds: 3.5,
+      extraMarkets: [
+        {
+          name: 'Rezultat Repriza 1',
+          key: '1X2_H1',
+          selections: [
+            { name: '1', odds: 2.5 },
+            { name: 'X', odds: 2.1 },
+            { name: '2', odds: 3.2 },
+          ],
+        },
+      ],
+    }],
+  });
+  const [stEv] = sStanley.extractEvents(parsedStanley);
+  const stMatchOdds = stEv.markets.find((m) => m.key === 'MATCH_ODDS');
+  assert.ok(stMatchOdds);
+  assert.equal(stMatchOdds.period, 'fulltime');
+
+  const stHalfMarket = stEv.markets.find((m) => m.key === '1X2_H1');
+  assert.ok(stHalfMarket);
+  assert.equal(stHalfMarket.period, 'half1');
+});

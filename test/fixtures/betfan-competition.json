@@ -1,0 +1,4288 @@
+{
+  "events": [
+    {
+      "id": 40524193,
+      "providerId": 1,
+      "name": "Komarno - Rużomberk",
+      "highlightedName": "Komarno - Rużomberk",
+      "start": 1792243800000,
+      "type": 1,
+      "remoteId": 72042294,
+      "category1Id": 1,
+      "category2Id": 1023,
+      "category3Id": 1024,
+      "category1Name": "Piłka nożna",
+      "category2Name": "Słowacja",
+      "category3Name": "1. Liga",
+      "gameCount": 3,
+      "games": [
+        {
+          "id": 1417134446,
+          "name": "Mecz",
+          "type": 1,
+          "combinationType": 1,
+          "marketTypes": [
+            1
+          ],
+          "gameLayout": 1,
+          "eventLayout": 1,
+          "outcomes": [
+            {
+              "id": 730150894,
+              "name": "Komarno",
+              "odds": 2,
+              "position": 0,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 730150895,
+              "name": "X",
+              "odds": 3.45,
+              "position": 1,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 730150896,
+              "name": "Rużomberk",
+              "odds": 3.05,
+              "position": 2,
+              "status": 100,
+              "betCount": 0
+            }
+          ],
+          "betCount": 0
+        },
+        {
+          "id": 1417134443,
+          "name": "Podwójna szansa",
+          "type": 4,
+          "combinationType": 1,
+          "marketTypes": [
+            1
+          ],
+          "gameLayout": 3,
+          "eventLayout": 14,
+          "outcomes": [
+            {
+              "id": 730150886,
+              "name": "1X",
+              "odds": 1.3,
+              "position": 0,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 730150888,
+              "name": "12",
+              "odds": 1.25,
+              "position": 1,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 730150889,
+              "name": "X2",
+              "odds": 1.62,
+              "position": 2,
+              "status": 100,
+              "betCount": 0
+            }
+          ],
+          "betCount": 0
+        }
+      ],
+      "mainGame": {
+        "id": 1417134446,
+        "name": "Mecz",
+        "type": 1,
+        "combinationType": 1,
+        "marketTypes": [
+          1
+        ],
+        "gameLayout": 1,
+        "eventLayout": 1,
+        "outcomes": [
+          {
+            "id": 730150894,
+            "name": "Komarno",
+            "odds": 2,
+            "position": 0,
+            "status": 100,
+            "betCount": 0
+          },
+          {
+            "id": 730150895,
+            "name": "X",
+            "odds": 3.45,
+            "position": 1,
+            "status": 100,
+            "betCount": 0
+          },
+          {
+            "id": 730150896,
+            "name": "Rużomberk",
+            "odds": 3.05,
+            "position": 2,
+            "status": 100,
+            "betCount": 0
+          }
+        ],
+        "betCount": 0
+      },
+      "treatAsSport": 1,
+      "participants": [
+        {
+          "id": 27741,
+          "name": "Komarno",
+          "highlightedName": "Komarno",
+          "number": 1
+        },
+        {
+          "id": 7154,
+          "name": "Rużomberk",
+          "highlightedName": "Rużomberk",
+          "number": 2
+        }
+      ],
+      "customBetAvailable": true,
+      "videoStream": false,
+      "backgroundImageUrl": "https://storage.betfan.pl/category-backgrounds/Pilkanozna.webp",
+      "disableNoFollow": false,
+      "liveDetails": null
+    },
+    {
+      "id": 40524195,
+      "providerId": 1,
+      "name": "MFK Skalica - Trenczyn",
+      "highlightedName": "MFK Skalica - Trenczyn",
+      "start": 1792243800000,
+      "type": 1,
+      "remoteId": 72042292,
+      "category1Id": 1,
+      "category2Id": 1023,
+      "category3Id": 1024,
+      "category1Name": "Piłka nożna",
+      "category2Name": "Słowacja",
+      "category3Name": "1. Liga",
+      "gameCount": 3,
+      "games": [
+        {
+          "id": 1416276909,
+          "name": "Mecz",
+          "type": 1,
+          "combinationType": 1,
+          "marketTypes": [
+            1
+          ],
+          "gameLayout": 1,
+          "eventLayout": 1,
+          "outcomes": [
+            {
+              "id": 726183618,
+              "name": "MFK Skalica",
+              "odds": 2.1,
+              "position": 0,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 726183619,
+              "name": "X",
+              "odds": 3.45,
+              "position": 1,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 726183620,
+              "name": "Trenczyn",
+              "odds": 2.85,
+              "position": 2,
+              "status": 100,
+              "betCount": 0
+            }
+          ],
+          "betCount": 0
+        },
+        {
+          "id": 1416276906,
+          "name": "Podwójna szansa",
+          "type": 4,
+          "combinationType": 1,
+          "marketTypes": [
+            1
+          ],
+          "gameLayout": 3,
+          "eventLayout": 14,
+          "outcomes": [
+            {
+              "id": 726183610,
+              "name": "1X",
+              "odds": 1.33,
+              "position": 0,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 726183611,
+              "name": "12",
+              "odds": 1.27,
+              "position": 1,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 726183613,
+              "name": "X2",
+              "odds": 1.57,
+              "position": 2,
+              "status": 100,
+              "betCount": 0
+            }
+          ],
+          "betCount": 0
+        }
+      ],
+      "mainGame": {
+        "id": 1416276909,
+        "name": "Mecz",
+        "type": 1,
+        "combinationType": 1,
+        "marketTypes": [
+          1
+        ],
+        "gameLayout": 1,
+        "eventLayout": 1,
+        "outcomes": [
+          {
+            "id": 726183618,
+            "name": "MFK Skalica",
+            "odds": 2.1,
+            "position": 0,
+            "status": 100,
+            "betCount": 0
+          },
+          {
+            "id": 726183619,
+            "name": "X",
+            "odds": 3.45,
+            "position": 1,
+            "status": 100,
+            "betCount": 0
+          },
+          {
+            "id": 726183620,
+            "name": "Trenczyn",
+            "odds": 2.85,
+            "position": 2,
+            "status": 100,
+            "betCount": 0
+          }
+        ],
+        "betCount": 0
+      },
+      "treatAsSport": 1,
+      "participants": [
+        {
+          "id": 1069,
+          "name": "MFK Skalica",
+          "highlightedName": "MFK Skalica",
+          "number": 1
+        },
+        {
+          "id": 6212,
+          "name": "Trenczyn",
+          "highlightedName": "Trenczyn",
+          "number": 2
+        }
+      ],
+      "customBetAvailable": true,
+      "videoStream": false,
+      "backgroundImageUrl": "https://storage.betfan.pl/category-backgrounds/Pilkanozna.webp",
+      "disableNoFollow": false,
+      "liveDetails": null
+    },
+    {
+      "id": 40524190,
+      "providerId": 1,
+      "name": "Spartak Trnawa - Slovan Bratysława",
+      "highlightedName": "Spartak Trnawa - Slovan Bratysława",
+      "start": 1792252800000,
+      "type": 1,
+      "remoteId": 72042290,
+      "category1Id": 1,
+      "category2Id": 1023,
+      "category3Id": 1024,
+      "category1Name": "Piłka nożna",
+      "category2Name": "Słowacja",
+      "category3Name": "1. Liga",
+      "gameCount": 3,
+      "games": [
+        {
+          "id": 1417245024,
+          "name": "Mecz",
+          "type": 1,
+          "combinationType": 1,
+          "marketTypes": [
+            1
+          ],
+          "gameLayout": 1,
+          "eventLayout": 1,
+          "outcomes": [
+            {
+              "id": 730639429,
+              "name": "Spartak Trnawa",
+              "odds": 3.1,
+              "position": 0,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 730639430,
+              "name": "X",
+              "odds": 3.6,
+              "position": 1,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 730639431,
+              "name": "Slovan Bratysława",
+              "odds": 1.97,
+              "position": 2,
+              "status": 100,
+              "betCount": 0
+            }
+          ],
+          "betCount": 0
+        },
+        {
+          "id": 1417245022,
+          "name": "Podwójna szansa",
+          "type": 4,
+          "combinationType": 1,
+          "marketTypes": [
+            1
+          ],
+          "gameLayout": 3,
+          "eventLayout": 14,
+          "outcomes": [
+            {
+              "id": 730639424,
+              "name": "1X",
+              "odds": 1.65,
+              "position": 0,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 730639425,
+              "name": "12",
+              "odds": 1.25,
+              "position": 1,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 730639426,
+              "name": "X2",
+              "odds": 1.3,
+              "position": 2,
+              "status": 100,
+              "betCount": 0
+            }
+          ],
+          "betCount": 0
+        }
+      ],
+      "mainGame": {
+        "id": 1417245024,
+        "name": "Mecz",
+        "type": 1,
+        "combinationType": 1,
+        "marketTypes": [
+          1
+        ],
+        "gameLayout": 1,
+        "eventLayout": 1,
+        "outcomes": [
+          {
+            "id": 730639429,
+            "name": "Spartak Trnawa",
+            "odds": 3.1,
+            "position": 0,
+            "status": 100,
+            "betCount": 0
+          },
+          {
+            "id": 730639430,
+            "name": "X",
+            "odds": 3.6,
+            "position": 1,
+            "status": 100,
+            "betCount": 0
+          },
+          {
+            "id": 730639431,
+            "name": "Slovan Bratysława",
+            "odds": 1.97,
+            "position": 2,
+            "status": 100,
+            "betCount": 0
+          }
+        ],
+        "betCount": 0
+      },
+      "treatAsSport": 1,
+      "participants": [
+        {
+          "id": 1070,
+          "name": "Spartak Trnawa",
+          "highlightedName": "Spartak Trnawa",
+          "number": 1
+        },
+        {
+          "id": 2332,
+          "name": "Slovan Bratysława",
+          "highlightedName": "Slovan Bratysława",
+          "number": 2
+        }
+      ],
+      "customBetAvailable": true,
+      "videoStream": false,
+      "backgroundImageUrl": "https://storage.betfan.pl/category-backgrounds/Pilkanozna.webp",
+      "disableNoFollow": false,
+      "liveDetails": null
+    },
+    {
+      "id": 40524185,
+      "providerId": 1,
+      "name": "Michalovce - Kosice",
+      "highlightedName": "Michalovce - Kosice",
+      "start": 1792330200000,
+      "type": 1,
+      "remoteId": 72042288,
+      "category1Id": 1,
+      "category2Id": 1023,
+      "category3Id": 1024,
+      "category1Name": "Piłka nożna",
+      "category2Name": "Słowacja",
+      "category3Name": "1. Liga",
+      "gameCount": 3,
+      "games": [
+        {
+          "id": 1417133679,
+          "name": "Mecz",
+          "type": 1,
+          "combinationType": 1,
+          "marketTypes": [
+            1
+          ],
+          "gameLayout": 1,
+          "eventLayout": 1,
+          "outcomes": [
+            {
+              "id": 730148351,
+              "name": "Michalovce",
+              "odds": 3,
+              "position": 0,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 730148352,
+              "name": "X",
+              "odds": 3.7,
+              "position": 1,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 730148353,
+              "name": "Kosice",
+              "odds": 1.97,
+              "position": 2,
+              "status": 100,
+              "betCount": 8
+            }
+          ],
+          "betCount": 8
+        },
+        {
+          "id": 1417133677,
+          "name": "Podwójna szansa",
+          "type": 4,
+          "combinationType": 1,
+          "marketTypes": [
+            1
+          ],
+          "gameLayout": 3,
+          "eventLayout": 14,
+          "outcomes": [
+            {
+              "id": 730148345,
+              "name": "1X",
+              "odds": 1.65,
+              "position": 0,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 730148346,
+              "name": "12",
+              "odds": 1.23,
+              "position": 1,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 730148347,
+              "name": "X2",
+              "odds": 1.32,
+              "position": 2,
+              "status": 100,
+              "betCount": 0
+            }
+          ],
+          "betCount": 0
+        }
+      ],
+      "mainGame": {
+        "id": 1417133679,
+        "name": "Mecz",
+        "type": 1,
+        "combinationType": 1,
+        "marketTypes": [
+          1
+        ],
+        "gameLayout": 1,
+        "eventLayout": 1,
+        "outcomes": [
+          {
+            "id": 730148351,
+            "name": "Michalovce",
+            "odds": 3,
+            "position": 0,
+            "status": 100,
+            "betCount": 0
+          },
+          {
+            "id": 730148352,
+            "name": "X",
+            "odds": 3.7,
+            "position": 1,
+            "status": 100,
+            "betCount": 0
+          },
+          {
+            "id": 730148353,
+            "name": "Kosice",
+            "odds": 1.97,
+            "position": 2,
+            "status": 100,
+            "betCount": 8
+          }
+        ],
+        "betCount": 8
+      },
+      "treatAsSport": 1,
+      "participants": [
+        {
+          "id": 5594,
+          "name": "Michalovce",
+          "highlightedName": "Michalovce",
+          "number": 1
+        },
+        {
+          "id": 67434,
+          "name": "Kosice",
+          "highlightedName": "Kosice",
+          "number": 2
+        }
+      ],
+      "customBetAvailable": true,
+      "videoStream": false,
+      "backgroundImageUrl": "https://storage.betfan.pl/category-backgrounds/Pilkanozna.webp",
+      "disableNoFollow": false,
+      "liveDetails": null
+    },
+    {
+      "id": 40524194,
+      "providerId": 1,
+      "name": "Dukla Bańska Bystrzyca - Podbrezova",
+      "highlightedName": "Dukla Bańska Bystrzyca - Podbrezova",
+      "start": 1792330200000,
+      "type": 1,
+      "remoteId": 72042298,
+      "category1Id": 1,
+      "category2Id": 1023,
+      "category3Id": 1024,
+      "category1Name": "Piłka nożna",
+      "category2Name": "Słowacja",
+      "category3Name": "1. Liga",
+      "gameCount": 3,
+      "games": [
+        {
+          "id": 1417244893,
+          "name": "Mecz",
+          "type": 1,
+          "combinationType": 1,
+          "marketTypes": [
+            1
+          ],
+          "gameLayout": 1,
+          "eventLayout": 1,
+          "outcomes": [
+            {
+              "id": 730638972,
+              "name": "Dukla Bańska Bystrzyca",
+              "odds": 3.4,
+              "position": 0,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 730638973,
+              "name": "X",
+              "odds": 3.65,
+              "position": 1,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 730638974,
+              "name": "Podbrezova",
+              "odds": 1.83,
+              "position": 2,
+              "status": 100,
+              "betCount": 0
+            }
+          ],
+          "betCount": 0
+        },
+        {
+          "id": 1417244891,
+          "name": "Podwójna szansa",
+          "type": 4,
+          "combinationType": 1,
+          "marketTypes": [
+            1
+          ],
+          "gameLayout": 3,
+          "eventLayout": 14,
+          "outcomes": [
+            {
+              "id": 730638967,
+              "name": "1X",
+              "odds": 1.73,
+              "position": 0,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 730638968,
+              "name": "12",
+              "odds": 1.23,
+              "position": 1,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 730638969,
+              "name": "X2",
+              "odds": 1.25,
+              "position": 2,
+              "status": 100,
+              "betCount": 0
+            }
+          ],
+          "betCount": 0
+        }
+      ],
+      "mainGame": {
+        "id": 1417244893,
+        "name": "Mecz",
+        "type": 1,
+        "combinationType": 1,
+        "marketTypes": [
+          1
+        ],
+        "gameLayout": 1,
+        "eventLayout": 1,
+        "outcomes": [
+          {
+            "id": 730638972,
+            "name": "Dukla Bańska Bystrzyca",
+            "odds": 3.4,
+            "position": 0,
+            "status": 100,
+            "betCount": 0
+          },
+          {
+            "id": 730638973,
+            "name": "X",
+            "odds": 3.65,
+            "position": 1,
+            "status": 100,
+            "betCount": 0
+          },
+          {
+            "id": 730638974,
+            "name": "Podbrezova",
+            "odds": 1.83,
+            "position": 2,
+            "status": 100,
+            "betCount": 0
+          }
+        ],
+        "betCount": 0
+      },
+      "treatAsSport": 1,
+      "participants": [
+        {
+          "id": 2295,
+          "name": "Dukla Bańska Bystrzyca",
+          "highlightedName": "Dukla Bańska Bystrzyca",
+          "number": 1
+        },
+        {
+          "id": 5032,
+          "name": "Podbrezova",
+          "highlightedName": "Podbrezova",
+          "number": 2
+        }
+      ],
+      "customBetAvailable": true,
+      "videoStream": false,
+      "backgroundImageUrl": "https://storage.betfan.pl/category-backgrounds/Pilkanozna.webp",
+      "disableNoFollow": false,
+      "liveDetails": null
+    },
+    {
+      "id": 40524187,
+      "providerId": 1,
+      "name": "Żylina - Dunajska Streda",
+      "highlightedName": "Żylina - Dunajska Streda",
+      "start": 1792339200000,
+      "type": 1,
+      "remoteId": 72042296,
+      "category1Id": 1,
+      "category2Id": 1023,
+      "category3Id": 1024,
+      "category1Name": "Piłka nożna",
+      "category2Name": "Słowacja",
+      "category3Name": "1. Liga",
+      "gameCount": 3,
+      "games": [
+        {
+          "id": 1417244907,
+          "name": "Mecz",
+          "type": 1,
+          "combinationType": 1,
+          "marketTypes": [
+            1
+          ],
+          "gameLayout": 1,
+          "eventLayout": 1,
+          "outcomes": [
+            {
+              "id": 730639003,
+              "name": "Żylina",
+              "odds": 2.85,
+              "position": 0,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 730639004,
+              "name": "X",
+              "odds": 3.7,
+              "position": 1,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 730639005,
+              "name": "Dunajska Streda",
+              "odds": 2.05,
+              "position": 2,
+              "status": 100,
+              "betCount": 0
+            }
+          ],
+          "betCount": 0
+        },
+        {
+          "id": 1417244905,
+          "name": "Podwójna szansa",
+          "type": 4,
+          "combinationType": 1,
+          "marketTypes": [
+            1
+          ],
+          "gameLayout": 3,
+          "eventLayout": 14,
+          "outcomes": [
+            {
+              "id": 730638998,
+              "name": "1X",
+              "odds": 1.6,
+              "position": 0,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 730638999,
+              "name": "12",
+              "odds": 1.23,
+              "position": 1,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 730639000,
+              "name": "X2",
+              "odds": 1.33,
+              "position": 2,
+              "status": 100,
+              "betCount": 10
+            }
+          ],
+          "betCount": 10
+        }
+      ],
+      "mainGame": {
+        "id": 1417244907,
+        "name": "Mecz",
+        "type": 1,
+        "combinationType": 1,
+        "marketTypes": [
+          1
+        ],
+        "gameLayout": 1,
+        "eventLayout": 1,
+        "outcomes": [
+          {
+            "id": 730639003,
+            "name": "Żylina",
+            "odds": 2.85,
+            "position": 0,
+            "status": 100,
+            "betCount": 0
+          },
+          {
+            "id": 730639004,
+            "name": "X",
+            "odds": 3.7,
+            "position": 1,
+            "status": 100,
+            "betCount": 0
+          },
+          {
+            "id": 730639005,
+            "name": "Dunajska Streda",
+            "odds": 2.05,
+            "position": 2,
+            "status": 100,
+            "betCount": 0
+          }
+        ],
+        "betCount": 0
+      },
+      "treatAsSport": 1,
+      "participants": [
+        {
+          "id": 7409,
+          "name": "Żylina",
+          "highlightedName": "Żylina",
+          "number": 1
+        },
+        {
+          "id": 4248,
+          "name": "Dunajska Streda",
+          "highlightedName": "Dunajska Streda",
+          "number": 2
+        }
+      ],
+      "customBetAvailable": true,
+      "videoStream": false,
+      "backgroundImageUrl": "https://storage.betfan.pl/category-backgrounds/Pilkanozna.webp",
+      "disableNoFollow": false,
+      "liveDetails": null
+    },
+    {
+      "id": 42823969,
+      "providerId": 1,
+      "name": "Atletico Nacional Medellin - Independiente Medellin",
+      "highlightedName": "Atletico Nacional Medellin - Independiente Medellin",
+      "start": 1792027800000,
+      "type": 1,
+      "remoteId": 75371332,
+      "category1Id": 1,
+      "category2Id": 900,
+      "category3Id": 2058,
+      "category1Name": "Piłka nożna",
+      "category2Name": "Kolumbia",
+      "category3Name": "Puchar",
+      "gameCount": 3,
+      "games": [
+        {
+          "id": 1418045453,
+          "name": "Mecz",
+          "type": 1,
+          "combinationType": 1,
+          "marketTypes": [
+            1
+          ],
+          "gameLayout": 1,
+          "eventLayout": 1,
+          "outcomes": [
+            {
+              "id": 734712186,
+              "name": "Atletico Nacional Medellin",
+              "odds": 1.67,
+              "position": 0,
+              "status": 100,
+              "betCount": 2
+            },
+            {
+              "id": 734712188,
+              "name": "X",
+              "odds": 3.7,
+              "position": 1,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 734712189,
+              "name": "Independiente Medellin",
+              "odds": 4.35,
+              "position": 2,
+              "status": 100,
+              "betCount": 0
+            }
+          ],
+          "betCount": 2
+        },
+        {
+          "id": 1418045451,
+          "name": "Podwójna szansa",
+          "type": 4,
+          "combinationType": 1,
+          "marketTypes": [
+            1
+          ],
+          "gameLayout": 3,
+          "eventLayout": 14,
+          "outcomes": [
+            {
+              "id": 734712175,
+              "name": "1X",
+              "odds": 1.18,
+              "position": 0,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 734712176,
+              "name": "12",
+              "odds": 1.23,
+              "position": 1,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 734712178,
+              "name": "X2",
+              "odds": 1.92,
+              "position": 2,
+              "status": 100,
+              "betCount": 0
+            }
+          ],
+          "betCount": 0
+        }
+      ],
+      "mainGame": {
+        "id": 1418045453,
+        "name": "Mecz",
+        "type": 1,
+        "combinationType": 1,
+        "marketTypes": [
+          1
+        ],
+        "gameLayout": 1,
+        "eventLayout": 1,
+        "outcomes": [
+          {
+            "id": 734712186,
+            "name": "Atletico Nacional Medellin",
+            "odds": 1.67,
+            "position": 0,
+            "status": 100,
+            "betCount": 2
+          },
+          {
+            "id": 734712188,
+            "name": "X",
+            "odds": 3.7,
+            "position": 1,
+            "status": 100,
+            "betCount": 0
+          },
+          {
+            "id": 734712189,
+            "name": "Independiente Medellin",
+            "odds": 4.35,
+            "position": 2,
+            "status": 100,
+            "betCount": 0
+          }
+        ],
+        "betCount": 2
+      },
+      "treatAsSport": 1,
+      "participants": [
+        {
+          "id": 4729,
+          "name": "Atletico Nacional Medellin",
+          "highlightedName": "Atletico Nacional Medellin",
+          "number": 1
+        },
+        {
+          "id": 5480,
+          "name": "Independiente Medellin",
+          "highlightedName": "Independiente Medellin",
+          "number": 2
+        }
+      ],
+      "customBetAvailable": true,
+      "videoStream": false,
+      "backgroundImageUrl": "https://storage.betfan.pl/category-backgrounds/Pilkanozna.webp",
+      "disableNoFollow": false,
+      "liveDetails": null
+    },
+    {
+      "id": 42824001,
+      "providerId": 1,
+      "name": "Internacional de Bogota. - Llaneros",
+      "highlightedName": "Internacional de Bogota. - Llaneros",
+      "start": 1792105200000,
+      "type": 1,
+      "remoteId": 75371346,
+      "category1Id": 1,
+      "category2Id": 900,
+      "category3Id": 2058,
+      "category1Name": "Piłka nożna",
+      "category2Name": "Kolumbia",
+      "category3Name": "Puchar",
+      "gameCount": 3,
+      "games": [
+        {
+          "id": 1418045823,
+          "name": "Mecz",
+          "type": 1,
+          "combinationType": 1,
+          "marketTypes": [
+            1
+          ],
+          "gameLayout": 1,
+          "eventLayout": 1,
+          "outcomes": [
+            {
+              "id": 734713279,
+              "name": "Internacional de Bogota.",
+              "odds": 1.73,
+              "position": 0,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 734713280,
+              "name": "X",
+              "odds": 3.35,
+              "position": 1,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 734713281,
+              "name": "Llaneros",
+              "odds": 4.5,
+              "position": 2,
+              "status": 100,
+              "betCount": 0
+            }
+          ],
+          "betCount": 0
+        },
+        {
+          "id": 1418045821,
+          "name": "Podwójna szansa",
+          "type": 4,
+          "combinationType": 1,
+          "marketTypes": [
+            1
+          ],
+          "gameLayout": 3,
+          "eventLayout": 14,
+          "outcomes": [
+            {
+              "id": 734713274,
+              "name": "1X",
+              "odds": 1.18,
+              "position": 0,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 734713275,
+              "name": "12",
+              "odds": 1.27,
+              "position": 1,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 734713276,
+              "name": "X2",
+              "odds": 1.85,
+              "position": 2,
+              "status": 100,
+              "betCount": 0
+            }
+          ],
+          "betCount": 0
+        }
+      ],
+      "mainGame": {
+        "id": 1418045823,
+        "name": "Mecz",
+        "type": 1,
+        "combinationType": 1,
+        "marketTypes": [
+          1
+        ],
+        "gameLayout": 1,
+        "eventLayout": 1,
+        "outcomes": [
+          {
+            "id": 734713279,
+            "name": "Internacional de Bogota.",
+            "odds": 1.73,
+            "position": 0,
+            "status": 100,
+            "betCount": 0
+          },
+          {
+            "id": 734713280,
+            "name": "X",
+            "odds": 3.35,
+            "position": 1,
+            "status": 100,
+            "betCount": 0
+          },
+          {
+            "id": 734713281,
+            "name": "Llaneros",
+            "odds": 4.5,
+            "position": 2,
+            "status": 100,
+            "betCount": 0
+          }
+        ],
+        "betCount": 0
+      },
+      "treatAsSport": 1,
+      "participants": [
+        {
+          "id": 529167,
+          "name": "Internacional de Bogota.",
+          "highlightedName": "Internacional de Bogota.",
+          "number": 1
+        },
+        {
+          "id": 16434,
+          "name": "Llaneros",
+          "highlightedName": "Llaneros",
+          "number": 2
+        }
+      ],
+      "customBetAvailable": true,
+      "videoStream": false,
+      "backgroundImageUrl": "https://storage.betfan.pl/category-backgrounds/Pilkanozna.webp",
+      "disableNoFollow": false,
+      "liveDetails": null
+    },
+    {
+      "id": 42818455,
+      "providerId": 1,
+      "name": "Zimbabwe - Malawi",
+      "highlightedName": "Zimbabwe - Malawi",
+      "start": 1791896400000,
+      "type": 1,
+      "remoteId": 71890062,
+      "category1Id": 1,
+      "category2Id": 231,
+      "category3Id": 595972,
+      "category1Name": "Piłka nożna",
+      "category2Name": "Międzynarodowe",
+      "category3Name": "CAF Igrzyska Olimpijskie kwal. (K)",
+      "gameCount": 2,
+      "games": [
+        {
+          "id": 1417848278,
+          "name": "Mecz",
+          "type": 1,
+          "combinationType": 1,
+          "marketTypes": [
+            1
+          ],
+          "gameLayout": 1,
+          "eventLayout": 1,
+          "outcomes": [
+            {
+              "id": 733757864,
+              "name": "Zimbabwe",
+              "odds": 3.4,
+              "position": 0,
+              "status": 100,
+              "betCount": 1
+            },
+            {
+              "id": 733757865,
+              "name": "X",
+              "odds": 3.4,
+              "position": 1,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 733757866,
+              "name": "Malawi",
+              "odds": 1.93,
+              "position": 2,
+              "status": 100,
+              "betCount": 0
+            }
+          ],
+          "betCount": 1
+        },
+        {
+          "id": 1417848277,
+          "name": "Podwójna szansa",
+          "type": 4,
+          "combinationType": 1,
+          "marketTypes": [
+            1
+          ],
+          "gameLayout": 3,
+          "eventLayout": 14,
+          "outcomes": [
+            {
+              "id": 733757861,
+              "name": "1X",
+              "odds": 1.65,
+              "position": 0,
+              "status": 100,
+              "betCount": 1
+            },
+            {
+              "id": 733757862,
+              "name": "12",
+              "odds": 1.25,
+              "position": 1,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 733757863,
+              "name": "X2",
+              "odds": 1.25,
+              "position": 2,
+              "status": 100,
+              "betCount": 0
+            }
+          ],
+          "betCount": 1
+        }
+      ],
+      "mainGame": {
+        "id": 1417848278,
+        "name": "Mecz",
+        "type": 1,
+        "combinationType": 1,
+        "marketTypes": [
+          1
+        ],
+        "gameLayout": 1,
+        "eventLayout": 1,
+        "outcomes": [
+          {
+            "id": 733757864,
+            "name": "Zimbabwe",
+            "odds": 3.4,
+            "position": 0,
+            "status": 100,
+            "betCount": 1
+          },
+          {
+            "id": 733757865,
+            "name": "X",
+            "odds": 3.4,
+            "position": 1,
+            "status": 100,
+            "betCount": 0
+          },
+          {
+            "id": 733757866,
+            "name": "Malawi",
+            "odds": 1.93,
+            "position": 2,
+            "status": 100,
+            "betCount": 0
+          }
+        ],
+        "betCount": 1
+      },
+      "treatAsSport": 1,
+      "participants": [
+        {
+          "id": 76816,
+          "name": "Zimbabwe",
+          "highlightedName": "Zimbabwe",
+          "number": 1
+        },
+        {
+          "id": 76806,
+          "name": "Malawi",
+          "highlightedName": "Malawi",
+          "number": 2
+        }
+      ],
+      "customBetAvailable": true,
+      "videoStream": false,
+      "backgroundImageUrl": "https://storage.betfan.pl/category-backgrounds/Pilkanozna.webp",
+      "disableNoFollow": false,
+      "liveDetails": null
+    },
+    {
+      "id": 42818457,
+      "providerId": 1,
+      "name": "Tanzania - Botswana",
+      "highlightedName": "Tanzania - Botswana",
+      "start": 1791896400000,
+      "type": 1,
+      "remoteId": 71889998,
+      "category1Id": 1,
+      "category2Id": 231,
+      "category3Id": 595972,
+      "category1Name": "Piłka nożna",
+      "category2Name": "Międzynarodowe",
+      "category3Name": "CAF Igrzyska Olimpijskie kwal. (K)",
+      "gameCount": 2,
+      "games": [
+        {
+          "id": 1417848309,
+          "name": "Mecz",
+          "type": 1,
+          "combinationType": 1,
+          "marketTypes": [
+            1
+          ],
+          "gameLayout": 1,
+          "eventLayout": 1,
+          "outcomes": [
+            {
+              "id": 733758019,
+              "name": "Tanzania",
+              "odds": 1.48,
+              "position": 0,
+              "status": 100,
+              "betCount": 10
+            },
+            {
+              "id": 733758020,
+              "name": "X",
+              "odds": 3.65,
+              "position": 1,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 733758021,
+              "name": "Botswana",
+              "odds": 6.1,
+              "position": 2,
+              "status": 100,
+              "betCount": 0
+            }
+          ],
+          "betCount": 10
+        },
+        {
+          "id": 1417848308,
+          "name": "Podwójna szansa",
+          "type": 4,
+          "combinationType": 1,
+          "marketTypes": [
+            1
+          ],
+          "gameLayout": 3,
+          "eventLayout": 14,
+          "outcomes": [
+            {
+              "id": 733758016,
+              "name": "1X",
+              "odds": 1.1,
+              "position": 0,
+              "status": 100,
+              "betCount": 1
+            },
+            {
+              "id": 733758017,
+              "name": "12",
+              "odds": 1.2,
+              "position": 1,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 733758018,
+              "name": "X2",
+              "odds": 2.15,
+              "position": 2,
+              "status": 100,
+              "betCount": 0
+            }
+          ],
+          "betCount": 1
+        }
+      ],
+      "mainGame": {
+        "id": 1417848309,
+        "name": "Mecz",
+        "type": 1,
+        "combinationType": 1,
+        "marketTypes": [
+          1
+        ],
+        "gameLayout": 1,
+        "eventLayout": 1,
+        "outcomes": [
+          {
+            "id": 733758019,
+            "name": "Tanzania",
+            "odds": 1.48,
+            "position": 0,
+            "status": 100,
+            "betCount": 10
+          },
+          {
+            "id": 733758020,
+            "name": "X",
+            "odds": 3.65,
+            "position": 1,
+            "status": 100,
+            "betCount": 0
+          },
+          {
+            "id": 733758021,
+            "name": "Botswana",
+            "odds": 6.1,
+            "position": 2,
+            "status": 100,
+            "betCount": 0
+          }
+        ],
+        "betCount": 10
+      },
+      "treatAsSport": 1,
+      "participants": [
+        {
+          "id": 156436,
+          "name": "Tanzania",
+          "highlightedName": "Tanzania",
+          "number": 1
+        },
+        {
+          "id": 76665,
+          "name": "Botswana",
+          "highlightedName": "Botswana",
+          "number": 2
+        }
+      ],
+      "customBetAvailable": true,
+      "videoStream": false,
+      "backgroundImageUrl": "https://storage.betfan.pl/category-backgrounds/Pilkanozna.webp",
+      "disableNoFollow": false,
+      "liveDetails": null
+    },
+    {
+      "id": 42819462,
+      "providerId": 1,
+      "name": "Gwinea Równikowa - Burkina Faso",
+      "highlightedName": "Gwinea Równikowa - Burkina Faso",
+      "start": 1791900000000,
+      "type": 1,
+      "remoteId": 71889944,
+      "category1Id": 1,
+      "category2Id": 231,
+      "category3Id": 595972,
+      "category1Name": "Piłka nożna",
+      "category2Name": "Międzynarodowe",
+      "category3Name": "CAF Igrzyska Olimpijskie kwal. (K)",
+      "gameCount": 2,
+      "games": [
+        {
+          "id": 1417884321,
+          "name": "Mecz",
+          "type": 1,
+          "combinationType": 1,
+          "marketTypes": [
+            1
+          ],
+          "gameLayout": 1,
+          "eventLayout": 1,
+          "outcomes": [
+            {
+              "id": 733935089,
+              "name": "Gwinea Równikowa",
+              "odds": 2.95,
+              "position": 0,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 733935090,
+              "name": "X",
+              "odds": 3.1,
+              "position": 1,
+              "status": 100,
+              "betCount": 1
+            },
+            {
+              "id": 733935091,
+              "name": "Burkina Faso",
+              "odds": 2.2,
+              "position": 2,
+              "status": 100,
+              "betCount": 3
+            }
+          ],
+          "betCount": 4
+        },
+        {
+          "id": 1417884320,
+          "name": "Podwójna szansa",
+          "type": 4,
+          "combinationType": 1,
+          "marketTypes": [
+            1
+          ],
+          "gameLayout": 3,
+          "eventLayout": 14,
+          "outcomes": [
+            {
+              "id": 733935086,
+              "name": "1X",
+              "odds": 1.5,
+              "position": 0,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 733935087,
+              "name": "12",
+              "odds": 1.3,
+              "position": 1,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 733935088,
+              "name": "X2",
+              "odds": 1.32,
+              "position": 2,
+              "status": 100,
+              "betCount": 0
+            }
+          ],
+          "betCount": 0
+        }
+      ],
+      "mainGame": {
+        "id": 1417884321,
+        "name": "Mecz",
+        "type": 1,
+        "combinationType": 1,
+        "marketTypes": [
+          1
+        ],
+        "gameLayout": 1,
+        "eventLayout": 1,
+        "outcomes": [
+          {
+            "id": 733935089,
+            "name": "Gwinea Równikowa",
+            "odds": 2.95,
+            "position": 0,
+            "status": 100,
+            "betCount": 0
+          },
+          {
+            "id": 733935090,
+            "name": "X",
+            "odds": 3.1,
+            "position": 1,
+            "status": 100,
+            "betCount": 1
+          },
+          {
+            "id": 733935091,
+            "name": "Burkina Faso",
+            "odds": 2.2,
+            "position": 2,
+            "status": 100,
+            "betCount": 3
+          }
+        ],
+        "betCount": 4
+      },
+      "treatAsSport": 1,
+      "participants": [
+        {
+          "id": 559735,
+          "name": "Gwinea Równikowa",
+          "highlightedName": "Gwinea Równikowa",
+          "number": 1
+        },
+        {
+          "id": 282495,
+          "name": "Burkina Faso",
+          "highlightedName": "Burkina Faso",
+          "number": 2
+        }
+      ],
+      "customBetAvailable": true,
+      "videoStream": false,
+      "backgroundImageUrl": "https://storage.betfan.pl/category-backgrounds/Pilkanozna.webp",
+      "disableNoFollow": false,
+      "liveDetails": null
+    },
+    {
+      "id": 42823640,
+      "providerId": 1,
+      "name": "Zambia - Uganda",
+      "highlightedName": "Zambia - Uganda",
+      "start": 1791907200000,
+      "type": 1,
+      "remoteId": 71890064,
+      "category1Id": 1,
+      "category2Id": 231,
+      "category3Id": 595972,
+      "category1Name": "Piłka nożna",
+      "category2Name": "Międzynarodowe",
+      "category3Name": "CAF Igrzyska Olimpijskie kwal. (K)",
+      "gameCount": 2,
+      "games": [
+        {
+          "id": 1418029263,
+          "name": "Mecz",
+          "type": 1,
+          "combinationType": 1,
+          "marketTypes": [
+            1
+          ],
+          "gameLayout": 1,
+          "eventLayout": 1,
+          "outcomes": [
+            {
+              "id": 734640502,
+              "name": "Zambia",
+              "odds": 1.47,
+              "position": 0,
+              "status": 100,
+              "betCount": 4
+            },
+            {
+              "id": 734640503,
+              "name": "X",
+              "odds": 4.05,
+              "position": 1,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 734640504,
+              "name": "Uganda",
+              "odds": 5.5,
+              "position": 2,
+              "status": 100,
+              "betCount": 0
+            }
+          ],
+          "betCount": 4
+        },
+        {
+          "id": 1418029262,
+          "name": "Podwójna szansa",
+          "type": 4,
+          "combinationType": 1,
+          "marketTypes": [
+            1
+          ],
+          "gameLayout": 3,
+          "eventLayout": 14,
+          "outcomes": [
+            {
+              "id": 734640499,
+              "name": "1X",
+              "odds": 1.12,
+              "position": 0,
+              "status": 100,
+              "betCount": 1
+            },
+            {
+              "id": 734640500,
+              "name": "12",
+              "odds": 1.18,
+              "position": 1,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 734640501,
+              "name": "X2",
+              "odds": 2.2,
+              "position": 2,
+              "status": 100,
+              "betCount": 0
+            }
+          ],
+          "betCount": 1
+        }
+      ],
+      "mainGame": {
+        "id": 1418029263,
+        "name": "Mecz",
+        "type": 1,
+        "combinationType": 1,
+        "marketTypes": [
+          1
+        ],
+        "gameLayout": 1,
+        "eventLayout": 1,
+        "outcomes": [
+          {
+            "id": 734640502,
+            "name": "Zambia",
+            "odds": 1.47,
+            "position": 0,
+            "status": 100,
+            "betCount": 4
+          },
+          {
+            "id": 734640503,
+            "name": "X",
+            "odds": 4.05,
+            "position": 1,
+            "status": 100,
+            "betCount": 0
+          },
+          {
+            "id": 734640504,
+            "name": "Uganda",
+            "odds": 5.5,
+            "position": 2,
+            "status": 100,
+            "betCount": 0
+          }
+        ],
+        "betCount": 4
+      },
+      "treatAsSport": 1,
+      "participants": [
+        {
+          "id": 76616,
+          "name": "Zambia",
+          "highlightedName": "Zambia",
+          "number": 1
+        },
+        {
+          "id": 101171,
+          "name": "Uganda",
+          "highlightedName": "Uganda",
+          "number": 2
+        }
+      ],
+      "customBetAvailable": true,
+      "videoStream": false,
+      "backgroundImageUrl": "https://storage.betfan.pl/category-backgrounds/Pilkanozna.webp",
+      "disableNoFollow": false,
+      "liveDetails": null
+    },
+    {
+      "id": 42834548,
+      "providerId": 1,
+      "name": "Etiopia - Rwanda",
+      "highlightedName": "Etiopia - Rwanda",
+      "start": 1791907200000,
+      "type": 1,
+      "remoteId": 71889948,
+      "category1Id": 1,
+      "category2Id": 231,
+      "category3Id": 595972,
+      "category1Name": "Piłka nożna",
+      "category2Name": "Międzynarodowe",
+      "category3Name": "CAF Igrzyska Olimpijskie kwal. (K)",
+      "gameCount": 2,
+      "games": [
+        {
+          "id": 1418432105,
+          "name": "Mecz",
+          "type": 1,
+          "combinationType": 1,
+          "marketTypes": [
+            1
+          ],
+          "gameLayout": 1,
+          "eventLayout": 1,
+          "outcomes": [
+            {
+              "id": 736771465,
+              "name": "Etiopia",
+              "odds": 1.47,
+              "position": 0,
+              "status": 100,
+              "betCount": 3
+            },
+            {
+              "id": 736771466,
+              "name": "X",
+              "odds": 3.85,
+              "position": 1,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 736771467,
+              "name": "Rwanda",
+              "odds": 5.9,
+              "position": 2,
+              "status": 100,
+              "betCount": 0
+            }
+          ],
+          "betCount": 3
+        },
+        {
+          "id": 1418432104,
+          "name": "Podwójna szansa",
+          "type": 4,
+          "combinationType": 1,
+          "marketTypes": [
+            1
+          ],
+          "gameLayout": 3,
+          "eventLayout": 14,
+          "outcomes": [
+            {
+              "id": 736771462,
+              "name": "1X",
+              "odds": 1.12,
+              "position": 0,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 736771463,
+              "name": "12",
+              "odds": 1.2,
+              "position": 1,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 736771464,
+              "name": "X2",
+              "odds": 2.15,
+              "position": 2,
+              "status": 100,
+              "betCount": 0
+            }
+          ],
+          "betCount": 0
+        }
+      ],
+      "mainGame": {
+        "id": 1418432105,
+        "name": "Mecz",
+        "type": 1,
+        "combinationType": 1,
+        "marketTypes": [
+          1
+        ],
+        "gameLayout": 1,
+        "eventLayout": 1,
+        "outcomes": [
+          {
+            "id": 736771465,
+            "name": "Etiopia",
+            "odds": 1.47,
+            "position": 0,
+            "status": 100,
+            "betCount": 3
+          },
+          {
+            "id": 736771466,
+            "name": "X",
+            "odds": 3.85,
+            "position": 1,
+            "status": 100,
+            "betCount": 0
+          },
+          {
+            "id": 736771467,
+            "name": "Rwanda",
+            "odds": 5.9,
+            "position": 2,
+            "status": 100,
+            "betCount": 0
+          }
+        ],
+        "betCount": 3
+      },
+      "treatAsSport": 1,
+      "participants": [
+        {
+          "id": 101172,
+          "name": "Etiopia",
+          "highlightedName": "Etiopia",
+          "number": 1
+        },
+        {
+          "id": 586152,
+          "name": "Rwanda",
+          "highlightedName": "Rwanda",
+          "number": 2
+        }
+      ],
+      "customBetAvailable": true,
+      "videoStream": false,
+      "backgroundImageUrl": "https://storage.betfan.pl/category-backgrounds/Pilkanozna.webp",
+      "disableNoFollow": false,
+      "liveDetails": null
+    },
+    {
+      "id": 42822485,
+      "providerId": 1,
+      "name": "Senegal - Tunisia",
+      "highlightedName": "Senegal - Tunisia",
+      "start": 1791910800000,
+      "type": 1,
+      "remoteId": 71889874,
+      "category1Id": 1,
+      "category2Id": 231,
+      "category3Id": 595972,
+      "category1Name": "Piłka nożna",
+      "category2Name": "Międzynarodowe",
+      "category3Name": "CAF Igrzyska Olimpijskie kwal. (K)",
+      "gameCount": 2,
+      "games": [
+        {
+          "id": 1417983202,
+          "name": "Mecz",
+          "type": 1,
+          "combinationType": 1,
+          "marketTypes": [
+            1
+          ],
+          "gameLayout": 1,
+          "eventLayout": 1,
+          "outcomes": [
+            {
+              "id": 734429199,
+              "name": "Senegal",
+              "odds": 1.95,
+              "position": 0,
+              "status": 100,
+              "betCount": 4
+            },
+            {
+              "id": 734429200,
+              "name": "X",
+              "odds": 3.2,
+              "position": 1,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 734429201,
+              "name": "Tunisia",
+              "odds": 3.5,
+              "position": 2,
+              "status": 100,
+              "betCount": 0
+            }
+          ],
+          "betCount": 4
+        },
+        {
+          "id": 1417983201,
+          "name": "Podwójna szansa",
+          "type": 4,
+          "combinationType": 1,
+          "marketTypes": [
+            1
+          ],
+          "gameLayout": 3,
+          "eventLayout": 14,
+          "outcomes": [
+            {
+              "id": 734429196,
+              "name": "1X",
+              "odds": 1.25,
+              "position": 0,
+              "status": 100,
+              "betCount": 1
+            },
+            {
+              "id": 734429197,
+              "name": "12",
+              "odds": 1.28,
+              "position": 1,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 734429198,
+              "name": "X2",
+              "odds": 1.63,
+              "position": 2,
+              "status": 100,
+              "betCount": 0
+            }
+          ],
+          "betCount": 1
+        }
+      ],
+      "mainGame": {
+        "id": 1417983202,
+        "name": "Mecz",
+        "type": 1,
+        "combinationType": 1,
+        "marketTypes": [
+          1
+        ],
+        "gameLayout": 1,
+        "eventLayout": 1,
+        "outcomes": [
+          {
+            "id": 734429199,
+            "name": "Senegal",
+            "odds": 1.95,
+            "position": 0,
+            "status": 100,
+            "betCount": 4
+          },
+          {
+            "id": 734429200,
+            "name": "X",
+            "odds": 3.2,
+            "position": 1,
+            "status": 100,
+            "betCount": 0
+          },
+          {
+            "id": 734429201,
+            "name": "Tunisia",
+            "odds": 3.5,
+            "position": 2,
+            "status": 100,
+            "betCount": 0
+          }
+        ],
+        "betCount": 4
+      },
+      "treatAsSport": 1,
+      "participants": [
+        {
+          "id": 282652,
+          "name": "Senegal",
+          "highlightedName": "Senegal",
+          "number": 1
+        },
+        {
+          "id": 110958,
+          "name": "Tunisia",
+          "highlightedName": "Tunisia",
+          "number": 2
+        }
+      ],
+      "customBetAvailable": true,
+      "videoStream": false,
+      "backgroundImageUrl": "https://storage.betfan.pl/category-backgrounds/Pilkanozna.webp",
+      "disableNoFollow": false,
+      "liveDetails": null
+    },
+    {
+      "id": 42822486,
+      "providerId": 1,
+      "name": "Mali - Benin",
+      "highlightedName": "Mali - Benin",
+      "start": 1791910800000,
+      "type": 1,
+      "remoteId": 71889878,
+      "category1Id": 1,
+      "category2Id": 231,
+      "category3Id": 595972,
+      "category1Name": "Piłka nożna",
+      "category2Name": "Międzynarodowe",
+      "category3Name": "CAF Igrzyska Olimpijskie kwal. (K)",
+      "gameCount": 2,
+      "games": [
+        {
+          "id": 1417983205,
+          "name": "Mecz",
+          "type": 1,
+          "combinationType": 1,
+          "marketTypes": [
+            1
+          ],
+          "gameLayout": 1,
+          "eventLayout": 1,
+          "outcomes": [
+            {
+              "id": 734429207,
+              "name": "Mali",
+              "odds": 1.45,
+              "position": 0,
+              "status": 100,
+              "betCount": 4
+            },
+            {
+              "id": 734429208,
+              "name": "X",
+              "odds": 4.05,
+              "position": 1,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 734429209,
+              "name": "Benin",
+              "odds": 5.6,
+              "position": 2,
+              "status": 100,
+              "betCount": 0
+            }
+          ],
+          "betCount": 4
+        },
+        {
+          "id": 1417983204,
+          "name": "Podwójna szansa",
+          "type": 4,
+          "combinationType": 1,
+          "marketTypes": [
+            1
+          ],
+          "gameLayout": 3,
+          "eventLayout": 14,
+          "outcomes": [
+            {
+              "id": 734429204,
+              "name": "1X",
+              "odds": 1.12,
+              "position": 0,
+              "status": 100,
+              "betCount": 1
+            },
+            {
+              "id": 734429205,
+              "name": "12",
+              "odds": 1.18,
+              "position": 1,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 734429206,
+              "name": "X2",
+              "odds": 2.2,
+              "position": 2,
+              "status": 100,
+              "betCount": 0
+            }
+          ],
+          "betCount": 1
+        }
+      ],
+      "mainGame": {
+        "id": 1417983205,
+        "name": "Mecz",
+        "type": 1,
+        "combinationType": 1,
+        "marketTypes": [
+          1
+        ],
+        "gameLayout": 1,
+        "eventLayout": 1,
+        "outcomes": [
+          {
+            "id": 734429207,
+            "name": "Mali",
+            "odds": 1.45,
+            "position": 0,
+            "status": 100,
+            "betCount": 4
+          },
+          {
+            "id": 734429208,
+            "name": "X",
+            "odds": 4.05,
+            "position": 1,
+            "status": 100,
+            "betCount": 0
+          },
+          {
+            "id": 734429209,
+            "name": "Benin",
+            "odds": 5.6,
+            "position": 2,
+            "status": 100,
+            "betCount": 0
+          }
+        ],
+        "betCount": 4
+      },
+      "treatAsSport": 1,
+      "participants": [
+        {
+          "id": 214166,
+          "name": "Mali",
+          "highlightedName": "Mali",
+          "number": 1
+        },
+        {
+          "id": 539546,
+          "name": "Benin",
+          "highlightedName": "Benin",
+          "number": 2
+        }
+      ],
+      "customBetAvailable": true,
+      "videoStream": false,
+      "backgroundImageUrl": "https://storage.betfan.pl/category-backgrounds/Pilkanozna.webp",
+      "disableNoFollow": false,
+      "liveDetails": null
+    },
+    {
+      "id": 42824385,
+      "providerId": 1,
+      "name": "Wybrzeże Kości Słoniowej - Congo DR",
+      "highlightedName": "Wybrzeże Kości Słoniowej - Congo DR",
+      "start": 1791918000000,
+      "type": 1,
+      "remoteId": 71889938,
+      "category1Id": 1,
+      "category2Id": 231,
+      "category3Id": 595972,
+      "category1Name": "Piłka nożna",
+      "category2Name": "Międzynarodowe",
+      "category3Name": "CAF Igrzyska Olimpijskie kwal. (K)",
+      "gameCount": 2,
+      "games": [
+        {
+          "id": 1418061571,
+          "name": "Mecz",
+          "type": 1,
+          "combinationType": 1,
+          "marketTypes": [
+            1
+          ],
+          "gameLayout": 1,
+          "eventLayout": 1,
+          "outcomes": [
+            {
+              "id": 734805195,
+              "name": "Wybrzeże Kości Słoniowej",
+              "odds": 1.5,
+              "position": 0,
+              "status": 100,
+              "betCount": 3
+            },
+            {
+              "id": 734805196,
+              "name": "X",
+              "odds": 3.95,
+              "position": 1,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 734805197,
+              "name": "Congo DR",
+              "odds": 5.3,
+              "position": 2,
+              "status": 100,
+              "betCount": 0
+            }
+          ],
+          "betCount": 3
+        },
+        {
+          "id": 1418061570,
+          "name": "Podwójna szansa",
+          "type": 4,
+          "combinationType": 1,
+          "marketTypes": [
+            1
+          ],
+          "gameLayout": 3,
+          "eventLayout": 14,
+          "outcomes": [
+            {
+              "id": 734805192,
+              "name": "1X",
+              "odds": 1.13,
+              "position": 0,
+              "status": 100,
+              "betCount": 1
+            },
+            {
+              "id": 734805193,
+              "name": "12",
+              "odds": 1.2,
+              "position": 1,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 734805194,
+              "name": "X2",
+              "odds": 2.1,
+              "position": 2,
+              "status": 100,
+              "betCount": 0
+            }
+          ],
+          "betCount": 1
+        }
+      ],
+      "mainGame": {
+        "id": 1418061571,
+        "name": "Mecz",
+        "type": 1,
+        "combinationType": 1,
+        "marketTypes": [
+          1
+        ],
+        "gameLayout": 1,
+        "eventLayout": 1,
+        "outcomes": [
+          {
+            "id": 734805195,
+            "name": "Wybrzeże Kości Słoniowej",
+            "odds": 1.5,
+            "position": 0,
+            "status": 100,
+            "betCount": 3
+          },
+          {
+            "id": 734805196,
+            "name": "X",
+            "odds": 3.95,
+            "position": 1,
+            "status": 100,
+            "betCount": 0
+          },
+          {
+            "id": 734805197,
+            "name": "Congo DR",
+            "odds": 5.3,
+            "position": 2,
+            "status": 100,
+            "betCount": 0
+          }
+        ],
+        "betCount": 3
+      },
+      "treatAsSport": 1,
+      "participants": [
+        {
+          "id": 548688,
+          "name": "Wybrzeże Kości Słoniowej",
+          "highlightedName": "Wybrzeże Kości Słoniowej",
+          "number": 1
+        },
+        {
+          "id": 425702,
+          "name": "Congo DR",
+          "highlightedName": "Congo DR",
+          "number": 2
+        }
+      ],
+      "customBetAvailable": true,
+      "videoStream": false,
+      "backgroundImageUrl": "https://storage.betfan.pl/category-backgrounds/Pilkanozna.webp",
+      "disableNoFollow": false,
+      "liveDetails": null
+    },
+    {
+      "id": 41563386,
+      "providerId": 1,
+      "name": "Notts County - Nottingham Forest U21",
+      "highlightedName": "Notts County - Nottingham Forest U21",
+      "start": 1791914400000,
+      "type": 1,
+      "remoteId": 73661216,
+      "category1Id": 1,
+      "category2Id": 223,
+      "category3Id": 1051,
+      "category1Name": "Piłka nożna",
+      "category2Name": "Anglia",
+      "category3Name": "EFL Trophy",
+      "gameCount": 90,
+      "games": [
+        {
+          "id": 1416247382,
+          "name": "Mecz",
+          "type": 1,
+          "combinationType": 1,
+          "marketTypes": [
+            1
+          ],
+          "gameLayout": 1,
+          "eventLayout": 1,
+          "outcomes": [
+            {
+              "id": 726047637,
+              "name": "Notts County",
+              "odds": 1.92,
+              "position": 0,
+              "status": 100,
+              "betCount": 1
+            },
+            {
+              "id": 726047638,
+              "name": "X",
+              "odds": 4,
+              "position": 1,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 726047639,
+              "name": "Nottingham Forest U21",
+              "odds": 3.25,
+              "position": 2,
+              "status": 100,
+              "betCount": 0
+            }
+          ],
+          "betCount": 1
+        },
+        {
+          "id": 1416247380,
+          "name": "Podwójna szansa",
+          "type": 4,
+          "combinationType": 1,
+          "marketTypes": [
+            1
+          ],
+          "gameLayout": 3,
+          "eventLayout": 14,
+          "outcomes": [
+            {
+              "id": 726047632,
+              "name": "1X",
+              "odds": 1.3,
+              "position": 0,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 726047633,
+              "name": "12",
+              "odds": 1.23,
+              "position": 1,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 726047634,
+              "name": "X2",
+              "odds": 1.73,
+              "position": 2,
+              "status": 100,
+              "betCount": 0
+            }
+          ],
+          "betCount": 0
+        },
+        {
+          "id": 1417640041,
+          "name": "Obie drużyny strzelą gola",
+          "type": 98,
+          "combinationType": 1,
+          "marketTypes": [
+            1
+          ],
+          "gameLayout": 2,
+          "eventLayout": 6,
+          "outcomes": [
+            {
+              "id": 732699617,
+              "name": "Tak",
+              "odds": 1.45,
+              "position": 0,
+              "status": 100,
+              "betCount": 16
+            },
+            {
+              "id": 732699618,
+              "name": "Nie",
+              "odds": 2.5,
+              "position": 1,
+              "status": 100,
+              "betCount": 0
+            }
+          ],
+          "betCount": 16
+        },
+        {
+          "id": 1417640040,
+          "name": "1. połowa - wynik",
+          "type": 3,
+          "combinationType": 1,
+          "marketTypes": [
+            14
+          ],
+          "gameLayout": 1,
+          "eventLayout": 3,
+          "outcomes": [
+            {
+              "id": 732699614,
+              "name": "Notts County",
+              "odds": 2.4,
+              "position": 0,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 732699615,
+              "name": "X",
+              "odds": 2.5,
+              "position": 1,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 732699616,
+              "name": "Nottingham Forest U21",
+              "odds": 3.65,
+              "position": 2,
+              "status": 100,
+              "betCount": 0
+            }
+          ],
+          "betCount": 0
+        },
+        {
+          "id": 1417640022,
+          "name": "1. połowa - podwójna szansa",
+          "type": 27,
+          "combinationType": 1,
+          "marketTypes": [
+            14
+          ],
+          "gameLayout": 1,
+          "eventLayout": 3,
+          "outcomes": [
+            {
+              "id": 732699531,
+              "name": "Notts County/X",
+              "odds": 1.25,
+              "position": 0,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 732699532,
+              "name": "Notts County/Nottingham Forest U21",
+              "odds": 1.45,
+              "position": 1,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 732699533,
+              "name": "X/Nottingham Forest U21",
+              "odds": 1.47,
+              "position": 2,
+              "status": 100,
+              "betCount": 0
+            }
+          ],
+          "betCount": 0
+        },
+        {
+          "id": 1417640003,
+          "name": "Liczba goli",
+          "type": 8,
+          "combinationType": 1,
+          "marketTypes": [
+            1,
+            4
+          ],
+          "gameLayout": 2,
+          "eventLayout": 6,
+          "outcomes": [
+            {
+              "id": 732699445,
+              "name": "Poniżej 3",
+              "odds": 2.05,
+              "position": 0,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 732699447,
+              "name": "Powyżej 3",
+              "odds": 1.7,
+              "position": 1,
+              "status": 100,
+              "betCount": 0
+            }
+          ],
+          "betCount": 0
+        },
+        {
+          "id": 1417640025,
+          "name": "1. połowa - obie drużyny strzelą gola",
+          "type": 120,
+          "combinationType": 1,
+          "marketTypes": [
+            14
+          ],
+          "gameLayout": 2,
+          "eventLayout": 5,
+          "outcomes": [
+            {
+              "id": 732699539,
+              "name": "Tak",
+              "odds": 3.15,
+              "position": 0,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 732699540,
+              "name": "Nie",
+              "odds": 1.3,
+              "position": 1,
+              "status": 100,
+              "betCount": 0
+            }
+          ],
+          "betCount": 0
+        },
+        {
+          "id": 1417640002,
+          "name": "2. połowa - wynik",
+          "type": 111,
+          "combinationType": 1,
+          "marketTypes": [
+            14
+          ],
+          "gameLayout": 3,
+          "eventLayout": 3,
+          "outcomes": [
+            {
+              "id": 732699441,
+              "name": "Notts County",
+              "odds": 2.25,
+              "position": 0,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 732699442,
+              "name": "X",
+              "odds": 2.9,
+              "position": 1,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 732699443,
+              "name": "Nottingham Forest U21",
+              "odds": 3.35,
+              "position": 2,
+              "status": 100,
+              "betCount": 0
+            }
+          ],
+          "betCount": 0
+        },
+        {
+          "id": 1417640034,
+          "name": "2. połowa - podwójna szansa",
+          "type": -188,
+          "combinationType": 1,
+          "marketTypes": [
+            14
+          ],
+          "gameLayout": 1,
+          "eventLayout": 3,
+          "outcomes": [
+            {
+              "id": 732699562,
+              "name": "Notts County/X",
+              "odds": 1.28,
+              "position": 0,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 732699563,
+              "name": "Notts County/Nottingham Forest U21",
+              "odds": 1.35,
+              "position": 1,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 732699564,
+              "name": "X/Nottingham Forest U21",
+              "odds": 1.53,
+              "position": 2,
+              "status": 100,
+              "betCount": 0
+            }
+          ],
+          "betCount": 0
+        },
+        {
+          "id": 1417640026,
+          "name": "2. połowa - obie drużyny strzelą gola",
+          "type": 121,
+          "combinationType": 1,
+          "marketTypes": [
+            14
+          ],
+          "gameLayout": 2,
+          "eventLayout": 5,
+          "outcomes": [
+            {
+              "id": 732699541,
+              "name": "Tak",
+              "odds": 2.5,
+              "position": 0,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 732699542,
+              "name": "Nie",
+              "odds": 1.45,
+              "position": 1,
+              "status": 100,
+              "betCount": 0
+            }
+          ],
+          "betCount": 0
+        },
+        {
+          "id": 1417640010,
+          "name": "Połowa z największą liczbą goli",
+          "type": 38,
+          "combinationType": 1,
+          "marketTypes": [
+            14
+          ],
+          "gameLayout": 1,
+          "eventLayout": 2,
+          "outcomes": [
+            {
+              "id": 732699458,
+              "name": "1. połowa",
+              "odds": 2.95,
+              "position": 0,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 732699459,
+              "name": "2. połowa",
+              "odds": 1.97,
+              "position": 1,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 732699460,
+              "name": "Tyle samo",
+              "odds": 3.85,
+              "position": 2,
+              "status": 100,
+              "betCount": 0
+            }
+          ],
+          "betCount": 0
+        }
+      ],
+      "mainGame": {
+        "id": 1416247382,
+        "name": "Mecz",
+        "type": 1,
+        "combinationType": 1,
+        "marketTypes": [
+          1
+        ],
+        "gameLayout": 1,
+        "eventLayout": 1,
+        "outcomes": [
+          {
+            "id": 726047637,
+            "name": "Notts County",
+            "odds": 1.92,
+            "position": 0,
+            "status": 100,
+            "betCount": 1
+          },
+          {
+            "id": 726047638,
+            "name": "X",
+            "odds": 4,
+            "position": 1,
+            "status": 100,
+            "betCount": 0
+          },
+          {
+            "id": 726047639,
+            "name": "Nottingham Forest U21",
+            "odds": 3.25,
+            "position": 2,
+            "status": 100,
+            "betCount": 0
+          }
+        ],
+        "betCount": 1
+      },
+      "treatAsSport": 1,
+      "participants": [
+        {
+          "id": 881,
+          "name": "Notts County",
+          "highlightedName": "Notts County",
+          "number": 1
+        },
+        {
+          "id": 75869,
+          "name": "Nottingham Forest U21",
+          "highlightedName": "Nottingham Forest U21",
+          "number": 2
+        }
+      ],
+      "customBetAvailable": true,
+      "videoStream": false,
+      "backgroundImageUrl": "https://storage.betfan.pl/category-backgrounds/Pilkanozna.webp",
+      "disableNoFollow": false,
+      "liveDetails": null
+    },
+    {
+      "id": 41563440,
+      "providerId": 1,
+      "name": "Cheltenham - Tottenham U21",
+      "highlightedName": "Cheltenham - Tottenham U21",
+      "start": 1791914400000,
+      "type": 1,
+      "remoteId": 73661260,
+      "category1Id": 1,
+      "category2Id": 223,
+      "category3Id": 1051,
+      "category1Name": "Piłka nożna",
+      "category2Name": "Anglia",
+      "category3Name": "EFL Trophy",
+      "gameCount": 93,
+      "games": [
+        {
+          "id": 1416233350,
+          "name": "Mecz",
+          "type": 1,
+          "combinationType": 1,
+          "marketTypes": [
+            1
+          ],
+          "gameLayout": 1,
+          "eventLayout": 1,
+          "outcomes": [
+            {
+              "id": 725989237,
+              "name": "Cheltenham",
+              "odds": 1.82,
+              "position": 0,
+              "status": 100,
+              "betCount": 3
+            },
+            {
+              "id": 725989238,
+              "name": "X",
+              "odds": 4.35,
+              "position": 1,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 725989239,
+              "name": "Tottenham U21",
+              "odds": 3.3,
+              "position": 2,
+              "status": 100,
+              "betCount": 0
+            }
+          ],
+          "betCount": 3
+        },
+        {
+          "id": 1416233348,
+          "name": "Podwójna szansa",
+          "type": 4,
+          "combinationType": 1,
+          "marketTypes": [
+            1
+          ],
+          "gameLayout": 3,
+          "eventLayout": 14,
+          "outcomes": [
+            {
+              "id": 725989230,
+              "name": "1X",
+              "odds": 1.28,
+              "position": 0,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 725989232,
+              "name": "12",
+              "odds": 1.2,
+              "position": 1,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 725989233,
+              "name": "X2",
+              "odds": 1.82,
+              "position": 2,
+              "status": 100,
+              "betCount": 0
+            }
+          ],
+          "betCount": 0
+        },
+        {
+          "id": 1417638016,
+          "name": "Obie drużyny strzelą gola",
+          "type": 98,
+          "combinationType": 1,
+          "marketTypes": [
+            1
+          ],
+          "gameLayout": 2,
+          "eventLayout": 6,
+          "outcomes": [
+            {
+              "id": 732689248,
+              "name": "Tak",
+              "odds": 1.27,
+              "position": 0,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 732689249,
+              "name": "Nie",
+              "odds": 3.3,
+              "position": 1,
+              "status": 100,
+              "betCount": 0
+            }
+          ],
+          "betCount": 0
+        },
+        {
+          "id": 1417638015,
+          "name": "1. połowa - wynik",
+          "type": 3,
+          "combinationType": 1,
+          "marketTypes": [
+            14
+          ],
+          "gameLayout": 1,
+          "eventLayout": 3,
+          "outcomes": [
+            {
+              "id": 732689245,
+              "name": "Cheltenham",
+              "odds": 2.2,
+              "position": 0,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 732689246,
+              "name": "X",
+              "odds": 2.8,
+              "position": 1,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 732689247,
+              "name": "Tottenham U21",
+              "odds": 3.55,
+              "position": 2,
+              "status": 100,
+              "betCount": 0
+            }
+          ],
+          "betCount": 0
+        },
+        {
+          "id": 1417637979,
+          "name": "1. połowa - podwójna szansa",
+          "type": 27,
+          "combinationType": 1,
+          "marketTypes": [
+            14
+          ],
+          "gameLayout": 1,
+          "eventLayout": 3,
+          "outcomes": [
+            {
+              "id": 732689100,
+              "name": "Cheltenham/X",
+              "odds": 1.25,
+              "position": 0,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 732689103,
+              "name": "Cheltenham/Tottenham U21",
+              "odds": 1.37,
+              "position": 1,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 732689105,
+              "name": "X/Tottenham U21",
+              "odds": 1.53,
+              "position": 2,
+              "status": 100,
+              "betCount": 0
+            }
+          ],
+          "betCount": 0
+        },
+        {
+          "id": 1417637949,
+          "name": "Liczba goli",
+          "type": 8,
+          "combinationType": 1,
+          "marketTypes": [
+            1,
+            4
+          ],
+          "gameLayout": 2,
+          "eventLayout": 6,
+          "outcomes": [
+            {
+              "id": 732688944,
+              "name": "Poniżej 4",
+              "odds": 1.78,
+              "position": 0,
+              "status": 100,
+              "betCount": 1
+            },
+            {
+              "id": 732688946,
+              "name": "Powyżej 4",
+              "odds": 1.93,
+              "position": 1,
+              "status": 100,
+              "betCount": 0
+            }
+          ],
+          "betCount": 1
+        },
+        {
+          "id": 1417637984,
+          "name": "1. połowa - obie drużyny strzelą gola",
+          "type": 120,
+          "combinationType": 1,
+          "marketTypes": [
+            14
+          ],
+          "gameLayout": 2,
+          "eventLayout": 5,
+          "outcomes": [
+            {
+              "id": 732689120,
+              "name": "Tak",
+              "odds": 2.55,
+              "position": 0,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 732689121,
+              "name": "Nie",
+              "odds": 1.43,
+              "position": 1,
+              "status": 100,
+              "betCount": 0
+            }
+          ],
+          "betCount": 0
+        },
+        {
+          "id": 1417637944,
+          "name": "2. połowa - wynik",
+          "type": 111,
+          "combinationType": 1,
+          "marketTypes": [
+            14
+          ],
+          "gameLayout": 3,
+          "eventLayout": 3,
+          "outcomes": [
+            {
+              "id": 732688933,
+              "name": "Cheltenham",
+              "odds": 2.1,
+              "position": 0,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 732688935,
+              "name": "X",
+              "odds": 3.25,
+              "position": 1,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 732688937,
+              "name": "Tottenham U21",
+              "odds": 3.3,
+              "position": 2,
+              "status": 100,
+              "betCount": 0
+            }
+          ],
+          "betCount": 0
+        },
+        {
+          "id": 1417638001,
+          "name": "2. połowa - podwójna szansa",
+          "type": -188,
+          "combinationType": 1,
+          "marketTypes": [
+            14
+          ],
+          "gameLayout": 1,
+          "eventLayout": 3,
+          "outcomes": [
+            {
+              "id": 732689163,
+              "name": "Cheltenham/X",
+              "odds": 1.28,
+              "position": 0,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 732689165,
+              "name": "Cheltenham/Tottenham U21",
+              "odds": 1.28,
+              "position": 1,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 732689166,
+              "name": "X/Tottenham U21",
+              "odds": 1.6,
+              "position": 2,
+              "status": 100,
+              "betCount": 0
+            }
+          ],
+          "betCount": 0
+        },
+        {
+          "id": 1417637985,
+          "name": "2. połowa - obie drużyny strzelą gola",
+          "type": 121,
+          "combinationType": 1,
+          "marketTypes": [
+            14
+          ],
+          "gameLayout": 2,
+          "eventLayout": 5,
+          "outcomes": [
+            {
+              "id": 732689124,
+              "name": "Tak",
+              "odds": 2.05,
+              "position": 0,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 732689125,
+              "name": "Nie",
+              "odds": 1.67,
+              "position": 1,
+              "status": 100,
+              "betCount": 0
+            }
+          ],
+          "betCount": 0
+        },
+        {
+          "id": 1417637955,
+          "name": "Połowa z największą liczbą goli",
+          "type": 38,
+          "combinationType": 1,
+          "marketTypes": [
+            14
+          ],
+          "gameLayout": 1,
+          "eventLayout": 2,
+          "outcomes": [
+            {
+              "id": 732688959,
+              "name": "1. połowa",
+              "odds": 2.9,
+              "position": 0,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 732688960,
+              "name": "2. połowa",
+              "odds": 1.9,
+              "position": 1,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 732688962,
+              "name": "Tyle samo",
+              "odds": 4.25,
+              "position": 2,
+              "status": 100,
+              "betCount": 0
+            }
+          ],
+          "betCount": 0
+        }
+      ],
+      "mainGame": {
+        "id": 1416233350,
+        "name": "Mecz",
+        "type": 1,
+        "combinationType": 1,
+        "marketTypes": [
+          1
+        ],
+        "gameLayout": 1,
+        "eventLayout": 1,
+        "outcomes": [
+          {
+            "id": 725989237,
+            "name": "Cheltenham",
+            "odds": 1.82,
+            "position": 0,
+            "status": 100,
+            "betCount": 3
+          },
+          {
+            "id": 725989238,
+            "name": "X",
+            "odds": 4.35,
+            "position": 1,
+            "status": 100,
+            "betCount": 0
+          },
+          {
+            "id": 725989239,
+            "name": "Tottenham U21",
+            "odds": 3.3,
+            "position": 2,
+            "status": 100,
+            "betCount": 0
+          }
+        ],
+        "betCount": 3
+      },
+      "treatAsSport": 1,
+      "participants": [
+        {
+          "id": 563,
+          "name": "Cheltenham",
+          "highlightedName": "Cheltenham",
+          "number": 1
+        },
+        {
+          "id": 25826,
+          "name": "Tottenham U21",
+          "highlightedName": "Tottenham U21",
+          "number": 2
+        }
+      ],
+      "customBetAvailable": true,
+      "videoStream": false,
+      "backgroundImageUrl": "https://storage.betfan.pl/category-backgrounds/Pilkanozna.webp",
+      "disableNoFollow": false,
+      "liveDetails": null
+    },
+    {
+      "id": 41563448,
+      "providerId": 1,
+      "name": "Walsall - Fulham U21",
+      "highlightedName": "Walsall - Fulham U21",
+      "start": 1791914400000,
+      "type": 1,
+      "remoteId": 73661274,
+      "category1Id": 1,
+      "category2Id": 223,
+      "category3Id": 1051,
+      "category1Name": "Piłka nożna",
+      "category2Name": "Anglia",
+      "category3Name": "EFL Trophy",
+      "gameCount": 93,
+      "games": [
+        {
+          "id": 1416233360,
+          "name": "Mecz",
+          "type": 1,
+          "combinationType": 1,
+          "marketTypes": [
+            1
+          ],
+          "gameLayout": 1,
+          "eventLayout": 1,
+          "outcomes": [
+            {
+              "id": 725989271,
+              "name": "Walsall",
+              "odds": 2.15,
+              "position": 0,
+              "status": 100,
+              "betCount": 1
+            },
+            {
+              "id": 725989272,
+              "name": "X",
+              "odds": 3.95,
+              "position": 1,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 725989273,
+              "name": "Fulham U21",
+              "odds": 2.8,
+              "position": 2,
+              "status": 100,
+              "betCount": 0
+            }
+          ],
+          "betCount": 1
+        },
+        {
+          "id": 1416233358,
+          "name": "Podwójna szansa",
+          "type": 4,
+          "combinationType": 1,
+          "marketTypes": [
+            1
+          ],
+          "gameLayout": 3,
+          "eventLayout": 14,
+          "outcomes": [
+            {
+              "id": 725989266,
+              "name": "1X",
+              "odds": 1.38,
+              "position": 0,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 725989267,
+              "name": "12",
+              "odds": 1.23,
+              "position": 1,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 725989268,
+              "name": "X2",
+              "odds": 1.6,
+              "position": 2,
+              "status": 100,
+              "betCount": 0
+            }
+          ],
+          "betCount": 0
+        },
+        {
+          "id": 1417637976,
+          "name": "Obie drużyny strzelą gola",
+          "type": 98,
+          "combinationType": 1,
+          "marketTypes": [
+            1
+          ],
+          "gameLayout": 2,
+          "eventLayout": 6,
+          "outcomes": [
+            {
+              "id": 732689093,
+              "name": "Tak",
+              "odds": 1.32,
+              "position": 0,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 732689094,
+              "name": "Nie",
+              "odds": 3,
+              "position": 1,
+              "status": 100,
+              "betCount": 0
+            }
+          ],
+          "betCount": 0
+        },
+        {
+          "id": 1417637974,
+          "name": "1. połowa - wynik",
+          "type": 3,
+          "combinationType": 1,
+          "marketTypes": [
+            14
+          ],
+          "gameLayout": 1,
+          "eventLayout": 3,
+          "outcomes": [
+            {
+              "id": 732689088,
+              "name": "Walsall",
+              "odds": 2.55,
+              "position": 0,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 732689089,
+              "name": "X",
+              "odds": 2.6,
+              "position": 1,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 732689091,
+              "name": "Fulham U21",
+              "odds": 3.15,
+              "position": 2,
+              "status": 100,
+              "betCount": 0
+            }
+          ],
+          "betCount": 0
+        },
+        {
+          "id": 1417637941,
+          "name": "1. połowa - podwójna szansa",
+          "type": 27,
+          "combinationType": 1,
+          "marketTypes": [
+            14
+          ],
+          "gameLayout": 1,
+          "eventLayout": 3,
+          "outcomes": [
+            {
+              "id": 732688924,
+              "name": "Walsall/X",
+              "odds": 1.3,
+              "position": 0,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 732688925,
+              "name": "Walsall/Fulham U21",
+              "odds": 1.4,
+              "position": 1,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 732688926,
+              "name": "X/Fulham U21",
+              "odds": 1.42,
+              "position": 2,
+              "status": 100,
+              "betCount": 0
+            }
+          ],
+          "betCount": 0
+        },
+        {
+          "id": 1417637916,
+          "name": "Liczba goli",
+          "type": 8,
+          "combinationType": 1,
+          "marketTypes": [
+            1,
+            4
+          ],
+          "gameLayout": 2,
+          "eventLayout": 6,
+          "outcomes": [
+            {
+              "id": 732688817,
+              "name": "Poniżej 3.5",
+              "odds": 1.88,
+              "position": 0,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 732688818,
+              "name": "Powyżej 3.5",
+              "odds": 1.82,
+              "position": 1,
+              "status": 100,
+              "betCount": 0
+            }
+          ],
+          "betCount": 0
+        },
+        {
+          "id": 1417637947,
+          "name": "1. połowa - obie drużyny strzelą gola",
+          "type": 120,
+          "combinationType": 1,
+          "marketTypes": [
+            14
+          ],
+          "gameLayout": 2,
+          "eventLayout": 5,
+          "outcomes": [
+            {
+              "id": 732688940,
+              "name": "Tak",
+              "odds": 2.8,
+              "position": 0,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 732688941,
+              "name": "Nie",
+              "odds": 1.37,
+              "position": 1,
+              "status": 100,
+              "betCount": 0
+            }
+          ],
+          "betCount": 0
+        },
+        {
+          "id": 1417637913,
+          "name": "2. połowa - wynik",
+          "type": 111,
+          "combinationType": 1,
+          "marketTypes": [
+            14
+          ],
+          "gameLayout": 3,
+          "eventLayout": 3,
+          "outcomes": [
+            {
+              "id": 732688810,
+              "name": "Walsall",
+              "odds": 2.4,
+              "position": 0,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 732688811,
+              "name": "X",
+              "odds": 3,
+              "position": 1,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 732688812,
+              "name": "Fulham U21",
+              "odds": 2.9,
+              "position": 2,
+              "status": 100,
+              "betCount": 0
+            }
+          ],
+          "betCount": 0
+        },
+        {
+          "id": 1417637961,
+          "name": "2. połowa - podwójna szansa",
+          "type": -188,
+          "combinationType": 1,
+          "marketTypes": [
+            14
+          ],
+          "gameLayout": 1,
+          "eventLayout": 3,
+          "outcomes": [
+            {
+              "id": 732688995,
+              "name": "Walsall/X",
+              "odds": 1.35,
+              "position": 0,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 732688998,
+              "name": "Walsall/Fulham U21",
+              "odds": 1.32,
+              "position": 1,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 732689000,
+              "name": "X/Fulham U21",
+              "odds": 1.47,
+              "position": 2,
+              "status": 100,
+              "betCount": 0
+            }
+          ],
+          "betCount": 0
+        },
+        {
+          "id": 1417637948,
+          "name": "2. połowa - obie drużyny strzelą gola",
+          "type": 121,
+          "combinationType": 1,
+          "marketTypes": [
+            14
+          ],
+          "gameLayout": 2,
+          "eventLayout": 5,
+          "outcomes": [
+            {
+              "id": 732688943,
+              "name": "Tak",
+              "odds": 2.2,
+              "position": 0,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 732688945,
+              "name": "Nie",
+              "odds": 1.57,
+              "position": 1,
+              "status": 100,
+              "betCount": 0
+            }
+          ],
+          "betCount": 0
+        },
+        {
+          "id": 1417637918,
+          "name": "Połowa z największą liczbą goli",
+          "type": 38,
+          "combinationType": 1,
+          "marketTypes": [
+            14
+          ],
+          "gameLayout": 1,
+          "eventLayout": 2,
+          "outcomes": [
+            {
+              "id": 732688820,
+              "name": "1. połowa",
+              "odds": 2.9,
+              "position": 0,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 732688822,
+              "name": "2. połowa",
+              "odds": 1.93,
+              "position": 1,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 732688824,
+              "name": "Tyle samo",
+              "odds": 4,
+              "position": 2,
+              "status": 100,
+              "betCount": 0
+            }
+          ],
+          "betCount": 0
+        }
+      ],
+      "mainGame": {
+        "id": 1416233360,
+        "name": "Mecz",
+        "type": 1,
+        "combinationType": 1,
+        "marketTypes": [
+          1
+        ],
+        "gameLayout": 1,
+        "eventLayout": 1,
+        "outcomes": [
+          {
+            "id": 725989271,
+            "name": "Walsall",
+            "odds": 2.15,
+            "position": 0,
+            "status": 100,
+            "betCount": 1
+          },
+          {
+            "id": 725989272,
+            "name": "X",
+            "odds": 3.95,
+            "position": 1,
+            "status": 100,
+            "betCount": 0
+          },
+          {
+            "id": 725989273,
+            "name": "Fulham U21",
+            "odds": 2.8,
+            "position": 2,
+            "status": 100,
+            "betCount": 0
+          }
+        ],
+        "betCount": 1
+      },
+      "treatAsSport": 1,
+      "participants": [
+        {
+          "id": 645,
+          "name": "Walsall",
+          "highlightedName": "Walsall",
+          "number": 1
+        },
+        {
+          "id": 18210,
+          "name": "Fulham U21",
+          "highlightedName": "Fulham U21",
+          "number": 2
+        }
+      ],
+      "customBetAvailable": true,
+      "videoStream": false,
+      "backgroundImageUrl": "https://storage.betfan.pl/category-backgrounds/Pilkanozna.webp",
+      "disableNoFollow": false,
+      "liveDetails": null
+    },
+    {
+      "id": 41563466,
+      "providerId": 1,
+      "name": "Reading - Chelsea U21",
+      "highlightedName": "Reading - Chelsea U21",
+      "start": 1791914400000,
+      "type": 1,
+      "remoteId": 73661294,
+      "category1Id": 1,
+      "category2Id": 223,
+      "category3Id": 1051,
+      "category1Name": "Piłka nożna",
+      "category2Name": "Anglia",
+      "category3Name": "EFL Trophy",
+      "gameCount": 94,
+      "games": [
+        {
+          "id": 1416234783,
+          "name": "Mecz",
+          "type": 1,
+          "combinationType": 1,
+          "marketTypes": [
+            1
+          ],
+          "gameLayout": 1,
+          "eventLayout": 1,
+          "outcomes": [
+            {
+              "id": 725996670,
+              "name": "Reading",
+              "odds": 1.52,
+              "position": 0,
+              "status": 100,
+              "betCount": 2
+            },
+            {
+              "id": 725996672,
+              "name": "X",
+              "odds": 4.75,
+              "position": 1,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 725996673,
+              "name": "Chelsea U21",
+              "odds": 4.7,
+              "position": 2,
+              "status": 100,
+              "betCount": 0
+            }
+          ],
+          "betCount": 2
+        },
+        {
+          "id": 1416234781,
+          "name": "Podwójna szansa",
+          "type": 4,
+          "combinationType": 1,
+          "marketTypes": [
+            1
+          ],
+          "gameLayout": 3,
+          "eventLayout": 14,
+          "outcomes": [
+            {
+              "id": 725996665,
+              "name": "1X",
+              "odds": 1.17,
+              "position": 0,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 725996666,
+              "name": "12",
+              "odds": 1.17,
+              "position": 1,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 725996667,
+              "name": "X2",
+              "odds": 2.2,
+              "position": 2,
+              "status": 100,
+              "betCount": 0
+            }
+          ],
+          "betCount": 0
+        },
+        {
+          "id": 1417638169,
+          "name": "Obie drużyny strzelą gola",
+          "type": 98,
+          "combinationType": 1,
+          "marketTypes": [
+            1
+          ],
+          "gameLayout": 2,
+          "eventLayout": 6,
+          "outcomes": [
+            {
+              "id": 732689831,
+              "name": "Tak",
+              "odds": 1.38,
+              "position": 0,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 732689832,
+              "name": "Nie",
+              "odds": 2.75,
+              "position": 1,
+              "status": 100,
+              "betCount": 0
+            }
+          ],
+          "betCount": 0
+        },
+        {
+          "id": 1417638168,
+          "name": "1. połowa - wynik",
+          "type": 3,
+          "combinationType": 1,
+          "marketTypes": [
+            14
+          ],
+          "gameLayout": 1,
+          "eventLayout": 3,
+          "outcomes": [
+            {
+              "id": 732689828,
+              "name": "Reading",
+              "odds": 1.92,
+              "position": 0,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 732689829,
+              "name": "X",
+              "odds": 2.85,
+              "position": 1,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 732689830,
+              "name": "Chelsea U21",
+              "odds": 4.65,
+              "position": 2,
+              "status": 100,
+              "betCount": 0
+            }
+          ],
+          "betCount": 0
+        },
+        {
+          "id": 1417638150,
+          "name": "1. połowa - podwójna szansa",
+          "type": 27,
+          "combinationType": 1,
+          "marketTypes": [
+            14
+          ],
+          "gameLayout": 1,
+          "eventLayout": 3,
+          "outcomes": [
+            {
+              "id": 732689744,
+              "name": "Reading/X",
+              "odds": 1.18,
+              "position": 0,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 732689745,
+              "name": "Reading/Chelsea U21",
+              "odds": 1.35,
+              "position": 1,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 732689746,
+              "name": "X/Chelsea U21",
+              "odds": 1.7,
+              "position": 2,
+              "status": 100,
+              "betCount": 0
+            }
+          ],
+          "betCount": 0
+        },
+        {
+          "id": 1417638137,
+          "name": "Liczba goli",
+          "type": 8,
+          "combinationType": 1,
+          "marketTypes": [
+            1,
+            4
+          ],
+          "gameLayout": 2,
+          "eventLayout": 6,
+          "outcomes": [
+            {
+              "id": 732689667,
+              "name": "Poniżej 3.5",
+              "odds": 2,
+              "position": 0,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 732689668,
+              "name": "Powyżej 3.5",
+              "odds": 1.73,
+              "position": 1,
+              "status": 100,
+              "betCount": 9
+            }
+          ],
+          "betCount": 9
+        },
+        {
+          "id": 1417638153,
+          "name": "1. połowa - obie drużyny strzelą gola",
+          "type": 120,
+          "combinationType": 1,
+          "marketTypes": [
+            14
+          ],
+          "gameLayout": 2,
+          "eventLayout": 5,
+          "outcomes": [
+            {
+              "id": 732689752,
+              "name": "Tak",
+              "odds": 2.85,
+              "position": 0,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 732689753,
+              "name": "Nie",
+              "odds": 1.35,
+              "position": 1,
+              "status": 100,
+              "betCount": 0
+            }
+          ],
+          "betCount": 0
+        },
+        {
+          "id": 1417638132,
+          "name": "2. połowa - wynik",
+          "type": 111,
+          "combinationType": 1,
+          "marketTypes": [
+            14
+          ],
+          "gameLayout": 3,
+          "eventLayout": 3,
+          "outcomes": [
+            {
+              "id": 732689655,
+              "name": "Reading",
+              "odds": 1.82,
+              "position": 0,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 732689657,
+              "name": "X",
+              "odds": 3.3,
+              "position": 1,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 732689659,
+              "name": "Chelsea U21",
+              "odds": 4.3,
+              "position": 2,
+              "status": 100,
+              "betCount": 0
+            }
+          ],
+          "betCount": 0
+        },
+        {
+          "id": 1417638162,
+          "name": "2. połowa - podwójna szansa",
+          "type": -188,
+          "combinationType": 1,
+          "marketTypes": [
+            14
+          ],
+          "gameLayout": 1,
+          "eventLayout": 3,
+          "outcomes": [
+            {
+              "id": 732689775,
+              "name": "Reading/X",
+              "odds": 1.2,
+              "position": 0,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 732689776,
+              "name": "Reading/Chelsea U21",
+              "odds": 1.28,
+              "position": 1,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 732689777,
+              "name": "X/Chelsea U21",
+              "odds": 1.78,
+              "position": 2,
+              "status": 100,
+              "betCount": 0
+            }
+          ],
+          "betCount": 0
+        },
+        {
+          "id": 1417638154,
+          "name": "2. połowa - obie drużyny strzelą gola",
+          "type": 121,
+          "combinationType": 1,
+          "marketTypes": [
+            14
+          ],
+          "gameLayout": 2,
+          "eventLayout": 5,
+          "outcomes": [
+            {
+              "id": 732689754,
+              "name": "Tak",
+              "odds": 2.3,
+              "position": 0,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 732689755,
+              "name": "Nie",
+              "odds": 1.53,
+              "position": 1,
+              "status": 100,
+              "betCount": 0
+            }
+          ],
+          "betCount": 0
+        },
+        {
+          "id": 1417638139,
+          "name": "Połowa z największą liczbą goli",
+          "type": 38,
+          "combinationType": 1,
+          "marketTypes": [
+            14
+          ],
+          "gameLayout": 1,
+          "eventLayout": 2,
+          "outcomes": [
+            {
+              "id": 732689671,
+              "name": "1. połowa",
+              "odds": 2.85,
+              "position": 0,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 732689672,
+              "name": "2. połowa",
+              "odds": 1.93,
+              "position": 1,
+              "status": 100,
+              "betCount": 0
+            },
+            {
+              "id": 732689673,
+              "name": "Tyle samo",
+              "odds": 4.1,
+              "position": 2,
+              "status": 100,
+              "betCount": 0
+            }
+          ],
+          "betCount": 0
+        }
+      ],
+      "mainGame": {
+        "id": 1416234783,
+        "name": "Mecz",
+        "type": 1,
+        "combinationType": 1,
+        "marketTypes": [
+          1
+        ],
+        "gameLayout": 1,
+        "eventLayout": 1,
+        "outcomes": [
+          {
+            "id": 725996670,
+            "name": "Reading",
+            "odds": 1.52,
+            "position": 0,
+            "status": 100,
+            "betCount": 2
+          },
+          {
+            "id": 725996672,
+            "name": "X",
+            "odds": 4.75,
+            "position": 1,
+            "status": 100,
+            "betCount": 0
+          },
+          {
+            "id": 725996673,
+            "name": "Chelsea U21",
+            "odds": 4.7,
+            "position": 2,
+            "status": 100,
+            "betCount": 0
+          }
+        ],
+        "betCount": 2
+      },
+      "treatAsSport": 1,
+      "participants": [
+        {
+          "id": 588,
+          "name": "Reading",
+          "highlightedName": "Reading",
+          "number": 1
+        },
+        {
+          "id": 25982,
+          "name": "Chelsea U21",
+          "highlightedName": "Chelsea U21",
+          "number": 2
+        }
+      ],
+      "customBetAvailable": true,
+      "videoStream": false,
+      "backgroundImageUrl": "https://storage.betfan.pl/category-backgrounds/Pilkanozna.webp",
+      "disableNoFollow": false,
+      "liveDetails": null
+    }
+  ]
+}

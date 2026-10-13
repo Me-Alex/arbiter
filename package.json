@@ -29,7 +29,9 @@
     "measure:sync": "node scripts/sync-measurements.mjs",
     "measure:sync:write": "node scripts/sync-measurements.mjs --write",
     "smoke:trend": "node scripts/smoke-trend.mjs",
-    "market:coverage": "node scripts/market-coverage.mjs"
+    "market:coverage": "node scripts/market-coverage.mjs",
+    "build:snapshot": "node scripts/build-snapshot.mjs",
+    "new-book": "node scripts/add-book.mjs"
   },
   "dependencies": {
     "playwright": "^1.47.0",

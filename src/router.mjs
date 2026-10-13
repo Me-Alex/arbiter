@@ -138,8 +138,21 @@ export function buildRouter(ctx) {
       // here and downloads everything, which is what an empty selection means
       // on the tables too.
       const sport = params.get('sport') || '';
+      // The other two sidebar controls, which had no parameter here at all and
+      // so could not travel: the search box and `confirmed only`. Both are read
+      // the way the page's own `visible()` reads them, and both are mirrored in
+      // buildScanCsv rather than restated here.
+      //
+      // `confirmed` is presence, not a value: `?confirmed` and `?confirmed=`
+      // both mean the box is ticked, and omitting the parameter means it is
+      // not. A reader who sends `?confirmed=false` gets the confirmed rows,
+      // which is the one surprise here -- it is spelled out here and in
+      // test/csv-export-wiring.test.mjs rather than left to be discovered by a
+      // download that came back with the wrong rows in it.
+      const q = params.get('q') || '';
+      const confirmedOnly = params.has('confirmed');
       const scan = await scanService.readLatestScan(dataDir);
-      const csv = buildScanCsv(scan, types, sport);
+      const csv = buildScanCsv(scan, types, sport, { q, confirmedOnly });
       res.setHeader('Content-Type', 'text/csv; charset=utf-8');
       res.setHeader('Content-Disposition', 'attachment; filename="scan-findings.csv"');
       res.setHeader('Cache-Control', 'no-store');

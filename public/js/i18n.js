@@ -429,6 +429,11 @@
       yes: 'Da',
       no: 'Nu',
       running: 'În curs',
+      // The state between "cancel pressed" and "cancel finished", which the
+      // orchestrator can hold for the length of an in-flight request. It had no
+      // word in either language, and it is a state the run status pill now
+      // prints — the sixth of seven that did, and the one this key closes.
+      cancelling: 'Se anulează',
       stopped: 'Oprit',
       disabled: 'Dezactivat',
       warning: 'avertisment',
@@ -859,6 +864,7 @@
       yes: 'Yes',
       no: 'No',
       running: 'Running',
+      cancelling: 'Cancelling…',
       stopped: 'Stopped',
       disabled: 'Disabled',
       saving: 'Saving…',

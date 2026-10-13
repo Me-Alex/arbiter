@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="ro">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <title>Arbiter — Analytics</title>
+  <script src="/js/theme.js"></script>
+  <link rel="stylesheet" href="/css/theme.css">
+  <link rel="stylesheet" href="/css/arbedge.css">
+  <link rel="stylesheet" href="/css/analytics.css">
+  <meta name="description" content="Verified scan signals, bet tracking, and market catalog analytics">
+</head>
+<body>
+  <main>
+    <div class="page-header">
+      <div>
+        <h1 data-i18n="analytics">Analytics</h1>
+        <div class="text-xs muted mt-1" data-i18n="analyticsSubtitle">
+          Tracker · market catalog · scan signals
+        </div>
+      </div>
+      <div class="meta">
+        <span class="sse-status chip green" id="sse-status" data-connected-text="Live" data-disconnected-text="Reconnecting"><span class="dot live"></span><span data-i18n="live">Live</span></span>
+        <button class="ghost lang-toggle" data-lang-toggle>RO</button>
+      </div>
+    </div>
+
+    <!-- Signals -->
+    <section id="signals" class="mb-5">
+      <div class="grid cols-4 analytics-kpis" aria-label="Scan signal summary">
+        <a class="card card-hover kpi-card" href="/admin/scanner.html">
+          <div class="kpi"><div class="label" data-i18n="oppsVerified">Opps (verified)</div><div class="value tabnum green" id="k-opps">—</div><div class="kpi-hint">verified opportunities</div></div>
+        </a>
+        <a class="card card-hover kpi-card" href="/admin/scanner.html">
+          <div class="kpi"><div class="label" data-i18n="middlesLabel">Middles</div><div class="value tabnum purple" id="k-mids">—</div><div class="kpi-hint">cross-book coverage</div></div>
+        </a>
+        <a class="card card-hover kpi-card" href="/admin/scanner.html">
+          <div class="kpi"><div class="label" data-i18n="evBets">+EV</div><div class="value tabnum yellow" id="k-ev">—</div><div class="kpi-hint">positive expected value</div></div>
+        </a>
+        <a class="card card-hover kpi-card" href="/admin/scanner.html">
+          <div class="kpi"><div class="label" data-i18n="lowHoldLabel">Low hold</div><div class="value tabnum accent" id="k-low">—</div><div class="kpi-hint">low-margin markets</div></div>
+        </a>
+      </div>
+    </section>
+
+    <!-- Tracker -->
+    <section id="tracker" class="mb-5">
+      <div class="card">
+        <h3>
+          <span data-i18n="tracker">Bet tracker</span>
+          <span class="h3-meta"><span id="tracker-count">0</span></span>
+        </h3>
+        <div class="row section-toolbar mb-7">
+          <div class="toolbar-actions">
+            <button class="primary" id="add-bet" data-i18n="addBet">Add bet</button>
+            <button class="ghost" id="export-csv" data-i18n="export">Export CSV</button>
+            <button class="ghost" id="import-csv" data-i18n="import">Import CSV</button>
+          </div>
+          <div class="spacer"></div>
+          <span class="chip outline"><span class="dot"></span><span data-i18n="localTracker">local tracker</span></span>
+        </div>
+        <div class="table-wrap table-clean">
+          <table class="compact" id="tracker-table">
+            <caption class="sr-only">Bet tracker entries and settlement actions</caption>
+            <thead><tr>
+              <th scope="col" data-i18n="placed">Placed</th>
+              <th scope="col" data-i18n="event">Event</th>
+              <th scope="col" data-i18n="market">Market</th>
+              <th scope="col" data-i18n="selection">Selection</th>
+              <th scope="col" data-i18n="bookmaker">Book</th>
+              <th scope="col" class="num" data-i18n="odds">Odds</th>
+              <th scope="col" class="num" data-i18n="stake">Stake</th>
+              <th scope="col" data-i18n="status">Status</th>
+              <th scope="col" class="num" data-i18n="actions">Actions</th>
+            </tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Catalog -->
+    <section id="catalog">
+      <div class="card">
+        <h3>
+          <span data-i18n="marketCatalog">Market catalog</span>
+          <!-- Two spans, not one: i18n.apply() rewrites the textContent of every
+               [data-i18n] element on DOMContentLoaded and on every language
+               switch, so the run the table was built from has to sit in a
+               sibling the page owns. -->
+          <span class="h3-meta"><span data-i18n="discoveredMarkets">discovered markets across all books</span> · <span id="catalog-run">—</span></span>
+        </h3>
+        <div class="row mb-7">
+          <div class="field flex-1 m-0 max-w-320">
+            <label class="sr-only" for="cat-search" data-i18n="filterPlaceholder">Filter source / market...</label>
+            <input type="text" id="cat-search" data-i18n-placeholder="filterPlaceholder" placeholder="Filter source / market..." autocomplete="off" aria-describedby="catalog-help">
+          <div id="catalog-help" class="muted text-xs">Shows every market collected from the public feeds.</div>
+          </div>
+        </div>
+        <div class="table-wrap table-clean">
+          <table class="compact" id="catalog-table">
+            <caption class="sr-only">Discovered market catalog by source</caption>
+            <thead><tr>
+              <th scope="col" data-i18n="bookmaker">Source</th>
+              <th scope="col" data-i18n="market">Market</th>
+              <th scope="col" class="num" data-i18n="events">Events</th>
+              <th scope="col" class="num" data-i18n="selections">Selections</th>
+            </tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Event coverage: the other half of the catalog, and the half
+         buildMarketCatalog promised when it wrote "Browsable from
+         /admin/analytics#catalog". A real capture holds 2 770 rows and 842 KB of
+         them, so the table is a search over the whole set rather than a page of
+         it, and the count above says which of the 2 770 are on screen — a
+         truncated list that does not say it is truncated is a list that lies. -->
+    <section id="event-coverage">
+      <div class="card">
+        <h3>
+          <span data-i18n="eventCoverage">Event coverage</span>
+          <span class="h3-meta"><span data-i18n="coveredEvents">events covered across all books</span> · <span id="event-coverage-count">—</span></span>
+        </h3>
+        <div class="row mb-7">
+          <div class="field flex-1 m-0 max-w-320">
+            <label class="sr-only" for="event-search" data-i18n="eventFilterPlaceholder">Filter team / league...</label>
+            <input type="text" id="event-search" data-i18n-placeholder="eventFilterPlaceholder" placeholder="Filter team / league..." autocomplete="off" aria-describedby="event-coverage-help">
+          <div id="event-coverage-help" class="muted text-xs">How many books quote each event, and on how many markets.</div>
+          </div>
+        </div>
+        <div class="table-wrap table-clean">
+          <table class="compact" id="event-coverage-table">
+            <caption class="sr-only">Event coverage across books</caption>
+            <thead><tr>
+              <th scope="col" data-i18n="event">Event</th>
+              <th scope="col" class="num" data-i18n="books">Books</th>
+              <th scope="col" class="num" data-i18n="market">Market</th>
+              <th scope="col" class="num" data-i18n="selections">Selections</th>
+            </tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <dialog id="add-bet-dialog" class="arbiter-modal" aria-labelledby="add-bet-title" aria-modal="true">
+    <header>
+      <h3 id="add-bet-title" data-i18n="addBet">Add bet</h3>
+      <button type="button" class="ghost icon" data-close-add-bet data-i18n-title="close" data-i18n-aria-label="close" title="Close">×</button>
+    </header>
+    <form id="add-bet-form" method="dialog" novalidate>
+      <div class="field"><label for="ab-selection" data-i18n="selection">Selection *</label><input id="ab-selection" name="selection" type="text" required autocomplete="off" placeholder="e.g. FCSB"></div>
+      <div class="grid">
+        <div class="field"><label for="ab-odds" data-i18n="odds">Odds *</label><input id="ab-odds" name="odds" type="number" step="0.01" min="1.01" required placeholder="2.10"></div>
+        <div class="field"><label for="ab-stake" data-i18n="stake">Stake *</label><input id="ab-stake" name="stake" type="number" step="0.01" min="0.01" required placeholder="100"></div>
+      </div>
+      <div class="grid">
+        <div class="field"><label for="ab-source" data-i18n="bookmaker">Book</label><input id="ab-source" name="sourceId" type="text" placeholder="betano"></div>
+        <div class="field"><label for="ab-market" data-i18n="market">Market</label><input id="ab-market" name="marketKey" type="text" value="MATCH_ODDS"></div>
+      </div>
+      <div class="row mt-5">
+        <button type="submit" class="primary" data-i18n="save">Save</button>
+        <button type="button" class="ghost" data-close-add-bet data-i18n="cancel">Cancel</button>
+      </div>
+      <p id="add-bet-error" class="alert hidden" role="alert" aria-live="polite"></p>
+    </form>
+  </dialog>
+  <dialog id="import-csv-dialog" class="arbiter-modal" aria-labelledby="import-csv-title" aria-modal="true">
+    <header>
+      <h3 id="import-csv-title" data-i18n="import">Import CSV</h3>
+      <button type="button" class="ghost icon" data-close-import-csv data-i18n-title="close" data-i18n-aria-label="close" title="Close">×</button>
+    </header>
+    <form id="import-csv-form" method="dialog" novalidate>
+      <div class="field"><label for="import-csv-input" data-i18n="pasteCsv">Paste CSV (id,... headers in row 1)</label><textarea id="import-csv-input" name="csv" rows="8" required placeholder="id,selection,odds,stake&#10;1,FCSB,2.10,100"></textarea></div>
+      <div class="row mt-5">
+        <button type="submit" class="primary" data-i18n="import">Import</button>
+        <button type="button" class="ghost" data-close-import-csv data-i18n="cancel">Cancel</button>
+      </div>
+      <p id="import-csv-error" class="alert hidden" role="alert" aria-live="polite"></p>
+    </form>
+  </dialog>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/i18n.js"></script>
+  <script src="/js/sse.js"></script>
+  <script src="/js/app.js"></script>
+  <script src="/js/pages/common.js"></script>
+  <script src="/js/connection-status.js"></script>
+  <script src="/js/pages/analytics.js"></script>
+</body>
+</html>

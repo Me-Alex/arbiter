@@ -538,7 +538,19 @@
       }
       const healthLabel = healthStatus === 'fresh' ? t('freshSources') : healthStatus;
       $('health-state').textContent = healthLabel;
-      $('health-state').className = `health-${escapeHtml(healthStatus)}`;
+      // An articulated map, not `health-${status}`: a token added to the
+      // backend then shows up here as a missing key (and a test can require it)
+      // instead of silently emitting a class no stylesheet defines.
+      const HEALTH_CLASS = {
+        fresh: 'health-fresh',
+        stale: 'health-stale',
+        partial: 'health-partial',
+        empty: 'health-empty',
+        failed: 'health-failed',
+        cancelled: 'health-cancelled',
+        unknown: 'health-unknown',
+      };
+      $('health-state').className = HEALTH_CLASS[healthStatus] || 'health-unknown';
       $('health-detail').textContent = `${Number(health.actionableSourceCount || 0)} ${t('freshSources')}`;
       // `scrapedAt` is when the observations were captured; `scanStartedAt` is
       // when the scan began reading them. This asked for `scannedAt`, which no

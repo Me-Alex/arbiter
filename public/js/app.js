@@ -1,24 +1,4 @@
-// app.js — shared layout, sidebar, language toggle.
-//
-// There is no theme preference any more. The app was dark-first with a light
-// override; it is now the ArbEdge palette only, which lives in design-tokens.css
-// as plain `:root` values. `design-tokens.css` keeps a `[data-theme]` selector as
-// a no-op so a stale attribute cannot ask for a palette that no longer exists.
-//
-// What this function still does is clear that stale state. A browser that ran
-// before the retheme has `arbiter-theme=dark` in localStorage and possibly
-// `data-theme="dark"` on the documentElement; both are removed here so nothing
-// downstream — a script reading `dataset.theme`, or a stale stylesheet rule —
-// can conclude the page is meant to be dark.
-(function clearLegacyTheme() {
-  try {
-    localStorage.removeItem('arbiter-theme');
-  } catch (_err) {
-    // A page opened with storage blocked still has to render.
-  }
-  delete document.documentElement.dataset.theme;
-})();
-
+// Shared layout, navigation and language controls. Theme boots in theme.js.
 (function () {
   // Inline SVG icon set so we don't depend on an external file or font.
   const ICONS = {
@@ -61,6 +41,9 @@
   function buildSidebar(active) {
     const t = window.arbiterI18n.t.bind(window.arbiterI18n);
     const curLang = window.arbiterI18n.lang || 'ro';
+    const themeLabels = curLang === 'en'
+      ? ['Theme', 'Light', 'Dark', 'System']
+      : ['Tem\u0103', 'Luminoas\u0103', '\u00centunecat\u0103', 'Sistem'];
     // Grouped rather than one flat list: the console pages answer "where is the
     // edge" (arbitrage / live / bookies) while the existing five answer "how do
     // I run and inspect it". The ArbEdge mockup made that split explicit, and it
@@ -158,8 +141,14 @@
                 <button type="button" class="lang-btn ${curLang === 'ro' ? 'active' : ''}" data-lang-set="ro">RO</button>
                 <button type="button" class="lang-btn ${curLang === 'en' ? 'active' : ''}" data-lang-set="en">EN</button>
               </div>
-              <!-- No theme control: the palette is fixed. The console pages never
-                   had one either, so this is the switch finally agreeing with them. -->
+              <label class="theme-choice">
+                <span class="visually-hidden">${themeLabels[0]}</span>
+                <select data-theme-choice>
+                  <option value="light">${themeLabels[1]}</option>
+                  <option value="dark">${themeLabels[2]}</option>
+                  <option value="system">${themeLabels[3]}</option>
+                </select>
+              </label>
             </div>
           </div>
         </div>
@@ -229,6 +218,7 @@
     // Sets `active` and `aria-pressed` on every switch on the page, the one the
     // generated sidebar included and the console pages render themselves.
     wireLangSwitch();
+    app.querySelector('[data-theme-choice]').value = document.documentElement.dataset.themePreference || 'light';
 
     // Mobile sidebar toggle
     const toggle = app.querySelector('.sidebar-toggle');
@@ -264,7 +254,7 @@
         if (!sidebar.classList.contains('open')) return;
         if (e.key === 'Escape') closeSidebar();
         if (e.key === 'Tab') {
-          const controls = [toggle, ...sidebar.querySelectorAll('a[href], button:not(:disabled)')];
+          const controls = [toggle, ...sidebar.querySelectorAll('a[href], button:not(:disabled), select:not(:disabled)')];
           const first = controls[0];
           const last = controls[controls.length - 1];
           if (e.shiftKey && document.activeElement === first) {

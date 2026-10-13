@@ -338,3 +338,111 @@ test('a nonsense save is stored as the defaults, not as the nonsense', async () 
   }
   await rm(dataDir, { recursive: true });
 });
+
+// ---- what the export leaves out -------------------------------------------
+
+/**
+ * The fields a bet really carries, against the columns its export writes.
+ *
+ * `CSV_HEADER` pins the file against the importer's fixtures, and
+ * analytics-page.test.mjs makes the page read every field the service writes.
+ * Between those two sits a direction neither covers: a field added to
+ * `normalizeBet` appears in the table and in no file, with both tests green —
+ * the export iterates `headers`, so a bet key nobody listed is dropped without
+ * a word. The reverse is the same gap the other way: a column with no key
+ * behind it is a file whose every cell is empty.
+ *
+ * `NOT_IN_THE_FILE` is where the difference is allowed to live, and it carries
+ * a reason rather than a name alone. Both reasons are claims about what the
+ * importer does, so both are checked by importing, not by reading: an excuse
+ * whose behaviour has changed is stale, and a stale excuse is a decision that
+ * was made once and is now being inherited.
+ *
+ * The page's side of this is analytics-page's: it asserts that every field the
+ * service writes is read by the table, so `updatedAt` and `provenance` are
+ * shown to the user from `GET /api/tracker` even though the file does not
+ * carry them. Nothing here claims otherwise.
+ */
+const NOT_IN_THE_FILE = [
+  {
+    id: 'provenance',
+    reason: 'a file records the bet, not where this app learned it from, so importCsv stamps every row it accepts as an import',
+    checkedBy: 'a CSV carrying provenance=scan comes back as import',
+  },
+  {
+    id: 'updatedAt',
+    reason: 'normalizeBet only takes updatedAt from its own options, never from the row, so the column would be written and discarded on every re-import',
+    checkedBy: 'a CSV carrying updatedAt comes back without it',
+  },
+];
+
+test('every field a bet carries is a column of its export, or named here', async () => {
+  const dataDir = await mkdtemp(join(tmpdir(), 'arbiter-tracker-'));
+  const tracker = new TrackerService({ dataDir });
+  const bet = await tracker.addBet({ selection: 'Home', odds: 2, stake: 10 });
+  // `updatedAt` is written by nothing except an edit, so a bet nothing has
+  // touched carries eleven keys and would let the twelfth slip past every
+  // comparison below.
+  await tracker.updateBet(bet.id, { status: 'won' });
+  const { items } = await tracker.loadTracker();
+  const carried = Object.keys(items[0]);
+  const headers = (await tracker.exportCsv()).split('\n')[0].split(',');
+
+  assert.ok(carried.length > 1, `a bet carries ${carried.length} fields, so there is nothing to compare`);
+  assert.ok(headers.length > 1, `the export writes ${headers.length} columns, so there is nothing to compare`);
+
+  assert.deepEqual(
+    headers.filter((h) => !carried.includes(h)),
+    [],
+    'the export writes a column no bet carries, so every cell of it is empty',
+  );
+
+  assert.deepEqual(
+    carried.filter((f) => !headers.includes(f) && !NOT_IN_THE_FILE.some((e) => e.id === f)),
+    [],
+    'a field the service stores and the file drops with no reason here — export it, or write the reason down',
+  );
+
+  assert.deepEqual(
+    NOT_IN_THE_FILE.filter((e) => headers.includes(e.id)).map((e) => e.id),
+    [],
+    'the export now writes a field this list says it does not: the reason has been outgrown, not met',
+  );
+
+  assert.deepEqual(
+    NOT_IN_THE_FILE.filter((e) => !carried.includes(e.id)).map((e) => e.id),
+    [],
+    'the service no longer stores a field this list excuses, so the reason is describing nothing',
+  );
+
+  await rm(dataDir, { recursive: true, force: true });
+});
+
+test('the two fields the export leaves out cannot cross the file either', async () => {
+  // The reason each excuse gives is a statement about the importer, so it is
+  // checked against the importer running. Reading the source would credit a
+  // comment, and a comment is what these excuses are made of.
+  const dataDir = await mkdtemp(join(tmpdir(), 'arbiter-tracker-'));
+  const tracker = new TrackerService({ dataDir });
+  const result = await tracker.importCsv([
+    'selection,odds,stake,provenance,updatedAt',
+    'Home,2,10,scan,2020-01-01T00:00:00.000Z',
+  ].join('\n'));
+  assert.deepEqual(result, { imported: 1, skipped: 0 }, 'the row with both fields in it was accepted');
+  const { items } = await tracker.loadTracker();
+
+  assert.equal(
+    items[0].provenance,
+    'import',
+    NOT_IN_THE_FILE.find((e) => e.id === 'provenance').checkedBy +
+    ' — it no longer does, so "the file does not record it" is a reason the code has left behind',
+  );
+  assert.equal(
+    items[0].updatedAt,
+    undefined,
+    NOT_IN_THE_FILE.find((e) => e.id === 'updatedAt').checkedBy +
+    ' — it now does, so decide whether the export should carry it too',
+  );
+
+  await rm(dataDir, { recursive: true, force: true });
+});

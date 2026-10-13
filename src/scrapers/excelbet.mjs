@@ -1,10 +1,41 @@
 import ScraperBase from './base.mjs';
 import { normalizeTeamName } from '../shared/text.mjs';
 import { ValidationError, UpstreamError } from '../shared/errors.mjs';
-import { liveCoverageFor } from './live-status.mjs';
+import { liveCoverageFor, markMarketsLive } from './live-status.mjs';
+import { extractPeriodFromName } from '../scanner/market-contracts.mjs';
 
 const DEFAULT_BASE = 'https://exalogic.excelbet.ro/XSportDatastore';
 const SYSTEM_CODE = 'EXCELBET';
+
+export const EXALOGIC_SPORT_ID_MAP = Object.freeze({
+  1: 'Football',
+  2: 'Basketball',
+  4: 'Ice Hockey',
+  5: 'Tennis',
+  6: 'Handball',
+  16: 'American Football',
+  20: 'Table Tennis',
+  23: 'Volleyball',
+});
+
+export const EXALOGIC_SPORT_NAME_TO_ID = Object.freeze({
+  football: 1,
+  soccer: 1,
+  basketball: 2,
+  'ice hockey': 4,
+  ice_hockey: 4,
+  tennis: 5,
+  handball: 6,
+  volleyball: 23,
+});
+
+export const EXALOGIC_SPORT_AGGREGATES = Object.freeze({
+  1: [1, 8, 9],
+  2: [5],
+  5: [269],
+  4: [86],
+  6: [90],
+});
 
 /**
  * Market categories this adapter reads, as the feed's own `idAggregata`.
@@ -26,10 +57,24 @@ const AGGREGATE_IDS = [1, 8, 9];
 
 /** Full-time result, "FINAL" — the three-way 1X2. */
 const RESULT_MARKET = 3;
+/** First-half result, "1ST HALF" — the three-way 1X2 for half 1. */
+const FIRST_HALF_RESULT_MARKET = 14;
 /** "TOTAL GOALS" — the two-way goals total. */
 const TOTAL_GOALS_MARKET = 7989;
 /** "ASIAN HANDICAP" — the two-way goals handicap. */
 const ASIAN_HANDICAP_MARKET = 60016;
+/** "HOME TOTAL" — team goals total for the host club. */
+const HOME_TOTAL_GOALS_MARKET = 1749;
+/** "AWAY TOTAL" — team goals total for the visitor club. */
+const AWAY_TOTAL_GOALS_MARKET = 1750;
+/** "BOTH TEAMS TO SCORE" — cs=18. */
+const BTTS_MARKET = 18;
+/** 2-Way Moneyline: Basketball (cs=110 incl OT), Tennis (cs=2). */
+const BASKETBALL_WINNER_MARKET = 110;
+const TENNIS_WINNER_MARKET = 2;
+/** Points/Games Totals: Basketball (cs=14863), Tennis (cs=13464). */
+const BASKETBALL_POINTS_TOTAL_MARKET = 14863;
+const TENNIS_GAMES_TOTAL_MARKET = 13464;
 
 /**
  * The whole market vocabulary of this feed, counted 2026-10-02.
@@ -162,32 +207,77 @@ export default class ExcelBetScraper extends ScraperBase {
     }
     this.days = days;
     this.timeoutMs = opts.timeoutMs ?? 25_000;
-    this.maxEvents = opts.maxEvents === 'all' ? 5000 : Math.min(Number(opts.maxEvents ?? 100), 5000);
-    if (!Number.isInteger(this.maxEvents) || this.maxEvents < 0 || this.maxEvents > 5000) {
+    this.liveOnly = Boolean(opts.liveOnly);
+    this.includeLive = Boolean(opts.includeLive || opts.liveOnly);
+    this.sport = opts.sport || 'football';
+    this.sports = Array.isArray(opts.sports) ? opts.sports.map((s) => s.toLowerCase()) : null;
+    this.maxEvents = opts.maxEvents === 'all' ? Infinity : Number(opts.maxEvents ?? Infinity);
+    if ((!Number.isInteger(this.maxEvents) && this.maxEvents !== Infinity) || this.maxEvents < 0) {
       throw new ValidationError(`${this.name}: invalid maxEvents`);
     }
   }
 
   async fetchRaw({ signal } = {}) {
     signal?.throwIfAborted();
+    if (this.liveOnly) {
+      const live = await this.fetchLive({ signal });
+      const liveEvents = live?.avs?.avs || [];
+      if (liveEvents.length === 0) throw new UpstreamError(`${this.name}: live fetch returned 0 events`);
+      this.sourceUrl = `${this.apiBase}/getMenuLiveGenerale?systemCode=${this.systemCode}&lingua=RO`;
+      this.observedAt = new Date().toISOString();
+      return { avs: { avs: liveEvents } };
+    }
     const days = this.days;
     const today = new Date();
     const headers = { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36' };
+
+    const targetSports = [];
+    if (this.sport === 'all') {
+      targetSports.push(
+        { id: 1, name: 'Football', aggregates: AGGREGATE_IDS, days },
+        { id: 2, name: 'Basketball', aggregates: EXALOGIC_SPORT_AGGREGATES[2] || [5], days: Math.min(days, 3) },
+        { id: 5, name: 'Tennis', aggregates: EXALOGIC_SPORT_AGGREGATES[5] || [269], days: Math.min(days, 3) },
+        { id: 4, name: 'Ice Hockey', aggregates: EXALOGIC_SPORT_AGGREGATES[4] || [86], days: Math.min(days, 3) },
+        { id: 6, name: 'Handball', aggregates: EXALOGIC_SPORT_AGGREGATES[6] || [90], days: Math.min(days, 3) },
+      );
+    } else if (this.sports) {
+      for (const spName of this.sports) {
+        const id = EXALOGIC_SPORT_NAME_TO_ID[spName];
+        if (id) {
+          targetSports.push({
+            id,
+            name: EXALOGIC_SPORT_ID_MAP[id] || spName,
+            aggregates: EXALOGIC_SPORT_AGGREGATES[id] || (id === 1 ? AGGREGATE_IDS : [1]),
+            days: id === 1 ? days : Math.min(days, 3),
+          });
+        }
+      }
+    } else {
+      const sportKey = this.sport.toLowerCase();
+      const id = EXALOGIC_SPORT_NAME_TO_ID[sportKey] || 1;
+      targetSports.push({
+        id,
+        name: EXALOGIC_SPORT_ID_MAP[id] || 'Football',
+        aggregates: id === 1 ? AGGREGATE_IDS : (EXALOGIC_SPORT_AGGREGATES[id] || [1]),
+        days,
+      });
+    }
+
     /** Fetch one day's palinsesto for one market category. */
-    const fetchBoard = async (dayOffset, aggregateId) => {
+    const fetchBoard = async (dayOffset, aggregateId, sportId = 1, sportName = 'Football') => {
       const d = new Date(today);
       d.setDate(d.getDate() + dayOffset);
       const ds = d.toISOString().slice(0, 10).replace(/-/g, '');
       const url = new URL(`${this.apiBase}/getPalinsestoDelGiorno`);
       url.search = new URLSearchParams({
         systemCode: this.systemCode, lingua: 'RO', hash: '',
-        data: ds, idSport: '1', idAggregata: String(aggregateId), timezone: '3',
+        data: ds, idSport: String(sportId), idAggregata: String(aggregateId), timezone: '3',
       });
       const timeout = AbortSignal.timeout(this.timeoutMs);
       const bounded = signal ? AbortSignal.any([signal, timeout]) : timeout;
       const response = await fetch(url.href, { signal: bounded, headers });
       if (!response.ok) {
-        throw new UpstreamError(`${this.name}: HTTP ${response.status} for ${ds} aggregate ${aggregateId}`);
+        throw new UpstreamError(`${this.name}: HTTP ${response.status} for ${ds} sport ${sportId} aggregate ${aggregateId}`);
       }
       const ct = response.headers.get('content-type') || '';
       if (!ct.includes('json') && !ct.includes('text/plain')) {
@@ -207,7 +297,12 @@ export default class ExcelBetScraper extends ScraperBase {
         }
       } finally { await reader.cancel(); }
       const parsed = JSON.parse(Buffer.concat(chunks).toString('utf8'));
-      return parsed?.avs?.avs || [];
+      const evs = parsed?.avs?.avs || [];
+      for (const ev of evs) {
+        if (!ev.sportId) ev.sportId = sportId;
+        if (!ev.sportName) ev.sportName = sportName;
+      }
+      return evs;
     };
     /**
      * One day across every category, merged per event.
@@ -220,15 +315,15 @@ export default class ExcelBetScraper extends ScraperBase {
      * complete and is not, and a day where every category failed is the empty
      * run this whole loop exists to distinguish from a quiet one.
      */
-    const fetchDay = async (dayOffset) => {
+    const fetchDay = async (dayOffset, sport = targetSports[0]) => {
       const byBid = new Map();
       let answered = 0;
-      for (const aggregateId of AGGREGATE_IDS) {
+      for (const aggregateId of sport.aggregates) {
         let events;
         try {
-          events = await fetchBoard(dayOffset, aggregateId);
+          events = await fetchBoard(dayOffset, aggregateId, sport.id, sport.name);
         } catch (err) {
-          this.aggregateFailures.push(`aggregate ${aggregateId}: ${err.message}`);
+          this.aggregateFailures.push(`sport ${sport.id} aggregate ${aggregateId}: ${err.message}`);
           continue;
         }
         answered += 1;
@@ -254,16 +349,83 @@ export default class ExcelBetScraper extends ScraperBase {
       }
       return [...byBid.values()].map((slot) => slot.event);
     };
-    this.sourceUrl = `${this.apiBase}/getPalinsestoDelGiorno?systemCode=${this.systemCode}&lingua=RO&data=YYYYMMDD&idSport=1&idAggregata=${AGGREGATE_IDS.join('&idAggregata=')}`;
+    const sportIdParam = targetSports.length === 1 ? targetSports[0].id : '1';
+    this.sourceUrl = `${this.apiBase}/getPalinsestoDelGiorno?systemCode=${this.systemCode}&lingua=RO&data=YYYYMMDD&idSport=${sportIdParam}&idAggregata=${AGGREGATE_IDS.join('&idAggregata=')}`;
     this.observedAt = new Date().toISOString();
     this.aggregateFailures = [];
-    const results = await Promise.allSettled(Array.from({ length: days }, (_, i) => fetchDay(i)));
+    const fetchTasks = [];
+    for (const sp of targetSports) {
+      for (let i = 0; i < sp.days; i++) {
+        fetchTasks.push(fetchDay(i, sp));
+      }
+    }
+    const results = await Promise.allSettled(fetchTasks);
     const allEvents = [];
     for (const r of results) {
       if (r.status === 'fulfilled' && Array.isArray(r.value)) allEvents.push(...r.value);
     }
+    if (this.includeLive) {
+      try {
+        const live = await this.fetchLive({ signal });
+        if (Array.isArray(live?.avs?.avs)) {
+          allEvents.push(...live.avs.avs);
+        }
+      } catch (err) {
+        this.logger?.('warn', `${this.name}: failed to fetch live menu: ${err.message}`);
+      }
+    }
     if (allEvents.length === 0) throw new UpstreamError(`${this.name}: all day fetches returned 0 events`);
     return { avs: { avs: allEvents } };
+  }
+
+  async fetchLive({ signal } = {}) {
+    const url = new URL(`${this.apiBase}/getMenuLiveGenerale`);
+    url.search = new URLSearchParams({
+      systemCode: this.systemCode,
+      lingua: 'RO',
+      hash: '',
+      sportId: '0',
+    });
+    const headers = { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36' };
+    const timeout = AbortSignal.timeout(this.timeoutMs);
+    const bounded = signal ? AbortSignal.any([signal, timeout]) : timeout;
+    const response = await fetch(url.href, { signal: bounded, headers });
+    if (!response.ok) {
+      throw new UpstreamError(`${this.name}: HTTP ${response.status} for getMenuLiveGenerale`);
+    }
+    const d = await response.json();
+    const liveEvents = [];
+    const sportMap = {
+      1: 'Football',
+      2: 'Basketball',
+      4: 'Ice Hockey',
+      5: 'Tennis',
+      6: 'Handball',
+      16: 'American Football',
+      20: 'Table Tennis',
+      23: 'Volleyball',
+      109: 'Esports',
+      137: 'Esports',
+      153: 'Esports',
+    };
+    for (const sp of d.sps || []) {
+      const sportName = sportMap[sp.id] || sp.dsl?.EN || sp.dsl?.RO || 'Other';
+      for (const ct of sp.cts || []) {
+        for (const tn of ct.tns || []) {
+          const league = tn.dsl?.RO || tn.dsl?.EN || ct.dsl?.RO || ct.dsl?.EN || 'Live';
+          for (const ev of tn.el || []) {
+            liveEvents.push({
+              ...ev,
+              league,
+              sportId: sp.id,
+              sportName,
+              lv: true,
+            });
+          }
+        }
+      }
+    }
+    return { avs: { avs: liveEvents } };
   }
 
   normalize(raw) {
@@ -271,12 +433,46 @@ export default class ExcelBetScraper extends ScraperBase {
     return raw.avs.avs;
   }
 
+  /**
+   * The palinsesto endpoint is per DAY, and `this.sourceUrl` is a pattern with a
+   * literal `YYYYMMDD` in it. Publishing that pattern verbatim put a dead link on
+   * every event of this book and its three subclasses (excelbet, magnumbet,
+   * las-vegas, winboss all extend this class), so the "where did this price come
+   * from" answer a user can follow did not exist. The odds themselves were always
+   * fetched per day by `fetchBoard`, which substitutes a real date -- only the
+   * provenance link was wrong.
+   *
+   * The date used is the event's own kickoff date, which is the day whose
+   * response carried it. `fetchBoard` computes its date from `new Date()` and
+   * `toISOString()`, and `extractEvents` parses `ts` as UTC, so both sides are on
+   * UTC and the substitution cannot drift by a day near midnight.
+   */
+  sourceUrlForDate(dateISO) {
+    // `extractEvents` is called directly by unit tests and by the sport-fallback
+    // path, without `fetchRaw` ever having assigned the pattern. Publishing
+    // `undefined` was survivable; calling `.replace` on it is not.
+    if (typeof this.sourceUrl !== 'string') return undefined;
+    const ds = String(dateISO || '').slice(0, 10).replace(/-/g, '');
+    return /^\d{8}$/.test(ds) ? this.sourceUrl.replace('YYYYMMDD', ds) : this.sourceUrl;
+  }
+
   extractEvents(rawEvents) {
     const out = [];
     const seen = new Set();
     for (const e of rawEvents) {
       if (out.length >= this.maxEvents) break;
-      if (e.lv) continue; // skip live
+      if (e.lv && !this.includeLive) continue; // skip live unless includeLive
+
+      const sport = e.sportName || 'football';
+      const sportLower = sport.toLowerCase();
+      if (this.sport !== 'all') {
+        if (this.sports) {
+          if (!this.sports.includes(sportLower)) continue;
+        } else if (this.sport.toLowerCase() !== sportLower) {
+          continue;
+        }
+      }
+
       const name = e.dsl?.RO || e.dsl?.EN || '';
       if (!name || !name.includes(' - ')) continue;
       const [homeRaw, awayRaw] = name.split(' - ');
@@ -286,46 +482,58 @@ export default class ExcelBetScraper extends ScraperBase {
       // Parse timestamp: "20260921 22:00:00"
       const ts = e.ts || '';
       const match = ts.match(/^(\d{4})(\d{2})(\d{2})\s+(\d{2}):(\d{2}):(\d{2})$/);
-      if (!match) continue;
-      const kickoff = new Date(`${match[1]}-${match[2]}-${match[3]}T${match[4]}:${match[5]}:${match[6]}Z`).toISOString();
+      let kickoff;
+      if (match) {
+        kickoff = new Date(`${match[1]}-${match[2]}-${match[3]}T${match[4]}:${match[5]}:${match[6]}Z`).toISOString();
+      } else if (e.lv) {
+        kickoff = new Date().toISOString();
+      } else {
+        continue;
+      }
       // A missing bid would serialise as the string "undefined" (which passes
       // the base id check) and poison the dedup set for every later event.
       if (e.bid === undefined || e.bid === null || seen.has(e.bid)) continue;
       seen.add(e.bid);
       const markets = [
         resultMarket(e),
+        firstHalfResultMarket(e),
+        ...bttsMarkets(e),
         ...totalGoalsMarkets(e),
         ...asianHandicapMarkets(e),
+        ...teamGoalsMarkets(e),
+        ...moneyline2WayMarkets(e),
+        ...pointsTotalsMarkets(e),
       ].filter(Boolean);
       if (markets.length === 0) continue;
-      const league = String(e.p || 'unknown');
+      const league = String(e.league || e.p || 'unknown');
       const eventKey = [
-        normalizeTeamName('football'),
+        normalizeTeamName(sport),
         normalizeTeamName(league),
         kickoff,
         normalizeTeamName(home),
         normalizeTeamName(away),
       ].join('|');
+      const isLive = Boolean(e.lv);
+      markMarketsLive(markets, () => isLive);
       out.push({
         id: String(e.bid),
         // `this.id`, not a literal: MagnumBet subclasses this class and a
         // hardcoded 'excelbet' attributed its prices to another book, so the
         // engine could never count them as an independent leg.
         sourceId: this.id,
-        sourceUrl: this.sourceUrl,
+        sourceUrl: e.lv ? `${this.apiBase}/getMenuLiveGenerale?systemCode=${this.systemCode}&lingua=RO` : this.sourceUrlForDate(kickoff),
         transport: this.transport,
         observedAt: this.observedAt,
-        sport: 'football',
+        sport,
         league,
         kickoff,
         homeTeam: home,
         awayTeam: away,
-        // A true statement about the emitted set, not about the feed: only future
-        // fixtures are emitted, and no measured field distinguishes a running
-        // one. The `isLive` field that used to sit here was read by nobody.
-        live: false,
+        live: isLive,
+        isLive,
         eventKey,
         markets,
+        ...(e.scr ? { score: e.scr.sc, minute: e.scr.t, periodName: e.scr.st } : {}),
       });
     }
     return out;
@@ -334,7 +542,10 @@ export default class ExcelBetScraper extends ScraperBase {
   _serializable(events, raw) {
     return {
       ...super._serializable(events, raw),
-      sourceUrl: this.sourceUrl,
+      // The run record describes ONE board, so it resolves the pattern to the
+      // day this run started -- a link that opens. Each event carries its own
+      // day via sourceUrlForDate.
+      sourceUrl: this.sourceUrlForDate(this.observedAt),
       transport: this.transport,
       observedAt: this.observedAt,
       coverage: {
@@ -434,7 +645,27 @@ function resultMarket(e) {
       odds: legs.get(ce),
       handicap: null,
     }));
-    return { key: '1x2', name: sc.d || 'FINAL', period: 'fulltime', selections };
+    const period = extractPeriodFromName(sc.d) || 'fulltime';
+    return { key: '1x2', name: sc.d || 'FINAL', period, selections };
+  }
+  return null;
+}
+
+/**
+ * First-half result market (cs=14), three-way 1X2.
+ */
+function firstHalfResultMarket(e) {
+  for (const sc of e.scs || []) {
+    if (sc.cs !== FIRST_HALF_RESULT_MARKET) continue;
+    const legs = pricedLegs(sc, RESULT_SIDES);
+    if (!legs) continue;
+    const selections = [...RESULT_SIDES].map(([ce, label]) => ({
+      id: `${e.bid}:${sc.cs}:${ce}`,
+      name: label,
+      odds: legs.get(ce),
+      handicap: null,
+    }));
+    return { key: '1x2', name: sc.d || '1ST HALF', period: 'half1', selections };
   }
   return null;
 }
@@ -480,7 +711,7 @@ function totalGoalsMarkets(e) {
       key: 'TOTAL_GOALS',
       providerMarketId: `${sc.cs}:${sc.h}`,
       name: sc.d || 'TOTAL GOALS',
-      period: 'fulltime',
+      period: extractPeriodFromName(sc.d) || 'fulltime',
       line,
       selections,
     });
@@ -542,10 +773,130 @@ function asianHandicapMarkets(e) {
       key: 'ASIAN_HANDICAP',
       providerMarketId: `${sc.cs}:${sc.h}`,
       name: sc.d || 'ASIAN HANDICAP',
-      period: 'fulltime',
+      period: extractPeriodFromName(sc.d) || 'fulltime',
       line: homeLine,
       selections,
     });
   }
   return out;
 }
+
+/**
+ * Team-specific goals totals (HOME TOTAL cs=1749, AWAY TOTAL cs=1750).
+ */
+function teamGoalsMarkets(e) {
+  const out = [];
+  for (const sc of e.scs || []) {
+    if (sc.cs !== HOME_TOTAL_GOALS_MARKET && sc.cs !== AWAY_TOTAL_GOALS_MARKET) continue;
+    const team = sc.cs === HOME_TOTAL_GOALS_MARKET ? 'home' : 'away';
+    const line = halfLine(sc.h);
+    if (line === null) continue;
+    const legs = pricedLegs(sc, TOTAL_GOALS_SIDES);
+    if (!legs) continue;
+    const selections = [...TOTAL_GOALS_SIDES].map(([ce, label]) => ({
+      id: `${e.bid}:${sc.cs}:${sc.h}:${ce}`,
+      name: `${label} ${line}`,
+      odds: legs.get(ce),
+      handicap: null,
+    }));
+    out.push({
+      key: 'TOTAL_GOALS',
+      providerMarketId: `${sc.cs}:${sc.h}`,
+      name: sc.d || (team === 'home' ? 'HOME TOTAL' : 'AWAY TOTAL'),
+      period: extractPeriodFromName(sc.d) || 'fulltime',
+      team,
+      line,
+      selections,
+    });
+  }
+  return out;
+}
+
+/**
+ * Both Teams To Score (cs=18).
+ * ce=1 is Yes ("sì" / "da"), ce=2 is No ("no" / "nu").
+ */
+const BTTS_SIDES = new Map([[1, 'Yes'], [2, 'No']]);
+function bttsMarkets(e) {
+  const out = [];
+  const seenPeriods = new Set();
+  for (const sc of e.scs || []) {
+    if (sc.cs !== BTTS_MARKET) continue;
+    const legs = pricedLegs(sc, BTTS_SIDES);
+    if (!legs) continue;
+    const period = extractPeriodFromName(sc.d) || 'fulltime';
+    if (seenPeriods.has(period)) continue;
+    seenPeriods.add(period);
+    const selections = [...BTTS_SIDES].map(([ce, label]) => ({
+      id: `${e.bid}:${sc.cs}:${ce}`,
+      name: label,
+      odds: legs.get(ce),
+      handicap: null,
+    }));
+    out.push({
+      key: 'BOTH_TEAMS_SCORE',
+      name: sc.d || 'BOTH TEAMS TO SCORE',
+      period,
+      selections,
+    });
+  }
+  return out;
+}
+
+/** 2-way Match Winner for Basketball (cs=110) or Tennis (cs=2). */
+const TWO_WAY_SIDES = new Map([[1, '1'], [2, '2']]);
+function moneyline2WayMarkets(e) {
+  const out = [];
+  const seenPeriods = new Set();
+  for (const sc of e.scs || []) {
+    if (sc.cs !== BASKETBALL_WINNER_MARKET && sc.cs !== TENNIS_WINNER_MARKET) continue;
+    const legs = pricedLegs(sc, TWO_WAY_SIDES);
+    if (!legs) continue;
+    const period = extractPeriodFromName(sc.d) || 'fulltime';
+    if (seenPeriods.has(period)) continue;
+    seenPeriods.add(period);
+    const selections = [...TWO_WAY_SIDES].map(([ce, label]) => ({
+      id: `${e.bid}:${sc.cs}:${ce}`,
+      name: label,
+      odds: legs.get(ce),
+      handicap: null,
+    }));
+    out.push({
+      key: 'MATCH_ODDS',
+      name: sc.d || 'Match Winner',
+      period,
+      selections,
+    });
+  }
+  return out;
+}
+
+/** Points totals for Basketball (cs=14863) or Games totals for Tennis (cs=13464). */
+function pointsTotalsMarkets(e) {
+  const out = [];
+  for (const sc of e.scs || []) {
+    if (sc.cs !== BASKETBALL_POINTS_TOTAL_MARKET && sc.cs !== TENNIS_GAMES_TOTAL_MARKET) continue;
+    const line = halfLine(sc.h);
+    if (line === null) continue;
+    const legs = pricedLegs(sc, TOTAL_GOALS_SIDES);
+    if (!legs) continue;
+    const selections = [...TOTAL_GOALS_SIDES].map(([ce, label]) => ({
+      id: `${e.bid}:${sc.cs}:${sc.h}:${ce}`,
+      name: `${label} ${line}`,
+      odds: legs.get(ce),
+      handicap: null,
+    }));
+    const isGames = sc.cs === TENNIS_GAMES_TOTAL_MARKET;
+    out.push({
+      key: 'OVER_UNDER',
+      providerMarketId: `${sc.cs}:${sc.h}`,
+      name: sc.d || (isGames ? 'Total game-uri' : 'TOTAL POINTS'),
+      period: extractPeriodFromName(sc.d) || 'fulltime',
+      line,
+      subject: isGames ? 'games' : 'points',
+      selections,
+    });
+  }
+  return out;
+}
+

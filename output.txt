@@ -1,0 +1,60 @@
+--- VISIBLE CONTENT START ---
+Sari la conținut
+ArbEdge
+TRADING
+Arbitraj
+Arbitraj live
+Case
+SPAȚIU DE LUCRU
+Tablă
+Răzuire
+Scanner
+Analiză
+Scan Insights
+SISTEM
+Setări
+RECONECTARE…
+STARE SISTEM
+RO
+EN
+Temă
+Luminoasă
+Întunecată
+Sistem
+Opportunity Terminal
+
+Cross-book arbitrage, middles and mispricing across every quoted book.
+
+BANKROLL
+—
+Export CSV
+ARBITRAGES
+—
+Guaranteed, result-independent
+GUARANTEED PROFIT
+—
+Summed over every arb below
+MIDDLES
+—
+Conditional on the margin
+POSITIVE EV
+—
+Mispriced against book consensus
+CAPITAL C
+--- VISIBLE CONTENT END ---
+
+--- KPIs ---
+Label: ARBITRAGES, Value: —
+Label: GUARANTEED PROFIT, Value: —
+Label: MIDDLES, Value: —
+Label: POSITIVE EV, Value: —
+Label: CAPITAL COMMITTED, Value: —
+
+--- FIRST ARBITRAGE CARD ---
+None
+
+--- BAD TEXTS ---
+[]
+
+--- MASTHEAD SUBTITLE ---
+Cross-book arbitrage, middles and mispricing across every quoted book.

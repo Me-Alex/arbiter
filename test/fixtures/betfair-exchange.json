@@ -1,0 +1,3141 @@
+{
+  "provenance": {
+    "sourceUrl": "https://ero.betfair.ro/www/sports/exchange/readonly/v1/bymarket",
+    "capturedAt": "2026-10-10T18:06:50.817Z",
+    "bookmaker": "betfair",
+    "totalEvents": 10,
+    "totalMarkets": 22
+  },
+  "raw": {
+    "search": {
+      "results": [
+        {
+          "eventId": 36103600,
+          "marketId": "1.262766648",
+          "competitionId": 115,
+          "eventTypeId": 1
+        },
+        {
+          "eventId": 36103600,
+          "marketId": "1.262766649",
+          "competitionId": 115,
+          "eventTypeId": 1
+        },
+        {
+          "eventId": 36103600,
+          "marketId": "1.262766659",
+          "competitionId": 115,
+          "eventTypeId": 1
+        },
+        {
+          "eventId": 36132083,
+          "marketId": "1.263090229",
+          "competitionId": 97,
+          "eventTypeId": 1
+        },
+        {
+          "eventId": 36132083,
+          "marketId": "1.263090182",
+          "competitionId": 97,
+          "eventTypeId": 1
+        },
+        {
+          "eventId": 36132083,
+          "marketId": "1.263090185",
+          "competitionId": 97,
+          "eventTypeId": 1
+        },
+        {
+          "eventId": 36173023,
+          "marketId": "1.263617807",
+          "competitionId": 12835532,
+          "eventTypeId": 2
+        },
+        {
+          "eventId": 36099016,
+          "marketId": "1.262707252",
+          "competitionId": 141,
+          "eventTypeId": 1
+        },
+        {
+          "eventId": 36163664,
+          "marketId": "1.263526557",
+          "competitionId": 10514636,
+          "eventTypeId": 7522
+        },
+        {
+          "eventId": 36103272,
+          "marketId": "1.262760445",
+          "competitionId": 61,
+          "eventTypeId": 1
+        },
+        {
+          "eventId": 36103272,
+          "marketId": "1.262760446",
+          "competitionId": 61,
+          "eventTypeId": 1
+        },
+        {
+          "eventId": 36116136,
+          "marketId": "1.262916860",
+          "competitionId": 4905,
+          "eventTypeId": 1
+        },
+        {
+          "eventId": 36165952,
+          "marketId": "1.263542766",
+          "competitionId": 12200369,
+          "eventTypeId": 1
+        },
+        {
+          "eventId": 36165952,
+          "marketId": "1.263542763",
+          "competitionId": 12200369,
+          "eventTypeId": 1
+        },
+        {
+          "eventId": 36099016,
+          "marketId": "1.262707242",
+          "competitionId": 141,
+          "eventTypeId": 1
+        },
+        {
+          "eventId": 36099016,
+          "marketId": "1.262707241",
+          "competitionId": 141,
+          "eventTypeId": 1
+        },
+        {
+          "eventId": 36116136,
+          "marketId": "1.262916850",
+          "competitionId": 4905,
+          "eventTypeId": 1
+        },
+        {
+          "eventId": 36116136,
+          "marketId": "1.262916849",
+          "competitionId": 4905,
+          "eventTypeId": 1
+        },
+        {
+          "eventId": 36160397,
+          "marketId": "1.263468687",
+          "competitionId": 10528723,
+          "eventTypeId": 7522
+        },
+        {
+          "eventId": 36165952,
+          "marketId": "1.263542810",
+          "competitionId": 12200369,
+          "eventTypeId": 1
+        },
+        {
+          "eventId": 36103272,
+          "marketId": "1.262760456",
+          "competitionId": 61,
+          "eventTypeId": 1
+        },
+        {
+          "eventId": 36173098,
+          "marketId": "1.263626459",
+          "competitionId": 12836284,
+          "eventTypeId": 2
+        }
+      ],
+      "attachments": {
+        "events": {
+          "36099016": {
+            "eventId": 36099016,
+            "key": "EVENT:36099016",
+            "name": "Chicago Fire v New York City",
+            "eventTypeId": 1,
+            "competitionId": 141,
+            "countryCode": "US",
+            "timezone": "GMT",
+            "openDate": "2026-10-10T18:30:00.000Z",
+            "videoAvailable": true,
+            "onTvChannels": [
+              "Apple TV"
+            ]
+          },
+          "36103272": {
+            "eventId": 36103272,
+            "key": "EVENT:36103272",
+            "name": "Nürnberg v Wolfsburg",
+            "eventTypeId": 1,
+            "competitionId": 61,
+            "countryCode": "DE",
+            "timezone": "GMT",
+            "openDate": "2026-10-10T18:30:00.000Z",
+            "videoAvailable": false
+          },
+          "36103600": {
+            "eventId": 36103600,
+            "key": "EVENT:36103600",
+            "name": "Olimpija v Mura",
+            "eventTypeId": 1,
+            "competitionId": 115,
+            "countryCode": "SI",
+            "timezone": "GMT",
+            "openDate": "2026-10-10T18:15:00.000Z",
+            "videoAvailable": false
+          },
+          "36116136": {
+            "eventId": 36116136,
+            "key": "EVENT:36116136",
+            "name": "FCSB v Otelul Galati",
+            "eventTypeId": 1,
+            "competitionId": 4905,
+            "countryCode": "RO",
+            "timezone": "GMT",
+            "openDate": "2026-10-10T18:30:00.000Z",
+            "videoAvailable": false,
+            "onTvChannels": [
+              "Digi Sport 1",
+              "Prima Sport 1"
+            ]
+          },
+          "36132083": {
+            "eventId": 36132083,
+            "key": "EVENT:36132083",
+            "name": "Jagiellonia Bialystock v Gornik Zabrze",
+            "eventTypeId": 1,
+            "competitionId": 97,
+            "countryCode": "PL",
+            "timezone": "GMT",
+            "openDate": "2026-10-10T18:15:00.000Z",
+            "videoAvailable": true
+          },
+          "36160397": {
+            "eventId": 36160397,
+            "key": "EVENT:36160397",
+            "name": "Boulazac Basket Dordogne Pro v JL Bourg Basket",
+            "eventTypeId": 7522,
+            "competitionId": 10528723,
+            "countryCode": "GB",
+            "timezone": "GMT",
+            "openDate": "2026-10-10T18:30:00.000Z",
+            "videoAvailable": false
+          },
+          "36163664": {
+            "eventId": 36163664,
+            "key": "EVENT:36163664",
+            "name": "Pallacanestro Varese v Pallacanestro Trieste 2004",
+            "eventTypeId": 7522,
+            "competitionId": 10514636,
+            "countryCode": "GB",
+            "timezone": "GMT",
+            "openDate": "2026-10-10T18:30:00.000Z",
+            "videoAvailable": true
+          },
+          "36165952": {
+            "eventId": 36165952,
+            "key": "EVENT:36165952",
+            "name": "USA  Feminin v Spania (F)",
+            "eventTypeId": 1,
+            "competitionId": 12200369,
+            "timezone": "GMT",
+            "openDate": "2026-10-10T18:30:00.000Z",
+            "videoAvailable": false
+          },
+          "36173023": {
+            "eventId": 36173023,
+            "key": "EVENT:36173023",
+            "name": "Passaro v Y Milev",
+            "eventTypeId": 2,
+            "competitionId": 12835532,
+            "timezone": "UTC",
+            "openDate": "2026-10-10T18:20:00.000Z",
+            "videoAvailable": false
+          },
+          "36173098": {
+            "eventId": 36173098,
+            "key": "EVENT:36173098",
+            "name": "Arantxa Rus v Kaitlyn Carnicella",
+            "eventTypeId": 2,
+            "competitionId": 12836284,
+            "countryCode": "GB",
+            "timezone": "GMT",
+            "openDate": "2026-10-10T23:00:00.000Z",
+            "videoAvailable": false
+          }
+        }
+      }
+    },
+    "byMarket": {
+      "eventTypes": [
+        {
+          "eventTypeId": 1,
+          "eventNodes": [
+            {
+              "eventId": 36099016,
+              "event": {
+                "eventName": "Chicago Fire v New York City",
+                "countryCode": "US",
+                "timezone": "GMT",
+                "openDate": "2026-10-10T18:30:00.000Z"
+              },
+              "marketNodes": [
+                {
+                  "marketId": "1.262707252",
+                  "isMarketDataDelayed": true,
+                  "state": {
+                    "betDelay": 0,
+                    "bspReconciled": false,
+                    "complete": true,
+                    "inplay": false,
+                    "numberOfWinners": 1,
+                    "numberOfRunners": 2,
+                    "numberOfActiveRunners": 2,
+                    "lastMatchTime": "2026-10-10T18:01:05.696Z",
+                    "totalMatched": 32038.957535135163,
+                    "totalAvailable": 128440.5153402846,
+                    "crossMatching": true,
+                    "runnersVoidable": false,
+                    "version": 7673141237,
+                    "betDelayModels": [
+                      "PASSIVE"
+                    ],
+                    "status": "OPEN"
+                  },
+                  "description": {
+                    "persistenceEnabled": true,
+                    "bspMarket": false,
+                    "marketName": "Peste/Sub 2,5 goluri",
+                    "marketTime": "2026-10-10T18:30:00.000Z",
+                    "suspendTime": "2026-10-10T18:30:00.000Z",
+                    "turnInPlayEnabled": true,
+                    "marketType": "OVER_UNDER_25",
+                    "priceLadderDescription": {
+                      "type": "CLASSIC"
+                    },
+                    "bettingType": "ODDS"
+                  },
+                  "runners": [
+                    {
+                      "selectionId": 47972,
+                      "handicap": 0,
+                      "description": {
+                        "runnerName": "Sub 2,5 goluri"
+                      },
+                      "exchange": {
+                        "availableToBack": [
+                          {
+                            "price": 2.68,
+                            "size": 1633.34
+                          },
+                          {
+                            "price": 2.66,
+                            "size": 1974.96
+                          },
+                          {
+                            "price": 2.64,
+                            "size": 1309.42
+                          }
+                        ],
+                        "availableToLay": [
+                          {
+                            "price": 2.74,
+                            "size": 1686.87
+                          },
+                          {
+                            "price": 2.76,
+                            "size": 4302.23
+                          },
+                          {
+                            "price": 2.78,
+                            "size": 1958.78
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "selectionId": 47973,
+                      "handicap": 0,
+                      "description": {
+                        "runnerName": "Peste 2,5 goluri"
+                      },
+                      "exchange": {
+                        "availableToBack": [
+                          {
+                            "price": 1.57,
+                            "size": 7993.17
+                          },
+                          {
+                            "price": 1.56,
+                            "size": 11371.92
+                          },
+                          {
+                            "price": 1.55,
+                            "size": 977.98
+                          }
+                        ],
+                        "availableToLay": [
+                          {
+                            "price": 1.59,
+                            "size": 1694.81
+                          },
+                          {
+                            "price": 1.6,
+                            "size": 1932.85
+                          },
+                          {
+                            "price": 1.61,
+                            "size": 7863.21
+                          }
+                        ]
+                      }
+                    }
+                  ],
+                  "isMarketDataVirtual": true
+                }
+              ]
+            },
+            {
+              "eventId": 36103272,
+              "event": {
+                "eventName": "Nürnberg v Wolfsburg",
+                "countryCode": "DE",
+                "timezone": "GMT",
+                "openDate": "2026-10-10T18:30:00.000Z"
+              },
+              "marketNodes": [
+                {
+                  "marketId": "1.262760445",
+                  "isMarketDataDelayed": true,
+                  "state": {
+                    "betDelay": 0,
+                    "bspReconciled": false,
+                    "complete": true,
+                    "inplay": false,
+                    "numberOfWinners": 1,
+                    "numberOfRunners": 2,
+                    "numberOfActiveRunners": 2,
+                    "lastMatchTime": "2026-10-10T17:54:15.348Z",
+                    "totalMatched": 1024.729868577506,
+                    "totalAvailable": 61704.430852344005,
+                    "crossMatching": true,
+                    "runnersVoidable": false,
+                    "version": 7681293260,
+                    "betDelayModels": [
+                      "PASSIVE"
+                    ],
+                    "status": "OPEN"
+                  },
+                  "description": {
+                    "persistenceEnabled": true,
+                    "bspMarket": false,
+                    "marketName": "Ambele echipe vor marca?",
+                    "marketTime": "2026-10-10T18:30:00.000Z",
+                    "suspendTime": "2026-10-10T18:30:00.000Z",
+                    "turnInPlayEnabled": true,
+                    "marketType": "BOTH_TEAMS_TO_SCORE",
+                    "priceLadderDescription": {
+                      "type": "CLASSIC"
+                    },
+                    "bettingType": "ODDS"
+                  },
+                  "runners": [
+                    {
+                      "selectionId": 30246,
+                      "handicap": 0,
+                      "description": {
+                        "runnerName": "Da"
+                      },
+                      "exchange": {
+                        "availableToBack": [
+                          {
+                            "price": 1.45,
+                            "size": 24118.34
+                          },
+                          {
+                            "price": 1.44,
+                            "size": 881.8
+                          },
+                          {
+                            "price": 1.43,
+                            "size": 2258.68
+                          }
+                        ],
+                        "availableToLay": [
+                          {
+                            "price": 1.48,
+                            "size": 681.87
+                          },
+                          {
+                            "price": 1.49,
+                            "size": 2153.93
+                          },
+                          {
+                            "price": 1.5,
+                            "size": 10631.65
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "selectionId": 110503,
+                      "handicap": 0,
+                      "description": {
+                        "runnerName": "Nu"
+                      },
+                      "exchange": {
+                        "availableToBack": [
+                          {
+                            "price": 3.05,
+                            "size": 1373.89
+                          },
+                          {
+                            "price": 3,
+                            "size": 5325.12
+                          },
+                          {
+                            "price": 2.68,
+                            "size": 114.32
+                          }
+                        ],
+                        "availableToLay": [
+                          {
+                            "price": 3.2,
+                            "size": 4740.11
+                          },
+                          {
+                            "price": 3.25,
+                            "size": 6481.19
+                          },
+                          {
+                            "price": 3.35,
+                            "size": 966.93
+                          }
+                        ]
+                      }
+                    }
+                  ],
+                  "isMarketDataVirtual": true
+                }
+              ]
+            },
+            {
+              "eventId": 36103600,
+              "event": {
+                "eventName": "Olimpija v Mura",
+                "countryCode": "SI",
+                "timezone": "GMT",
+                "openDate": "2026-10-10T18:15:00.000Z"
+              },
+              "marketNodes": [
+                {
+                  "marketId": "1.262766648",
+                  "isMarketDataDelayed": true,
+                  "state": {
+                    "betDelay": 0,
+                    "bspReconciled": false,
+                    "complete": true,
+                    "inplay": false,
+                    "numberOfWinners": 1,
+                    "numberOfRunners": 2,
+                    "numberOfActiveRunners": 2,
+                    "lastMatchTime": "2026-10-10T17:25:46.684Z",
+                    "totalMatched": 488.79765,
+                    "totalAvailable": 14510.34276603877,
+                    "crossMatching": true,
+                    "runnersVoidable": false,
+                    "version": 7681242080,
+                    "betDelayModels": [
+                      "PASSIVE"
+                    ],
+                    "status": "OPEN"
+                  },
+                  "description": {
+                    "persistenceEnabled": true,
+                    "bspMarket": false,
+                    "marketName": "Ambele echipe vor marca?",
+                    "marketTime": "2026-10-10T18:15:00.000Z",
+                    "suspendTime": "2026-10-10T18:15:00.000Z",
+                    "turnInPlayEnabled": true,
+                    "marketType": "BOTH_TEAMS_TO_SCORE",
+                    "priceLadderDescription": {
+                      "type": "CLASSIC"
+                    },
+                    "bettingType": "ODDS"
+                  },
+                  "runners": [
+                    {
+                      "selectionId": 30246,
+                      "handicap": 0,
+                      "description": {
+                        "runnerName": "Da"
+                      },
+                      "exchange": {
+                        "availableToBack": [
+                          {
+                            "price": 2.08,
+                            "size": 2186.73
+                          },
+                          {
+                            "price": 2.06,
+                            "size": 976.11
+                          },
+                          {
+                            "price": 1.11,
+                            "size": 117.58
+                          }
+                        ],
+                        "availableToLay": [
+                          {
+                            "price": 2.22,
+                            "size": 1026.1
+                          },
+                          {
+                            "price": 2.24,
+                            "size": 1402.17
+                          },
+                          {
+                            "price": 1000,
+                            "size": 51.32
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "selectionId": 110503,
+                      "handicap": 0,
+                      "description": {
+                        "runnerName": "Nu"
+                      },
+                      "exchange": {
+                        "availableToBack": [
+                          {
+                            "price": 1.82,
+                            "size": 1251.03
+                          },
+                          {
+                            "price": 1.8,
+                            "size": 1744.92
+                          },
+                          {
+                            "price": 1.11,
+                            "size": 106.8
+                          }
+                        ],
+                        "availableToLay": [
+                          {
+                            "price": 1.92,
+                            "size": 848.51
+                          },
+                          {
+                            "price": 1.93,
+                            "size": 1512.57
+                          },
+                          {
+                            "price": 1.95,
+                            "size": 1031.17
+                          }
+                        ]
+                      }
+                    }
+                  ],
+                  "isMarketDataVirtual": true
+                },
+                {
+                  "marketId": "1.262766649",
+                  "isMarketDataDelayed": true,
+                  "state": {
+                    "betDelay": 0,
+                    "bspReconciled": false,
+                    "complete": true,
+                    "inplay": false,
+                    "numberOfWinners": 1,
+                    "numberOfRunners": 3,
+                    "numberOfActiveRunners": 3,
+                    "lastMatchTime": "2026-10-10T18:02:53.495Z",
+                    "totalMatched": 17284.554700951638,
+                    "totalAvailable": 44883.0834492746,
+                    "crossMatching": true,
+                    "runnersVoidable": false,
+                    "version": 7681242073,
+                    "betDelayModels": [
+                      "PASSIVE"
+                    ],
+                    "status": "OPEN"
+                  },
+                  "description": {
+                    "persistenceEnabled": true,
+                    "bspMarket": false,
+                    "marketName": "Rezultat Final",
+                    "marketTime": "2026-10-10T18:15:00.000Z",
+                    "suspendTime": "2026-10-10T18:15:00.000Z",
+                    "turnInPlayEnabled": true,
+                    "marketType": "MATCH_ODDS",
+                    "priceLadderDescription": {
+                      "type": "CLASSIC"
+                    },
+                    "bettingType": "ODDS"
+                  },
+                  "runners": [
+                    {
+                      "selectionId": 489147,
+                      "handicap": 0,
+                      "description": {
+                        "runnerName": "Olimpija"
+                      },
+                      "exchange": {
+                        "availableToBack": [
+                          {
+                            "price": 1.72,
+                            "size": 271.6
+                          },
+                          {
+                            "price": 1.71,
+                            "size": 371.88
+                          },
+                          {
+                            "price": 1.7,
+                            "size": 392.78
+                          }
+                        ],
+                        "availableToLay": [
+                          {
+                            "price": 1.74,
+                            "size": 250.48
+                          },
+                          {
+                            "price": 1.75,
+                            "size": 194.9
+                          },
+                          {
+                            "price": 1.76,
+                            "size": 1529.55
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "selectionId": 503236,
+                      "handicap": 0,
+                      "description": {
+                        "runnerName": "Mura"
+                      },
+                      "exchange": {
+                        "availableToBack": [
+                          {
+                            "price": 6.2,
+                            "size": 70.28
+                          },
+                          {
+                            "price": 6,
+                            "size": 481.92
+                          },
+                          {
+                            "price": 5.9,
+                            "size": 113.57
+                          }
+                        ],
+                        "availableToLay": [
+                          {
+                            "price": 6.4,
+                            "size": 75.64
+                          },
+                          {
+                            "price": 6.8,
+                            "size": 378.09
+                          },
+                          {
+                            "price": 7,
+                            "size": 514.68
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "selectionId": 58805,
+                      "handicap": 0,
+                      "description": {
+                        "runnerName": "Egal"
+                      },
+                      "exchange": {
+                        "availableToBack": [
+                          {
+                            "price": 3.7,
+                            "size": 578.17
+                          },
+                          {
+                            "price": 3.6,
+                            "size": 80.45
+                          },
+                          {
+                            "price": 3.55,
+                            "size": 311.18
+                          }
+                        ],
+                        "availableToLay": [
+                          {
+                            "price": 3.9,
+                            "size": 812.24
+                          },
+                          {
+                            "price": 3.95,
+                            "size": 209.8
+                          },
+                          {
+                            "price": 4,
+                            "size": 361.52
+                          }
+                        ]
+                      }
+                    }
+                  ],
+                  "isMarketDataVirtual": true
+                },
+                {
+                  "marketId": "1.262766659",
+                  "isMarketDataDelayed": true,
+                  "state": {
+                    "betDelay": 0,
+                    "bspReconciled": false,
+                    "complete": true,
+                    "inplay": false,
+                    "numberOfWinners": 1,
+                    "numberOfRunners": 2,
+                    "numberOfActiveRunners": 2,
+                    "lastMatchTime": "2026-10-10T17:47:14.962Z",
+                    "totalMatched": 7236.193658538364,
+                    "totalAvailable": 36987.24900820305,
+                    "crossMatching": true,
+                    "runnersVoidable": false,
+                    "version": 7681242098,
+                    "betDelayModels": [
+                      "PASSIVE"
+                    ],
+                    "status": "OPEN"
+                  },
+                  "description": {
+                    "persistenceEnabled": true,
+                    "bspMarket": false,
+                    "marketName": "Peste/Sub 2,5 goluri",
+                    "marketTime": "2026-10-10T18:15:00.000Z",
+                    "suspendTime": "2026-10-10T18:15:00.000Z",
+                    "turnInPlayEnabled": true,
+                    "marketType": "OVER_UNDER_25",
+                    "priceLadderDescription": {
+                      "type": "CLASSIC"
+                    },
+                    "bettingType": "ODDS"
+                  },
+                  "runners": [
+                    {
+                      "selectionId": 47972,
+                      "handicap": 0,
+                      "description": {
+                        "runnerName": "Sub 2,5 goluri"
+                      },
+                      "exchange": {
+                        "availableToBack": [
+                          {
+                            "price": 1.78,
+                            "size": 108.2
+                          },
+                          {
+                            "price": 1.76,
+                            "size": 227.96
+                          },
+                          {
+                            "price": 1.75,
+                            "size": 1846.17
+                          }
+                        ],
+                        "availableToLay": [
+                          {
+                            "price": 1.83,
+                            "size": 352.9
+                          },
+                          {
+                            "price": 1.84,
+                            "size": 326.95
+                          },
+                          {
+                            "price": 1.85,
+                            "size": 1472.46
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "selectionId": 47973,
+                      "handicap": 0,
+                      "description": {
+                        "runnerName": "Peste 2,5 goluri"
+                      },
+                      "exchange": {
+                        "availableToBack": [
+                          {
+                            "price": 2.2,
+                            "size": 514.28
+                          },
+                          {
+                            "price": 2.18,
+                            "size": 923.53
+                          },
+                          {
+                            "price": 2.16,
+                            "size": 1098.18
+                          }
+                        ],
+                        "availableToLay": [
+                          {
+                            "price": 2.3,
+                            "size": 160.79
+                          },
+                          {
+                            "price": 2.32,
+                            "size": 135.01
+                          },
+                          {
+                            "price": 2.34,
+                            "size": 2003.43
+                          }
+                        ]
+                      }
+                    }
+                  ],
+                  "isMarketDataVirtual": true
+                }
+              ]
+            },
+            {
+              "eventId": 36132083,
+              "event": {
+                "eventName": "Jagiellonia Bialystock v Gornik Zabrze",
+                "countryCode": "PL",
+                "timezone": "GMT",
+                "openDate": "2026-10-10T18:15:00.000Z"
+              },
+              "marketNodes": [
+                {
+                  "marketId": "1.263090182",
+                  "isMarketDataDelayed": true,
+                  "state": {
+                    "betDelay": 0,
+                    "bspReconciled": false,
+                    "complete": true,
+                    "inplay": false,
+                    "numberOfWinners": 1,
+                    "numberOfRunners": 3,
+                    "numberOfActiveRunners": 3,
+                    "lastMatchTime": "2026-10-10T18:02:05.184Z",
+                    "totalMatched": 39926.586795811636,
+                    "totalAvailable": 111310.95787336845,
+                    "crossMatching": true,
+                    "runnersVoidable": false,
+                    "version": 7681220420,
+                    "betDelayModels": [
+                      "PASSIVE"
+                    ],
+                    "status": "OPEN"
+                  },
+                  "description": {
+                    "persistenceEnabled": true,
+                    "bspMarket": false,
+                    "marketName": "Rezultat Final",
+                    "marketTime": "2026-10-10T18:15:00.000Z",
+                    "suspendTime": "2026-10-10T18:15:00.000Z",
+                    "turnInPlayEnabled": true,
+                    "marketType": "MATCH_ODDS",
+                    "priceLadderDescription": {
+                      "type": "CLASSIC"
+                    },
+                    "bettingType": "ODDS"
+                  },
+                  "runners": [
+                    {
+                      "selectionId": 7391394,
+                      "handicap": 0,
+                      "description": {
+                        "runnerName": "Jagiellonia Bialystock"
+                      },
+                      "exchange": {
+                        "availableToBack": [
+                          {
+                            "price": 2.74,
+                            "size": 1098.68
+                          },
+                          {
+                            "price": 2.72,
+                            "size": 1383.23
+                          },
+                          {
+                            "price": 2.7,
+                            "size": 2733.28
+                          }
+                        ],
+                        "availableToLay": [
+                          {
+                            "price": 2.76,
+                            "size": 895.15
+                          },
+                          {
+                            "price": 2.78,
+                            "size": 78.78
+                          },
+                          {
+                            "price": 2.8,
+                            "size": 1329.82
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "selectionId": 503499,
+                      "handicap": 0,
+                      "description": {
+                        "runnerName": "Gornik Zabrze"
+                      },
+                      "exchange": {
+                        "availableToBack": [
+                          {
+                            "price": 2.86,
+                            "size": 1150.38
+                          },
+                          {
+                            "price": 2.84,
+                            "size": 326.02
+                          },
+                          {
+                            "price": 2.82,
+                            "size": 1865.36
+                          }
+                        ],
+                        "availableToLay": [
+                          {
+                            "price": 2.9,
+                            "size": 1743.27
+                          },
+                          {
+                            "price": 2.92,
+                            "size": 404.3
+                          },
+                          {
+                            "price": 2.94,
+                            "size": 2867.35
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "selectionId": 58805,
+                      "handicap": 0,
+                      "description": {
+                        "runnerName": "Egal"
+                      },
+                      "exchange": {
+                        "availableToBack": [
+                          {
+                            "price": 3.4,
+                            "size": 3676.87
+                          },
+                          {
+                            "price": 3.35,
+                            "size": 1865.51
+                          },
+                          {
+                            "price": 3.3,
+                            "size": 1833.72
+                          }
+                        ],
+                        "availableToLay": [
+                          {
+                            "price": 3.45,
+                            "size": 1033.88
+                          },
+                          {
+                            "price": 3.5,
+                            "size": 546.96
+                          },
+                          {
+                            "price": 3.55,
+                            "size": 1474.58
+                          }
+                        ]
+                      }
+                    }
+                  ],
+                  "isMarketDataVirtual": true
+                },
+                {
+                  "marketId": "1.263090185",
+                  "isMarketDataDelayed": true,
+                  "state": {
+                    "betDelay": 0,
+                    "bspReconciled": false,
+                    "complete": true,
+                    "inplay": false,
+                    "numberOfWinners": 1,
+                    "numberOfRunners": 2,
+                    "numberOfActiveRunners": 2,
+                    "lastMatchTime": "2026-10-10T18:00:02.792Z",
+                    "totalMatched": 14875.782983312776,
+                    "totalAvailable": 108464.37568044293,
+                    "crossMatching": true,
+                    "runnersVoidable": false,
+                    "version": 7681220422,
+                    "betDelayModels": [
+                      "PASSIVE"
+                    ],
+                    "status": "OPEN"
+                  },
+                  "description": {
+                    "persistenceEnabled": true,
+                    "bspMarket": false,
+                    "marketName": "Peste/Sub 2,5 goluri",
+                    "marketTime": "2026-10-10T18:15:00.000Z",
+                    "suspendTime": "2026-10-10T18:15:00.000Z",
+                    "turnInPlayEnabled": true,
+                    "marketType": "OVER_UNDER_25",
+                    "priceLadderDescription": {
+                      "type": "CLASSIC"
+                    },
+                    "bettingType": "ODDS"
+                  },
+                  "runners": [
+                    {
+                      "selectionId": 47972,
+                      "handicap": 0,
+                      "description": {
+                        "runnerName": "Sub 2,5 goluri"
+                      },
+                      "exchange": {
+                        "availableToBack": [
+                          {
+                            "price": 2.04,
+                            "size": 1420.39
+                          },
+                          {
+                            "price": 2.02,
+                            "size": 758.31
+                          },
+                          {
+                            "price": 2,
+                            "size": 1029.83
+                          }
+                        ],
+                        "availableToLay": [
+                          {
+                            "price": 2.08,
+                            "size": 221.69
+                          },
+                          {
+                            "price": 2.1,
+                            "size": 2369.35
+                          },
+                          {
+                            "price": 2.12,
+                            "size": 954.7
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "selectionId": 47973,
+                      "handicap": 0,
+                      "description": {
+                        "runnerName": "Peste 2,5 goluri"
+                      },
+                      "exchange": {
+                        "availableToBack": [
+                          {
+                            "price": 1.93,
+                            "size": 238.92
+                          },
+                          {
+                            "price": 1.92,
+                            "size": 397.09
+                          },
+                          {
+                            "price": 1.91,
+                            "size": 821.45
+                          }
+                        ],
+                        "availableToLay": [
+                          {
+                            "price": 1.96,
+                            "size": 734.17
+                          },
+                          {
+                            "price": 1.97,
+                            "size": 1068.17
+                          },
+                          {
+                            "price": 1.98,
+                            "size": 160.76
+                          }
+                        ]
+                      }
+                    }
+                  ],
+                  "isMarketDataVirtual": true
+                },
+                {
+                  "marketId": "1.263090229",
+                  "isMarketDataDelayed": true,
+                  "state": {
+                    "betDelay": 0,
+                    "bspReconciled": false,
+                    "complete": true,
+                    "inplay": false,
+                    "numberOfWinners": 1,
+                    "numberOfRunners": 2,
+                    "numberOfActiveRunners": 2,
+                    "lastMatchTime": "2026-10-10T18:01:53.725Z",
+                    "totalMatched": 21953.065505074108,
+                    "totalAvailable": 39875.25576004235,
+                    "crossMatching": true,
+                    "runnersVoidable": false,
+                    "version": 7681220446,
+                    "betDelayModels": [
+                      "PASSIVE"
+                    ],
+                    "status": "OPEN"
+                  },
+                  "description": {
+                    "persistenceEnabled": true,
+                    "bspMarket": false,
+                    "marketName": "Ambele echipe vor marca?",
+                    "marketTime": "2026-10-10T18:15:00.000Z",
+                    "suspendTime": "2026-10-10T18:15:00.000Z",
+                    "turnInPlayEnabled": true,
+                    "marketType": "BOTH_TEAMS_TO_SCORE",
+                    "priceLadderDescription": {
+                      "type": "CLASSIC"
+                    },
+                    "bettingType": "ODDS"
+                  },
+                  "runners": [
+                    {
+                      "selectionId": 30246,
+                      "handicap": 0,
+                      "description": {
+                        "runnerName": "Da"
+                      },
+                      "exchange": {
+                        "availableToBack": [
+                          {
+                            "price": 1.71,
+                            "size": 2927.01
+                          },
+                          {
+                            "price": 1.7,
+                            "size": 4250.37
+                          },
+                          {
+                            "price": 1.69,
+                            "size": 166.08
+                          }
+                        ],
+                        "availableToLay": [
+                          {
+                            "price": 1.74,
+                            "size": 68.9
+                          },
+                          {
+                            "price": 1.75,
+                            "size": 105.47
+                          },
+                          {
+                            "price": 1.76,
+                            "size": 2049.2
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "selectionId": 110503,
+                      "handicap": 0,
+                      "description": {
+                        "runnerName": "Nu"
+                      },
+                      "exchange": {
+                        "availableToBack": [
+                          {
+                            "price": 2.34,
+                            "size": 127.19
+                          },
+                          {
+                            "price": 2.32,
+                            "size": 823.91
+                          },
+                          {
+                            "price": 2.3,
+                            "size": 827.48
+                          }
+                        ],
+                        "availableToLay": [
+                          {
+                            "price": 2.42,
+                            "size": 5054.11
+                          },
+                          {
+                            "price": 2.46,
+                            "size": 244.66
+                          },
+                          {
+                            "price": 2.48,
+                            "size": 785.85
+                          }
+                        ]
+                      }
+                    }
+                  ],
+                  "isMarketDataVirtual": true
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "eventTypeId": 7522,
+          "eventNodes": [
+            {
+              "eventId": 36163664,
+              "event": {
+                "eventName": "Pallacanestro Varese v Pallacanestro Trieste 2004",
+                "countryCode": "GB",
+                "timezone": "GMT",
+                "openDate": "2026-10-10T18:30:00.000Z"
+              },
+              "marketNodes": [
+                {
+                  "marketId": "1.263526557",
+                  "isMarketDataDelayed": true,
+                  "state": {
+                    "betDelay": 0,
+                    "bspReconciled": false,
+                    "complete": true,
+                    "inplay": false,
+                    "numberOfWinners": 1,
+                    "numberOfRunners": 2,
+                    "numberOfActiveRunners": 2,
+                    "lastMatchTime": "2026-10-10T16:32:41.737Z",
+                    "totalMatched": 5027.111375015417,
+                    "totalAvailable": 19204.280961889643,
+                    "crossMatching": true,
+                    "runnersVoidable": false,
+                    "version": 7673043594,
+                    "betDelayModels": [
+                      "PASSIVE"
+                    ],
+                    "status": "OPEN"
+                  },
+                  "description": {
+                    "persistenceEnabled": true,
+                    "bspMarket": false,
+                    "marketName": "Pariu pe câştigător",
+                    "marketTime": "2026-10-10T18:30:00.000Z",
+                    "suspendTime": "2026-10-10T18:30:00.000Z",
+                    "turnInPlayEnabled": true,
+                    "marketType": "MATCH_ODDS",
+                    "priceLadderDescription": {
+                      "type": "CLASSIC"
+                    },
+                    "bettingType": "ODDS"
+                  },
+                  "runners": [
+                    {
+                      "selectionId": 944354,
+                      "handicap": 0,
+                      "description": {
+                        "runnerName": "Pallacanestro Varese"
+                      },
+                      "exchange": {
+                        "availableToBack": [
+                          {
+                            "price": 1.45,
+                            "size": 706.63
+                          },
+                          {
+                            "price": 1.44,
+                            "size": 2495.48
+                          },
+                          {
+                            "price": 1.43,
+                            "size": 1711.39
+                          }
+                        ],
+                        "availableToLay": [
+                          {
+                            "price": 1.49,
+                            "size": 274.38
+                          },
+                          {
+                            "price": 1.5,
+                            "size": 1479.89
+                          },
+                          {
+                            "price": 1.51,
+                            "size": 1109.79
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "selectionId": 91128364,
+                      "handicap": 0,
+                      "description": {
+                        "runnerName": "Pallacanestro Trieste 2004"
+                      },
+                      "exchange": {
+                        "availableToBack": [
+                          {
+                            "price": 3.05,
+                            "size": 133.86
+                          },
+                          {
+                            "price": 3,
+                            "size": 739.95
+                          },
+                          {
+                            "price": 2.98,
+                            "size": 220.61
+                          }
+                        ],
+                        "availableToLay": [
+                          {
+                            "price": 3.25,
+                            "size": 781.12
+                          },
+                          {
+                            "price": 3.3,
+                            "size": 630.14
+                          },
+                          {
+                            "price": 3.35,
+                            "size": 1461.05
+                          }
+                        ]
+                      }
+                    }
+                  ],
+                  "isMarketDataVirtual": true
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "eventTypeId": 2,
+          "eventNodes": [
+            {
+              "eventId": 36173023,
+              "event": {
+                "eventName": "Passaro v Y Milev",
+                "timezone": "UTC",
+                "openDate": "2026-10-10T18:20:00.000Z"
+              },
+              "marketNodes": [
+                {
+                  "marketId": "1.263617807",
+                  "isMarketDataDelayed": true,
+                  "state": {
+                    "betDelay": 0,
+                    "bspReconciled": false,
+                    "complete": true,
+                    "inplay": false,
+                    "numberOfWinners": 1,
+                    "numberOfRunners": 2,
+                    "numberOfActiveRunners": 2,
+                    "lastMatchTime": "2026-10-10T18:03:09.354Z",
+                    "totalMatched": 15141.394544055469,
+                    "totalAvailable": 156328.22669575465,
+                    "crossMatching": true,
+                    "runnersVoidable": false,
+                    "version": 7681356782,
+                    "betDelayModels": [
+                      "PASSIVE"
+                    ],
+                    "status": "OPEN"
+                  },
+                  "description": {
+                    "persistenceEnabled": true,
+                    "bspMarket": false,
+                    "marketName": "Rezultat Final",
+                    "marketTime": "2026-10-10T18:20:00.000Z",
+                    "suspendTime": "2026-10-10T18:20:00.000Z",
+                    "turnInPlayEnabled": true,
+                    "marketType": "MATCH_ODDS",
+                    "priceLadderDescription": {
+                      "type": "CLASSIC"
+                    },
+                    "bettingType": "ODDS"
+                  },
+                  "runners": [
+                    {
+                      "selectionId": 13459272,
+                      "handicap": 0,
+                      "description": {
+                        "runnerName": "Francesco Passaro"
+                      },
+                      "exchange": {
+                        "availableToBack": [
+                          {
+                            "price": 1.22,
+                            "size": 4317.66
+                          },
+                          {
+                            "price": 1.21,
+                            "size": 4365.2
+                          },
+                          {
+                            "price": 1.2,
+                            "size": 10762.45
+                          }
+                        ],
+                        "availableToLay": [
+                          {
+                            "price": 1.24,
+                            "size": 23002.93
+                          },
+                          {
+                            "price": 1.25,
+                            "size": 11965.98
+                          },
+                          {
+                            "price": 1.26,
+                            "size": 5831.66
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "selectionId": 26593114,
+                      "handicap": 0,
+                      "description": {
+                        "runnerName": "Yanaki Milev"
+                      },
+                      "exchange": {
+                        "availableToBack": [
+                          {
+                            "price": 5.3,
+                            "size": 432.55
+                          },
+                          {
+                            "price": 5.2,
+                            "size": 518.36
+                          },
+                          {
+                            "price": 5.1,
+                            "size": 5136.85
+                          }
+                        ],
+                        "availableToLay": [
+                          {
+                            "price": 5.6,
+                            "size": 953.24
+                          },
+                          {
+                            "price": 5.7,
+                            "size": 325.47
+                          },
+                          {
+                            "price": 5.8,
+                            "size": 626.44
+                          }
+                        ]
+                      }
+                    }
+                  ],
+                  "isMarketDataVirtual": true
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "eventTypeId": 1,
+          "eventNodes": [
+            {
+              "eventId": 36099016,
+              "event": {
+                "eventName": "Chicago Fire v New York City",
+                "countryCode": "US",
+                "timezone": "GMT",
+                "openDate": "2026-10-10T18:30:00.000Z"
+              },
+              "marketNodes": [
+                {
+                  "marketId": "1.262707241",
+                  "isMarketDataDelayed": true,
+                  "state": {
+                    "betDelay": 0,
+                    "bspReconciled": false,
+                    "complete": true,
+                    "inplay": false,
+                    "numberOfWinners": 1,
+                    "numberOfRunners": 2,
+                    "numberOfActiveRunners": 2,
+                    "lastMatchTime": "2026-10-10T18:01:34.347Z",
+                    "totalMatched": 5537.813081602243,
+                    "totalAvailable": 66353.84760980723,
+                    "crossMatching": true,
+                    "runnersVoidable": false,
+                    "version": 7674889742,
+                    "betDelayModels": [
+                      "PASSIVE"
+                    ],
+                    "status": "OPEN"
+                  },
+                  "description": {
+                    "persistenceEnabled": true,
+                    "bspMarket": false,
+                    "marketName": "Ambele echipe vor marca?",
+                    "marketTime": "2026-10-10T18:30:00.000Z",
+                    "suspendTime": "2026-10-10T18:30:00.000Z",
+                    "turnInPlayEnabled": true,
+                    "marketType": "BOTH_TEAMS_TO_SCORE",
+                    "priceLadderDescription": {
+                      "type": "CLASSIC"
+                    },
+                    "bettingType": "ODDS"
+                  },
+                  "runners": [
+                    {
+                      "selectionId": 30246,
+                      "handicap": 0,
+                      "description": {
+                        "runnerName": "Da"
+                      },
+                      "exchange": {
+                        "availableToBack": [
+                          {
+                            "price": 1.58,
+                            "size": 145.22
+                          },
+                          {
+                            "price": 1.57,
+                            "size": 6317.34
+                          },
+                          {
+                            "price": 1.56,
+                            "size": 9494.47
+                          }
+                        ],
+                        "availableToLay": [
+                          {
+                            "price": 1.6,
+                            "size": 166.21
+                          },
+                          {
+                            "price": 1.61,
+                            "size": 5284.44
+                          },
+                          {
+                            "price": 1.62,
+                            "size": 1266.18
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "selectionId": 110503,
+                      "handicap": 0,
+                      "description": {
+                        "runnerName": "Nu"
+                      },
+                      "exchange": {
+                        "availableToBack": [
+                          {
+                            "price": 2.66,
+                            "size": 162.94
+                          },
+                          {
+                            "price": 2.64,
+                            "size": 1598.88
+                          },
+                          {
+                            "price": 2.62,
+                            "size": 2355.2
+                          }
+                        ],
+                        "availableToLay": [
+                          {
+                            "price": 2.74,
+                            "size": 90.36
+                          },
+                          {
+                            "price": 2.76,
+                            "size": 8953.43
+                          },
+                          {
+                            "price": 2.82,
+                            "size": 1459.87
+                          }
+                        ]
+                      }
+                    }
+                  ],
+                  "isMarketDataVirtual": true
+                },
+                {
+                  "marketId": "1.262707242",
+                  "isMarketDataDelayed": true,
+                  "state": {
+                    "betDelay": 0,
+                    "bspReconciled": false,
+                    "complete": true,
+                    "inplay": false,
+                    "numberOfWinners": 1,
+                    "numberOfRunners": 3,
+                    "numberOfActiveRunners": 3,
+                    "lastMatchTime": "2026-10-10T18:04:12.787Z",
+                    "totalMatched": 63340.816854875826,
+                    "totalAvailable": 298961.4906267047,
+                    "crossMatching": true,
+                    "runnersVoidable": false,
+                    "version": 7670407774,
+                    "betDelayModels": [
+                      "PASSIVE"
+                    ],
+                    "status": "OPEN"
+                  },
+                  "description": {
+                    "persistenceEnabled": true,
+                    "bspMarket": false,
+                    "marketName": "Rezultat Final",
+                    "marketTime": "2026-10-10T18:30:00.000Z",
+                    "suspendTime": "2026-10-10T18:30:00.000Z",
+                    "turnInPlayEnabled": true,
+                    "marketType": "MATCH_ODDS",
+                    "priceLadderDescription": {
+                      "type": "CLASSIC"
+                    },
+                    "bettingType": "ODDS"
+                  },
+                  "runners": [
+                    {
+                      "selectionId": 226469,
+                      "handicap": 0,
+                      "description": {
+                        "runnerName": "Chicago Fire"
+                      },
+                      "exchange": {
+                        "availableToBack": [
+                          {
+                            "price": 1.88,
+                            "size": 838.3
+                          },
+                          {
+                            "price": 1.87,
+                            "size": 618.44
+                          },
+                          {
+                            "price": 1.86,
+                            "size": 12054.33
+                          }
+                        ],
+                        "availableToLay": [
+                          {
+                            "price": 1.89,
+                            "size": 2822.08
+                          },
+                          {
+                            "price": 1.9,
+                            "size": 1717.13
+                          },
+                          {
+                            "price": 1.91,
+                            "size": 6570.27
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "selectionId": 9280784,
+                      "handicap": 0,
+                      "description": {
+                        "runnerName": "New York City"
+                      },
+                      "exchange": {
+                        "availableToBack": [
+                          {
+                            "price": 4.2,
+                            "size": 559.83
+                          },
+                          {
+                            "price": 4.1,
+                            "size": 4639.63
+                          },
+                          {
+                            "price": 4,
+                            "size": 14219.96
+                          }
+                        ],
+                        "availableToLay": [
+                          {
+                            "price": 4.3,
+                            "size": 2723.77
+                          },
+                          {
+                            "price": 4.4,
+                            "size": 8354.07
+                          },
+                          {
+                            "price": 4.5,
+                            "size": 4032.62
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "selectionId": 58805,
+                      "handicap": 0,
+                      "description": {
+                        "runnerName": "Egal"
+                      },
+                      "exchange": {
+                        "availableToBack": [
+                          {
+                            "price": 4.3,
+                            "size": 418.46
+                          },
+                          {
+                            "price": 4.2,
+                            "size": 867.8
+                          },
+                          {
+                            "price": 4.1,
+                            "size": 5710.27
+                          }
+                        ],
+                        "availableToLay": [
+                          {
+                            "price": 4.4,
+                            "size": 7868.94
+                          },
+                          {
+                            "price": 4.5,
+                            "size": 1186.13
+                          },
+                          {
+                            "price": 4.6,
+                            "size": 5375.82
+                          }
+                        ]
+                      }
+                    }
+                  ],
+                  "isMarketDataVirtual": true
+                }
+              ]
+            },
+            {
+              "eventId": 36103272,
+              "event": {
+                "eventName": "Nürnberg v Wolfsburg",
+                "countryCode": "DE",
+                "timezone": "GMT",
+                "openDate": "2026-10-10T18:30:00.000Z"
+              },
+              "marketNodes": [
+                {
+                  "marketId": "1.262760446",
+                  "isMarketDataDelayed": true,
+                  "state": {
+                    "betDelay": 0,
+                    "bspReconciled": false,
+                    "complete": true,
+                    "inplay": false,
+                    "numberOfWinners": 1,
+                    "numberOfRunners": 3,
+                    "numberOfActiveRunners": 3,
+                    "lastMatchTime": "2026-10-10T18:03:12.403Z",
+                    "totalMatched": 35004.347106270216,
+                    "totalAvailable": 216350.9059292996,
+                    "crossMatching": true,
+                    "runnersVoidable": false,
+                    "version": 7681293258,
+                    "betDelayModels": [
+                      "PASSIVE"
+                    ],
+                    "status": "OPEN"
+                  },
+                  "description": {
+                    "persistenceEnabled": true,
+                    "bspMarket": false,
+                    "marketName": "Rezultat Final",
+                    "marketTime": "2026-10-10T18:30:00.000Z",
+                    "suspendTime": "2026-10-10T18:30:00.000Z",
+                    "turnInPlayEnabled": true,
+                    "marketType": "MATCH_ODDS",
+                    "priceLadderDescription": {
+                      "type": "CLASSIC"
+                    },
+                    "bettingType": "ODDS"
+                  },
+                  "runners": [
+                    {
+                      "selectionId": 121724,
+                      "handicap": 0,
+                      "description": {
+                        "runnerName": "Nürnberg"
+                      },
+                      "exchange": {
+                        "availableToBack": [
+                          {
+                            "price": 2.5,
+                            "size": 1655.04
+                          },
+                          {
+                            "price": 2.48,
+                            "size": 3534.4
+                          },
+                          {
+                            "price": 2.46,
+                            "size": 3657.46
+                          }
+                        ],
+                        "availableToLay": [
+                          {
+                            "price": 2.54,
+                            "size": 76.69
+                          },
+                          {
+                            "price": 2.56,
+                            "size": 1437.72
+                          },
+                          {
+                            "price": 2.58,
+                            "size": 2796.58
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "selectionId": 44521,
+                      "handicap": 0,
+                      "description": {
+                        "runnerName": "Wolfsburg"
+                      },
+                      "exchange": {
+                        "availableToBack": [
+                          {
+                            "price": 2.76,
+                            "size": 1689.51
+                          },
+                          {
+                            "price": 2.74,
+                            "size": 789.56
+                          },
+                          {
+                            "price": 2.72,
+                            "size": 2494.67
+                          }
+                        ],
+                        "availableToLay": [
+                          {
+                            "price": 2.82,
+                            "size": 1699.43
+                          },
+                          {
+                            "price": 2.84,
+                            "size": 2640.64
+                          },
+                          {
+                            "price": 2.86,
+                            "size": 5038.6
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "selectionId": 58805,
+                      "handicap": 0,
+                      "description": {
+                        "runnerName": "Egal"
+                      },
+                      "exchange": {
+                        "availableToBack": [
+                          {
+                            "price": 4,
+                            "size": 3391.19
+                          },
+                          {
+                            "price": 3.95,
+                            "size": 1120.39
+                          },
+                          {
+                            "price": 3.9,
+                            "size": 2032.79
+                          }
+                        ],
+                        "availableToLay": [
+                          {
+                            "price": 4.1,
+                            "size": 1250.34
+                          },
+                          {
+                            "price": 4.2,
+                            "size": 4092.34
+                          },
+                          {
+                            "price": 4.3,
+                            "size": 7069.13
+                          }
+                        ]
+                      }
+                    }
+                  ],
+                  "isMarketDataVirtual": true
+                }
+              ]
+            },
+            {
+              "eventId": 36116136,
+              "event": {
+                "eventName": "FCSB v Otelul Galati",
+                "countryCode": "RO",
+                "timezone": "GMT",
+                "openDate": "2026-10-10T18:30:00.000Z"
+              },
+              "marketNodes": [
+                {
+                  "marketId": "1.262916849",
+                  "isMarketDataDelayed": true,
+                  "state": {
+                    "betDelay": 0,
+                    "bspReconciled": false,
+                    "complete": true,
+                    "inplay": false,
+                    "numberOfWinners": 1,
+                    "numberOfRunners": 2,
+                    "numberOfActiveRunners": 2,
+                    "lastMatchTime": "2026-10-10T17:55:05.057Z",
+                    "totalMatched": 2546.376491754704,
+                    "totalAvailable": 16375.325700684145,
+                    "crossMatching": true,
+                    "runnersVoidable": false,
+                    "version": 7681264735,
+                    "betDelayModels": [
+                      "PASSIVE"
+                    ],
+                    "status": "OPEN"
+                  },
+                  "description": {
+                    "persistenceEnabled": true,
+                    "bspMarket": false,
+                    "marketName": "Ambele echipe vor marca?",
+                    "marketTime": "2026-10-10T18:30:00.000Z",
+                    "suspendTime": "2026-10-10T18:30:00.000Z",
+                    "turnInPlayEnabled": true,
+                    "marketType": "BOTH_TEAMS_TO_SCORE",
+                    "priceLadderDescription": {
+                      "type": "CLASSIC"
+                    },
+                    "bettingType": "ODDS"
+                  },
+                  "runners": [
+                    {
+                      "selectionId": 30246,
+                      "handicap": 0,
+                      "description": {
+                        "runnerName": "Da"
+                      },
+                      "exchange": {
+                        "availableToBack": [
+                          {
+                            "price": 1.83,
+                            "size": 155.35
+                          },
+                          {
+                            "price": 1.8,
+                            "size": 550.82
+                          },
+                          {
+                            "price": 1.79,
+                            "size": 2071.18
+                          }
+                        ],
+                        "availableToLay": [
+                          {
+                            "price": 1.88,
+                            "size": 474.13
+                          },
+                          {
+                            "price": 1.89,
+                            "size": 2526.94
+                          },
+                          {
+                            "price": 1.9,
+                            "size": 2100.63
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "selectionId": 110503,
+                      "handicap": 0,
+                      "description": {
+                        "runnerName": "Nu"
+                      },
+                      "exchange": {
+                        "availableToBack": [
+                          {
+                            "price": 2.14,
+                            "size": 415.81
+                          },
+                          {
+                            "price": 2.12,
+                            "size": 4135.43
+                          },
+                          {
+                            "price": 2.08,
+                            "size": 100.53
+                          }
+                        ],
+                        "availableToLay": [
+                          {
+                            "price": 2.2,
+                            "size": 66.18
+                          },
+                          {
+                            "price": 2.22,
+                            "size": 73.61
+                          },
+                          {
+                            "price": 2.26,
+                            "size": 1368.95
+                          }
+                        ]
+                      }
+                    }
+                  ],
+                  "isMarketDataVirtual": true
+                },
+                {
+                  "marketId": "1.262916850",
+                  "isMarketDataDelayed": true,
+                  "state": {
+                    "betDelay": 0,
+                    "bspReconciled": false,
+                    "complete": true,
+                    "inplay": false,
+                    "numberOfWinners": 1,
+                    "numberOfRunners": 3,
+                    "numberOfActiveRunners": 3,
+                    "lastMatchTime": "2026-10-10T18:03:05.440Z",
+                    "totalMatched": 60714.68615450121,
+                    "totalAvailable": 64414.99264422834,
+                    "crossMatching": true,
+                    "runnersVoidable": false,
+                    "version": 7681264743,
+                    "betDelayModels": [
+                      "PASSIVE"
+                    ],
+                    "status": "OPEN"
+                  },
+                  "description": {
+                    "persistenceEnabled": true,
+                    "bspMarket": false,
+                    "marketName": "Rezultat Final",
+                    "marketTime": "2026-10-10T18:30:00.000Z",
+                    "suspendTime": "2026-10-10T18:30:00.000Z",
+                    "turnInPlayEnabled": true,
+                    "marketType": "MATCH_ODDS",
+                    "priceLadderDescription": {
+                      "type": "CLASSIC"
+                    },
+                    "bettingType": "ODDS"
+                  },
+                  "runners": [
+                    {
+                      "selectionId": 12819357,
+                      "handicap": 0,
+                      "description": {
+                        "runnerName": "FCSB"
+                      },
+                      "exchange": {
+                        "availableToBack": [
+                          {
+                            "price": 1.5,
+                            "size": 979.94
+                          },
+                          {
+                            "price": 1.49,
+                            "size": 4515.82
+                          },
+                          {
+                            "price": 1.48,
+                            "size": 5707.83
+                          }
+                        ],
+                        "availableToLay": [
+                          {
+                            "price": 1.51,
+                            "size": 751.57
+                          },
+                          {
+                            "price": 1.52,
+                            "size": 2376.14
+                          },
+                          {
+                            "price": 1.53,
+                            "size": 2011.49
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "selectionId": 866238,
+                      "handicap": 0,
+                      "description": {
+                        "runnerName": "Otelul Galati"
+                      },
+                      "exchange": {
+                        "availableToBack": [
+                          {
+                            "price": 7.6,
+                            "size": 232.24
+                          },
+                          {
+                            "price": 7.4,
+                            "size": 896.29
+                          },
+                          {
+                            "price": 7.2,
+                            "size": 290.5
+                          }
+                        ],
+                        "availableToLay": [
+                          {
+                            "price": 8,
+                            "size": 181.47
+                          },
+                          {
+                            "price": 8.2,
+                            "size": 321
+                          },
+                          {
+                            "price": 8.4,
+                            "size": 350.02
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "selectionId": 58805,
+                      "handicap": 0,
+                      "description": {
+                        "runnerName": "Egal"
+                      },
+                      "exchange": {
+                        "availableToBack": [
+                          {
+                            "price": 4.7,
+                            "size": 1049.02
+                          },
+                          {
+                            "price": 4.6,
+                            "size": 440.36
+                          },
+                          {
+                            "price": 4.5,
+                            "size": 1047.09
+                          }
+                        ],
+                        "availableToLay": [
+                          {
+                            "price": 4.8,
+                            "size": 1098.11
+                          },
+                          {
+                            "price": 4.9,
+                            "size": 101.23
+                          },
+                          {
+                            "price": 5,
+                            "size": 427.91
+                          }
+                        ]
+                      }
+                    }
+                  ],
+                  "isMarketDataVirtual": true
+                },
+                {
+                  "marketId": "1.262916860",
+                  "isMarketDataDelayed": true,
+                  "state": {
+                    "betDelay": 0,
+                    "bspReconciled": false,
+                    "complete": true,
+                    "inplay": false,
+                    "numberOfWinners": 1,
+                    "numberOfRunners": 2,
+                    "numberOfActiveRunners": 2,
+                    "lastMatchTime": "2026-10-10T18:01:40.850Z",
+                    "totalMatched": 5610.552708075178,
+                    "totalAvailable": 43519.78691492256,
+                    "crossMatching": true,
+                    "runnersVoidable": false,
+                    "version": 7681264762,
+                    "betDelayModels": [
+                      "PASSIVE"
+                    ],
+                    "status": "OPEN"
+                  },
+                  "description": {
+                    "persistenceEnabled": true,
+                    "bspMarket": false,
+                    "marketName": "Peste/Sub 2,5 goluri",
+                    "marketTime": "2026-10-10T18:30:00.000Z",
+                    "suspendTime": "2026-10-10T18:30:00.000Z",
+                    "turnInPlayEnabled": true,
+                    "marketType": "OVER_UNDER_25",
+                    "priceLadderDescription": {
+                      "type": "CLASSIC"
+                    },
+                    "bettingType": "ODDS"
+                  },
+                  "runners": [
+                    {
+                      "selectionId": 47972,
+                      "handicap": 0,
+                      "description": {
+                        "runnerName": "Sub 2,5 goluri"
+                      },
+                      "exchange": {
+                        "availableToBack": [
+                          {
+                            "price": 2.44,
+                            "size": 692.01
+                          },
+                          {
+                            "price": 2.42,
+                            "size": 788.71
+                          },
+                          {
+                            "price": 2.4,
+                            "size": 763.06
+                          }
+                        ],
+                        "availableToLay": [
+                          {
+                            "price": 2.48,
+                            "size": 1805.84
+                          },
+                          {
+                            "price": 2.5,
+                            "size": 220.61
+                          },
+                          {
+                            "price": 2.52,
+                            "size": 512.51
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "selectionId": 47973,
+                      "handicap": 0,
+                      "description": {
+                        "runnerName": "Peste 2,5 goluri"
+                      },
+                      "exchange": {
+                        "availableToBack": [
+                          {
+                            "price": 1.68,
+                            "size": 2600.63
+                          },
+                          {
+                            "price": 1.67,
+                            "size": 65.52
+                          },
+                          {
+                            "price": 1.66,
+                            "size": 653.75
+                          }
+                        ],
+                        "availableToLay": [
+                          {
+                            "price": 1.7,
+                            "size": 996.56
+                          },
+                          {
+                            "price": 1.71,
+                            "size": 1998.08
+                          },
+                          {
+                            "price": 1.72,
+                            "size": 1749.42
+                          }
+                        ]
+                      }
+                    }
+                  ],
+                  "isMarketDataVirtual": true
+                }
+              ]
+            },
+            {
+              "eventId": 36165952,
+              "event": {
+                "eventName": "USA  Feminin v Spania (F)",
+                "timezone": "GMT",
+                "openDate": "2026-10-10T18:30:00.000Z"
+              },
+              "marketNodes": [
+                {
+                  "marketId": "1.263542763",
+                  "isMarketDataDelayed": true,
+                  "state": {
+                    "betDelay": 0,
+                    "bspReconciled": false,
+                    "complete": true,
+                    "inplay": false,
+                    "numberOfWinners": 1,
+                    "numberOfRunners": 3,
+                    "numberOfActiveRunners": 3,
+                    "lastMatchTime": "2026-10-10T18:03:06.298Z",
+                    "totalMatched": 1845.4804314072696,
+                    "totalAvailable": 27553.5967527727,
+                    "crossMatching": true,
+                    "runnersVoidable": false,
+                    "version": 7673680382,
+                    "betDelayModels": [
+                      "PASSIVE"
+                    ],
+                    "status": "OPEN"
+                  },
+                  "description": {
+                    "persistenceEnabled": true,
+                    "bspMarket": false,
+                    "marketName": "Rezultat Final",
+                    "marketTime": "2026-10-10T18:30:00.000Z",
+                    "suspendTime": "2026-10-10T18:30:00.000Z",
+                    "turnInPlayEnabled": true,
+                    "marketType": "MATCH_ODDS",
+                    "priceLadderDescription": {
+                      "type": "CLASSIC"
+                    },
+                    "bettingType": "ODDS"
+                  },
+                  "runners": [
+                    {
+                      "selectionId": 541859,
+                      "handicap": 0,
+                      "description": {
+                        "runnerName": "USA  Feminin"
+                      },
+                      "exchange": {
+                        "availableToBack": [
+                          {
+                            "price": 3.45,
+                            "size": 284.45
+                          },
+                          {
+                            "price": 3.35,
+                            "size": 177.1
+                          },
+                          {
+                            "price": 3.3,
+                            "size": 460.81
+                          }
+                        ],
+                        "availableToLay": [
+                          {
+                            "price": 3.7,
+                            "size": 124.35
+                          },
+                          {
+                            "price": 3.75,
+                            "size": 440.32
+                          },
+                          {
+                            "price": 3.8,
+                            "size": 325.94
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "selectionId": 984617,
+                      "handicap": 0,
+                      "description": {
+                        "runnerName": "Spania (F)"
+                      },
+                      "exchange": {
+                        "availableToBack": [
+                          {
+                            "price": 2.22,
+                            "size": 514.45
+                          },
+                          {
+                            "price": 2.2,
+                            "size": 703.04
+                          },
+                          {
+                            "price": 2.18,
+                            "size": 554.18
+                          }
+                        ],
+                        "availableToLay": [
+                          {
+                            "price": 2.3,
+                            "size": 387.07
+                          },
+                          {
+                            "price": 2.32,
+                            "size": 127.91
+                          },
+                          {
+                            "price": 2.34,
+                            "size": 672.99
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "selectionId": 58805,
+                      "handicap": 0,
+                      "description": {
+                        "runnerName": "Egal"
+                      },
+                      "exchange": {
+                        "availableToBack": [
+                          {
+                            "price": 3.5,
+                            "size": 305
+                          },
+                          {
+                            "price": 3.45,
+                            "size": 303.54
+                          },
+                          {
+                            "price": 3.35,
+                            "size": 236.13
+                          }
+                        ],
+                        "availableToLay": [
+                          {
+                            "price": 3.75,
+                            "size": 258.93
+                          },
+                          {
+                            "price": 3.9,
+                            "size": 284.01
+                          },
+                          {
+                            "price": 4.1,
+                            "size": 211.46
+                          }
+                        ]
+                      }
+                    }
+                  ],
+                  "isMarketDataVirtual": true
+                },
+                {
+                  "marketId": "1.263542766",
+                  "isMarketDataDelayed": true,
+                  "state": {
+                    "betDelay": 0,
+                    "bspReconciled": false,
+                    "complete": true,
+                    "inplay": false,
+                    "numberOfWinners": 1,
+                    "numberOfRunners": 2,
+                    "numberOfActiveRunners": 2,
+                    "lastMatchTime": "2026-10-10T15:17:49.483Z",
+                    "totalMatched": 1387.2620932339235,
+                    "totalAvailable": 23888.261897157572,
+                    "crossMatching": true,
+                    "runnersVoidable": false,
+                    "version": 7673680384,
+                    "betDelayModels": [
+                      "PASSIVE"
+                    ],
+                    "status": "OPEN"
+                  },
+                  "description": {
+                    "persistenceEnabled": true,
+                    "bspMarket": false,
+                    "marketName": "Peste/Sub 2,5 goluri",
+                    "marketTime": "2026-10-10T18:30:00.000Z",
+                    "suspendTime": "2026-10-10T18:30:00.000Z",
+                    "turnInPlayEnabled": true,
+                    "marketType": "OVER_UNDER_25",
+                    "priceLadderDescription": {
+                      "type": "CLASSIC"
+                    },
+                    "bettingType": "ODDS"
+                  },
+                  "runners": [
+                    {
+                      "selectionId": 47972,
+                      "handicap": 0,
+                      "description": {
+                        "runnerName": "Sub 2,5 goluri"
+                      },
+                      "exchange": {
+                        "availableToBack": [
+                          {
+                            "price": 1.99,
+                            "size": 436.22
+                          },
+                          {
+                            "price": 1.98,
+                            "size": 3153.53
+                          },
+                          {
+                            "price": 1.96,
+                            "size": 562.99
+                          }
+                        ],
+                        "availableToLay": [
+                          {
+                            "price": 2.06,
+                            "size": 216.07
+                          },
+                          {
+                            "price": 2.08,
+                            "size": 420.26
+                          },
+                          {
+                            "price": 2.1,
+                            "size": 101.6
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "selectionId": 47973,
+                      "handicap": 0,
+                      "description": {
+                        "runnerName": "Peste 2,5 goluri"
+                      },
+                      "exchange": {
+                        "availableToBack": [
+                          {
+                            "price": 1.94,
+                            "size": 460.12
+                          },
+                          {
+                            "price": 1.93,
+                            "size": 180.28
+                          },
+                          {
+                            "price": 1.92,
+                            "size": 72.48
+                          }
+                        ],
+                        "availableToLay": [
+                          {
+                            "price": 2.02,
+                            "size": 1322.94
+                          },
+                          {
+                            "price": 2.04,
+                            "size": 2498.44
+                          },
+                          {
+                            "price": 2.06,
+                            "size": 478.16
+                          }
+                        ]
+                      }
+                    }
+                  ],
+                  "isMarketDataVirtual": true
+                },
+                {
+                  "marketId": "1.263542810",
+                  "isMarketDataDelayed": true,
+                  "state": {
+                    "betDelay": 0,
+                    "bspReconciled": false,
+                    "complete": true,
+                    "inplay": false,
+                    "numberOfWinners": 1,
+                    "numberOfRunners": 2,
+                    "numberOfActiveRunners": 2,
+                    "totalMatched": 0,
+                    "totalAvailable": 19825.135474311148,
+                    "crossMatching": true,
+                    "runnersVoidable": false,
+                    "version": 7674889512,
+                    "betDelayModels": [
+                      "PASSIVE"
+                    ],
+                    "status": "OPEN"
+                  },
+                  "description": {
+                    "persistenceEnabled": true,
+                    "bspMarket": false,
+                    "marketName": "Ambele echipe vor marca?",
+                    "marketTime": "2026-10-10T18:30:00.000Z",
+                    "suspendTime": "2026-10-10T18:30:00.000Z",
+                    "turnInPlayEnabled": true,
+                    "marketType": "BOTH_TEAMS_TO_SCORE",
+                    "priceLadderDescription": {
+                      "type": "CLASSIC"
+                    },
+                    "bettingType": "ODDS"
+                  },
+                  "runners": [
+                    {
+                      "selectionId": 30246,
+                      "handicap": 0,
+                      "description": {
+                        "runnerName": "Da"
+                      },
+                      "exchange": {
+                        "availableToBack": [
+                          {
+                            "price": 1.76,
+                            "size": 314.17
+                          },
+                          {
+                            "price": 1.75,
+                            "size": 210.08
+                          },
+                          {
+                            "price": 1.73,
+                            "size": 2388.58
+                          }
+                        ],
+                        "availableToLay": [
+                          {
+                            "price": 1.84,
+                            "size": 2364.51
+                          },
+                          {
+                            "price": 1.85,
+                            "size": 2403.11
+                          },
+                          {
+                            "price": 1.91,
+                            "size": 328.3
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "selectionId": 110503,
+                      "handicap": 0,
+                      "description": {
+                        "runnerName": "Nu"
+                      },
+                      "exchange": {
+                        "availableToBack": [
+                          {
+                            "price": 2.2,
+                            "size": 242.79
+                          },
+                          {
+                            "price": 2.18,
+                            "size": 3790.05
+                          },
+                          {
+                            "price": 2.08,
+                            "size": 301.31
+                          }
+                        ],
+                        "availableToLay": [
+                          {
+                            "price": 2.32,
+                            "size": 238.34
+                          },
+                          {
+                            "price": 2.34,
+                            "size": 157.11
+                          },
+                          {
+                            "price": 2.36,
+                            "size": 231.95
+                          }
+                        ]
+                      }
+                    }
+                  ],
+                  "isMarketDataVirtual": true
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "eventTypeId": 7522,
+          "eventNodes": [
+            {
+              "eventId": 36160397,
+              "event": {
+                "eventName": "Boulazac Basket Dordogne Pro v JL Bourg Basket",
+                "countryCode": "GB",
+                "timezone": "GMT",
+                "openDate": "2026-10-10T18:30:00.000Z"
+              },
+              "marketNodes": [
+                {
+                  "marketId": "1.263468687",
+                  "isMarketDataDelayed": true,
+                  "state": {
+                    "betDelay": 0,
+                    "bspReconciled": false,
+                    "complete": true,
+                    "inplay": false,
+                    "numberOfWinners": 1,
+                    "numberOfRunners": 2,
+                    "numberOfActiveRunners": 2,
+                    "lastMatchTime": "2026-10-10T14:41:15.623Z",
+                    "totalMatched": 748.1462772972973,
+                    "totalAvailable": 51861.99462120918,
+                    "crossMatching": true,
+                    "runnersVoidable": false,
+                    "version": 7671204583,
+                    "betDelayModels": [
+                      "PASSIVE"
+                    ],
+                    "status": "OPEN"
+                  },
+                  "description": {
+                    "persistenceEnabled": true,
+                    "bspMarket": false,
+                    "marketName": "Pariu pe câştigător",
+                    "marketTime": "2026-10-10T18:30:00.000Z",
+                    "suspendTime": "2026-10-10T18:30:00.000Z",
+                    "turnInPlayEnabled": true,
+                    "marketType": "MATCH_ODDS",
+                    "priceLadderDescription": {
+                      "type": "CLASSIC"
+                    },
+                    "bettingType": "ODDS"
+                  },
+                  "runners": [
+                    {
+                      "selectionId": 26012773,
+                      "handicap": 0,
+                      "description": {
+                        "runnerName": "Boulazac Basket Dordogne Pro"
+                      },
+                      "exchange": {
+                        "availableToBack": [
+                          {
+                            "price": 3.15,
+                            "size": 2188.4
+                          },
+                          {
+                            "price": 3,
+                            "size": 2694.13
+                          },
+                          {
+                            "price": 2.96,
+                            "size": 2695.29
+                          }
+                        ],
+                        "availableToLay": [
+                          {
+                            "price": 3.4,
+                            "size": 1280.48
+                          },
+                          {
+                            "price": 3.45,
+                            "size": 1183.41
+                          },
+                          {
+                            "price": 3.5,
+                            "size": 5677.28
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "selectionId": 25790844,
+                      "handicap": 0,
+                      "description": {
+                        "runnerName": "JL Bourg Basket"
+                      },
+                      "exchange": {
+                        "availableToBack": [
+                          {
+                            "price": 1.42,
+                            "size": 830.17
+                          },
+                          {
+                            "price": 1.41,
+                            "size": 5144.98
+                          },
+                          {
+                            "price": 1.4,
+                            "size": 14193.19
+                          }
+                        ],
+                        "availableToLay": [
+                          {
+                            "price": 1.46,
+                            "size": 2382.53
+                          },
+                          {
+                            "price": 1.47,
+                            "size": 2323.11
+                          },
+                          {
+                            "price": 1.48,
+                            "size": 111.85
+                          }
+                        ]
+                      }
+                    }
+                  ],
+                  "isMarketDataVirtual": true
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "eventTypeId": 1,
+          "eventNodes": [
+            {
+              "eventId": 36103272,
+              "event": {
+                "eventName": "Nürnberg v Wolfsburg",
+                "countryCode": "DE",
+                "timezone": "GMT",
+                "openDate": "2026-10-10T18:30:00.000Z"
+              },
+              "marketNodes": [
+                {
+                  "marketId": "1.262760456",
+                  "isMarketDataDelayed": true,
+                  "state": {
+                    "betDelay": 0,
+                    "bspReconciled": false,
+                    "complete": true,
+                    "inplay": false,
+                    "numberOfWinners": 1,
+                    "numberOfRunners": 2,
+                    "numberOfActiveRunners": 2,
+                    "lastMatchTime": "2026-10-10T18:01:04.858Z",
+                    "totalMatched": 13470.830108946213,
+                    "totalAvailable": 114454.56987548027,
+                    "crossMatching": true,
+                    "runnersVoidable": false,
+                    "version": 7681293284,
+                    "betDelayModels": [
+                      "PASSIVE"
+                    ],
+                    "status": "OPEN"
+                  },
+                  "description": {
+                    "persistenceEnabled": true,
+                    "bspMarket": false,
+                    "marketName": "Peste/Sub 2,5 goluri",
+                    "marketTime": "2026-10-10T18:30:00.000Z",
+                    "suspendTime": "2026-10-10T18:30:00.000Z",
+                    "turnInPlayEnabled": true,
+                    "marketType": "OVER_UNDER_25",
+                    "priceLadderDescription": {
+                      "type": "CLASSIC"
+                    },
+                    "bettingType": "ODDS"
+                  },
+                  "runners": [
+                    {
+                      "selectionId": 47972,
+                      "handicap": 0,
+                      "description": {
+                        "runnerName": "Sub 2,5 goluri"
+                      },
+                      "exchange": {
+                        "availableToBack": [
+                          {
+                            "price": 3.05,
+                            "size": 195.67
+                          },
+                          {
+                            "price": 3,
+                            "size": 2916.77
+                          },
+                          {
+                            "price": 2.98,
+                            "size": 299.39
+                          }
+                        ],
+                        "availableToLay": [
+                          {
+                            "price": 3.1,
+                            "size": 1511.98
+                          },
+                          {
+                            "price": 3.15,
+                            "size": 5530.97
+                          },
+                          {
+                            "price": 3.2,
+                            "size": 1137.31
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "selectionId": 47973,
+                      "handicap": 0,
+                      "description": {
+                        "runnerName": "Peste 2,5 goluri"
+                      },
+                      "exchange": {
+                        "availableToBack": [
+                          {
+                            "price": 1.47,
+                            "size": 10781.39
+                          },
+                          {
+                            "price": 1.46,
+                            "size": 5599.54
+                          },
+                          {
+                            "price": 1.45,
+                            "size": 2344.03
+                          }
+                        ],
+                        "availableToLay": [
+                          {
+                            "price": 1.49,
+                            "size": 2608.22
+                          },
+                          {
+                            "price": 1.5,
+                            "size": 3640.58
+                          },
+                          {
+                            "price": 1.51,
+                            "size": 1781.89
+                          }
+                        ]
+                      }
+                    }
+                  ],
+                  "isMarketDataVirtual": true
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "eventTypeId": 2,
+          "eventNodes": [
+            {
+              "eventId": 36173098,
+              "event": {
+                "eventName": "Arantxa Rus v Kaitlyn Carnicella",
+                "countryCode": "GB",
+                "timezone": "GMT",
+                "openDate": "2026-10-10T23:00:00.000Z"
+              },
+              "marketNodes": [
+                {
+                  "marketId": "1.263626459",
+                  "isMarketDataDelayed": true,
+                  "state": {
+                    "betDelay": 0,
+                    "bspReconciled": false,
+                    "complete": true,
+                    "inplay": false,
+                    "numberOfWinners": 1,
+                    "numberOfRunners": 2,
+                    "numberOfActiveRunners": 2,
+                    "lastMatchTime": "2026-10-10T17:59:03.604Z",
+                    "totalMatched": 30.61519775396086,
+                    "totalAvailable": 15253.413525199516,
+                    "crossMatching": true,
+                    "runnersVoidable": false,
+                    "version": 7678337373,
+                    "betDelayModels": [
+                      "PASSIVE"
+                    ],
+                    "status": "OPEN"
+                  },
+                  "description": {
+                    "persistenceEnabled": true,
+                    "bspMarket": false,
+                    "marketName": "Rezultat Final",
+                    "marketTime": "2026-10-10T23:00:00.000Z",
+                    "suspendTime": "2026-10-10T23:00:00.000Z",
+                    "turnInPlayEnabled": true,
+                    "marketType": "MATCH_ODDS",
+                    "priceLadderDescription": {
+                      "type": "CLASSIC"
+                    },
+                    "bettingType": "ODDS"
+                  },
+                  "runners": [
+                    {
+                      "selectionId": 2451050,
+                      "handicap": 0,
+                      "description": {
+                        "runnerName": "Arantxa Rus"
+                      },
+                      "exchange": {
+                        "availableToBack": [
+                          {
+                            "price": 1.02,
+                            "size": 95.55
+                          },
+                          {
+                            "price": 1.01,
+                            "size": 4909.17
+                          }
+                        ],
+                        "availableToLay": [
+                          {
+                            "price": 1.46,
+                            "size": 2439.2
+                          },
+                          {
+                            "price": 1.49,
+                            "size": 1124.12
+                          },
+                          {
+                            "price": 990,
+                            "size": 59.32
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "selectionId": 56255571,
+                      "handicap": 0,
+                      "description": {
+                        "runnerName": "Kaitlyn Carnicella"
+                      },
+                      "exchange": {
+                        "availableToBack": [
+                          {
+                            "price": 3.15,
+                            "size": 1130.55
+                          },
+                          {
+                            "price": 3,
+                            "size": 558.14
+                          },
+                          {
+                            "price": 1.01,
+                            "size": 4868.11
+                          }
+                        ],
+                        "availableToLay": [
+                          {
+                            "price": 990,
+                            "size": 69.26
+                          }
+                        ]
+                      }
+                    }
+                  ],
+                  "isMarketDataVirtual": true
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

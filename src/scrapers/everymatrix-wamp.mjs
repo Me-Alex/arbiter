@@ -16,8 +16,29 @@
 import { UpstreamError, TimeoutError, ValidationError } from '../shared/errors.mjs';
 import { normalizeTeamName } from '../shared/text.mjs';
 import { isUnlimited, limitReached, maxEvents } from '../shared/event-limit.mjs';
+import { markMarketsLive } from './live-status.mjs';
+import { extractPeriodFromName, isTradablePeriod } from '../scanner/market-contracts.mjs';
 import ScraperBase from './base.mjs';
 /* global WebSocket */
+
+export const EVERYMATRIX_SPORT_ID_MAP = Object.freeze({
+  1: 'Football',
+  2: 'Basketball',
+  3: 'Tennis',
+  4: 'Ice Hockey',
+  5: 'Handball',
+  6: 'Volleyball',
+});
+
+export const EVERYMATRIX_SPORT_NAME_TO_ID = Object.freeze({
+  football: '1',
+  basketball: '2',
+  tennis: '3',
+  'ice hockey': '4',
+  ice_hockey: '4',
+  handball: '5',
+  volleyball: '6',
+});
 
 /**
  * The market an outcome (and therefore a BETTING_OFFER) belongs to.
@@ -181,6 +202,7 @@ export default class EveryMatrixWampScraper extends ScraperBase {
 
   // 1X2 "Final - Timp regulamentar." betting type on EveryMatrix ODDS.
   oneXTwoTypeId = '69';
+  twoWayMatchWinnerTypeId = '249';
 
   // A tournament index can contain hundreds of historical/derivative groups.
   // Keep discovery bounded while still covering substantially more than the
@@ -188,7 +210,7 @@ export default class EveryMatrixWampScraper extends ScraperBase {
   tournamentDumpLimit = 24;
   // Bounded candidate pool compensates for incomplete 1X2 markets without
   // allowing unbounded WebSocket fan-out.
-  eventScanLimit = 240;
+  eventScanLimit = Infinity;
   eventRequestConcurrency = 2;
 
   // A WAMP scrape opens a socket and then scans up to `eventScanLimit` events
@@ -203,6 +225,21 @@ export default class EveryMatrixWampScraper extends ScraperBase {
   constructor(opts = {}) {
     super(opts);
     this.maxEvents = maxEvents(opts.maxEvents, 60, 300);
+    if (opts.sportId) this.sportId = String(opts.sportId);
+    if (opts.sport) this.sport = opts.sport;
+    if (opts.sportSlug) this.sportSlug = opts.sportSlug;
+    else if (opts.sport) this.sportSlug = opts.sport.toLowerCase().replace(/\s+/g, '-');
+    if (opts.sport && !opts.sportId) {
+      const mappedId = EVERYMATRIX_SPORT_NAME_TO_ID[this.sportSlug] || EVERYMATRIX_SPORT_NAME_TO_ID[opts.sport.toLowerCase()];
+      if (mappedId) this.sportId = mappedId;
+    } else if (opts.sportId && !opts.sport) {
+      const mappedSport = EVERYMATRIX_SPORT_ID_MAP[this.sportId];
+      if (mappedSport) {
+        this.sport = mappedSport;
+        this.sportSlug = mappedSport.toLowerCase().replace(/\s+/g, '-');
+      }
+    }
+    if (opts.twoWayMatchWinnerTypeId) this.twoWayMatchWinnerTypeId = String(opts.twoWayMatchWinnerTypeId);
   }
 
   // ---- WAMP plumbing -----------------------------------------------------
@@ -472,11 +509,16 @@ export default class EveryMatrixWampScraper extends ScraperBase {
   extractEvents(rawEvents) {
     const out = [];
     const seenEventKeys = new Set();
+    const isTwoWaySport = this.sportSlug === 'basketball' || this.sportSlug === 'tennis';
     for (const { match, records } of rawEvents) {
-      const selected = this.extractOneXTwo(match, records);
+      const selected = isTwoWaySport
+        ? (this.extractTwoWayMatchWinner(match, records) || this.extractOneXTwo(match, records))
+        : this.extractOneXTwo(match, records);
       if (!selected) continue;
       const kickoffMs = Number(match.startTime);
-      if (!Number.isFinite(kickoffMs) || kickoffMs <= Date.now()) continue;
+      if (!Number.isFinite(kickoffMs)) continue;
+      const isLive = Boolean(match.isLive || match.status === 'LIVE' || match.inPlay);
+      if (!this.includeLive && kickoffMs <= Date.now()) continue;
       const home = match.homeParticipantName;
       const away = match.awayParticipantName;
       if (!home || !away) continue;
@@ -496,9 +538,21 @@ export default class EveryMatrixWampScraper extends ScraperBase {
         ...this.extractBothTeamsToScore(match, records),
         ...this.extractDoubleChance(match, records),
         ...this.extractDrawNoBet(match, records),
+        ...this.extractPeriodWinners(match, records),
       ];
       if (seenEventKeys.has(eventKey)) continue;
       seenEventKeys.add(eventKey);
+      const allMarkets = [{
+        key: 'MATCH_ODDS',
+        name: market.displayName || market.name || 'Match Odds',
+        selections: selections.map((kind) => ({
+          id: `${match.id}:${kind}`,
+          name: kind,
+          odds: offers[kind],
+          group: 'Main',
+        })),
+      }, ...extraMarkets];
+      markMarketsLive(allMarkets, () => isLive);
       out.push({
         id: String(match.id),
         sourceId: this.sourceIds[0],
@@ -510,16 +564,8 @@ export default class EveryMatrixWampScraper extends ScraperBase {
         homeTeam: home,
         awayTeam: away,
         eventKey,
-        markets: [{
-          key: 'MATCH_ODDS',
-          name: market.displayName || market.name || 'Match Odds',
-          selections: selections.map((kind) => ({
-            id: `${match.id}:${kind}`,
-            name: kind,
-            odds: offers[kind],
-            group: 'Main',
-          })),
-        }, ...extraMarkets],
+        live: isLive,
+        markets: allMarkets,
       });
       if (limitReached(out.length, this.maxEvents)) break;
     }
@@ -537,10 +583,22 @@ export default class EveryMatrixWampScraper extends ScraperBase {
    * aliases, and a `firsthalf` string matches none of them and degrades to
    * full-time, which is the favbet bug in a different feed.
    */
-  static periodFor(marketName) {
-    const label = String(marketName || '');
-    if (/repriza\s*1|1st\s*half|prima\s*repriza/i.test(label)) return 'half1';
-    if (/repriza\s*2|2nd\s*half|a\s*doua\s*repriza/i.test(label)) return 'half2';
+  static periodFor(marketOrName) {
+    if (!marketOrName) return 'fulltime';
+    if (typeof marketOrName === 'string') {
+      return extractPeriodFromName(marketOrName) || 'fulltime';
+    }
+    const candidateTexts = [
+      marketOrName.name,
+      marketOrName.displayName,
+      marketOrName.shortName,
+      marketOrName.eventPartName,
+      marketOrName.shortEventPartName,
+    ].filter(Boolean);
+    for (const text of candidateTexts) {
+      const extracted = extractPeriodFromName(text);
+      if (extracted) return extracted;
+    }
     return 'fulltime';
   }
 
@@ -618,8 +676,9 @@ export default class EveryMatrixWampScraper extends ScraperBase {
    */
   extractTotals(match, records) {
     const index = EveryMatrixWampScraper.indexDump(records);
+    const seenTotals = new Set();
     return records
-      .filter((r) => r._type === 'MARKET' && String(r.bettingTypeId) === '47')
+      .filter((r) => r._type === 'MARKET' && (String(r.bettingTypeId) === '47' || String(r.bettingTypeId) === '77'))
       .flatMap((market) => {
         const line = Number(market.paramFloat1);
         if (!Number.isFinite(line) || line <= 0) return [];
@@ -628,12 +687,40 @@ export default class EveryMatrixWampScraper extends ScraperBase {
         const over = sides.find((s) => /^(?:over|peste)\b/i.test(s.side));
         const under = sides.find((s) => /^(?:under|sub)\b/i.test(s.side));
         if (!over || !under) return [];
+        const isTeam = String(market.bettingTypeId) === '77';
+        let team = 'match';
+        let name = market.name || `Total goluri ${trimLine(line)}`;
+        if (isTeam) {
+          if (String(market.paramParticipantId1) === String(match.homeParticipantId)) {
+            team = 'home';
+            name = `Echipa 1 Total goluri ${trimLine(line)}`;
+          } else if (String(market.paramParticipantId1) === String(match.awayParticipantId)) {
+            team = 'away';
+            name = `Echipa 2 Total goluri ${trimLine(line)}`;
+          } else {
+            return []; // side unknown, refuse to prevent match collision
+          }
+        }
+        const isBasketball = this.sportSlug === 'basketball';
+        const isTennis = this.sportSlug === 'tennis';
+        const subject = isBasketball ? 'points' : (isTennis ? 'games' : 'goals');
+        const key = isBasketball ? 'POINTS_OVER_UNDER' : (isTennis ? 'TOTAL_GAMES' : 'TOTAL_GOALS');
+        if (!market.name) {
+          if (isBasketball) name = `Total puncte ${trimLine(line)}`;
+          else if (isTennis) name = `Total game-uri ${trimLine(line)}`;
+        }
+        const period = EveryMatrixWampScraper.periodFor(market);
+        const totalKey = `${period}:${team}:${trimLine(line)}`;
+        if (seenTotals.has(totalKey)) return [];
+        seenTotals.add(totalKey);
         // The line goes in the SELECTION NAME, not only in `handicap`: the
         // contracts layer reads it via classifyAndExtractLine → extractLineFromName.
         return [{
-          key: 'TOTAL_GOALS',
-          name: market.name || `Total goluri ${trimLine(line)}`,
-          period: EveryMatrixWampScraper.periodFor(market.name || market.displayName),
+          key,
+          name,
+          team,
+          subject,
+          period,
           selections: [
             { id: over.id, name: `Peste ${trimLine(line)}`, odds: over.odds, handicap: line, group: 'Main' },
             { id: under.id, name: `Sub ${trimLine(line)}`, odds: under.odds, handicap: line, group: 'Main' },
@@ -665,6 +752,7 @@ export default class EveryMatrixWampScraper extends ScraperBase {
    */
   extractAsianHandicap(match, records) {
     const index = EveryMatrixWampScraper.indexDump(records);
+    const seenHandicaps = new Set();
     return records
       .filter((r) => r._type === 'MARKET' && String(r.bettingTypeId) === '48')
       .flatMap((market) => {
@@ -676,10 +764,14 @@ export default class EveryMatrixWampScraper extends ScraperBase {
         if (home.line === null || away.line === null) return [];
         if (home.line !== -away.line) return []; // not an exhaustive two-way pair
         if (!isHalfLine(home.line)) return []; // whole/quarter lines are not exhaustive
+        const period = EveryMatrixWampScraper.periodFor(market);
+        const handicapKey = `${period}:${trimLine(home.line)}`;
+        if (seenHandicaps.has(handicapKey)) return [];
+        seenHandicaps.add(handicapKey);
         return [{
           key: 'ASIAN_HANDICAP',
           name: market.name || `Handicap asiatic ${trimLine(home.line)}`,
-          period: EveryMatrixWampScraper.periodFor(market.name || market.displayName),
+          period,
           selections: [
             { id: home.id, name: `1 (${trimLine(home.line)})`, odds: home.odds, handicap: home.line, group: 'Main' },
             { id: away.id, name: `2 (${trimLine(away.line)})`, odds: away.odds, handicap: away.line, group: 'Main' },
@@ -705,6 +797,7 @@ export default class EveryMatrixWampScraper extends ScraperBase {
    */
   extractBothTeamsToScore(match, records) {
     const index = EveryMatrixWampScraper.indexDump(records);
+    const seenBtts = new Set();
     return records
       .filter((r) => r._type === 'MARKET' && String(r.bettingTypeId) === '76')
       .flatMap((market) => {
@@ -712,10 +805,14 @@ export default class EveryMatrixWampScraper extends ScraperBase {
         const yes = sides.find((s) => /^(?:yes|da|gg)\b/i.test(s.side));
         const no = sides.find((s) => /^(?:no|nu|ng)\b/i.test(s.side));
         if (!yes || !no) return [];
+        const period = EveryMatrixWampScraper.periodFor(market);
+        const bttsKey = `${period}`;
+        if (seenBtts.has(bttsKey)) return [];
+        seenBtts.add(bttsKey);
         return [{
           key: 'BOTH_TEAMS_SCORE',
           name: market.name || 'Ambele echipe marchează',
-          period: EveryMatrixWampScraper.periodFor(market.name || market.displayName),
+          period,
           selections: [
             { id: yes.id, name: 'Yes', odds: yes.odds, group: 'Main' },
             { id: no.id, name: 'No', odds: no.odds, group: 'Main' },
@@ -738,6 +835,7 @@ export default class EveryMatrixWampScraper extends ScraperBase {
    */
   extractDoubleChance(match, records) {
     const index = EveryMatrixWampScraper.indexDump(records);
+    const seenDc = new Set();
     return records
       .filter((r) => r._type === 'MARKET' && String(r.bettingTypeId) === '9')
       .flatMap((market) => {
@@ -746,10 +844,13 @@ export default class EveryMatrixWampScraper extends ScraperBase {
         const drawOrAway = sides.find((s) => /^oasp/i.test(s.side));
         const homeOrAway = sides.find((s) => /^gazde\s*sau\s*oasp/i.test(s.side));
         if (!homeOrDraw || !drawOrAway || !homeOrAway) return [];
+        const period = EveryMatrixWampScraper.periodFor(market);
+        if (seenDc.has(period)) return [];
+        seenDc.add(period);
         return [{
           key: 'DOUBLE_CHANCE',
           name: market.name || 'Șansă Dublă',
-          period: EveryMatrixWampScraper.periodFor(market.name || market.displayName),
+          period,
           selections: [
             { id: homeOrDraw.id, name: '1X', odds: homeOrDraw.odds, group: 'Main' },
             { id: drawOrAway.id, name: 'X2', odds: drawOrAway.odds, group: 'Main' },
@@ -778,6 +879,7 @@ export default class EveryMatrixWampScraper extends ScraperBase {
    */
   extractDrawNoBet(match, records) {
     const index = EveryMatrixWampScraper.indexDump(records);
+    const seenDnb = new Set();
     return records
       .filter((r) => r._type === 'MARKET' && String(r.bettingTypeId) === '112')
       .flatMap((market) => {
@@ -785,16 +887,165 @@ export default class EveryMatrixWampScraper extends ScraperBase {
         const home = sides.find((s) => /^gazde\b|^home\b/i.test(s.side));
         const away = sides.find((s) => /^oasp|^away\b/i.test(s.side));
         if (!home || !away) return [];
+        const period = EveryMatrixWampScraper.periodFor(market);
+        if (seenDnb.has(period)) return [];
+        seenDnb.add(period);
         return [{
           key: 'DRAW_NO_BET',
           name: market.name || 'Egal - Pariul se rambursează',
-          period: EveryMatrixWampScraper.periodFor(market.name || market.displayName),
+          period,
           selections: [
             { id: home.id, name: '1', odds: home.odds, group: 'Main' },
             { id: away.id, name: '2', odds: away.odds, group: 'Main' },
           ],
         }];
       });
+  }
+
+  /**
+   * Extract 2-way and 3-way sub-window derivative markets (halves, quarters, sets).
+   * Supports 2-way (Tennis sets, Basketball quarters/halves) and 3-way (Football/Basketball quarter/half 1X2).
+   */
+  extractPeriodWinners(match, records) {
+    const markets = records.filter((r) => r._type === 'MARKET');
+    const named = (m) => {
+      const parts = [m.displayName, m.name, m.shortName, m.eventPartName, m.shortEventPartName].filter(Boolean);
+      return parts.join(' ');
+    };
+
+    const isExcludedMarket = (label) => {
+      return /\b(total|peste|sub|over|under|handicap|h[12]|ambele|btts|gg|ng|dubl[aă]|double\s*chance|ramburs|dnb|draw\s*no\s*bet)\b/i.test(label);
+    };
+
+    const isPeriodCandidate = (m) => {
+      const label = named(m);
+      if (isExcludedMarket(label)) return false;
+      const period = EveryMatrixWampScraper.periodFor(label);
+      if (period === 'fulltime' || period === 'unknown' || !isTradablePeriod(period)) return false;
+
+      const type = String(m.bettingTypeId || '');
+      if (
+        type === this.oneXTwoTypeId ||
+        type === this.twoWayMatchWinnerTypeId ||
+        type === '249' ||
+        type === '70' ||
+        type === '1' ||
+        type === '300'
+      ) {
+        return true;
+      }
+
+      if (/c[aâ][sș]?tig[aă]tor|winner|rezultat|1x2|mres|final\b/i.test(label)) return true;
+
+      return /set(?:ul)?\s*[1-5]|\b[1-5]\.?\s*set\b|(?:1st|2nd|3rd|4th|5th)\s*set|sfert(?:ul)?\s*[1-4]|\b[1-4]\.?\s*sfert\b|(?:1st|2nd|3rd|4th)\s*quarter|repriz[aă]\s*[12]|\b[12]\.?\s*repriz[aă]\b|(?:1st|2nd)\s*half/i.test(label);
+    };
+
+    const candidates = markets.filter(isPeriodCandidate);
+    if (candidates.length === 0) return [];
+
+    const outcomes = new Map(
+      records.filter((r) => r._type === 'OUTCOME').map((o) => [String(o.id), o]),
+    );
+    const home = match.homeParticipantName;
+    const away = match.awayParticipantName;
+
+    const out = [];
+    const seenPeriodKeys = new Set();
+
+    for (const market of candidates) {
+      const period = EveryMatrixWampScraper.periodFor(named(market));
+      if (period === 'fulltime' || period === 'unknown' || !isTradablePeriod(period)) continue;
+
+      const offers = records.filter((r) => {
+        if (r._type !== 'BETTING_OFFER') return false;
+        if (String(r.bettingTypeId) !== String(market.bettingTypeId)) return false;
+        const offerMarket = outcomeMarketId(r, records);
+        return offerMarket === null || offerMarket === String(market.id);
+      });
+      if (offers.length < 2) continue;
+
+      let homeOffer = null;
+      let drawOffer = null;
+      let awayOffer = null;
+      let hasUnexpectedSide = false;
+
+      for (const offer of offers) {
+        const outcome = outcomes.get(String(offer.outcomeId));
+        if (!outcome) continue;
+        const odds = Number(offer.odds);
+        if (!Number.isFinite(odds) || odds <= 1 || offer.isAvailable === false) continue;
+
+        const sideLabel = outcomeSideLabel(outcome);
+        const shortName = String(outcome.shortTranslatedName || '').trim();
+        const outcomeName = String(outcome.name || '').trim();
+
+        if (
+          outcome.typeName === 'Draw' ||
+          /^(?:egal|draw|remiza|x)$/i.test(sideLabel) ||
+          /^(?:egal|draw|remiza|x)$/i.test(shortName) ||
+          /^(?:egal|draw|remiza|x)$/i.test(outcomeName)
+        ) {
+          if (!drawOffer) drawOffer = { id: String(offer.outcomeId), odds };
+        } else if (
+          outcome.typeName === 'Home' ||
+          outcome.paramParticipantName1 === home ||
+          shortName === '1' ||
+          outcomeName === '1' ||
+          (home && (sideLabel === home || outcomeName === home)) ||
+          /^(?:gazde|home|1)\b/i.test(sideLabel)
+        ) {
+          if (!homeOffer) homeOffer = { id: String(offer.outcomeId), odds };
+        } else if (
+          outcome.typeName === 'Away' ||
+          outcome.paramParticipantName1 === away ||
+          shortName === '2' ||
+          outcomeName === '2' ||
+          (away && (sideLabel === away || outcomeName === away)) ||
+          /^(?:oasp|away|2)\b/i.test(sideLabel)
+        ) {
+          if (!awayOffer) awayOffer = { id: String(offer.outcomeId), odds };
+        } else {
+          hasUnexpectedSide = true;
+          break;
+        }
+      }
+
+      if (hasUnexpectedSide || !homeOffer || !awayOffer) continue;
+
+      if (drawOffer) {
+        // 3-way sub-window market (1X2 for halves, quarters)
+        const periodKey = `${period}:3`;
+        if (seenPeriodKeys.has(periodKey)) continue;
+        seenPeriodKeys.add(periodKey);
+
+        out.push({
+          key: 'MATCH_ODDS',
+          name: named(market),
+          period,
+          selections: [
+            { id: `${match.id}:${market.id}:1`, name: '1', odds: homeOffer.odds, group: 'Main' },
+            { id: `${match.id}:${market.id}:X`, name: 'X', odds: drawOffer.odds, group: 'Main' },
+            { id: `${match.id}:${market.id}:2`, name: '2', odds: awayOffer.odds, group: 'Main' },
+          ],
+        });
+      } else {
+        // 2-way sub-window market (sets, quarters, halves)
+        const periodKey = `${period}:2`;
+        if (seenPeriodKeys.has(periodKey)) continue;
+        seenPeriodKeys.add(periodKey);
+
+        out.push({
+          key: 'MATCH_ODDS',
+          name: named(market),
+          period,
+          selections: [
+            { id: `${match.id}:${market.id}:1`, name: '1', odds: homeOffer.odds, group: 'Main' },
+            { id: `${match.id}:${market.id}:2`, name: '2', odds: awayOffer.odds, group: 'Main' },
+          ],
+        });
+      }
+    }
+    return out;
   }
 
   // Corners and cards extractors were removed here on purpose.
@@ -834,8 +1085,11 @@ export default class EveryMatrixWampScraper extends ScraperBase {
     // on the order the dealer happened to serialise them, so the published
     // price flipped with it. Prefer the market whose own name says it settles
     // at full time, and only fall back to the first when none does.
-    const named = (m) => String(m.displayName || m.name || '');
-    const isSubWindow = (m) => /repriza\s*1|repriza\s*2|1st\s*half|2nd\s*half|first\s*half|second\s*half|half\s*time|pauza/i.test(named(m));
+    const named = (m) => {
+      const parts = [m.displayName, m.name, m.shortName, m.eventPartName, m.shortEventPartName].filter(Boolean);
+      return parts.join(' ');
+    };
+    const isSubWindow = (m) => /repriza\s*[12]|1st\s*half|2nd\s*half|first\s*half|second\s*half|half\s*time|pauza|\bpr\b|\bsr\b|sfert|quarter|set\b/i.test(named(m));
     const sameType = markets.filter((r) => String(r.bettingTypeId) === this.oneXTwoTypeId);
     const market = sameType.find((r) => !isSubWindow(r)) || sameType[0];
     if (!market) return null;
@@ -880,5 +1134,87 @@ export default class EveryMatrixWampScraper extends ScraperBase {
       selections: ['1', 'X', '2'],
       offers: { '1': mapped.home, X: mapped.draw, '2': mapped.away },
     };
+  }
+
+  /**
+   * Extract the 2-way Match Winner market for two-way sports (Basketball, Tennis).
+   * Supports bettingTypeId 249 / 70 / 1 or named winner markets, without sub-windows.
+   * Returns { market, selections: ['1', '2'], offers: { '1': odds, '2': odds } }
+   * or null when incomplete or contains a draw outcome.
+   */
+  extractTwoWayMatchWinner(match, records) {
+    const markets = records.filter((r) => r._type === 'MARKET');
+    const named = (m) => String(m.displayName || m.name || '');
+    const isSubWindow = (m) => /repriza|set\s*\d|quarter|sfert|1st\s*half|2nd\s*half|first\s*half|second\s*half|half\s*time|pauza/i.test(named(m));
+    const isCandidate = (m) => {
+      const type = String(m.bettingTypeId || '');
+      if (type === this.twoWayMatchWinnerTypeId || type === '70' || type === '249' || type === '1') return true;
+      if (type === this.oneXTwoTypeId) return true;
+      return /câștigător\s*(?:meci)?|castigator\s*(?:meci)?|match\s*winner|winner\b/i.test(named(m));
+    };
+
+    const candidates = markets.filter((m) => isCandidate(m) && !isSubWindow(m));
+    if (candidates.length === 0) return null;
+
+    const outcomes = new Map(
+      records.filter((r) => r._type === 'OUTCOME').map((o) => [String(o.id), o]),
+    );
+    const home = match.homeParticipantName;
+    const away = match.awayParticipantName;
+
+    for (const market of candidates) {
+      const offers = records.filter((r) => {
+        if (r._type !== 'BETTING_OFFER') return false;
+        if (String(r.bettingTypeId) !== String(market.bettingTypeId)) return false;
+        const offerMarket = outcomeMarketId(r, records);
+        return offerMarket === null || offerMarket === String(market.id);
+      });
+      if (offers.length < 2) continue;
+
+      let homeOdds = null;
+      let awayOdds = null;
+      let hasDraw = false;
+
+      for (const offer of offers) {
+        const outcome = outcomes.get(String(offer.outcomeId));
+        if (!outcome) continue;
+        const odds = Number(offer.odds);
+        if (!Number.isFinite(odds) || odds <= 1 || offer.isAvailable === false) continue;
+
+        if (outcome.typeName === 'Draw' || /egal/i.test(String(outcome.shortTranslatedName || ''))) {
+          hasDraw = true;
+          break;
+        }
+
+        if (
+          outcome.typeName === 'Home' ||
+          outcome.paramParticipantName1 === home ||
+          outcome.shortTranslatedName === '1' ||
+          outcome.name === '1' ||
+          (home && outcome.name === home)
+        ) {
+          if (homeOdds === null) homeOdds = odds;
+        } else if (
+          outcome.typeName === 'Away' ||
+          outcome.paramParticipantName1 === away ||
+          outcome.shortTranslatedName === '2' ||
+          outcome.name === '2' ||
+          (away && outcome.name === away)
+        ) {
+          if (awayOdds === null) awayOdds = odds;
+        }
+      }
+
+      if (hasDraw) continue;
+      if (homeOdds !== null && awayOdds !== null) {
+        return {
+          market,
+          selections: ['1', '2'],
+          offers: { '1': homeOdds, '2': awayOdds },
+        };
+      }
+    }
+
+    return null;
   }
 }

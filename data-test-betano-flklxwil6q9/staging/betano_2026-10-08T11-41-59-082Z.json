@@ -1,0 +1,65 @@
+{
+  "schemaVersion": 2,
+  "runId": null,
+  "sourceId": "betano",
+  "capturedAt": "2026-10-08T11:41:59.084Z",
+  "observedAt": "2026-10-08T11:41:59.083Z",
+  "dataStatus": "fresh",
+  "discovery": null,
+  "extraction": null,
+  "events": [
+    {
+      "id": "111",
+      "sourceId": "betano",
+      "sourceUrl": null,
+      "sport": "Football",
+      "league": "Liga 1",
+      "kickoff": "2026-10-08T12:41:59.083Z",
+      "homeTeam": "FCSB",
+      "awayTeam": "Dinamo",
+      "eventKey": "football|2026-10-08|fcsb|dinamo",
+      "markets": [
+        {
+          "key": "MATCH_ODDS",
+          "name": "Match Odds",
+          "period": "fulltime",
+          "selections": [
+            {
+              "id": "s1",
+              "name": "1",
+              "odds": 2.1,
+              "handicap": null,
+              "group": "Main"
+            },
+            {
+              "id": "s2",
+              "name": "X",
+              "odds": 3.3,
+              "handicap": null,
+              "group": "Main"
+            },
+            {
+              "id": "s3",
+              "name": "2",
+              "odds": 3.2,
+              "handicap": null,
+              "group": "Main"
+            }
+          ]
+        }
+      ],
+      "providerEventKey": "football|liga 1|2026-10-08T12:41:59.083Z|fcsb|dinamo"
+    }
+  ],
+  "sourceUrl": "https://betano.ro (multi-sport top-events-v2)",
+  "transport": "betano-top-events-json",
+  "coverage": {
+    "sport": "multi-sport",
+    "allMarkets": true,
+    "live": false,
+    "scope": null,
+    "field": null,
+    "started": 0,
+    "maxEvents": 100
+  }
+}

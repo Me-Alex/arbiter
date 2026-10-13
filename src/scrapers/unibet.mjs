@@ -3,6 +3,7 @@ import { normalizeTeamName } from '../shared/text.mjs';
 import { ValidationError, UpstreamError } from '../shared/errors.mjs';
 import { describeError, summariseReasons } from './feg-common.mjs';
 import { unibetEventIsLive, markMarketsLive, eventIsLive, liveCoverageFor } from './live-status.mjs';
+import { extractPeriodFromName } from '../scanner/market-contracts.mjs';
 
 /**
  * Unibet (RO) — Kindred XNS sports BFF.
@@ -162,12 +163,78 @@ export function contestsIn(view) {
  */
 const ENGINE_KEYS = {
   '1x2': '1x2',
+  head_to_head: 'HEAD_TO_HEAD',
+  'head-to-head': 'HEAD_TO_HEAD',
+  moneyline: 'MONEYLINE',
+  match_winner: 'MATCH_WINNER',
+  winner: 'MATCH_WINNER',
+  '2_way_match_winner': 'MATCH_WINNER',
   total: 'TOTAL',
+  total_games: 'FTGO',
+  games_total: 'FTGO',
+  total_points: 'FTPO',
+  points_total: 'FTPO',
   '1st_half_total': 'TOTAL',
   '1st_half_1x2': '1x2',
+  '2nd_half_total': 'TOTAL',
+  '2nd_half_1x2': '1x2',
+  '1st_quarter_total': 'FTPO',
+  'quarter_1_total': 'FTPO',
+  '2nd_quarter_total': 'FTPO',
+  'quarter_2_total': 'FTPO',
+  '3rd_quarter_total': 'FTPO',
+  'quarter_3_total': 'FTPO',
+  '4th_quarter_total': 'FTPO',
+  'quarter_4_total': 'FTPO',
+  '1st_quarter_winner': 'MATCH_WINNER',
+  'quarter_1_winner': 'MATCH_WINNER',
+  '2nd_quarter_winner': 'MATCH_WINNER',
+  'quarter_2_winner': 'MATCH_WINNER',
+  '3rd_quarter_winner': 'MATCH_WINNER',
+  'quarter_3_winner': 'MATCH_WINNER',
+  '4th_quarter_winner': 'MATCH_WINNER',
+  'quarter_4_winner': 'MATCH_WINNER',
+  set_1_total: 'FTGO',
+  set_1_winner: 'MATCH_WINNER',
+  set_2_total: 'FTGO',
+  set_2_winner: 'MATCH_WINNER',
+  set_3_total: 'FTGO',
+  set_3_winner: 'MATCH_WINNER',
+  set_4_total: 'FTGO',
+  set_4_winner: 'MATCH_WINNER',
+  set_5_total: 'FTGO',
+  set_5_winner: 'MATCH_WINNER',
   both_teams_to_score: 'BOTH_TEAMS_SCORE',
+  '1st_half_both_teams_to_score': 'BOTH_TEAMS_SCORE',
+  '2nd_half_both_teams_to_score': 'BOTH_TEAMS_SCORE',
   double_chance: 'DOUBLE_CHANCE',
+  '1st_half_double_chance': 'DOUBLE_CHANCE',
+  '2nd_half_double_chance': 'DOUBLE_CHANCE',
+  '1st_half_handicap': 'HANDICAP',
+  '2nd_half_handicap': 'HANDICAP',
   '2_way_handicap': 'HANDICAP',
+  game_handicap: 'HANDICAP',
+  games_handicap: 'HANDICAP',
+  point_spread: 'HANDICAP',
+  points_handicap: 'HANDICAP',
+  total_corners: 'CNOU',
+  corners_total: 'CNOU',
+  total_cards: 'TCOU',
+  cards_total: 'TCOU',
+  home_team_total: 'TOTAL',
+  away_team_total: 'TOTAL',
+  '1st_team_total': 'TOTAL',
+  '2nd_team_total': 'TOTAL',
+  team_1_total: 'TOTAL',
+  team_2_total: 'TOTAL',
+  total_home: 'TOTAL',
+  total_away: 'TOTAL',
+  home_total: 'TOTAL',
+  away_total: 'TOTAL',
+  corners_home: 'CNOU',
+  corners_away: 'CNOU',
+  '1st_half_corners': 'CNOU',
+  '1st_half_cards': 'TCOU',
 };
 
 /**
@@ -203,8 +270,15 @@ function isHalfLine(line) {
 const PLAYER_OPTION_TYPES = new Set(['Participant', 'Player']);
 
 /** Proposition types that settle before the final whistle. */
-function periodFor(propositionType) {
-  return /1st_half|half_time/.test(String(propositionType)) ? 'half1' : 'fulltime';
+function periodFor(propositionType, displayName = '') {
+  const pt = String(propositionType || '');
+  if (/1st_half|half_time|first_half/.test(pt)) return 'half1';
+  if (/2nd_half|second_half/.test(pt)) return 'half2';
+  const setM = /(?:set_?([1-5])|([1-5])(?:st|nd|rd|th)?_set)/i.exec(pt);
+  if (setM) return `set${setM[1] || setM[2]}`;
+  const qM = /(?:quarter_?([1-4])|q([1-4])|([1-4])(?:st|nd|rd|th)?_quarter)/i.exec(pt);
+  if (qM) return `q${qM[1] || qM[2] || qM[3]}`;
+  return extractPeriodFromName(displayName) || 'fulltime';
 }
 
 /**
@@ -219,7 +293,7 @@ function periodFor(propositionType) {
  *
  * @returns {object|null} null when the variant has no two-sided price.
  */
-function normalizeVariant(proposition, variant, key) {
+function normalizeVariant(proposition, variant, key, sport = '') {
   const selections = [];
   for (const option of variant || []) {
     // Player props are excluded here rather than filtered by propositionType so
@@ -261,6 +335,26 @@ function normalizeVariant(proposition, variant, key) {
   const line = selections[0]?.handicap ?? null;
   if (HALF_LINE_ONLY.has(key) && !(line && isHalfLine(line))) return null;
 
+  const rawPropType = String(proposition.propositionType || '').trim().toLowerCase();
+  const rawDisplayName = String(proposition.displayName || '');
+  const team = /home|1st_team|team_1|prim[aă]\s*echip[aă]/i.test(rawPropType) || /(?:echip[aă]\s*1|echip[aă]\s*i\b|gazde|gazd[aă]|home\s*team)/i.test(rawDisplayName)
+    ? 'home'
+    : /away|2nd_team|team_2|a\s*doua\s*echip[aă]/i.test(rawPropType) || /(?:echip[aă]\s*2|echip[aă]\s*ii\b|oaspe[tț]i|oaspete|away\s*team)/i.test(rawDisplayName)
+      ? 'away'
+      : undefined;
+
+  let subject;
+  if (/corners?/.test(rawPropType)) subject = 'corners';
+  else if (/cards?/.test(rawPropType)) subject = 'cards';
+  else if (/points?/.test(rawPropType)) subject = 'points';
+  else if (/games?/.test(rawPropType)) subject = 'games';
+  else if (key === 'TOTAL' || key === 'FTPO' || key === 'FTGO') {
+    const s = String(sport || '').toLowerCase();
+    if (s === 'basketball' || s === 'americanfootball' || s === 'baseball') subject = 'points';
+    else if (s === 'tennis' || s === 'tabletennis') subject = 'games';
+    else subject = 'goals';
+  }
+
   return {
     id: `${String(proposition.propositionKey || key)}:${String(variant?.[0]?.variantKey ?? '')}`,
     key,
@@ -270,10 +364,27 @@ function normalizeVariant(proposition, variant, key) {
     // are exactly the names that must survive that check — and `period` is what
     // actually separates them, not the label.
     name: String(proposition.displayName || key),
-    period: periodFor(proposition.propositionType),
+    period: periodFor(proposition.propositionType, proposition.displayName),
     line,
+    team,
+    ...(subject ? { subject } : {}),
     selections,
   };
+}
+
+function resolveUnibetEngineKey(rawType) {
+  const t = String(rawType || '').trim().toLowerCase();
+  if (ENGINE_KEYS[t]) return ENGINE_KEYS[t];
+  if (/(?:quarter_?[1-4]|q[1-4]|[1-4](?:st|nd|rd|th)?_quarter)_winner/.test(t)) return 'MATCH_WINNER';
+  if (/(?:quarter_?[1-4]|q[1-4]|[1-4](?:st|nd|rd|th)?_quarter)_total/.test(t)) return 'FTPO';
+  if (/(?:set_?[1-5]|[1-5](?:st|nd|rd|th)?_set)_winner/.test(t)) return 'MATCH_WINNER';
+  if (/(?:set_?[1-5]|[1-5](?:st|nd|rd|th)?_set)_total/.test(t)) return 'FTGO';
+  if (/(?:1st|2nd|first|second)_half_both_teams_to_score|both_teams_to_score_(?:1st|2nd|first|second)_half/.test(t)) return 'BOTH_TEAMS_SCORE';
+  if (/(?:1st|2nd|first|second)_half_double_chance|double_chance_(?:1st|2nd|first|second)_half/.test(t)) return 'DOUBLE_CHANCE';
+  if (/(?:1st|2nd|first|second)_half_handicap|handicap_(?:1st|2nd|first|second)_half/.test(t)) return 'HANDICAP';
+  if (/(?:1st|2nd|first|second)_half_total|total_(?:1st|2nd|first|second)_half/.test(t)) return 'TOTAL';
+  if (/(?:1st|2nd|first|second)_half_1x2|1x2_(?:1st|2nd|first|second)_half/.test(t)) return '1x2';
+  return null;
 }
 
 /**
@@ -285,9 +396,9 @@ function normalizeVariant(proposition, variant, key) {
  *
  * @returns {object[]}
  */
-export function marketsFromProposition(proposition) {
+export function marketsFromProposition(proposition, sport = '') {
   const rawType = String(proposition?.propositionType || '').trim();
-  const key = ENGINE_KEYS[rawType];
+  const key = resolveUnibetEngineKey(rawType);
   if (!key) return [];
 
   const groups = Array.isArray(proposition.variants) && proposition.variants.length
@@ -297,11 +408,11 @@ export function marketsFromProposition(proposition) {
   const out = [];
   const seen = new Set();
   for (const variant of groups) {
-    const market = normalizeVariant(proposition, variant, key);
+    const market = normalizeVariant(proposition, variant, key, sport);
     if (!market) continue;
-    // Same key + same line must appear once; the feed repeats a proposition
+    // Same key + same line + team + subject must appear once; the feed repeats a proposition
     // under both its display and its raw type on some events.
-    const slot = `${market.key}@${market.line ?? '_'}@${market.period}`;
+    const slot = `${market.key}@${market.line ?? '_'}@${market.period}@${market.team ?? '_'}@${market.subject ?? '_'}`;
     if (seen.has(slot)) continue;
     seen.add(slot);
     out.push(market);
@@ -322,8 +433,8 @@ export default class UnibetScraper extends ScraperBase {
     this.timeoutMs = opts.timeoutMs ?? 300_000;
     this.maxAttempts = opts.maxAttempts ?? 2;
     this.concurrency = Math.max(1, Number(opts.concurrency ?? 6));
-    this.maxEvents = opts.maxEvents === 'all' ? 5000 : Math.min(Number(opts.maxEvents ?? 2000), 5000);
-    if (!Number.isInteger(this.maxEvents) || this.maxEvents < 0 || this.maxEvents > 5000) {
+    this.maxEvents = opts.maxEvents === 'all' ? Infinity : Number(opts.maxEvents ?? Infinity);
+    if ((!Number.isInteger(this.maxEvents) && this.maxEvents !== Infinity) || this.maxEvents < 0) {
       throw new ValidationError('Unibet: invalid maxEvents');
     }
     const requested = Array.isArray(opts.sports) && opts.sports.length ? opts.sports : DEFAULT_SPORTS;
@@ -332,6 +443,16 @@ export default class UnibetScraper extends ScraperBase {
     // the arb scan reads one, so this is what tells the detail pass which
     // contests are worth the extra request.
     this.sport = String(opts.sport || '').trim();
+    // When that single sport is named but no explicit `sports` list was given,
+    // the crawl targets only that sport. The scan filters every other sport out
+    // of its result, so the other sports' lobbies spend the cycle budget on
+    // events that can never pair — measured 2026-10-08: the 13-sport crawl plus
+    // fullMarkets runs 76s, most of it on sports the scan discards. An explicit
+    // `sports` still wins, because a deliberate multi-sport crawl is not the
+    // scan's doing.
+    if (!(Array.isArray(opts.sports) && opts.sports.length) && this.sport) {
+      this.sports = [this.sport];
+    }
     // Deep mode costs one contest-page request per event, on top of the lobby
     // crawl. It is the difference between Unibet contributing only a 1X2
     // result market and Unibet contributing totals, BTTS and handicaps — but
@@ -340,12 +461,14 @@ export default class UnibetScraper extends ScraperBase {
     this.fullMarkets = Boolean(opts.fullMarkets ?? opts.jobConfig?.fullMarkets);
     // Cap on how many events get the detail call. A full football crawl is ~700
     // contests; without a cap a deep run issues 700 extra requests.
-    this.detailLimit = Number.isInteger(opts.detailLimit)
-      ? opts.detailLimit
-      : Number.isInteger(opts.jobConfig?.detailLimit)
-        ? opts.jobConfig.detailLimit
-        : this.maxEvents;
-    if (!Number.isInteger(this.detailLimit) || this.detailLimit < 0) {
+    this.detailLimit = String(opts.detailLimit ?? opts.jobConfig?.detailLimit ?? '').toLowerCase() === 'all'
+      ? Infinity
+      : Number.isInteger(opts.detailLimit)
+        ? opts.detailLimit
+        : Number.isInteger(opts.jobConfig?.detailLimit)
+          ? opts.jobConfig.detailLimit
+          : this.maxEvents;
+    if ((!Number.isInteger(this.detailLimit) && this.detailLimit !== Infinity) || this.detailLimit < 0) {
       throw new ValidationError('Unibet: invalid detailLimit');
     }
     this.observedAt = new Date().toISOString();
@@ -413,8 +536,25 @@ export default class UnibetScraper extends ScraperBase {
     }
 
     const available = new Map((azMenu.items || []).map((i) => [String(i.key), i.displayName]));
-    const wanted = this.sports.filter((s) => available.has(s));
-    const missing = this.sports.filter((s) => !available.has(s));
+    // The caller names the sport the way the scan does (`football`, the registry
+    // id); the az-menu keys come back capitalized (`Football`). An exact match
+    // against that key drops the requested sport entirely, and a single-sport
+    // crawl would then collect nothing at all — a silent empty feed.
+    const menuKey = (name) => {
+      if (available.has(name)) return name;
+      const lower = name.toLowerCase();
+      for (const key of available.keys()) {
+        if (key.toLowerCase() === lower) return key;
+      }
+      return null;
+    };
+    const wanted = [];
+    const missing = [];
+    for (const name of this.sports) {
+      const key = menuKey(name);
+      if (key) wanted.push(key);
+      else missing.push(name);
+    }
     if (missing.length) {
       this.logger('warn', `Unibet: sports not offered by the feed: ${missing.join(', ')}`);
     }
@@ -545,16 +685,17 @@ export default class UnibetScraper extends ScraperBase {
       const kickoff = new Date(typeof kickoffRaw === 'number' ? kickoffRaw : kickoffRaw);
       if (!Number.isFinite(+kickoff)) continue;
 
+      const sport = String(contest.contestType || contest._sport || 'Unknown');
       const markets = [];
       const taken = new Set();
       for (const proposition of contest.propositions || []) {
-        for (const market of marketsFromProposition(proposition)) {
-          // One market per (key, line, period): the feed repeats a
+        for (const market of marketsFromProposition(proposition, sport)) {
+          // One market per (key, line, period, subject): the feed repeats a
           // propositionType (Unibet lists "Rezultat final" and "Cote meci" as
           // two 1x2 markets on some events). Emitting both would put two
           // full-time result legs in the same engine bucket, so the first
           // priced one wins.
-          const slot = `${market.key}@${market.line ?? '_'}@${market.period}`;
+          const slot = `${market.key}@${market.line ?? '_'}@${market.period}@${market.team ?? '_'}@${market.subject ?? '_'}`;
           if (taken.has(slot)) continue;
           taken.add(slot);
           markets.push(market);
@@ -679,20 +820,31 @@ function leagueNameOf(contest, fallback) {
  * gives when the result market is not priced yet.
  */
 function resolveTeams(contest) {
+  const matchWinnerTypes = new Set([
+    '1x2',
+    'head_to_head',
+    'head-to-head',
+    'moneyline',
+    'match_winner',
+    'winner',
+    '2_way_match_winner',
+  ]);
   for (const proposition of contest.propositions || []) {
-    if (proposition.propositionType !== '1x2') continue;
+    const pType = String(proposition.propositionType || '').toLowerCase().trim();
+    if (!matchWinnerTypes.has(pType)) continue;
     let home = '';
     let away = '';
-    for (const option of proposition.options || []) {
+    const opts = (Array.isArray(proposition.variants) && proposition.variants[0]) || proposition.options || [];
+    for (const option of opts) {
       const name = String(option.optionName || '').trim();
       if (!name) continue;
-      if (option.optionType === 'T1') home = name;
-      else if (option.optionType === 'T2') away = name;
+      if (option.optionType === 'T1' || option.optionType === 'Home') home = name;
+      else if (option.optionType === 'T2' || option.optionType === 'Away') away = name;
     }
     if (home && away) return { home, away };
   }
   const label = String(contest?.name || '');
-  const parts = label.split(/\s+vs\.?\s+/i);
+  const parts = label.split(/\s+(?:vs\.?|-)\s+/i);
   if (parts.length === 2 && parts[0].trim() && parts[1].trim()) {
     return { home: parts[0].trim(), away: parts[1].trim() };
   }

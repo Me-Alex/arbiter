@@ -1,0 +1,1902 @@
+{
+  "provenance": {
+    "book": "bet7",
+    "sourceUrl": "https://micros-prod1.gambling-solutions.ro/api/digitain-fetcher/v2/public/events",
+    "capturedAt": "2026-10-08T11:17:34.946Z",
+    "note": "Actual public response subset: first eight accepted football events; event fields, prices and times unchanged."
+  },
+  "raw": {
+    "data": {
+      "events": [
+        {
+          "provider": "digitain",
+          "matchType": 0,
+          "mType": "prematch",
+          "idMatch": "41062828",
+          "partTypeId": 0,
+          "periodId": 0,
+          "matchDateTime": 1791640800000,
+          "comment": {
+            "2": "",
+            "42": ""
+          },
+          "idSport": "1",
+          "sportName": {
+            "2": "Football",
+            "42": "Fotbal"
+          },
+          "sportShortName": {
+            "2": "Football",
+            "42": "Fotbal"
+          },
+          "idCategory": "1225",
+          "categoryName": {
+            "2": "England",
+            "42": "Anglia"
+          },
+          "categoryShortName": {
+            "2": "England",
+            "42": "Anglia"
+          },
+          "idTournament": "4634",
+          "tournamentName": {
+            "2": "England. 1st League",
+            "42": "Anglia - League 1"
+          },
+          "tournamentShortName": {
+            "2": "England. 1st League",
+            "42": "Anglia - League 1"
+          },
+          "bettingStatus": true,
+          "active": true,
+          "position": 2147483647,
+          "team1Name": {
+            "2": "Wycombe Wanderers",
+            "42": "Wycombe Wanderers"
+          },
+          "idTeam1": 2173,
+          "team1ShortName": {
+            "2": "Wycombe Wanderers",
+            "42": "Wycombe Wanderers"
+          },
+          "team1Logo": 605,
+          "team2Name": {
+            "2": "Luton Town",
+            "42": "Luton Town"
+          },
+          "idTeam2": 3549,
+          "team2ShortName": {
+            "2": "Luton Town",
+            "42": "Luton Town"
+          },
+          "team2Logo": 764,
+          "hasLiveTV": false,
+          "hasScout": false,
+          "head2HeadId": 1900631,
+          "headToHeadSportId": 1,
+          "matchBets": [
+            {
+              "idBet": "1",
+              "idMb": "41062828/1",
+              "mbChanged": false,
+              "mbPosition": 200001,
+              "mbActive": true,
+              "mbDisplayName": {
+                "2": "Result",
+                "42": "Final"
+              },
+              "mbOutcomes": [
+                {
+                  "idMatch": "41062828",
+                  "idBet": "1",
+                  "idMbo": "7162807167",
+                  "idBo": "1/1",
+                  "mboActive": true,
+                  "isLive": false,
+                  "mboType": {
+                    "2": "1",
+                    "42": "1"
+                  },
+                  "mboDisplayName": {
+                    "2": "1",
+                    "42": "1"
+                  },
+                  "mboOddValue": 2.54,
+                  "bValue": 2.6,
+                  "mboPosition": 200001,
+                  "mboEventPosition": 9223372036844775000,
+                  "mboOrder": 1,
+                  "mboCode": 1,
+                  "isCashoutEnabled": true,
+                  "isExpressDenied": false,
+                  "argument": null,
+                  "sign": false,
+                  "main": false,
+                  "superMain": false,
+                  "betName": {
+                    "2": "Result",
+                    "42": "Final"
+                  }
+                },
+                {
+                  "idMatch": "41062828",
+                  "idBet": "1",
+                  "idMbo": "7162807168",
+                  "idBo": "1/2",
+                  "mboActive": true,
+                  "isLive": false,
+                  "mboType": {
+                    "2": "X",
+                    "42": "X"
+                  },
+                  "mboDisplayName": {
+                    "2": "X",
+                    "42": "X"
+                  },
+                  "mboOddValue": 3.72,
+                  "bValue": 3.8,
+                  "mboPosition": 200001,
+                  "mboEventPosition": 9223372036844775000,
+                  "mboOrder": 2,
+                  "mboCode": 2,
+                  "isCashoutEnabled": true,
+                  "isExpressDenied": false,
+                  "argument": null,
+                  "sign": false,
+                  "main": false,
+                  "superMain": false,
+                  "betName": {
+                    "2": "Result",
+                    "42": "Final"
+                  }
+                },
+                {
+                  "idMatch": "41062828",
+                  "idBet": "1",
+                  "idMbo": "7162807169",
+                  "idBo": "1/3",
+                  "mboActive": true,
+                  "isLive": false,
+                  "mboType": {
+                    "2": "2",
+                    "42": "2"
+                  },
+                  "mboDisplayName": {
+                    "2": "2",
+                    "42": "2"
+                  },
+                  "mboOddValue": 2.41,
+                  "bValue": 2.46,
+                  "mboPosition": 200001,
+                  "mboEventPosition": 9223372036844775000,
+                  "mboOrder": 3,
+                  "mboCode": 3,
+                  "isCashoutEnabled": true,
+                  "isExpressDenied": false,
+                  "argument": null,
+                  "sign": false,
+                  "main": false,
+                  "superMain": false,
+                  "betName": {
+                    "2": "Result",
+                    "42": "Final"
+                  }
+                }
+              ]
+            }
+          ],
+          "DDTTCKS": 0,
+          "currentStatus": {
+            "HomeTeamScore": 0,
+            "AwayTeamScore": 0,
+            "LiveEventTime": 0,
+            "LiveEventSecond": 0,
+            "LiveSetScore": "",
+            "LiveSetAltScore": "",
+            "LiveGameScore": "",
+            "LiveServer": 0,
+            "LiveMatchStatus": {
+              "2": "",
+              "42": ""
+            },
+            "CurrentPeriod": 0,
+            "LiveScoresRCard": "",
+            "EventAddedExtraTime": 0,
+            "MatchInfo": {
+              "2": "",
+              "42": ""
+            },
+            "IsLiveFinished": false,
+            "IsLiveStarted": false,
+            "LiveMatchShortStatus": {
+              "2": "",
+              "42": ""
+            }
+          },
+          "marketCount": 231,
+          "competitors": [
+            {
+              "type": 1,
+              "id": 2173,
+              "name": {
+                "2": "Wycombe Wanderers",
+                "42": "Wycombe Wanderers"
+              },
+              "shortName": {
+                "2": "Wycombe Wanderers",
+                "42": "Wycombe Wanderers"
+              }
+            },
+            {
+              "type": 2,
+              "id": 3549,
+              "name": {
+                "2": "Luton Town",
+                "42": "Luton Town"
+              },
+              "shortName": {
+                "2": "Luton Town",
+                "42": "Luton Town"
+              }
+            }
+          ],
+          "isOutright": false,
+          "periods": [],
+          "periodShortName": null
+        },
+        {
+          "provider": "digitain",
+          "matchType": 0,
+          "mType": "prematch",
+          "idMatch": "41323671",
+          "partTypeId": 0,
+          "periodId": 0,
+          "matchDateTime": 1791730800000,
+          "comment": {
+            "2": "",
+            "42": ""
+          },
+          "idSport": "1",
+          "sportName": {
+            "2": "Football",
+            "42": "Fotbal"
+          },
+          "sportShortName": {
+            "2": "Football",
+            "42": "Fotbal"
+          },
+          "idCategory": "1288",
+          "categoryName": {
+            "2": "Spain",
+            "42": "Spania"
+          },
+          "categoryShortName": {
+            "2": "Spain",
+            "42": "Spania"
+          },
+          "idTournament": "32906",
+          "tournamentName": {
+            "2": "Spain. Segunda RFEF - Group 3",
+            "42": "Spania - Segunda Division RFEF - Grupa 3"
+          },
+          "tournamentShortName": {
+            "2": "Spain. Segunda RFEF - Group 3",
+            "42": "Spania - Segunda Division RFEF - Grupa 3"
+          },
+          "bettingStatus": true,
+          "active": true,
+          "position": 2147483647,
+          "team1Name": {
+            "2": "UCAM Murcia",
+            "42": "UCAM Murcia"
+          },
+          "idTeam1": 14462,
+          "team1ShortName": {
+            "2": "UCAM Murcia",
+            "42": "UCAM Murcia"
+          },
+          "team1Logo": 11853,
+          "team2Name": {
+            "2": "Alcoyano",
+            "42": "Alcoyano"
+          },
+          "idTeam2": 1722,
+          "team2ShortName": {
+            "2": "Alcoyano",
+            "42": "Alcoyano"
+          },
+          "team2Logo": 0,
+          "hasLiveTV": false,
+          "hasScout": false,
+          "head2HeadId": 1978405,
+          "headToHeadSportId": 1,
+          "matchBets": [
+            {
+              "idBet": "1",
+              "idMb": "41323671/1",
+              "mbChanged": false,
+              "mbPosition": 200001,
+              "mbActive": true,
+              "mbDisplayName": {
+                "2": "Result",
+                "42": "Final"
+              },
+              "mbOutcomes": [
+                {
+                  "idMatch": "41323671",
+                  "idBet": "1",
+                  "idMbo": "7202511581",
+                  "idBo": "1/1",
+                  "mboActive": true,
+                  "isLive": false,
+                  "mboType": {
+                    "2": "1",
+                    "42": "1"
+                  },
+                  "mboDisplayName": {
+                    "2": "1",
+                    "42": "1"
+                  },
+                  "mboOddValue": 2,
+                  "bValue": 2,
+                  "mboPosition": 200001,
+                  "mboEventPosition": 9223372036844775000,
+                  "mboOrder": 1,
+                  "mboCode": 1,
+                  "isCashoutEnabled": true,
+                  "isExpressDenied": false,
+                  "argument": null,
+                  "sign": false,
+                  "main": false,
+                  "superMain": false,
+                  "betName": {
+                    "2": "Result",
+                    "42": "Final"
+                  }
+                },
+                {
+                  "idMatch": "41323671",
+                  "idBet": "1",
+                  "idMbo": "7202511582",
+                  "idBo": "1/2",
+                  "mboActive": true,
+                  "isLive": false,
+                  "mboType": {
+                    "2": "X",
+                    "42": "X"
+                  },
+                  "mboDisplayName": {
+                    "2": "X",
+                    "42": "X"
+                  },
+                  "mboOddValue": 3,
+                  "bValue": 3,
+                  "mboPosition": 200001,
+                  "mboEventPosition": 9223372036844775000,
+                  "mboOrder": 2,
+                  "mboCode": 2,
+                  "isCashoutEnabled": true,
+                  "isExpressDenied": false,
+                  "argument": null,
+                  "sign": false,
+                  "main": false,
+                  "superMain": false,
+                  "betName": {
+                    "2": "Result",
+                    "42": "Final"
+                  }
+                },
+                {
+                  "idMatch": "41323671",
+                  "idBet": "1",
+                  "idMbo": "7202511583",
+                  "idBo": "1/3",
+                  "mboActive": true,
+                  "isLive": false,
+                  "mboType": {
+                    "2": "2",
+                    "42": "2"
+                  },
+                  "mboDisplayName": {
+                    "2": "2",
+                    "42": "2"
+                  },
+                  "mboOddValue": 3.6,
+                  "bValue": 3.6,
+                  "mboPosition": 200001,
+                  "mboEventPosition": 9223372036844775000,
+                  "mboOrder": 3,
+                  "mboCode": 3,
+                  "isCashoutEnabled": true,
+                  "isExpressDenied": false,
+                  "argument": null,
+                  "sign": false,
+                  "main": false,
+                  "superMain": false,
+                  "betName": {
+                    "2": "Result",
+                    "42": "Final"
+                  }
+                }
+              ]
+            }
+          ],
+          "DDTTCKS": 0,
+          "currentStatus": {
+            "HomeTeamScore": 0,
+            "AwayTeamScore": 0,
+            "LiveEventTime": 0,
+            "LiveEventSecond": 0,
+            "LiveSetScore": "",
+            "LiveSetAltScore": "",
+            "LiveGameScore": "",
+            "LiveServer": 0,
+            "LiveMatchStatus": {
+              "2": "",
+              "42": ""
+            },
+            "CurrentPeriod": 0,
+            "LiveScoresRCard": "",
+            "EventAddedExtraTime": 0,
+            "MatchInfo": {
+              "2": "",
+              "42": ""
+            },
+            "IsLiveFinished": false,
+            "IsLiveStarted": false,
+            "LiveMatchShortStatus": {
+              "2": "",
+              "42": ""
+            }
+          },
+          "marketCount": 0,
+          "competitors": [
+            {
+              "type": 1,
+              "id": 14462,
+              "name": {
+                "2": "UCAM Murcia",
+                "42": "UCAM Murcia"
+              },
+              "shortName": {
+                "2": "UCAM Murcia",
+                "42": "UCAM Murcia"
+              }
+            },
+            {
+              "type": 2,
+              "id": 1722,
+              "name": {
+                "2": "Alcoyano",
+                "42": "Alcoyano"
+              },
+              "shortName": {
+                "2": "Alcoyano",
+                "42": "Alcoyano"
+              }
+            }
+          ],
+          "isOutright": false,
+          "periods": [],
+          "periodShortName": null
+        },
+        {
+          "provider": "digitain",
+          "matchType": 0,
+          "mType": "prematch",
+          "idMatch": "40723495",
+          "partTypeId": 0,
+          "periodId": 0,
+          "matchDateTime": 1791563400000,
+          "comment": {
+            "2": "Gameweek. 10",
+            "42": "Gameweek. 10"
+          },
+          "idSport": "1",
+          "sportName": {
+            "2": "Football",
+            "42": "Fotbal"
+          },
+          "sportShortName": {
+            "2": "Football",
+            "42": "Fotbal"
+          },
+          "idCategory": "1343",
+          "categoryName": {
+            "2": "Russia",
+            "42": "Rusia"
+          },
+          "categoryShortName": {
+            "2": "Russia",
+            "42": "Rusia"
+          },
+          "idTournament": "5016",
+          "tournamentName": {
+            "2": "Russia. Premier League",
+            "42": "Rusia - Premier League"
+          },
+          "tournamentShortName": {
+            "2": "Russia. Premier League",
+            "42": "Rusia - Premier League"
+          },
+          "bettingStatus": true,
+          "active": true,
+          "position": 2147483647,
+          "team1Name": {
+            "2": "Rostov",
+            "42": "Rostov"
+          },
+          "idTeam1": 1847,
+          "team1ShortName": {
+            "2": "Rostov",
+            "42": "Rostov"
+          },
+          "team1Logo": 1847,
+          "team2Name": {
+            "2": "Akron Tolyatti",
+            "42": "Akron Tolyatti"
+          },
+          "idTeam2": 237687,
+          "team2ShortName": {
+            "2": "Akron Tolyatti",
+            "42": "Akron Tolyatti"
+          },
+          "team2Logo": 23561,
+          "hasLiveTV": false,
+          "hasScout": false,
+          "head2HeadId": 1896153,
+          "headToHeadSportId": 1,
+          "matchBets": [
+            {
+              "idBet": "1",
+              "idMb": "40723495/1",
+              "mbChanged": false,
+              "mbPosition": 200001,
+              "mbActive": true,
+              "mbDisplayName": {
+                "2": "Result",
+                "42": "Final"
+              },
+              "mbOutcomes": [
+                {
+                  "idMatch": "40723495",
+                  "idBet": "1",
+                  "idMbo": "7110024560",
+                  "idBo": "1/1",
+                  "mboActive": true,
+                  "isLive": false,
+                  "mboType": {
+                    "2": "1",
+                    "42": "1"
+                  },
+                  "mboDisplayName": {
+                    "2": "1",
+                    "42": "1"
+                  },
+                  "mboOddValue": 1.86,
+                  "bValue": 1.91,
+                  "mboPosition": 200001,
+                  "mboEventPosition": 9223372036844775000,
+                  "mboOrder": 1,
+                  "mboCode": 1,
+                  "isCashoutEnabled": true,
+                  "isExpressDenied": false,
+                  "argument": null,
+                  "sign": false,
+                  "main": false,
+                  "superMain": false,
+                  "betName": {
+                    "2": "Result",
+                    "42": "Final"
+                  }
+                },
+                {
+                  "idMatch": "40723495",
+                  "idBet": "1",
+                  "idMbo": "7110024561",
+                  "idBo": "1/2",
+                  "mboActive": true,
+                  "isLive": false,
+                  "mboType": {
+                    "2": "X",
+                    "42": "X"
+                  },
+                  "mboDisplayName": {
+                    "2": "X",
+                    "42": "X"
+                  },
+                  "mboOddValue": 3.51,
+                  "bValue": 3.6,
+                  "mboPosition": 200001,
+                  "mboEventPosition": 9223372036844775000,
+                  "mboOrder": 2,
+                  "mboCode": 2,
+                  "isCashoutEnabled": true,
+                  "isExpressDenied": false,
+                  "argument": null,
+                  "sign": false,
+                  "main": false,
+                  "superMain": false,
+                  "betName": {
+                    "2": "Result",
+                    "42": "Final"
+                  }
+                },
+                {
+                  "idMatch": "40723495",
+                  "idBet": "1",
+                  "idMbo": "7110024562",
+                  "idBo": "1/3",
+                  "mboActive": true,
+                  "isLive": false,
+                  "mboType": {
+                    "2": "2",
+                    "42": "2"
+                  },
+                  "mboDisplayName": {
+                    "2": "2",
+                    "42": "2"
+                  },
+                  "mboOddValue": 3.91,
+                  "bValue": 4,
+                  "mboPosition": 200001,
+                  "mboEventPosition": 9223372036844775000,
+                  "mboOrder": 3,
+                  "mboCode": 3,
+                  "isCashoutEnabled": true,
+                  "isExpressDenied": false,
+                  "argument": null,
+                  "sign": false,
+                  "main": false,
+                  "superMain": false,
+                  "betName": {
+                    "2": "Result",
+                    "42": "Final"
+                  }
+                }
+              ]
+            }
+          ],
+          "DDTTCKS": 0,
+          "currentStatus": {
+            "HomeTeamScore": 0,
+            "AwayTeamScore": 0,
+            "LiveEventTime": 0,
+            "LiveEventSecond": 0,
+            "LiveSetScore": "",
+            "LiveSetAltScore": "",
+            "LiveGameScore": "",
+            "LiveServer": 0,
+            "LiveMatchStatus": {
+              "2": "",
+              "42": ""
+            },
+            "CurrentPeriod": 0,
+            "LiveScoresRCard": "",
+            "EventAddedExtraTime": 0,
+            "MatchInfo": {
+              "2": "",
+              "42": ""
+            },
+            "IsLiveFinished": false,
+            "IsLiveStarted": false,
+            "LiveMatchShortStatus": {
+              "2": "",
+              "42": ""
+            }
+          },
+          "marketCount": 0,
+          "competitors": [
+            {
+              "type": 1,
+              "id": 1847,
+              "name": {
+                "2": "Rostov",
+                "42": "Rostov"
+              },
+              "shortName": {
+                "2": "Rostov",
+                "42": "Rostov"
+              }
+            },
+            {
+              "type": 2,
+              "id": 237687,
+              "name": {
+                "2": "Akron Tolyatti",
+                "42": "Akron Tolyatti"
+              },
+              "shortName": {
+                "2": "Akron Tolyatti",
+                "42": "Akron Tolyatti"
+              }
+            }
+          ],
+          "isOutright": false,
+          "periods": [],
+          "periodShortName": null
+        },
+        {
+          "provider": "digitain",
+          "matchType": 0,
+          "mType": "prematch",
+          "idMatch": "41338308",
+          "partTypeId": 0,
+          "periodId": 0,
+          "matchDateTime": 1791549000000,
+          "comment": {
+            "2": "",
+            "42": ""
+          },
+          "idSport": "1",
+          "sportName": {
+            "2": "Football",
+            "42": "Fotbal"
+          },
+          "sportShortName": {
+            "2": "Football",
+            "42": "Fotbal"
+          },
+          "idCategory": "1306",
+          "categoryName": {
+            "2": "Egypt",
+            "42": "Egipt"
+          },
+          "categoryShortName": {
+            "2": "Egypt",
+            "42": "Egipt"
+          },
+          "idTournament": "55617",
+          "tournamentName": {
+            "2": "Egypt. 2nd Division A",
+            "42": "Egipt - Liga 2A"
+          },
+          "tournamentShortName": {
+            "2": "Egypt. 2nd Division A",
+            "42": "Egipt - Liga 2A"
+          },
+          "bettingStatus": true,
+          "active": true,
+          "position": 2147483647,
+          "team1Name": {
+            "2": "Telecom Egypt",
+            "42": "Telecom Egipt"
+          },
+          "idTeam1": 404713,
+          "team1ShortName": {
+            "2": "Telecom Egypt",
+            "42": "Telecom Egipt"
+          },
+          "team1Logo": 0,
+          "team2Name": {
+            "2": "El Mansoura",
+            "42": "El Mansoura"
+          },
+          "idTeam2": 567183,
+          "team2ShortName": {
+            "2": "El Mansoura",
+            "42": "El Mansoura"
+          },
+          "team2Logo": 0,
+          "hasLiveTV": false,
+          "hasScout": false,
+          "head2HeadId": 0,
+          "headToHeadSportId": 1,
+          "matchBets": [
+            {
+              "idBet": "1",
+              "idMb": "41338308/1",
+              "mbChanged": false,
+              "mbPosition": 200001,
+              "mbActive": true,
+              "mbDisplayName": {
+                "2": "Result",
+                "42": "Final"
+              },
+              "mbOutcomes": [
+                {
+                  "idMatch": "41338308",
+                  "idBet": "1",
+                  "idMbo": "7204712205",
+                  "idBo": "1/1",
+                  "mboActive": true,
+                  "isLive": false,
+                  "mboType": {
+                    "2": "1",
+                    "42": "1"
+                  },
+                  "mboDisplayName": {
+                    "2": "1",
+                    "42": "1"
+                  },
+                  "mboOddValue": 1.98,
+                  "bValue": 1.98,
+                  "mboPosition": 200001,
+                  "mboEventPosition": 9223372036844775000,
+                  "mboOrder": 1,
+                  "mboCode": 1,
+                  "isCashoutEnabled": true,
+                  "isExpressDenied": false,
+                  "argument": null,
+                  "sign": false,
+                  "main": false,
+                  "superMain": false,
+                  "betName": {
+                    "2": "Result",
+                    "42": "Final"
+                  }
+                },
+                {
+                  "idMatch": "41338308",
+                  "idBet": "1",
+                  "idMbo": "7204712206",
+                  "idBo": "1/2",
+                  "mboActive": true,
+                  "isLive": false,
+                  "mboType": {
+                    "2": "X",
+                    "42": "X"
+                  },
+                  "mboDisplayName": {
+                    "2": "X",
+                    "42": "X"
+                  },
+                  "mboOddValue": 2.8,
+                  "bValue": 2.8,
+                  "mboPosition": 200001,
+                  "mboEventPosition": 9223372036844775000,
+                  "mboOrder": 2,
+                  "mboCode": 2,
+                  "isCashoutEnabled": true,
+                  "isExpressDenied": false,
+                  "argument": null,
+                  "sign": false,
+                  "main": false,
+                  "superMain": false,
+                  "betName": {
+                    "2": "Result",
+                    "42": "Final"
+                  }
+                },
+                {
+                  "idMatch": "41338308",
+                  "idBet": "1",
+                  "idMbo": "7204712207",
+                  "idBo": "1/3",
+                  "mboActive": true,
+                  "isLive": false,
+                  "mboType": {
+                    "2": "2",
+                    "42": "2"
+                  },
+                  "mboDisplayName": {
+                    "2": "2",
+                    "42": "2"
+                  },
+                  "mboOddValue": 3.9,
+                  "bValue": 3.9,
+                  "mboPosition": 200001,
+                  "mboEventPosition": 9223372036844775000,
+                  "mboOrder": 3,
+                  "mboCode": 3,
+                  "isCashoutEnabled": true,
+                  "isExpressDenied": false,
+                  "argument": null,
+                  "sign": false,
+                  "main": false,
+                  "superMain": false,
+                  "betName": {
+                    "2": "Result",
+                    "42": "Final"
+                  }
+                }
+              ]
+            }
+          ],
+          "DDTTCKS": 0,
+          "currentStatus": {
+            "HomeTeamScore": 0,
+            "AwayTeamScore": 0,
+            "LiveEventTime": 0,
+            "LiveEventSecond": 0,
+            "LiveSetScore": "",
+            "LiveSetAltScore": "",
+            "LiveGameScore": "",
+            "LiveServer": 0,
+            "LiveMatchStatus": {
+              "2": "",
+              "42": ""
+            },
+            "CurrentPeriod": 0,
+            "LiveScoresRCard": "",
+            "EventAddedExtraTime": 0,
+            "MatchInfo": {
+              "2": "",
+              "42": ""
+            },
+            "IsLiveFinished": false,
+            "IsLiveStarted": false,
+            "LiveMatchShortStatus": {
+              "2": "",
+              "42": ""
+            }
+          },
+          "marketCount": 0,
+          "competitors": [
+            {
+              "type": 1,
+              "id": 404713,
+              "name": {
+                "2": "Telecom Egypt",
+                "42": "Telecom Egipt"
+              },
+              "shortName": {
+                "2": "Telecom Egypt",
+                "42": "Telecom Egipt"
+              }
+            },
+            {
+              "type": 2,
+              "id": 567183,
+              "name": {
+                "2": "El Mansoura",
+                "42": "El Mansoura"
+              },
+              "shortName": {
+                "2": "El Mansoura",
+                "42": "El Mansoura"
+              }
+            }
+          ],
+          "isOutright": false,
+          "periods": [],
+          "periodShortName": null
+        },
+        {
+          "provider": "digitain",
+          "matchType": 0,
+          "mType": "prematch",
+          "idMatch": "41107662",
+          "partTypeId": 0,
+          "periodId": 0,
+          "matchDateTime": 1791759600000,
+          "comment": {
+            "2": "",
+            "42": ""
+          },
+          "idSport": "1",
+          "sportName": {
+            "2": "Football",
+            "42": "Fotbal"
+          },
+          "sportShortName": {
+            "2": "Football",
+            "42": "Fotbal"
+          },
+          "idCategory": "1298",
+          "categoryName": {
+            "2": "Mexico",
+            "42": "Mexic"
+          },
+          "categoryShortName": {
+            "2": "Mexico",
+            "42": "Mexic"
+          },
+          "idTournament": "42659",
+          "tournamentName": {
+            "2": "Mexico. Liga MX",
+            "42": "Mexic - Liga MX"
+          },
+          "tournamentShortName": {
+            "2": "Mexico. Liga MX",
+            "42": "Mexic - Liga MX"
+          },
+          "bettingStatus": true,
+          "active": true,
+          "position": 2147483647,
+          "team1Name": {
+            "2": "Atletico San Luis",
+            "42": "Atletico San Luis"
+          },
+          "idTeam1": 192945,
+          "team1ShortName": {
+            "2": "Atletico San Luis",
+            "42": "Atletico San Luis"
+          },
+          "team1Logo": 0,
+          "team2Name": {
+            "2": "Santos Laguna",
+            "42": "Santos Laguna"
+          },
+          "idTeam2": 753,
+          "team2ShortName": {
+            "2": "Santos Laguna",
+            "42": "Santos Laguna"
+          },
+          "team2Logo": 0,
+          "hasLiveTV": false,
+          "hasScout": false,
+          "head2HeadId": 1893306,
+          "headToHeadSportId": 1,
+          "matchBets": [
+            {
+              "idBet": "1",
+              "idMb": "41107662/1",
+              "mbChanged": false,
+              "mbPosition": 200001,
+              "mbActive": true,
+              "mbDisplayName": {
+                "2": "Result",
+                "42": "Final"
+              },
+              "mbOutcomes": [
+                {
+                  "idMatch": "41107662",
+                  "idBet": "1",
+                  "idMbo": "7169596745",
+                  "idBo": "1/1",
+                  "mboActive": true,
+                  "isLive": false,
+                  "mboType": {
+                    "2": "1",
+                    "42": "1"
+                  },
+                  "mboDisplayName": {
+                    "2": "1",
+                    "42": "1"
+                  },
+                  "mboOddValue": 1.96,
+                  "bValue": 1.96,
+                  "mboPosition": 200001,
+                  "mboEventPosition": 9223372036844775000,
+                  "mboOrder": 1,
+                  "mboCode": 1,
+                  "isCashoutEnabled": true,
+                  "isExpressDenied": false,
+                  "argument": null,
+                  "sign": false,
+                  "main": false,
+                  "superMain": false,
+                  "betName": {
+                    "2": "Result",
+                    "42": "Final"
+                  }
+                },
+                {
+                  "idMatch": "41107662",
+                  "idBet": "1",
+                  "idMbo": "7169596746",
+                  "idBo": "1/2",
+                  "mboActive": true,
+                  "isLive": false,
+                  "mboType": {
+                    "2": "X",
+                    "42": "X"
+                  },
+                  "mboDisplayName": {
+                    "2": "X",
+                    "42": "X"
+                  },
+                  "mboOddValue": 3.7,
+                  "bValue": 3.7,
+                  "mboPosition": 200001,
+                  "mboEventPosition": 9223372036844775000,
+                  "mboOrder": 2,
+                  "mboCode": 2,
+                  "isCashoutEnabled": true,
+                  "isExpressDenied": false,
+                  "argument": null,
+                  "sign": false,
+                  "main": false,
+                  "superMain": false,
+                  "betName": {
+                    "2": "Result",
+                    "42": "Final"
+                  }
+                },
+                {
+                  "idMatch": "41107662",
+                  "idBet": "1",
+                  "idMbo": "7169596747",
+                  "idBo": "1/3",
+                  "mboActive": true,
+                  "isLive": false,
+                  "mboType": {
+                    "2": "2",
+                    "42": "2"
+                  },
+                  "mboDisplayName": {
+                    "2": "2",
+                    "42": "2"
+                  },
+                  "mboOddValue": 3.6,
+                  "bValue": 3.6,
+                  "mboPosition": 200001,
+                  "mboEventPosition": 9223372036844775000,
+                  "mboOrder": 3,
+                  "mboCode": 3,
+                  "isCashoutEnabled": true,
+                  "isExpressDenied": false,
+                  "argument": null,
+                  "sign": false,
+                  "main": false,
+                  "superMain": false,
+                  "betName": {
+                    "2": "Result",
+                    "42": "Final"
+                  }
+                }
+              ]
+            }
+          ],
+          "DDTTCKS": 0,
+          "currentStatus": {
+            "HomeTeamScore": 0,
+            "AwayTeamScore": 0,
+            "LiveEventTime": 0,
+            "LiveEventSecond": 0,
+            "LiveSetScore": "",
+            "LiveSetAltScore": "",
+            "LiveGameScore": "",
+            "LiveServer": 0,
+            "LiveMatchStatus": {
+              "2": "",
+              "42": ""
+            },
+            "CurrentPeriod": 0,
+            "LiveScoresRCard": "",
+            "EventAddedExtraTime": 0,
+            "MatchInfo": {
+              "2": "",
+              "42": ""
+            },
+            "IsLiveFinished": false,
+            "IsLiveStarted": false,
+            "LiveMatchShortStatus": {
+              "2": "",
+              "42": ""
+            }
+          },
+          "marketCount": 50,
+          "competitors": [
+            {
+              "type": 1,
+              "id": 192945,
+              "name": {
+                "2": "Atletico San Luis",
+                "42": "Atletico San Luis"
+              },
+              "shortName": {
+                "2": "Atletico San Luis",
+                "42": "Atletico San Luis"
+              }
+            },
+            {
+              "type": 2,
+              "id": 753,
+              "name": {
+                "2": "Santos Laguna",
+                "42": "Santos Laguna"
+              },
+              "shortName": {
+                "2": "Santos Laguna",
+                "42": "Santos Laguna"
+              }
+            }
+          ],
+          "isOutright": false,
+          "periods": [],
+          "periodShortName": null
+        },
+        {
+          "provider": "digitain",
+          "matchType": 0,
+          "mType": "prematch",
+          "idMatch": "41268310",
+          "partTypeId": 0,
+          "periodId": 0,
+          "matchDateTime": 1791568800000,
+          "comment": {
+            "2": "",
+            "42": ""
+          },
+          "idSport": "1",
+          "sportName": {
+            "2": "Football",
+            "42": "Fotbal"
+          },
+          "sportShortName": {
+            "2": "Football",
+            "42": "Fotbal"
+          },
+          "idCategory": "1295",
+          "categoryName": {
+            "2": "Netherlands",
+            "42": "Olanda"
+          },
+          "categoryShortName": {
+            "2": "Netherlands",
+            "42": "Olanda"
+          },
+          "idTournament": "4618",
+          "tournamentName": {
+            "2": "Netherlands. Eerste Divisie",
+            "42": "Olanda - Eerste Divisie"
+          },
+          "tournamentShortName": {
+            "2": "Netherlands. Eerste Divisie",
+            "42": "Olanda - Eerste Divisie"
+          },
+          "bettingStatus": true,
+          "active": true,
+          "position": 2147483647,
+          "team1Name": {
+            "2": "Jong Ajax",
+            "42": "Jong Ajax"
+          },
+          "idTeam1": 17140,
+          "team1ShortName": {
+            "2": "Jong Ajax",
+            "42": "Jong Ajax"
+          },
+          "team1Logo": 0,
+          "team2Name": {
+            "2": "Venlo",
+            "42": "Venlo"
+          },
+          "idTeam2": 563,
+          "team2ShortName": {
+            "2": "Venlo",
+            "42": "Venlo"
+          },
+          "team2Logo": 956,
+          "hasLiveTV": false,
+          "hasScout": false,
+          "head2HeadId": 1898376,
+          "headToHeadSportId": 1,
+          "matchBets": [
+            {
+              "idBet": "1",
+              "idMb": "41268310/1",
+              "mbChanged": false,
+              "mbPosition": 200001,
+              "mbActive": true,
+              "mbDisplayName": {
+                "2": "Result",
+                "42": "Final"
+              },
+              "mbOutcomes": [
+                {
+                  "idMatch": "41268310",
+                  "idBet": "1",
+                  "idMbo": "7193973829",
+                  "idBo": "1/1",
+                  "mboActive": true,
+                  "isLive": false,
+                  "mboType": {
+                    "2": "1",
+                    "42": "1"
+                  },
+                  "mboDisplayName": {
+                    "2": "1",
+                    "42": "1"
+                  },
+                  "mboOddValue": 2.78,
+                  "bValue": 2.78,
+                  "mboPosition": 200001,
+                  "mboEventPosition": 9223372036844775000,
+                  "mboOrder": 1,
+                  "mboCode": 1,
+                  "isCashoutEnabled": true,
+                  "isExpressDenied": false,
+                  "argument": null,
+                  "sign": false,
+                  "main": false,
+                  "superMain": false,
+                  "betName": {
+                    "2": "Result",
+                    "42": "Final"
+                  }
+                },
+                {
+                  "idMatch": "41268310",
+                  "idBet": "1",
+                  "idMbo": "7193973830",
+                  "idBo": "1/2",
+                  "mboActive": true,
+                  "isLive": false,
+                  "mboType": {
+                    "2": "X",
+                    "42": "X"
+                  },
+                  "mboDisplayName": {
+                    "2": "X",
+                    "42": "X"
+                  },
+                  "mboOddValue": 4.1,
+                  "bValue": 4.1,
+                  "mboPosition": 200001,
+                  "mboEventPosition": 9223372036844775000,
+                  "mboOrder": 2,
+                  "mboCode": 2,
+                  "isCashoutEnabled": true,
+                  "isExpressDenied": false,
+                  "argument": null,
+                  "sign": false,
+                  "main": false,
+                  "superMain": false,
+                  "betName": {
+                    "2": "Result",
+                    "42": "Final"
+                  }
+                },
+                {
+                  "idMatch": "41268310",
+                  "idBet": "1",
+                  "idMbo": "7193973831",
+                  "idBo": "1/3",
+                  "mboActive": true,
+                  "isLive": false,
+                  "mboType": {
+                    "2": "2",
+                    "42": "2"
+                  },
+                  "mboDisplayName": {
+                    "2": "2",
+                    "42": "2"
+                  },
+                  "mboOddValue": 2.15,
+                  "bValue": 2.15,
+                  "mboPosition": 200001,
+                  "mboEventPosition": 9223372036844775000,
+                  "mboOrder": 3,
+                  "mboCode": 3,
+                  "isCashoutEnabled": true,
+                  "isExpressDenied": false,
+                  "argument": null,
+                  "sign": false,
+                  "main": false,
+                  "superMain": false,
+                  "betName": {
+                    "2": "Result",
+                    "42": "Final"
+                  }
+                }
+              ]
+            }
+          ],
+          "DDTTCKS": 0,
+          "currentStatus": {
+            "HomeTeamScore": 0,
+            "AwayTeamScore": 0,
+            "LiveEventTime": 0,
+            "LiveEventSecond": 0,
+            "LiveSetScore": "",
+            "LiveSetAltScore": "",
+            "LiveGameScore": "",
+            "LiveServer": 0,
+            "LiveMatchStatus": {
+              "2": "",
+              "42": ""
+            },
+            "CurrentPeriod": 0,
+            "LiveScoresRCard": "",
+            "EventAddedExtraTime": 0,
+            "MatchInfo": {
+              "2": "",
+              "42": ""
+            },
+            "IsLiveFinished": false,
+            "IsLiveStarted": false,
+            "LiveMatchShortStatus": {
+              "2": "",
+              "42": ""
+            }
+          },
+          "marketCount": 215,
+          "competitors": [
+            {
+              "type": 1,
+              "id": 17140,
+              "name": {
+                "2": "Jong Ajax",
+                "42": "Jong Ajax"
+              },
+              "shortName": {
+                "2": "Jong Ajax",
+                "42": "Jong Ajax"
+              }
+            },
+            {
+              "type": 2,
+              "id": 563,
+              "name": {
+                "2": "Venlo",
+                "42": "Venlo"
+              },
+              "shortName": {
+                "2": "Venlo",
+                "42": "Venlo"
+              }
+            }
+          ],
+          "isOutright": false,
+          "periods": [],
+          "periodShortName": null
+        },
+        {
+          "provider": "digitain",
+          "matchType": 0,
+          "mType": "prematch",
+          "idMatch": "41304231",
+          "partTypeId": 0,
+          "periodId": 0,
+          "matchDateTime": 1791853800000,
+          "comment": {
+            "2": "",
+            "42": ""
+          },
+          "idSport": "1",
+          "sportName": {
+            "2": "Football",
+            "42": "Fotbal"
+          },
+          "sportShortName": {
+            "2": "Football",
+            "42": "Fotbal"
+          },
+          "idCategory": "1406",
+          "categoryName": {
+            "2": "Colombia",
+            "42": "Columbia"
+          },
+          "categoryShortName": {
+            "2": "Colombia",
+            "42": "Columbia"
+          },
+          "idTournament": "5284",
+          "tournamentName": {
+            "2": "Colombia. Primera A",
+            "42": "Columbia - Primera A - Clausura"
+          },
+          "tournamentShortName": {
+            "2": "Colombia. Primera A",
+            "42": "Columbia - Primera A - Clausura"
+          },
+          "bettingStatus": true,
+          "active": true,
+          "position": 2147483647,
+          "team1Name": {
+            "2": "Boyaca Chico",
+            "42": "Boyaca Chico"
+          },
+          "idTeam1": 214733,
+          "team1ShortName": {
+            "2": "Boyaca Chico",
+            "42": "Boyaca Chico"
+          },
+          "team1Logo": 0,
+          "team2Name": {
+            "2": "Cucuta Deportivo",
+            "42": "Cucuta Deportivo"
+          },
+          "idTeam2": 471415,
+          "team2ShortName": {
+            "2": "Cucuta Deportivo",
+            "42": "Cucuta Deportivo"
+          },
+          "team2Logo": 0,
+          "hasLiveTV": false,
+          "hasScout": false,
+          "head2HeadId": 1978858,
+          "headToHeadSportId": 1,
+          "matchBets": [
+            {
+              "idBet": "1",
+              "idMb": "41304231/1",
+              "mbChanged": false,
+              "mbPosition": 200001,
+              "mbActive": true,
+              "mbDisplayName": {
+                "2": "Result",
+                "42": "Final"
+              },
+              "mbOutcomes": [
+                {
+                  "idMatch": "41304231",
+                  "idBet": "1",
+                  "idMbo": "7199496367",
+                  "idBo": "1/1",
+                  "mboActive": true,
+                  "isLive": false,
+                  "mboType": {
+                    "2": "1",
+                    "42": "1"
+                  },
+                  "mboDisplayName": {
+                    "2": "1",
+                    "42": "1"
+                  },
+                  "mboOddValue": 2.2,
+                  "bValue": 2.2,
+                  "mboPosition": 200001,
+                  "mboEventPosition": 9223372036844775000,
+                  "mboOrder": 1,
+                  "mboCode": 1,
+                  "isCashoutEnabled": true,
+                  "isExpressDenied": false,
+                  "argument": null,
+                  "sign": false,
+                  "main": false,
+                  "superMain": false,
+                  "betName": {
+                    "2": "Result",
+                    "42": "Final"
+                  }
+                },
+                {
+                  "idMatch": "41304231",
+                  "idBet": "1",
+                  "idMbo": "7199496368",
+                  "idBo": "1/2",
+                  "mboActive": true,
+                  "isLive": false,
+                  "mboType": {
+                    "2": "X",
+                    "42": "X"
+                  },
+                  "mboDisplayName": {
+                    "2": "X",
+                    "42": "X"
+                  },
+                  "mboOddValue": 3,
+                  "bValue": 3,
+                  "mboPosition": 200001,
+                  "mboEventPosition": 9223372036844775000,
+                  "mboOrder": 2,
+                  "mboCode": 2,
+                  "isCashoutEnabled": true,
+                  "isExpressDenied": false,
+                  "argument": null,
+                  "sign": false,
+                  "main": false,
+                  "superMain": false,
+                  "betName": {
+                    "2": "Result",
+                    "42": "Final"
+                  }
+                },
+                {
+                  "idMatch": "41304231",
+                  "idBet": "1",
+                  "idMbo": "7199496369",
+                  "idBo": "1/3",
+                  "mboActive": true,
+                  "isLive": false,
+                  "mboType": {
+                    "2": "2",
+                    "42": "2"
+                  },
+                  "mboDisplayName": {
+                    "2": "2",
+                    "42": "2"
+                  },
+                  "mboOddValue": 3.4,
+                  "bValue": 3.4,
+                  "mboPosition": 200001,
+                  "mboEventPosition": 9223372036844775000,
+                  "mboOrder": 3,
+                  "mboCode": 3,
+                  "isCashoutEnabled": true,
+                  "isExpressDenied": false,
+                  "argument": null,
+                  "sign": false,
+                  "main": false,
+                  "superMain": false,
+                  "betName": {
+                    "2": "Result",
+                    "42": "Final"
+                  }
+                }
+              ]
+            }
+          ],
+          "DDTTCKS": 0,
+          "currentStatus": {
+            "HomeTeamScore": 0,
+            "AwayTeamScore": 0,
+            "LiveEventTime": 0,
+            "LiveEventSecond": 0,
+            "LiveSetScore": "",
+            "LiveSetAltScore": "",
+            "LiveGameScore": "",
+            "LiveServer": 0,
+            "LiveMatchStatus": {
+              "2": "",
+              "42": ""
+            },
+            "CurrentPeriod": 0,
+            "LiveScoresRCard": "",
+            "EventAddedExtraTime": 0,
+            "MatchInfo": {
+              "2": "",
+              "42": ""
+            },
+            "IsLiveFinished": false,
+            "IsLiveStarted": false,
+            "LiveMatchShortStatus": {
+              "2": "",
+              "42": ""
+            }
+          },
+          "marketCount": 0,
+          "competitors": [
+            {
+              "type": 1,
+              "id": 214733,
+              "name": {
+                "2": "Boyaca Chico",
+                "42": "Boyaca Chico"
+              },
+              "shortName": {
+                "2": "Boyaca Chico",
+                "42": "Boyaca Chico"
+              }
+            },
+            {
+              "type": 2,
+              "id": 471415,
+              "name": {
+                "2": "Cucuta Deportivo",
+                "42": "Cucuta Deportivo"
+              },
+              "shortName": {
+                "2": "Cucuta Deportivo",
+                "42": "Cucuta Deportivo"
+              }
+            }
+          ],
+          "isOutright": false,
+          "periods": [],
+          "periodShortName": null
+        },
+        {
+          "provider": "digitain",
+          "matchType": 0,
+          "mType": "prematch",
+          "idMatch": "41317545",
+          "partTypeId": 0,
+          "periodId": 0,
+          "matchDateTime": 1791659700000,
+          "comment": {
+            "2": "Champions Group",
+            "42": "Grupa Campionilor"
+          },
+          "idSport": "1",
+          "sportName": {
+            "2": "Football",
+            "42": "Fotbal"
+          },
+          "sportShortName": {
+            "2": "Football",
+            "42": "Fotbal"
+          },
+          "idCategory": "1344",
+          "categoryName": {
+            "2": "Iceland",
+            "42": "Islanda"
+          },
+          "categoryShortName": {
+            "2": "Iceland",
+            "42": "Islanda"
+          },
+          "idTournament": "5445",
+          "tournamentName": {
+            "2": "Iceland. Premier League",
+            "42": "Islanda - Premier League"
+          },
+          "tournamentShortName": {
+            "2": "Iceland. Premier League",
+            "42": "Islanda - Premier League"
+          },
+          "bettingStatus": true,
+          "active": true,
+          "position": 2147483647,
+          "team1Name": {
+            "2": "Fram",
+            "42": "Fram"
+          },
+          "idTeam1": 90620,
+          "team1ShortName": {
+            "2": "Fram",
+            "42": "Fram"
+          },
+          "team1Logo": 1529,
+          "team2Name": {
+            "2": "KR Reykjavik",
+            "42": "KR Reykjavik"
+          },
+          "idTeam2": 962,
+          "team2ShortName": {
+            "2": "KR Reykjavik",
+            "42": "KR Reykjavik"
+          },
+          "team2Logo": 109,
+          "hasLiveTV": false,
+          "hasScout": false,
+          "head2HeadId": 1978126,
+          "headToHeadSportId": 1,
+          "matchBets": [
+            {
+              "idBet": "1",
+              "idMb": "41317545/1",
+              "mbChanged": false,
+              "mbPosition": 200001,
+              "mbActive": true,
+              "mbDisplayName": {
+                "2": "Result",
+                "42": "Final"
+              },
+              "mbOutcomes": [
+                {
+                  "idMatch": "41317545",
+                  "idBet": "1",
+                  "idMbo": "7201501994",
+                  "idBo": "1/1",
+                  "mboActive": true,
+                  "isLive": false,
+                  "mboType": {
+                    "2": "1",
+                    "42": "1"
+                  },
+                  "mboDisplayName": {
+                    "2": "1",
+                    "42": "1"
+                  },
+                  "mboOddValue": 2.18,
+                  "bValue": 2.26,
+                  "mboPosition": 200001,
+                  "mboEventPosition": 9223372036844775000,
+                  "mboOrder": 1,
+                  "mboCode": 1,
+                  "isCashoutEnabled": true,
+                  "isExpressDenied": false,
+                  "argument": null,
+                  "sign": false,
+                  "main": false,
+                  "superMain": false,
+                  "betName": {
+                    "2": "Result",
+                    "42": "Final"
+                  }
+                },
+                {
+                  "idMatch": "41317545",
+                  "idBet": "1",
+                  "idMbo": "7201501995",
+                  "idBo": "1/2",
+                  "mboActive": true,
+                  "isLive": false,
+                  "mboType": {
+                    "2": "X",
+                    "42": "X"
+                  },
+                  "mboDisplayName": {
+                    "2": "X",
+                    "42": "X"
+                  },
+                  "mboOddValue": 4.35,
+                  "bValue": 4.5,
+                  "mboPosition": 200001,
+                  "mboEventPosition": 9223372036844775000,
+                  "mboOrder": 2,
+                  "mboCode": 2,
+                  "isCashoutEnabled": true,
+                  "isExpressDenied": false,
+                  "argument": null,
+                  "sign": false,
+                  "main": false,
+                  "superMain": false,
+                  "betName": {
+                    "2": "Result",
+                    "42": "Final"
+                  }
+                },
+                {
+                  "idMatch": "41317545",
+                  "idBet": "1",
+                  "idMbo": "7201501996",
+                  "idBo": "1/3",
+                  "mboActive": true,
+                  "isLive": false,
+                  "mboType": {
+                    "2": "2",
+                    "42": "2"
+                  },
+                  "mboDisplayName": {
+                    "2": "2",
+                    "42": "2"
+                  },
+                  "mboOddValue": 2.39,
+                  "bValue": 2.47,
+                  "mboPosition": 200001,
+                  "mboEventPosition": 9223372036844775000,
+                  "mboOrder": 3,
+                  "mboCode": 3,
+                  "isCashoutEnabled": true,
+                  "isExpressDenied": false,
+                  "argument": null,
+                  "sign": false,
+                  "main": false,
+                  "superMain": false,
+                  "betName": {
+                    "2": "Result",
+                    "42": "Final"
+                  }
+                }
+              ]
+            }
+          ],
+          "DDTTCKS": 0,
+          "currentStatus": {
+            "HomeTeamScore": 0,
+            "AwayTeamScore": 0,
+            "LiveEventTime": 0,
+            "LiveEventSecond": 0,
+            "LiveSetScore": "",
+            "LiveSetAltScore": "",
+            "LiveGameScore": "",
+            "LiveServer": 0,
+            "LiveMatchStatus": {
+              "2": "",
+              "42": ""
+            },
+            "CurrentPeriod": 0,
+            "LiveScoresRCard": "",
+            "EventAddedExtraTime": 0,
+            "MatchInfo": {
+              "2": "",
+              "42": ""
+            },
+            "IsLiveFinished": false,
+            "IsLiveStarted": false,
+            "LiveMatchShortStatus": {
+              "2": "",
+              "42": ""
+            }
+          },
+          "marketCount": 214,
+          "competitors": [
+            {
+              "type": 1,
+              "id": 90620,
+              "name": {
+                "2": "Fram",
+                "42": "Fram"
+              },
+              "shortName": {
+                "2": "Fram",
+                "42": "Fram"
+              }
+            },
+            {
+              "type": 2,
+              "id": 962,
+              "name": {
+                "2": "KR Reykjavik",
+                "42": "KR Reykjavik"
+              },
+              "shortName": {
+                "2": "KR Reykjavik",
+                "42": "KR Reykjavik"
+              }
+            }
+          ],
+          "isOutright": false,
+          "periods": [],
+          "periodShortName": null
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,1269 @@
+{
+  "dates": [
+    {
+      "dateTime": "2026-09-21T20:00:00Z",
+      "eventIds": [
+        17964429,
+        17946258,
+        17965238,
+        17965236
+      ]
+    }
+  ],
+  "topSports": [
+    {
+      "id": 66,
+      "name": "Soccer",
+      "iconName": "soccer",
+      "hasStream": false,
+      "count": 1261
+    },
+    {
+      "id": 67,
+      "name": "Basketball",
+      "iconName": "basketball",
+      "hasStream": false,
+      "count": 217
+    },
+    {
+      "id": 68,
+      "name": "Tennis",
+      "iconName": "tennis",
+      "hasStream": false,
+      "count": 467
+    },
+    {
+      "id": 77,
+      "name": "Table Tennis",
+      "iconName": "table-tennis",
+      "hasStream": false,
+      "count": 331
+    },
+    {
+      "id": 70,
+      "name": "Ice Hockey",
+      "iconName": "ice-hockey",
+      "hasStream": false,
+      "count": 187
+    },
+    {
+      "id": 69,
+      "name": "Volleyball",
+      "iconName": "volleyball",
+      "hasStream": false,
+      "count": 79
+    },
+    {
+      "id": -1,
+      "name": "Other",
+      "iconName": "Other",
+      "hasStream": false,
+      "count": 766
+    }
+  ],
+  "headers": [
+    {
+      "typeId": 1,
+      "name": "1x2",
+      "mst": 0,
+      "odds": [
+        {
+          "id": 1,
+          "name": "1"
+        },
+        {
+          "id": 2,
+          "name": "X"
+        },
+        {
+          "id": 3,
+          "name": "2"
+        }
+      ]
+    },
+    {
+      "typeId": 18,
+      "name": "Total",
+      "mst": 0,
+      "odds": [
+        {
+          "id": 12,
+          "name": "peste"
+        },
+        {
+          "id": 13,
+          "name": "sub"
+        }
+      ],
+      "specialOdd": {
+        "typeId": 1,
+        "name": "Goluri"
+      }
+    },
+    {
+      "typeId": 29,
+      "name": "Ambele echipe să înscrie",
+      "mst": 0,
+      "odds": [
+        {
+          "id": 74,
+          "name": "da"
+        },
+        {
+          "id": 76,
+          "name": "nu"
+        }
+      ]
+    },
+    {
+      "typeId": 10,
+      "name": "Șansă dublă",
+      "mst": 0,
+      "odds": [
+        {
+          "id": 9,
+          "name": "1X\t"
+        },
+        {
+          "id": 10,
+          "name": "12"
+        },
+        {
+          "id": 11,
+          "name": "X2"
+        }
+      ]
+    },
+    {
+      "typeId": 11,
+      "name": "Egal pariu nul",
+      "mst": 0,
+      "odds": [
+        {
+          "id": 1,
+          "name": "1"
+        },
+        {
+          "id": 3,
+          "name": "2"
+        }
+      ]
+    }
+  ],
+  "pageCount": 1,
+  "page": 1,
+  "markets": [
+    {
+      "oddIds": [
+        4638465304,
+        4638465305,
+        4638465306
+      ],
+      "typeId": 1,
+      "sportMarketId": 70472,
+      "id": 1776871877,
+      "name": "1x2"
+    },
+    {
+      "oddIds": [
+        4638465374,
+        4638465376,
+        4638465375
+      ],
+      "variant": 9,
+      "lines": [],
+      "typeId": 8,
+      "sportMarketId": 70491,
+      "sv": "1",
+      "sn": "Primul",
+      "id": 1776871902,
+      "name": "Golul primul"
+    },
+    {
+      "oddIds": [
+        4638465142,
+        4638465140,
+        4638465141
+      ],
+      "typeId": 10,
+      "sportMarketId": 70495,
+      "id": 1776871840,
+      "name": "Șansă dublă"
+    },
+    {
+      "oddIds": [
+        4638465185,
+        4638465186
+      ],
+      "typeId": 11,
+      "sportMarketId": 70500,
+      "id": 1776871849,
+      "name": "Egal pariu nul"
+    },
+    {
+      "oddIds": [
+        4638465010,
+        4638465011
+      ],
+      "typeId": 18,
+      "sportMarketId": 70520,
+      "sv": "2.5",
+      "sn": "2.5",
+      "id": 1776871798,
+      "name": "Total"
+    },
+    {
+      "oddIds": [
+        4638465078,
+        4638465079
+      ],
+      "typeId": 29,
+      "sportMarketId": 70545,
+      "id": 1776871832,
+      "name": "Ambele echipe să înscrie"
+    },
+    {
+      "oddIds": [
+        4617237488,
+        4617237489,
+        4617237490
+      ],
+      "typeId": 1,
+      "sportMarketId": 70472,
+      "id": 1769648739,
+      "name": "1x2"
+    },
+    {
+      "oddIds": [
+        4617237561,
+        4617237563,
+        4617237562
+      ],
+      "variant": 9,
+      "lines": [],
+      "typeId": 8,
+      "sportMarketId": 70491,
+      "sv": "1",
+      "sn": "Primul",
+      "id": 1769648765,
+      "name": "Golul primul"
+    },
+    {
+      "oddIds": [
+        4617237338,
+        4617237336,
+        4617237337
+      ],
+      "typeId": 10,
+      "sportMarketId": 70495,
+      "id": 1769648704,
+      "name": "Șansă dublă"
+    },
+    {
+      "oddIds": [
+        4617237375,
+        4617237376
+      ],
+      "typeId": 11,
+      "sportMarketId": 70500,
+      "id": 1769648712,
+      "name": "Egal pariu nul"
+    },
+    {
+      "oddIds": [
+        4617237198,
+        4617237199
+      ],
+      "typeId": 18,
+      "sportMarketId": 70520,
+      "sv": "3.5",
+      "sn": "3.5",
+      "id": 1769648660,
+      "name": "Total"
+    },
+    {
+      "oddIds": [
+        4617237268,
+        4617237269
+      ],
+      "typeId": 29,
+      "sportMarketId": 70545,
+      "id": 1769648695,
+      "name": "Ambele echipe să înscrie"
+    },
+    {
+      "oddIds": [
+        4638535234,
+        4638535235,
+        4638535236
+      ],
+      "typeId": 1,
+      "sportMarketId": 70472,
+      "id": 1776901195,
+      "name": "1x2"
+    },
+    {
+      "oddIds": [
+        4638535304,
+        4638535306,
+        4638535305
+      ],
+      "variant": 9,
+      "lines": [],
+      "typeId": 8,
+      "sportMarketId": 70491,
+      "sv": "1",
+      "sn": "Primul",
+      "id": 1776901220,
+      "name": "Golul primul"
+    },
+    {
+      "oddIds": [
+        4638535072,
+        4638535070,
+        4638535071
+      ],
+      "typeId": 10,
+      "sportMarketId": 70495,
+      "id": 1776901158,
+      "name": "Șansă dublă"
+    },
+    {
+      "oddIds": [
+        4638535115,
+        4638535116
+      ],
+      "typeId": 11,
+      "sportMarketId": 70500,
+      "id": 1776901167,
+      "name": "Egal pariu nul"
+    },
+    {
+      "oddIds": [
+        4638534834,
+        4638534835
+      ],
+      "typeId": 18,
+      "sportMarketId": 70520,
+      "sv": "2.5",
+      "sn": "2.5",
+      "id": 1776901064,
+      "name": "Total"
+    },
+    {
+      "oddIds": [
+        4638535008,
+        4638535009
+      ],
+      "typeId": 29,
+      "sportMarketId": 70545,
+      "id": 1776901150,
+      "name": "Ambele echipe să înscrie"
+    },
+    {
+      "oddIds": [
+        4638541128,
+        4638541129,
+        4638541130
+      ],
+      "typeId": 1,
+      "sportMarketId": 70472,
+      "id": 1776903720,
+      "name": "1x2"
+    },
+    {
+      "oddIds": [
+        4638541198,
+        4638541200,
+        4638541199
+      ],
+      "variant": 9,
+      "lines": [],
+      "typeId": 8,
+      "sportMarketId": 70491,
+      "sv": "1",
+      "sn": "Primul",
+      "id": 1776903745,
+      "name": "Golul primul"
+    },
+    {
+      "oddIds": [
+        4638540966,
+        4638540964,
+        4638540965
+      ],
+      "typeId": 10,
+      "sportMarketId": 70495,
+      "id": 1776903683,
+      "name": "Șansă dublă"
+    },
+    {
+      "oddIds": [
+        4638541009,
+        4638541010
+      ],
+      "typeId": 11,
+      "sportMarketId": 70500,
+      "id": 1776903692,
+      "name": "Egal pariu nul"
+    },
+    {
+      "oddIds": [
+        4638540834,
+        4638540835
+      ],
+      "typeId": 18,
+      "sportMarketId": 70520,
+      "sv": "2.5",
+      "sn": "2.5",
+      "id": 1776903641,
+      "name": "Total"
+    },
+    {
+      "oddIds": [
+        4638540902,
+        4638540903
+      ],
+      "typeId": 29,
+      "sportMarketId": 70545,
+      "id": 1776903675,
+      "name": "Ambele echipe să înscrie"
+    }
+  ],
+  "odds": [
+    {
+      "typeId": 1,
+      "price": 3.1429,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 66502,
+      "isDBB": true,
+      "id": 4638465304,
+      "name": "Aubstadt"
+    },
+    {
+      "typeId": 2,
+      "price": 3.5,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4638465305,
+      "name": "Egal"
+    },
+    {
+      "typeId": 3,
+      "price": 2.1,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 68030,
+      "isDBB": true,
+      "id": 4638465306,
+      "name": "FV Illertissen"
+    },
+    {
+      "typeId": 1,
+      "price": 2.1,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 66502,
+      "isDBB": true,
+      "id": 4638465374,
+      "name": "Aubstadt"
+    },
+    {
+      "typeId": 7,
+      "price": 14,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4638465376,
+      "name": "Niciunul"
+    },
+    {
+      "typeId": 3,
+      "price": 1.6924,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 68030,
+      "isDBB": true,
+      "id": 4638465375,
+      "name": "FV Illertissen"
+    },
+    {
+      "typeId": 9,
+      "price": 1.6,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 66502,
+      "isDBB": true,
+      "id": 4638465142,
+      "name": "Aubstadt sau egal"
+    },
+    {
+      "typeId": 10,
+      "price": 1.2728,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4638465140,
+      "name": "Aubstadt sau FV Illertissen"
+    },
+    {
+      "typeId": 11,
+      "price": 1.3,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 68030,
+      "isDBB": true,
+      "id": 4638465141,
+      "name": "Egal sau FV Illertissen"
+    },
+    {
+      "typeId": 1,
+      "price": 2.2858,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 66502,
+      "id": 4638465185,
+      "name": "Aubstadt"
+    },
+    {
+      "typeId": 3,
+      "price": 1.5556,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 68030,
+      "id": 4638465186,
+      "name": "FV Illertissen"
+    },
+    {
+      "typeId": 12,
+      "price": 1.6667,
+      "isMB": true,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4638465010,
+      "name": "Peste 2.5"
+    },
+    {
+      "typeId": 13,
+      "price": 2.1,
+      "isMB": true,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4638465011,
+      "name": "Sub 2.5"
+    },
+    {
+      "typeId": 74,
+      "price": 1.5556,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4638465078,
+      "name": "Da"
+    },
+    {
+      "typeId": 76,
+      "price": 2.2858,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4638465079,
+      "name": "Nu"
+    },
+    {
+      "typeId": 1,
+      "price": 1.4445,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 50687,
+      "isDBB": true,
+      "id": 4617237488,
+      "name": "Rot-Weiss Essen"
+    },
+    {
+      "typeId": 2,
+      "price": 4.75,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4617237489,
+      "name": "Egal"
+    },
+    {
+      "typeId": 3,
+      "price": 5.6667,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 57020,
+      "isDBB": true,
+      "id": 4617237490,
+      "name": "SC Fortuna Cologne"
+    },
+    {
+      "typeId": 1,
+      "price": 1.375,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 50687,
+      "isDBB": true,
+      "id": 4617237561,
+      "name": "Rot-Weiss Essen"
+    },
+    {
+      "typeId": 7,
+      "price": 18,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4617237563,
+      "name": "Niciunul"
+    },
+    {
+      "typeId": 3,
+      "price": 2.8,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 57020,
+      "isDBB": true,
+      "id": 4617237562,
+      "name": "SC Fortuna Cologne"
+    },
+    {
+      "typeId": 9,
+      "price": 1.125,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 50687,
+      "isDBB": true,
+      "id": 4617237338,
+      "name": "Rot-Weiss Essen sau egal"
+    },
+    {
+      "typeId": 10,
+      "price": 1.1667,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4617237336,
+      "name": "Rot-Weiss Essen sau SC Fortuna Cologne"
+    },
+    {
+      "typeId": 11,
+      "price": 2.3,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 57020,
+      "isDBB": true,
+      "id": 4617237337,
+      "name": "Egal sau SC Fortuna Cologne"
+    },
+    {
+      "typeId": 1,
+      "price": 1.1667,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 50687,
+      "id": 4617237375,
+      "name": "Rot-Weiss Essen"
+    },
+    {
+      "typeId": 3,
+      "price": 4.3334,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 57020,
+      "id": 4617237376,
+      "name": "SC Fortuna Cologne"
+    },
+    {
+      "typeId": 12,
+      "price": 2.2858,
+      "isMB": true,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4617237198,
+      "name": "Peste 3.5"
+    },
+    {
+      "typeId": 13,
+      "price": 1.5556,
+      "isMB": true,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4617237199,
+      "name": "Sub 3.5"
+    },
+    {
+      "typeId": 74,
+      "price": 1.7,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4617237268,
+      "name": "Da"
+    },
+    {
+      "typeId": 76,
+      "price": 2.05,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4617237269,
+      "name": "Nu"
+    },
+    {
+      "typeId": 1,
+      "price": 2.5,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 62299,
+      "isDBB": true,
+      "id": 4638535234,
+      "name": "SpVgg Greuther Furth II"
+    },
+    {
+      "typeId": 2,
+      "price": 3.4,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4638535235,
+      "name": "Egal"
+    },
+    {
+      "typeId": 3,
+      "price": 2.6,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 68966,
+      "isDBB": true,
+      "id": 4638535236,
+      "name": "Memmingen"
+    },
+    {
+      "typeId": 1,
+      "price": 1.8889,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 62299,
+      "isDBB": true,
+      "id": 4638535304,
+      "name": "SpVgg Greuther Furth II"
+    },
+    {
+      "typeId": 7,
+      "price": 11,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4638535306,
+      "name": "Niciunul"
+    },
+    {
+      "typeId": 3,
+      "price": 1.9231,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 68966,
+      "isDBB": true,
+      "id": 4638535305,
+      "name": "Memmingen"
+    },
+    {
+      "typeId": 9,
+      "price": 1.4286,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 62299,
+      "isDBB": true,
+      "id": 4638535072,
+      "name": "SpVgg Greuther Furth II sau egal"
+    },
+    {
+      "typeId": 10,
+      "price": 1.2728,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4638535070,
+      "name": "SpVgg Greuther Furth II sau Memmingen"
+    },
+    {
+      "typeId": 11,
+      "price": 1.4445,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 68966,
+      "isDBB": true,
+      "id": 4638535071,
+      "name": "Egal sau Memmingen"
+    },
+    {
+      "typeId": 1,
+      "price": 1.8334,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 62299,
+      "id": 4638535115,
+      "name": "SpVgg Greuther Furth II"
+    },
+    {
+      "typeId": 3,
+      "price": 1.8334,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 68966,
+      "id": 4638535116,
+      "name": "Memmingen"
+    },
+    {
+      "typeId": 12,
+      "price": 1.8334,
+      "isMB": true,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4638534834,
+      "name": "Peste 2.5"
+    },
+    {
+      "typeId": 13,
+      "price": 1.8334,
+      "isMB": true,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4638534835,
+      "name": "Sub 2.5"
+    },
+    {
+      "typeId": 74,
+      "price": 1.7,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4638535008,
+      "name": "Da"
+    },
+    {
+      "typeId": 76,
+      "price": 2.05,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4638535009,
+      "name": "Nu"
+    },
+    {
+      "typeId": 1,
+      "price": 2.25,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 48132,
+      "isDBB": true,
+      "id": 4638541128,
+      "name": "VfB Eichstatt"
+    },
+    {
+      "typeId": 2,
+      "price": 3.5,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4638541129,
+      "name": "Egal"
+    },
+    {
+      "typeId": 3,
+      "price": 2.8572,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 74361,
+      "isDBB": true,
+      "id": 4638541130,
+      "name": "DJK Vilzing"
+    },
+    {
+      "typeId": 1,
+      "price": 1.76,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 48132,
+      "isDBB": true,
+      "id": 4638541198,
+      "name": "VfB Eichstatt"
+    },
+    {
+      "typeId": 7,
+      "price": 14,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4638541200,
+      "name": "Niciunul"
+    },
+    {
+      "typeId": 3,
+      "price": 2,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 74361,
+      "isDBB": true,
+      "id": 4638541199,
+      "name": "DJK Vilzing"
+    },
+    {
+      "typeId": 9,
+      "price": 1.35,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 48132,
+      "isDBB": true,
+      "id": 4638540966,
+      "name": "VfB Eichstatt sau egal"
+    },
+    {
+      "typeId": 10,
+      "price": 1.2728,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4638540964,
+      "name": "VfB Eichstatt sau DJK Vilzing"
+    },
+    {
+      "typeId": 11,
+      "price": 1.5295,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 74361,
+      "isDBB": true,
+      "id": 4638540965,
+      "name": "Egal sau DJK Vilzing"
+    },
+    {
+      "typeId": 1,
+      "price": 1.6667,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 48132,
+      "id": 4638541009,
+      "name": "VfB Eichstatt"
+    },
+    {
+      "typeId": 3,
+      "price": 2.1,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 74361,
+      "id": 4638541010,
+      "name": "DJK Vilzing"
+    },
+    {
+      "typeId": 12,
+      "price": 1.6,
+      "isMB": true,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4638540834,
+      "name": "Peste 2.5"
+    },
+    {
+      "typeId": 13,
+      "price": 2.2,
+      "isMB": true,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4638540835,
+      "name": "Sub 2.5"
+    },
+    {
+      "typeId": 74,
+      "price": 1.5556,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4638540902,
+      "name": "Da"
+    },
+    {
+      "typeId": 76,
+      "price": 2.2858,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4638540903,
+      "name": "Nu"
+    }
+  ],
+  "events": [
+    {
+      "marketIds": [
+        1776871877,
+        1776871902,
+        1776871840,
+        1776871849,
+        1776871798,
+        1776871832
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "code": 685,
+      "hasStream": false,
+      "extId": "fp32_ar:match:690431",
+      "sc": 1576,
+      "mc": 178,
+      "rc": false,
+      "pId": 32,
+      "et": 0,
+      "hasStats": true,
+      "competitorIds": [
+        66502,
+        68030
+      ],
+      "sportId": 66,
+      "catId": 589,
+      "champId": 42093,
+      "status": 0,
+      "startDate": "2026-09-21T20:00:00Z",
+      "id": 17964429,
+      "name": "Aubstadt vs. FV Illertissen"
+    },
+    {
+      "marketIds": [
+        1769648739,
+        1769648765,
+        1769648704,
+        1769648712,
+        1769648660,
+        1769648695
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "code": 3132,
+      "hasStream": false,
+      "extId": "fp32_ar:match:689361",
+      "sc": 2345,
+      "mc": 240,
+      "rc": false,
+      "pId": 32,
+      "et": 0,
+      "hasStats": true,
+      "competitorIds": [
+        50687,
+        57020
+      ],
+      "sportId": 66,
+      "catId": 506,
+      "champId": 3044,
+      "status": 0,
+      "startDate": "2026-09-21T20:00:00Z",
+      "id": 17946258,
+      "name": "Rot-Weiss Essen vs. SC Fortuna Cologne"
+    },
+    {
+      "marketIds": [
+        1776901195,
+        1776901220,
+        1776901158,
+        1776901167,
+        1776901064,
+        1776901150
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "code": 1521,
+      "hasStream": false,
+      "extId": "fp32_ar:match:690436",
+      "sc": 1569,
+      "mc": 179,
+      "rc": false,
+      "pId": 32,
+      "et": 0,
+      "hasStats": false,
+      "competitorIds": [
+        62299,
+        68966
+      ],
+      "sportId": 66,
+      "catId": 589,
+      "champId": 42093,
+      "status": 0,
+      "startDate": "2026-09-21T20:00:00Z",
+      "id": 17965238,
+      "name": "SpVgg Greuther Furth II vs. Memmingen"
+    },
+    {
+      "marketIds": [
+        1776903720,
+        1776903745,
+        1776903683,
+        1776903692,
+        1776903641,
+        1776903675
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "code": 1324,
+      "hasStream": false,
+      "extId": "fp32_ar:match:690432",
+      "sc": 1578,
+      "mc": 179,
+      "rc": false,
+      "pId": 32,
+      "et": 0,
+      "hasStats": true,
+      "competitorIds": [
+        48132,
+        74361
+      ],
+      "sportId": 66,
+      "catId": 589,
+      "champId": 42093,
+      "status": 0,
+      "startDate": "2026-09-21T20:00:00Z",
+      "id": 17965236,
+      "name": "VfB Eichstatt vs. DJK Vilzing"
+    }
+  ],
+  "sports": [
+    {
+      "catIds": [
+        589,
+        1133,
+        499,
+        506,
+        574,
+        809,
+        1132,
+        602,
+        507,
+        783,
+        517,
+        1134,
+        826,
+        515,
+        561,
+        495,
+        548,
+        497,
+        1173,
+        593,
+        1131,
+        935,
+        510,
+        511,
+        512
+      ],
+      "typeId": 1,
+      "iconName": "soccer",
+      "hasLiveEvents": false,
+      "id": 66,
+      "name": "Soccer"
+    }
+  ],
+  "categories": [
+    {
+      "champIds": [
+        42093
+      ],
+      "iso": "DEU",
+      "hasLiveEvents": false,
+      "id": 589,
+      "name": "Germany Amateur"
+    },
+    {
+      "champIds": [
+        3044
+      ],
+      "iso": "DEU",
+      "hasLiveEvents": false,
+      "id": 506,
+      "name": "Germany"
+    }
+  ],
+  "champs": [
+    {
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "hasLiveEvents": false,
+      "id": 42093,
+      "name": "German Regionalliga"
+    },
+    {
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "hasLiveEvents": false,
+      "id": 3044,
+      "name": "3rd Liga"
+    }
+  ],
+  "competitors": [
+    {
+      "abbreviation": "AUB",
+      "id": 66502,
+      "name": "Aubstadt"
+    },
+    {
+      "abbreviation": "ILL",
+      "id": 68030,
+      "name": "FV Illertissen"
+    },
+    {
+      "abbreviation": "RWE",
+      "id": 50687,
+      "name": "Rot-Weiss Essen"
+    },
+    {
+      "abbreviation": "FOR",
+      "id": 57020,
+      "name": "SC Fortuna Cologne"
+    },
+    {
+      "abbreviation": "SGF",
+      "id": 62299,
+      "name": "SpVgg Greuther Furth II"
+    },
+    {
+      "abbreviation": "MEM",
+      "id": 68966,
+      "name": "Memmingen"
+    },
+    {
+      "abbreviation": "EIC",
+      "id": 48132,
+      "name": "VfB Eichstatt"
+    },
+    {
+      "abbreviation": "VIL",
+      "id": 74361,
+      "name": "DJK Vilzing"
+    }
+  ]
+}

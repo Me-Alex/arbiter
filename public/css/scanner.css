@@ -63,19 +63,34 @@
 }
 
 .summary-label {
-  font-size: 10.5px;
+  font-size: var(--fs-xs);
   text-transform: uppercase;
   letter-spacing: 0.06em;
   color: var(--text-muted);
 }
 
 .summary-detail {
-  font-size: 11.5px;
+  font-size: var(--fs-xs);
   color: var(--text-dim);
 }
 
+/* The data-health verdict on #health-state. scanner.js names one class per
+ * DATA_STATUS value (scanner.js HEALTH_CLASS); before this block existed the
+ * classes were emitted but styled nowhere, so a stale workspace and a fresh
+ * one printed in the same colour. */
+.health-fresh { color: var(--green); }
+.health-stale { color: var(--yellow); }
+.health-partial { color: var(--yellow); }
+.health-empty { color: var(--text-muted); }
+.health-failed { color: var(--red); }
+.health-cancelled { color: var(--text-muted); }
+.health-unknown { color: var(--text-muted); }
+.health-error { color: var(--red); }
+
 @media (max-width: 640px) {
   .scan-summary {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+
+.summary-item { min-width: 0; overflow-wrap: anywhere; }

@@ -1,0 +1,1338 @@
+{
+  "dates": [
+    {
+      "dateTime": "2026-10-12T21:00:00Z",
+      "eventIds": [
+        18023504,
+        18013754,
+        18013749,
+        18023925,
+        18023926,
+        18023924,
+        18023927,
+        18013160,
+        18013161,
+        18018457,
+        18018473,
+        18019198,
+        18019189,
+        18022765,
+        18019026,
+        18019029,
+        18023835,
+        18022996,
+        18018587,
+        18018595,
+        18018639,
+        18013159,
+        18013152,
+        18022897,
+        18018471,
+        18018455,
+        18019192,
+        17946287,
+        18023952,
+        18023953,
+        18023954,
+        17946276,
+        17981947,
+        17998203,
+        18019038,
+        18019031,
+        18023840,
+        18018650,
+        18023000,
+        18018871,
+        18018868,
+        18018602,
+        17961911,
+        18019030,
+        18019039,
+        18018671,
+        18018647,
+        18023834,
+        18018877,
+        18018867
+      ]
+    }
+  ],
+  "topSports": [
+    {
+      "id": 66,
+      "name": "Soccer",
+      "iconName": "soccer",
+      "hasStream": false,
+      "count": 1269
+    },
+    {
+      "id": 68,
+      "name": "Tennis",
+      "iconName": "tennis",
+      "hasStream": false,
+      "count": 437
+    },
+    {
+      "id": 67,
+      "name": "Basketball",
+      "iconName": "basketball",
+      "hasStream": false,
+      "count": 197
+    },
+    {
+      "id": 70,
+      "name": "Ice Hockey",
+      "iconName": "ice-hockey",
+      "hasStream": false,
+      "count": 175
+    },
+    {
+      "id": 77,
+      "name": "Table Tennis",
+      "iconName": "table-tennis",
+      "hasStream": false,
+      "count": 409
+    },
+    {
+      "id": 69,
+      "name": "Volleyball",
+      "iconName": "volleyball",
+      "hasStream": false,
+      "count": 54
+    },
+    {
+      "id": 75,
+      "name": "American Football",
+      "iconName": "american-football",
+      "hasStream": false,
+      "count": 73
+    },
+    {
+      "id": 76,
+      "name": "Baseball",
+      "iconName": "baseball",
+      "hasStream": false,
+      "count": 18
+    },
+    {
+      "id": 101,
+      "name": "Rugby League",
+      "iconName": "rugby-league",
+      "hasStream": false,
+      "count": 9
+    },
+    {
+      "id": 106,
+      "name": "Aussie Rules",
+      "iconName": "aussie-rules",
+      "hasStream": false,
+      "count": 9
+    },
+    {
+      "id": -1,
+      "name": "Other",
+      "iconName": "Other",
+      "hasStream": false,
+      "count": 439
+    }
+  ],
+  "headers": [
+    {
+      "typeId": 1,
+      "name": "1x2",
+      "mst": 0,
+      "odds": [
+        {
+          "id": 1,
+          "name": "1"
+        },
+        {
+          "id": 2,
+          "name": "X"
+        },
+        {
+          "id": 3,
+          "name": "2"
+        }
+      ]
+    },
+    {
+      "typeId": 18,
+      "name": "Total",
+      "mst": 0,
+      "odds": [
+        {
+          "id": 12,
+          "name": "peste"
+        },
+        {
+          "id": 13,
+          "name": "sub"
+        }
+      ]
+    },
+    {
+      "typeId": 29,
+      "name": "Ambele echipe să înscrie",
+      "mst": 0,
+      "odds": [
+        {
+          "id": 74,
+          "name": "da"
+        },
+        {
+          "id": 76,
+          "name": "nu"
+        }
+      ]
+    }
+  ],
+  "pageCount": 25,
+  "page": 1,
+  "markets": [
+    {
+      "oddIds": [
+        4629249381,
+        4629249382,
+        4629249383
+      ],
+      "typeId": 1,
+      "sportMarketId": 70472,
+      "id": 1773727760,
+      "name": "1x2"
+    },
+    {
+      "oddIds": [
+        4631986983,
+        4631986985,
+        4631986984
+      ],
+      "variant": 9,
+      "lines": [],
+      "typeId": 8,
+      "sportMarketId": 70491,
+      "sv": "1",
+      "sn": "Primul",
+      "id": 1774632199,
+      "name": "Golul 1"
+    },
+    {
+      "oddIds": [
+        4629249297,
+        4629249298
+      ],
+      "typeId": 18,
+      "sportMarketId": 70520,
+      "sv": "0.5",
+      "sn": "0.5",
+      "id": 1773727724,
+      "name": "Total goluri"
+    },
+    {
+      "oddIds": [
+        4637611260,
+        4637611261
+      ],
+      "typeId": 29,
+      "sportMarketId": 70545,
+      "id": 1776543146,
+      "name": "Ambele echipe să înscrie"
+    },
+    {
+      "oddIds": [
+        4638962211,
+        4638962212,
+        4638962213
+      ],
+      "typeId": 1,
+      "sportMarketId": 70472,
+      "id": 1777085314,
+      "name": "1x2"
+    },
+    {
+      "oddIds": [
+        4638962235,
+        4638962237,
+        4638962236
+      ],
+      "variant": 9,
+      "lines": [],
+      "typeId": 8,
+      "sportMarketId": 70491,
+      "sv": "1",
+      "sn": "Primul",
+      "id": 1777085321,
+      "name": "Golul 1"
+    },
+    {
+      "oddIds": [
+        4638962077,
+        4638962078
+      ],
+      "typeId": 18,
+      "sportMarketId": 70520,
+      "sv": "0.5",
+      "sn": "0.5",
+      "id": 1777085270,
+      "name": "Total goluri"
+    },
+    {
+      "oddIds": [
+        4638962135,
+        4638962136
+      ],
+      "typeId": 29,
+      "sportMarketId": 70545,
+      "id": 1777085299,
+      "name": "Ambele echipe să înscrie"
+    },
+    {
+      "oddIds": [
+        4638186524,
+        4638186525,
+        4638186526
+      ],
+      "typeId": 1,
+      "sportMarketId": 70472,
+      "id": 1776743853,
+      "name": "1x2"
+    },
+    {
+      "oddIds": [
+        4638186548,
+        4638186550,
+        4638186549
+      ],
+      "variant": 9,
+      "lines": [],
+      "typeId": 8,
+      "sportMarketId": 70491,
+      "sv": "1",
+      "sn": "Primul",
+      "id": 1776743860,
+      "name": "Golul 1"
+    },
+    {
+      "oddIds": [
+        4638186384,
+        4638186385
+      ],
+      "typeId": 18,
+      "sportMarketId": 70520,
+      "sv": "2.5",
+      "sn": "2.5",
+      "id": 1776743806,
+      "name": "Total goluri"
+    },
+    {
+      "oddIds": [
+        4637195848,
+        4637195849,
+        4637195850
+      ],
+      "typeId": 1,
+      "sportMarketId": 70472,
+      "id": 1776385622,
+      "name": "1x2"
+    },
+    {
+      "oddIds": [
+        4637195891,
+        4637195893,
+        4637195892
+      ],
+      "variant": 9,
+      "lines": [],
+      "typeId": 8,
+      "sportMarketId": 70491,
+      "sv": "1",
+      "sn": "Primul",
+      "id": 1776385636,
+      "name": "Golul 1"
+    },
+    {
+      "oddIds": [
+        4637195687,
+        4637195688
+      ],
+      "typeId": 18,
+      "sportMarketId": 70520,
+      "sv": "2.5",
+      "sn": "2.5",
+      "id": 1776385573,
+      "name": "Total goluri"
+    }
+  ],
+  "odds": [
+    {
+      "typeId": 1,
+      "price": 2.5455,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 54262,
+      "isDBB": true,
+      "id": 4629249381,
+      "name": "Malavan Bandar Anzali FC"
+    },
+    {
+      "typeId": 2,
+      "price": 2.8572,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4629249382,
+      "name": "X"
+    },
+    {
+      "typeId": 3,
+      "price": 2.7143,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 50942,
+      "isDBB": true,
+      "id": 4629249383,
+      "name": "Foolad Khuzestan FC"
+    },
+    {
+      "typeId": 1,
+      "price": 2,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 54262,
+      "isDBB": true,
+      "id": 4631986983,
+      "name": "Malavan Bandar Anzali FC"
+    },
+    {
+      "typeId": 7,
+      "price": 6.3334,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4631986985,
+      "name": "Niciunul"
+    },
+    {
+      "typeId": 3,
+      "price": 2.0834,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 50942,
+      "isDBB": true,
+      "id": 4631986984,
+      "name": "Foolad Khuzestan FC"
+    },
+    {
+      "typeId": 12,
+      "price": 1.1,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4629249297,
+      "name": "Peste 0.5"
+    },
+    {
+      "typeId": 13,
+      "price": 5.5,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4629249298,
+      "name": "Sub 0.5"
+    },
+    {
+      "typeId": 74,
+      "price": 2.2858,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4637611260,
+      "name": "Da"
+    },
+    {
+      "typeId": 76,
+      "price": 1.5556,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4637611261,
+      "name": "Nu"
+    },
+    {
+      "typeId": 1,
+      "price": 2,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 54377,
+      "isDBB": true,
+      "id": 4638962211,
+      "name": "Fajr Sepasi FC"
+    },
+    {
+      "typeId": 2,
+      "price": 2.9,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4638962212,
+      "name": "X"
+    },
+    {
+      "typeId": 3,
+      "price": 3.75,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 54378,
+      "isDBB": true,
+      "id": 4638962213,
+      "name": "Aluminium Arak"
+    },
+    {
+      "typeId": 1,
+      "price": 1.7273,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 54377,
+      "isDBB": true,
+      "id": 4638962235,
+      "name": "Fajr Sepasi FC"
+    },
+    {
+      "typeId": 7,
+      "price": 6,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4638962237,
+      "name": "Niciunul"
+    },
+    {
+      "typeId": 3,
+      "price": 2.5455,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 54378,
+      "isDBB": true,
+      "id": 4638962236,
+      "name": "Aluminium Arak"
+    },
+    {
+      "typeId": 12,
+      "price": 1.1,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4638962077,
+      "name": "Peste 0.5"
+    },
+    {
+      "typeId": 13,
+      "price": 5.5,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4638962078,
+      "name": "Sub 0.5"
+    },
+    {
+      "typeId": 74,
+      "price": 2.2858,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4638962135,
+      "name": "Da"
+    },
+    {
+      "typeId": 76,
+      "price": 1.5556,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4638962136,
+      "name": "Nu"
+    },
+    {
+      "typeId": 1,
+      "price": 3.2,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 2352966,
+      "isDBB": true,
+      "id": 4638186524,
+      "name": "Dinthar FC"
+    },
+    {
+      "typeId": 2,
+      "price": 3.5,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4638186525,
+      "name": "X"
+    },
+    {
+      "typeId": 3,
+      "price": 1.96,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 56861,
+      "isDBB": true,
+      "id": 4638186526,
+      "name": "Mizoram FT"
+    },
+    {
+      "typeId": 1,
+      "price": 2.1429,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 2352966,
+      "isDBB": true,
+      "id": 4638186548,
+      "name": "Dinthar FC"
+    },
+    {
+      "typeId": 7,
+      "price": 12,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4638186550,
+      "name": "Niciunul"
+    },
+    {
+      "typeId": 3,
+      "price": 1.6667,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 56861,
+      "isDBB": true,
+      "id": 4638186549,
+      "name": "Mizoram FT"
+    },
+    {
+      "typeId": 12,
+      "price": 1.8,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4638186384,
+      "name": "Peste 2.5"
+    },
+    {
+      "typeId": 13,
+      "price": 1.85,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4638186385,
+      "name": "Sub 2.5"
+    },
+    {
+      "typeId": 1,
+      "price": 1.5,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 47939,
+      "isDBB": true,
+      "id": 4637195848,
+      "name": "Cape Town City FC"
+    },
+    {
+      "typeId": 2,
+      "price": 3.5,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4637195849,
+      "name": "X"
+    },
+    {
+      "typeId": 3,
+      "price": 6.3334,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 1724763,
+      "isDBB": true,
+      "id": 4637195850,
+      "name": "The Bees FC"
+    },
+    {
+      "typeId": 1,
+      "price": 1.4,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 47939,
+      "isDBB": true,
+      "id": 4637195891,
+      "name": "Cape Town City FC"
+    },
+    {
+      "typeId": 7,
+      "price": 7.5,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4637195893,
+      "name": "Niciunul"
+    },
+    {
+      "typeId": 3,
+      "price": 3.3334,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 1724763,
+      "isDBB": true,
+      "id": 4637195892,
+      "name": "The Bees FC"
+    },
+    {
+      "typeId": 12,
+      "price": 2.2,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4637195687,
+      "name": "Peste 2.5"
+    },
+    {
+      "typeId": 13,
+      "price": 1.5556,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4637195688,
+      "name": "Sub 2.5"
+    }
+  ],
+  "events": [
+    {
+      "marketIds": [
+        1773727760,
+        1774632199,
+        1773727724,
+        1773727725,
+        1773727726,
+        1776543146
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "code": 6622,
+      "hasStream": false,
+      "extId": "fp32_ar:match:691305",
+      "sc": 767,
+      "mc": 72,
+      "rc": false,
+      "pId": 32,
+      "et": 0,
+      "hasStats": true,
+      "competitorIds": [
+        54262,
+        50942
+      ],
+      "sportId": 66,
+      "catId": 697,
+      "champId": 3358,
+      "status": 0,
+      "startDate": "2026-09-21T20:00:00Z",
+      "id": 17946287,
+      "name": "Malavan Bandar Anzali FC vs. Foolad Khuzestan FC"
+    },
+    {
+      "marketIds": [
+        1777085314,
+        1777085321,
+        1777085270,
+        1777085271,
+        1777085272,
+        1777085299
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "code": 758,
+      "hasStream": false,
+      "extId": "fp32_ar:match:691308",
+      "sc": 774,
+      "mc": 72,
+      "rc": false,
+      "pId": 32,
+      "et": 0,
+      "hasStats": false,
+      "competitorIds": [
+        54377,
+        54378
+      ],
+      "sportId": 66,
+      "catId": 697,
+      "champId": 3358,
+      "status": 0,
+      "startDate": "2026-09-21T20:00:00Z",
+      "id": 17946276,
+      "name": "Fajr Sepasi FC vs. Aluminium Arak"
+    },
+    {
+      "marketIds": [
+        1776743853,
+        1776743860,
+        1776743806
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "code": 5966,
+      "hasStream": false,
+      "extId": "fp32_ar:match:689018",
+      "sc": 766,
+      "mc": 73,
+      "rc": false,
+      "pId": 32,
+      "et": 0,
+      "hasStats": false,
+      "competitorIds": [
+        2352966,
+        56861
+      ],
+      "sportId": 66,
+      "catId": 567,
+      "champId": 9227,
+      "status": 0,
+      "startDate": "2026-09-21T20:00:00Z",
+      "id": 17981947,
+      "name": "Dinthar FC vs. Mizoram FT"
+    },
+    {
+      "marketIds": [
+        1776385622,
+        1776385636,
+        1776385573
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "code": 7553,
+      "hasStream": false,
+      "extId": "fp32_ar:match:691872",
+      "sc": 1143,
+      "mc": 118,
+      "rc": false,
+      "pId": 32,
+      "et": 0,
+      "hasStats": true,
+      "competitorIds": [
+        47939,
+        1724763
+      ],
+      "sportId": 66,
+      "catId": 515,
+      "champId": 3381,
+      "status": 0,
+      "startDate": "2026-09-21T20:00:00Z",
+      "id": 17998203,
+      "name": "Cape Town City FC vs. The Bees FC"
+    }
+  ],
+  "sports": [
+    {
+      "catIds": [
+        1571,
+        1728,
+        1595,
+        697,
+        567,
+        515,
+        1131
+      ],
+      "typeId": 318,
+      "iconName": "soccer",
+      "hasLiveEvents": false,
+      "id": 66,
+      "name": "Soccer"
+    }
+  ],
+  "categories": [
+    {
+      "champIds": [
+        64087,
+        64079,
+        64088
+      ],
+      "iso": "",
+      "hasLiveEvents": false,
+      "id": 1571,
+      "name": "Rush Football"
+    },
+    {
+      "champIds": [
+        58885,
+        38256,
+        58884,
+        62882,
+        57321,
+        44071,
+        58883
+      ],
+      "iso": "",
+      "hasLiveEvents": false,
+      "id": 1728,
+      "name": "E-battles"
+    },
+    {
+      "champIds": [
+        56505
+      ],
+      "iso": "",
+      "hasLiveEvents": false,
+      "id": 1595,
+      "name": "Gt Sports League"
+    },
+    {
+      "champIds": [
+        3358
+      ],
+      "iso": "IRN",
+      "hasLiveEvents": false,
+      "id": 697,
+      "name": "Iran"
+    },
+    {
+      "champIds": [
+        9227
+      ],
+      "iso": "IND",
+      "hasLiveEvents": false,
+      "id": 567,
+      "name": "India"
+    },
+    {
+      "champIds": [
+        3381
+      ],
+      "iso": "ZAF",
+      "hasLiveEvents": false,
+      "id": 515,
+      "name": "South Africa"
+    },
+    {
+      "champIds": [
+        3972
+      ],
+      "hasLiveEvents": false,
+      "id": 1131,
+      "name": "Asia"
+    }
+  ],
+  "champs": [
+    {
+      "hasLiveEvents": false,
+      "id": 64087,
+      "name": "Valhalla Cup 4 2026 Week #42 (2x4 mins)"
+    },
+    {
+      "hasLiveEvents": false,
+      "id": 58885,
+      "name": "Champions League"
+    },
+    {
+      "hasLiveEvents": false,
+      "id": 56505,
+      "name": "GT Leagues (E) (2x6 mins)"
+    },
+    {
+      "hasLiveEvents": false,
+      "id": 38256,
+      "name": "Champions VOLTA league 4x4 (2x3 mins)"
+    },
+    {
+      "hasLiveEvents": false,
+      "id": 58884,
+      "name": "La Liga"
+    },
+    {
+      "hasLiveEvents": false,
+      "id": 62882,
+      "name": "Eredivisie"
+    },
+    {
+      "hasLiveEvents": false,
+      "id": 64079,
+      "name": "Valkyrie Cup 2026 Week #42 (2x4 mins)"
+    },
+    {
+      "hasLiveEvents": false,
+      "id": 57321,
+      "name": "Serie A"
+    },
+    {
+      "hasLiveEvents": false,
+      "id": 64088,
+      "name": "Valhalla Cup 2026 Week #42 (2x4 mins)"
+    },
+    {
+      "hasLiveEvents": false,
+      "id": 44071,
+      "name": "International I (2x6 mins)"
+    },
+    {
+      "hasLiveEvents": false,
+      "id": 58883,
+      "name": "Europa League"
+    },
+    {
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "hasLiveEvents": false,
+      "id": 3358,
+      "name": "Pro League"
+    },
+    {
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "hasLiveEvents": false,
+      "id": 9227,
+      "name": "India Mizoram Premier League"
+    },
+    {
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "hasLiveEvents": false,
+      "id": 3381,
+      "name": "National First Division"
+    },
+    {
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "hasLiveEvents": false,
+      "id": 3972,
+      "name": "AFC Cup"
+    }
+  ],
+  "competitors": [
+    {
+      "abbreviation": "TSG (Dzen)",
+      "id": 3758754,
+      "name": "Hoffenheim (Dzen)"
+    },
+    {
+      "abbreviation": "B04 (Drakon)",
+      "id": 3758443,
+      "name": "Leverkusen (Drakon)"
+    },
+    {
+      "id": 3758700,
+      "name": "B Dortmund (d1pseN)"
+    },
+    {
+      "id": 3260852,
+      "name": "Sporting CP (Wboy)"
+    },
+    {
+      "id": 2442412,
+      "name": "Juventus (mko1919)"
+    },
+    {
+      "id": 2308871,
+      "name": "Manchester City (kraftvk)"
+    },
+    {
+      "id": 2472066,
+      "name": "Paris Saint Germain (shelby)"
+    },
+    {
+      "id": 2552496,
+      "name": "Arsenal (Vito) Esports"
+    },
+    {
+      "id": 2633468,
+      "name": "Barcelona (tifosi)"
+    },
+    {
+      "id": 2538741,
+      "name": "villarreal cf (jack)"
+    },
+    {
+      "id": 2522806,
+      "name": "Fc Bayern Munich (eminem)"
+    },
+    {
+      "id": 3492076,
+      "name": "Inter Milan (fernando)"
+    },
+    {
+      "id": 2526237,
+      "name": "Real Betis (lio)"
+    },
+    {
+      "id": 3232591,
+      "name": "Atletico Madrid (kratos)"
+    },
+    {
+      "id": 3265725,
+      "name": "Bayern Munchen (Mapiston)"
+    },
+    {
+      "id": 3424053,
+      "name": "Atleti (Dreamer)"
+    },
+    {
+      "id": 2244505,
+      "name": "Paris Saint-Germain F.C. (Bob)"
+    },
+    {
+      "id": 2951276,
+      "name": "Real Madrid (Senya)"
+    },
+    {
+      "id": 2239670,
+      "name": "Athletic Club de Bilbao (DaVa)"
+    },
+    {
+      "id": 2240293,
+      "name": "Real Madrid (dm1trena)"
+    },
+    {
+      "id": 2656783,
+      "name": "Villarreal (Jekunam)"
+    },
+    {
+      "id": 2239677,
+      "name": "Barcelona (MeLToSik)"
+    },
+    {
+      "id": 3716381,
+      "name": "Feyenoord (Shinobu)"
+    },
+    {
+      "id": 3712245,
+      "name": "AZ Alkmaar (mPm)"
+    },
+    {
+      "id": 3760122,
+      "name": "Twente (Smetana)"
+    },
+    {
+      "id": 3742668,
+      "name": "Ajax (saportj)"
+    },
+    {
+      "abbreviation": "ARS (Demi)",
+      "id": 3229992,
+      "name": "Arsenal (Demi)"
+    },
+    {
+      "abbreviation": "MUN (Lotta)",
+      "id": 2439033,
+      "name": "Manchester Utd (Lotta)"
+    },
+    {
+      "id": 3016328,
+      "name": "Sassuolo (Lumix)"
+    },
+    {
+      "id": 3716375,
+      "name": "Roma (Maxa)"
+    },
+    {
+      "id": 3584557,
+      "name": "Juventus (Taz)"
+    },
+    {
+      "id": 3130444,
+      "name": "Napoli (Ganger_29)"
+    },
+    {
+      "abbreviation": "TOU (Nate)",
+      "id": 3758432,
+      "name": "Toulouse FC (Nate)"
+    },
+    {
+      "abbreviation": "MON (Ousmane)",
+      "id": 3758441,
+      "name": "AS Monaco (Ousmane)"
+    },
+    {
+      "abbreviation": "SRFC (Rendeto)",
+      "id": 3758445,
+      "name": "Rennes (Rendeto)"
+    },
+    {
+      "abbreviation": "FCN (Vini)",
+      "id": 3758433,
+      "name": "Nantes (Vini)"
+    },
+    {
+      "id": 3674044,
+      "name": "England (Firminho)"
+    },
+    {
+      "id": 3565521,
+      "name": "Argentina (Buu)"
+    },
+    {
+      "id": 2569147,
+      "name": "Spain (cappo)"
+    },
+    {
+      "id": 3365992,
+      "name": "France (Lufy)"
+    },
+    {
+      "id": 2807620,
+      "name": "Aston Villa (llulle)"
+    },
+    {
+      "id": 2535749,
+      "name": "Fenerbahce (pikalicaaa)"
+    },
+    {
+      "id": 372519,
+      "name": "Liverpool (Gula14)"
+    },
+    {
+      "abbreviation": "SVW (Arkon)",
+      "id": 3758675,
+      "name": "Werder Bremen (Arkon)"
+    },
+    {
+      "abbreviation": "KOE (Drakon)",
+      "id": 3761771,
+      "name": "FC Koln (Drakon)"
+    },
+    {
+      "abbreviation": "MBA",
+      "id": 54262,
+      "name": "Malavan Bandar Anzali FC"
+    },
+    {
+      "abbreviation": "FOO",
+      "id": 50942,
+      "name": "Foolad Khuzestan FC"
+    },
+    {
+      "id": 2580427,
+      "name": "real madrid (lucas)"
+    },
+    {
+      "id": 2703097,
+      "name": "aston villa fc (professor)"
+    },
+    {
+      "id": 2586471,
+      "name": "Manchester City (Vito)"
+    },
+    {
+      "abbreviation": "FAJ",
+      "id": 54377,
+      "name": "Fajr Sepasi FC"
+    },
+    {
+      "abbreviation": "ALA",
+      "id": 54378,
+      "name": "Aluminium Arak"
+    },
+    {
+      "abbreviation": "DIN",
+      "id": 2352966,
+      "name": "Dinthar FC"
+    },
+    {
+      "abbreviation": "MIZ",
+      "id": 56861,
+      "name": "Mizoram FT"
+    },
+    {
+      "abbreviation": "CTC",
+      "id": 47939,
+      "name": "Cape Town City FC"
+    },
+    {
+      "abbreviation": "THE",
+      "id": 1724763,
+      "name": "The Bees FC"
+    },
+    {
+      "id": 3721204,
+      "name": "Bologna (Tesla)"
+    },
+    {
+      "abbreviation": "SB29 (Elastico)",
+      "id": 3758434,
+      "name": "Stade Brestois 29 (Elastico)"
+    },
+    {
+      "id": 3262634,
+      "name": "Salzburg (Dicca)"
+    },
+    {
+      "id": 3429315,
+      "name": "Roma (Mani)"
+    },
+    {
+      "id": 3016348,
+      "name": "Arsenal (hit)"
+    },
+    {
+      "id": 3310724,
+      "name": "Man City (Maki)"
+    },
+    {
+      "id": 1702062,
+      "name": "Borussia Dortmund (lzrn)"
+    },
+    {
+      "id": 3505802,
+      "name": "Juventus (Linox)"
+    },
+    {
+      "id": 3635279,
+      "name": "Germany (ZORO)"
+    },
+    {
+      "abbreviation": "EBE",
+      "id": 50997,
+      "name": "SC East Bengal"
+    },
+    {
+      "hasConfigJersey": true,
+      "abbreviation": "SHO",
+      "id": 59015,
+      "name": "AL Shorta SC (IRQ)"
+    },
+    {
+      "id": 3742649,
+      "name": "Porto (DEKSON)"
+    },
+    {
+      "id": 3267989,
+      "name": "Sporting CP (Bjela)"
+    }
+  ]
+}

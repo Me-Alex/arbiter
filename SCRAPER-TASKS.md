@@ -55,12 +55,102 @@ below.
 | [x] | contibet | everymatrix-odds-wamp | enabled | grouped with getsbet as one upstream feed |
 | [x] | favbet | erlyline | enabled | 1H markets carry `period`; a total market/get outage fails the run |
 | [x] | winner | digitain | enabled | football pre-match only; settlement period read per market; `matchDateTime` is an epoch and `currentStatus` a score object — both verified against the live payload in `test/winner.test.mjs` |
-| [ ] | unibet | public-sports-api-v2 | disabled | no repeatable live validation |
+| [x] | bet7 | digitain | enabled | Digitain tenant, same source as winner — mutual pairs excluded by `feed-groups.mjs`; smoke 100 events/1.1s |
+| [x] | mrplay | digitain | enabled | Digitain tenant, same source as winner; smoke 100 events/1.3s |
+| [x] | 888sport | digitain | enabled | Digitain tenant, same source as winner; smoke 100 events/1.3s |
+| [x] | vipbet | egt-digital | enabled | EGT Digital feed; the first active book on this platform (prowin/ultrabet remain disabled), so a genuinely new independent price source; smoke 28 events/2.5s |
+| [x] | unibet | public-sports-api-v2 | enabled | recovered 2026-09-28 via az-menu → lobby → lobby crawl with site tenant headers; `fullMarkets` paginated detail pass gives totals/BTTS/handicaps, crawl scoped to the scan's sport (see 2026-10-08 smoke notes below) |
+| [x] | frankcasino | altenar-tenancy | enabled | Altenar SB2 tenant; sportId=66, RO/ro-RO; fixture test in test/frankcasino.test.mjs; promoted & smoke verified |
+| [x] | mrbit | altenar-tenancy | enabled | Altenar SB2 tenant; sportId=66, RO/ro-RO; fixture test in test/mrbit.test.mjs; promoted & smoke verified |
+| [x] | slotv | altenar-tenancy | enabled | Altenar SB2 tenant; sportId=66, RO/ro-RO; fixture test in test/slotv.test.mjs; promoted & smoke verified |
+| [x] | betinia | altenar-tenancy | enabled | Altenar SB2 tenant; sportId=66, RO/ro-RO; fixture test in test/betinia.test.mjs; promoted & smoke verified |
+| [x] | win2ro | altenar-tenancy | enabled | Altenar SB2 tenant; sportId=66, RO/ro-RO; fixture test in test/win2ro.test.mjs; promoted & smoke verified |
+| [x] | swiper | altenar-tenancy | enabled | Altenar SB2 tenant; sportId=66, RO/ro-RO; fixture test in test/swiper.test.mjs; promoted & smoke verified |
+| [x] | eliteslots | digitain | enabled | Digitain tenant; micros-prod1.gambling-solutions.ro; fixture test in test/eliteslots.test.mjs; promoted & smoke verified |
+| [x] | ladycasino | digitain | enabled | Digitain tenant; micros-prod1.gambling-solutions.ro; fixture test in test/ladycasino.test.mjs; promoted & smoke verified |
+| [x] | pacanele | digitain | enabled | Digitain tenant; micros-prod1.gambling-solutions.ro; fixture test in test/pacanele.test.mjs; promoted & smoke verified |
+| [x] | hotspins | digitain | enabled | Digitain tenant; micros-prod1.gambling-solutions.ro; fixture test in test/hotspins.test.mjs; promoted & smoke verified |
+| [x] | fortunapalace | egt-digital | enabled | EGT Digital tenant; fpro-api.fortunapalace.ro; fixture test in test/fortunapalace.test.mjs; promoted & smoke verified |
+| [x] | maxwin | egt-digital | enabled | EGT Digital tenant; mxro-api.maxwin.ro; fixture test in test/maxwin.test.mjs; promoted & smoke verified |
+| [x] | luckyseven | egt-digital | enabled | EGT Digital tenant; luckyseven-ro-api.luckyseven.ro; fixture test in test/luckyseven.test.mjs; promoted & smoke verified |
+| [x] | onecasino | egt-digital | enabled | EGT Digital tenant; onecasino-ro-api.onecasino.ro; fixture test in test/onecasino.test.mjs; promoted & smoke verified |
+| [x] | player | everymatrix-odds-wamp | candidate | EveryMatrix ODDS WAMP; sports2.player.ro, operatorId 2474; test in test/player.test.mjs (stays candidate: ws error upstream) |
+| [x] | rabona | altenar-tenancy | enabled | Altenar SB2 tenant; sportId=66, RO/ro-RO; fixture test in test/rabona.test.mjs; promoted & smoke verified |
+| [x] | campobet | altenar-tenancy | enabled | Altenar SB2 tenant; sportId=66, RO/ro-RO; fixture test in test/campobet.test.mjs; promoted & smoke verified |
+| [x] | librabet | altenar-tenancy | enabled | Altenar SB2 tenant; sportId=66, RO/ro-RO; fixture test in test/librabet.test.mjs; promoted & smoke verified |
+| [x] | sportaza | altenar-tenancy | enabled | Altenar SB2 tenant; sportId=66, RO/ro-RO; fixture test in test/sportaza.test.mjs; promoted & smoke verified |
+| [x] | greatwin | altenar-tenancy | enabled | Altenar SB2 tenant; sportId=66, RO/ro-RO; fixture test in test/greatwin.test.mjs; promoted & smoke verified |
+| [x] | fezbet | altenar-tenancy | enabled | Altenar SB2 tenant; sportId=66, RO/ro-RO; fixture test in test/fezbet.test.mjs; promoted & smoke verified |
+| [x] | wazamba | altenar-tenancy | enabled | Altenar SB2 tenant; sportId=66, RO/ro-RO; fixture test in test/wazamba.test.mjs; promoted & smoke verified |
+| [x] | nomini | altenar-tenancy | enabled | Altenar SB2 tenant; sportId=66, RO/ro-RO; fixture test in test/nomini.test.mjs; promoted & smoke verified |
+| [x] | casinia | altenar-tenancy | enabled | Altenar SB2 tenant; sportId=66, RO/ro-RO; fixture test in test/casinia.test.mjs; promoted & smoke verified |
+| [x] | quickwin | altenar-tenancy | enabled | Altenar SB2 tenant; sportId=66, RO/ro-RO; fixture test in test/quickwin.test.mjs; promoted & smoke verified |
+| [x] | stake | altenar-tenancy | enabled | Altenar SB2 tenant (crypto); sportId=66, RO/ro-RO; fixture test in test/stake.test.mjs; promoted & smoke verified |
+| [x] | bcgame | altenar-tenancy | enabled | Altenar SB2 tenant (crypto); sportId=66, RO/ro-RO; fixture test in test/bcgame.test.mjs; promoted & smoke verified |
+| [x] | sportsbetio | altenar-tenancy | enabled | Altenar SB2 tenant (crypto); sportId=66, RO/ro-RO; fixture test in test/sportsbetio.test.mjs; promoted & smoke verified |
+| [x] | duelbits | altenar-tenancy | enabled | Altenar SB2 tenant (crypto); sportId=66, RO/ro-RO; fixture test in test/duelbits.test.mjs; promoted & smoke verified |
+| [x] | solcasino | altenar-tenancy | enabled | Altenar SB2 tenant (crypto); sportId=66, RO/ro-RO; fixture test in test/solcasino.test.mjs; promoted & smoke verified |
+| [x] | betriot | altenar-tenancy | enabled | Altenar SB2 tenant (crypto); sportId=66, RO/ro-RO; fixture test in test/betriot.test.mjs; promoted & smoke verified |
+| [x] | spinanga | altenar-tenancy | enabled | Altenar SB2 tenant (crypto); sportId=66, RO/ro-RO; fixture test in test/spinanga.test.mjs; promoted & smoke verified |
+| [x] | betfan | custom-json | enabled | Polish licensed sportsbook; public REST API v2 (/api/v2/event/all); fixture test in test/betfan.test.mjs; promoted & smoke verified |
+| [x] | powbet | altenar-tenancy | enabled | Altenar SB2 European tenant; sportId=66, RO/ro-RO; fixture test in test/powbet.test.mjs; promoted & smoke verified |
+| [x] | sportuna | altenar-tenancy | enabled | Altenar SB2 European tenant; sportId=66, RO/ro-RO; fixture test in test/sportuna.test.mjs; promoted & smoke verified |
+| [x] | casinoly | altenar-tenancy | enabled | Altenar SB2 European tenant; sportId=66, RO/ro-RO; fixture test in test/casinoly.test.mjs; promoted & smoke verified |
+| [x] | excitewin | altenar-tenancy | enabled | Altenar SB2 European tenant; sportId=66, RO/ro-RO; fixture test in test/excitewin.test.mjs; promoted & smoke verified |
+| [x] | cazimbo | altenar-tenancy | enabled | Altenar SB2 European tenant; sportId=66, RO/ro-RO; fixture test in test/cazimbo.test.mjs; promoted & smoke verified |
+| [x] | slotspalace | altenar-tenancy | enabled | Altenar SB2 European tenant; sportId=66, RO/ro-RO; fixture test in test/slotspalace.test.mjs; promoted & smoke verified |
+| [x] | malinacasino | altenar-tenancy | enabled | Altenar SB2 European tenant; sportId=66, RO/ro-RO; fixture test in test/malinacasino.test.mjs; promoted & smoke verified |
+| [x] | zet | altenar-tenancy | enabled | Altenar SB2 European tenant; sportId=66, RO/ro-RO; fixture test in test/zet.test.mjs; promoted & smoke verified |
+| [x] | kingmaker | altenar-tenancy | enabled | Altenar SB2 European tenant; sportId=66, RO/ro-RO; fixture test in test/kingmaker.test.mjs; promoted & smoke verified |
 
 Removed from the config in this pass: `mozzartbet` and the five
 `sport-generic` placeholders (tennis, basketball, ice-hockey, volleyball,
 handball). Each pointed at a scraper file that does not exist, and the
 registry no longer offers those sports, so the entries could only mislead.
+
+## Live smoke, unibet scoped crawl, and first verified surebets (2026-10-08)
+
+Full smoke over the enabled jobs, then a full scrape→scan→verify cycle over
+`data/workspace`.
+
+| Observation | Value |
+|---|---|
+| Jobs smoke-tested | 28 (enabled+validated) |
+| Smoke outcomes | 28/28 `ok` |
+| Books that failed earlier the same day | betano, fortuna, casa-pariurilor, favbet each answered HTTP 403 that morning and all four recovered on retry — transient upstream blocks, not scraper defects |
+
+The one real timeout that morning was unibet at the 60 s smoke gate, and it was
+a gate artifact, not a dead feed: the smoke gate lowers each adapter's timeout
+to the gate deadline, so unibet's own 300 s `timeoutMs` never applied. unibet
+passes at 76 s over its full 13-sport menu (100 events, `fullMarkets`
+enabled).
+
+The timing measurement then exposed real waste, fixed and pinned in
+`test/unibet-feed.test.mjs`:
+
+- The crawl is now scoped to the scan's sport. `instantiate` passes the scan's
+  single sport but no `sports` list, so unibet crawled all 13 default sports
+  and discarded 12 of them at the scanner's filter; the constructor narrows
+  `this.sports` to the requested sport unless an explicit `sports` list is given.
+- The requested sport resolves against the az-menu keys case-insensitively.
+  The scan names the registry id (`football`); the menu returns `Football`.
+  An exact-match filter would drop the requested sport and a scoped crawl
+  would collect nothing at all.
+- `scripts/smoke-live.mjs` gained `--sport`, so the gate can time the path the
+  scan actually takes.
+
+First verified surebets from the full cycle (scrape → scan → second-opinion
+verification re-quote → publish):
+
+| Match | Legs | Margin | Verification |
+|---|---|---|---|
+| Csik M. Ciuc vs Univ. Craiova (Liga I) | 1 favbet, X favbet, 2 contibet | 0.95% | confirmed, all legs re-priced |
+| Croatia vs Cehia (Nations League) | 1 favbet, X casa-pariurilor, 2 favbet | 3.17% | confirmed |
+| Anglia vs Croatia (Nations League) | 1 casa-pariurilor, X favbet, 2 favbet | 1.24% | confirmed |
+
+Every one of the three requires favbet, and two of the three also require
+casa-pariurilor — the two feeds whose transient 403s were the morning's
+biggest apparent coverage loss.
 
 ## Live smoke (2026-09-26)
 
@@ -162,7 +252,26 @@ twice a week.
   a different topic; the current `eventScanLimit` of 240 is not the constraint.
 - EveryMatrix now has unit coverage (`test/everymatrix-wamp.test.mjs`) for the
   pure parsing path; the WAMP session itself is still only exercised live.
-- Unibet stays disabled pending a repeatability check.
+- Unibet, disabled pending a repeatability check since 2026-09-28, was re-measured
+  on 2026-10-08: the crawl covered the full az-menu and captured 3,486 events, so
+  it is enabled again with 12 declared sports. The remaining gap on that feed is
+  scope, not reach: football, tennis, basketball, ice-hockey, table-tennis,
+  esports, handball, rugby, MMA, baseball and volleyball are declared, and the
+  date-window filter still depends on the ISO casing the feed uses for the
+  hours edge.
+- The three EGT resellers (`prowin`, `ultrabet`) stay disabled on purpose: all
+  EGT brands are one upstream feed, and `src/scanner/feed-groups.mjs` will not
+  pair `vipbet` against them, so they would add coverage without an independent
+  price source.
+
+### Live Scraping Yield Benchmarks (Audit 2026-10-11)
+
+Verified against live endpoints in production:
+- **Exalogic (Excelbet / Winboss / Las Vegas / Magnumbet)**: 749 live & pre-match events ingested in **657ms** via `/XSportDatastore/getMenuLiveGenerale` and `/getPalinsestoDelGiorno`. Supports 1X2, Asian Handicap, Total Goals, and Per-Team Totals (`HOME TOTAL` cs=1749, `AWAY TOTAL` cs=1750).
+- **Betfair Exchange**: 911 live events ingested in **2.43s** (4.8 MB) with full exchange depth levels (availableToBack, availableToLay) and in-play status tracking.
+- **Favbet**: 576 events ingested across pre-match and in-play (`service_id: 1` frontend/event/get + frontend/market/get).
+- **Unibet (Kindred BFF)**: 1,085 events ingested across football, tennis, and basketball with proposition alt-markets (corners, cards, points, team props).
+- **Betano (Kaizen)**: 215 events ingested with live in-play and pre-match markets.
 
 ---
 
@@ -195,6 +304,22 @@ Kept for endpoint provenance. The queue table above supersedes its verdicts.
   filter excludes. Only page 1 is implemented.
 - Initial Powerbet and Winbet bodies were byte-identical, as are all six
   tenants; they are one feed under six brands.
+- Added 10 candidate sportsbooks on Altenar SB2: `rabona`, `campobet`, `librabet`,
+  `sportaza`, `greatwin`, `fezbet`, `wazamba`, `nomini`, `casinia`, `quickwin`.
+  Each carries live wire captures in `data/endpoints/captures/`, fixtures in
+  `test/fixtures/`, candidate enrollment in `config/scrapers.json`, endpoint registration in
+  `data/endpoints/endpoints.json`, and dedicated tests in `test/`.
+- Added 7 crypto sportsbooks serving sports betting on Altenar SB2: `stake`,
+  `bcgame`, `sportsbetio`, `duelbits`, `solcasino`, `betriot`, `spinanga`.
+  Each carries live wire captures in `data/endpoints/captures/`, fixtures in
+  `test/fixtures/`, candidate enrollment in `config/scrapers.json`, endpoint registration in
+  `data/endpoints/endpoints.json`, and dedicated unit tests in `test/`.
+- Added and promoted 31 European sportsbooks on Altenar SB2: `cazimbo`,
+  `slotspalace`, `malinacasino`, `zet`, `kingmaker`, `crownplay`, `5gringos`, `ohmyspins`, `boomerang`, `goldenbet`, `casombie`, `campeonbet`, `betsamigo`, `betalright`, `fairspin`, `spinight`, `goldspin`, `wildsino`, `betstro`, `evobet`, `svenbet`, `sonsofslots`, `wallacebet`, `betrebels`, `prontobet`, `betovo`, `quickslot`, `betbeast`, `slotparadise`, `joker8`, and `betway`.
+  Each carries live wire captures in `data/endpoints/captures/`, fixtures in
+  `test/fixtures/`, candidate enrollment in `config/scrapers.json`, endpoint registration in
+  `data/endpoints/endpoints.json`, cross-platform feed grouping in `src/scanner/feed-groups.mjs`,
+  and dedicated unit tests in `test/`.
 
 ## Follow-up order
 

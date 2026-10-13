@@ -136,3 +136,94 @@ test('ASIAN_HANDICAP: different lines DO NOT collide', () => {
   const ah = out.find((o) => o.family === 'ASIAN_HANDICAP');
   assert.equal(ah, undefined, 'AH -0.5 and AH -1.5 are different contracts; must not pair');
 });
+
+test('ASIAN_HANDICAP: cross-book arb pairs numbered format against H1/H2 format', () => {
+  // bookA quotes numbered format "1 (-1.5)" / "2 (+1.5)"
+  const a = ev('bookA', 'Poli', 'Craiova');
+  a.markets.push({
+    key: 'game_handicap', period: 'fulltime', name: 'Asian handicap',
+    selections: [
+      { id: 'a1', name: '1 (-1.5)', odds: 1.95, handicap: -1.5 },
+      { id: 'a2', name: '2 (+1.5)', odds: 2.10, handicap: 1.5 },
+    ],
+  });
+  // bookB quotes raw NSoft-style H1/H2 format "H1 -1.5" / "H2 1.5"
+  const b = ev('bookB', 'Poli', 'Craiova');
+  b.markets.push({
+    key: 'ASIAN_HANDICAP', period: 'fulltime', name: 'Handicap', line: '-1.5',
+    selections: [
+      { id: 'b1', name: 'H1 -1.5', odds: 2.15 },
+      { id: 'b2', name: 'H2 1.5', odds: 1.90 },
+    ],
+  });
+  const grouped = fixture([a, b]);
+  const out = findArbitrage(grouped);
+  const ah = out.find((o) => o.family === 'ASIAN_HANDICAP');
+  assert.ok(ah, 'expected cross-book AH arb between numbered and H1/H2 shapes');
+  assert.equal(ah.legs.length, 2);
+  assert.equal(ah.line, '-1.5/1.5');
+  // home leg comes from b (2.15), away leg comes from a (2.10)
+  const homeLeg = ah.legs.find((l) => l.outcome === 'home');
+  const awayLeg = ah.legs.find((l) => l.outcome === 'away');
+  assert.equal(homeLeg.sourceId, 'bookB');
+  assert.equal(homeLeg.odds, 2.15);
+  assert.equal(awayLeg.sourceId, 'bookA');
+  assert.equal(awayLeg.odds, 2.10);
+});
+
+test('PERIOD ISOLATION: Set 1 winner from bookA and full-time winner from bookB DO NOT collide', () => {
+  const a = ev('bookA', 'Jannik Sinner', 'Carlos Alcaraz');
+  a.sport = 'Tennis';
+  a.markets.push({
+    key: 'MATCH_ODDS', period: 'set1', name: 'Set 1 Castigator',
+    selections: [
+      { id: 'a1', name: 'Jannik Sinner', odds: 1.70 },
+      { id: 'a2', name: 'Carlos Alcaraz', odds: 2.15 },
+    ],
+  });
+  const b = ev('bookB', 'Jannik Sinner', 'Carlos Alcaraz');
+  b.sport = 'Tennis';
+  b.markets.push({
+    key: 'MATCH_ODDS', period: 'fulltime', name: 'Castigator meci',
+    selections: [
+      { id: 'b1', name: 'Jannik Sinner', odds: 2.20 },
+      { id: 'b2', name: 'Carlos Alcaraz', odds: 1.68 },
+    ],
+  });
+  const grouped = fixture([a, b]);
+  const out = findArbitrage(grouped);
+  assert.equal(out.length, 0, 'Set 1 and full-time match winners must NEVER pair');
+});
+
+test('SET ARBITRAGE: Set 1 winner from bookA and Set 1 winner from bookB produce a cross-book arb', () => {
+  const a = ev('bookA', 'Jannik Sinner', 'Carlos Alcaraz');
+  a.sport = 'Tennis';
+  a.markets.push({
+    key: 'MATCH_ODDS', period: 'set1', name: 'Set 1 Castigator',
+    selections: [
+      { id: 'a1', name: 'Jannik Sinner', odds: 1.85 },
+      { id: 'a2', name: 'Carlos Alcaraz', odds: 2.10 },
+    ],
+  });
+  const b = ev('bookB', 'Jannik Sinner', 'Carlos Alcaraz');
+  b.sport = 'Tennis';
+  b.markets.push({
+    key: 'MATCH_ODDS', period: 'set1', name: 'Set 1 Winner',
+    selections: [
+      { id: 'b1', name: 'Jannik Sinner', odds: 2.15 },
+      { id: 'b2', name: 'Carlos Alcaraz', odds: 1.80 },
+    ],
+  });
+  const grouped = fixture([a, b]);
+  const out = findArbitrage(grouped);
+  assert.equal(out.length, 1, 'Two books quoting Set 1 winner must pair into an arb');
+  const arb = out[0];
+  assert.equal(arb.period, 'set1');
+  assert.equal(arb.legs.length, 2);
+  const homeLeg = arb.legs.find((l) => l.outcome === 'home');
+  const awayLeg = arb.legs.find((l) => l.outcome === 'away');
+  assert.equal(homeLeg.sourceId, 'bookB');
+  assert.equal(homeLeg.odds, 2.15);
+  assert.equal(awayLeg.sourceId, 'bookA');
+  assert.equal(awayLeg.odds, 2.10);
+});

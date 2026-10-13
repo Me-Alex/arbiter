@@ -6,7 +6,7 @@ import { tmpdir } from 'node:os';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { setImmediate as tickLoop } from 'node:timers/promises';
-import { LiveService } from '../src/live-service.mjs';
+import { LiveService, FAST_LIVE_BOOKS } from '../src/live-service.mjs';
 import { DEFAULT_SCAN_OPTIONS } from '../src/scanner/scanner.mjs';
 import { DEFAULT_LIVE_MAX_AGE_MS } from '../src/shared/data-quality.mjs';
 
@@ -396,5 +396,32 @@ test('saving the live poll twice leaves it polling, not enabled and idle', async
 
   await service.disable();
   for (const { handle } of armed) realClearInterval(handle);
+  await rm(dataDir, { recursive: true, force: true });
+});
+
+test('liveOnly mode targets fast live books and allows high-frequency interval', async () => {
+  assert.ok(Array.isArray(FAST_LIVE_BOOKS));
+  assert.ok(FAST_LIVE_BOOKS.includes('unibet'));
+  assert.ok(FAST_LIVE_BOOKS.includes('superbet'));
+
+  const dataDir = await tmp();
+  const orch = orchestrator();
+  const service = new LiveService({ dataDir, configPath: 'unused', orchestrator: orch });
+
+  const status = await service.enable({ liveOnly: true, intervalSeconds: 5 });
+  assert.equal(service.liveOnly, true);
+  assert.equal(status.intervalSeconds, 5, 'liveOnly mode allows sub-30s intervals (e.g. 5s)');
+  assert.equal(status.scanOptions.includeLive, true);
+
+  await service._tick();
+  assert.equal(orch.launches.length, 1);
+  const launch = orch.launches[0];
+  assert.ok(launch.bookIds.includes('excelbet'));
+  assert.ok(launch.bookIds.includes('favbet'));
+  assert.ok(launch.bookIds.includes('betfair'));
+  assert.equal(launch.scanOptions.liveOnly, true);
+  assert.equal(launch.scanOptions.includeLive, true);
+
+  await service.disable();
   await rm(dataDir, { recursive: true, force: true });
 });

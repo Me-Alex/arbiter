@@ -1,9 +1,11 @@
 import ScraperBase from './base.mjs';
 import { normalizeTeamName } from '../shared/text.mjs';
 import { ValidationError, UpstreamError } from '../shared/errors.mjs';
-import { liveCoverageFor } from './live-status.mjs';
+import { liveCoverageFor, markMarketsLive } from './live-status.mjs';
+import { extractPeriodFromName } from '../scanner/market-contracts.mjs';
 
 const SPORTIFY_URL = 'https://api.sportify.bet/api/content/inventory-events';
+const COMPETITIONS_URL = 'https://api.sportify.bet/api/content/inventory-competitions';
 const BOOKMAKER = 'netbetro';
 
 /** All known Sportify sport slugs. */
@@ -111,6 +113,8 @@ const SIDE_BY_KIND = {
   Home: '1', Away: '2',
   Over: 'Over', Under: 'Under',
   Yes: 'Yes', No: 'No',
+  '1X': '1X', 'X2': 'X2', '12': '12',
+  '1x': '1X', 'x2': 'X2',
 };
 
 /**
@@ -169,12 +173,23 @@ function selectionNameFor(o) {
  * with no counterparty on the other side.
  */
 const PERIOD_BY_NAME = [
-  [/\b(prima\s+repriza|primul\s+set|primul\s+sfert|1\s*h|half\s*time|halftime|1st\s+half)\b/i, 'half1'],
-  [/\b(a\s+doua\s+repriza|al\s+doilea\s+set|al\s+doilea\s+sfert|2\s*h|second\s+half|2nd\s+half)\b/i, 'half2'],
+  [/\b(prima\s+repriza|1\s*h|half\s*time|halftime|1st\s+half|first\s+half)\b/i, 'half1'],
+  [/\b(a\s+doua\s+repriza|2\s*h|second\s+half|2nd\s+half)\b/i, 'half2'],
+  [/\b(primul\s+sfert|1st\s+quarter|quarter\s*1|sfert(?:ul)?\s*1)\b/i, 'q1'],
+  [/\b(al\s+doilea\s+sfert|2nd\s+quarter|quarter\s*2|sfert(?:ul)?\s*2)\b/i, 'q2'],
+  [/\b(al\s+treilea\s+sfert|3rd\s+quarter|quarter\s*3|sfert(?:ul)?\s*3)\b/i, 'q3'],
+  [/\b(al\s+patrulea\s+sfert|4th\s+quarter|quarter\s*4|sfert(?:ul)?\s*4)\b/i, 'q4'],
+  [/\b(primul\s+set|1st\s+set|set(?:ul)?\s*1)\b/i, 'set1'],
+  [/\b(al\s+doilea\s+set|2nd\s+set|set(?:ul)?\s*2)\b/i, 'set2'],
+  [/\b(al\s+treilea\s+set|3rd\s+set|set(?:ul)?\s*3)\b/i, 'set3'],
+  [/\b(al\s+patrulea\s+set|4th\s+set|set(?:ul)?\s*4)\b/i, 'set4'],
+  [/\b(al\s+cincilea\s+set|5th\s+set|set(?:ul)?\s*5)\b/i, 'set5'],
 ];
 
 function periodFor(market) {
-  const label = `${market?.name || ''} ${market?.market_code || ''}`;
+  const label = `${market?.name || ''} ${market?.market_code || ''}`.replace(/_/g, ' ');
+  const extracted = extractPeriodFromName(label);
+  if (extracted) return extracted;
   for (const [pattern, period] of PERIOD_BY_NAME) {
     if (pattern.test(label)) return period;
   }
@@ -197,12 +212,14 @@ export default class NetBetScraper extends ScraperBase {
 
   constructor(opts = {}) {
     super(opts);
-    this.maxEvents = opts.maxEvents === 'all' ? 5000 : Math.min(Number(opts.maxEvents ?? 100), 5000);
+    this.maxEvents = opts.maxEvents === 'all' ? Infinity : Number(opts.maxEvents ?? Infinity);
+    this.crawlCompetitions = opts.crawlCompetitions !== false;
+    this.includeLive = opts.includeLive === true;
     /** When no specific sport is set, fetch all supported sports. */
     this.sports = opts.sport
       ? [SPORT_SLUGS[opts.sport] ?? opts.sport]
       : ALL_SPORTS;
-    if (!Number.isInteger(this.maxEvents) || this.maxEvents < 0 || this.maxEvents > 5000) {
+    if ((!Number.isInteger(this.maxEvents) && this.maxEvents !== Infinity) || this.maxEvents < 0) {
       throw new ValidationError('NetBet: invalid maxEvents');
     }
   }
@@ -215,12 +232,31 @@ export default class NetBetScraper extends ScraperBase {
       'Accept-Language': 'ro-RO,ro;q=0.9,en;q=0.8',
     };
 
-    /** Fetch one page of a single sport. */
-    const fetchPage = async (sport, page) => {
-      const url = new URL(SPORTIFY_URL);
+    /** Fetch competitions for a sport. */
+    const fetchCompetitions = async (sport) => {
+      const url = new URL(COMPETITIONS_URL);
       url.search = new URLSearchParams({
-        sport, key: 'market_type', lang: 'ro', bookmaker: BOOKMAKER, page: String(page),
+        bookmaker: BOOKMAKER, lang: 'ro', sport, mode: 'competitions',
       });
+      const timeout = AbortSignal.timeout(this.timeoutMs);
+      const bounded = signal ? AbortSignal.any([signal, timeout]) : timeout;
+      const res = await fetch(url.href, { signal: bounded, headers });
+      if (!res.ok) return null;
+      const data = await res.json();
+      const list = Array.isArray(data?.data?.competitions)
+        ? data.data.competitions
+        : (Array.isArray(data?.competitions) ? data.competitions : (Array.isArray(data) ? data : []));
+      return list.filter((c) => c && c.slug && !c.is_outright && (c.event_count === null || c.event_count === undefined || c.event_count > 0));
+    };
+
+    /** Fetch one page of a single sport (or competition). */
+    const fetchPage = async (sport, page, competition = null) => {
+      const url = new URL(SPORTIFY_URL);
+      const params = {
+        sport, key: 'market_type', lang: 'ro', bookmaker: BOOKMAKER, page: String(page),
+      };
+      if (competition) params.competition = competition;
+      url.search = new URLSearchParams(params);
       const timeout = AbortSignal.timeout(this.timeoutMs);
       const bounded = signal ? AbortSignal.any([signal, timeout]) : timeout;
       const res = await fetch(url.href, { signal: bounded, headers });
@@ -243,13 +279,41 @@ export default class NetBetScraper extends ScraperBase {
     };
 
     /**
-     * Fetch a single sport. A failure is recorded, not swallowed: this used to
-     * return an empty tree, so a football request that 500'd while snooker
-     * answered produced `status: 'ok'` with no football in it — the run looked
-     * complete and simply had no football.
+     * Fetch a single sport. Traverses competitions when available to reach
+     * full sportsbook catalog beyond the ~75 event top-level cap.
      */
     const fetchSport = async (sport) => {
       try {
+        if (this.crawlCompetitions) {
+          try {
+            const comps = await fetchCompetitions(sport);
+            if (comps && comps.length > 0) {
+              const compTrees = [];
+              const concurrency = Math.min(6, comps.length);
+              let cIdx = 0;
+              const worker = async () => {
+                while (cIdx < comps.length) {
+                  signal?.throwIfAborted();
+                  const comp = comps[cIdx++];
+                  try {
+                    const data = await fetchPage(sport, 1, comp.slug);
+                    if (Array.isArray(data?.tree) && data.tree.length > 0) {
+                      compTrees.push(...data.tree);
+                    }
+                  } catch {
+                    // Ignore single competition failures
+                  }
+                }
+              };
+              await Promise.all(Array.from({ length: concurrency }, () => worker()));
+              if (compTrees.length > 0) {
+                return { sport, tree: compTrees };
+              }
+            }
+          } catch {
+            // Fall back to flat sport query on competition discovery failure
+          }
+        }
         const data = await fetchPage(sport, 1);
         return { sport, tree: data?.tree || [] };
       } catch (err) {
@@ -301,7 +365,9 @@ export default class NetBetScraper extends ScraperBase {
     const seen = new Set();
     for (const e of rawEvents) {
       if (out.length >= this.maxEvents) break;
-      if (e.is_live || e.is_suspended) continue;
+      if (e.is_suspended) continue;
+      if (e.is_live && !this.includeLive) continue;
+      const live = Boolean(e.is_live);
       const competitors = e.competitors || [];
       if (competitors.length !== 2) continue;
       const home = competitors.find((c) => c.is_home);
@@ -330,6 +396,7 @@ export default class NetBetScraper extends ScraperBase {
       const compositeId = `${e._sportName || 'unknown'}:${e.id}`;
       if (seen.has(compositeId)) continue;
       seen.add(compositeId);
+      const sportName = e._sportName || 'Unknown';
       const markets = (e.markets || [])
         .map((m) => {
           const key = (m.market_code || '').trim();
@@ -351,12 +418,23 @@ export default class NetBetScraper extends ScraperBase {
             })
             .filter(Boolean);
           if (selections.length < 2) return null;
-          return { key, name: m.name || key, period: periodFor(m), selections };
+          let subject;
+          if (key === 'total_points' || /points/i.test(key)) subject = 'points';
+          else if (key === 'total_games' || /games/i.test(key)) subject = 'games';
+          else if (key === 'total_goals' || /goals/i.test(key)) subject = 'goals';
+          else if (sportName === 'Basketball') subject = 'points';
+          else if (sportName === 'Tennis') subject = 'games';
+          return {
+            key,
+            name: m.name || key,
+            period: periodFor(m),
+            ...(subject ? { subject } : {}),
+            selections,
+          };
         })
         .filter(Boolean);
       if (markets.length === 0) continue;
       const league = e._competition?.name || e.competition_name || 'Unknown';
-      const sportName = e._sportName || 'Unknown';
       const eventKey = [
         normalizeTeamName(sportName),
         normalizeTeamName(league),
@@ -364,6 +442,9 @@ export default class NetBetScraper extends ScraperBase {
         normalizeTeamName(home.name),
         normalizeTeamName(away.name),
       ].join('|');
+      if (live) {
+        markMarketsLive(markets, () => true);
+      }
       out.push({
         id: String(e.id),
         sourceId: 'netbet',
@@ -375,10 +456,8 @@ export default class NetBetScraper extends ScraperBase {
         kickoff,
         homeTeam: home.name,
         awayTeam: away.name,
-        // A true statement about the emitted set, not about the feed: only future
-        // fixtures are emitted, and no measured field distinguishes a running
-        // one. The `isLive` field that used to sit here was read by nobody.
-        live: false,
+        live,
+        isLive: live,
         eventKey,
         markets,
       });

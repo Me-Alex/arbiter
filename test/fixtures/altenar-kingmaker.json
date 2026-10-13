@@ -1,0 +1,1218 @@
+{
+  "dates": [
+    {
+      "dateTime": "2026-10-12T21:00:00Z",
+      "eventIds": [
+        18002468,
+        17971072,
+        17998115,
+        17996250,
+        17950915,
+        18015678,
+        17888162,
+        17888161,
+        17979929,
+        17690831,
+        18002419,
+        17958908,
+        17888157,
+        17946266,
+        17946281,
+        17991363,
+        17861205,
+        17990665,
+        18007818,
+        17998204,
+        17972406,
+        17971169,
+        17990657,
+        18002469,
+        17979941,
+        17963335,
+        17963334,
+        17960479,
+        17951428,
+        17950903,
+        17913940,
+        17913938,
+        17888158,
+        17888156,
+        17782422,
+        18002420,
+        17960481,
+        17964429,
+        17965234,
+        17672473,
+        17672472,
+        18007138,
+        18015864,
+        17668797,
+        17981946,
+        17965238,
+        17965236,
+        17965235,
+        17946271,
+        17668798
+      ]
+    }
+  ],
+  "topSports": [
+    {
+      "id": 66,
+      "name": "Soccer",
+      "iconName": "soccer",
+      "hasStream": false,
+      "count": 1182
+    },
+    {
+      "id": 68,
+      "name": "Tennis",
+      "iconName": "tennis",
+      "hasStream": false,
+      "count": 425
+    },
+    {
+      "id": 67,
+      "name": "Basketball",
+      "iconName": "basketball",
+      "hasStream": false,
+      "count": 186
+    },
+    {
+      "id": 70,
+      "name": "Ice Hockey",
+      "iconName": "ice-hockey",
+      "hasStream": false,
+      "count": 166
+    },
+    {
+      "id": 77,
+      "name": "Table Tennis",
+      "iconName": "table-tennis",
+      "hasStream": false,
+      "count": 379
+    },
+    {
+      "id": 69,
+      "name": "Volleyball",
+      "iconName": "volleyball",
+      "hasStream": false,
+      "count": 57
+    },
+    {
+      "id": 75,
+      "name": "American Football",
+      "iconName": "american-football",
+      "hasStream": false,
+      "count": 73
+    },
+    {
+      "id": 76,
+      "name": "Baseball",
+      "iconName": "baseball",
+      "hasStream": false,
+      "count": 18
+    },
+    {
+      "id": 146,
+      "name": "E-Football",
+      "iconName": "e-football",
+      "hasStream": false,
+      "count": 89
+    },
+    {
+      "id": 101,
+      "name": "Rugby League",
+      "iconName": "rugby-league",
+      "hasStream": false,
+      "count": 9
+    },
+    {
+      "id": 106,
+      "name": "Aussie Rules",
+      "iconName": "aussie-rules",
+      "hasStream": false,
+      "count": 9
+    },
+    {
+      "id": -1,
+      "name": "Other",
+      "iconName": "Other",
+      "hasStream": false,
+      "count": 465
+    }
+  ],
+  "headers": [
+    {
+      "typeId": 1,
+      "name": "1x2",
+      "mst": 0,
+      "odds": [
+        {
+          "id": 1,
+          "name": "1"
+        },
+        {
+          "id": 2,
+          "name": "X"
+        },
+        {
+          "id": 3,
+          "name": "2"
+        }
+      ]
+    },
+    {
+      "typeId": 18,
+      "name": "Total goluri",
+      "mst": 0,
+      "odds": [
+        {
+          "id": 12,
+          "name": "peste"
+        },
+        {
+          "id": 13,
+          "name": "sub"
+        }
+      ],
+      "specialOdd": {
+        "typeId": 1,
+        "name": "Goluri"
+      }
+    },
+    {
+      "typeId": 29,
+      "name": "Ambele echipe să înscrie",
+      "mst": 0,
+      "odds": [
+        {
+          "id": 74,
+          "name": "da"
+        },
+        {
+          "id": 76,
+          "name": "nu"
+        }
+      ]
+    },
+    {
+      "typeId": 16,
+      "name": "Handicap Goluri",
+      "mst": 0,
+      "odds": [
+        {
+          "id": 1714,
+          "name": "1"
+        },
+        {
+          "id": 1715,
+          "name": "2"
+        }
+      ],
+      "specialOdd": {
+        "typeId": 1,
+        "name": "Goluri"
+      }
+    },
+    {
+      "typeId": 10,
+      "name": "Șansă dublă",
+      "mst": 0,
+      "odds": [
+        {
+          "id": 9,
+          "name": "1X\t"
+        },
+        {
+          "id": 10,
+          "name": "12"
+        },
+        {
+          "id": 11,
+          "name": "X2"
+        }
+      ]
+    },
+    {
+      "typeId": 11,
+      "name": "Egal - Pariul se rambursează",
+      "mst": 0,
+      "odds": [
+        {
+          "id": 1,
+          "name": "1"
+        },
+        {
+          "id": 3,
+          "name": "2"
+        }
+      ]
+    }
+  ],
+  "pageCount": 1,
+  "page": 1,
+  "markets": [
+    {
+      "oddIds": [
+        4638801685,
+        4638801686,
+        4638801687
+      ],
+      "typeId": 1,
+      "sportMarketId": 70472,
+      "id": 1777005731,
+      "name": "1x2"
+    },
+    {
+      "oddIds": [
+        4638801709,
+        4638801711,
+        4638801710
+      ],
+      "variant": 9,
+      "lines": [],
+      "typeId": 8,
+      "sportMarketId": 70491,
+      "sv": "1",
+      "sn": "Primul",
+      "id": 1777005738,
+      "name": "Golul 1"
+    },
+    {
+      "oddIds": [
+        4638801639,
+        4638801637,
+        4638801638
+      ],
+      "typeId": 10,
+      "sportMarketId": 70495,
+      "id": 1777005718,
+      "name": "Șansă dublă"
+    },
+    {
+      "oddIds": [
+        4638801643,
+        4638801644
+      ],
+      "typeId": 11,
+      "sportMarketId": 70500,
+      "id": 1777005720,
+      "name": "Egal - Pariul se rambursează"
+    },
+    {
+      "oddIds": [
+        4638801536,
+        4638801537
+      ],
+      "typeId": 18,
+      "sportMarketId": 70520,
+      "sv": "2.5",
+      "sn": "2.5",
+      "id": 1777005681,
+      "name": "Total goluri"
+    },
+    {
+      "oddIds": [
+        4637925259,
+        4637925260,
+        4637925261
+      ],
+      "typeId": 1,
+      "sportMarketId": 70472,
+      "id": 1776672739,
+      "name": "1x2"
+    },
+    {
+      "oddIds": [
+        4637925283,
+        4637925285,
+        4637925284
+      ],
+      "variant": 9,
+      "lines": [],
+      "typeId": 8,
+      "sportMarketId": 70491,
+      "sv": "1",
+      "sn": "Primul",
+      "id": 1776672746,
+      "name": "Golul 1"
+    },
+    {
+      "oddIds": [
+        4637925213,
+        4637925211,
+        4637925212
+      ],
+      "typeId": 10,
+      "sportMarketId": 70495,
+      "id": 1776672726,
+      "name": "Șansă dublă"
+    },
+    {
+      "oddIds": [
+        4637925217,
+        4637925218
+      ],
+      "typeId": 11,
+      "sportMarketId": 70500,
+      "id": 1776672728,
+      "name": "Egal - Pariul se rambursează"
+    },
+    {
+      "oddIds": [
+        4637925117,
+        4637925118
+      ],
+      "typeId": 18,
+      "sportMarketId": 70520,
+      "sv": "3.5",
+      "sn": "3.5",
+      "id": 1776672691,
+      "name": "Total goluri"
+    },
+    {
+      "oddIds": [
+        4638314656,
+        4638314657,
+        4638314658
+      ],
+      "typeId": 1,
+      "sportMarketId": 70472,
+      "id": 1776797270,
+      "name": "1x2"
+    },
+    {
+      "oddIds": [
+        4638314655,
+        4638314653,
+        4638314654
+      ],
+      "typeId": 10,
+      "sportMarketId": 70495,
+      "id": 1776797269,
+      "name": "Șansă dublă"
+    },
+    {
+      "oddIds": [
+        4638314651,
+        4638314652
+      ],
+      "typeId": 18,
+      "sportMarketId": 70520,
+      "sv": "3.5",
+      "sn": "3.5",
+      "id": 1776797268,
+      "name": "Total goluri"
+    },
+    {
+      "oddIds": [
+        4631756315,
+        4631756316,
+        4631756317
+      ],
+      "typeId": 1,
+      "sportMarketId": 70472,
+      "id": 1774537397,
+      "name": "1x2"
+    },
+    {
+      "oddIds": [
+        4632396902,
+        4632396904,
+        4632396903
+      ],
+      "variant": 9,
+      "lines": [],
+      "typeId": 8,
+      "sportMarketId": 70491,
+      "sv": "1",
+      "sn": "Primul",
+      "id": 1774804220,
+      "name": "Golul 1"
+    },
+    {
+      "oddIds": [
+        4632396896,
+        4632396894,
+        4632396895
+      ],
+      "typeId": 10,
+      "sportMarketId": 70495,
+      "id": 1774804217,
+      "name": "Șansă dublă"
+    },
+    {
+      "oddIds": [
+        4632396897,
+        4632396898
+      ],
+      "typeId": 11,
+      "sportMarketId": 70500,
+      "id": 1774804218,
+      "name": "Egal - Pariul se rambursează"
+    },
+    {
+      "oddIds": [
+        4631756196,
+        4631756197
+      ],
+      "typeId": 18,
+      "sportMarketId": 70520,
+      "sv": "3.5",
+      "sn": "3.5",
+      "id": 1774537348,
+      "name": "Total goluri"
+    }
+  ],
+  "odds": [
+    {
+      "typeId": 1,
+      "price": 2.625,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 155207,
+      "isDBB": true,
+      "id": 4638801685,
+      "name": "CD Atletico del Oriente"
+    },
+    {
+      "typeId": 2,
+      "price": 3.4,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4638801686,
+      "name": "X"
+    },
+    {
+      "typeId": 3,
+      "price": 2.3,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 306402,
+      "isDBB": true,
+      "id": 4638801687,
+      "name": "Comunal Cabrero"
+    },
+    {
+      "typeId": 1,
+      "price": 1.9091,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 155207,
+      "isDBB": true,
+      "id": 4638801709,
+      "name": "CD Atletico del Oriente"
+    },
+    {
+      "typeId": 7,
+      "price": 15,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4638801711,
+      "name": "Niciunul"
+    },
+    {
+      "typeId": 3,
+      "price": 1.7858,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 306402,
+      "isDBB": true,
+      "id": 4638801710,
+      "name": "Comunal Cabrero"
+    },
+    {
+      "typeId": 9,
+      "price": 1.4616,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 155207,
+      "isDBB": true,
+      "id": 4638801639,
+      "name": "CD Atletico del Oriente sau egal"
+    },
+    {
+      "typeId": 10,
+      "price": 1.2667,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4638801637,
+      "name": "CD Atletico del Oriente sau Comunal Cabrero"
+    },
+    {
+      "typeId": 11,
+      "price": 1.375,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 306402,
+      "isDBB": true,
+      "id": 4638801638,
+      "name": "Egal sau Comunal Cabrero"
+    },
+    {
+      "typeId": 1,
+      "price": 1.95,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 155207,
+      "id": 4638801643,
+      "name": "CD Atletico del Oriente"
+    },
+    {
+      "typeId": 3,
+      "price": 1.75,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 306402,
+      "id": 4638801644,
+      "name": "Comunal Cabrero"
+    },
+    {
+      "typeId": 12,
+      "price": 1.6,
+      "isMB": true,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4638801536,
+      "name": "Peste 2.5"
+    },
+    {
+      "typeId": 13,
+      "price": 2.1,
+      "isMB": true,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4638801537,
+      "name": "Sub 2.5"
+    },
+    {
+      "typeId": 1,
+      "price": 2.8,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 51127,
+      "isDBB": true,
+      "id": 4637925259,
+      "name": "Hapoel Rishon Letzion U19"
+    },
+    {
+      "typeId": 2,
+      "price": 3.75,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4637925260,
+      "name": "X"
+    },
+    {
+      "typeId": 3,
+      "price": 2.1429,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 51126,
+      "isDBB": true,
+      "id": 4637925261,
+      "name": "Hapoel Raanana U19"
+    },
+    {
+      "typeId": 1,
+      "price": 1.96,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 51127,
+      "isDBB": true,
+      "id": 4637925283,
+      "name": "Hapoel Rishon Letzion U19"
+    },
+    {
+      "typeId": 7,
+      "price": 18,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4637925285,
+      "name": "Niciunul"
+    },
+    {
+      "typeId": 3,
+      "price": 1.7143,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 51126,
+      "isDBB": true,
+      "id": 4637925284,
+      "name": "Hapoel Raanana U19"
+    },
+    {
+      "typeId": 9,
+      "price": 1.5385,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 51127,
+      "isDBB": true,
+      "id": 4637925213,
+      "name": "Hapoel Rishon Letzion U19 sau egal"
+    },
+    {
+      "typeId": 10,
+      "price": 1.25,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4637925211,
+      "name": "Hapoel Rishon Letzion U19 sau Hapoel Raanana U19"
+    },
+    {
+      "typeId": 11,
+      "price": 1.3334,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 51126,
+      "isDBB": true,
+      "id": 4637925212,
+      "name": "Egal sau Hapoel Raanana U19"
+    },
+    {
+      "typeId": 1,
+      "price": 2.1,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 51127,
+      "id": 4637925217,
+      "name": "Hapoel Rishon Letzion U19"
+    },
+    {
+      "typeId": 3,
+      "price": 1.6667,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 51126,
+      "id": 4637925218,
+      "name": "Hapoel Raanana U19"
+    },
+    {
+      "typeId": 12,
+      "price": 2.2,
+      "isMB": true,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4637925117,
+      "name": "Peste 3.5"
+    },
+    {
+      "typeId": 13,
+      "price": 1.5556,
+      "isMB": true,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4637925118,
+      "name": "Sub 3.5"
+    },
+    {
+      "typeId": 1,
+      "price": 2.375,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 156888,
+      "isDBB": true,
+      "id": 4638314656,
+      "name": "Leandro N. Alem II"
+    },
+    {
+      "typeId": 2,
+      "price": 3.3334,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4638314657,
+      "name": "X"
+    },
+    {
+      "typeId": 3,
+      "price": 2.5715,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 785502,
+      "isDBB": true,
+      "id": 4638314658,
+      "name": "Deportivo Muniz Reserve"
+    },
+    {
+      "typeId": 9,
+      "price": 1.4,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 156888,
+      "isDBB": true,
+      "id": 4638314655,
+      "name": "Leandro N. Alem II sau egal"
+    },
+    {
+      "typeId": 10,
+      "price": 1.2728,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4638314653,
+      "name": "Leandro N. Alem II sau Deportivo Muniz Reserve"
+    },
+    {
+      "typeId": 11,
+      "price": 1.4286,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 785502,
+      "isDBB": true,
+      "id": 4638314654,
+      "name": "Egal sau Deportivo Muniz Reserve"
+    },
+    {
+      "typeId": 12,
+      "price": 2.1,
+      "isMB": true,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4638314651,
+      "name": "Peste 3.5"
+    },
+    {
+      "typeId": 13,
+      "price": 1.6,
+      "isMB": true,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4638314652,
+      "name": "Sub 3.5"
+    },
+    {
+      "typeId": 1,
+      "price": 4.2,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 57801,
+      "isDBB": true,
+      "id": 4631756315,
+      "name": "Parnu JK Vaprus"
+    },
+    {
+      "typeId": 2,
+      "price": 4.2,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4631756316,
+      "name": "X"
+    },
+    {
+      "typeId": 3,
+      "price": 1.6364,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 43795,
+      "isDBB": true,
+      "id": 4631756317,
+      "name": "Nomme Kalju"
+    },
+    {
+      "typeId": 1,
+      "price": 2.3637,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 57801,
+      "isDBB": true,
+      "id": 4632396902,
+      "name": "Parnu JK Vaprus"
+    },
+    {
+      "typeId": 7,
+      "price": 21,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4632396904,
+      "name": "Niciunul"
+    },
+    {
+      "typeId": 3,
+      "price": 1.4706,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 43795,
+      "isDBB": true,
+      "id": 4632396903,
+      "name": "Nomme Kalju"
+    },
+    {
+      "typeId": 9,
+      "price": 1.9231,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 57801,
+      "isDBB": true,
+      "id": 4632396896,
+      "name": "Parnu JK Vaprus sau egal"
+    },
+    {
+      "typeId": 10,
+      "price": 1.1819,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4632396894,
+      "name": "Parnu JK Vaprus sau Nomme Kalju"
+    },
+    {
+      "typeId": 11,
+      "price": 1.2,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 43795,
+      "isDBB": true,
+      "id": 4632396895,
+      "name": "Egal sau Nomme Kalju"
+    },
+    {
+      "typeId": 1,
+      "price": 3.2,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 57801,
+      "id": 4632396897,
+      "name": "Parnu JK Vaprus"
+    },
+    {
+      "typeId": 3,
+      "price": 1.3,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 43795,
+      "id": 4632396898,
+      "name": "Nomme Kalju"
+    },
+    {
+      "typeId": 12,
+      "price": 2.1,
+      "isMB": true,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4631756196,
+      "name": "Peste 3.5"
+    },
+    {
+      "typeId": 13,
+      "price": 1.6,
+      "isMB": true,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4631756197,
+      "name": "Sub 3.5"
+    }
+  ],
+  "events": [
+    {
+      "marketIds": [
+        1777005731,
+        1777005738,
+        1777005718,
+        1777005720,
+        1777005681
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "code": 521,
+      "hasStream": false,
+      "extId": "fp32_ar:match:691293",
+      "sc": 804,
+      "mc": 75,
+      "rc": false,
+      "pId": 32,
+      "et": 0,
+      "hasStats": false,
+      "competitorIds": [
+        155207,
+        306402
+      ],
+      "sportId": 66,
+      "catId": 595,
+      "champId": 8603,
+      "status": 0,
+      "startDate": "2026-09-21T20:00:00Z",
+      "id": 17998115,
+      "name": "CD Atletico del Oriente vs. Comunal Cabrero"
+    },
+    {
+      "marketIds": [
+        1776672739,
+        1776672746,
+        1776672726,
+        1776672728,
+        1776672691
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "code": 2721,
+      "hasStream": false,
+      "extId": "fp32_ar:match:690681",
+      "sc": 811,
+      "mc": 74,
+      "rc": false,
+      "pId": 32,
+      "et": 0,
+      "hasStats": false,
+      "competitorIds": [
+        51127,
+        51126
+      ],
+      "sportId": 66,
+      "catId": 516,
+      "champId": 3362,
+      "status": 0,
+      "startDate": "2026-09-21T20:00:00Z",
+      "id": 17996250,
+      "name": "Hapoel Rishon Letzion U19 vs. Hapoel Raanana U19"
+    },
+    {
+      "marketIds": [
+        1776797270,
+        1776797269,
+        1776797268
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "code": 5010,
+      "hasStream": false,
+      "extId": "fp32_ar:match:694188",
+      "sc": 457,
+      "mc": 19,
+      "rc": false,
+      "pId": 32,
+      "et": 0,
+      "hasStats": false,
+      "competitorIds": [
+        156888,
+        785502
+      ],
+      "sportId": 66,
+      "catId": 574,
+      "champId": 7421,
+      "status": 0,
+      "startDate": "2026-09-21T20:00:00Z",
+      "id": 18015678,
+      "name": "Leandro N. Alem II vs. Deportivo Muniz Reserve"
+    },
+    {
+      "marketIds": [
+        1774537397,
+        1774804220,
+        1774804217,
+        1774804218,
+        1774537348
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "code": 5535,
+      "hasStream": false,
+      "extId": "fp32_ar:match:677643",
+      "sc": 907,
+      "mc": 89,
+      "rc": false,
+      "pId": 32,
+      "et": 0,
+      "hasStats": true,
+      "competitorIds": [
+        57801,
+        43795
+      ],
+      "sportId": 66,
+      "catId": 810,
+      "champId": 4153,
+      "status": 0,
+      "startDate": "2026-09-21T20:00:00Z",
+      "id": 17888162,
+      "name": "Parnu JK Vaprus vs. Nomme Kalju"
+    }
+  ],
+  "sports": [
+    {
+      "catIds": [
+        1131,
+        1133,
+        595,
+        516,
+        1132,
+        574,
+        810,
+        605,
+        1134,
+        496,
+        590,
+        568,
+        876,
+        934,
+        566,
+        514,
+        582,
+        589,
+        499,
+        783,
+        517,
+        826,
+        507
+      ],
+      "typeId": 1,
+      "iconName": "soccer",
+      "hasLiveEvents": false,
+      "id": 66,
+      "name": "Soccer"
+    }
+  ],
+  "categories": [
+    {
+      "champIds": [
+        8603
+      ],
+      "iso": "CHL",
+      "hasLiveEvents": false,
+      "id": 595,
+      "name": "Chile"
+    },
+    {
+      "champIds": [
+        3362,
+        9491,
+        9505
+      ],
+      "iso": "ISR",
+      "hasLiveEvents": false,
+      "id": 516,
+      "name": "Israel"
+    },
+    {
+      "champIds": [
+        7421
+      ],
+      "iso": "ARG",
+      "hasLiveEvents": false,
+      "id": 574,
+      "name": "Argentina"
+    },
+    {
+      "champIds": [
+        4153
+      ],
+      "iso": "EST",
+      "hasLiveEvents": false,
+      "id": 810,
+      "name": "Estonia"
+    }
+  ],
+  "champs": [
+    {
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "hasLiveEvents": false,
+      "id": 8603,
+      "name": "Chile Tercera Division"
+    },
+    {
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "hasLiveEvents": false,
+      "id": 3362,
+      "name": "U19 championship"
+    },
+    {
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "hasLiveEvents": false,
+      "id": 7421,
+      "name": "Argentina Primera C Metropolitana Reserves"
+    },
+    {
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "hasLiveEvents": false,
+      "id": 4153,
+      "name": "Premium Liiga"
+    }
+  ],
+  "competitors": [
+    {
+      "id": 155207,
+      "name": "CD Atletico del Oriente"
+    },
+    {
+      "abbreviation": "COM",
+      "id": 306402,
+      "name": "Comunal Cabrero"
+    },
+    {
+      "abbreviation": "LET",
+      "id": 51127,
+      "name": "Hapoel Rishon Letzion U19"
+    },
+    {
+      "abbreviation": "RAA",
+      "id": 51126,
+      "name": "Hapoel Raanana U19"
+    },
+    {
+      "abbreviation": "CDM",
+      "id": 156888,
+      "name": "Leandro N. Alem II"
+    },
+    {
+      "abbreviation": "DEP",
+      "id": 785502,
+      "name": "Deportivo Muniz Reserve"
+    },
+    {
+      "hasConfigJersey": true,
+      "abbreviation": "VAP",
+      "id": 57801,
+      "name": "Parnu JK Vaprus"
+    },
+    {
+      "hasConfigJersey": true,
+      "abbreviation": "KAL",
+      "id": 43795,
+      "name": "Nomme Kalju"
+    }
+  ]
+}

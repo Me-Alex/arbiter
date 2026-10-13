@@ -30,6 +30,7 @@ import { TrackerService } from './tracker-service.mjs';
 import { SchedulerService } from './scheduler-service.mjs';
 import { LiveService } from './live-service.mjs';
 import { CronService } from './cron-service.mjs';
+import { AlertDispatcher } from './alerts/dispatcher.mjs';
 import * as ScanService from './scan-service.mjs';
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
@@ -84,8 +85,31 @@ const live = new LiveService({
 });
 await live.loadState();
 
+const isLiveOnly = process.argv.includes('--live-only') || process.env.ARBITER_LIVE_ONLY === '1';
+if (isLiveOnly) {
+  const liveInterval = Number(process.env.ARBITER_LIVE_INTERVAL_SECONDS) || 5;
+  logger('info', `[daemon] --live-only mode active: starting real-time in-play scanner loop (${liveInterval}s interval)`);
+  await live.enable({
+    liveOnly: true,
+    intervalSeconds: liveInterval,
+    scanOptions: { includeLive: true, liveOnly: true },
+  });
+}
+
 const cronService = new CronService({ logger });
 cronService.start();
+
+const alertDispatcher = new AlertDispatcher({
+  telegram: {
+    enabled: Boolean(process.env.TELEGRAM_BOT_TOKEN && process.env.TELEGRAM_CHAT_ID),
+    botToken: process.env.TELEGRAM_BOT_TOKEN,
+    chatId: process.env.TELEGRAM_CHAT_ID,
+  },
+  webhook: {
+    enabled: Boolean(process.env.ALERT_WEBHOOK_URL),
+    url: process.env.ALERT_WEBHOOK_URL,
+  },
+});
 
 const ctx = {
   dataDir: DATA_DIR,
@@ -99,6 +123,7 @@ const ctx = {
   broadcaster,
   scanService: ScanService,
   cronService,
+  alertDispatcher,
   logger,
 };
 

@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ArbEdge — Opportunity Terminal</title>
+  <link rel="icon" href="/favicon.svg">
+  <script src="/js/theme.js"></script>
+  <link rel="stylesheet" href="/css/theme.css">
+  <link rel="stylesheet" href="/css/arbedge.css">
+  <link rel="stylesheet" href="/css/terminal.css">
+</head>
+<body class="edge min-h-screen flex">
+
+  <!-- Shared sidebar mounts from /js/app.js -->
+  <main class="flex-1 p-4 lg:p-6 stack-3">
+
+    <!-- Masthead ---------------------------------------------------------
+         The one line an operator needs before anything else: what is
+         quotable right now, and how much of it is actually tradeable. -->
+    <header class="masthead">
+      <div>
+        <h1 class="masthead__title">Opportunity Terminal</h1>
+        <p class="masthead__sub" id="masthead-sub">Cross-book arbitrage, middles and mispricing across every quoted book.</p>
+        <div class="feedline" id="feedline"></div>
+      </div>
+      <div class="flex items-center gap-2">
+        <div class="text-right">
+          <div class="kicker">Bankroll</div>
+          <div class="num text-sm font-semibold" id="k-bankroll">&mdash;</div>
+        </div>
+        <button id="btn-export" class="btn">Export CSV</button>
+      </div>
+    </header>
+
+    <!-- Stat rail --------------------------------------------------------
+         Four numbers, chosen so that a change in any of them changes a
+         decision: how many arbs, what they return, how many middles are
+         conditional rather than guaranteed, and what capital is committed. -->
+    <section class="rail" aria-label="Session summary">
+      <div class="rail__cell">
+        <div class="rail__label">Arbitrages</div>
+        <div class="rail__value rail__value--arb" id="k-arbs">&mdash;</div>
+        <div class="rail__sub">Guaranteed, result-independent</div>
+      </div>
+      <div class="rail__cell">
+        <div class="rail__label">Guaranteed Profit</div>
+        <div class="rail__value rail__value--arb" id="k-profit">&mdash;</div>
+        <div class="rail__sub">Summed over every arb below</div>
+      </div>
+      <div class="rail__cell">
+        <div class="rail__label">Middles</div>
+        <div class="rail__value rail__value--middle" id="k-middles">&mdash;</div>
+        <div class="rail__sub" id="k-middles-sub">Conditional on the margin</div>
+      </div>
+      <div class="rail__cell">
+        <div class="rail__label">Positive EV</div>
+        <div class="rail__value rail__value--ev" id="k-ev">&mdash;</div>
+        <div class="rail__sub">Mispriced against book consensus</div>
+      </div>
+      <div class="rail__cell">
+        <div class="rail__label">Capital Committed</div>
+        <div class="rail__value" id="k-stake">&mdash;</div>
+        <div class="rail__sub">Total stake across all arbs</div>
+      </div>
+    </section>
+
+    <!-- Controls ---------------------------------------------------------
+         Signal class first, because it is the filter that changes what the
+         page is for. Then sport, then free text. -->
+    <section class="card p-4 stack-2" aria-label="Filters">
+      <div class="flex items-center justify-between gap-3 flex-wrap">
+        <div class="segmented" role="group" aria-label="Signal class">
+          <button type="button" data-signal="all"     aria-pressed="true">All</button>
+          <button type="button" data-signal="arb"     aria-pressed="false">Arbs</button>
+          <button type="button" data-signal="middle"  aria-pressed="false">Middles</button>
+          <button type="button" data-signal="ev"      aria-pressed="false">+EV</button>
+          <button type="button" data-signal="lowhold" aria-pressed="false">Low hold</button>
+        </div>
+        <span class="num text-xs value-dim" id="f-count"></span>
+      </div>
+
+      <div class="grid grid-cols-1 xl:grid-cols-3 gap-3">
+        <div>
+          <label class="kicker block mb-1" for="f-sport">Sport</label>
+          <select id="f-sport" class="w-full"></select>
+        </div>
+        <div>
+          <label class="kicker block mb-1" for="f-q">Search</label>
+          <input type="text" id="f-q" class="w-full" placeholder="Team, market or book" autocomplete="off">
+        </div>
+        <div>
+          <label class="kicker block mb-1" for="f-bankroll">Bankroll (re-plan stakes)</label>
+          <input type="number" id="f-bankroll" min="1" step="50" class="w-full num" value="1000">
+        </div>
+      </div>
+
+      <div class="flex items-center gap-4 flex-wrap">
+        <div class="flex items-center gap-2">
+          <input type="checkbox" class="toggle" id="f-confirmed">
+          <label class="text-sm" for="f-confirmed">Confirmed only</label>
+        </div>
+        <div class="flex items-center gap-2">
+          <label class="text-sm value-dim" for="f-sort">Sort</label>
+          <select id="f-sort" class="num">
+            <option value="edge">By edge</option>
+            <option value="risk">By risk</option>
+            <option value="stake">By stake</option>
+            <option value="kickoff">By kickoff</option>
+          </select>
+        </div>
+      </div>
+    </section>
+
+    <!-- Arbitrages -->
+    <section aria-label="Arbitrages">
+      <div class="flex items-center justify-between mb-3">
+        <h2 class="kicker">Guaranteed Arbitrage</h2>
+        <span class="kicker value-dim">Payout does not depend on the result</span>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3" id="arb-grid"></div>
+    </section>
+
+    <!-- Middles -->
+    <section class="card p-4 lg:p-5" aria-label="Middles">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="kicker">Middles</h2>
+        <span class="kicker value-dim">Both legs pay only if the margin lands between the lines</span>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3" id="middle-grid"></div>
+    </section>
+
+    <!-- Positive EV -->
+    <section class="card p-4 lg:p-5" aria-label="Positive EV">
+      <h2 class="kicker mb-4">Positive Expected Value</h2>
+      <div class="overflow-x-auto">
+        <table class="w-full">
+          <thead>
+            <tr class="text-left">
+              <th class="px-3 py-2 font-medium">Event</th>
+              <th class="px-3 py-2 font-medium">Market</th>
+              <th class="px-3 py-2 font-medium">Book</th>
+              <th class="px-3 py-2 font-medium text-right">Odds</th>
+              <th class="px-3 py-2 font-medium text-right">P</th>
+              <th class="px-3 py-2 font-medium text-right">EV</th>
+              <th class="px-3 py-2 font-medium text-right">Stake</th>
+            </tr>
+          </thead>
+          <tbody id="table-ev"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Low hold -->
+    <section class="card p-4 lg:p-5" aria-label="Low hold">
+      <h2 class="kicker mb-4">Low Hold</h2>
+      <div class="overflow-x-auto">
+        <table class="w-full">
+          <thead>
+            <tr class="text-left">
+              <th class="px-3 py-2 font-medium">Event</th>
+              <th class="px-3 py-2 font-medium">Market</th>
+              <th class="px-3 py-2 font-medium">Book</th>
+              <th class="px-3 py-2 font-medium text-right">Selections</th>
+              <th class="px-3 py-2 font-medium text-right">Hold</th>
+            </tr>
+          </thead>
+          <tbody id="table-lowhold"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script src="/js/i18n.js" defer></script>
+  <script src="/js/api.js" defer></script>
+  <script src="/js/pages/common.js" defer></script>
+  <script src="/js/sse.js" defer></script>
+  <script src="/js/connection-status.js" defer></script>
+  <script src="/js/app.js" defer></script>
+  <script src="/js/pages/arbitrage.js" defer></script>
+</body>
+</html>

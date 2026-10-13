@@ -5,6 +5,7 @@ import fs from 'node:fs/promises';
 import Egt, { matchesEgtConfig } from '../src/scrapers/egt.mjs';
 import { instantiate } from '../src/scrapers/index.mjs';
 import { isSharedFeed, feedGroupOf } from '../src/scanner/feed-groups.mjs';
+import { resolveContract, bucketKeyForContract } from '../src/scanner/market-contracts.mjs';
 
 /**
  * EGT Digital is a new platform, so this suite is the only thing standing
@@ -120,6 +121,14 @@ test('live events are excluded, not published', () => {
   // claim and cannot be satisfied by an empty list.
   assert.ok(out.length > 0, 'and it must publish something for "excluded" to mean anything');
   assert.equal(out.filter((e) => e.isLive).length, 0, 'no live event reaches the page');
+
+  // With includeLive: true, live events are published and marked
+  const sLive = new Egt('prowin', { windowHours: 24, includeLive: true });
+  const outLive = sLive.extractEvents(raw);
+  const liveEvents = outLive.filter((e) => e.live);
+  assert.ok(liveEvents.length > 0, 'live events are included when includeLive is true');
+  assert.equal(liveEvents[0].isLive, true);
+  assert.equal(liveEvents[0].markets[0].live, true);
 });
 
 test('a three-way lookalike market is never published as the result', () => {
@@ -354,3 +363,182 @@ for (const id of ['prowin', 'ultrabet']) {
     assert.equal(matchesEgtConfig(id, jobConfig), true);
   });
 }
+
+test('EGT extracts 3-way sub-window markets and maintains bucket key isolation', () => {
+  const s = new Egt('prowin');
+  const rawEvent = {
+    sportEventId: 777001,
+    sportId: 1001,
+    startTime: new Date(Date.now() + 3600000).toISOString(),
+    homeTeam: 'Arsenal',
+    awayTeam: 'Chelsea',
+    tournamentName: 'Premier League',
+    markets: [
+      {
+        marketStatus: 'Active',
+        marketTemplateName: '1X2',
+        marketTitle: 'Rezultat Final 1X2',
+        marketPath: 'Full Time Result 1X2',
+        isMainMarket: true,
+        outcomes: [
+          { name: '1', odds: 2.10 },
+          { name: 'X', odds: 3.40 },
+          { name: '2', odds: 3.60 },
+        ],
+      },
+      {
+        marketStatus: 'Active',
+        marketTemplateName: '1X2 1st Half',
+        marketTitle: '1X2 Prima repriză',
+        marketPath: '1st Half 1X2',
+        outcomes: [
+          { name: '1', odds: 2.70 },
+          { name: 'X', odds: 2.15 },
+          { name: '2', odds: 4.10 },
+        ],
+      },
+      {
+        marketStatus: 'Active',
+        marketTemplateName: '1X2 2nd Half',
+        marketTitle: '1X2 A doua repriză',
+        marketPath: '2nd Half 1X2',
+        outcomes: [
+          { name: '1', odds: 2.50 },
+          { name: 'X', odds: 2.30 },
+          { name: '2', odds: 3.80 },
+        ],
+      },
+      {
+        marketStatus: 'Active',
+        marketTemplateName: 'Total Goals 1st Half',
+        marketTitle: 'Prima repriză - Total goluri',
+        marketSpecifier: 'total=1.5',
+        outcomes: [
+          { name: 'Peste', odds: 2.65 },
+          { name: 'Sub', odds: 1.48 },
+        ],
+      },
+    ],
+  };
+
+  const [ev] = s.extractEvents([rawEvent]);
+  assert.ok(ev);
+  assert.equal(ev.markets.length, 4);
+
+  const ft = ev.markets.find((m) => m.period === 'fulltime');
+  const h1 = ev.markets.find((m) => m.period === 'half1' && m.key === '1x2');
+  const h2 = ev.markets.find((m) => m.period === 'half2');
+  const h1Total = ev.markets.find((m) => m.period === 'half1' && m.key === 'TOTAL_GOALS');
+
+  assert.ok(ft && h1 && h2 && h1Total);
+  assert.equal(ft.selections.length, 3);
+  assert.equal(h1.selections.length, 3);
+  assert.equal(h2.selections.length, 3);
+  assert.equal(h1Total.selections.length, 2);
+
+  const ftContract = resolveContract(ft, ev.sport);
+  const h1Contract = resolveContract(h1, ev.sport);
+  const h2Contract = resolveContract(h2, ev.sport);
+  const h1TotalContract = resolveContract(h1Total, ev.sport);
+
+  assert.equal(ftContract.family, 'MATCH_ODDS');
+  assert.equal(h1Contract.family, 'MATCH_ODDS');
+  assert.equal(h2Contract.family, 'MATCH_ODDS');
+  assert.equal(h1TotalContract.family, 'OVER_UNDER');
+
+  const ftKey = bucketKeyForContract(ev.eventKey, ftContract);
+  const h1Key = bucketKeyForContract(ev.eventKey, h1Contract);
+  const h2Key = bucketKeyForContract(ev.eventKey, h2Contract);
+  const h1TotKey = bucketKeyForContract(ev.eventKey, h1TotalContract);
+
+  // Deterministic isolation across full-time and sub-windows
+  assert.notEqual(ftKey, h1Key);
+  assert.notEqual(ftKey, h2Key);
+  assert.notEqual(h1Key, h2Key);
+  assert.notEqual(h1Key, h1TotKey);
+
+  assert.match(ftKey, /::fulltime::/);
+  assert.match(h1Key, /::half1::/);
+  assert.match(h2Key, /::half2::/);
+  assert.match(h1TotKey, /::half1::1\.5::/);
+});
+
+test('EGT extracts 2-way sub-window markets and deduplicates period markets', () => {
+  const s = new Egt('ultrabet');
+  const rawEvent = {
+    sportEventId: 777002,
+    sportId: 1001,
+    startTime: new Date(Date.now() + 3600000).toISOString(),
+    homeTeam: 'Real Madrid',
+    awayTeam: 'Barcelona',
+    tournamentName: 'La Liga',
+    markets: [
+      {
+        marketStatus: 'Active',
+        marketTemplateName: '1X2',
+        marketTitle: 'Rezultat Final',
+        outcomes: [
+          { name: '1', odds: 2.20 },
+          { name: 'X', odds: 3.50 },
+          { name: '2', odds: 3.10 },
+        ],
+      },
+      // First instance of Set 1 Winner
+      {
+        marketStatus: 'Active',
+        marketTemplateName: '1st Set Winner',
+        marketTitle: 'Castigator Setul 1',
+        outcomes: [
+          { name: '1', odds: 1.80 },
+          { name: '2', odds: 1.95 },
+        ],
+      },
+      // Duplicate of Set 1 Winner — should be deduplicated
+      {
+        marketStatus: 'Active',
+        marketTemplateName: '1st Set Winner',
+        marketTitle: 'Castigator Setul 1 (Copie)',
+        outcomes: [
+          { name: '1', odds: 1.78 },
+          { name: '2', odds: 1.98 },
+        ],
+      },
+      // 1st Half 1X2 duplicate
+      {
+        marketStatus: 'Active',
+        marketTemplateName: '1X2 1st Half',
+        marketTitle: '1X2 Repriza 1',
+        outcomes: [
+          { name: '1', odds: 2.60 },
+          { name: 'X', odds: 2.10 },
+          { name: '2', odds: 4.20 },
+        ],
+      },
+      {
+        marketStatus: 'Active',
+        marketTemplateName: '1X2 1st Half',
+        marketTitle: '1X2 Repriza 1 Duplicate',
+        outcomes: [
+          { name: '1', odds: 2.60 },
+          { name: 'X', odds: 2.10 },
+          { name: '2', odds: 4.20 },
+        ],
+      },
+    ],
+  };
+
+  const [ev] = s.extractEvents([rawEvent]);
+  assert.ok(ev);
+  // Exactly 3 unique markets: 1 fulltime, 1 set1 winner, 1 half1 1X2
+  assert.equal(ev.markets.length, 3);
+
+  const set1 = ev.markets.find((m) => m.period === 'set1');
+  assert.ok(set1);
+  assert.equal(set1.key, 'MATCH_ODDS');
+  assert.equal(set1.selections.length, 2);
+
+  const set1Contract = resolveContract(set1, 'tennis');
+  assert.equal(set1Contract.period, 'set1');
+  const set1Bucket = bucketKeyForContract(ev.eventKey, set1Contract);
+  assert.match(set1Bucket, /::set1::/);
+});

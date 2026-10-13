@@ -23,26 +23,9 @@
  */
 
 /* ── Tokens ────────────────────────────────────────────────────────────────
- * Declared on `body` rather than `:root` so these names cannot leak into the
- * five pages that load theme.css instead. Custom properties inherit, so every
- * descendant still sees them. */
+ * The --edge-* compatibility names now inherit from design-tokens.css on
+ * every page, including pages without body.edge. */
 body.edge {
-  --edge-bg: #f8fafc;
-  --edge-surface: #ffffff;
-  --edge-surface2: #f1f5f9;
-  --edge-surface3: #e2e8f0;
-  --edge-border: #e2e8f0;
-  --edge-border2: #cbd5e1;
-  --edge-textBright: #0f172a;
-  --edge-text: #475569;
-  --edge-textMuted: #94a3b8;
-  --edge-blue: #3b82f6;
-  --edge-blueDim: rgba(59, 130, 246, 0.08);
-  --edge-green: #10b981;
-  --edge-red: #ef4444;
-  --edge-amber: #f59e0b;
-  --edge-amberDim: rgba(245, 158, 11, 0.08);
-
   background-color: var(--edge-bg);
   color: var(--edge-text);
   font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial,
@@ -58,9 +41,10 @@ body.edge {
   background: var(--edge-surface);
   border: 1px solid var(--edge-border);
   border-radius: 0.75rem;
-  transition: border-color 0.2s, transform 0.15s;
+  box-shadow: none;
+  transition: border-color var(--t-fast);
 }
-.card:hover { border-color: var(--edge-border2); transform: translateY(-1px); }
+.card:hover { border-color: var(--edge-border2); }
 
 .status-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
 
@@ -242,8 +226,24 @@ input::placeholder { color: var(--edge-textMuted); }
 .bg-\[var\(--edge-amber\)\] { background-color: var(--edge-amber); }
 .bg-\[var\(--edge-red\)\] { background-color: var(--edge-red); }
 .bg-black\/60 { background-color: rgb(0 0 0 / 0.6); }
+.bg-\[var\(--t-guaranteed\)\] { background-color: var(--t-guaranteed); }
+.bg-\[var\(--t-conditional\)\] { background-color: var(--t-conditional); }
+.bg-\[var\(--t-value\)\] { background-color: var(--t-value); }
+.bg-\[var\(--t-muted-signal\)\] { background-color: var(--t-muted-signal); }
+.bg-\[var\(--t-raise\)\] { background-color: var(--t-raise); }
 
-.text-white { color: #fff; }
+/* Measured the same way: `arbitrage.js:262`'s guaranteed-profit callout
+ * carried `bg-[var(--edge-green)]/10 border border-[var(--edge-green)]/25`
+ * and neither token was defined — the only `/NN` utilities on record were
+ * blue/15 and red/20 borders two blocks down, both still used. A callout that
+ * paints its own background is the whole point of these, so the green pair is
+ * added with the colour the markup already names. */
+.bg-\[var\(--edge-green\)\]\/10 { background-color: color-mix(in srgb, var(--edge-green) 10%, transparent); }
+.border-\[var\(--edge-green\)\]\/25 { border-color: color-mix(in srgb, var(--edge-green) 25%, transparent); }
+.bg-\[var\(--t-guaranteed\)\]\/10 { background-color: color-mix(in srgb, var(--t-guaranteed) 10%, transparent); }
+.border-\[var\(--t-guaranteed-line\)\] { border-color: var(--t-guaranteed-line); }
+
+.text-white { color: var(--surface-btn-primary-text); }
 .text-\[var\(--edge-textBright\)\] { color: var(--edge-textBright); }
 .text-\[var\(--edge-text\)\] { color: var(--edge-text); }
 .text-\[var\(--edge-textMuted\)\] { color: var(--edge-textMuted); }
@@ -251,6 +251,7 @@ input::placeholder { color: var(--edge-textMuted); }
 .text-\[var\(--edge-green\)\] { color: var(--edge-green); }
 .text-\[var\(--edge-red\)\] { color: var(--edge-red); }
 .text-\[var\(--edge-amber\)\] { color: var(--edge-amber); }
+.text-\[var\(--t-guaranteed\)\] { color: var(--t-guaranteed); }
 
 /* ── Border ──────────────────────────────────────────────────────────────── */
 .border { border-width: 1px; border-style: solid; }
@@ -266,6 +267,8 @@ input::placeholder { color: var(--edge-textMuted); }
 .border-\[var\(--edge-red\)\]\/20 {
   border-color: color-mix(in srgb, var(--edge-red) 20%, transparent);
 }
+.border-\[var\(--t-line\)\] { border-color: var(--t-line); }
+.border-\[var\(--t-line-2\)\] { border-color: var(--t-line-2); }
 .divide-y > * + * { border-top-width: 1px; border-top-style: solid; }
 .divide-\[var\(--edge-border\)\] > * + * { border-color: var(--edge-border); }
 
@@ -283,17 +286,18 @@ input::placeholder { color: var(--edge-textMuted); }
  * theme.css was reaching for are restated here. */
 .card table { width: 100%; border-collapse: collapse; font-size: 0.875rem; background: transparent; }
 .card table th {
-  background: transparent;
+  background: var(--edge-surface2);
   color: var(--edge-textMuted);
-  font-weight: 500;
+  font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   border-bottom: 1px solid var(--edge-border);
   border-top: 0;
   text-align: left;
 }
-.card table td { background: transparent; border-bottom: 1px solid var(--edge-border); }
-.card table tbody tr:nth-child(even) td { background: transparent; }
+.card table td { background: var(--edge-surface); border-bottom: 1px solid var(--edge-border); }
+.card table th.num { text-align: right; }
+.card table tbody tr:nth-child(even) td { background: var(--edge-surface); }
 .card table tbody tr:hover td { background: var(--edge-surface2); }
 
 /* ── Shared runtime, restyled for this palette ─────────────────────────────
@@ -345,11 +349,11 @@ input::placeholder { color: var(--edge-textMuted); }
 }
 .toast-close:hover { color: var(--edge-text); }
 .toast-success { border-color: color-mix(in srgb, var(--edge-green) 45%, var(--edge-border)); }
-.toast-success .toast-msg { color: #047857; }
+.toast-success .toast-msg { color: var(--green); }
 .toast-error { border-color: color-mix(in srgb, var(--edge-red) 45%, var(--edge-border)); }
-.toast-error .toast-msg { color: #b91c1c; }
+.toast-error .toast-msg { color: var(--red); }
 .toast-warning { border-color: color-mix(in srgb, var(--edge-amber) 45%, var(--edge-border)); }
-.toast-warning .toast-msg { color: #b45309; }
+.toast-warning .toast-msg { color: var(--yellow); }
 
 .chip {
   display: inline-flex;
@@ -364,9 +368,9 @@ input::placeholder { color: var(--edge-textMuted); }
   font-weight: 500;
   white-space: nowrap;
 }
-.chip.green { background: color-mix(in srgb, var(--edge-green) 12%, var(--edge-surface)); color: #047857; border-color: color-mix(in srgb, var(--edge-green) 30%, transparent); }
-.chip.red { background: color-mix(in srgb, var(--edge-red) 12%, var(--edge-surface)); color: #b91c1c; border-color: color-mix(in srgb, var(--edge-red) 30%, transparent); }
-.chip.yellow { background: color-mix(in srgb, var(--edge-amber) 14%, var(--edge-surface)); color: #b45309; border-color: color-mix(in srgb, var(--edge-amber) 32%, transparent); }
+.chip.green { background: color-mix(in srgb, var(--edge-green) 12%, var(--edge-surface)); color: var(--green); border-color: color-mix(in srgb, var(--edge-green) 30%, transparent); }
+.chip.red { background: color-mix(in srgb, var(--edge-red) 12%, var(--edge-surface)); color: var(--red); border-color: color-mix(in srgb, var(--edge-red) 30%, transparent); }
+.chip.yellow { background: color-mix(in srgb, var(--edge-amber) 14%, var(--edge-surface)); color: var(--yellow); border-color: color-mix(in srgb, var(--edge-amber) 32%, transparent); }
 .chip.outline { background: transparent; }
 .chip .dot, .sse-status .dot {
   width: 0.375rem;
@@ -385,7 +389,7 @@ input::placeholder { color: var(--edge-textMuted); }
   border: 1px solid color-mix(in srgb, var(--edge-amber) 35%, transparent);
   border-left: 3px solid var(--edge-amber);
   background: var(--edge-amberDim);
-  color: #b45309;
+  color: var(--yellow);
   font-size: 0.8125rem;
 }
 /* `display` is absent from the base rule above on purpose. theme.css:1741 sets
@@ -402,7 +406,7 @@ input::placeholder { color: var(--edge-textMuted); }
   border-color: color-mix(in srgb, var(--edge-blue) 30%, transparent);
   border-left-color: var(--edge-blue);
   background: var(--edge-blueDim);
-  color: #1d4ed8;
+  color: var(--accent);
 }
 
 .lang-btn {
@@ -455,6 +459,8 @@ input::placeholder { color: var(--edge-textMuted); }
 .hover\:border-\[var\(--edge-border2\)\]:hover { border-color: var(--edge-border2); }
 .hover\:border-\[var\(--edge-textMuted\)\]:hover { border-color: var(--edge-textMuted); }
 .hover\:underline:hover { text-decoration: underline; }
+.hover\:border-\[var\(--t-line-hot\)\]:hover { border-color: var(--t-line-hot); }
+.hover\:bg-\[var\(--t-panel-2\)\]:hover { background-color: var(--t-panel-2); }
 .focus-ring:focus-visible {
   outline: 2px solid var(--edge-blue);
   outline-offset: 2px;
@@ -496,10 +502,14 @@ button.edge-card-button:active:not(:disabled) { transform: translateY(-1px); }
  *
  * `.edge-label` states the same intent with no `hidden` in it, so there is
  * nothing for theme.css to out-rank. */
-.edge-label { display: none; }
+.edge-label { display: block; }
 
 @media (min-width: 640px) {
   .sm\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (min-width: 768px) {
+  .md\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 
 @media (min-width: 1024px) {
@@ -509,13 +519,7 @@ button.edge-card-button:active:not(:disabled) { transform: translateY(-1px); }
   .lg\:p-5 { padding: 1.25rem; }
   .lg\:p-6 { padding: 1.5rem; }
   .lg\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  /* The KPI row on arbitrage/live/bookies is marked up
-   * `grid-cols-2 lg:grid-cols-4`, but only the `lg:grid-cols-2` half of the
-   * pair was ever implemented here. An undeclared utility is not an error in
-   * CSS — it simply does nothing — so every console page kept the mobile
-   * `grid-cols-2` at desktop width and the four KPIs sat in a 2x2 block while
-   * the Dashboard's quickbar ran four across. Declared here rather than in the
-   * markup so the diff still reads against the mockups. */
+  .lg\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .lg\:grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   .lg\:gap-4 { gap: 1rem; }
   .lg\:justify-start { justify-content: flex-start; }
@@ -576,26 +580,32 @@ button.edge-card-button:active:not(:disabled) { transform: translateY(-1px); }
  * block row, at a specificity that outranks the utility classes on the element.
  * Restating the same selectors here — same specificity, later file — is what makes
  * the design win, rather than reaching for !important or renaming every hook. */
-body.has-sidebar .app { grid-template-columns: 1fr; }
+body.has-sidebar .app { grid-template-columns: minmax(0, 1fr); width: 100%; }
 body.has-sidebar main {
-  margin-left: 4rem;
-  padding: var(--s-4);
+  margin-left: var(--sidebar-w);
+  width: calc(100% - var(--sidebar-w));
+  max-width: none;
+  padding: var(--s-6) var(--s-8) var(--s-12);
 }
-@media (min-width: 1024px) {
-  body.has-sidebar main { margin-left: 14rem; padding: var(--s-6); }
-}
+
 /* The shared sidebar is a drawer at this breakpoint, not the old 4rem icon
  * rail. Console pages now use that same navigation, so their content starts
  * at the viewport edge while the menu is closed. */
 @media (max-width: 980px) {
-  body.has-sidebar main { margin-left: 0; }
+  body.has-sidebar main {
+    margin-left: 0;
+    width: 100%;
+    max-width: 100%;
+    padding: calc(var(--header-h) + var(--s-5)) var(--s-5) var(--s-8);
+  }
 }
 
 .sidebar {
   position: fixed;
   inset: 0 auto 0 0;
   z-index: 40;
-  width: 4rem;
+  width: var(--sidebar-w);
+  height: 100dvh;
   display: flex;
   flex-direction: column;
   padding: 0;
@@ -603,18 +613,18 @@ body.has-sidebar main {
   border-right: 1px solid var(--border);
   overflow: hidden;
 }
-@media (min-width: 1024px) { .sidebar { width: 14rem; } }
+
 
 .sidebar .sidebar-brand {
   display: flex;
   align-items: center;
-  height: 3.5rem;
-  padding: 0 0.5rem;
+  min-height: var(--header-h);
+  flex-shrink: 0;
+  padding: 0 var(--s-4);
   margin: 0;
   border-bottom: 1px solid var(--border);
-  gap: 0;
+  gap: var(--s-3);
 }
-@media (min-width: 1024px) { .sidebar .sidebar-brand { padding: 0 1rem; } }
 .sidebar .sidebar-brand .logo {
   width: 1.5rem;
   height: 1.5rem;
@@ -624,10 +634,7 @@ body.has-sidebar main {
 }
 .sidebar .sidebar-brand .logo::after { display: none; }
 .sidebar .sidebar-brand .logo svg { width: 1.5rem; height: 1.5rem; color: var(--accent); }
-.sidebar .sidebar-brand .brand-text { display: none; }
-@media (min-width: 1024px) {
-  .sidebar .sidebar-brand .brand-text { display: flex; }
-}
+.sidebar .sidebar-brand .brand-text { display: flex; }
 .sidebar .sidebar-brand .name {
   font-size: 1.125rem;
   font-weight: 700;
@@ -644,7 +651,7 @@ body.has-sidebar main {
   overflow-y: auto;
   padding: 0.75rem 0.5rem;
 }
-.sidebar .sidebar-nav nav + div { margin-top: 1.5rem; }
+.sidebar .sidebar-nav > div + div { margin-top: var(--s-6); }
 .sidebar .sidebar-nav nav { display: flex; flex-direction: column; gap: 0.25rem; }
 
 .sidebar .sidebar-nav nav a {
@@ -693,3 +700,23 @@ body.has-sidebar main {
 }
 .sidebar .sidebar-footer .footer-row { gap: 0.5rem; }
 .sidebar .connection-status { color: var(--text-muted); font-size: 0.75rem; }
+
+/* Drawer geometry shares the same breakpoint as app.js. */
+@media (max-width: 980px) {
+  .sidebar { padding-top: calc(var(--header-h) + var(--s-2)); }
+}
+@media (max-width: 600px) {
+  body.has-sidebar main { padding-inline: var(--s-4); }
+  .edge main > .flex, .edge .card > .flex { flex-wrap: wrap; gap: var(--s-3); }
+}
+.sidebar .sidebar-footer .footer-controls { flex-wrap: wrap; width: 100%; }
+.sidebar .sidebar-footer .footer-row { align-items: flex-start; }
+.theme-choice { flex: 1; min-width: 0; }
+.theme-choice select { min-height: var(--control-h); font-size: var(--fs-xs); }
+@media (max-width: 600px) {
+  select { font-size: 16px; }
+  .theme-choice select { min-height: var(--touch-target); }
+}
+/* Preserve switch dimensions against the shared checkbox selector. */
+input.toggle { width: 38px; height: 22px; flex-shrink: 0; }
+.toggle:checked::after { background: var(--surface-btn-primary-text); }

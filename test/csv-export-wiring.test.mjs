@@ -54,12 +54,19 @@ function opportunity(sport, tag) {
     totalStake: 100, guaranteedProfit: 5, verification: { status: 'confirmed' },
   };
 }
-function middle(sport, tag) {
+function middle(sport, tag, verified = false) {
   return {
     sport, league: 'Test League', kickoff: '2026-01-01T00:00:00Z',
     homeTeam: `${tag} Home`, awayTeam: `${tag} Away`, marketKey: 'ou',
+    // One leg, so the export's one-row-per-leg is one row per record and the
+    // file's count is the tables' count. See `middlesOnScreen`.
     legs: [{ sourceId: 'bookB', selection: 'OVER', odds: 1.9, stake: 50 }],
     roiPercent: 1.2, riskPercent: 0.4,
+    // The export already publishes `verificationStatus` for this family
+    // (src/scan-service.mjs), so a middle carrying a verdict is a shape the
+    // file can express rather than one invented for this test. Middles go out
+    // unverified most of the time, which is why both cases are in the fixture.
+    ...(verified ? { verification: { status: 'confirmed', reason: 'both legs verified' } } : {}),
   };
 }
 
@@ -67,7 +74,7 @@ const FIXTURE = {
   dataHealth: { status: 'fresh' },
   sources: [],
   opportunities: [opportunity('Football', 'FCSB'), opportunity('TENNIS', 'Alcaraz')],
-  middles: [middle('Football', 'FCSB'), middle('TENNIS', 'Alcaraz')],
+  middles: [middle('Football', 'FCSB', true), middle('TENNIS', 'Alcaraz')],
   positiveEv: [
     { sport: 'Football', marketKey: '1x2', sourceId: 'bookC', selection: 'AWAY', odds: 3.1, evPercent: 4.5, consensusProbability: 0.3, totalStake: 20, guaranteedProfit: 1 },
     { sport: 'TENNIS', marketKey: '1x2', sourceId: 'bookD', selection: 'AWAY', odds: 3.2, evPercent: 4.1, consensusProbability: 0.31, totalStake: 20, guaranteedProfit: 1 },
@@ -141,8 +148,15 @@ function arbitragePage(scan = FIXTURE) {
 
 const settle = () => new Promise((resolve) => { setTimeout(resolve, 0); });
 
-/** The href the page navigates to, after driving its own controls. */
-async function exportHrefFor(sport) {
+/**
+ * The href the page navigates to, after driving its own controls.
+ *
+ * Every control goes through the page's own listener rather than by writing to
+ * `state`, which is not reachable: the page is an IIFE and nothing it declares
+ * leaks to the context. A test that set the state directly would pass on a page
+ * whose listener had stopped calling `render`.
+ */
+async function exportHrefFor({ sport = '', q = '', confirmedOnly = false } = {}) {
   const { context, get } = arbitragePage();
   await settle();
   await settle();
@@ -150,8 +164,47 @@ async function exportHrefFor(sport) {
     get('f-sport').value = sport;
     get('f-sport').fire('change');
   }
+  if (q) {
+    get('f-q').value = q;
+    get('f-q').fire('input');
+  }
+  if (confirmedOnly) {
+    get('f-confirmed').checked = true;
+    get('f-confirmed').fire('change');
+  }
   get('btn-export').fire('click');
   return context.location.href;
+}
+
+/**
+ * How many middle records the page is showing, read out of its own render.
+ *
+ * Middles are the family this file counts against, for two measured reasons.
+ * They carry the identity columns a search can actually reach, where a +EV row
+ * publishes only a sport and a market key, so a +EV search matches the market
+ * and nothing else. And the export writes one row per leg, so the fixture gives
+ * every middle a single leg and the two counts are the same count.
+ */
+async function middlesOnScreen({ sport = '', q = '', confirmedOnly = false } = {}) {
+  const { get } = arbitragePage();
+  await settle();
+  await settle();
+  if (sport) {
+    get('f-sport').value = sport;
+    get('f-sport').fire('change');
+  }
+  if (q) {
+    get('f-q').value = q;
+    get('f-q').fire('input');
+  }
+  if (confirmedOnly) {
+    get('f-confirmed').checked = true;
+    get('f-confirmed').fire('change');
+  }
+  const text = get('k-middles').textContent;
+  const shown = /^\s*([\d,]+)/.exec(text);
+  assert.ok(shown, `the page drew no middle count to read: ${JSON.stringify(text)}`);
+  return Number(shown[1].replace(/,/g, ''));
 }
 
 // ---- the route, over HTTP ---------------------------------------------------
@@ -175,6 +228,29 @@ function stubServices(scan) {
   };
 }
 
+/**
+ * One CSV line as an object keyed by the header's own column names.
+ *
+ * Keyed rather than positional on purpose: the export's header has grown
+ * columns before, and it is appended to at the end on purpose
+ * (src/scan-service.mjs), so a test reading index 1 would silently start
+ * reading a different field the day a column is inserted.
+ */
+function csvTable(path) {
+  return fetch(path).then(async (res) => {
+    assert.equal(res.status, 200, `${path} answered ${res.status}`);
+    const lines = (await res.text()).trim().split(/\r?\n/);
+    const header = lines[0].split(',');
+    for (const column of ['type', 'sport', 'homeTeam', 'verificationStatus']) {
+      assert.ok(header.includes(column), `the export lost its ${column} column: ${lines[0]}`);
+    }
+    return lines.slice(1).map((line) => {
+      const cells = line.split(',');
+      return Object.fromEntries(header.map((name, i) => [name, cells[i] ?? '']));
+    });
+  });
+}
+
 async function withServer(scan, fn) {
   const server = http.createServer((req, res) => {
     const url = new URL(req.url, `http://${req.headers.host || '127.0.0.1'}`);
@@ -182,16 +258,10 @@ async function withServer(scan, fn) {
   });
   await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
   const { port } = server.address();
-  const csvRows = async (path) => {
-    const res = await fetch(`http://127.0.0.1:${port}${path}`);
-    assert.equal(res.status, 200, `${path} answered ${res.status}`);
-    const lines = (await res.text()).trim().split(/\r?\n/);
-    const sportIdx = lines[0].split(',').indexOf('sport');
-    assert.ok(sportIdx >= 0, `the export lost its sport column: ${lines[0]}`);
-    return lines.slice(1).map((line) => line.split(',')[sportIdx].toLowerCase());
-  };
+  const table = async (path) => csvTable(`http://127.0.0.1:${port}${path}`);
+  const csvRows = async (path) => (await table(path)).map((r) => r.sport.toLowerCase());
   try {
-    await fn({ csvRows });
+    await fn({ table, csvRows });
   } finally {
     server.closeAllConnections?.();
     await new Promise((resolve) => server.close(resolve));
@@ -201,7 +271,7 @@ async function withServer(scan, fn) {
 // ---- the page half ----------------------------------------------------------
 
 test('the arbitrage export carries the selection its tables are drawn under', async () => {
-  assert.equal(await exportHrefFor('Football'), '/api/scan/export.csv?sport=Football',
+  assert.equal(await exportHrefFor({ sport: 'Football' }), '/api/scan/export.csv?sport=Football',
     'the page navigated to a URL that does not name the selected sport');
 });
 
@@ -228,13 +298,13 @@ test('with no selection the arbitrage export asks for the whole document', async
   // list untouched when `state.sport` is ''), so a bare URL is the right answer
   // here rather than a hole in the wiring. The dashboard link is bare for the
   // same measured reason and is pinned in the census below.
-  assert.equal(await exportHrefFor(''), '/api/scan/export.csv');
+  assert.equal(await exportHrefFor({}), '/api/scan/export.csv');
 });
 
 // ---- the tie between the two halves ----------------------------------------
 
 test('the href the page builds answers for exactly the rows the tables keep', async () => {
-  const href = await exportHrefFor('Football');
+  const href = await exportHrefFor({ sport: 'Football' });
   await withServer(FIXTURE, async ({ csvRows }) => {
     const rows = await csvRows(href);
     assert.ok(rows.length > 0, `?sport=Football exported nothing: ${href}`);
@@ -247,6 +317,104 @@ test('the href the page builds answers for exactly the rows the tables keep', as
     const bare = await csvRows('/api/scan/export.csv');
     assert.ok(bare.some((s) => s !== 'football'),
       `the fixture has only one sport, so this file cannot tell the two apart: ${bare.join(', ')}`);
+  });
+});
+
+// ---- the two controls that had no parameter at all --------------------------
+
+test('every sidebar control travels with the export', async () => {
+  assert.equal(
+    await exportHrefFor({ sport: 'Football', q: 'fcsb', confirmedOnly: true }),
+    '/api/scan/export.csv?sport=Football&q=fcsb&confirmed=1',
+    'the search or the confirmed box did not reach the request',
+  );
+});
+
+test('a control that is off writes no parameter, and an off control is not a filter', async () => {
+  // Absence, not an empty value: the route reads an absent parameter as "no
+  // filter", so writing `q=` would ask it a question the tables are not asking.
+  assert.equal(await exportHrefFor({ sport: 'Football', q: '' }), '/api/scan/export.csv?sport=Football',
+    'an empty search wrote a parameter');
+  assert.equal(await exportHrefFor({ sport: 'Football', confirmedOnly: false }), '/api/scan/export.csv?sport=Football',
+    'an unticked box wrote a parameter');
+});
+
+test('the route narrows the file by the search the sidebar holds', async () => {
+  await withServer(FIXTURE, async ({ table }) => {
+    const matched = await table('/api/scan/export.csv?type=middles&q=fcsb');
+    assert.ok(matched.length > 0, '?q= exported nothing for a term the tables match');
+    assert.ok(matched.every((r) => r.homeTeam.toLowerCase().includes('fcsb')),
+      `?q=fcsb kept rows that do not carry the term: ${matched.map((r) => r.homeTeam).join(', ')}`);
+
+    // The control: without the parameter the same request keeps both, so the
+    // assertion above is about the search rather than about a fixture that
+    // only holds one record.
+    const all = await table('/api/scan/export.csv?type=middles');
+    assert.ok(all.length > matched.length,
+      `?q=fcsb changed nothing, so this test proves nothing: ${all.length} rows either way`);
+  });
+});
+
+test('the route narrows the file by the confirmed box', async () => {
+  await withServer(FIXTURE, async ({ table }) => {
+    const confirmed = await table('/api/scan/export.csv?type=middles&confirmed');
+    assert.ok(confirmed.length > 0, '?confirmed= dropped every row, including the verified one');
+    assert.ok(confirmed.every((r) => r.verificationStatus === 'confirmed'),
+      `?confirmed= kept an unverified row: ${confirmed.map((r) => r.verificationStatus).join(', ')}`);
+
+    const all = await table('/api/scan/export.csv?type=middles');
+    assert.ok(all.length > confirmed.length,
+      `?confirmed= changed nothing, so this test proves nothing: ${all.length} rows either way`);
+  });
+});
+
+test('confirmed is presence, not a value, and the surprising case is pinned here', async () => {
+  // Spelled out in src/router.mjs next to the read. A reader who writes
+  // `?confirmed=false` expecting to switch the box off gets the confirmed rows,
+  // because `URLSearchParams.has` cannot tell an empty value from a false one.
+  // Pinned rather than left to be discovered by a download that came back
+  // holding the wrong rows.
+  await withServer(FIXTURE, async ({ table }) => {
+    const bare = await table('/api/scan/export.csv?type=middles&confirmed');
+    const empty = await table('/api/scan/export.csv?type=middles&confirmed=');
+    const word = await table('/api/scan/export.csv?type=middles&confirmed=false');
+    assert.equal(empty.length, bare.length, '?confirmed= stopped meaning the same as ?confirmed');
+    assert.equal(word.length, bare.length,
+      '?confirmed=false no longer filters; if the parameter became value-based, delete this pin and say why');
+  });
+});
+
+test('the file keeps exactly the middles the tables keep, under search and box', async () => {
+  // The tie. The page is driven through its own listeners and the count is read
+  // out of its own render, because `visible()` is inside the page's IIFE and
+  // unreachable -- so this is the only way to compare what the tables keep
+  // against what the file keeps without asking the page to expose something it
+  // does not otherwise need.
+  await withServer(FIXTURE, async ({ table }) => {
+    const cases = [
+      { sport: '', q: '', confirmedOnly: false },
+      { sport: 'Football', q: '', confirmedOnly: false },
+      { sport: '', q: 'fcsb', confirmedOnly: false },
+      { sport: '', q: 'alcaraz', confirmedOnly: false },
+      { sport: '', q: '', confirmedOnly: true },
+      { sport: 'Football', q: 'fcsb', confirmedOnly: true },
+    ];
+    let varied = 0;
+    for (const selection of cases) {
+      const onScreen = await middlesOnScreen(selection);
+      const params = new URLSearchParams({ type: 'middles' });
+      if (selection.sport) params.set('sport', selection.sport);
+      if (selection.q) params.set('q', selection.q);
+      if (selection.confirmedOnly) params.set('confirmed', '1');
+      const inFile = (await table(`/api/scan/export.csv?${params}`)).length;
+      assert.equal(inFile, onScreen,
+        `${JSON.stringify(selection)}: the tables show ${onScreen} middles and the file holds ${inFile}`);
+      if (onScreen > 0 && onScreen < 2) varied += 1;
+    }
+    // The control on the control: if every case above answered 2, the equality
+    // would hold for a builder that ignores both parameters.
+    assert.ok(varied >= 2,
+      `only ${varied} of the cases narrowed the fixture, so the equalities above are mostly 2 == 2`);
   });
 });
 

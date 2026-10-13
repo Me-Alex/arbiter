@@ -1,0 +1,910 @@
+{
+  "dates": [
+    {
+      "dateTime": "2026-09-21T20:00:00Z",
+      "eventIds": [
+        17971169,
+        17972406,
+        17990657,
+        17963335
+      ]
+    }
+  ],
+  "topSports": [
+    {
+      "id": 66,
+      "name": "Soccer",
+      "iconName": "soccer",
+      "hasStream": false,
+      "count": 1326
+    },
+    {
+      "id": 68,
+      "name": "Tennis",
+      "iconName": "tennis",
+      "hasStream": false,
+      "count": 454
+    },
+    {
+      "id": 67,
+      "name": "Basketball",
+      "iconName": "basketball",
+      "hasStream": false,
+      "count": 219
+    },
+    {
+      "id": 70,
+      "name": "Ice Hockey",
+      "iconName": "ice-hockey",
+      "hasStream": false,
+      "count": 176
+    },
+    {
+      "id": 77,
+      "name": "Table Tennis",
+      "iconName": "table-tennis",
+      "hasStream": false,
+      "count": 352
+    },
+    {
+      "id": 69,
+      "name": "Volleyball",
+      "iconName": "volleyball",
+      "hasStream": false,
+      "count": 64
+    },
+    {
+      "id": 75,
+      "name": "American Football",
+      "iconName": "american-football",
+      "hasStream": false,
+      "count": 77
+    },
+    {
+      "id": 76,
+      "name": "Baseball",
+      "iconName": "baseball",
+      "hasStream": false,
+      "count": 19
+    },
+    {
+      "id": 101,
+      "name": "Rugby League",
+      "iconName": "rugby-league",
+      "hasStream": false,
+      "count": 9
+    },
+    {
+      "id": 106,
+      "name": "Aussie Rules",
+      "iconName": "aussie-rules",
+      "hasStream": false,
+      "count": 9
+    },
+    {
+      "id": -1,
+      "name": "Other",
+      "iconName": "Other",
+      "hasStream": false,
+      "count": 445
+    }
+  ],
+  "headers": [
+    {
+      "typeId": 1,
+      "name": "1x2",
+      "mst": 0,
+      "odds": [
+        {
+          "id": 1,
+          "name": "1"
+        },
+        {
+          "id": 2,
+          "name": "X"
+        },
+        {
+          "id": 3,
+          "name": "2"
+        }
+      ]
+    },
+    {
+      "typeId": 18,
+      "name": "Total",
+      "mst": 0,
+      "odds": [
+        {
+          "id": 12,
+          "name": "peste"
+        },
+        {
+          "id": 13,
+          "name": "sub"
+        }
+      ]
+    },
+    {
+      "typeId": 29,
+      "name": "Ambele echipe să înscrie",
+      "mst": 0,
+      "odds": [
+        {
+          "id": 74,
+          "name": "da"
+        },
+        {
+          "id": 76,
+          "name": "nu"
+        }
+      ]
+    }
+  ],
+  "pageCount": 1,
+  "page": 1,
+  "markets": [
+    {
+      "oddIds": [
+        4640478996,
+        4640478997,
+        4640478998
+      ],
+      "typeId": 1,
+      "sportMarketId": 70472,
+      "id": 1777573766,
+      "name": "1x2"
+    },
+    {
+      "oddIds": [
+        4640479020,
+        4640479022,
+        4640479021
+      ],
+      "variant": 9,
+      "lines": [],
+      "typeId": 8,
+      "sportMarketId": 70491,
+      "sv": "1",
+      "sn": "Primul",
+      "id": 1777573773,
+      "name": "Golul 1"
+    },
+    {
+      "oddIds": [
+        4640478852,
+        4640478853
+      ],
+      "typeId": 18,
+      "sportMarketId": 70520,
+      "sv": "2.5",
+      "sn": "2.5",
+      "id": 1777573717,
+      "name": "Total goluri"
+    },
+    {
+      "oddIds": [
+        4640478920,
+        4640478921
+      ],
+      "typeId": 29,
+      "sportMarketId": 70545,
+      "id": 1777573751,
+      "name": "Ambele echipe să înscrie"
+    },
+    {
+      "oddIds": [
+        4627495624,
+        4627495625,
+        4627495626
+      ],
+      "typeId": 1,
+      "sportMarketId": 70472,
+      "id": 1773017931,
+      "name": "1x2"
+    },
+    {
+      "oddIds": [
+        4632764586,
+        4632764588,
+        4632764587
+      ],
+      "variant": 9,
+      "lines": [],
+      "typeId": 8,
+      "sportMarketId": 70491,
+      "sv": "1",
+      "sn": "Primul",
+      "id": 1774929901,
+      "name": "Golul 1"
+    },
+    {
+      "oddIds": [
+        4627495538,
+        4627495539
+      ],
+      "typeId": 18,
+      "sportMarketId": 70520,
+      "sv": "2.5",
+      "sn": "2.5",
+      "id": 1773017894,
+      "name": "Total goluri"
+    },
+    {
+      "oddIds": [
+        4637637433,
+        4637637434,
+        4637637435
+      ],
+      "typeId": 1,
+      "sportMarketId": 70472,
+      "id": 1776556737,
+      "name": "1x2"
+    },
+    {
+      "oddIds": [
+        4637637457,
+        4637637459,
+        4637637458
+      ],
+      "variant": 9,
+      "lines": [],
+      "typeId": 8,
+      "sportMarketId": 70491,
+      "sv": "1",
+      "sn": "Primul",
+      "id": 1776556744,
+      "name": "Golul 1"
+    },
+    {
+      "oddIds": [
+        4637637334,
+        4637637335
+      ],
+      "typeId": 18,
+      "sportMarketId": 70520,
+      "sv": "1.5",
+      "sn": "1.5",
+      "id": 1776556694,
+      "name": "Total goluri"
+    },
+    {
+      "oddIds": [
+        4638077773,
+        4638077774
+      ],
+      "typeId": 29,
+      "sportMarketId": 70545,
+      "id": 1776729427,
+      "name": "Ambele echipe să înscrie"
+    },
+    {
+      "oddIds": [
+        4637632073,
+        4637632074,
+        4637632075
+      ],
+      "typeId": 1,
+      "sportMarketId": 70472,
+      "id": 1776554733,
+      "name": "1x2"
+    },
+    {
+      "oddIds": [
+        4638077491,
+        4638077492
+      ],
+      "typeId": 18,
+      "sportMarketId": 70520,
+      "sv": "2.5",
+      "sn": "2.5",
+      "id": 1776729265,
+      "name": "Total goluri"
+    }
+  ],
+  "odds": [
+    {
+      "typeId": 1,
+      "price": 1.3,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 43897,
+      "isDBB": true,
+      "id": 4640478996,
+      "name": "Bnei Yehuda Tel Aviv FC"
+    },
+    {
+      "typeId": 2,
+      "price": 5,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4640478997,
+      "name": "X"
+    },
+    {
+      "typeId": 3,
+      "price": 7,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 51047,
+      "isDBB": true,
+      "id": 4640478998,
+      "name": "Hapoel Acre FC"
+    },
+    {
+      "typeId": 1,
+      "price": 1.3,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 43897,
+      "isDBB": true,
+      "id": 4640479020,
+      "name": "Bnei Yehuda Tel Aviv FC"
+    },
+    {
+      "typeId": 7,
+      "price": 19,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4640479022,
+      "name": "Niciunul"
+    },
+    {
+      "typeId": 3,
+      "price": 3.1429,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 51047,
+      "isDBB": true,
+      "id": 4640479021,
+      "name": "Hapoel Acre FC"
+    },
+    {
+      "typeId": 12,
+      "price": 1.5,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4640478852,
+      "name": "Peste 2.5"
+    },
+    {
+      "typeId": 13,
+      "price": 2.4,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4640478853,
+      "name": "Sub 2.5"
+    },
+    {
+      "typeId": 74,
+      "price": 1.8,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4640478920,
+      "name": "Da"
+    },
+    {
+      "typeId": 76,
+      "price": 1.9,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4640478921,
+      "name": "Nu"
+    },
+    {
+      "typeId": 1,
+      "price": 1.4706,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 46486,
+      "isDBB": true,
+      "id": 4627495624,
+      "name": "Gor Mahia"
+    },
+    {
+      "typeId": 2,
+      "price": 3.6667,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4627495625,
+      "name": "X"
+    },
+    {
+      "typeId": 3,
+      "price": 6.3334,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 76593,
+      "isDBB": true,
+      "id": 4627495626,
+      "name": "Muranga Seal"
+    },
+    {
+      "typeId": 1,
+      "price": 1.3847,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 46486,
+      "isDBB": true,
+      "id": 4632764586,
+      "name": "Gor Mahia"
+    },
+    {
+      "typeId": 7,
+      "price": 7.5,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4632764588,
+      "name": "Niciunul"
+    },
+    {
+      "typeId": 3,
+      "price": 3.4,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 76593,
+      "isDBB": true,
+      "id": 4632764587,
+      "name": "Muranga Seal"
+    },
+    {
+      "typeId": 12,
+      "price": 2.2,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4627495538,
+      "name": "Peste 2.5"
+    },
+    {
+      "typeId": 13,
+      "price": 1.5556,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4627495539,
+      "name": "Sub 2.5"
+    },
+    {
+      "typeId": 1,
+      "price": 3.8,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 139920,
+      "isDBB": true,
+      "id": 4637637433,
+      "name": "Arad FC"
+    },
+    {
+      "typeId": 2,
+      "price": 3.6,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4637637434,
+      "name": "X"
+    },
+    {
+      "typeId": 3,
+      "price": 1.76,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 1205461,
+      "isDBB": true,
+      "id": 4637637435,
+      "name": "FC Kfar Saba"
+    },
+    {
+      "typeId": 1,
+      "price": 2.4,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 139920,
+      "isDBB": true,
+      "id": 4637637457,
+      "name": "Arad FC"
+    },
+    {
+      "typeId": 7,
+      "price": 13,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4637637459,
+      "name": "Niciunul"
+    },
+    {
+      "typeId": 3,
+      "price": 1.5455,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 1205461,
+      "isDBB": true,
+      "id": 4637637458,
+      "name": "FC Kfar Saba"
+    },
+    {
+      "typeId": 12,
+      "price": 1.2223,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4637637334,
+      "name": "Peste 1.5"
+    },
+    {
+      "typeId": 13,
+      "price": 3.75,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4637637335,
+      "name": "Sub 1.5"
+    },
+    {
+      "typeId": 74,
+      "price": 1.6667,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4638077773,
+      "name": "Da"
+    },
+    {
+      "typeId": 76,
+      "price": 2.1,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4638077774,
+      "name": "Nu"
+    },
+    {
+      "typeId": 1,
+      "price": 1.6471,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 70579,
+      "isDBB": true,
+      "id": 4637632073,
+      "name": "Gjilani"
+    },
+    {
+      "typeId": 2,
+      "price": 3.5,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4637632074,
+      "name": "X"
+    },
+    {
+      "typeId": 3,
+      "price": 4.2,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 71193,
+      "isDBB": true,
+      "id": 4637632075,
+      "name": "Drenica Skenderaj"
+    },
+    {
+      "typeId": 12,
+      "price": 1.9,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4638077491,
+      "name": "Peste 2.5"
+    },
+    {
+      "typeId": 13,
+      "price": 1.75,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4638077492,
+      "name": "Sub 2.5"
+    }
+  ],
+  "events": [
+    {
+      "marketIds": [
+        1777573766,
+        1777573773,
+        1777573717,
+        1777573718,
+        1777573719,
+        1777573751
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "code": 6504,
+      "hasStream": false,
+      "extId": "fp32_ar:match:688255",
+      "sc": 799,
+      "mc": 74,
+      "rc": false,
+      "pId": 32,
+      "et": 0,
+      "hasStats": false,
+      "competitorIds": [
+        43897,
+        51047
+      ],
+      "sportId": 66,
+      "catId": 516,
+      "champId": 9505,
+      "status": 0,
+      "startDate": "2026-09-21T20:00:00Z",
+      "id": 17971169,
+      "name": "Bnei Yehuda Tel Aviv FC vs. Hapoel Acre FC"
+    },
+    {
+      "marketIds": [
+        1773017931,
+        1774929901,
+        1773017894
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "code": 3729,
+      "hasStream": false,
+      "extId": "fp32_ar:match:691211",
+      "sc": 881,
+      "mc": 75,
+      "rc": false,
+      "pId": 32,
+      "et": 0,
+      "hasStats": false,
+      "competitorIds": [
+        46486,
+        76593
+      ],
+      "sportId": 66,
+      "catId": 568,
+      "champId": 3064,
+      "status": 0,
+      "startDate": "2026-09-21T20:00:00Z",
+      "id": 17972406,
+      "name": "Gor Mahia vs. Muranga Seal"
+    },
+    {
+      "marketIds": [
+        1776556737,
+        1776556744,
+        1776556694,
+        1776556695,
+        1776556696,
+        1776729427
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "code": 6484,
+      "hasStream": false,
+      "extId": "fp32_ar:match:690622",
+      "sc": 809,
+      "mc": 76,
+      "rc": false,
+      "pId": 32,
+      "et": 0,
+      "hasStats": false,
+      "competitorIds": [
+        139920,
+        1205461
+      ],
+      "sportId": 66,
+      "catId": 516,
+      "champId": 9491,
+      "status": 0,
+      "startDate": "2026-09-21T20:00:00Z",
+      "id": 17990657,
+      "name": "Arad FC vs. FC Kfar Saba"
+    },
+    {
+      "marketIds": [
+        1776554733,
+        1776729265
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "code": 9347,
+      "hasStream": false,
+      "extId": "fp32_ar:match:689996",
+      "sc": 463,
+      "mc": 21,
+      "rc": false,
+      "pId": 32,
+      "et": 0,
+      "hasStats": true,
+      "competitorIds": [
+        70579,
+        71193
+      ],
+      "sportId": 66,
+      "catId": 876,
+      "champId": 4767,
+      "status": 0,
+      "startDate": "2026-09-21T20:00:00Z",
+      "id": 17963335,
+      "name": "Gjilani vs. Drenica Skenderaj"
+    }
+  ],
+  "sports": [
+    {
+      "catIds": [
+        1728,
+        1571,
+        1595,
+        1134,
+        516,
+        568,
+        1133,
+        876,
+        934,
+        1131,
+        566,
+        514,
+        582,
+        589,
+        499,
+        585,
+        517,
+        506,
+        507,
+        783,
+        574,
+        826,
+        602,
+        1132,
+        515,
+        561
+      ],
+      "typeId": 318,
+      "iconName": "soccer",
+      "hasLiveEvents": false,
+      "id": 66,
+      "name": "Soccer"
+    }
+  ],
+  "categories": [
+    {
+      "champIds": [
+        9505,
+        9491
+      ],
+      "iso": "ISR",
+      "hasLiveEvents": false,
+      "id": 516,
+      "name": "Israel"
+    },
+    {
+      "champIds": [
+        3064
+      ],
+      "iso": "KEN",
+      "hasLiveEvents": false,
+      "id": 568,
+      "name": "Kenya"
+    },
+    {
+      "champIds": [
+        4767
+      ],
+      "iso": "KOS",
+      "hasLiveEvents": false,
+      "id": 876,
+      "name": "Kosovo"
+    }
+  ],
+  "champs": [
+    {
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "hasLiveEvents": false,
+      "id": 9505,
+      "name": "Israel Toto Cup Ligat Leumit"
+    },
+    {
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "hasLiveEvents": false,
+      "id": 3064,
+      "name": "Premier League"
+    },
+    {
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "hasLiveEvents": false,
+      "id": 9491,
+      "name": "Israel State Cup"
+    },
+    {
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "hasLiveEvents": false,
+      "id": 4767,
+      "name": "Superliga"
+    }
+  ],
+  "competitors": [
+    {
+      "abbreviation": "BYE",
+      "id": 43897,
+      "name": "Bnei Yehuda Tel Aviv FC"
+    },
+    {
+      "abbreviation": "HAC",
+      "id": 51047,
+      "name": "Hapoel Acre FC"
+    },
+    {
+      "abbreviation": "GOR",
+      "id": 46486,
+      "name": "Gor Mahia"
+    },
+    {
+      "abbreviation": "MUR",
+      "id": 76593,
+      "name": "Muranga Seal"
+    },
+    {
+      "id": 139920,
+      "name": "Arad FC"
+    },
+    {
+      "abbreviation": "KFA",
+      "id": 1205461,
+      "name": "FC Kfar Saba"
+    },
+    {
+      "abbreviation": "GJI",
+      "id": 70579,
+      "name": "Gjilani"
+    },
+    {
+      "abbreviation": "SKE",
+      "id": 71193,
+      "name": "Drenica Skenderaj"
+    }
+  ]
+}

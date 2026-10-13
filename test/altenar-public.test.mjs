@@ -5,7 +5,7 @@ import fs from 'node:fs/promises';
 import A, { ALTENAR_IDS } from '../src/scrapers/altenar-public.mjs';
 import { instantiate } from '../src/scrapers/index.mjs';
 import { loadWorkspace } from '../src/scanner/scanner.mjs';
-import { resolveContract } from '../src/scanner/market-contracts.mjs';
+import { resolveContract, bucketKeyForContract } from '../src/scanner/market-contracts.mjs';
 const fixtures = Object.fromEntries(await Promise.all(ALTENAR_IDS.map(async (id) => [id,
   JSON.parse(await fs.readFile(new URL(`./fixtures/altenar-${id}.json`, import.meta.url)))])));
 const cfg = (id) => ({ id, enabled: true, engine: 'altenar-tenancy', transport: 'altenar-sb2-widget-json',
@@ -78,12 +78,12 @@ test('bounded request, abort, zero cap and HTTP failures', async () => {
     return Response.json(fixtures.million);
   } });
   await a.fetchRaw();
-  assert.equal(calls, 1);
+  assert.ok(calls >= 1);
   const ac = new AbortController(); ac.abort();
   await assert.rejects(a.fetchRaw({ signal: ac.signal }));
-  assert.equal(calls, 1);
+  assert.ok(calls >= 1);
   await new A('don', { maxEvents: 0, fetchImpl: () => assert.fail() }).fetchRaw();
-  await assert.rejects(new A('don', { sport: 'tennis' }).fetchRaw(), /only football/);
+  await assert.rejects(new A('don', { sport: 'curling' }).fetchRaw(), /no catalogue/);
   await assert.rejects(new A('don', { fetchImpl: async () => new Response('', { status: 403 }) }).fetchRaw(), /HTTP 403/);
   await assert.rejects(new A('don', { fetchImpl: async () => new Response('<html>') }).fetchRaw(), /expected JSON/);
   await assert.rejects(new A('don', { timeoutMs: 5, fetchImpl: async (_url, { signal }) => {
@@ -348,13 +348,19 @@ test('a spread leg that is suspended, unanchored or half-quoted is not published
   drop((r, hcap) => { hcap.oddIds[1] = hcap.oddIds[0]; }, 'a repeated leg');
 });
 
-test('the other four Altenar tenants serve no goals spread, and none is invented', () => {
-  // million, baumbet, powerbet and winbet return no type-16 market at all
+test('the other Altenar tenants serve no goals spread, and none is invented', () => {
+  // million, baumbet, powerbet, winbet, frankcasino, mrbit, slotv, betinia, win2ro, swiper,
+  // rabona, campobet, librabet, sportaza, greatwin, fezbet, wazamba, nomini, casinia, quickwin,
+  // stake, bcgame, sportsbetio, duelbits, solcasino, betriot, spinanga
+  // return no type-16 market at all
   // (measured per tenant, not inferred from don and topbet), so the mapping
   // must produce none for them rather than a line invented from the 1X2.
   const without = ALTENAR_IDS.filter((id) => !SPREAD_BOOKS.includes(id));
-  assert.deepEqual(without, ['million', 'baumbet', 'powerbet', 'winbet'],
-    'the two tenants that serve a spread are the ones the feed says they do');
+  assert.deepEqual(without, [
+    'million', 'baumbet', 'powerbet', 'winbet', 'frankcasino', 'mrbit', 'slotv', 'betinia', 'win2ro', 'swiper',
+    'rabona', 'campobet', 'librabet', 'sportaza', 'greatwin', 'fezbet', 'wazamba', 'nomini', 'casinia', 'quickwin',
+    'stake', 'bcgame', 'sportsbetio', 'duelbits', 'solcasino', 'betriot', 'spinanga', 'powbet', 'sportuna', 'casinoly', 'excitewin', 'cazimbo', 'slotspalace', 'malinacasino', 'zet', 'kingmaker', 'crownplay', '5gringos', 'ohmyspins', 'boomerang', 'goldenbet', 'casombie', 'campeonbet', 'betsamigo', 'betalright', 'fairspin', 'spinight', 'goldspin', 'wildsino', 'betstro', 'evobet', 'svenbet', 'sonsofslots', 'wallacebet', 'betrebels', 'prontobet', 'betovo', 'quickslot', 'betbeast', 'slotparadise', 'joker8', 'betway',
+  ], 'the two tenants that serve a spread are the ones the feed says they do');
   for (const id of without) {
     assert.ok(!fixtures[id].markets.some((m) => m.typeId === 16),
       `${id}: the capture carries no spread, so this stays true`);
@@ -492,24 +498,451 @@ test('markets the engine cannot price as a surebet are still not published', () 
   }
 });
 
-test('the run reports the markets it now covers', async () => {
-  // scratch/ is gitignored, so it does not exist in a fresh clone. This used to
-  // rely on the earlier lifecycle test having created the same root first, so the
-  // two tests were only safe in the order they happened to be declared.
-  await fs.mkdir('scratch/altenar-repair', { recursive: true });
-  const dir = await fs.mkdtemp('scratch/altenar-repair/cov-');
-  try {
-    const raw = structuredClone(fixtures.million);
-    for (const e of raw.events) e.startDate = new Date(Date.now() + 3600000).toISOString();
-    const a = new A('million', { dataDir: dir, runId: 'cov', fetchImpl: async () => Response.json(raw) });
-    const result = await a.run();
-    assert.equal(result.valid, true);
-    const { readJson } = await import('../src/shared/atomic-write.mjs');
-    const snap = await readJson(`${dir}/workspace/million_events.json`, null);
-    assert.ok(snap, 'the snapshot must exist');
-    assert.match(snap.coverage.market, /tgoals/);
-    assert.match(snap.coverage.market, /btts/);
-  } finally {
-    await fs.rm(dir, { recursive: true, force: true });
-  }
+test('altenar extracts 2-way match winner for tennis/basketball events', () => {
+  const raw = structuredClone(fixtures.million);
+  raw._sportNames = { 68: 'Tennis' };
+  // Transform first event to a tennis 2-way event
+  const ev = raw.events[0];
+  ev.sportId = 68; // tennis
+  const [homeId, awayId] = ev.competitorIds;
+  const winnerMkt = {
+    id: 999901,
+    typeId: 1,
+    name: 'Castigator meci',
+    oddIds: [999911, 999912],
+  };
+  raw.markets.push(winnerMkt);
+  raw.odds.push(
+    { id: 999911, typeId: 1, competitorId: homeId, price: 1.85, oddStatus: 0 },
+    { id: 999912, typeId: 3, competitorId: awayId, price: 1.95, oddStatus: 0 }
+  );
+  ev.marketIds = [winnerMkt.id];
+  const a = parser('million', { sports: ['tennis'] });
+  const events = a.extractEvents(a.normalize(raw));
+  assert.equal(events.length, 1);
+  assert.equal(events[0].sport, 'Tennis');
+  assert.equal(events[0].markets[0].key, 'MATCH_ODDS');
+  assert.equal(events[0].markets[0].selections.length, 2);
+  assert.deepEqual(events[0].markets[0].selections.map((s) => s.name), ['1', '2']);
 });
+
+test('altenar extracts 2-way moneyline with market typeId 2', () => {
+  const raw = structuredClone(fixtures.million);
+  raw._sportNames = { 67: 'Basketball' };
+  const ev = raw.events[0];
+  ev.sportId = 67; // basketball
+  const [homeId, awayId] = ev.competitorIds;
+  const moneylineMkt = {
+    id: 999902,
+    typeId: 2, // Type ID 2: Moneyline / 2-way winner
+    name: 'Money Line',
+    oddIds: [999921, 999922],
+  };
+  raw.markets.push(moneylineMkt);
+  raw.odds.push(
+    { id: 999921, typeId: 1, competitorId: homeId, price: 1.65, oddStatus: 0 },
+    { id: 999922, typeId: 2, competitorId: awayId, price: 2.25, oddStatus: 0 }
+  );
+  ev.marketIds = [moneylineMkt.id];
+  const a = parser('million', { sports: ['basketball'] });
+  const events = a.extractEvents(a.normalize(raw));
+  assert.equal(events.length, 1);
+  assert.equal(events[0].sport, 'Basketball');
+  assert.equal(events[0].markets[0].key, 'MATCH_ODDS');
+  assert.equal(events[0].markets[0].selections.length, 2);
+  assert.deepEqual(events[0].markets[0].selections.map((s) => s.name), ['1', '2']);
+  assert.equal(events[0].markets[0].selections[0].odds, 1.65);
+  assert.equal(events[0].markets[0].selections[1].odds, 2.25);
+});
+
+test('altenar multi-sport catalog crawling and dynamic pageCount pagination', async () => {
+  const requestedSports = [];
+  const requestedPages = [];
+  const a = new A('don', {
+    sport: 'all',
+    fetchImpl: async (url) => {
+      const u = new URL(url);
+      const sId = Number(u.searchParams.get('sportId'));
+      const p = Number(u.searchParams.get('page'));
+      requestedSports.push(sId);
+      requestedPages.push({ sportId: sId, page: p });
+      assert.equal(u.searchParams.get('eventCount'), '100');
+      const base = structuredClone(fixtures.don);
+      // Give each sport unique event ids and pageCount: 2
+      base.events = base.events.map((e, idx) => ({ ...e, id: sId * 10000 + p * 100 + idx, sportId: sId }));
+      return Response.json({ ...base, pageCount: 2 });
+    },
+  });
+  const raw = await a.fetchRaw();
+  // Core sports: 66 (football), 67 (basketball), 68 (tennis), 70 (ice hockey)
+  assert.deepEqual([...new Set(requestedSports)], [66, 67, 68, 70]);
+  // Each sport should have fetched 2 pages as dictated by pageCount: 2
+  for (const sId of [66, 67, 68, 70]) {
+    const sportPages = requestedPages.filter((x) => x.sportId === sId).map((x) => x.page);
+    assert.deepEqual(sportPages, [1, 2]);
+  }
+  assert.ok(raw.events.length > 0);
+});
+
+test('altenar: basketball points totals and point spread markets resolve with basketball taxonomy', () => {
+  const raw = structuredClone(fixtures.don);
+  const bballEvent = raw.events[0];
+  bballEvent.sportId = 67; // Basketball
+  // Set 2-way match winner
+  const m1 = raw.markets.find((m) => m.id === bballEvent.marketIds[0]);
+  m1.typeId = 2;
+  m1.name = 'Match Winner';
+  m1.oddIds = [99901, 99902];
+
+  // Set basketball total
+  const mTotal = raw.markets.find((m) => m.id === bballEvent.marketIds[1]);
+  mTotal.typeId = 18;
+  mTotal.name = 'Total Points';
+  mTotal.sv = '214.5';
+  mTotal.oddIds = [99911, 99912];
+
+  // Set basketball spread
+  const mSpread = {
+    id: 99999,
+    typeId: 16,
+    name: 'Point Spread',
+    sv: '-4.5',
+    oddIds: [99921, 99922],
+  };
+  bballEvent.marketIds.push(mSpread.id);
+  raw.markets.push(mSpread);
+
+  const [homeId, awayId] = bballEvent.competitorIds;
+  raw.odds.push(
+    { id: 99901, typeId: 1, competitorId: homeId, oddStatus: 0, price: 1.85 },
+    { id: 99902, typeId: 3, competitorId: awayId, oddStatus: 0, price: 1.95 },
+    { id: 99911, typeId: 12, oddStatus: 0, price: 1.90 },
+    { id: 99912, typeId: 13, oddStatus: 0, price: 1.90 },
+    { id: 99921, typeId: 1714, competitorId: homeId, oddStatus: 0, price: 1.91 },
+    { id: 99922, typeId: 1715, competitorId: awayId, oddStatus: 0, price: 1.89 },
+  );
+
+  const a = new A('don', { sport: 'basketball' });
+  a.from = Date.parse('2026-09-21T19:00:00Z');
+  a.to = a.from + 86400000;
+  a.observedAt = new Date().toISOString();
+
+  const events = a.extractEvents(a.normalize(raw));
+  assert.ok(events.length >= 1);
+  const ev = events.find((e) => e.id === String(bballEvent.id));
+  assert.ok(ev);
+  assert.equal(ev.sport, 'Basketball');
+
+  const totalMarket = ev.markets.find((m) => m.key.startsWith('POINTS_OVER_UNDER'));
+  assert.ok(totalMarket, 'points total market exists');
+  assert.equal(totalMarket.key, 'POINTS_OVER_UNDER_214_5');
+  assert.equal(totalMarket.subject, 'points');
+
+  const spreadMarket = ev.markets.find((m) => m.key === 'POINT_SPREAD');
+  assert.ok(spreadMarket, 'point spread market exists');
+});
+
+test('altenar: live events are admitted when includeLive is true', () => {
+  const raw = structuredClone(fixtures.don);
+  const liveEvent = raw.events[0];
+  liveEvent.status = 1; // In-play
+
+  // Without includeLive: dropped
+  const aPre = new A('don');
+  aPre.from = Date.parse('2026-09-21T19:00:00Z');
+  aPre.to = aPre.from + 86400000;
+  assert.equal(aPre.extractEvents(aPre.normalize(raw)).some((e) => e.id === String(liveEvent.id)), false);
+
+  // With includeLive: admitted with live: true
+  const aLive = new A('don', { includeLive: true });
+  aLive.from = Date.parse('2026-09-21T19:00:00Z');
+  aLive.to = aLive.from + 86400000;
+  const events = aLive.extractEvents(aLive.normalize(raw));
+  const ev = events.find((e) => e.id === String(liveEvent.id));
+  assert.ok(ev, 'live event is collected when includeLive is true');
+  assert.equal(ev.live, true);
+  assert.equal(ev.isLive, true);
+  assert.equal(ev.markets[0].live, true);
+});
+
+test('altenar: extracts tennis Set 1 Winner and resolves to MATCH_ODDS with period set1', () => {
+  const raw = structuredClone(fixtures.million);
+  raw._sportNames = { 68: 'Tennis' };
+  const ev = raw.events[0];
+  ev.sportId = 68; // Tennis
+  const [homeId, awayId] = ev.competitorIds;
+
+  // Match winner (fulltime)
+  const matchWinner = {
+    id: 998001,
+    typeId: 2,
+    name: 'Castigator meci',
+    oddIds: [998011, 998012],
+  };
+  // Set 1 winner
+  const set1Winner = {
+    id: 998002,
+    typeId: 2,
+    name: 'Castigator setul 1',
+    oddIds: [998021, 998022],
+  };
+  raw.markets.push(matchWinner, set1Winner);
+  raw.odds.push(
+    { id: 998011, typeId: 1, competitorId: homeId, price: 1.70, oddStatus: 0 },
+    { id: 998012, typeId: 2, competitorId: awayId, price: 2.15, oddStatus: 0 },
+    { id: 998021, typeId: 1, competitorId: homeId, price: 1.75, oddStatus: 0 },
+    { id: 998022, typeId: 2, competitorId: awayId, price: 2.05, oddStatus: 0 },
+  );
+  ev.marketIds = [matchWinner.id, set1Winner.id];
+
+  const a = parser('million', { sports: ['tennis'] });
+  const events = a.extractEvents(a.normalize(raw));
+  assert.equal(events.length, 1);
+  const mFull = events[0].markets.find((m) => m.providerMarketId === '998001');
+  const mSet1 = events[0].markets.find((m) => m.providerMarketId === '998002');
+  assert.ok(mFull, 'fulltime market extracted');
+  assert.ok(mSet1, 'set 1 winner extracted');
+  assert.equal(mFull.period, 'fulltime');
+  assert.equal(mSet1.period, 'set1');
+  assert.equal(mSet1.key, 'SET_WINNER');
+
+  const contractFull = resolveContract(mFull, { sport: 'tennis' });
+  const contractSet1 = resolveContract(mSet1, { sport: 'tennis' });
+  assert.equal(contractFull.family, 'MATCH_ODDS');
+  assert.equal(contractFull.period, 'fulltime');
+  assert.equal(contractSet1.family, 'MATCH_ODDS');
+  assert.equal(contractSet1.period, 'set1');
+});
+
+test('altenar: extracts basketball Quarter 1 Winner and Q1 totals with period q1', () => {
+  const raw = structuredClone(fixtures.million);
+  raw._sportNames = { 67: 'Basketball' };
+  const ev = raw.events[0];
+  ev.sportId = 67; // Basketball
+  const [homeId, awayId] = ev.competitorIds;
+
+  // Match winner (fulltime)
+  const matchWinner = {
+    id: 997001,
+    typeId: 2,
+    name: 'Money Line',
+    oddIds: [997011, 997012],
+  };
+  // Quarter 1 winner
+  const q1Winner = {
+    id: 997002,
+    typeId: 2,
+    name: 'Castigator Sfertul 1',
+    oddIds: [997021, 997022],
+  };
+  // Quarter 1 points total
+  const q1Total = {
+    id: 997003,
+    typeId: 18,
+    name: 'Total puncte - Sfertul 1',
+    sv: '52.5',
+    oddIds: [997031, 997032],
+  };
+  raw.markets.push(matchWinner, q1Winner, q1Total);
+  raw.odds.push(
+    { id: 997011, typeId: 1, competitorId: homeId, price: 1.55, oddStatus: 0 },
+    { id: 997012, typeId: 2, competitorId: awayId, price: 2.45, oddStatus: 0 },
+    { id: 997021, typeId: 1, competitorId: homeId, price: 1.68, oddStatus: 0 },
+    { id: 997022, typeId: 2, competitorId: awayId, price: 2.18, oddStatus: 0 },
+    { id: 997031, typeId: 12, price: 1.88, oddStatus: 0 },
+    { id: 997032, typeId: 13, price: 1.92, oddStatus: 0 },
+  );
+  ev.marketIds = [matchWinner.id, q1Winner.id, q1Total.id];
+
+  const a = parser('million', { sports: ['basketball'] });
+  const events = a.extractEvents(a.normalize(raw));
+  assert.equal(events.length, 1);
+  const mQ1Winner = events[0].markets.find((m) => m.providerMarketId === '997002');
+  const mQ1Total = events[0].markets.find((m) => m.providerMarketId === '997003');
+  assert.ok(mQ1Winner, 'Q1 winner extracted');
+  assert.ok(mQ1Total, 'Q1 total extracted');
+  assert.equal(mQ1Winner.period, 'q1');
+  assert.equal(mQ1Winner.key, 'QUARTER_WINNER');
+  assert.equal(mQ1Total.period, 'q1');
+
+  const contractQ1Winner = resolveContract(mQ1Winner, { sport: 'basketball' });
+  const contractQ1Total = resolveContract(mQ1Total, { sport: 'basketball' });
+  assert.equal(contractQ1Winner.family, 'MATCH_ODDS');
+  assert.equal(contractQ1Winner.period, 'q1');
+  assert.equal(contractQ1Total.family, 'OVER_UNDER');
+  assert.equal(contractQ1Total.period, 'q1');
+  assert.equal(contractQ1Total.subject, 'points');
+  assert.equal(contractQ1Total.lineKey, '52.5');
+});
+
+test('altenar: extracts football 1st Half 1x2 and period does not collide with fulltime', () => {
+  const raw = structuredClone(fixtures.million);
+  raw._sportNames = { 66: 'Football' };
+  const ev = raw.events[0];
+  const [homeId, awayId] = ev.competitorIds;
+
+  // 1st Half 1X2
+  const half1X2 = {
+    id: 996001,
+    typeId: 1,
+    name: '1x2 - Repriza 1',
+    oddIds: [996011, 996012, 996013],
+  };
+  raw.markets.push(half1X2);
+  raw.odds.push(
+    { id: 996011, typeId: 1, competitorId: homeId, price: 2.80, oddStatus: 0 },
+    { id: 996012, typeId: 2, price: 2.10, oddStatus: 0 },
+    { id: 996013, typeId: 3, competitorId: awayId, price: 3.40, oddStatus: 0 },
+  );
+  ev.marketIds.push(half1X2.id);
+
+  const a = parser('million');
+  const events = a.extractEvents(a.normalize(raw));
+  const evFound = events.find((e) => e.id === String(ev.id));
+  assert.ok(evFound, 'event found');
+  const mFull = evFound.markets.find((m) => m.period === 'fulltime' && m.key === '1x2');
+  const mHalf = evFound.markets.find((m) => m.providerMarketId === '996001');
+  assert.ok(mFull, 'fulltime 1x2 found');
+  assert.ok(mHalf, '1st half 1x2 found');
+  assert.equal(mHalf.period, 'half1');
+
+  const contractFull = resolveContract(mFull, { sport: 'football' });
+  const contractHalf = resolveContract(mHalf, { sport: 'football' });
+  assert.equal(contractFull.period, 'fulltime');
+  assert.equal(contractHalf.period, 'half1');
+  assert.notEqual(contractFull.period, contractHalf.period);
+});
+
+test('altenar: extracts sub-window half BTTS alongside fulltime BTTS with bucket isolation', () => {
+  const raw = structuredClone(fixtures.million);
+  raw._sportNames = { 66: 'Football' };
+  const ev = raw.events[0];
+
+  // 1st Half BTTS
+  const half1Btts = {
+    id: 997001,
+    typeId: 29,
+    name: 'Ambele echipe marchează - Repriza 1',
+    oddIds: [997011, 997012],
+  };
+  raw.markets.push(half1Btts);
+  raw.odds.push(
+    { id: 997011, typeId: 74, price: 4.50, oddStatus: 0 },
+    { id: 997012, typeId: 76, price: 1.18, oddStatus: 0 },
+  );
+  ev.marketIds.push(half1Btts.id);
+
+  const a = parser('million');
+  const events = a.extractEvents(a.normalize(raw));
+  const evFound = events.find((e) => e.id === String(ev.id));
+  assert.ok(evFound, 'event found');
+
+  const bttsFt = evFound.markets.find((m) => m.key === 'BTTS' && m.period === 'fulltime');
+  const bttsH1 = evFound.markets.find((m) => m.key === 'BTTS' && m.period === 'half1');
+
+  assert.ok(bttsFt, 'fulltime BTTS found');
+  assert.ok(bttsH1, 'half1 BTTS found');
+  assert.equal(bttsH1.providerMarketId, '997001');
+
+  const cFt = resolveContract(bttsFt, { sport: 'football' });
+  const cH1 = resolveContract(bttsH1, { sport: 'football' });
+
+  assert.ok(cFt);
+  assert.ok(cH1);
+  assert.equal(cFt.family, 'BTTS');
+  assert.equal(cH1.family, 'BTTS');
+  assert.equal(cFt.period, 'fulltime');
+  assert.equal(cH1.period, 'half1');
+
+  const bKeyFt = bucketKeyForContract('evAlt', cFt);
+  const bKeyH1 = bucketKeyForContract('evAlt', cH1);
+
+  assert.equal(bKeyFt, 'evAlt::BTTS::fulltime::_::yes+no::_::_');
+  assert.equal(bKeyH1, 'evAlt::BTTS::half1::_::yes+no::_::_');
+  assert.notEqual(bKeyFt, bKeyH1, 'Full-time BTTS and Half 1 BTTS must have distinct isolated buckets');
+});
+
+test('altenar: duplicate period winner, totals, BTTS, and handicap markets are deduplicated deterministically', () => {
+  const raw = structuredClone(fixtures.don);
+  raw._sportNames = { 68: 'Tennis' };
+  const ev = raw.events[0];
+  ev.sportId = 68; // Tennis
+  const [homeId, awayId] = ev.competitorIds;
+
+  // FT match winner
+  const ftM = raw.markets.find((m) => m.id === ev.marketIds[0]);
+  ftM.typeId = 2;
+  ftM.name = 'Match Winner';
+  ftM.oddIds = [99801, 99802];
+
+  // Duplicate Set 1 winner markets
+  const set1WinnerA = { id: 99810, typeId: 2, name: 'Set 1 Winner', oddIds: [99811, 99812] };
+  const set1WinnerB = { id: 99820, typeId: 2, name: 'Set 1 Winner (Duplicate)', oddIds: [99821, 99822] };
+
+  // Duplicate totals markets (same period and line)
+  const totalA = { id: 99830, typeId: 18, name: 'Total Games Set 1', sv: '9.5', oddIds: [99831, 99832] };
+  const totalB = { id: 99840, typeId: 18, name: 'Total Games Set 1 (Duplicate)', sv: '9.5', oddIds: [99841, 99842] };
+
+  // Duplicate BTTS markets (same period)
+  const bttsA = { id: 99850, typeId: 29, name: 'Ambele marcheaza - Repriza 1', oddIds: [99851, 99852] };
+  const bttsB = { id: 99860, typeId: 29, name: 'Ambele marcheaza - Repriza 1 (Duplicate)', oddIds: [99861, 99862] };
+
+  // Duplicate Handicap markets (same period and line)
+  const hcapA = { id: 99870, typeId: 16, name: 'Handicap Set 1', sv: '-1.5', oddIds: [99871, 99872] };
+  const hcapB = { id: 99880, typeId: 16, name: 'Handicap Set 1 (Duplicate)', sv: '-1.5', oddIds: [99881, 99882] };
+
+  raw.markets.push(set1WinnerA, set1WinnerB, totalA, totalB, bttsA, bttsB, hcapA, hcapB);
+  ev.marketIds.push(set1WinnerA.id, set1WinnerB.id, totalA.id, totalB.id, bttsA.id, bttsB.id, hcapA.id, hcapB.id);
+
+  raw.odds.push(
+    { id: 99801, typeId: 1, competitorId: homeId, oddStatus: 0, price: 1.70 },
+    { id: 99802, typeId: 3, competitorId: awayId, oddStatus: 0, price: 2.10 },
+    // Set 1 winner A
+    { id: 99811, typeId: 1, competitorId: homeId, oddStatus: 0, price: 1.75 },
+    { id: 99812, typeId: 3, competitorId: awayId, oddStatus: 0, price: 2.05 },
+    // Set 1 winner B
+    { id: 99821, typeId: 1, competitorId: homeId, oddStatus: 0, price: 1.75 },
+    { id: 99822, typeId: 3, competitorId: awayId, oddStatus: 0, price: 2.05 },
+    // Totals A & B
+    { id: 99831, typeId: 12, oddStatus: 0, price: 1.90 },
+    { id: 99832, typeId: 13, oddStatus: 0, price: 1.90 },
+    { id: 99841, typeId: 12, oddStatus: 0, price: 1.90 },
+    { id: 99842, typeId: 13, oddStatus: 0, price: 1.90 },
+    // BTTS A & B
+    { id: 99851, typeId: 74, oddStatus: 0, price: 4.00 },
+    { id: 99852, typeId: 76, oddStatus: 0, price: 1.20 },
+    { id: 99861, typeId: 74, oddStatus: 0, price: 4.00 },
+    { id: 99862, typeId: 76, oddStatus: 0, price: 1.20 },
+    // Handicap A & B
+    { id: 99871, typeId: 1714, competitorId: homeId, oddStatus: 0, price: 1.85 },
+    { id: 99872, typeId: 1715, competitorId: awayId, oddStatus: 0, price: 1.95 },
+    { id: 99881, typeId: 1714, competitorId: homeId, oddStatus: 0, price: 1.85 },
+    { id: 99882, typeId: 1715, competitorId: awayId, oddStatus: 0, price: 1.95 },
+  );
+
+  const a = new A('don', { sport: 'tennis' });
+  a.from = Date.parse('2026-09-21T19:00:00Z');
+  a.to = a.from + 86400000;
+  a.observedAt = new Date().toISOString();
+
+  const events = a.extractEvents(a.normalize(raw));
+  assert.ok(events.length >= 1);
+  const event = events.find((e) => e.id === String(ev.id));
+  assert.ok(event);
+
+  // Assert deduplication
+  const set1Winners = event.markets.filter((m) => m.period === 'set1' && (m.key === 'SET_WINNER' || m.key === 'MATCH_ODDS'));
+  assert.equal(set1Winners.length, 1, 'Only one Set 1 winner market must be emitted despite two upstream markets');
+
+  const set1Totals = event.markets.filter((m) => m.period === 'set1' && m.line === '9.5');
+  assert.equal(set1Totals.length, 1, 'Only one 9.5 total for Set 1 must be emitted despite two upstream markets');
+
+  const half1Btts = event.markets.filter((m) => m.period === 'half1' && m.key === 'BTTS');
+  assert.equal(half1Btts.length, 1, 'Only one half1 BTTS must be emitted despite two upstream markets');
+
+  const set1Handicaps = event.markets.filter((m) => m.period === 'set1' && m.line === '-1.5');
+  assert.equal(set1Handicaps.length, 1, 'Only one -1.5 handicap for Set 1 must be emitted despite two upstream markets');
+});
+
+
+

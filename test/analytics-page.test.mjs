@@ -21,6 +21,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import vm from 'node:vm';
 import { buildMarketCatalog } from '../src/scanner/market-catalog.mjs';
+import { TrackerService } from '../src/tracker-service.mjs';
 import { codeOnly, fieldReads, fieldsOn, objectEntries } from './helpers/code-only.mjs';
 
 const analyticsSource = readFileSync(new URL('../public/js/pages/analytics.js', import.meta.url), 'utf8');
@@ -387,6 +388,45 @@ test('the table says where the bet came from', () => {
   assert.ok(hostile.includes('&lt;b&gt;kiv'));
 });
 
+test('every status the tracker can hold has a badge the stylesheet draws', async () => {
+  // The table prints the status as `<span class="status ${status}">`, so the
+  // colour of a bet's outcome is decided by whether the stylesheet knows the
+  // name. The base `.status` rule carries no background and no colour of its
+  // own — geometry and a font — so a name nothing styles renders as an
+  // unfilled pill with the text at full strength, next to three that are
+  // filled. That is not a broken layout, it is a status that reads louder than
+  // the ones around it while saying the opposite.
+  //
+  // The vocabulary is measured rather than read: a bet is stored with each
+  // candidate and whatever the service keeps is a status the ledger can hold. A
+  // list of names typed here would be a second copy that stops being true
+  // quietly, which is the whole subject of this file.
+  const dataDir = await mkdtemp(join(tmpdir(), 'arbiter-status-'));
+  const tracker = new TrackerService({ dataDir });
+  const holdable = [];
+  for (const status of ['pending', 'won', 'lost', 'void', 'settled', 'cancelled', '']) {
+    const bet = await tracker.addBet({ selection: 'Home', odds: 2, stake: 10, status });
+    if (!holdable.includes(bet.status)) holdable.push(bet.status);
+  }
+  await rm(dataDir, { recursive: true, force: true });
+
+  const sheets = [...analyticsHtml.matchAll(/<link rel="stylesheet" href="\/css\/([^"]+)"/g)].map((m) => m[1]);
+  const css = sheets.map((s) => readFileSync(new URL(`../public/css/${s}`, import.meta.url), 'utf8')).join('\n');
+  const hasBadge = (name) => new RegExp(`\\.status\\.${name}\\b`).test(css);
+
+  // The controls first: a vocabulary that came back empty would leave the list
+  // below empty too, and an empty list is not a pass.
+  assert.ok(holdable.length > 0, 'the measurement found no status the service would store');
+  assert.ok(hasBadge('won') && hasBadge('lost') && hasBadge('pending'),
+    'the search finds the badges that are there');
+  assert.ok(!hasBadge('nonexistent'), 'and does not answer yes to a name nothing styles');
+  assert.ok(sheets.length > 0, 'the page loads no stylesheet, so no status can be styled');
+
+  const unstyled = holdable.filter((s) => !hasBadge(s)).sort();
+  assert.deepEqual(unstyled, [],
+    `the tracker stores these statuses and the page draws no badge for them: ${unstyled.join(', ')}`);
+});
+
 test('an import tells the user what it did, through the handler the page ships', async () => {
   // The summary is pure and was tested on its own, but the three things that
   // turn it into something a person sees were not: the route's answer reaching
@@ -743,7 +783,7 @@ const UNREAD_BY_DESIGN = {
   schemaVersion: [
     'A version marker, and the only one of its kind in the tree whose value',
     'nothing pinned. Measured across the whole tree: six builders write one',
-    '(src/router.mjs:294, src/alert-engine.mjs, src/tracker-service.mjs,',
+    '(src/router.mjs:323, src/alert-engine.mjs, src/tracker-service.mjs,',
     'src/scanner/scanner.mjs, src/scanner/market-catalog.mjs, src/scrapers/base.mjs)',
     'and no page reads any of them. The siblings are pinned in test/router.test.mjs:492,',
     'test/tracker-service.test.mjs:274 and test/endpoints-registry.test.mjs:24; this',

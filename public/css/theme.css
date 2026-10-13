@@ -14,7 +14,7 @@ html, body { margin: 0; padding: 0; }
 
 html {
   background: var(--bg-0);
-  color-scheme: dark;
+  color-scheme: var(--color-scheme);
   scrollbar-color: var(--bg-4) var(--bg-0);
 }
 
@@ -222,13 +222,14 @@ main > section + section { margin-top: var(--s-6); }
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: var(--s-8);
+  margin-bottom: var(--s-6);
   gap: var(--s-4);
   flex-wrap: wrap;
 }
 
 .page-header > div:first-child { min-width: 0; }
 
+.page-header h1,
 .page-header h2 {
   margin: 0;
   font-size: var(--fs-3xl);
@@ -743,11 +744,11 @@ main > section + section { margin-top: var(--s-6); }
 
 .card h3 {
   margin: 0 0 var(--s-4);
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
+  font-size: var(--fs-lg);
+  font-weight: 600;
+  color: var(--text-strong);
+  text-transform: none;
+  letter-spacing: -0.01em;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -1005,6 +1006,7 @@ main > section + section { margin-top: var(--s-6); }
 
 button, .btn {
   display: inline-flex;
+  min-height: var(--control-h);
   align-items: center;
   justify-content: center;
   gap: var(--s-2);
@@ -1038,7 +1040,7 @@ button:disabled { opacity: 0.45; cursor: not-allowed; }
 button:focus-visible { outline: none; box-shadow: var(--ring-strong); }
 
 button.primary, .btn.primary {
-  background: linear-gradient(180deg, var(--accent) 0%, var(--accent-strong) 100%);
+  background: var(--accent);
   border-color: var(--accent-strong);
   color: var(--surface-btn-primary-text);
   font-weight: 600;
@@ -1047,20 +1049,22 @@ button.primary, .btn.primary {
     0 1px 2px rgba(0, 0, 0, 0.4),
     0 0 0 0 var(--accent-glow);
 }
-button.primary:hover:not(:disabled) {
-  background: linear-gradient(180deg, #84e0fb 0%, var(--accent-2) 100%);
-  border-color: var(--accent-2);
-  box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.30) inset,
-    0 4px 12px rgba(56, 189, 248, 0.35),
-    0 0 0 4px rgba(56, 189, 248, 0.12);
+button.primary:hover:not(:disabled), .btn.primary:hover {
+  background: var(--accent-strong);
+  border-color: var(--accent-strong);
+  color: var(--surface-btn-primary-text);
+  box-shadow: var(--shadow-sm);
 }
 
 button.danger, .btn.danger {
-  background: linear-gradient(180deg, #f87171 0%, var(--red-strong) 100%);
+  background: var(--red);
   border-color: var(--red-strong);
-  color: #fff;
+  color: var(--surface-btn-primary-text);
   font-weight: 600;
+}
+button.danger:hover:not(:disabled), .btn.danger:hover {
+  background: var(--red-strong);
+  color: var(--surface-btn-primary-text);
 }
 
 button.ghost, .btn.ghost {
@@ -1199,7 +1203,14 @@ button.lg, .btn.lg {
 .status.skipped, .status.timeout, .status.expired { background: var(--yellow-soft); color: var(--yellow); border: 1px solid rgba(251, 191, 36, 0.30); }
 .status.confirmed { background: var(--green-soft); color: var(--green); border: 1px solid rgba(52, 211, 153, 0.30); }
 .status.rejected  { background: var(--red-soft);   color: var(--red);   border: 1px solid rgba(248, 113, 113, 0.30); }
-.status.unknown   { background: var(--bg-2); color: var(--text-muted); border: 1px solid var(--border); }
+/* `void` is the fourth status the tracker can hold — normalizeBet accepts it and
+   a CSV import can carry one in — and it means the bet had no result, so it takes
+   the neutral wash rather than the green of a win or the red of a loss. It was
+   the one name here with no rule at all, which left the base `.status` geometry
+   and nothing else: an unfilled pill whose text reads at full strength, beside
+   three that are filled. Same defect the `.status.cancelled` rule in
+   css/scrape.css was added for. */
+.status.unknown, .status.void { background: var(--bg-2); color: var(--text-muted); border: 1px solid var(--border); }
 .status.won       { background: var(--green-soft); color: var(--green); border: 1px solid rgba(52, 211, 153, 0.30); }
 .status.lost      { background: var(--red-soft);   color: var(--red);   border: 1px solid rgba(248, 113, 113, 0.30); }
 
@@ -2328,7 +2339,7 @@ a.card:hover {
 }
 
 .login .card {
-  width: 380px;
+  width: min(100%, 420px);
   box-shadow: var(--shadow-lg);
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.025) 0%, transparent 50%),
@@ -2573,7 +2584,7 @@ table th.num, table td.num { min-width: 5rem; }
 @media (max-width: 600px) {
   main { padding: var(--s-4); }
   .card { padding: var(--s-4); border-radius: var(--r-md); }
-  .page-header h2 { font-size: var(--fs-2xl); }
+  .page-header h1, .page-header h2 { font-size: var(--fs-2xl); }
   .page-header .meta { width: 100%; justify-content: space-between; }
   .kpi .value { font-size: 30px; }
   button, .btn { min-height: 44px; min-width: 44px; }
@@ -2670,7 +2681,7 @@ body.has-sidebar::before { display: none; }
      they are pushed darker and the borders thicken. These were the dark theme's
      values, which on white made the page lower-contrast than the default rather
      than higher. */
-  :root {
+  :root:not([data-theme="dark"]) {
     --border: #64748b;
     --border-strong: #475569;
     --text-muted: #475569;
@@ -2684,4 +2695,48 @@ body.has-sidebar::before { display: none; }
   .chip { border: 1px solid var(--border-bright); }
   .card { border-width: 1px; border-color: var(--border-bright); }
   .alert { border-left-width: 4px; }
+}
+
+/* Shared reading rhythm and control affordances. */
+.page-header { padding-bottom: var(--s-5); border-bottom: 1px solid var(--border); }
+.page-header .meta, .card h3 { flex-wrap: wrap; }
+.card h3 { row-gap: var(--s-2); }
+.grid > *, .field { min-width: 0; }
+label { font-size: var(--fs-xs); }
+input:not([type="checkbox"]):not([type="radio"]), select, textarea {
+  min-width: 0;
+  min-height: var(--control-h);
+  caret-color: var(--accent);
+  box-shadow: none;
+}
+input[type="time"] {
+  width: 100%;
+  padding: var(--s-2) var(--s-3);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--r-sm);
+  background: var(--bg-0);
+  color: var(--text-strong);
+}
+input::placeholder, textarea::placeholder { color: var(--text-muted); opacity: 1; }
+body button:focus-visible, body input:focus-visible, body select:focus-visible, body textarea:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+.table-wrap, .overflow-x-auto { max-width: 100%; }
+.login { padding: var(--s-4); }
+.login .brand { flex-wrap: wrap; }
+@media (max-width: 600px) {
+  input:not([type="checkbox"]):not([type="radio"]), select, textarea {
+    font-size: 16px;
+    min-height: var(--touch-target);
+  }
+  .table-wrap { margin-inline: 0; border-radius: var(--r-sm); }
+}
+@media (prefers-contrast: more) {
+  :root[data-theme="dark"] {
+    --text-muted: #e2e8f0;
+    --text-dim: #cbd5e1;
+    --border: #94a3b8;
+    --border-strong: #cbd5e1;
+  }
 }

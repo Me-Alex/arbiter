@@ -59,6 +59,10 @@ function srcModules() {
  * below rather than asserted here.
  */
 const UNREACHABLE_FROM_SERVER = new Set([
+  // The platform catalogue read by `npm run new-book`. It describes how to
+  // scaffold a book, so the server has no reason to load it and shipping it in
+  // the server's graph would be dead weight; scripts/add-book.mjs is its importer.
+  'src/scrapers/platforms.mjs',
   'src/scrapers/tinyfish-scraper.mjs',
   'src/tinyfish/books.mjs',
   'src/tinyfish/browser-discovery.mjs',

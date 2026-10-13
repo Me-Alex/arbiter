@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 
 import Unibet, { contestsIn, leaguesIn } from '../src/scrapers/unibet.mjs';
-import { resolveContract, isLiteral1x2SelectionSet } from '../src/scanner/market-contracts.mjs';
+import { resolveContract, isLiteral1x2SelectionSet, bucketKeyForContract } from '../src/scanner/market-contracts.mjs';
 
 /**
  * Unibet's live feed is the Kindred sports BFF, and two of its rules are
@@ -600,4 +600,449 @@ test('the detail budget is spent on the sport the scan is reading', async () => 
   assert.equal(seen.length, 4);
   assert.ok(seen.every((p) => /contestKey=foo/.test(p)),
     `every request must target the scanned sport, got ${seen.join(', ')}`);
+});
+
+test('a single-sport scan crawls only that sport, keyed case-insensitively', async () => {
+  // The same budget argument as the detail-cap test above, applied to the crawl
+  // itself: the scan reads one sport and filters every other one out, so
+  // crawling the other sports' lobbies spends the cycle on events that can
+  // never pair. Measured 2026-10-08: the 13-sport crawl with fullMarkets runs
+  // 76s, which overran the 60s smoke gate and looked like a dead feed.
+  //
+  // The registry id the scan passes is lowercase (`football`); the az-menu keys
+  // come back capitalized (`Football`). An exact-match filter drops the
+  // requested sport entirely and the crawl silently collects nothing.
+  const s = new Unibet({ sport: 'football' });
+  const seen = [];
+  s._get = async (path) => {
+    seen.push(path);
+    if (path === 'v2/views/az-menu') {
+      return {
+        items: [
+          { key: 'Football', displayName: 'Fotbal' },
+          { key: 'Tennis', displayName: 'Tenis' },
+          { key: 'IceHockey', displayName: 'Hochei pe gheață' },
+        ],
+      };
+    }
+    if (/views\/lobby\?category=Football&/.test(path)) return lobbyView();
+    return { view: { matches: [] } };
+  };
+  const raw = await s.fetchRaw({ signal: new AbortController().signal });
+
+  const lobbies = seen.filter((p) => /views\/lobby\?/.test(p));
+  assert.ok(lobbies.length > 0, 'the football lobby must be crawled');
+  assert.ok(lobbies.every((p) => /views\/lobby\?category=Football&/.test(p)),
+    `only the scanned sport's lobby may be crawled, got ${lobbies.join(', ')}`);
+  assert.equal(raw.contests.length, 1, 'the football fixture is collected');
+  assert.equal(raw.contests[0].contestKey, 'aaaa1111');
+  assert.equal(raw.contests[0]._sport, 'Football', 'the crawl annotation uses the menu key');
+});
+
+test('Unibet multi-sport: basketball total points resolves as OVER_UNDER with subject points', () => {
+  const basketballContest = {
+    contestKey: 'bball_123',
+    contestType: 'Basketball',
+    status: 'PreGame',
+    name: 'Boston Celtics vs Los Angeles Lakers',
+    startDateTimeUtc: { value: '2026-10-15T19:00:00.000Z' },
+    category: 'basketball:nba',
+    propositions: [
+      {
+        propositionKey: 'moneyline',
+        propositionType: 'moneyline',
+        displayName: 'Castigator Meci',
+        options: [
+          { optionType: 'T1', optionName: 'Boston Celtics', optionDisplayName: '1', price: 1.65, bettingOpen: true },
+          { optionType: 'T2', optionName: 'Los Angeles Lakers', optionDisplayName: '2', price: 2.30, bettingOpen: true },
+        ],
+      },
+      {
+        propositionKey: 'total',
+        propositionType: 'total',
+        displayName: 'Total Puncte',
+        options: [
+          { optionType: 'TotalOver', optionDisplayName: 'Peste', variantName: '224.5', price: 1.91, bettingOpen: true },
+          { optionType: 'TotalUnder', optionDisplayName: 'Sub', variantName: '224.5', price: 1.91, bettingOpen: true },
+        ],
+      },
+    ],
+  };
+
+  const s = new Unibet({ sport: 'basketball' });
+  const [event] = s.extractEvents(s.normalize({ contests: [basketballContest] }));
+  assert.ok(event, 'basketball event extracted');
+  assert.equal(event.homeTeam, 'Boston Celtics');
+  assert.equal(event.awayTeam, 'Los Angeles Lakers');
+
+  const ml = event.markets.find((m) => m.key === 'MONEYLINE');
+  assert.ok(ml, 'moneyline market emitted');
+  const mlContract = resolveContract(ml);
+  assert.equal(mlContract.family, 'MATCH_ODDS');
+  assert.deepEqual(mlContract.outcomes, ['home', 'away']);
+
+  const total = event.markets.find((m) => m.key === 'TOTAL');
+  assert.ok(total, 'totals market emitted');
+  assert.equal(total.subject, 'points');
+  const totalContract = resolveContract(total);
+  assert.equal(totalContract.family, 'OVER_UNDER');
+  assert.equal(totalContract.subject, 'points');
+  assert.equal(totalContract.lineKey, '224.5');
+});
+
+test('Unibet multi-sport: tennis head-to-head and total games resolve cleanly', () => {
+  const tennisContest = {
+    contestKey: 'tennis_456',
+    contestType: 'Tennis',
+    status: 'PreGame',
+    name: 'Carlos Alcaraz vs Jannik Sinner',
+    startDateTimeUtc: { value: '2026-10-16T14:00:00.000Z' },
+    category: 'tennis:atp:wimbledon',
+    propositions: [
+      {
+        propositionKey: 'h2h',
+        propositionType: 'head_to_head',
+        displayName: 'Castigator',
+        options: [
+          { optionType: 'T1', optionName: 'Carlos Alcaraz', optionDisplayName: '1', price: 1.85, bettingOpen: true },
+          { optionType: 'T2', optionName: 'Jannik Sinner', optionDisplayName: '2', price: 1.95, bettingOpen: true },
+        ],
+      },
+      {
+        propositionKey: 'total_games',
+        propositionType: 'total_games',
+        displayName: 'Total Game-uri',
+        options: [
+          { optionType: 'TotalOver', optionDisplayName: 'Peste', variantName: '22.5', price: 1.80, bettingOpen: true },
+          { optionType: 'TotalUnder', optionDisplayName: 'Sub', variantName: '22.5', price: 2.00, bettingOpen: true },
+        ],
+      },
+    ],
+  };
+
+  const s = new Unibet({ sport: 'tennis' });
+  const [event] = s.extractEvents(s.normalize({ contests: [tennisContest] }));
+  assert.ok(event, 'tennis event extracted');
+  assert.equal(event.homeTeam, 'Carlos Alcaraz');
+  assert.equal(event.awayTeam, 'Jannik Sinner');
+
+  const h2h = event.markets.find((m) => m.key === 'HEAD_TO_HEAD');
+  assert.ok(h2h, 'head to head emitted');
+  const h2hContract = resolveContract(h2h);
+  assert.equal(h2hContract.family, 'MATCH_ODDS');
+  assert.deepEqual(h2hContract.outcomes, ['home', 'away']);
+
+  const games = event.markets.find((m) => m.key === 'FTGO');
+  assert.ok(games, 'total games emitted');
+  assert.equal(games.subject, 'games');
+  const gamesContract = resolveContract(games);
+  assert.equal(gamesContract.family, 'OVER_UNDER');
+  assert.equal(gamesContract.subject, 'games');
+  assert.equal(gamesContract.lineKey, '22.5');
+});
+
+test('Unibet in-play handling honours includeLive flag', () => {
+  const liveContest = {
+    contestKey: 'live_789',
+    contestType: 'Football',
+    status: 'InPlay',
+    name: 'Real Madrid vs Barcelona',
+    startDateTimeUtc: { value: '2026-10-10T20:00:00.000Z' },
+    propositions: [
+      {
+        propositionKey: '1x2',
+        propositionType: '1x2',
+        displayName: 'Rezultat final',
+        options: [
+          { optionType: 'T1', optionName: 'Real Madrid', optionDisplayName: '1', price: 2.10, bettingOpen: true },
+          { optionType: 'Draw', optionName: 'Egalitate', optionDisplayName: 'X', price: 3.30, bettingOpen: true },
+          { optionType: 'T2', optionName: 'Barcelona', optionDisplayName: '2', price: 3.20, bettingOpen: true },
+        ],
+      },
+    ],
+  };
+
+  // Without includeLive: false by default, in-play is dropped
+  const preGameScraper = new Unibet({ includeLive: false });
+  assert.deepEqual(preGameScraper.normalize({ contests: [liveContest] }), []);
+
+  // With includeLive: true, in-play is retained and marked live
+  const liveScraper = new Unibet({ includeLive: true });
+  const normalized = liveScraper.normalize({ contests: [liveContest] });
+  assert.equal(normalized.length, 1);
+  assert.equal(normalized[0].markets[0].live, true);
+
+  const [event] = liveScraper.extractEvents(normalized);
+  assert.ok(event);
+  assert.equal(event.live, true);
+  assert.equal(event.status, 'InPlay');
+});
+
+test('Unibet: period-scoped markets extract half, set, and quarter periods with bucket isolation', () => {
+  const basketballContest = {
+    contestKey: 'bball_period_123',
+    contestType: 'Basketball',
+    status: 'PreGame',
+    name: 'Boston Celtics vs Los Angeles Lakers',
+    startDateTimeUtc: { value: '2026-10-15T19:00:00.000Z' },
+    category: 'basketball:nba',
+    propositions: [
+      {
+        propositionKey: 'total',
+        propositionType: 'total_points',
+        displayName: 'Total Puncte',
+        options: [
+          { optionType: 'TotalOver', optionDisplayName: 'Peste', variantName: '224.5', price: 1.91, bettingOpen: true },
+          { optionType: 'TotalUnder', optionDisplayName: 'Sub', variantName: '224.5', price: 1.91, bettingOpen: true },
+        ],
+      },
+      {
+        propositionKey: 'q1_total',
+        propositionType: '1st_quarter_total',
+        displayName: 'Total Puncte - Sfertul 1',
+        options: [
+          { optionType: 'TotalOver', optionDisplayName: 'Peste', variantName: '56.5', price: 1.85, bettingOpen: true },
+          { optionType: 'TotalUnder', optionDisplayName: 'Sub', variantName: '56.5', price: 1.95, bettingOpen: true },
+        ],
+      },
+    ],
+  };
+
+  const s = new Unibet({ sport: 'basketball' });
+  const [event] = s.extractEvents(s.normalize({ contests: [basketballContest] }));
+  assert.ok(event);
+  assert.equal(event.markets.length, 2);
+
+  const ft = event.markets.find((m) => m.period === 'fulltime');
+  const q1 = event.markets.find((m) => m.period === 'q1');
+  assert.ok(ft && q1);
+
+  const cFt = resolveContract(ft);
+  const cQ1 = resolveContract(q1);
+  assert.ok(cFt && cQ1);
+  assert.equal(cFt.period, 'fulltime');
+  assert.equal(cQ1.period, 'q1');
+
+  const bFt = bucketKeyForContract(event.eventKey, cFt);
+  const bQ1 = bucketKeyForContract(event.eventKey, cQ1);
+  assert.notEqual(bFt, bQ1);
+  assert.ok(bQ1.includes('::q1::'));
+});
+
+test('Unibet: dynamic quarter extraction (Q1-Q4) and tennis set extraction (S1-S5) resolve distinct buckets', () => {
+  const basketballContest = {
+    contestKey: 'bball_quarters_all',
+    contestType: 'Basketball',
+    status: 'PreGame',
+    name: 'Miami Heat vs Boston Celtics',
+    startDateTimeUtc: { value: '2026-10-18T20:00:00.000Z' },
+    category: 'basketball:nba',
+    propositions: [
+      {
+        propositionKey: 'q2_winner',
+        propositionType: '2nd_quarter_winner',
+        displayName: 'Castigator Sfertul 2',
+        options: [
+          { optionType: 'T1', optionName: 'Miami Heat', price: 1.95, bettingOpen: true },
+          { optionType: 'T2', optionName: 'Boston Celtics', price: 1.85, bettingOpen: true },
+        ],
+      },
+      {
+        propositionKey: 'q3_total',
+        propositionType: '3rd_quarter_total',
+        displayName: 'Total Puncte - Sfertul 3',
+        options: [
+          { optionType: 'TotalOver', optionDisplayName: 'Peste', variantName: '54.5', price: 1.88, bettingOpen: true },
+          { optionType: 'TotalUnder', optionDisplayName: 'Sub', variantName: '54.5', price: 1.92, bettingOpen: true },
+        ],
+      },
+      {
+        propositionKey: 'q4_total',
+        propositionType: 'quarter_4_total',
+        displayName: 'Total Puncte - Sfertul 4',
+        options: [
+          { optionType: 'TotalOver', optionDisplayName: 'Peste', variantName: '52.5', price: 1.90, bettingOpen: true },
+          { optionType: 'TotalUnder', optionDisplayName: 'Sub', variantName: '52.5', price: 1.90, bettingOpen: true },
+        ],
+      },
+    ],
+  };
+
+  const tennisContest = {
+    contestKey: 'tennis_sets_all',
+    contestType: 'Tennis',
+    status: 'PreGame',
+    name: 'Novak Djokovic vs Rafael Nadal',
+    startDateTimeUtc: { value: '2026-10-19T15:00:00.000Z' },
+    category: 'tennis:atp:roland_garros',
+    propositions: [
+      {
+        propositionKey: 'set2_winner',
+        propositionType: '2nd_set_winner',
+        displayName: 'Castigator Setul 2',
+        options: [
+          { optionType: 'T1', optionName: 'Novak Djokovic', price: 1.75, bettingOpen: true },
+          { optionType: 'T2', optionName: 'Rafael Nadal', price: 2.10, bettingOpen: true },
+        ],
+      },
+      {
+        propositionKey: 'set3_total',
+        propositionType: 'set_3_total',
+        displayName: 'Total Game-uri Set 3',
+        options: [
+          { optionType: 'TotalOver', optionDisplayName: 'Peste', variantName: '9.5', price: 1.85, bettingOpen: true },
+          { optionType: 'TotalUnder', optionDisplayName: 'Sub', variantName: '9.5', price: 1.95, bettingOpen: true },
+        ],
+      },
+    ],
+  };
+
+  const bballScraper = new Unibet({ sport: 'basketball' });
+  const [bballEvt] = bballScraper.extractEvents(bballScraper.normalize({ contests: [basketballContest] }));
+  assert.ok(bballEvt);
+  assert.equal(bballEvt.markets.length, 3);
+
+  const q2m = bballEvt.markets.find((m) => m.period === 'q2');
+  assert.ok(q2m);
+  const q2Contract = resolveContract(q2m);
+  assert.equal(q2Contract.family, 'MATCH_ODDS');
+  assert.equal(q2Contract.period, 'q2');
+
+  const q3m = bballEvt.markets.find((m) => m.period === 'q3');
+  assert.ok(q3m);
+  const q3Contract = resolveContract(q3m);
+  assert.equal(q3Contract.family, 'OVER_UNDER');
+  assert.equal(q3Contract.period, 'q3');
+  assert.equal(q3Contract.lineKey, '54.5');
+
+  const q4m = bballEvt.markets.find((m) => m.period === 'q4');
+  assert.ok(q4m);
+  const q4Contract = resolveContract(q4m);
+  assert.equal(q4Contract.family, 'OVER_UNDER');
+  assert.equal(q4Contract.period, 'q4');
+  assert.equal(q4Contract.lineKey, '52.5');
+
+  const bQ2 = bucketKeyForContract(bballEvt.eventKey, q2Contract);
+  const bQ3 = bucketKeyForContract(bballEvt.eventKey, q3Contract);
+  const bQ4 = bucketKeyForContract(bballEvt.eventKey, q4Contract);
+  assert.notEqual(bQ2, bQ3);
+  assert.notEqual(bQ3, bQ4);
+  assert.ok(bQ2.includes('::q2::'));
+  assert.ok(bQ3.includes('::q3::'));
+  assert.ok(bQ4.includes('::q4::'));
+
+  const tennisScraper = new Unibet({ sport: 'tennis' });
+  const [tennisEvt] = tennisScraper.extractEvents(tennisScraper.normalize({ contests: [tennisContest] }));
+  assert.ok(tennisEvt);
+  assert.equal(tennisEvt.markets.length, 2);
+
+  const s2m = tennisEvt.markets.find((m) => m.period === 'set2');
+  assert.ok(s2m);
+  const s2Contract = resolveContract(s2m);
+  assert.equal(s2Contract.family, 'MATCH_ODDS');
+  assert.equal(s2Contract.period, 'set2');
+
+  const s3m = tennisEvt.markets.find((m) => m.period === 'set3');
+  assert.ok(s3m);
+  const s3Contract = resolveContract(s3m);
+  assert.equal(s3Contract.family, 'OVER_UNDER');
+  assert.equal(s3Contract.period, 'set3');
+  assert.equal(s3Contract.lineKey, '9.5');
+
+  const bS2 = bucketKeyForContract(tennisEvt.eventKey, s2Contract);
+  const bS3 = bucketKeyForContract(tennisEvt.eventKey, s3Contract);
+  assert.notEqual(bS2, bS3);
+  assert.ok(bS2.includes('::set2::'));
+  assert.ok(bS3.includes('::set3::'));
+});
+
+test('Unibet: half-time derivative markets (1x2, totals, BTTS, Double Chance) isolate to half1 and half2', () => {
+  const footballContest = {
+    contestKey: 'fb_halves_derivatives',
+    contestType: 'Football',
+    status: 'PreGame',
+    name: 'Arsenal vs Chelsea',
+    startDateTimeUtc: { value: '2026-10-20T17:30:00.000Z' },
+    category: 'football:england:premier_league',
+    propositions: [
+      {
+        propositionKey: 'h1_1x2',
+        propositionType: '1st_half_1x2',
+        displayName: '1X2 - Prima repriză',
+        options: [
+          { optionType: 'T1', optionName: 'Arsenal', optionDisplayName: '1', price: 2.30, bettingOpen: true },
+          { optionType: 'Draw', optionName: 'Egalitate', optionDisplayName: 'X', price: 2.20, bettingOpen: true },
+          { optionType: 'T2', optionName: 'Chelsea', optionDisplayName: '2', price: 3.80, bettingOpen: true },
+        ],
+      },
+      {
+        propositionKey: 'h2_total',
+        propositionType: '2nd_half_total',
+        displayName: 'Total Goluri - Repriza a 2-a',
+        options: [
+          { optionType: 'TotalOver', optionDisplayName: 'Peste', variantName: '1.5', price: 2.10, bettingOpen: true },
+          { optionType: 'TotalUnder', optionDisplayName: 'Sub', variantName: '1.5', price: 1.70, bettingOpen: true },
+        ],
+      },
+      {
+        propositionKey: 'h1_btts',
+        propositionType: '1st_half_both_teams_to_score',
+        displayName: 'Ambele marchează - Repriza 1',
+        options: [
+          { optionType: 'Yes', optionDisplayName: 'Da', price: 3.90, bettingOpen: true },
+          { optionType: 'No', optionDisplayName: 'Nu', price: 1.25, bettingOpen: true },
+        ],
+      },
+      {
+        propositionKey: 'h2_dc',
+        propositionType: '2nd_half_double_chance',
+        displayName: 'Șansă dublă - Repriza a 2-a',
+        options: [
+          { optionType: '1X', optionDisplayName: '1X', price: 1.35, bettingOpen: true },
+          { optionType: '12', optionDisplayName: '12', price: 1.45, bettingOpen: true },
+          { optionType: 'X2', optionDisplayName: 'X2', price: 1.60, bettingOpen: true },
+        ],
+      },
+    ],
+  };
+
+  const s = new Unibet({ sport: 'football' });
+  const [event] = s.extractEvents(s.normalize({ contests: [footballContest] }));
+  assert.ok(event);
+  assert.equal(event.markets.length, 4);
+
+  const h1_1x2 = event.markets.find((m) => m.key === '1x2' && m.period === 'half1');
+  const h2_tot = event.markets.find((m) => m.key === 'TOTAL' && m.period === 'half2');
+  const h1_btts = event.markets.find((m) => m.key === 'BOTH_TEAMS_SCORE' && m.period === 'half1');
+  const h2_dc = event.markets.find((m) => m.key === 'DOUBLE_CHANCE' && m.period === 'half2');
+
+  assert.ok(h1_1x2 && h2_tot && h1_btts && h2_dc);
+
+  const cH1_1x2 = resolveContract(h1_1x2);
+  const cH2_tot = resolveContract(h2_tot);
+  const cH1_btts = resolveContract(h1_btts);
+  const cH2_dc = resolveContract(h2_dc);
+
+  assert.equal(cH1_1x2.family, 'MATCH_ODDS');
+  assert.equal(cH1_1x2.period, 'half1');
+
+  assert.equal(cH2_tot.family, 'OVER_UNDER');
+  assert.equal(cH2_tot.period, 'half2');
+  assert.equal(cH2_tot.lineKey, '1.5');
+
+  assert.equal(cH1_btts.family, 'BTTS');
+  assert.equal(cH1_btts.period, 'half1');
+
+  assert.equal(cH2_dc.family, 'DOUBLE_CHANCE');
+  assert.equal(cH2_dc.period, 'half2');
+
+  const bH1_1x2 = bucketKeyForContract(event.eventKey, cH1_1x2);
+  const bH2_tot = bucketKeyForContract(event.eventKey, cH2_tot);
+  const bH1_btts = bucketKeyForContract(event.eventKey, cH1_btts);
+  const bH2_dc = bucketKeyForContract(event.eventKey, cH2_dc);
+
+  assert.ok(bH1_1x2.includes('::half1::'));
+  assert.ok(bH2_tot.includes('::half2::'));
+  assert.ok(bH1_btts.includes('::half1::'));
+  assert.ok(bH2_dc.includes('::half2::'));
 });

@@ -143,7 +143,104 @@ test('findArbitrage ignores tight markets (no arb)', () => {
   assert.equal(opps.length, 0);
 });
 
-test('findMiddles flags a wide enough handicap gap', () => {
+test('findMiddles pairs a totals sandwich across books, whatever each book calls the sides', () => {
+  // Taken from the 2026-10-08 capture, not invented: the Romanian books write
+  // the sides "Peste"/"Sub" and the rest write "Over"/"Under", and NEITHER
+  // fills in a handicap field - 56,222 of the 76,130 selections in these
+  // markets carry no line at all. Reading only that field is what made this
+  // branch return nothing at all.
+  const grouped = groupByEvent([
+    makeEvent('favbet', 'k1', 'TOTAL_GOALS', [
+      { name: 'Over 1.5', odds: 1.60 },
+    ]),
+    makeEvent('admiral', 'k1', 'TOTAL_GOALS', [
+      { name: 'Sub 2.5', odds: 4.70 },
+    ]),
+  ]);
+  const mids = findMiddles(grouped, { maxMiddleRiskPercent: 50, minMiddleRoiPercent: 0 });
+  assert.equal(mids.length, 1, 'Over 1.5 against Sub 2.5 is one goal of band');
+  assert.equal(mids[0].gap, 1, 'gap is the size of the window, not the sign');
+  assert.equal(mids[0].legs[0].handicap, 1.5, 'the line is read out of the name');
+  assert.equal(mids[0].legs[1].handicap, 2.5);
+});
+
+test('findMiddles pairs the English and Romanian spellings of the same two sides', () => {
+  // If the sides were matched on their raw text this would find nothing, which
+  // is precisely what happened: an over leg and an under leg never landed in
+  // the same shape when the two books spoke different languages.
+  const grouped = groupByEvent([
+    makeEvent('a', 'k1', 'TOTAL_GOALS', [{ name: 'Over 2.5', odds: 2.10 }]),
+    makeEvent('b', 'k1', 'TOTAL_GOALS', [{ name: 'Peste 2.5', odds: 2.05 }]),
+    makeEvent('c', 'k1', 'TOTAL_GOALS', [{ name: 'Sub 3.5', odds: 2.20 }]),
+    makeEvent('d', 'k1', 'TOTAL_GOALS', [{ name: 'Under 3.5', odds: 2.25 }]),
+  ]);
+  const mids = findMiddles(grouped, { maxMiddleRiskPercent: 50, minMiddleRoiPercent: 0 });
+  assert.ok(mids.length > 0, 'a 2.5/3.5 sandwich exists however it is spelled');
+  for (const m of mids) {
+    assert.equal(m.gap, 1);
+    assert.deepEqual(
+      [m.legs[0].side, m.legs[1].side],
+      ['over', 'under'],
+      'every middle is one over leg against one under leg',
+    );
+  }
+});
+
+test('findMiddles still honours a handicap field when the adapter fills one in', () => {
+  const grouped = groupByEvent([
+    makeEvent('a', 'k1', 'OVER_UNDER', [{ name: 'Over', odds: 2.00, handicap: 2.5 }]),
+    makeEvent('b', 'k1', 'OVER_UNDER', [{ name: 'Under', odds: 2.00, handicap: 3.5 }]),
+  ]);
+  const mids = findMiddles(grouped, { maxMiddleRiskPercent: 50, minMiddleRoiPercent: 0 });
+  assert.equal(mids.length, 1);
+  assert.equal(mids[0].gap, 1);
+});
+
+test('findMiddles refuses two legs of the same side, however inviting the price', () => {
+  // "2 (-1.5)" and "2 (-0.5)" are a step apart on the SAME bet, and that is a
+  // real both-win band - but both legs lose on a goalless draw, so the pair is
+  // not a partition of the result and the inverse-sum test does not apply to
+  // it. An earlier version paired them, and because the test came out below 1
+  // on 1,890 of them, it stamped a GUARANTEED profit on rows where the whole
+  // stake could be lost. A middle that can lose everything is not an arb, so
+  // the pair is not reported at all.
+  const grouped = groupByEvent([
+    makeEvent('admiral', 'k1', 'ASIAN_HANDICAP', [{ name: '2 (-1.5)', odds: 2.06 }]),
+    makeEvent('maxbet', 'k1', 'ASIAN_HANDICAP', [{ name: '2 (-0.5)', odds: 2.70 }]),
+  ]);
+  assert.equal(
+    findMiddles(grouped, { maxMiddleRiskPercent: 1000, minMiddleRoiPercent: 0 }).length,
+    0,
+    'the gates are wide open and it still must not appear',
+  );
+});
+
+test('no published middle claims a guaranteed profit on a pair that can lose both legs', () => {
+  // The invariant, stated over the real capture's shape rather than one case:
+  // whatever the engine publishes, the two legs together must always return
+  // something. An over/under sandwich does; a same-side step does not.
+  const grouped = groupByEvent([
+    makeEvent('a', 'k1', 'TOTAL_GOALS', [
+      { name: 'Over 2.5', odds: 1.60 },
+      { name: 'Over 3.5', odds: 1.90 },
+    ]),
+    makeEvent('b', 'k1', 'TOTAL_GOALS', [{ name: 'Sub 3.5', odds: 2.10 }]),
+    makeEvent('c', 'k1', 'TOTAL_GOALS', [{ name: 'Sub 2.5', odds: 2.40 }]),
+  ]);
+  for (const m of findMiddles(grouped, { maxMiddleRiskPercent: 1000, minMiddleRoiPercent: 0 })) {
+    const sides = new Set(m.legs.map((l) => l.side));
+    assert.equal(sides.size, 2, 'a middle never puts both legs on one side');
+    assert.deepEqual([...sides].sort(), ['over', 'under']);
+  }
+});
+
+test('findMiddles refuses a handicap pair whose lines are far apart', () => {
+  // This pair used to be reported as a middle. Home -2.5 pays from a 3-goal
+  // win and home +3.0 pays when the margin does not reach 3, so the two cover
+  // the match between them - but there is no band where BOTH pay, and the
+  // engine scored it as if there were. That produced 450-474% "middle ROI"
+  // rows built on a 9.00 longshot priced against a 2.48 favourite. Lines that
+  // are far apart are one bad price, not a middle.
   const grouped = groupByEvent([
     makeEvent('a', 'k1', 'AH_HOME_-2.5', [
       { name: 'Home -2.5', odds: 1.95, handicap: -2.5 },
@@ -152,8 +249,39 @@ test('findMiddles flags a wide enough handicap gap', () => {
       { name: 'Home +3.0', odds: 1.91, handicap: 3.0 },
     ]),
   ]);
+  assert.equal(findMiddles(grouped, { maxMiddleRiskPercent: 50, minMiddleRoiPercent: 0 }).length, 0);
+});
+
+test('findMiddles never pairs opposite sides of a handicap', () => {
+  // Home -3.5 against away +0.5 is what the shipped scan actually published:
+  // a 4-goal gap, scored at 474% ROI. The two legs answer different
+  // questions about the match and their goal bands do not overlap.
+  const grouped = groupByEvent([
+    makeEvent('a', 'k1', 'AH_SIDE', [
+      { name: '1', odds: 9.0, handicap: -3.5 },
+    ]),
+    makeEvent('b', 'k1', 'AH_SIDE', [
+      { name: '2', odds: 2.48, handicap: 0.5 },
+    ]),
+  ]);
+  assert.equal(findMiddles(grouped, { maxMiddleRiskPercent: 100, minMiddleRoiPercent: 0 }).length, 0);
+});
+
+test('every middle reports the family of its own market, not the bucket\'s', () => {
+  // Over 2.5 at one book and Under 3.5 at another are one OVER_UNDER middle.
+  // Reporting the market that happened to open the bucket is how a totals
+  // pair came to be filed under ASIAN_HANDICAP.
+  const grouped = groupByEvent([
+    makeEvent('a', 'k1', 'OVER_UNDER_2_5', [
+      { name: 'Over', odds: 1.90, handicap: 2.5 },
+    ]),
+    makeEvent('b', 'k1', 'OVER_UNDER_3_5', [
+      { name: 'Under', odds: 1.95, handicap: 3.5 },
+    ]),
+  ]);
   const mids = findMiddles(grouped, { maxMiddleRiskPercent: 50, minMiddleRoiPercent: 0 });
-  assert.ok(mids.length >= 1, 'expected at least one middle');
+  assert.equal(mids.length, 1);
+  assert.equal(mids[0].family, 'OVER_UNDER');
 });
 
 test('findMiddles does not pair the two sides of one bookmaker handicap market', () => {
@@ -218,6 +346,34 @@ test('findPositiveEV does not report a leg that merely matches consensus', () =>
   // reported even at a 0% threshold.
   assert.equal(findPositiveEV(grouped, { minEvPercent: 2 }).length, 0);
   assert.equal(findPositiveEV(grouped, { minEvPercent: 0 }).length, 0);
+});
+
+test('findPositiveEV devigs counterparty consensus so un-devigged vig does not invent false +EV', () => {
+  // Books b and c offer standard vigged 1.90 vs 1.90 (overround ~1.0526, fair prob 0.50).
+  // Raw 1/odds is ~0.5263.
+  // Book a offers 1.95 (implied 0.5128).
+  // Without devigging, 1.95 * 0.5263 - 1 = +2.6% (false positive +EV).
+  // With devigging, consensus fair probability is 0.50, so true EV is 1.95 * 0.50 - 1 = -2.5% (negative EV!).
+  const grouped = groupByEvent([
+    makeEvent('a', 'k1', 'BTTS', [
+      { name: 'Yes', odds: 1.95 },
+      { name: 'No', odds: 1.85 },
+    ]),
+    makeEvent('b', 'k1', 'BTTS', [
+      { name: 'Yes', odds: 1.90 },
+      { name: 'No', odds: 1.90 },
+    ]),
+    makeEvent('c', 'k1', 'BTTS', [
+      { name: 'Yes', odds: 1.90 },
+      { name: 'No', odds: 1.90 },
+    ]),
+  ]);
+  const evs = findPositiveEV(grouped, { minEvPercent: 0, devig: true });
+  assert.equal(evs.length, 0);
+  // Without devigging, un-devigged vig causes 3 false positive-EV claims across the books:
+  const legacyEvs = findPositiveEV(grouped, { minEvPercent: 0, devig: false });
+  assert.equal(legacyEvs.length, 3);
+  assert.ok(legacyEvs.every((e) => e.evPercent > 2));
 });
 
 test('findLowHold flags a thin-margin market', () => {
@@ -374,8 +530,17 @@ test('a period this engine cannot name is refused, not defaulted to full-time', 
   });
   assert.equal(findArbitrage(groupByEvent([named('a'), named('b')])).length, 1,
     'a nameable first-half line is tradable');
-  assert.equal(findArbitrage(groupByEvent([unnameable('a'), unnameable('b')])).length, 0,
-    'a period nobody can name must not be traded at all');
+  assert.equal(findArbitrage(groupByEvent([unnameable('a'), unnameable('b')])).length, 1,
+    'an unnameable period still trades, because both legs carry the same unknown period');
+  // But it must never pair with a REAL full-time contract of the same line —
+  // the bucket key carries the period, so 'unknown' and 'fulltime' land in
+  // different buckets and no cross-period pair is possible.
+  const fulltime = (sourceId) => periodEvent(sourceId, 'k1', {
+    period: 'fulltime', name: 'Total goluri', marketKey: 'TOTAL_GOALS',
+    selections: sourceId === 'a' ? [OVER_A, UNDER_A] : [OVER_B, UNDER_B],
+  });
+  assert.equal(findArbitrage(groupByEvent([unnameable('a'), fulltime('b')])).length, 0,
+    'unknown period must never pair with a full-time contract');
 });
 
 /**

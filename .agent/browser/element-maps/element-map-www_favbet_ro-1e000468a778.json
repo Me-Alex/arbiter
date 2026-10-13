@@ -1,0 +1,415 @@
+{
+  "timestamp": 1791530880768,
+  "urlPath": "www.favbet.ro/ro/casino/",
+  "pageInfo": {
+    "url": "https://www.favbet.ro/ro/casino/",
+    "title": "Casino Online Favbet - Top Jocuri de Cazino România",
+    "viewport": {
+      "width": 1093,
+      "height": 793
+    },
+    "scrollPosition": {
+      "x": 0,
+      "y": 0
+    },
+    "pageHeight": 842,
+    "pageWidth": 1083,
+    "focusedElement": null
+  },
+  "elements": [
+    {
+      "index": 0,
+      "backendNodeId": 232,
+      "selector": "[data-backend-node-id=\"232\"]",
+      "tag": "a",
+      "type": "link",
+      "text": "site-logo",
+      "normalizedPosition": {
+        "x": 0.112,
+        "y": 0.038
+      },
+      "boundingBox": {
+        "x": 16,
+        "y": 16,
+        "width": 212,
+        "height": 28
+      },
+      "isInViewport": true,
+      "isInteractable": true,
+      "attributes": {
+        "href": "/ro/"
+      },
+      "paintOrder": 13
+    },
+    {
+      "index": 1,
+      "backendNodeId": 231,
+      "selector": "[data-backend-node-id=\"231\"]",
+      "tag": "picture",
+      "type": "picture",
+      "text": "",
+      "normalizedPosition": {
+        "x": 0.112,
+        "y": 0.038
+      },
+      "boundingBox": {
+        "x": 16,
+        "y": 16,
+        "width": 212,
+        "height": 28
+      },
+      "isInViewport": true,
+      "isInteractable": true,
+      "attributes": {},
+      "paintOrder": 13
+    },
+    {
+      "index": 2,
+      "backendNodeId": 229,
+      "selector": "[data-backend-node-id=\"229\"]",
+      "tag": "img",
+      "type": "image",
+      "text": "site-logo",
+      "normalizedPosition": {
+        "x": 0.112,
+        "y": 0.038
+      },
+      "boundingBox": {
+        "x": 16,
+        "y": 16,
+        "width": 212,
+        "height": 28
+      },
+      "isInViewport": true,
+      "isInteractable": true,
+      "attributes": {
+        "src": "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="
+      },
+      "paintOrder": 13
+    },
+    {
+      "index": 3,
+      "backendNodeId": 236,
+      "selector": "[data-backend-node-id=\"236\"]",
+      "tag": "a",
+      "type": "link",
+      "text": "CASINO",
+      "normalizedPosition": {
+        "x": 0.288,
+        "y": 0.038
+      },
+      "boundingBox": {
+        "x": 281,
+        "y": 17,
+        "width": 67,
+        "height": 27
+      },
+      "isInViewport": true,
+      "isInteractable": true,
+      "attributes": {
+        "href": "/ro/casino/"
+      },
+      "paintOrder": 17
+    },
+    {
+      "index": 4,
+      "backendNodeId": 241,
+      "selector": "[data-backend-node-id=\"241\"]",
+      "tag": "a",
+      "type": "link",
+      "text": "LIVE CASINO",
+      "normalizedPosition": {
+        "x": 0.372,
+        "y": 0.038
+      },
+      "boundingBox": {
+        "x": 357,
+        "y": 17,
+        "width": 100,
+        "height": 27
+      },
+      "isInViewport": true,
+      "isInteractable": true,
+      "attributes": {
+        "href": "/ro/casino-live/"
+      },
+      "paintOrder": 19
+    },
+    {
+      "index": 5,
+      "backendNodeId": 245,
+      "selector": "[data-backend-node-id=\"245\"]",
+      "tag": "a",
+      "type": "link",
+      "text": "JOCURI RAPIDE",
+      "normalizedPosition": {
+        "x": 0.479,
+        "y": 0.038
+      },
+      "boundingBox": {
+        "x": 464,
+        "y": 17,
+        "width": 117,
+        "height": 27
+      },
+      "isInViewport": true,
+      "isInteractable": true,
+      "attributes": {
+        "href": "/ro/instant-games/"
+      },
+      "paintOrder": 21
+    },
+    {
+      "index": 6,
+      "backendNodeId": 249,
+      "selector": "[data-backend-node-id=\"249\"]",
+      "tag": "a",
+      "type": "link",
+      "text": "VIP CLUB",
+      "normalizedPosition": {
+        "x": 0.575,
+        "y": 0.038
+      },
+      "boundingBox": {
+        "x": 590,
+        "y": 17,
+        "width": 77,
+        "height": 27
+      },
+      "isInViewport": true,
+      "isInteractable": true,
+      "attributes": {
+        "href": "/ro/vip-club/"
+      },
+      "paintOrder": 23
+    },
+    {
+      "index": 7,
+      "backendNodeId": 253,
+      "selector": "[data-backend-node-id=\"253\"]",
+      "tag": "a",
+      "type": "link",
+      "text": "TURNEE",
+      "normalizedPosition": {
+        "x": 0.649,
+        "y": 0.038
+      },
+      "boundingBox": {
+        "x": 675,
+        "y": 17,
+        "width": 68,
+        "height": 27
+      },
+      "isInViewport": true,
+      "isInteractable": true,
+      "attributes": {
+        "href": "/ro/promos/tournaments/all/?highlightSeparately=true"
+      },
+      "paintOrder": 25
+    },
+    {
+      "index": 8,
+      "backendNodeId": 269,
+      "selector": "[data-backend-node-id=\"269\"]",
+      "tag": "a",
+      "type": "link",
+      "text": "BONUS PROMOȚII",
+      "normalizedPosition": {
+        "x": 0.725,
+        "y": 0.038
+      },
+      "boundingBox": {
+        "x": 751,
+        "y": 17,
+        "width": 83,
+        "height": 27
+      },
+      "isInViewport": true,
+      "isInteractable": true,
+      "attributes": {
+        "href": "/ro/promos/promotions/all/"
+      },
+      "paintOrder": 28
+    },
+    {
+      "index": 9,
+      "backendNodeId": 267,
+      "selector": "[data-backend-node-id=\"267\"]",
+      "tag": "div",
+      "type": "generic",
+      "text": "",
+      "normalizedPosition": {
+        "x": 0.747,
+        "y": 0.017
+      },
+      "boundingBox": {
+        "x": 801,
+        "y": 8,
+        "width": 31,
+        "height": 12
+      },
+      "isInViewport": true,
+      "isInteractable": true,
+      "attributes": {},
+      "paintOrder": 38
+    },
+    {
+      "index": 10,
+      "backendNodeId": 286,
+      "selector": "[data-backend-node-id=\"286\"]",
+      "tag": "div",
+      "type": "generic",
+      "text": "",
+      "normalizedPosition": {
+        "x": 0.711,
+        "y": 0.038
+      },
+      "boundingBox": {
+        "x": 767,
+        "y": 20,
+        "width": 20,
+        "height": 20
+      },
+      "isInViewport": true,
+      "isInteractable": true,
+      "attributes": {},
+      "paintOrder": 31
+    },
+    {
+      "index": 11,
+      "backendNodeId": 316,
+      "selector": "[data-backend-node-id=\"316\"]",
+      "tag": "svg",
+      "type": "image",
+      "text": "",
+      "normalizedPosition": {
+        "x": 0.711,
+        "y": 0.038
+      },
+      "boundingBox": {
+        "x": 767,
+        "y": 20,
+        "width": 20,
+        "height": 20
+      },
+      "isInViewport": true,
+      "isInteractable": true,
+      "attributes": {},
+      "paintOrder": 32
+    },
+    {
+      "index": 12,
+      "backendNodeId": 287,
+      "selector": "[data-backend-node-id=\"287\"]",
+      "tag": "div",
+      "type": "generic",
+      "text": "",
+      "normalizedPosition": {
+        "x": 0.742,
+        "y": 0.038
+      },
+      "boundingBox": {
+        "x": 795,
+        "y": 18,
+        "width": 32,
+        "height": 24
+      },
+      "isInViewport": true,
+      "isInteractable": true,
+      "attributes": {},
+      "paintOrder": 33
+    },
+    {
+      "index": 13,
+      "backendNodeId": 281,
+      "selector": "[data-backend-node-id=\"281\"]",
+      "tag": "div",
+      "type": "generic",
+      "text": "",
+      "normalizedPosition": {
+        "x": 0.742,
+        "y": 0.038
+      },
+      "boundingBox": {
+        "x": 795,
+        "y": 18,
+        "width": 32,
+        "height": 24
+      },
+      "isInViewport": true,
+      "isInteractable": true,
+      "attributes": {},
+      "paintOrder": 34
+    },
+    {
+      "index": 14,
+      "backendNodeId": 280,
+      "selector": "[data-backend-node-id=\"280\"]",
+      "tag": "svg",
+      "type": "image",
+      "text": "",
+      "normalizedPosition": {
+        "x": 0.742,
+        "y": 0.038
+      },
+      "boundingBox": {
+        "x": 795,
+        "y": 18,
+        "width": 32,
+        "height": 24
+      },
+      "isInViewport": true,
+      "isInteractable": true,
+      "attributes": {},
+      "paintOrder": 35
+    },
+    {
+      "index": 15,
+      "backendNodeId": 288,
+      "selector": "[data-backend-node-id=\"288\"]",
+      "tag": "a",
+      "type": "link",
+      "text": "CONECTARE",
+      "normalizedPosition": {
+        "x": 0.812,
+        "y": 0.038
+      },
+      "boundingBox": {
+        "x": 835,
+        "y": 14,
+        "width": 105,
+        "height": 32
+      },
+      "isInViewport": true,
+      "isInteractable": true,
+      "attributes": {
+        "href": "/ro/login/?from=header-desktop"
+      },
+      "paintOrder": 30
+    },
+    {
+      "index": 16,
+      "backendNodeId": 289,
+      "selector": "[data-backend-node-id=\"289\"]",
+      "tag": "a",
+      "type": "link",
+      "text": "ÎNREGISTRARE",
+      "normalizedPosition": {
+        "x": 0.922,
+        "y": 0.038
+      },
+      "boundingBox": {
+        "x": 948,
+        "y": 14,
+        "width": 119,
+        "height": 32
+      },
+      "isInViewport": true,
+      "isInteractable": true,
+      "attributes": {
+        "href": "/ro/register/?from=header-desktop"
+      },
+      "paintOrder": 30
+    }
+  ]
+}

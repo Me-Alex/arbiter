@@ -1,0 +1,10 @@
+Fixed the identity test to check canonical `eventKey` and full kickoff in `providerEventKey`. Export census now checks discovered files and parsed declarations instead of fixed totals.
+
+- Targeted tests: **22 passed, 0 failed**.
+- ESLint: **clean** for both touched files.
+- `node --test test/*.test.mjs`: **127 files blocked by Windows sandbox `spawn EPERM`**.
+- Fresh per-file runs: **1,502 passed, 35 failed, 3 cancelled**—seven failures resolved. Of the remaining failures, 29 involve EPERM; six concern registry metadata, captures, and snapshot census parsing. [Full results](</E:/AI Folder Projects/arbiter/.codex-new-bookmakers-perfile-final.log>)
+
+Snapshot-route remains unchanged. Although the standard runner hits EPERM, in-process execution also exposes its parser’s assumption that serializers use literal `return { ... }`; I can’t label that solely a sandbox issue.
+
+**vipbet, mrplay, 888sport, bet7:** captured-data tests pass; all remain **experimental and disabled**. None is live-smoke validated or newly enabled.

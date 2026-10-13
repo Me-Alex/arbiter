@@ -94,7 +94,7 @@ const EVENT_IDS = ['event-markets', 'event-status', 'event-retry', 'event-live',
  * the assertions name the text a user actually sees.
  *
  * The context is its own `window` because in a browser the global object IS
- * `window`: event-detail.js:5 reads bare `arbiterI18n.lang` while i18n.js:677
+ * `window`: event-detail.js:5 reads bare `arbiterI18n.lang` while i18n.js:894
  * assigns `window.arbiterI18n`. A plain object with a `window` property would
  * leave the page unable to see the dictionary at all.
  */

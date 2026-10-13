@@ -3,7 +3,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import Favbet from '../src/scrapers/favbet.mjs';
+import Favbet, { FAVBET_SPORT_ID_MAP, FAVBET_SPORT_NAME_TO_ID } from '../src/scrapers/favbet.mjs';
 import {
   resolveContract, isFullTimeMarket, bucketKeyForContract,
 } from '../src/scanner/market-contracts.mjs';
@@ -1050,6 +1050,669 @@ test('favbet never disagrees with itself', (t) => {
   const arbs = findArbitrage(grouped, { minMarginPercent: 0 });
   assert.deepEqual(arbs, [], 'no self-arbitrage across the capture');
   assert.ok(grouped.size > 0, 'the capture does produce grouped events');
+});
+
+test('favbet: multi-sport 2-way match winner extraction for tennis and basketball', (t) => {
+  atPinnedNow(t);
+  const s = new Favbet({ sport: 'all' });
+
+  // 1. Tennis 2-way event (sport_id: 2)
+  const tennisEvent = {
+    event_id: 2001,
+    sport_id: 2,
+    event_dt: Math.floor(Date.parse(PINNED_NOW) / 1000) + 7200,
+    participants: [
+      { participant_number: 1, participant_name: 'Carlos Alcaraz' },
+      { participant_number: 2, participant_name: 'Jannik Sinner' },
+    ],
+    category_name: 'Tenis',
+    tournament_name: 'ATP Wimbledon',
+    tournament_id: 'atp-wimbledon',
+    event_status_type: 'notstarted',
+  };
+  const tennisMatchWinner = {
+    market_id: 501,
+    market_name: 'Castigator Meci',
+    market_suspend: false,
+    market_template_id: 1,
+    outcomes: [
+      leg(5011, '1', 'Carlos Alcaraz', 1.85),
+      leg(5012, '2', 'Jannik Sinner', 1.95),
+    ],
+  };
+
+  // 2. Basketball 2-way event (sport_id: 23)
+  const basketballEvent = {
+    event_id: 2002,
+    sport_id: 23,
+    event_dt: Math.floor(Date.parse(PINNED_NOW) / 1000) + 14400,
+    participants: [
+      { participant_number: 1, participant_name: 'Los Angeles Lakers' },
+      { participant_number: 2, participant_name: 'Boston Celtics' },
+    ],
+    category_name: 'Baschet',
+    tournament_name: 'NBA',
+    tournament_id: 'nba',
+    event_status_type: 'notstarted',
+  };
+  const basketballMatchWinner = {
+    market_id: 601,
+    market_name: 'Castigator (incl. prel.)',
+    market_suspend: false,
+    market_template_id: 1,
+    outcomes: [
+      leg(6011, '1', 'Los Angeles Lakers', 2.10),
+      leg(6012, '2', 'Boston Celtics', 1.75),
+    ],
+  };
+
+  const payload = {
+    events: new Map([
+      ['2001', tennisEvent],
+      ['2002', basketballEvent],
+    ]),
+    markets: [
+      { event: tennisEvent, markets: [tennisMatchWinner] },
+      { event: basketballEvent, markets: [basketballMatchWinner] },
+    ],
+    sourceUrl: 'https://www.favbet.ro/service/lineout/frontend_api2/',
+    observedAt: PINNED_NOW,
+  };
+
+  const extracted = s.extractEvents(s.normalize(payload));
+  assert.equal(extracted.length, 2);
+
+  const tennis = extracted.find((e) => e.sport === 'Tennis');
+  assert.ok(tennis);
+  assert.equal(tennis.homeTeam, 'Carlos Alcaraz');
+  assert.equal(tennis.awayTeam, 'Jannik Sinner');
+  assert.ok(tennis.eventKey.startsWith('tennis|'));
+  const tennisMarket = tennis.markets.find((m) => m.key === 'MATCH_ODDS');
+  assert.ok(tennisMarket);
+  assert.equal(tennisMarket.selections.length, 2);
+  assert.equal(tennisMarket.selections[0].name, 'Carlos Alcaraz');
+  assert.equal(tennisMarket.selections[1].name, 'Jannik Sinner');
+
+  const bball = extracted.find((e) => e.sport === 'Basketball');
+  assert.ok(bball);
+  assert.equal(bball.homeTeam, 'Los Angeles Lakers');
+  assert.equal(bball.awayTeam, 'Boston Celtics');
+  assert.ok(bball.eventKey.startsWith('basketball|'));
+  const bballMarket = bball.markets.find((m) => m.key === 'MATCH_ODDS');
+  assert.ok(bballMarket);
+  assert.equal(bballMarket.selections.length, 2);
+  assert.equal(bballMarket.selections[0].odds, 2.10);
+  assert.equal(bballMarket.selections[1].odds, 1.75);
+});
+
+test('favbet: in-play metadata extraction (live, score, minute, periodName)', (t) => {
+  atPinnedNow(t);
+  const s = new Favbet({ includeLive: true });
+
+  const liveEvent = {
+    event_id: 3001,
+    sport_id: 1,
+    service_id: 1,
+    event_status_type: 'live',
+    event_dt: Math.floor(Date.parse(PINNED_NOW) / 1000) - 3000,
+    participants: [
+      { participant_number: 1, participant_name: 'FCSB' },
+      { participant_number: 2, participant_name: 'CFR Cluj' },
+    ],
+    category_name: 'Fotbal',
+    tournament_name: 'Liga 1',
+    score: '1-0',
+    minute: '42',
+    period_name: '1H',
+  };
+
+  const liveMarket = matchOdds(3001);
+
+  const payload = {
+    events: new Map([['3001', liveEvent]]),
+    markets: [{ event: liveEvent, markets: [liveMarket] }],
+    sourceUrl: 'https://www.favbet.ro/service/lineout/frontend_api2/',
+    observedAt: PINNED_NOW,
+  };
+
+  const extracted = s.extractEvents(s.normalize(payload));
+  assert.equal(extracted.length, 1);
+  const ev = extracted[0];
+  assert.equal(ev.live, true);
+  assert.equal(ev.score, '1-0');
+  assert.equal(ev.minute, '42');
+  assert.equal(ev.periodName, '1H');
+  assert.equal(ev.markets[0].live, true, 'markets marked live: true when ev.live is true');
+});
+
+test('favbet: sport options mapping and registry constants', () => {
+  assert.equal(FAVBET_SPORT_ID_MAP[1], 'Football');
+  assert.equal(FAVBET_SPORT_ID_MAP[2], 'Tennis');
+  assert.equal(FAVBET_SPORT_ID_MAP[23], 'Basketball');
+  assert.equal(FAVBET_SPORT_NAME_TO_ID.football, 1);
+  assert.equal(FAVBET_SPORT_NAME_TO_ID.tennis, 2);
+  assert.equal(FAVBET_SPORT_NAME_TO_ID.basketball, 23);
+
+  const all = new Favbet({ sport: 'all' });
+  assert.equal(all.sport, 'all');
+  assert.equal(all.sportId, null);
+  assert.ok(all.sports.length > 5);
+
+  const tennis = new Favbet({ sport: 'tennis' });
+  assert.equal(tennis.sport, 'tennis');
+  assert.equal(tennis.sportId, 2);
+
+  const multi = new Favbet({ sports: ['basketball', 'tennis'] });
+  assert.equal(multi.sport, 'all');
+  assert.equal(multi.sportId, null);
+  assert.deepEqual(multi.sports, ['basketball', 'tennis']);
+});
+
+test('favbet: basketball and tennis template 50 totals resolution to POINTS and GAMES', (t) => {
+  atPinnedNow(t);
+  const s = new Favbet({ windowHours: 72, includeLive: true });
+
+  const bballEvent = {
+    event_id: 2101,
+    sport_id: 23,
+    event_dt: Math.floor(Date.parse(PINNED_NOW) / 1000) + 3600,
+    participants: [
+      { participant_number: 1, participant_name: 'Denver Nuggets' },
+      { participant_number: 2, participant_name: 'Miami Heat' },
+    ],
+    category_name: 'Baschet',
+    tournament_name: 'NBA',
+    event_status_type: 'notstarted',
+  };
+
+  const bballWinner = {
+    market_id: 210101,
+    market_name: 'Castigator',
+    market_suspend: false,
+    market_template_id: 1,
+    outcomes: [
+      leg(2101011, '1', 'Denver Nuggets', 1.55),
+      leg(2101012, '2', 'Miami Heat', 2.45),
+    ],
+  };
+
+  const bballTotal = total(210102, 'Timp Regulamentar', 215.5, 1.90, 1.90);
+
+  const tennisEvent = {
+    event_id: 2102,
+    sport_id: 2,
+    event_dt: Math.floor(Date.parse(PINNED_NOW) / 1000) + 3600,
+    participants: [
+      { participant_number: 1, participant_name: 'Novak Djokovic' },
+      { participant_number: 2, participant_name: 'Rafael Nadal' },
+    ],
+    category_name: 'Tenis',
+    tournament_name: 'Roland Garros',
+    event_status_type: 'notstarted',
+  };
+
+  const tennisWinner = {
+    market_id: 210201,
+    market_name: 'Castigator',
+    market_suspend: false,
+    market_template_id: 1,
+    outcomes: [
+      leg(2102011, '1', 'Novak Djokovic', 1.80),
+      leg(2102012, '2', 'Rafael Nadal', 2.05),
+    ],
+  };
+
+  const tennisTotal = total(210202, 'Timp Regulamentar', 22.5, 1.85, 1.95);
+
+  const payload = {
+    events: new Map([
+      ['2101', bballEvent],
+      ['2102', tennisEvent],
+    ]),
+    markets: [
+      { event: bballEvent, markets: [bballWinner, bballTotal] },
+      { event: tennisEvent, markets: [tennisWinner, tennisTotal] },
+    ],
+    sourceUrl: 'https://www.favbet.ro/service/lineout/frontend_api2/',
+    observedAt: PINNED_NOW,
+  };
+
+  const extracted = s.extractEvents(s.normalize(payload));
+  assert.equal(extracted.length, 2);
+
+  const bball = extracted.find((e) => e.sport === 'Basketball');
+  assert.ok(bball);
+  const bballTot = bball.markets.find((m) => m.key === 'TOTAL_POINTS');
+  assert.ok(bballTot, 'Basketball template 50 yields TOTAL_POINTS');
+  assert.equal(bballTot.subject, 'points');
+  assert.equal(bballTot.line, 215.5);
+  const bballContract = resolveContract(bballTot);
+  assert.ok(bballContract);
+  assert.equal(bballContract.family, 'OVER_UNDER');
+  assert.equal(bballContract.subject, 'points');
+  assert.equal(bballContract.lineKey, '215.5');
+
+  const tennis = extracted.find((e) => e.sport === 'Tennis');
+  assert.ok(tennis);
+  const tennisTot = tennis.markets.find((m) => m.key === 'TOTAL_GAMES');
+  assert.ok(tennisTot, 'Tennis template 50 yields TOTAL_GAMES');
+  assert.equal(tennisTot.subject, 'games');
+  assert.equal(tennisTot.line, 22.5);
+  const tennisContract = resolveContract(tennisTot);
+  assert.ok(tennisContract);
+  assert.equal(tennisContract.family, 'OVER_UNDER');
+  assert.equal(tennisContract.subject, 'games');
+  assert.equal(tennisContract.lineKey, '22.5');
+});
+
+test('favbet: 2-way match winner extraction with fallback template 2 and outcome participant matching', (t) => {
+  atPinnedNow(t);
+  const s = new Favbet({ windowHours: 72 });
+
+  const tennisEvent = {
+    event_id: 2201,
+    sport_id: 2,
+    event_dt: Math.floor(Date.parse(PINNED_NOW) / 1000) + 7200,
+    participants: [
+      { participant_number: 1, participant_name: 'Alexander Zverev' },
+      { participant_number: 2, participant_name: 'Daniil Medvedev' },
+    ],
+    category_name: 'Tenis',
+    tournament_name: 'ATP Masters',
+    event_status_type: 'notstarted',
+  };
+
+  const template2Winner = {
+    market_id: 220101,
+    market_name: 'Castigator meci',
+    market_suspend: false,
+    market_template_id: 2,
+    outcomes: [
+      { outcome_id: 2201011, outcome_name: 'Alexander Zverev', outcome_tag: null, outcome_coef: 1.70, outcome_visible: true },
+      { outcome_id: 2201012, outcome_name: 'Daniil Medvedev', outcome_tag: null, outcome_coef: 2.15, outcome_visible: true },
+    ],
+  };
+
+  const payload = {
+    events: new Map([['2201', tennisEvent]]),
+    markets: [{ event: tennisEvent, markets: [template2Winner] }],
+    sourceUrl: 'https://www.favbet.ro/service/lineout/frontend_api2/',
+    observedAt: PINNED_NOW,
+  };
+
+  const extracted = s.extractEvents(s.normalize(payload));
+  assert.equal(extracted.length, 1);
+  const ev = extracted[0];
+  const match = ev.markets.find((m) => m.key === 'MATCH_ODDS');
+  assert.ok(match, 'match winner extracted via template 2 fallback');
+  assert.equal(match.selections.length, 2);
+  assert.equal(match.selections[0].name, 'Alexander Zverev');
+  assert.equal(match.selections[1].name, 'Daniil Medvedev');
+  assert.equal(match.selections[0].odds, 1.70);
+  assert.equal(match.selections[1].odds, 2.15);
+});
+
+test('favbet: multi-sport additional totals via mapFavbetMarket with subject attribution', (t) => {
+  atPinnedNow(t);
+  const s = new Favbet({ windowHours: 72 });
+
+  const bballEvent = {
+    event_id: 2301,
+    sport_id: 23,
+    event_dt: Math.floor(Date.parse(PINNED_NOW) / 1000) + 3600,
+    participants: [
+      { participant_number: 1, participant_name: 'Chicago Bulls' },
+      { participant_number: 2, participant_name: 'New York Knicks' },
+    ],
+    category_name: 'Baschet',
+    tournament_name: 'NBA',
+    event_status_type: 'notstarted',
+  };
+
+  const bballWinner = matchOdds(2301);
+  const bballAddTotal = {
+    market_id: 230199,
+    market_name: 'Total puncte 208.5',
+    market_suspend: false,
+    market_template_id: 888,
+    result_type_name: 'Timp Regulamentar',
+    outcomes: [
+      leg(2301991, 'over', 'Peste', 1.85),
+      leg(2301992, 'under', 'Sub', 1.95),
+    ],
+  };
+
+  const payload = {
+    events: new Map([['2301', bballEvent]]),
+    markets: [{ event: bballEvent, markets: [bballWinner, bballAddTotal] }],
+    sourceUrl: 'https://www.favbet.ro/service/lineout/frontend_api2/',
+    observedAt: PINNED_NOW,
+  };
+
+  const extracted = s.extractEvents(s.normalize(payload));
+  assert.equal(extracted.length, 1);
+  const ev = extracted[0];
+  const ptsMarket = ev.markets.find((m) => m.key === 'POINTS_OVER_UNDER_208_5');
+  assert.ok(ptsMarket, 'POINTS_OVER_UNDER_208_5 emitted for basketball additional total');
+  assert.equal(ptsMarket.subject, 'points');
+  const contract = resolveContract(ptsMarket);
+  assert.ok(contract);
+  assert.equal(contract.family, 'OVER_UNDER');
+  assert.equal(contract.subject, 'points');
+  assert.equal(contract.lineKey, '208.5');
+});
+
+test('favbet: extracts sub-window period match odds (half1, half2, sets) with bucket isolation', (t) => {
+  atPinnedNow(t);
+  const s = new Favbet({ windowHours: 72 });
+  const event = {
+    event_id: 5001,
+    sport_id: 1,
+    event_dt: Math.floor(Date.parse(PINNED_NOW) / 1000) + 3600,
+    participants: [
+      { participant_number: 1, participant_name: 'FCSB' },
+      { participant_number: 2, participant_name: 'Dinamo Bucuresti' },
+    ],
+    category_name: 'Fotbal',
+    tournament_name: 'Romania - Liga 1',
+    event_status_type: 'notstarted',
+  };
+
+  const ft1x2 = matchOdds(50011);
+
+  const half11x2 = {
+    market_id: 50012,
+    market_name: '1X2 Prima repriză',
+    market_suspend: false,
+    result_type_name: 'Prima repriză',
+    result_type_short_name: '1R',
+    outcomes: [
+      leg(500121, '1', '1', 2.80),
+      leg(500122, 'X', 'X', 2.10),
+      leg(500123, '2', '2', 3.90),
+    ],
+  };
+
+  const half21x2 = {
+    market_id: 50013,
+    market_name: '1X2 A doua repriză',
+    market_suspend: false,
+    result_type_name: 'A doua repriză',
+    result_type_short_name: '2R',
+    outcomes: [
+      leg(500131, '1', '1', 2.50),
+      leg(500132, 'X', 'X', 2.30),
+      leg(500133, '2', '2', 3.50),
+    ],
+  };
+
+  const set1Winner = {
+    market_id: 50014,
+    market_name: 'Câștigător Set 1',
+    market_suspend: false,
+    result_type_name: 'Setul 1',
+    result_type_short_name: '1S',
+    outcomes: [
+      leg(500141, '1', '1', 1.70),
+      leg(500142, '2', '2', 2.15),
+    ],
+  };
+
+  const payload = {
+    events: new Map([['5001', event]]),
+    markets: [{ event, markets: [ft1x2, half11x2, half21x2, set1Winner] }],
+    sourceUrl: 'https://www.favbet.ro/service/lineout/frontend_api2/',
+    observedAt: PINNED_NOW,
+  };
+
+  const extracted = s.extractEvents(s.normalize(payload));
+  assert.equal(extracted.length, 1);
+  const ev = extracted[0];
+
+  const mFt = ev.markets.find((m) => m.period === 'fulltime' && m.key === 'MATCH_ODDS');
+  const mH1 = ev.markets.find((m) => m.period === 'half1' && m.key === 'MATCH_ODDS');
+  const mH2 = ev.markets.find((m) => m.period === 'half2' && m.key === 'MATCH_ODDS');
+  const mS1 = ev.markets.find((m) => m.period === 'set1' && m.key === 'MATCH_ODDS');
+
+  assert.ok(mFt, 'full-time 1X2 emitted');
+  assert.ok(mH1, 'first-half 1X2 emitted');
+  assert.ok(mH2, 'second-half 1X2 emitted');
+  assert.ok(mS1, 'set 1 winner emitted');
+
+  const cFt = resolveContract(mFt);
+  const cH1 = resolveContract(mH1);
+  const cH2 = resolveContract(mH2);
+  const cS1 = resolveContract(mS1);
+
+  assert.equal(cFt.period, 'fulltime');
+  assert.equal(cH1.period, 'half1');
+  assert.equal(cH2.period, 'half2');
+  assert.equal(cS1.period, 'set1');
+
+  const bFt = bucketKeyForContract('evFav', cFt);
+  const bH1 = bucketKeyForContract('evFav', cH1);
+  const bH2 = bucketKeyForContract('evFav', cH2);
+  const bS1 = bucketKeyForContract('evFav', cS1);
+
+  assert.equal(bFt, 'evFav::MATCH_ODDS::fulltime::_::home+draw+away::_::_');
+  assert.equal(bH1, 'evFav::MATCH_ODDS::half1::_::home+draw+away::_::_');
+  assert.equal(bH2, 'evFav::MATCH_ODDS::half2::_::home+draw+away::_::_');
+  assert.equal(bS1, 'evFav::MATCH_ODDS::set1::_::home+away::_::_');
+
+  assert.notEqual(bFt, bH1);
+  assert.notEqual(bFt, bH2);
+  assert.notEqual(bH1, bH2);
+  assert.notEqual(bFt, bS1);
+});
+
+test('favbet: multi-sport sub-window derivative markets (quarters, sets, halves) isolate cleanly into distinct buckets', (t) => {
+  atPinnedNow(t);
+  const s = new Favbet({ windowHours: 72 });
+
+  // 1. Basketball event with Q1-Q4 winners and totals
+  const bballEvent = {
+    event_id: 6001,
+    sport_id: 23,
+    tournament_name: 'NBA',
+    event_dt: Math.floor(new Date('2026-09-28T19:00:00Z').getTime() / 1000),
+    participants: [
+      { participant_number: 1, participant_name: 'Boston Celtics' },
+      { participant_number: 2, participant_name: 'Golden State Warriors' },
+    ],
+  };
+
+  const bballMarkets = [
+    // Full-time match winner
+    {
+      market_id: 60010,
+      market_name: 'Câștigător Meci',
+      market_suspend: false,
+      market_template_id: 2,
+      outcomes: [
+        leg(600101, '1', 'Boston Celtics', 1.65),
+        leg(600102, '2', 'Golden State Warriors', 2.30),
+      ],
+    },
+    // Q1 Winner (result_type_short_name: "1Q")
+    {
+      market_id: 60011,
+      market_name: 'Câștigător',
+      market_suspend: false,
+      result_type_name: 'Sfertul 1',
+      result_type_short_name: '1Q',
+      outcomes: [
+        leg(600111, '1', 'Boston Celtics', 1.80),
+        leg(600112, '2', 'Golden State Warriors', 2.05),
+      ],
+    },
+    // Q2 Winner (result_type_short_name: "2Q")
+    {
+      market_id: 60012,
+      market_name: 'Câștigător Sfertul 2',
+      market_suspend: false,
+      result_type_name: 'Sfertul 2',
+      result_type_short_name: '2Q',
+      outcomes: [
+        leg(600121, '1', 'Boston Celtics', 1.85),
+        leg(600122, '2', 'Golden State Warriors', 1.95),
+      ],
+    },
+    // Q1 Total Points (Peste / Sub with line in legs)
+    {
+      market_id: 60013,
+      market_name: 'Total Puncte',
+      market_suspend: false,
+      result_type_name: 'Sfertul 1',
+      result_type_short_name: '1Q',
+      outcomes: [
+        leg(600131, 'over', 'Peste (54.5)', 1.90),
+        leg(600132, 'under', 'Sub (54.5)', 1.90),
+      ],
+    },
+    // Q3 Total Points
+    {
+      market_id: 60014,
+      market_name: 'Total Puncte - Sfertul 3',
+      market_suspend: false,
+      result_type_name: 'Sfertul 3',
+      result_type_short_name: '3Q',
+      outcomes: [
+        leg(600141, 'over', 'Peste (52.5)', 1.88),
+        leg(600142, 'under', 'Sub (52.5)', 1.92),
+      ],
+    },
+  ];
+
+  // 2. Tennis event with Set 1-3 winners and totals
+  const tennisEvent = {
+    event_id: 7001,
+    sport_id: 2,
+    tournament_name: 'ATP Wimbledon',
+    event_dt: Math.floor(new Date('2026-09-28T14:00:00Z').getTime() / 1000),
+    participants: [
+      { participant_number: 1, participant_name: 'Carlos Alcaraz' },
+      { participant_number: 2, participant_name: 'Jannik Sinner' },
+    ],
+  };
+
+  const tennisMarkets = [
+    {
+      market_id: 70010,
+      market_name: 'Câștigător',
+      market_suspend: false,
+      market_template_id: 2,
+      outcomes: [
+        leg(700101, '1', 'Carlos Alcaraz', 1.85),
+        leg(700102, '2', 'Jannik Sinner', 1.95),
+      ],
+    },
+    {
+      market_id: 70011,
+      market_name: 'Câștigător Setul 2',
+      market_suspend: false,
+      result_type_name: 'Setul 2',
+      result_type_short_name: '2S',
+      outcomes: [
+        leg(700111, '1', 'Carlos Alcaraz', 1.90),
+        leg(700112, '2', 'Jannik Sinner', 1.90),
+      ],
+    },
+    {
+      market_id: 70012,
+      market_name: 'Total Game-uri Set 2',
+      market_suspend: false,
+      result_type_name: 'Setul 2',
+      result_type_short_name: '2S',
+      outcomes: [
+        leg(700121, 'over', 'Peste (9.5)', 1.85),
+        leg(700122, 'under', 'Sub (9.5)', 1.95),
+      ],
+    },
+  ];
+
+  const payload = {
+    events: new Map([['6001', bballEvent], ['7001', tennisEvent]]),
+    markets: [
+      { event: bballEvent, markets: bballMarkets },
+      { event: tennisEvent, markets: tennisMarkets },
+    ],
+    sourceUrl: 'https://www.favbet.ro/service/lineout/frontend_api2/',
+    observedAt: PINNED_NOW,
+  };
+
+  const extracted = s.extractEvents(s.normalize(payload));
+  assert.equal(extracted.length, 2);
+
+  const [bballEvt, tennisEvt] = extracted;
+
+  // Verify Basketball Q1 & Q2 Winners
+  const bFtWin = bballEvt.markets.find((m) => m.period === 'fulltime' && m.key === 'MATCH_ODDS');
+  const bQ1Win = bballEvt.markets.find((m) => m.period === 'q1' && m.key === 'MATCH_ODDS');
+  const bQ2Win = bballEvt.markets.find((m) => m.period === 'q2' && m.key === 'MATCH_ODDS');
+  assert.ok(bFtWin && bQ1Win && bQ2Win);
+
+  const cBft = resolveContract(bFtWin);
+  const cBq1 = resolveContract(bQ1Win);
+  const cBq2 = resolveContract(bQ2Win);
+
+  assert.equal(cBft.period, 'fulltime');
+  assert.equal(cBq1.period, 'q1');
+  assert.equal(cBq2.period, 'q2');
+
+  const bKeyBft = bucketKeyForContract(bballEvt.eventKey, cBft);
+  const bKeyBq1 = bucketKeyForContract(bballEvt.eventKey, cBq1);
+  const bKeyBq2 = bucketKeyForContract(bballEvt.eventKey, cBq2);
+
+  assert.notEqual(bKeyBft, bKeyBq1);
+  assert.notEqual(bKeyBq1, bKeyBq2);
+  assert.ok(bKeyBq1.includes('::q1::'));
+  assert.ok(bKeyBq2.includes('::q2::'));
+
+  // Verify Basketball Q1 & Q3 Totals Points
+  const bQ1Tot = bballEvt.markets.find((m) => m.period === 'q1' && /POINTS_OVER_UNDER/i.test(m.key));
+  const bQ3Tot = bballEvt.markets.find((m) => m.period === 'q3' && /POINTS_OVER_UNDER/i.test(m.key));
+  assert.ok(bQ1Tot && bQ3Tot);
+
+  const cBq1Tot = resolveContract(bQ1Tot);
+  const cBq3Tot = resolveContract(bQ3Tot);
+
+  assert.equal(cBq1Tot.family, 'OVER_UNDER');
+  assert.equal(cBq1Tot.period, 'q1');
+  assert.equal(cBq1Tot.subject, 'points');
+  assert.equal(cBq1Tot.lineKey, '54.5');
+
+  assert.equal(cBq3Tot.family, 'OVER_UNDER');
+  assert.equal(cBq3Tot.period, 'q3');
+  assert.equal(cBq3Tot.subject, 'points');
+  assert.equal(cBq3Tot.lineKey, '52.5');
+
+  const bKeyBq1Tot = bucketKeyForContract(bballEvt.eventKey, cBq1Tot);
+  const bKeyBq3Tot = bucketKeyForContract(bballEvt.eventKey, cBq3Tot);
+  assert.notEqual(bKeyBq1Tot, bKeyBq3Tot);
+  assert.ok(bKeyBq1Tot.includes('::q1::'));
+  assert.ok(bKeyBq3Tot.includes('::q3::'));
+
+  // Verify Tennis Set 2 Winner & Total Games
+  const tSet2Win = tennisEvt.markets.find((m) => m.period === 'set2' && m.key === 'MATCH_ODDS');
+  const tSet2Tot = tennisEvt.markets.find((m) => m.period === 'set2' && /GAMES_OVER_UNDER/i.test(m.key));
+  assert.ok(tSet2Win && tSet2Tot);
+
+  const cTs2Win = resolveContract(tSet2Win);
+  const cTs2Tot = resolveContract(tSet2Tot);
+
+  assert.equal(cTs2Win.family, 'MATCH_ODDS');
+  assert.equal(cTs2Win.period, 'set2');
+
+  assert.equal(cTs2Tot.family, 'OVER_UNDER');
+  assert.equal(cTs2Tot.period, 'set2');
+  assert.equal(cTs2Tot.subject, 'games');
+  assert.equal(cTs2Tot.lineKey, '9.5');
+
+  const bKeyTs2Win = bucketKeyForContract(tennisEvt.eventKey, cTs2Win);
+  const bKeyTs2Tot = bucketKeyForContract(tennisEvt.eventKey, cTs2Tot);
+  assert.ok(bKeyTs2Win.includes('::set2::'));
+  assert.ok(bKeyTs2Tot.includes('::set2::'));
+  assert.notEqual(bKeyTs2Win, bKeyTs2Tot);
 });
 
 /* --- synthetic row builders, shaped like the capture ---------------------- */

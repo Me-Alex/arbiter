@@ -52,6 +52,21 @@ export const node = () => ({
 
 export const settle = () => new Promise((r) => setTimeout(r, 0));
 
+/**
+ * The `preferences` half of `/api/alerts`, as the route publishes it.
+ *
+ * Exported because the page harness and test/sport-label.test.mjs both need one,
+ * and two hand-written copies is how a fixture starts naming a field the server
+ * does not publish: nothing renders an empty box in a test that never reads the
+ * box, so the drift is invisible until the key set is compared against
+ * `normalizeAlertPreferences`, which test/alert-ui.test.mjs does.
+ */
+export const ALERT_PREFERENCES = {
+  minMarginPercent: 1, minMiddleRoiPercent: 1, cooldownSeconds: 300, includeLive: false,
+  channels: { desktop: false, sound: false },
+  quietHours: { enabled: false, from: '23:00', to: '07:00' },
+};
+
 /** The `/api/alerts` answer a page without an alert concern should get. */
 const EMPTY_ALERTS = {
   schemaVersion: 1,
@@ -60,11 +75,7 @@ const EMPTY_ALERTS = {
   // Complete, because `fillAlertForm` reads `channels` and `quietHours`
   // as objects: a stub with `preferences: {}` throws inside the page's
   // own catch and leaves the alert form unfilled.
-  preferences: {
-    minRoiPercent: 1, minMiddleRoiPercent: 1, cooldownSeconds: 300, includeLive: false,
-    channels: { desktop: false, sound: false },
-    quietHours: { enabled: false, from: '23:00', to: '07:00' },
-  },
+  preferences: ALERT_PREFERENCES,
   alerts: { arbitrages: [], middles: [] },
   counts: { arbitrages: 0, middles: 0 },
 };

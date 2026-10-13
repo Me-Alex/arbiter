@@ -1,0 +1,2395 @@
+{
+  "data": {
+    "event": {
+      "name": "Always Ready - Independiente Petrolero",
+      "status": "active",
+      "type": "prematch",
+      "path": [
+        {
+          "name": "Piłka nożna",
+          "uuid": "ff57b93d-f74c-4015-a23b-e89f68b8d2c9"
+        },
+        {
+          "name": "Boliwia",
+          "uuid": "d7823ac7-72ff-46b0-92e5-9919f243f8de"
+        },
+        {
+          "name": "1. Liga",
+          "uuid": "b18c93f7-1b64-433e-8b55-69bdbbbea86e"
+        }
+      ],
+      "result": ":",
+      "components": [],
+      "category": {
+        "name": "Boliwia",
+        "type": "sport",
+        "level": "category",
+        "image": null,
+        "uuid": "d7823ac7-72ff-46b0-92e5-9919f243f8de",
+        "icon": "https://cdn.totalbet.pl/categories/68b5f330-c247-4b61-a664-9165a75cd319.svg",
+        "parent_uuid": "ff57b93d-f74c-4015-a23b-e89f68b8d2c9",
+        "header_photo": null,
+        "three_d_icon": null
+      },
+      "uuid": "a86f0ccf-1a8b-4e4a-8e40-b9e48934df23",
+      "betbuilder_available": true,
+      "event_layout": "horizontal",
+      "iframe": null,
+      "mobile_statscore_widget_id": "67e3cded6b587a60a98542e5",
+      "statscore_widget_id": "67a4c28b3ed1d6f55eb65bcb",
+      "category_uuid": "d7823ac7-72ff-46b0-92e5-9919f243f8de",
+      "tournament": {
+        "name": "1. Liga",
+        "type": "sport",
+        "level": "tournament",
+        "image": null,
+        "uuid": "b18c93f7-1b64-433e-8b55-69bdbbbea86e",
+        "icon": null,
+        "parent_uuid": "d7823ac7-72ff-46b0-92e5-9919f243f8de",
+        "header_photo": null,
+        "three_d_icon": null
+      },
+      "discipline_uuid": "ff57b93d-f74c-4015-a23b-e89f68b8d2c9",
+      "tournament_uuid": "b18c93f7-1b64-433e-8b55-69bdbbbea86e",
+      "start_at": "2026-10-12T21:15:00Z",
+      "market_count": 47,
+      "participants": [
+        {
+          "name": "Always Ready",
+          "uuid": "cc8c268e-f7dd-4c35-b558-36e9c98882a9",
+          "image_source": null
+        },
+        {
+          "name": "Independiente Petrolero",
+          "uuid": "230eab85-bffd-477b-9599-dae14c19d253",
+          "image_source": null
+        }
+      ],
+      "matchday": 21,
+      "additional_info": null,
+      "jackpot_available": false,
+      "live_data": {
+        "away_score": null,
+        "category_id": "sr:sport:1",
+        "clock": null,
+        "home_score": null,
+        "match_status": {
+          "id": "0",
+          "name": "Przed startem",
+          "uuid": "dfb45fd3-3264-4605-89a0-317e439735c0"
+        },
+        "model_name": "soccer",
+        "period_scores": null,
+        "statistics": null
+      },
+      "type_participants": "pair",
+      "discipline": {
+        "name": "Piłka nożna",
+        "type": "sport",
+        "level": "sport",
+        "image": "https://cdn.totalbet.pl/categories/5e27e539-7ee3-47b2-b3cd-e3655300ab06.svg",
+        "uuid": "ff57b93d-f74c-4015-a23b-e89f68b8d2c9",
+        "icon": "https://cdn.totalbet.pl/categories/0abf437f-9ab9-4826-9fcd-c40dafde9c8a.svg",
+        "parent_uuid": null,
+        "header_photo": "https://cdn.totalbet.pl/categories/72e9000b-1a8c-431e-a6e7-d2d17aa7c267.jpg",
+        "three_d_icon": "https://cdn.totalbet.pl/categories/870b3543-eea3-4f3d-8690-3a0ae2659fcf.svg"
+      },
+      "component_lists": [
+        {
+          "name": "Wynik meczu",
+          "type": "single_market",
+          "sort_order": 1,
+          "game_groups": [],
+          "grid": [
+            [
+              {
+                "type": "label",
+                "text": "Always Ready"
+              },
+              {
+                "name": "Always Ready",
+                "type": "outcome",
+                "uuid": "91f400b6-cc6f-4c12-97cb-dd1418657f6b",
+                "betbuilder_available": true,
+                "market_uuid": "79d4cc2a-f6e4-4db5-8acf-f2c5d9661032",
+                "odds": "1.10",
+                "market_status": "active",
+                "outcome_status": "active"
+              }
+            ],
+            [
+              {
+                "type": "label",
+                "text": "remis"
+              },
+              {
+                "name": "remis",
+                "type": "outcome",
+                "uuid": "7361f70e-a612-4a59-ba40-932199b889fb",
+                "betbuilder_available": true,
+                "market_uuid": "79d4cc2a-f6e4-4db5-8acf-f2c5d9661032",
+                "odds": "7.60",
+                "market_status": "active",
+                "outcome_status": "active"
+              }
+            ],
+            [
+              {
+                "type": "label",
+                "text": "Independiente Petrolero"
+              },
+              {
+                "name": "Independiente Petrolero",
+                "type": "outcome",
+                "uuid": "2c06763e-ee26-4716-b0c0-13dd7da75ba8",
+                "betbuilder_available": true,
+                "market_uuid": "79d4cc2a-f6e4-4db5-8acf-f2c5d9661032",
+                "odds": "13.00",
+                "market_status": "active",
+                "outcome_status": "active"
+              }
+            ]
+          ],
+          "slug": "single_market_79d4cc2a-f6e4-4db5-8acf-f2c5d9661032",
+          "tooltip": "Należy wytypować jakim rozstrzygnięciem zakończy się spotkanie (zakład nie uwzględnia dogrywki, podobnie jak w przypadku pozostałych zakładów, chyba, że ich opis lub specyfika - np. Awans - stanowią inaczej)",
+          "product_active": true
+        },
+        {
+          "name": "Podwójna szansa",
+          "type": "markets_in_columns",
+          "sort_order": 2,
+          "game_groups": [],
+          "grid": [
+            [
+              {
+                "type": "empty"
+              },
+              {
+                "type": "label",
+                "text": "Cały mecz",
+                "market_id": "10"
+              },
+              {
+                "type": "label",
+                "text": "1. Połowa",
+                "market_id": "63"
+              }
+            ],
+            [
+              {
+                "type": "label",
+                "text": "Always Ready lub remis"
+              },
+              {
+                "name": "Always Ready lub remis",
+                "type": "outcome",
+                "uuid": "52af07cb-fe65-4482-afd4-f9b04496dcc0",
+                "betbuilder_available": true,
+                "market_uuid": "22df7618-87f4-4383-bcb5-becde026596a",
+                "odds": "1.02",
+                "market_status": "active",
+                "outcome_status": "active"
+              },
+              {
+                "name": "Always Ready lub remis",
+                "type": "outcome",
+                "uuid": "4aae8b3e-9e48-4f5f-b94b-1485fb7d6c71",
+                "betbuilder_available": true,
+                "market_uuid": "d53a480b-4395-4949-b78f-f0d39b6b9b5a",
+                "odds": "1.05",
+                "market_status": "active",
+                "outcome_status": "active"
+              }
+            ],
+            [
+              {
+                "type": "label",
+                "text": "Always Ready lub Independiente Petrolero"
+              },
+              {
+                "name": "Always Ready lub Independiente Petrolero",
+                "type": "outcome",
+                "uuid": "29928a66-ca62-409a-9a29-b79011f06c6d",
+                "betbuilder_available": true,
+                "market_uuid": "22df7618-87f4-4383-bcb5-becde026596a",
+                "odds": "1.04",
+                "market_status": "active",
+                "outcome_status": "active"
+              },
+              {
+                "name": "Always Ready lub Independiente Petrolero",
+                "type": "outcome",
+                "uuid": "8c1d4e66-533f-4bfa-a462-2570af574a23",
+                "betbuilder_available": true,
+                "market_uuid": "d53a480b-4395-4949-b78f-f0d39b6b9b5a",
+                "odds": "1.19",
+                "market_status": "active",
+                "outcome_status": "active"
+              }
+            ],
+            [
+              {
+                "type": "label",
+                "text": "remis lub Independiente Petrolero"
+              },
+              {
+                "name": "remis lub Independiente Petrolero",
+                "type": "outcome",
+                "uuid": "1bebf64e-9f32-4e21-b3b5-57641710394a",
+                "betbuilder_available": true,
+                "market_uuid": "22df7618-87f4-4383-bcb5-becde026596a",
+                "odds": "3.37",
+                "market_status": "active",
+                "outcome_status": "active"
+              },
+              {
+                "name": "remis lub Independiente Petrolero",
+                "type": "outcome",
+                "uuid": "4f739cd1-6204-4d73-9e80-d4b006fc5d1b",
+                "betbuilder_available": true,
+                "market_uuid": "d53a480b-4395-4949-b78f-f0d39b6b9b5a",
+                "odds": "2.25",
+                "market_status": "active",
+                "outcome_status": "active"
+              }
+            ]
+          ],
+          "slug": "podwajna_szansa",
+          "tooltip": "Należy wytypować jakim rozstrzygnięciem zakończy się dana część spotkania wybierając dwie z trzech opcji.",
+          "product_active": true
+        },
+        {
+          "name": "Obie drużyny strzelą gola",
+          "type": "markets_in_columns",
+          "sort_order": 3,
+          "game_groups": [],
+          "grid": [
+            [
+              {
+                "type": "empty"
+              },
+              {
+                "type": "label",
+                "text": "Cały mecz",
+                "market_id": "29"
+              }
+            ],
+            [
+              {
+                "type": "label",
+                "text": "tak"
+              },
+              {
+                "name": "tak",
+                "type": "outcome",
+                "uuid": "667eafbf-5e01-49f4-80f0-4a008c958782",
+                "betbuilder_available": true,
+                "market_uuid": "260ded94-9081-4dde-bb14-4f3a6670d207",
+                "odds": "1.79",
+                "market_status": "active",
+                "outcome_status": "active"
+              }
+            ],
+            [
+              {
+                "type": "label",
+                "text": "nie"
+              },
+              {
+                "name": "nie",
+                "type": "outcome",
+                "uuid": "7da4245f-5d23-439a-9895-99d5414acd25",
+                "betbuilder_available": true,
+                "market_uuid": "260ded94-9081-4dde-bb14-4f3a6670d207",
+                "odds": "1.78",
+                "market_status": "active",
+                "outcome_status": "active"
+              }
+            ]
+          ],
+          "slug": "obie_druayny_strzela_gola",
+          "tooltip": "Należy wytypować, czy oba zespoły strzelą gola w danej części spotkania.",
+          "product_active": true
+        },
+        {
+          "name": "Total (suma)",
+          "type": "total",
+          "sort_order": 4,
+          "game_groups": [],
+          "grid": [
+            [
+              {
+                "type": "label",
+                "text": ""
+              },
+              {
+                "type": "label",
+                "text": "Poniżej"
+              },
+              {
+                "type": "label",
+                "text": "Powyżej"
+              }
+            ],
+            [
+              {
+                "type": "label",
+                "text": "1.5"
+              },
+              {
+                "name": "poniżej 1.5",
+                "type": "outcome",
+                "uuid": "39b51bc1-896d-453a-9b4f-12cecef8bffb",
+                "betbuilder_available": true,
+                "market_uuid": "8ba31640-3c24-4656-9447-101b522c8c69",
+                "odds": "6.00",
+                "market_status": "active",
+                "outcome_status": "active"
+              },
+              {
+                "name": "powyżej 1.5",
+                "type": "outcome",
+                "uuid": "d9da24f3-d58e-4035-8caa-b466dbbc4ce9",
+                "betbuilder_available": true,
+                "market_uuid": "8ba31640-3c24-4656-9447-101b522c8c69",
+                "odds": "1.05",
+                "market_status": "active",
+                "outcome_status": "active"
+              }
+            ],
+            [
+              {
+                "type": "label",
+                "text": "2.5"
+              },
+              {
+                "name": "poniżej 2.5",
+                "type": "outcome",
+                "uuid": "aa06ee33-cd02-4f93-9ee6-cb47b1e76eca",
+                "betbuilder_available": true,
+                "market_uuid": "311196a7-89ed-451b-be0c-75730134a3ea",
+                "odds": "3.37",
+                "market_status": "active",
+                "outcome_status": "active"
+              },
+              {
+                "name": "powyżej 2.5",
+                "type": "outcome",
+                "uuid": "52bf4bec-38a4-49de-bc6b-f4bef9a2101f",
+                "betbuilder_available": true,
+                "market_uuid": "311196a7-89ed-451b-be0c-75730134a3ea",
+                "odds": "1.21",
+                "market_status": "active",
+                "outcome_status": "active"
+              }
+            ],
+            [
+              {
+                "type": "label",
+                "text": "3.5"
+              },
+              {
+                "name": "poniżej 3.5",
+                "type": "outcome",
+                "uuid": "5fd2feb0-fe44-4b37-b1b6-faf3ee2fb494",
+                "betbuilder_available": true,
+                "market_uuid": "ddcd7e0d-ffc7-43e0-ad4d-7cb5a57a0245",
+                "odds": "2.06",
+                "market_status": "active",
+                "outcome_status": "active"
+              },
+              {
+                "name": "powyżej 3.5",
+                "type": "outcome",
+                "uuid": "08745631-de03-48f8-a7d7-d11bb7523992",
+                "betbuilder_available": true,
+                "market_uuid": "ddcd7e0d-ffc7-43e0-ad4d-7cb5a57a0245",
+                "odds": "1.58",
+                "market_status": "active",
+                "outcome_status": "active"
+              }
+            ],
+            [
+              {
+                "type": "label",
+                "text": "4.5"
+              },
+              {
+                "name": "poniżej 4.5",
+                "type": "outcome",
+                "uuid": "002833e8-b43b-49f2-adea-039ccdfad744",
+                "betbuilder_available": true,
+                "market_uuid": "fde8ddbb-7018-45d4-9d55-f70eeac01271",
+                "odds": "1.48",
+                "market_status": "active",
+                "outcome_status": "active"
+              },
+              {
+                "name": "powyżej 4.5",
+                "type": "outcome",
+                "uuid": "cd10fee8-f1fc-4c2f-8bd0-4f1c31c5f2c0",
+                "betbuilder_available": true,
+                "market_uuid": "fde8ddbb-7018-45d4-9d55-f70eeac01271",
+                "odds": "2.26",
+                "market_status": "active",
+                "outcome_status": "active"
+              }
+            ],
+            [
+              {
+                "type": "label",
+                "text": "5.5"
+              },
+              {
+                "name": "poniżej 5.5",
+                "type": "outcome",
+                "uuid": "7e27c75b-e14f-4b9b-b63b-50f5b99eb4fa",
+                "betbuilder_available": true,
+                "market_uuid": "1ef6f162-22dd-4185-a8ac-83473dee2d60",
+                "odds": "1.20",
+                "market_status": "active",
+                "outcome_status": "active"
+              },
+              {
+                "name": "powyżej 5.5",
+                "type": "outcome",
+                "uuid": "2450e0ca-4ddb-4630-8277-624aabed7ef1",
+                "betbuilder_available": true,
+                "market_uuid": "1ef6f162-22dd-4185-a8ac-83473dee2d60",
+                "odds": "3.47",
+                "market_status": "active",
+                "outcome_status": "active"
+              }
+            ]
+          ],
+          "slug": "suma",
+          "tooltip": "Należy wytypować czy suma goli/punktów w meczu przekroczy wartość określoną w zakładzie.",
+          "product_active": true
+        },
+        {
+          "name": "Strzeli gola",
+          "type": "markets_in_columns",
+          "sort_order": 10,
+          "game_groups": [],
+          "grid": [
+            [
+              {
+                "type": "empty"
+              },
+              {
+                "type": "label",
+                "text": "Always Ready",
+                "market_id": "32"
+              },
+              {
+                "type": "label",
+                "text": "Independiente Petrolero",
+                "market_id": "31"
+              }
+            ],
+            [
+              {
+                "type": "label",
+                "text": "nie"
+              },
+              {
+                "name": "nie",
+                "type": "outcome",
+                "uuid": "043a5a7a-d6ab-462e-8378-cd8afc6ba199",
+                "betbuilder_available": true,
+                "market_uuid": "292ad46d-2cdb-4c32-8716-dfb0df116e26",
+                "odds": "7.60",
+                "market_status": "active",
+                "outcome_status": "active"
+              },
+              {
+                "name": "nie",
+                "type": "outcome",
+                "uuid": "70a43b9a-ac99-45c2-aa8e-b116b09fb91a",
+                "betbuilder_available": true,
+                "market_uuid": "3cda2a6f-0734-4fc8-ac7a-210db022e1f7",
+                "odds": "1.84",
+                "market_status": "active",
+                "outcome_status": "active"
+              }
+            ],
+            [
+              {
+                "type": "label",
+                "text": "tak"
+              },
+              {
+                "name": "tak",
+                "type": "outcome",
+                "uuid": "d2574a49-158c-436d-a8be-94b8f52bef10",
+                "betbuilder_available": true,
+                "market_uuid": "292ad46d-2cdb-4c32-8716-dfb0df116e26",
+                "odds": "1.01",
+                "market_status": "active",
+                "outcome_status": "active"
+              },
+              {
+                "name": "tak",
+                "type": "outcome",
+                "uuid": "5dd4a805-b209-4b4c-b587-b939b5c6f5f7",
+                "betbuilder_available": true,
+                "market_uuid": "3cda2a6f-0734-4fc8-ac7a-210db022e1f7",
+                "odds": "1.73",
+                "market_status": "active",
+                "outcome_status": "active"
+              }
+            ]
+          ],
+          "slug": "strzeli_gola",
+          "tooltip": "Należy wytypować czy drużyna wymieniona w zakładzie strzeli gola.",
+          "product_active": true
+        },
+        {
+          "name": "Always Ready - Total (suma)",
+          "type": "total",
+          "sort_order": 12,
+          "game_groups": [],
+          "grid": [
+            [
+              {
+                "type": "label",
+                "text": ""
+              },
+              {
+                "type": "label",
+                "text": "Poniżej"
+              },
+              {
+                "type": "label",
+                "text": "Powyżej"
+              }
+            ],
+            [
+              {
+                "type": "label",
+                "text": "1.5"
+              },
+              {
+                "name": "poniżej 1.5",
+                "type": "outcome",
+                "uuid": "249e3eaa-40b9-4ddd-aa57-5ac287530ded",
+                "betbuilder_available": true,
+                "market_uuid": "a4f55008-95c3-4a3c-87f5-7ddd931b855e",
+                "odds": "4.45",
+                "market_status": "active",
+                "outcome_status": "active"
+              },
+              {
+                "name": "powyżej 1.5",
+                "type": "outcome",
+                "uuid": "815e5f53-4eed-42a1-b2c1-7bc18f84002f",
+                "betbuilder_available": true,
+                "market_uuid": "a4f55008-95c3-4a3c-87f5-7ddd931b855e",
+                "odds": "1.12",
+                "market_status": "active",
+                "outcome_status": "active"
+              }
+            ],
+            [
+              {
+                "type": "label",
+                "text": "2.5"
+              },
+              {
+                "name": "poniżej 2.5",
+                "type": "outcome",
+                "uuid": "0ba1a902-d3bb-4edf-a7a5-22ddbfbbe267",
+                "betbuilder_available": true,
+                "market_uuid": "d14e6b03-54ea-455a-887d-21e44419b9ec",
+                "odds": "2.40",
+                "market_status": "active",
+                "outcome_status": "active"
+              },
+              {
+                "name": "powyżej 2.5",
+                "type": "outcome",
+                "uuid": "6b0809e4-b4de-407f-b6d6-bc50c74d5999",
+                "betbuilder_available": true,
+                "market_uuid": "d14e6b03-54ea-455a-887d-21e44419b9ec",
+                "odds": "1.42",
+                "market_status": "active",
+                "outcome_status": "active"
+              }
+            ],
+            [
+              {
+                "type": "label",
+                "text": "3.5"
+              },
+              {
+                "name": "poniżej 3.5",
+                "type": "outcome",
+                "uuid": "405cd495-5f10-4c30-a1ab-1e592d272a2d",
+                "betbuilder_available": true,
+                "market_uuid": "7b29dab1-9a8a-4eba-8645-e7ab048a5f78",
+                "odds": "1.57",
+                "market_status": "active",
+                "outcome_status": "active"
+              },
+              {
+                "name": "powyżej 3.5",
+                "type": "outcome",
+                "uuid": "8833652b-9a3f-426f-9b56-115ffbaf039b",
+                "betbuilder_available": true,
+                "market_uuid": "7b29dab1-9a8a-4eba-8645-e7ab048a5f78",
+                "odds": "2.06",
+                "market_status": "active",
+                "outcome_status": "active"
+              }
+            ],
+            [
+              {
+                "type": "label",
+                "text": "4.5"
+              },
+              {
+                "name": "poniżej 4.5",
+                "type": "outcome",
+                "uuid": "d007dc89-212b-40b3-a16a-3d651e2a7ebf",
+                "betbuilder_available": true,
+                "market_uuid": "702b6821-fcaf-4a82-97ab-4b5fc269e048",
+                "odds": "1.23",
+                "market_status": "active",
+                "outcome_status": "active"
+              },
+              {
+                "name": "powyżej 4.5",
+                "type": "outcome",
+                "uuid": "1b769b5a-09dd-4b72-8e7e-699016c50465",
+                "betbuilder_available": true,
+                "market_uuid": "702b6821-fcaf-4a82-97ab-4b5fc269e048",
+                "odds": "3.27",
+                "market_status": "active",
+                "outcome_status": "active"
+              }
+            ],
+            [
+              {
+                "type": "label",
+                "text": "5.5"
+              },
+              {
+                "name": "poniżej 5.5",
+                "type": "outcome",
+                "uuid": "60302543-772b-4883-8219-9bdda7c8d027",
+                "betbuilder_available": true,
+                "market_uuid": "df670caf-5fa1-446a-bb7a-e8238b60acf5",
+                "odds": "1.08",
+                "market_status": "active",
+                "outcome_status": "active"
+              },
+              {
+                "name": "powyżej 5.5",
+                "type": "outcome",
+                "uuid": "70249528-c22f-4305-87aa-db7a0862f07f",
+                "betbuilder_available": true,
+                "market_uuid": "df670caf-5fa1-446a-bb7a-e8238b60acf5",
+                "odds": "5.20",
+                "market_status": "active",
+                "outcome_status": "active"
+              }
+            ]
+          ],
+          "slug": "competitor1_total_suma",
+          "tooltip": "Należy wytypować czy suma goli/punktów zdobytych przez drużynę wymienioną na pierwszym miejscu mieściła będzie się poniżej czy powyżej wskazanej wartości.",
+          "product_active": true
+        },
+        {
+          "name": "Independiente Petrolero - Total (suma)",
+          "type": "total",
+          "sort_order": 17,
+          "game_groups": [],
+          "grid": [
+            [
+              {
+                "type": "label",
+                "text": ""
+              },
+              {
+                "type": "label",
+                "text": "Poniżej"
+              },
+              {
+                "type": "label",
+                "text": "Powyżej"
+              }
+            ],
+            [
+              {
+                "type": "label",
+                "text": "0.5"
+              },
+              {
+                "name": "poniżej 0.5",
+                "type": "outcome",
+                "uuid": "f08a946c-df9d-4c85-b0a6-0fa3ea885f81",
+                "betbuilder_available": true,
+                "market_uuid": "620b53ab-df1e-4e19-addc-638b07d05f9d",
+                "odds": "1.84",
+                "market_status": "active",
+                "outcome_status": "active"
+              },
+              {
+                "name": "powyżej 0.5",
+                "type": "outcome",
+                "uuid": "09a4521b-ff32-4aca-94a3-c0efe8801a49",
+                "betbuilder_available": true,
+                "market_uuid": "620b53ab-df1e-4e19-addc-638b07d05f9d",
+                "odds": "1.73",
+                "market_status": "active",
+                "outcome_status": "active"
+              }
+            ],
+            [
+              {
+                "type": "label",
+                "text": "1.5"
+              },
+              {
+                "name": "poniżej 1.5",
+                "type": "outcome",
+                "uuid": "7ec0d0fe-3667-477c-b145-5b7aaec2d590",
+                "betbuilder_available": true,
+                "market_uuid": "06d39256-ec16-4a17-873c-750bdb363e1f",
+                "odds": "1.13",
+                "market_status": "active",
+                "outcome_status": "active"
+              },
+              {
+                "name": "powyżej 1.5",
+                "type": "outcome",
+                "uuid": "04e6f6f8-37c7-4ae2-a753-28c21e4ef753",
+                "betbuilder_available": true,
+                "market_uuid": "06d39256-ec16-4a17-873c-750bdb363e1f",
+                "odds": "4.25",
+                "market_status": "active",
+                "outcome_status": "active"
+              }
+            ],
+            [
+              {
+                "type": "label",
+                "text": "2.5"
+              },
+              {
+                "name": "poniżej 2.5",
+                "type": "outcome",
+                "uuid": "ba35d79d-bb16-4e44-bba5-1e1d525b4a91",
+                "betbuilder_available": true,
+                "market_uuid": "b2260936-cee2-48b5-9d9d-49a794d8b2b2",
+                "odds": "1.01",
+                "market_status": "active",
+                "outcome_status": "active"
+              },
+              {
+                "name": "powyżej 2.5",
+                "type": "outcome",
+                "uuid": "483c7371-5d2d-4b1f-b946-85319166207b",
+                "betbuilder_available": true,
+                "market_uuid": "b2260936-cee2-48b5-9d9d-49a794d8b2b2",
+                "odds": "7.60",
+                "market_status": "active",
+                "outcome_status": "active"
+              }
+            ]
+          ],
+          "slug": "competitor2_total_suma",
+          "tooltip": "Należy wytypować czy suma goli/punktów zdobytych przez drużynę wymienioną na pierwszym miejscu mieściła będzie się poniżej czy powyżej wskazanej wartości.",
+          "product_active": true
+        },
+        {
+          "name": "Handicap",
+          "type": "handicap_2col",
+          "sort_order": 21,
+          "game_groups": [],
+          "grid": [
+            [
+              {
+                "type": "label",
+                "text": "Always Ready"
+              },
+              {
+                "type": "label",
+                "text": "Independiente Petrolero"
+              }
+            ],
+            [
+              {
+                "type": "label",
+                "text": "-4.5"
+              },
+              {
+                "name": "Always Ready (-4.5)",
+                "type": "outcome",
+                "uuid": "82740efc-6095-4e73-892a-2891a2f3c436",
+                "betbuilder_available": false,
+                "market_uuid": "3661ef47-3645-4d73-90a9-fb1204b22065",
+                "odds": "4.30",
+                "market_status": "active",
+                "outcome_status": "active"
+              },
+              {
+                "type": "label",
+                "text": "+4.5"
+              },
+              {
+                "name": "Independiente Petrolero (+4.5)",
+                "type": "outcome",
+                "uuid": "7539990b-12ac-44c6-b06f-24f51301fa06",
+                "betbuilder_available": false,
+                "market_uuid": "3661ef47-3645-4d73-90a9-fb1204b22065",
+                "odds": "1.13",
+                "market_status": "active",
+                "outcome_status": "active"
+              }
+            ],
+            [
+              {
+                "type": "label",
+                "text": "-3.5"
+              },
+              {
+                "name": "Always Ready (-3.5)",
+                "type": "outcome",
+                "uuid": "90fab7b9-20a8-4610-813a-2fa2e10749ef",
+                "betbuilder_available": false,
+                "market_uuid": "31ac759f-cae9-4bff-b2e1-de3789f63116",
+                "odds": "2.72",
+                "market_status": "active",
+                "outcome_status": "active"
+              },
+              {
+                "type": "label",
+                "text": "+3.5"
+              },
+              {
+                "name": "Independiente Petrolero (+3.5)",
+                "type": "outcome",
+                "uuid": "fe7558e8-afe1-4048-87cc-55cf01e1b48f",
+                "betbuilder_available": false,
+                "market_uuid": "31ac759f-cae9-4bff-b2e1-de3789f63116",
+                "odds": "1.33",
+                "market_status": "active",
+                "outcome_status": "active"
+              }
+            ],
+            [
+              {
+                "type": "label",
+                "text": "-2.5"
+              },
+              {
+                "name": "Always Ready (-2.5)",
+                "type": "outcome",
+                "uuid": "d2c625e5-9aab-4cbe-9061-23d06e2e6847",
+                "betbuilder_available": false,
+                "market_uuid": "9f4ad8f0-a8fa-4f3e-bf13-910fcb1e4aef",
+                "odds": "1.81",
+                "market_status": "active",
+                "outcome_status": "active"
+              },
+              {
+                "type": "label",
+                "text": "+2.5"
+              },
+              {
+                "name": "Independiente Petrolero (+2.5)",
+                "type": "outcome",
+                "uuid": "a4029282-b4a1-4d56-9954-c9b92162ab95",
+                "betbuilder_available": false,
+                "market_uuid": "9f4ad8f0-a8fa-4f3e-bf13-910fcb1e4aef",
+                "odds": "1.77",
+                "market_status": "active",
+                "outcome_status": "active"
+              }
+            ],
+            [
+              {
+                "type": "label",
+                "text": "-1.5"
+              },
+              {
+                "name": "Always Ready (-1.5)",
+                "type": "outcome",
+                "uuid": "a8460dce-9eab-4703-b038-45e34b1a2f14",
+                "betbuilder_available": false,
+                "market_uuid": "185b9e7c-1c09-4e1c-ba85-9834f7577637",
+                "odds": "1.33",
+                "market_status": "active",
+                "outcome_status": "active"
+              },
+              {
+                "type": "label",
+                "text": "+1.5"
+              },
+              {
+                "name": "Independiente Petrolero (+1.5)",
+                "type": "outcome",
+                "uuid": "e95dcd65-f5c8-4a73-bd9e-a7e070f3f2ce",
+                "betbuilder_available": false,
+                "market_uuid": "185b9e7c-1c09-4e1c-ba85-9834f7577637",
+                "odds": "2.72",
+                "market_status": "active",
+                "outcome_status": "active"
+              }
+            ]
+          ],
+          "slug": "handicap",
+          "tooltip": "Należy wytypować jakim rozstrzygnięciem zakończy się spotkanie, uwzględniając doliczenie handicapu jednej z drużyn.",
+          "product_active": true
+        },
+        {
+          "name": "Handicap ",
+          "type": "handicap_3col",
+          "sort_order": 26,
+          "game_groups": [],
+          "grid": [
+            [
+              {
+                "type": "empty"
+              },
+              {
+                "type": "label",
+                "text": "Always Ready"
+              },
+              {
+                "type": "label",
+                "text": "remis"
+              },
+              {
+                "type": "label",
+                "text": "Independiente Petrolero"
+              }
+            ],
+            [
+              {
+                "type": "label",
+                "text": "0:2"
+              },
+              {
+                "name": "Always Ready (0:2)",
+                "type": "outcome",
+                "uuid": "063d9fef-75d4-4fe5-84f6-06f98e7d034a",
+                "betbuilder_available": true,
+                "market_uuid": "d149360e-988f-4f94-b13c-0c19cc4168ca",
+                "odds": "1.81",
+                "market_status": "active",
+                "outcome_status": "active"
+              },
+              {
+                "name": "remis (0:2)",
+                "type": "outcome",
+                "uuid": "9c75b1cf-65d8-40e6-8082-50eed3f645ca",
+                "betbuilder_available": true,
+                "market_uuid": "d149360e-988f-4f94-b13c-0c19cc4168ca",
+                "odds": "4.10",
+                "market_status": "active",
+                "outcome_status": "active"
+              },
+              {
+                "name": "Independiente Petrolero (0:2)",
+                "type": "outcome",
+                "uuid": "e5880232-5adb-491d-a07b-47b86aaa885f",
+                "betbuilder_available": true,
+                "market_uuid": "d149360e-988f-4f94-b13c-0c19cc4168ca",
+                "odds": "2.82",
+                "market_status": "active",
+                "outcome_status": "active"
+              }
+            ]
+          ],
+          "slug": "handicap_hcp",
+          "tooltip": "Należy wytypować jakim rozstrzygnięciem zakończy się spotkanie, uwzględniając doliczenie handicapu jednej z drużyn.",
+          "product_active": true
+        },
+        {
+          "name": "Remis = zwrot",
+          "type": "markets_in_columns",
+          "sort_order": 28,
+          "game_groups": [],
+          "grid": [
+            [
+              {
+                "type": "empty"
+              },
+              {
+                "type": "label",
+                "text": "Cały mecz",
+                "market_id": "11"
+              },
+              {
+                "type": "label",
+                "text": "1. Połowa",
+                "market_id": "64"
+              }
+            ],
+            [
+              {
+                "type": "label",
+                "text": "Always Ready"
+              },
+              {
+                "name": "Always Ready",
+                "type": "outcome",
+                "uuid": "fc064dc5-9032-40bd-b9dd-b2428b6976a4",
+                "betbuilder_available": false,
+                "market_uuid": "c8a92413-41c2-431e-937b-c3b2198e2cee",
+                "odds": "1.02",
+                "market_status": "active",
+                "outcome_status": "active"
+              },
+              {
+                "name": "Always Ready",
+                "type": "outcome",
+                "uuid": "a02dab05-cfa1-4ed2-b731-adec334579af",
+                "betbuilder_available": false,
+                "market_uuid": "b36aae93-e96e-4730-81ad-0f3cba6a11b2",
+                "odds": "1.06",
+                "market_status": "active",
+                "outcome_status": "active"
+              }
+            ],
+            [
+              {
+                "type": "label",
+                "text": "Independiente Petrolero"
+              },
+              {
+                "name": "Independiente Petrolero",
+                "type": "outcome",
+                "uuid": "62727819-814b-457f-ba98-429a8505cb7d",
+                "betbuilder_available": false,
+                "market_uuid": "c8a92413-41c2-431e-937b-c3b2198e2cee",
+                "odds": "7.20",
+                "market_status": "active",
+                "outcome_status": "active"
+              },
+              {
+                "name": "Independiente Petrolero",
+                "type": "outcome",
+                "uuid": "86766d58-3eb9-472e-a8bf-6be109ea5ad9",
+                "betbuilder_available": false,
+                "market_uuid": "b36aae93-e96e-4730-81ad-0f3cba6a11b2",
+                "odds": "5.70",
+                "market_status": "active",
+                "outcome_status": "active"
+              }
+            ]
+          ],
+          "slug": "test",
+          "tooltip": "Należy wytypować jakim rozstrzygnięciem zakończy się dana część spotkania. W przypadku remisu następuje zwrot stawki.",
+          "product_active": true
+        },
+        {
+          "name": "Zdobędzie gola w obu połowach",
+          "type": "markets_in_columns",
+          "sort_order": 29,
+          "game_groups": [],
+          "grid": [
+            [
+              {
+                "type": "empty"
+              },
+              {
+                "type": "label",
+                "text": "Always Ready",
+                "market_id": "56"
+              },
+              {
+                "type": "label",
+                "text": "Independiente Petrolero",
+                "market_id": "57"
+              }
+            ],
+            [
+              {
+                "type": "label",
+                "text": "tak"
+              },
+              {
+                "name": "tak",
+                "type": "outcome",
+                "uuid": "13f377a1-4e74-4651-a473-05b6c42d99a7",
+                "betbuilder_available": true,
+                "market_uuid": "4548ba88-f9e8-4653-a4c3-38e70b5a56c6",
+                "odds": "1.41",
+                "market_status": "active",
+                "outcome_status": "active"
+              },
+              {
+                "name": "tak",
+                "type": "outcome",
+                "uuid": "70dc6e2b-1240-4188-8bf0-1517bf6cebe3",
+                "betbuilder_available": true,
+                "market_uuid": "198c766b-4041-42cb-b568-ac23aff81992",
+                "odds": "5.90",
+                "market_status": "active",
+                "outcome_status": "active"
+              }
+            ],
+            [
+              {
+                "type": "label",
+                "text": "nie"
+              },
+              {
+                "name": "nie",
+                "type": "outcome",
+                "uuid": "0cd23af4-f09a-48a9-8a48-aec5fbeefb14",
+                "betbuilder_available": true,
+                "market_uuid": "4548ba88-f9e8-4653-a4c3-38e70b5a56c6",
+                "odds": "2.44",
+                "market_status": "active",
+                "outcome_status": "active"
+              },
+              {
+                "name": "nie",
+                "type": "outcome",
+                "uuid": "e95f2db0-776b-47c4-a07f-f6289af39e84",
+                "betbuilder_available": true,
+                "market_uuid": "198c766b-4041-42cb-b568-ac23aff81992",
+                "odds": "1.05",
+                "market_status": "active",
+                "outcome_status": "active"
+              }
+            ]
+          ],
+          "slug": "zdobedzie_gola_w_obu_polowach",
+          "tooltip": "Należy wytypować czy dana drużyna zdobędzie przynajmniej jednego gola w każdej połowie spotkania.",
+          "product_active": true
+        },
+        {
+          "name": "Wynik połowy",
+          "type": "markets_in_columns",
+          "sort_order": 31,
+          "game_groups": [],
+          "grid": [
+            [
+              {
+                "type": "empty"
+              },
+              {
+                "type": "label",
+                "text": "1. Połowa",
+                "market_id": "60"
+              },
+              {
+                "type": "label",
+                "text": "2. Połowa",
+                "market_id": "83"
+              }
+            ],
+            [
+              {
+                "type": "label",
+                "text": "Always Ready"
+              },
+              {
+                "name": "Always Ready",
+                "type": "outcome",
+                "uuid": "5d931ce9-aef8-4910-a3f1-1adf7cc4306c",
+                "betbuilder_available": true,
+                "market_uuid": "82287ce7-4d7d-42ff-ad1b-99daaeb71f21",
+                "odds": "1.37",
+                "market_status": "active",
+                "outcome_status": "active"
+              },
+              {
+                "name": "Always Ready",
+                "type": "outcome",
+                "uuid": "bc0509cd-e822-4f08-bf77-503792278e7e",
+                "betbuilder_available": true,
+                "market_uuid": "f1493e00-4a41-439b-b538-4a6392179954",
+                "odds": "1.31",
+                "market_status": "active",
+                "outcome_status": "active"
+              }
+            ],
+            [
+              {
+                "type": "label",
+                "text": "remis"
+              },
+              {
+                "name": "remis",
+                "type": "outcome",
+                "uuid": "6b925299-3a62-4965-b0f2-9f8f721db41c",
+                "betbuilder_available": true,
+                "market_uuid": "82287ce7-4d7d-42ff-ad1b-99daaeb71f21",
+                "odds": "3.42",
+                "market_status": "active",
+                "outcome_status": "active"
+              },
+              {
+                "name": "remis",
+                "type": "outcome",
+                "uuid": "7fa6f9db-93e3-4ae1-967e-e957115c9b0d",
+                "betbuilder_available": true,
+                "market_uuid": "f1493e00-4a41-439b-b538-4a6392179954",
+                "odds": "3.95",
+                "market_status": "active",
+                "outcome_status": "active"
+              }
+            ],
+            [
+              {
+                "type": "label",
+                "text": "Independiente Petrolero"
+              },
+              {
+                "name": "Independiente Petrolero",
+                "type": "outcome",
+                "uuid": "4af79b91-0a0e-493b-95c2-a0c2d3983a74",
+                "betbuilder_available": true,
+                "market_uuid": "82287ce7-4d7d-42ff-ad1b-99daaeb71f21",
+                "odds": "10.00",
+                "market_status": "active",
+                "outcome_status": "active"
+              },
+              {
+                "name": "Independiente Petrolero",
+                "type": "outcome",
+                "uuid": "0fca355d-f1f6-4d25-af59-da28efa35248",
+                "betbuilder_available": true,
+                "market_uuid": "f1493e00-4a41-439b-b538-4a6392179954",
+                "odds": "10.00",
+                "market_status": "active",
+                "outcome_status": "active"
+              }
+            ]
+          ],
+          "slug": "wynikpolowy",
+          "tooltip": "Należy wytypować jakim rozstrzygnięciem zakończy się wskazana połowa meczu.",
+          "product_active": true
+        },
+        {
+          "name": "1. połowa - Total (suma)",
+          "type": "total",
+          "sort_order": 34,
+          "game_groups": [],
+          "grid": [
+            [
+              {
+                "type": "label",
+                "text": ""
+              },
+              {
+                "type": "label",
+                "text": "Poniżej"
+              },
+              {
+                "type": "label",
+                "text": "Powyżej"
+              }
+            ],
+            [
+              {
+                "type": "label",
+                "text": "0.5"
+              },
+              {
+                "name": "poniżej 0.5",
+                "type": "outcome",
+                "uuid": "484b6e16-801b-4553-b714-73424d350d42",
+                "betbuilder_available": true,
+                "market_uuid": "5966588d-b7b2-40b9-8811-6aa3c218e763",
+                "odds": "4.45",
+                "market_status": "active",
+                "outcome_status": "active"
+              },
+              {
+                "name": "powyżej 0.5",
+                "type": "outcome",
+                "uuid": "c0b6ef0e-1f68-44ca-ab05-eb2e7f0c2f7e",
+                "betbuilder_available": true,
+                "market_uuid": "5966588d-b7b2-40b9-8811-6aa3c218e763",
+                "odds": "1.12",
+                "market_status": "active",
+                "outcome_status": "active"
+              }
+            ],
+            [
+              {
+                "type": "label",
+                "text": "1.5"
+              },
+              {
+                "name": "poniżej 1.5",
+                "type": "outcome",
+                "uuid": "d4c8d0c6-17a6-4a6f-b9db-d1a917676ffc",
+                "betbuilder_available": true,
+                "market_uuid": "cf5bf64a-4f0b-4f0b-afe9-425dbbd4f2ac",
+                "odds": "1.96",
+                "market_status": "active",
+                "outcome_status": "active"
+              },
+              {
+                "name": "powyżej 1.5",
+                "type": "outcome",
+                "uuid": "f84f2d6d-013d-433d-9748-07f980db2438",
+                "betbuilder_available": true,
+                "market_uuid": "cf5bf64a-4f0b-4f0b-afe9-425dbbd4f2ac",
+                "odds": "1.64",
+                "market_status": "active",
+                "outcome_status": "active"
+              }
+            ],
+            [
+              {
+                "type": "label",
+                "text": "2.5"
+              },
+              {
+                "name": "poniżej 2.5",
+                "type": "outcome",
+                "uuid": "72d41abc-a31f-4e0b-b1de-723285ed836f",
+                "betbuilder_available": true,
+                "market_uuid": "36637666-e184-4292-b4cf-b3f1821f92f6",
+                "odds": "1.29",
+                "market_status": "active",
+                "outcome_status": "active"
+              },
+              {
+                "name": "powyżej 2.5",
+                "type": "outcome",
+                "uuid": "df79a1a3-0d7f-4fb7-a407-648618b40664",
+                "betbuilder_available": true,
+                "market_uuid": "36637666-e184-4292-b4cf-b3f1821f92f6",
+                "odds": "2.92",
+                "market_status": "active",
+                "outcome_status": "active"
+              }
+            ]
+          ],
+          "slug": "1_poaowa_suma",
+          "tooltip": "Należy wytypować czy suma goli/punktów w pierwszej połowie będzie mieściła się poniżej czy powyżej wskazanej wartości. ",
+          "product_active": true
+        },
+        {
+          "name": "1. Połowa - handicap",
+          "type": "handicap_2col",
+          "sort_order": 38,
+          "game_groups": [],
+          "grid": [
+            [
+              {
+                "type": "label",
+                "text": "Always Ready"
+              },
+              {
+                "type": "label",
+                "text": "Independiente Petrolero"
+              }
+            ],
+            [
+              {
+                "type": "label",
+                "text": "-1.5"
+              },
+              {
+                "name": "Always Ready (-1.5)",
+                "type": "outcome",
+                "uuid": "9029a1ef-8c0f-4f50-9759-b93e7efdb179",
+                "betbuilder_available": false,
+                "market_uuid": "b58335e3-5e58-4db0-9f45-86fa77d30782",
+                "odds": "2.30",
+                "market_status": "active",
+                "outcome_status": "active"
+              },
+              {
+                "type": "label",
+                "text": "+1.5"
+              },
+              {
+                "name": "Independiente Petrolero (+1.5)",
+                "type": "outcome",
+                "uuid": "ef070955-65ee-43e0-b31e-223d051093f7",
+                "betbuilder_available": false,
+                "market_uuid": "b58335e3-5e58-4db0-9f45-86fa77d30782",
+                "odds": "1.46",
+                "market_status": "active",
+                "outcome_status": "active"
+              }
+            ],
+            [
+              {
+                "type": "label",
+                "text": "-0.5"
+              },
+              {
+                "name": "Always Ready (-0.5)",
+                "type": "outcome",
+                "uuid": "8889ac58-8aa9-4759-ae93-6ac669810aca",
+                "betbuilder_available": false,
+                "market_uuid": "88e8c3f0-f758-4dbb-bc7f-ba91c2a90ca9",
+                "odds": "1.36",
+                "market_status": "active",
+                "outcome_status": "active"
+              },
+              {
+                "type": "label",
+                "text": "+0.5"
+              },
+              {
+                "name": "Independiente Petrolero (+0.5)",
+                "type": "outcome",
+                "uuid": "7dd34138-9651-4a29-92d5-1e02249823d8",
+                "betbuilder_available": false,
+                "market_uuid": "88e8c3f0-f758-4dbb-bc7f-ba91c2a90ca9",
+                "odds": "2.61",
+                "market_status": "active",
+                "outcome_status": "active"
+              }
+            ]
+          ],
+          "slug": "1_poaowa_handicap",
+          "tooltip": "Należy wytypować jakim rozstrzygnięciem zakończy się pierwsza połowa, uwzględniając doliczenie handicapu jednej z drużyn.",
+          "product_active": true
+        },
+        {
+          "name": "2. połowa - Total (suma)",
+          "type": "total",
+          "sort_order": 41,
+          "game_groups": [],
+          "grid": [
+            [
+              {
+                "type": "label",
+                "text": ""
+              },
+              {
+                "type": "label",
+                "text": "Poniżej"
+              },
+              {
+                "type": "label",
+                "text": "Powyżej"
+              }
+            ],
+            [
+              {
+                "type": "label",
+                "text": "0.5"
+              },
+              {
+                "name": "poniżej 0.5",
+                "type": "outcome",
+                "uuid": "c31dea8a-649d-4829-bbe0-0e15f9615e68",
+                "betbuilder_available": true,
+                "market_uuid": "86befcb4-dbbd-4fad-918e-35a60d0a2794",
+                "odds": "5.40",
+                "market_status": "active",
+                "outcome_status": "active"
+              },
+              {
+                "name": "powyżej 0.5",
+                "type": "outcome",
+                "uuid": "91d73cfc-2f2e-410d-8564-4e7bf4c35655",
+                "betbuilder_available": true,
+                "market_uuid": "86befcb4-dbbd-4fad-918e-35a60d0a2794",
+                "odds": "1.07",
+                "market_status": "active",
+                "outcome_status": "active"
+              }
+            ],
+            [
+              {
+                "type": "label",
+                "text": "1.5"
+              },
+              {
+                "name": "poniżej 1.5",
+                "type": "outcome",
+                "uuid": "12f04f51-ad8a-4829-b1a9-7da390e9c49c",
+                "betbuilder_available": true,
+                "market_uuid": "493f044c-bff9-41d6-b252-7a812b3f698f",
+                "odds": "2.42",
+                "market_status": "active",
+                "outcome_status": "active"
+              },
+              {
+                "name": "powyżej 1.5",
+                "type": "outcome",
+                "uuid": "185f4dda-7c76-460f-8cb4-a9bc443d76ba",
+                "betbuilder_available": true,
+                "market_uuid": "493f044c-bff9-41d6-b252-7a812b3f698f",
+                "odds": "1.42",
+                "market_status": "active",
+                "outcome_status": "active"
+              }
+            ],
+            [
+              {
+                "type": "label",
+                "text": "2.5"
+              },
+              {
+                "name": "poniżej 2.5",
+                "type": "outcome",
+                "uuid": "cb3507ce-cea4-4b14-ae61-8c26b7a51879",
+                "betbuilder_available": true,
+                "market_uuid": "6e69f239-05e2-477d-ac86-b0dc09e36991",
+                "odds": "1.48",
+                "market_status": "active",
+                "outcome_status": "active"
+              },
+              {
+                "name": "powyżej 2.5",
+                "type": "outcome",
+                "uuid": "bc90234d-b8f3-4ee7-99a6-707b0bcdc636",
+                "betbuilder_available": true,
+                "market_uuid": "6e69f239-05e2-477d-ac86-b0dc09e36991",
+                "odds": "2.25",
+                "market_status": "active",
+                "outcome_status": "active"
+              }
+            ],
+            [
+              {
+                "type": "label",
+                "text": "3.5"
+              },
+              {
+                "name": "poniżej 3.5",
+                "type": "outcome",
+                "uuid": "8f618dc0-d574-48ac-92ba-534895358e2b",
+                "betbuilder_available": true,
+                "market_uuid": "9b4a2b88-ca5d-4fd3-8337-3ed350fb3965",
+                "odds": "1.15",
+                "market_status": "active",
+                "outcome_status": "active"
+              },
+              {
+                "name": "powyżej 3.5",
+                "type": "outcome",
+                "uuid": "1632db70-70a0-4a71-9c1c-1ee6af3432ed",
+                "betbuilder_available": true,
+                "market_uuid": "9b4a2b88-ca5d-4fd3-8337-3ed350fb3965",
+                "odds": "4.00",
+                "market_status": "active",
+                "outcome_status": "active"
+              }
+            ]
+          ],
+          "slug": "2_poaowa_suma",
+          "tooltip": "Należy wytypować czy suma goli/punktów w drugiej połowie będzie mieściła się poniżej czy powyżej wskazanej wartości.",
+          "product_active": true
+        },
+        {
+          "name": "2. Połowa - Handicap",
+          "type": "handicap_2col",
+          "sort_order": 45,
+          "game_groups": [],
+          "grid": [
+            [
+              {
+                "type": "label",
+                "text": "Always Ready"
+              },
+              {
+                "type": "label",
+                "text": "Independiente Petrolero"
+              }
+            ],
+            [
+              {
+                "type": "label",
+                "text": "-2.5"
+              },
+              {
+                "name": "Always Ready (-2.5)",
+                "type": "outcome",
+                "uuid": "215776aa-cd39-4b50-a0e0-6b9f5bb175b6",
+                "betbuilder_available": false,
+                "market_uuid": "22627327-67b5-4b4c-a586-0bcc84a80f88",
+                "odds": "3.55",
+                "market_status": "active",
+                "outcome_status": "active"
+              },
+              {
+                "type": "label",
+                "text": "+2.5"
+              },
+              {
+                "name": "Independiente Petrolero (+2.5)",
+                "type": "outcome",
+                "uuid": "f7f55e7a-9e14-4b55-a4c9-5b8394923a43",
+                "betbuilder_available": false,
+                "market_uuid": "22627327-67b5-4b4c-a586-0bcc84a80f88",
+                "odds": "1.19",
+                "market_status": "active",
+                "outcome_status": "active"
+              }
+            ],
+            [
+              {
+                "type": "label",
+                "text": "-1.5"
+              },
+              {
+                "name": "Always Ready (-1.5)",
+                "type": "outcome",
+                "uuid": "c640c38e-b78f-4363-81ee-975cf5ac1dc0",
+                "betbuilder_available": false,
+                "market_uuid": "504162f9-ddad-4fd5-8d66-b53f7abfa2c2",
+                "odds": "1.99",
+                "market_status": "active",
+                "outcome_status": "active"
+              },
+              {
+                "type": "label",
+                "text": "+1.5"
+              },
+              {
+                "name": "Independiente Petrolero (+1.5)",
+                "type": "outcome",
+                "uuid": "51b6b65e-2149-4729-9ecc-a7d11376935e",
+                "betbuilder_available": false,
+                "market_uuid": "504162f9-ddad-4fd5-8d66-b53f7abfa2c2",
+                "odds": "1.62",
+                "market_status": "active",
+                "outcome_status": "active"
+              }
+            ],
+            [
+              {
+                "type": "label",
+                "text": "-0.5"
+              },
+              {
+                "name": "Always Ready (-0.5)",
+                "type": "outcome",
+                "uuid": "078c3416-b996-4ef7-a4c1-4d57caad7f7a",
+                "betbuilder_available": false,
+                "market_uuid": "72b58109-4b21-410c-bbee-9978a12e9b98",
+                "odds": "1.30",
+                "market_status": "active",
+                "outcome_status": "active"
+              },
+              {
+                "type": "label",
+                "text": "+0.5"
+              },
+              {
+                "name": "Independiente Petrolero (+0.5)",
+                "type": "outcome",
+                "uuid": "5015363c-fd21-4fe1-904b-62acc39e2da3",
+                "betbuilder_available": false,
+                "market_uuid": "72b58109-4b21-410c-bbee-9978a12e9b98",
+                "odds": "2.87",
+                "market_status": "active",
+                "outcome_status": "active"
+              }
+            ]
+          ],
+          "slug": "2_poaowa_handicap",
+          "tooltip": "Należy wytypować jakim rozstrzygnięciem zakończy się druga połowa, uwzględniając doliczenie handicapu jednej z drużyn.",
+          "product_active": true
+        },
+        {
+          "name": "Dokładny wynik",
+          "type": "exact_result",
+          "sort_order": 48,
+          "game_groups": [],
+          "grid": [
+            [
+              {
+                "type": "label",
+                "text": "1:0"
+              },
+              {
+                "type": "label",
+                "text": "0:0"
+              },
+              {
+                "type": "label",
+                "text": "0:1"
+              }
+            ],
+            [
+              {
+                "name": "1:0",
+                "type": "outcome",
+                "uuid": "30989f4f-a379-486f-8d25-feef44f243a9",
+                "betbuilder_available": true,
+                "market_uuid": "548b9136-76a7-4110-a499-324f2983e2ee",
+                "odds": "11.00",
+                "market_status": "active",
+                "outcome_status": "active"
+              },
+              {
+                "name": "0:0",
+                "type": "outcome",
+                "uuid": "6065cf64-016a-4206-bb24-2afc395424c7",
+                "betbuilder_available": true,
+                "market_uuid": "548b9136-76a7-4110-a499-324f2983e2ee",
+                "odds": "30.00",
+                "market_status": "active",
+                "outcome_status": "active"
+              },
+              {
+                "name": "0:1",
+                "type": "outcome",
+                "uuid": "f4b7935c-47f8-4116-a77e-68d3478bb70b",
+                "betbuilder_available": true,
+                "market_uuid": "548b9136-76a7-4110-a499-324f2983e2ee",
+                "odds": "45.00",
+                "market_status": "active",
+                "outcome_status": "active"
+              }
+            ],
+            [
+              {
+                "type": "label",
+                "text": "2:0"
+              },
+              {
+                "type": "label",
+                "text": "1:1"
+              },
+              {
+                "type": "label",
+                "text": "0:2"
+              }
+            ],
+            [
+              {
+                "name": "2:0",
+                "type": "outcome",
+                "uuid": "4b6a14f6-431a-42c2-8053-9abe6d6bb922",
+                "betbuilder_available": true,
+                "market_uuid": "548b9136-76a7-4110-a499-324f2983e2ee",
+                "odds": "6.70",
+                "market_status": "active",
+                "outcome_status": "active"
+              },
+              {
+                "name": "1:1",
+                "type": "outcome",
+                "uuid": "fc485fa6-3f4b-442f-a0c0-ca4f399e1972",
+                "betbuilder_available": true,
+                "market_uuid": "548b9136-76a7-4110-a499-324f2983e2ee",
+                "odds": "16.00",
+                "market_status": "active",
+                "outcome_status": "active"
+              },
+              {
+                "name": "0:2",
+                "type": "outcome",
+                "uuid": "ee0b72d3-50c1-405b-9d4c-cd5f30a638cb",
+                "betbuilder_available": true,
+                "market_uuid": "548b9136-76a7-4110-a499-324f2983e2ee",
+                "odds": "100.00",
+                "market_status": "active",
+                "outcome_status": "active"
+              }
+            ],
+            [
+              {
+                "type": "label",
+                "text": "2:1"
+              },
+              {
+                "type": "label",
+                "text": "2:2"
+              },
+              {
+                "type": "label",
+                "text": "1:2"
+              }
+            ],
+            [
+              {
+                "name": "2:1",
+                "type": "outcome",
+                "uuid": "c0e860dc-9a62-463e-8bb0-82abd26c2849",
+                "betbuilder_available": true,
+                "market_uuid": "548b9136-76a7-4110-a499-324f2983e2ee",
+                "odds": "9.00",
+                "market_status": "active",
+                "outcome_status": "active"
+              },
+              {
+                "name": "2:2",
+                "type": "outcome",
+                "uuid": "24c37d84-9cb1-439e-ac08-54ee361962c3",
+                "betbuilder_available": true,
+                "market_uuid": "548b9136-76a7-4110-a499-324f2983e2ee",
+                "odds": "25.00",
+                "market_status": "active",
+                "outcome_status": "active"
+              },
+              {
+                "name": "1:2",
+                "type": "outcome",
+                "uuid": "4b271df1-1bc3-4d73-ab6a-a71c47345592",
+                "betbuilder_available": true,
+                "market_uuid": "548b9136-76a7-4110-a499-324f2983e2ee",
+                "odds": "40.00",
+                "market_status": "active",
+                "outcome_status": "active"
+              }
+            ],
+            [
+              {
+                "type": "label",
+                "text": "3:0"
+              },
+              {
+                "type": "label",
+                "text": "3:3"
+              },
+              {
+                "type": "label",
+                "text": "0:3"
+              }
+            ],
+            [
+              {
+                "name": "3:0",
+                "type": "outcome",
+                "uuid": "e3dcbb01-0d3d-4bdf-a1e7-b9cb8dbd306c",
+                "betbuilder_available": true,
+                "market_uuid": "548b9136-76a7-4110-a499-324f2983e2ee",
+                "odds": "6.10",
+                "market_status": "active",
+                "outcome_status": "active"
+              },
+              {
+                "name": "3:3",
+                "type": "outcome",
+                "uuid": "44168fd1-21e1-4fa2-b3e8-f86756c172b8",
+                "betbuilder_available": true,
+                "market_uuid": "548b9136-76a7-4110-a499-324f2983e2ee",
+                "odds": "90.00",
+                "market_status": "active",
+                "outcome_status": "active"
+              },
+              {
+                "name": "0:3",
+                "type": "outcome",
+                "uuid": "b79bb842-427c-4d33-a2a8-b09eb3a639dc",
+                "betbuilder_available": true,
+                "market_uuid": "548b9136-76a7-4110-a499-324f2983e2ee",
+                "odds": "100.00",
+                "market_status": "active",
+                "outcome_status": "active"
+              }
+            ],
+            [
+              {
+                "type": "label",
+                "text": "3:1"
+              },
+              {
+                "type": "empty"
+              },
+              {
+                "type": "label",
+                "text": "1:3"
+              }
+            ],
+            [
+              {
+                "name": "3:1",
+                "type": "outcome",
+                "uuid": "0c21f4a0-a988-40d4-a8dc-521be7b6ca06",
+                "betbuilder_available": true,
+                "market_uuid": "548b9136-76a7-4110-a499-324f2983e2ee",
+                "odds": "8.25",
+                "market_status": "active",
+                "outcome_status": "active"
+              },
+              {
+                "type": "empty"
+              },
+              {
+                "name": "1:3",
+                "type": "outcome",
+                "uuid": "ca2c1b43-ff98-4866-a492-71a22b53d21f",
+                "betbuilder_available": true,
+                "market_uuid": "548b9136-76a7-4110-a499-324f2983e2ee",
+                "odds": "100.00",
+                "market_status": "active",
+                "outcome_status": "active"
+              }
+            ],
+            [
+              {
+                "type": "label",
+                "text": "3:2"
+              },
+              {
+                "type": "empty"
+              },
+              {
+                "type": "label",
+                "text": "2:3"
+              }
+            ],
+            [
+              {
+                "name": "3:2",
+                "type": "outcome",
+                "uuid": "3cb0c02a-25dc-46a3-90b1-67c36bec8d53",
+                "betbuilder_available": true,
+                "market_uuid": "548b9136-76a7-4110-a499-324f2983e2ee",
+                "odds": "22.00",
+                "market_status": "active",
+                "outcome_status": "active"
+              },
+              {
+                "type": "empty"
+              },
+              {
+                "name": "2:3",
+                "type": "outcome",
+                "uuid": "d778c9e9-c21b-4007-b6d7-67f3ae81db54",
+                "betbuilder_available": true,
+                "market_uuid": "548b9136-76a7-4110-a499-324f2983e2ee",
+                "odds": "90.00",
+                "market_status": "active",
+                "outcome_status": "active"
+              }
+            ],
+            [
+              {
+                "type": "label",
+                "text": "4:0"
+              },
+              {
+                "type": "empty"
+              },
+              {
+                "type": "label",
+                "text": "0:4"
+              }
+            ],
+            [
+              {
+                "name": "4:0",
+                "type": "outcome",
+                "uuid": "9e96190f-a6ef-40a7-a643-3be7cce85ee4",
+                "betbuilder_available": true,
+                "market_uuid": "548b9136-76a7-4110-a499-324f2983e2ee",
+                "odds": "7.20",
+                "market_status": "active",
+                "outcome_status": "active"
+              },
+              {
+                "type": "empty"
+              },
+              {
+                "name": "0:4",
+                "type": "outcome",
+                "uuid": "65a4b7fb-0501-4833-98d9-3e7a07a7ed1e",
+                "betbuilder_available": true,
+                "market_uuid": "548b9136-76a7-4110-a499-324f2983e2ee",
+                "odds": "100.00",
+                "market_status": "active",
+                "outcome_status": "active"
+              }
+            ],
+            [
+              {
+                "type": "label",
+                "text": "4:1"
+              },
+              {
+                "type": "empty"
+              },
+              {
+                "type": "label",
+                "text": "1:4"
+              }
+            ],
+            [
+              {
+                "name": "4:1",
+                "type": "outcome",
+                "uuid": "5072a65c-78ce-46d3-a3f8-038c81a92aac",
+                "betbuilder_available": true,
+                "market_uuid": "548b9136-76a7-4110-a499-324f2983e2ee",
+                "odds": "9.75",
+                "market_status": "active",
+                "outcome_status": "active"
+              },
+              {
+                "type": "empty"
+              },
+              {
+                "name": "1:4",
+                "type": "outcome",
+                "uuid": "a6c1ab0d-6546-4b36-9afb-9ac76ff3b6d2",
+                "betbuilder_available": true,
+                "market_uuid": "548b9136-76a7-4110-a499-324f2983e2ee",
+                "odds": "100.00",
+                "market_status": "active",
+                "outcome_status": "active"
+              }
+            ],
+            [
+              {
+                "type": "label",
+                "text": "4:2"
+              },
+              {
+                "type": "empty"
+              },
+              {
+                "type": "label",
+                "text": "2:4"
+              }
+            ],
+            [
+              {
+                "name": "4:2",
+                "type": "outcome",
+                "uuid": "ecd43988-820c-48dd-ba5d-b5b959a51131",
+                "betbuilder_available": true,
+                "market_uuid": "548b9136-76a7-4110-a499-324f2983e2ee",
+                "odds": "25.00",
+                "market_status": "active",
+                "outcome_status": "active"
+              },
+              {
+                "type": "empty"
+              },
+              {
+                "name": "2:4",
+                "type": "outcome",
+                "uuid": "a4ae4366-831e-4921-ae83-ca4c82fb27de",
+                "betbuilder_available": true,
+                "market_uuid": "548b9136-76a7-4110-a499-324f2983e2ee",
+                "odds": "100.00",
+                "market_status": "active",
+                "outcome_status": "active"
+              }
+            ],
+            [
+              {
+                "type": "label",
+                "text": "5:0"
+              },
+              {
+                "type": "empty"
+              },
+              {
+                "type": "label",
+                "text": "0:5"
+              }
+            ],
+            [
+              {
+                "name": "5:0",
+                "type": "outcome",
+                "uuid": "160a8808-0055-4611-b5d8-73e168970d07",
+                "betbuilder_available": true,
+                "market_uuid": "548b9136-76a7-4110-a499-324f2983e2ee",
+                "odds": "11.00",
+                "market_status": "active",
+                "outcome_status": "active"
+              },
+              {
+                "type": "empty"
+              },
+              {
+                "name": "0:5",
+                "type": "outcome",
+                "uuid": "881a4c50-a469-4f29-bb9e-ec8122cfa51c",
+                "betbuilder_available": true,
+                "market_uuid": "548b9136-76a7-4110-a499-324f2983e2ee",
+                "odds": "100.00",
+                "market_status": "active",
+                "outcome_status": "active"
+              }
+            ],
+            [
+              {
+                "type": "label",
+                "text": "5:1"
+              },
+              {
+                "type": "empty"
+              },
+              {
+                "type": "label",
+                "text": "1:5"
+              }
+            ],
+            [
+              {
+                "name": "5:1",
+                "type": "outcome",
+                "uuid": "137081ee-7fb9-4f03-90c9-27d3dba76813",
+                "betbuilder_available": true,
+                "market_uuid": "548b9136-76a7-4110-a499-324f2983e2ee",
+                "odds": "15.00",
+                "market_status": "active",
+                "outcome_status": "active"
+              },
+              {
+                "type": "empty"
+              },
+              {
+                "name": "1:5",
+                "type": "outcome",
+                "uuid": "96fcc850-41b9-4f3a-b655-38dd6a2c9078",
+                "betbuilder_available": true,
+                "market_uuid": "548b9136-76a7-4110-a499-324f2983e2ee",
+                "odds": "100.00",
+                "market_status": "active",
+                "outcome_status": "active"
+              }
+            ],
+            [
+              {
+                "type": "label",
+                "text": "6:0"
+              },
+              {
+                "type": "empty"
+              },
+              {
+                "type": "label",
+                "text": "0:6"
+              }
+            ],
+            [
+              {
+                "name": "6:0",
+                "type": "outcome",
+                "uuid": "61e1ba85-4c4c-4b80-bcfa-f3e0b9db05d8",
+                "betbuilder_available": true,
+                "market_uuid": "548b9136-76a7-4110-a499-324f2983e2ee",
+                "odds": "19.00",
+                "market_status": "active",
+                "outcome_status": "active"
+              },
+              {
+                "type": "empty"
+              },
+              {
+                "name": "0:6",
+                "type": "outcome",
+                "uuid": "046d62d3-6ece-49d2-b0e3-5728d0e2938f",
+                "betbuilder_available": true,
+                "market_uuid": "548b9136-76a7-4110-a499-324f2983e2ee",
+                "odds": "100.00",
+                "market_status": "active",
+                "outcome_status": "active"
+              }
+            ]
+          ],
+          "slug": "dokaadny_wynik",
+          "tooltip": "Należy wytypować dokładny wynik, jakim zakończy się spotkanie.",
+          "product_active": true
+        },
+        {
+          "name": "Połowa z największą liczbą goli/punktów",
+          "type": "single_market",
+          "sort_order": 49,
+          "game_groups": [],
+          "grid": [
+            [
+              {
+                "type": "label",
+                "text": "1. połowa"
+              },
+              {
+                "name": "1. połowa",
+                "type": "outcome",
+                "uuid": "059addd1-7a5d-48ff-b04d-b3b6627e9ee7",
+                "betbuilder_available": true,
+                "market_uuid": "36f3122a-7184-4aef-8746-38caa73cea00",
+                "odds": "2.53",
+                "market_status": "active",
+                "outcome_status": "active"
+              }
+            ],
+            [
+              {
+                "type": "label",
+                "text": "2. połowa"
+              },
+              {
+                "name": "2. połowa",
+                "type": "outcome",
+                "uuid": "8ed8a3a4-9707-4078-9a4d-4969d63887f3",
+                "betbuilder_available": true,
+                "market_uuid": "36f3122a-7184-4aef-8746-38caa73cea00",
+                "odds": "1.84",
+                "market_status": "active",
+                "outcome_status": "active"
+              }
+            ],
+            [
+              {
+                "type": "label",
+                "text": "równo"
+              },
+              {
+                "name": "równo",
+                "type": "outcome",
+                "uuid": "e9519329-f18d-436c-b637-50c1257b10d5",
+                "betbuilder_available": true,
+                "market_uuid": "36f3122a-7184-4aef-8746-38caa73cea00",
+                "odds": "3.85",
+                "market_status": "active",
+                "outcome_status": "active"
+              }
+            ]
+          ],
+          "slug": "single_market_36f3122a-7184-4aef-8746-38caa73cea00",
+          "tooltip": "Należy wytypować, w której połowie spotkania padnie najwięcej goli/punktów.",
+          "product_active": true
+        },
+        {
+          "name": "Parzyste/Nieparzyste",
+          "type": "markets_in_columns",
+          "sort_order": 50,
+          "game_groups": [],
+          "grid": [
+            [
+              {
+                "type": "empty"
+              },
+              {
+                "type": "label",
+                "text": "Cały mecz",
+                "market_id": "26"
+              }
+            ],
+            [
+              {
+                "type": "label",
+                "text": "nieparzysta"
+              },
+              {
+                "name": "nieparzysta",
+                "type": "outcome",
+                "uuid": "b61ad405-de3e-432f-bd6e-d1070dcab0c9",
+                "betbuilder_available": true,
+                "market_uuid": "0e368bf1-6c40-462a-87c4-01b7cd3c8c10",
+                "odds": "1.78",
+                "market_status": "active",
+                "outcome_status": "active"
+              }
+            ],
+            [
+              {
+                "type": "label",
+                "text": "parzysta"
+              },
+              {
+                "name": "parzysta",
+                "type": "outcome",
+                "uuid": "e02b40a0-444b-4c56-b182-b6d3992257d0",
+                "betbuilder_available": true,
+                "market_uuid": "0e368bf1-6c40-462a-87c4-01b7cd3c8c10",
+                "odds": "1.79",
+                "market_status": "active",
+                "outcome_status": "active"
+              }
+            ]
+          ],
+          "slug": "parzystenieparzyste",
+          "tooltip": "Należy wytypować czy w danej części spotkania padnie parzysta czy nieparzysta liczba goli/punktów. 0 traktowane jest jako liczba parzysta.",
+          "product_active": true
+        },
+        {
+          "name": "Suma goli parzysta/nieparzysta",
+          "type": "markets_in_columns",
+          "sort_order": 51,
+          "game_groups": [],
+          "grid": [
+            [
+              {
+                "type": "empty"
+              },
+              {
+                "type": "label",
+                "text": "Always Ready",
+                "market_id": "27"
+              },
+              {
+                "type": "label",
+                "text": "Independiente Petrolero",
+                "market_id": "28"
+              }
+            ],
+            [
+              {
+                "type": "label",
+                "text": "nieparzysta"
+              },
+              {
+                "name": "nieparzysta",
+                "type": "outcome",
+                "uuid": "c45fe6cb-717c-4866-8f18-f593acdafe31",
+                "betbuilder_available": true,
+                "market_uuid": "1bae15df-8f0b-472c-928a-03778a90b19b",
+                "odds": "1.79",
+                "market_status": "active",
+                "outcome_status": "active"
+              },
+              {
+                "name": "nieparzysta",
+                "type": "outcome",
+                "uuid": "7173272a-3cbd-4c55-a1ee-9ec3238cd869",
+                "betbuilder_available": true,
+                "market_uuid": "879985de-b6f0-4a53-a11b-ef4412092084",
+                "odds": "2.25",
+                "market_status": "active",
+                "outcome_status": "active"
+              }
+            ],
+            [
+              {
+                "type": "label",
+                "text": "parzysta"
+              },
+              {
+                "name": "parzysta",
+                "type": "outcome",
+                "uuid": "ea18b0ad-c63e-4104-992c-bb924f027999",
+                "betbuilder_available": true,
+                "market_uuid": "1bae15df-8f0b-472c-928a-03778a90b19b",
+                "odds": "1.78",
+                "market_status": "active",
+                "outcome_status": "active"
+              },
+              {
+                "name": "parzysta",
+                "type": "outcome",
+                "uuid": "41a3e0a8-cf34-4cdd-9c6e-e5c5438f04e9",
+                "betbuilder_available": true,
+                "market_uuid": "879985de-b6f0-4a53-a11b-ef4412092084",
+                "odds": "1.48",
+                "market_status": "active",
+                "outcome_status": "active"
+              }
+            ]
+          ],
+          "slug": "suma_goli_parzysta_nieparzysta",
+          "tooltip": "Należy wytypować czy suma goli/punktów zdobytych w meczu przez daną drużynę będzie parzysta czy nieparzysta. 0 traktowane jest jako liczba parzysta.",
+          "product_active": true
+        }
+      ],
+      "next_matchdays": [
+        22,
+        23
+      ],
+      "jackpot_prize_pool": null,
+      "promotion_cms_url": null,
+      "tipster_eid": "m:sr:match:75298376"
+    }
+  },
+  "state": "success",
+  "_meta": null
+}

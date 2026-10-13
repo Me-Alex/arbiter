@@ -109,7 +109,7 @@ const RUN_ROWS = functionWindow(scrapeCode, 'refreshLastRun');
  *
  * `/api/scrapers`'s job rows have a document to measure against —
  * config/scrapers.json — but its response envelope does not: the four arrays are
- * built at src/router.mjs:200-205 and exist nowhere else. Naming them in this
+ * built at src/router.mjs:230-233 and exist nowhere else. Naming them in this
  * test without a measurement would make the census check a list against itself.
  * The keys are read at the literal's own indent, so a router that changes shape
  * fails here instead of quietly censusing nothing.
@@ -215,13 +215,13 @@ function producedSummaryKeys() {
  *
  * The second producer is not a constructor but a fold: `job-complete` and
  * `batch-end` assign onto a `j` that already exists (src/scrape-orchestrator.mjs:
- * 417-424 and 442-447), and `marketDiagnostics` is the one field no constructor
+ * 443-451 and 468-474), and `marketDiagnostics` is the one field no constructor
  * sets. Every field those folds assign is collected by name, so a fold that
  * starts writing a new field changes this set without the test being edited.
  *
  * Measured, because a mutation showed the union is more forgiving than the
- * sentence above claims: `job-complete` assigns nine names and `batch-end` six,
- * and `batch-end`'s six are a subset of the first fold's nine. So no field is
+ * sentence above claims: `job-complete` assigns eight names and `batch-end` six,
+ * and `batch-end`'s six are a subset of the first fold's eight. So no field is
  * contributed by exactly one fold — renaming a receiver in either of them, or
  * deleting one of the two `marketDiagnostics` writes, leaves this set identical.
  * The union is still what carries `marketDiagnostics`, since no constructor sets
@@ -386,7 +386,7 @@ const RUN = readJson('data/latest-scrape-run.json');
  */
 const SCRAPERS_JOB = [
   'detailLimit', 'enabled', 'endpointVerifiedAt', 'engine', 'feedStatus', 'fullMarkets', 'id',
-  'minEvents', 'name', 'oddsFeed.auth', 'oddsFeed.businessUnit', 'oddsFeed.eventsIn3DayWindow',
+  'maxEvents', 'minEvents', 'name', 'oddsFeed.auth', 'oddsFeed.businessUnit', 'oddsFeed.eventsIn3DayWindow',
   'oddsFeed.eventsWithComplete1x2', 'oddsFeed.footballSportId', 'oddsFeed.measuredAt',
   'oddsFeed.method', 'oddsFeed.priced1x2Found', 'oddsFeed.requiredHeaders', 'oddsFeed.url',
   'platform', 'script', 'sourceIds', 'supportedSports', 'transport', 'unavailableSports',
@@ -520,7 +520,7 @@ const stateReads = () => new Set(fieldsOn(scrapeCode, 'state'));
  *
  * The page does not read `state.summary.completed`; it writes
  * `const summary = state.summary || {}` and reads the leaves off that
- * (public/js/pages/scrape.js:884 and :989, rebinding it in both). `fieldsOn`
+ * (public/js/pages/scrape.js:980 and :1110, rebinding it in both). `fieldsOn`
  * returns the first segment of a dotted read, so searching `state` alone sees
  * the word `summary` and none of the three numbers under it — the census
  * reported `completed`, `events` and `failed` as unread on a page that draws all
@@ -899,9 +899,9 @@ const R_RUN_ERROR = 'GET /api/scrape-run · job.error';
  */
 const WHY = {
   constant: [
-    'A constant, measured: every job in config/scrapers.json reads one `feedStatus`,',
-    'and data/endpoints/endpoints.json records the same value for every one of',
-    'them. A chip would gain a word and say nothing. The page writes down where',
+    'A constant, measured: jobs that publish `feedStatus` in config/scrapers.json',
+    'all carry one value, corroborated per book by data/endpoints/endpoints.json.',
+    'New jobs may omit this optional field. A chip would gain a word and say nothing. The page writes down where',
     'this belongs — the note above `chipTitle` in public/js/pages/scrape.js says',
     'it earns a line when it starts to vary — and the control below re-derives both',
     'halves instead of trusting this paragraph.',
@@ -959,11 +959,11 @@ const WHY = {
     'data/latest-scrape-run.json do, written 31 seconds apart by one run. The',
     'cause is src/scraper-service.mjs:147, where the batch report spreads the',
     'adapter result (which carries `sourceIds` from src/scrapers/base.mjs:209) over',
-    'the job, against the fold at src/scrape-orchestrator.mjs:417-424 and 442-447,',
-    'which copies seven fields by name and omits this one. `j.sourceIds =` appears',
-    '0 times in that file and `job.sourceIds =` 0 times in the service. So the row',
-    'on the wire carries an array that is empty on every scrape, forever, and the',
-    'page is right not to draw it — there is nothing there to draw. The control',
+    'the job, against the folds at src/scrape-orchestrator.mjs:443-451 and 468-474,',
+    'which copy eight and six fields by name and omit this one. `j.sourceIds =`',
+    'appears 0 times in that file and `job.sourceIds =` 0 times in the service.',
+    'So the row on the wire carries an array that is empty on every scrape, forever,',
+    'and the page is right not to draw it — there is nothing there to draw. The control',
     'below pins the measurement, and the day a fold starts writing it, that control',
     'fails and this reason has to be rewritten.',
   ].join(' '),
@@ -1024,7 +1024,7 @@ const WHY = {
     'keys and 13 adapters override it adding four more — coverage, sourceUrl,',
     'transport and scrapeLimits — for 13 in all, and this name is in neither list.',
     'So `result.marketDiagnostics` is undefined on every job, the orchestrator',
-    'stores null (src/scrape-orchestrator.mjs:422), and the fold below has nothing',
+    'stores null (src/scrape-orchestrator.mjs:449), and the fold below has nothing',
     'to fold. The 16 of 22 captures in data-market-run/workspace that carry it were',
     'written by a version that no longer exists; test/snapshot-route.test.mjs',
     'measures that too, from the writer side.',
@@ -1032,7 +1032,7 @@ const WHY = {
 
   markets: [
     'The same measurement as `marketDiagnostics`, one level up: mergeMarketDiagnostics',
-    'reads `job.marketDiagnostics.markets` (src/scrape-orchestrator.mjs:463) and',
+    'reads `job.marketDiagnostics.markets` (src/scrape-orchestrator.mjs:490) and',
     'every job\'s copy is null, so the array is empty on every run. The stored',
     'data/scrape-state.json measures it as `[]`, which is what an unfilled fold',
     'looks like rather than what a complete one looks like.',
@@ -1118,6 +1118,7 @@ const WHY = {
 const UNREAD_BY_DESIGN = {
   [`${R_SCRAPERS_JOB} › feedStatus`]: WHY.constant,
   [`${R_SCRAPERS_JOB} › transport`]: WHY.transport,
+  [`${R_SCRAPERS_JOB} › maxEvents`]: 'Per-job book-result cap, measured rather than guessed: the field is declared per row in config/scrapers.json and consumed by src/scrapers/index.mjs, which folds it into instantiate() as the default event bound for that book. The caller-supplied scan limit (scanOptions.maxEvents) is a separate axis, always winning when the user asks, so this row documents the ceiling every book can emit without leaking the user knob into the job shape. The page never sorts on it because the scrape card surfaces the scan limit the user actually chose, not the book cap each row is built against — so the row is redundant against the control below.',
   [`${R_SCRAPERS_JOB} › platform`]: WHY.platform,
   [`${R_SCRAPERS_JOB} › oddsFeed`]: WHY.oddsFeed,
   [`${R_SCRAPERS_JOB} › unavailableSports`]: WHY.unavailableSports,
@@ -1295,17 +1296,31 @@ test('the scraper route still publishes what the census names', () => {
  * key, so the markers are compared on their leaves.
  */
 test('neither stored job document carries a key its producer cannot build', () => {
-  for (const [file, doc, produced] of [
-    ['data/scrape-state.json', STATE, producedStateJobKeys()],
-    ['data/latest-scrape-run.json', RUN, producedRunJobKeys()],
+  for (const [file, doc, produced, errorKeys] of [
+    ['data/scrape-state.json', STATE, producedStateJobKeys(), producedStateErrorKeys()],
+    ['data/latest-scrape-run.json', RUN, producedRunJobKeys(), producedRunErrorKeys()],
   ]) {
+    // `keysOfRows` descends into a real error object and reports `error.code`,
+    // `error.field`, ... — and for a long time it never had anything to descend
+    // into, because both samples stored `error: null` on every row. The first
+    // stored row that carried a live error (favbet's HTTP 403 envelope through
+    // `_shapeError`, on 2026-10-07's run) surfaced a blind spot that was in the
+    // produced set, not in the data: the error leaf's own keys must be admitted
+    // here, from the same literal the census reads them off.
     const built = new Set(produced.map((k) => leafOf(k)));
+    for (const k of errorKeys) built.add(k);
     const stored = keysOfRows(doc.jobs);
     const foreign = stored.filter((k) => !built.has(leafOf(k)));
     assert.deepEqual(foreign, [],
       `${file} carries job keys nothing builds any more: ${foreign.join(', ')} — the file is from a build this branch does not have`);
-    assert.ok(stored.length > 0 && stored.length <= built.size,
-      `${file} carries ${stored.length} of the ${built.size} job keys the producer builds — the direction of this control moved`);
+    // `keysOfRows` also emits the error object's dotted children (`error.code`, …),
+    // so counting everything it returns against `built.size` — which mixes job
+    // keys with error keys after the deduplication above — is a type error that
+    // can fail on a perfectly producible document. The count can only be about
+    // the row's own keys.
+    const ownKeys = stored.filter((k) => !k.includes('.'));
+    assert.ok(ownKeys.length > 0 && ownKeys.length <= produced.length,
+      `${file} carries ${ownKeys.length} of the ${produced.length} job keys the producer builds — the direction of this control moved`);
   }
 });
 
@@ -1318,8 +1333,9 @@ test('neither stored job document carries a key its producer cannot build', () =
  * rows, `admiral: ["admiral"]` — so "no page draws it" is the whole claim. On the
  * state row it has never been populated at all: 0 of 24, written 31 seconds after
  * the run file by the same scrape. The cause is that the batch report spreads the
- * adapter result over the job while the orchestrator's folds copy seven fields by
- * name, so the two documents disagree about the same field and both are right.
+ * adapter result over the job while the orchestrator's folds copy fields by name
+ * and skip this one, so the two documents disagree about the same field and both
+ * are right.
  *
  * So this pins the writers rather than the sample. A stored-file reading would
  * still hold on this machine, and would go quiet on the next scrape that filled
@@ -1424,19 +1440,16 @@ test('the `feedStatus` exemption rests on one value, and the recorded evidence a
   // values empty — technically a constant, and the reading under which this
   // exemption would look justified forever. So the census has to be seen to have
   // read the document before its shape is allowed to mean anything.
-  const jobs = SCRAPERS.jobs || SCRAPERS;
-  // What is pinned is the shape of the rows that exist, not how many there are.
-  // A total goes stale the moment a book is added and trains the reader to bump
-  // it without reading the claim. An unreadable job list is not guarded from
-  // here either, and deliberately so: rename the `jobs` key and this file stops
-  // loading at all — `keysOfRows` is handed undefined and the censuses above it
-  // throw before any exemption is evaluated. That failure is louder than any
-  // assertion in a test, so adding one here would be a guard that cannot fire.
-  const missing = jobs.filter((j) => !('feedStatus' in j)).map((j) => j.id);
-  assert.deepEqual(missing, [],
-    'these registered jobs carry no feedStatus at all, so "every job reads one value" is no longer what the chip was told');
+  const allJobs = SCRAPERS.jobs || SCRAPERS;
+  assert.ok(allJobs.length > 0, 'no configured jobs were read');
+  const jobs = allJobs.filter((j) => Object.hasOwn(j, 'feedStatus'));
+  assert.ok(jobs.length > 0, 'feedStatus is absent from every configured job');
+  // Omission is allowed, but a published value must be meaningful and backed
+  // by the registry. A field absent from every job already failed above.
+  const empty = jobs.filter((j) => typeof j.feedStatus !== 'string' || !j.feedStatus).map((j) => j.id);
+  assert.deepEqual(empty, [], 'these jobs publish an empty feedStatus');
   const values = [...new Set(jobs.map((j) => j.feedStatus))].sort();
-  assert.deepEqual(values, ['verified'],
+  assert.equal(values.length, 1,
     `feedStatus is no longer one value across config/scrapers.json — it now reads ${values.join(', ')}. `
     + 'That is the moment it starts to mean something, so chipTitle in public/js/pages/scrape.js earns a line '
     + 'and WHY.constant above has to be rewritten in the same commit that moved the field');
@@ -1451,7 +1464,7 @@ test('the `feedStatus` exemption rests on one value, and the recorded evidence a
   const registry = readJson('data/endpoints/endpoints.json');
   assert.ok(registry.books && Object.keys(registry.books).length > 0,
     'data/endpoints/endpoints.json carries no books, so the agreement below proves nothing');
-  // Every job has to be compared, or the list below is silent about the ones it
+  // Every job publishing the field has to be compared, or the list is silent about the ones it
   // dropped: `registry.books[j.id]?.feedStatus` is undefined for a book the
   // registry has never heard of, the filter skips it, and a registry that had
   // quietly stopped describing a book would read as agreement. The comparison

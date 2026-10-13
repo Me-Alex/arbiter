@@ -1,0 +1,4024 @@
+{
+  "provenance": {
+    "book": "totalbet",
+    "sourceUrl": "https://tbet-sofferapi.oddin-platform.com/sofferapi/api/offer/getOfferPag/1/50/1/0/0/0/0",
+    "capturedAt": "2026-10-12T13:42:38.431Z",
+    "note": "Oddin platform public offer pagination: prematch football events with 1X2 market, verified live against totalbet.ro/pariuri-sportive on-screen odds."
+  },
+  "raw": [
+    {
+      "sportId": "1",
+      "sportName": "Fotbal",
+      "displayName": "Fotbal",
+      "sortOrder": 1,
+      "leagues": [
+        {
+          "leagueId": "152_219",
+          "leagueName": "Liga I",
+          "displayName": "Liga I",
+          "sortOrder": 76,
+          "events": [
+            {
+              "eventId": "72388030",
+              "eventName": "FC Arges vs. CFR Cluj",
+              "eventNo": "7501",
+              "eventDate": "2026-10-12T18:00:00+03:00",
+              "marketsNo": 553,
+              "markets": [
+                {
+                  "marketId": "1",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "1",
+                      "outcomeName": "1",
+                      "value": "3.01"
+                    },
+                    {
+                      "outcomeId": "2",
+                      "outcomeName": "X",
+                      "value": "3.18"
+                    },
+                    {
+                      "outcomeId": "3",
+                      "outcomeName": "2",
+                      "value": "2.6"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "74",
+                      "outcomeName": "GG",
+                      "value": "2.02"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "10",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "9",
+                      "outcomeName": "1X",
+                      "value": "1.5"
+                    },
+                    {
+                      "outcomeId": "11",
+                      "outcomeName": "X2",
+                      "value": "1.43"
+                    },
+                    {
+                      "outcomeId": "10",
+                      "outcomeName": "12",
+                      "value": "1.38"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "76",
+                      "outcomeName": "NG",
+                      "value": "1.65"
+                    }
+                  ]
+                }
+              ],
+              "hasSpecials": true
+            },
+            {
+              "eventId": "72388028",
+              "eventName": "U.Cluj vs. Rapid Bucuresti",
+              "eventNo": "7500",
+              "eventDate": "2026-10-12T21:00:00+03:00",
+              "marketsNo": 561,
+              "markets": [
+                {
+                  "marketId": "1",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "1",
+                      "outcomeName": "1",
+                      "value": "2.82"
+                    },
+                    {
+                      "outcomeId": "2",
+                      "outcomeName": "X",
+                      "value": "3.36"
+                    },
+                    {
+                      "outcomeId": "3",
+                      "outcomeName": "2",
+                      "value": "2.65"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "74",
+                      "outcomeName": "GG",
+                      "value": "1.8"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "10",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "9",
+                      "outcomeName": "1X",
+                      "value": "1.48"
+                    },
+                    {
+                      "outcomeId": "11",
+                      "outcomeName": "X2",
+                      "value": "1.47"
+                    },
+                    {
+                      "outcomeId": "10",
+                      "outcomeName": "12",
+                      "value": "1.35"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "76",
+                      "outcomeName": "NG",
+                      "value": "1.83"
+                    }
+                  ]
+                }
+              ],
+              "hasSpecials": true
+            },
+            {
+              "eventId": "72388034",
+              "eventName": "  Otelul Galati vs. Csik.M.Ciuc",
+              "eventNo": "6973",
+              "eventDate": "2026-10-16T18:00:00+03:00",
+              "marketsNo": 390,
+              "markets": [
+                {
+                  "marketId": "1",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "1",
+                      "outcomeName": "1",
+                      "value": "1.63"
+                    },
+                    {
+                      "outcomeId": "2",
+                      "outcomeName": "X",
+                      "value": "4.19"
+                    },
+                    {
+                      "outcomeId": "3",
+                      "outcomeName": "2",
+                      "value": "5.55"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "74",
+                      "outcomeName": "GG",
+                      "value": "1.85"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "10",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "9",
+                      "outcomeName": "1X",
+                      "value": "1.18"
+                    },
+                    {
+                      "outcomeId": "11",
+                      "outcomeName": "X2",
+                      "value": "2.25"
+                    },
+                    {
+                      "outcomeId": "10",
+                      "outcomeName": "12",
+                      "value": "1.25"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "76",
+                      "outcomeName": "NG",
+                      "value": "1.78"
+                    }
+                  ]
+                }
+              ],
+              "hasSpecials": false
+            },
+            {
+              "eventId": "72388040",
+              "eventName": "Dinamo Bucuresti vs. FC Botosani",
+              "eventNo": "6976",
+              "eventDate": "2026-10-16T21:00:00+03:00",
+              "marketsNo": 395,
+              "markets": [
+                {
+                  "marketId": "1",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "1",
+                      "outcomeName": "1",
+                      "value": "1.48"
+                    },
+                    {
+                      "outcomeId": "2",
+                      "outcomeName": "X",
+                      "value": "4.69"
+                    },
+                    {
+                      "outcomeId": "3",
+                      "outcomeName": "2",
+                      "value": "7.1"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "74",
+                      "outcomeName": "GG",
+                      "value": "1.87"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "10",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "9",
+                      "outcomeName": "1X",
+                      "value": "1.13"
+                    },
+                    {
+                      "outcomeId": "11",
+                      "outcomeName": "X2",
+                      "value": "2.62"
+                    },
+                    {
+                      "outcomeId": "10",
+                      "outcomeName": "12",
+                      "value": "1.22"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "76",
+                      "outcomeName": "NG",
+                      "value": "1.77"
+                    }
+                  ]
+                }
+              ],
+              "hasSpecials": false
+            },
+            {
+              "eventId": "72388038",
+              "eventName": "Petrolul vs. Sepsi",
+              "eventNo": "6975",
+              "eventDate": "2026-10-17T17:15:00+03:00",
+              "marketsNo": 390,
+              "markets": [
+                {
+                  "marketId": "1",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "1",
+                      "outcomeName": "1",
+                      "value": "2.03"
+                    },
+                    {
+                      "outcomeId": "2",
+                      "outcomeName": "X",
+                      "value": "3.62"
+                    },
+                    {
+                      "outcomeId": "3",
+                      "outcomeName": "2",
+                      "value": "3.79"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "74",
+                      "outcomeName": "GG",
+                      "value": "1.82"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "10",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "9",
+                      "outcomeName": "1X",
+                      "value": "1.3"
+                    },
+                    {
+                      "outcomeId": "11",
+                      "outcomeName": "X2",
+                      "value": "1.78"
+                    },
+                    {
+                      "outcomeId": "10",
+                      "outcomeName": "12",
+                      "value": "1.32"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "76",
+                      "outcomeName": "NG",
+                      "value": "1.82"
+                    }
+                  ]
+                }
+              ],
+              "hasSpecials": false
+            },
+            {
+              "eventId": "72388042",
+              "eventName": "Rapid Bucuresti vs.  Corvinul Hunedoara",
+              "eventNo": "6977",
+              "eventDate": "2026-10-17T21:30:00+03:00",
+              "marketsNo": 395,
+              "markets": [
+                {
+                  "marketId": "1",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "1",
+                      "outcomeName": "1",
+                      "value": "1.55"
+                    },
+                    {
+                      "outcomeId": "2",
+                      "outcomeName": "X",
+                      "value": "3.97"
+                    },
+                    {
+                      "outcomeId": "3",
+                      "outcomeName": "2",
+                      "value": "7.4"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "74",
+                      "outcomeName": "GG",
+                      "value": "2.05"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "10",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "9",
+                      "outcomeName": "1X",
+                      "value": "1.12"
+                    },
+                    {
+                      "outcomeId": "11",
+                      "outcomeName": "X2",
+                      "value": "2.42"
+                    },
+                    {
+                      "outcomeId": "10",
+                      "outcomeName": "12",
+                      "value": "1.27"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "76",
+                      "outcomeName": "NG",
+                      "value": "1.63"
+                    }
+                  ]
+                }
+              ],
+              "hasSpecials": false
+            },
+            {
+              "eventId": "72388044",
+              "eventName": "UTA Arad vs. CFR Cluj",
+              "eventNo": "6978",
+              "eventDate": "2026-10-18T18:15:00+03:00",
+              "marketsNo": 390,
+              "markets": [
+                {
+                  "marketId": "1",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "1",
+                      "outcomeName": "1",
+                      "value": "2.52"
+                    },
+                    {
+                      "outcomeId": "2",
+                      "outcomeName": "X",
+                      "value": "3.25"
+                    },
+                    {
+                      "outcomeId": "3",
+                      "outcomeName": "2",
+                      "value": "3.08"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "74",
+                      "outcomeName": "GG",
+                      "value": "1.78"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "10",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "9",
+                      "outcomeName": "1X",
+                      "value": "1.4"
+                    },
+                    {
+                      "outcomeId": "11",
+                      "outcomeName": "X2",
+                      "value": "1.55"
+                    },
+                    {
+                      "outcomeId": "10",
+                      "outcomeName": "12",
+                      "value": "1.37"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "76",
+                      "outcomeName": "NG",
+                      "value": "1.87"
+                    }
+                  ]
+                }
+              ],
+              "hasSpecials": false
+            },
+            {
+              "eventId": "72388036",
+              "eventName": "Univ.Craiova vs. Farul Constanta",
+              "eventNo": "6974",
+              "eventDate": "2026-10-18T21:00:00+03:00",
+              "marketsNo": 395,
+              "markets": [
+                {
+                  "marketId": "1",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "1",
+                      "outcomeName": "1",
+                      "value": "1.52"
+                    },
+                    {
+                      "outcomeId": "2",
+                      "outcomeName": "X",
+                      "value": "4.59"
+                    },
+                    {
+                      "outcomeId": "3",
+                      "outcomeName": "2",
+                      "value": "6.5"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "74",
+                      "outcomeName": "GG",
+                      "value": "1.78"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "10",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "9",
+                      "outcomeName": "1X",
+                      "value": "1.14"
+                    },
+                    {
+                      "outcomeId": "11",
+                      "outcomeName": "X2",
+                      "value": "2.5"
+                    },
+                    {
+                      "outcomeId": "10",
+                      "outcomeName": "12",
+                      "value": "1.22"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "76",
+                      "outcomeName": "NG",
+                      "value": "1.87"
+                    }
+                  ]
+                }
+              ],
+              "hasSpecials": false
+            },
+            {
+              "eventId": "72388046",
+              "eventName": "U.Cluj vs. FC Arges",
+              "eventNo": "6979",
+              "eventDate": "2026-10-19T18:00:00+03:00",
+              "marketsNo": 390,
+              "markets": [
+                {
+                  "marketId": "1",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "1",
+                      "outcomeName": "1",
+                      "value": "1.75"
+                    },
+                    {
+                      "outcomeId": "2",
+                      "outcomeName": "X",
+                      "value": "3.79"
+                    },
+                    {
+                      "outcomeId": "3",
+                      "outcomeName": "2",
+                      "value": "5.15"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "74",
+                      "outcomeName": "GG",
+                      "value": "2.08"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "10",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "9",
+                      "outcomeName": "1X",
+                      "value": "1.2"
+                    },
+                    {
+                      "outcomeId": "11",
+                      "outcomeName": "X2",
+                      "value": "2.08"
+                    },
+                    {
+                      "outcomeId": "10",
+                      "outcomeName": "12",
+                      "value": "1.3"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "76",
+                      "outcomeName": "NG",
+                      "value": "1.62"
+                    }
+                  ]
+                }
+              ],
+              "hasSpecials": false
+            },
+            {
+              "eventId": "72388032",
+              "eventName": "Voluntari vs. FCSB",
+              "eventNo": "6972",
+              "eventDate": "2026-10-19T21:00:00+03:00",
+              "marketsNo": 395,
+              "markets": [
+                {
+                  "marketId": "1",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "1",
+                      "outcomeName": "1",
+                      "value": "7.05"
+                    },
+                    {
+                      "outcomeId": "2",
+                      "outcomeName": "X",
+                      "value": "3.99"
+                    },
+                    {
+                      "outcomeId": "3",
+                      "outcomeName": "2",
+                      "value": "1.57"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "74",
+                      "outcomeName": "GG",
+                      "value": "1.92"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "10",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "9",
+                      "outcomeName": "1X",
+                      "value": "2.38"
+                    },
+                    {
+                      "outcomeId": "11",
+                      "outcomeName": "X2",
+                      "value": "1.13"
+                    },
+                    {
+                      "outcomeId": "10",
+                      "outcomeName": "12",
+                      "value": "1.27"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "76",
+                      "outcomeName": "NG",
+                      "value": "1.73"
+                    }
+                  ]
+                }
+              ],
+              "hasSpecials": false
+            },
+            {
+              "eventId": "72388052",
+              "eventName": "Farul Constanta vs.   Otelul Galati",
+              "eventNo": "7447",
+              "eventDate": "2026-10-25T16:00:00+02:00",
+              "marketsNo": 8,
+              "markets": [
+                {
+                  "marketId": "1",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "1",
+                      "outcomeName": "1",
+                      "value": "2"
+                    },
+                    {
+                      "outcomeId": "2",
+                      "outcomeName": "X",
+                      "value": "3.44"
+                    },
+                    {
+                      "outcomeId": "3",
+                      "outcomeName": "2",
+                      "value": "4.15"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "74",
+                      "outcomeName": "GG",
+                      "value": "-"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "10",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "9",
+                      "outcomeName": "1X",
+                      "value": "1.25"
+                    },
+                    {
+                      "outcomeId": "11",
+                      "outcomeName": "X2",
+                      "value": "1.82"
+                    },
+                    {
+                      "outcomeId": "10",
+                      "outcomeName": "12",
+                      "value": "1.33"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "76",
+                      "outcomeName": "NG",
+                      "value": "-"
+                    }
+                  ]
+                }
+              ],
+              "hasSpecials": false
+            },
+            {
+              "eventId": "72388054",
+              "eventName": "Sepsi vs. Univ.Craiova",
+              "eventNo": "7448",
+              "eventDate": "2026-10-26T20:00:00+02:00",
+              "marketsNo": 388,
+              "markets": [
+                {
+                  "marketId": "1",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "1",
+                      "outcomeName": "1",
+                      "value": "5"
+                    },
+                    {
+                      "outcomeId": "2",
+                      "outcomeName": "X",
+                      "value": "3.63"
+                    },
+                    {
+                      "outcomeId": "3",
+                      "outcomeName": "2",
+                      "value": "1.8"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "74",
+                      "outcomeName": "GG",
+                      "value": "1.78"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "10",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "9",
+                      "outcomeName": "1X",
+                      "value": "2.02"
+                    },
+                    {
+                      "outcomeId": "11",
+                      "outcomeName": "X2",
+                      "value": "1.2"
+                    },
+                    {
+                      "outcomeId": "10",
+                      "outcomeName": "12",
+                      "value": "1.32"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "76",
+                      "outcomeName": "NG",
+                      "value": "1.85"
+                    }
+                  ]
+                }
+              ],
+              "hasSpecials": false
+            }
+          ],
+          "categoryId": "77",
+          "categoryName": "România"
+        },
+        {
+          "leagueId": "562_54878",
+          "leagueName": "Liga 2",
+          "displayName": "Liga 2",
+          "sortOrder": 85,
+          "events": [
+            {
+              "eventId": "73086658",
+              "eventName": "CSA Steaua  vs. Metaloglobus B.",
+              "eventNo": "3088",
+              "eventDate": "2026-10-17T11:00:00+03:00",
+              "marketsNo": 385,
+              "markets": [
+                {
+                  "marketId": "1",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "1",
+                      "outcomeName": "1",
+                      "value": "1.98"
+                    },
+                    {
+                      "outcomeId": "2",
+                      "outcomeName": "X",
+                      "value": "3.44"
+                    },
+                    {
+                      "outcomeId": "3",
+                      "outcomeName": "2",
+                      "value": "3.78"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "74",
+                      "outcomeName": "GG",
+                      "value": "1.73"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "10",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "9",
+                      "outcomeName": "1X",
+                      "value": "1.27"
+                    },
+                    {
+                      "outcomeId": "11",
+                      "outcomeName": "X2",
+                      "value": "1.75"
+                    },
+                    {
+                      "outcomeId": "10",
+                      "outcomeName": "12",
+                      "value": "1.3"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "76",
+                      "outcomeName": "NG",
+                      "value": "1.88"
+                    }
+                  ]
+                }
+              ],
+              "hasSpecials": false
+            },
+            {
+              "eventId": "73086666",
+              "eventName": "CSM Slatina vs. Unirea Slobozia",
+              "eventNo": "4641",
+              "eventDate": "2026-10-17T11:00:00+03:00",
+              "marketsNo": 385,
+              "markets": [
+                {
+                  "marketId": "1",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "1",
+                      "outcomeName": "1",
+                      "value": "1.63"
+                    },
+                    {
+                      "outcomeId": "2",
+                      "outcomeName": "X",
+                      "value": "4.14"
+                    },
+                    {
+                      "outcomeId": "3",
+                      "outcomeName": "2",
+                      "value": "4.9"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "74",
+                      "outcomeName": "GG",
+                      "value": "1.68"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "10",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "9",
+                      "outcomeName": "1X",
+                      "value": "1.18"
+                    },
+                    {
+                      "outcomeId": "11",
+                      "outcomeName": "X2",
+                      "value": "2.12"
+                    },
+                    {
+                      "outcomeId": "10",
+                      "outcomeName": "12",
+                      "value": "1.23"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "76",
+                      "outcomeName": "NG",
+                      "value": "1.95"
+                    }
+                  ]
+                }
+              ],
+              "hasSpecials": false
+            },
+            {
+              "eventId": "73086660",
+              "eventName": "CSM Resita vs.  Cetate Suceava",
+              "eventNo": "3118",
+              "eventDate": "2026-10-17T11:00:00+03:00",
+              "marketsNo": 374,
+              "markets": [
+                {
+                  "marketId": "1",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "1",
+                      "outcomeName": "1",
+                      "value": "-"
+                    },
+                    {
+                      "outcomeId": "2",
+                      "outcomeName": "X",
+                      "value": "-"
+                    },
+                    {
+                      "outcomeId": "3",
+                      "outcomeName": "2",
+                      "value": "-"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "74",
+                      "outcomeName": "GG",
+                      "value": "1.7"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "10",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "9",
+                      "outcomeName": "1X",
+                      "value": "-"
+                    },
+                    {
+                      "outcomeId": "11",
+                      "outcomeName": "X2",
+                      "value": "-"
+                    },
+                    {
+                      "outcomeId": "10",
+                      "outcomeName": "12",
+                      "value": "-"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "76",
+                      "outcomeName": "NG",
+                      "value": "1.93"
+                    }
+                  ]
+                }
+              ],
+              "hasSpecials": false
+            },
+            {
+              "eventId": "73086668",
+              "eventName": "CS Stefanesti vs. CS Dinamo Bucuresti",
+              "eventNo": "4652",
+              "eventDate": "2026-10-17T11:00:00+03:00",
+              "marketsNo": 388,
+              "markets": [
+                {
+                  "marketId": "1",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "1",
+                      "outcomeName": "1",
+                      "value": "1.4"
+                    },
+                    {
+                      "outcomeId": "2",
+                      "outcomeName": "X",
+                      "value": "4.82"
+                    },
+                    {
+                      "outcomeId": "3",
+                      "outcomeName": "2",
+                      "value": "7.4"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "74",
+                      "outcomeName": "GG",
+                      "value": "1.63"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "10",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "9",
+                      "outcomeName": "1X",
+                      "value": "1.1"
+                    },
+                    {
+                      "outcomeId": "11",
+                      "outcomeName": "X2",
+                      "value": "2.67"
+                    },
+                    {
+                      "outcomeId": "10",
+                      "outcomeName": "12",
+                      "value": "1.18"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "76",
+                      "outcomeName": "NG",
+                      "value": "2.02"
+                    }
+                  ]
+                }
+              ],
+              "hasSpecials": false
+            },
+            {
+              "eventId": "73323806",
+              "eventName": " CSM Satu Mare vs. Metalul Buzău",
+              "eventNo": "5545",
+              "eventDate": "2026-10-17T11:00:00+03:00",
+              "marketsNo": 387,
+              "markets": [
+                {
+                  "marketId": "1",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "1",
+                      "outcomeName": "1",
+                      "value": "3.67"
+                    },
+                    {
+                      "outcomeId": "2",
+                      "outcomeName": "X",
+                      "value": "3.69"
+                    },
+                    {
+                      "outcomeId": "3",
+                      "outcomeName": "2",
+                      "value": "1.93"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "74",
+                      "outcomeName": "GG",
+                      "value": "1.65"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "10",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "9",
+                      "outcomeName": "1X",
+                      "value": "1.78"
+                    },
+                    {
+                      "outcomeId": "11",
+                      "outcomeName": "X2",
+                      "value": "1.27"
+                    },
+                    {
+                      "outcomeId": "10",
+                      "outcomeName": "12",
+                      "value": "1.28"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "76",
+                      "outcomeName": "NG",
+                      "value": "1.98"
+                    }
+                  ]
+                }
+              ],
+              "hasSpecials": false
+            },
+            {
+              "eventId": "73086674",
+              "eventName": "Popești Leordeni vs. CS Afumati",
+              "eventNo": "4966",
+              "eventDate": "2026-10-17T11:00:00+03:00",
+              "marketsNo": 387,
+              "markets": [
+                {
+                  "marketId": "1",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "1",
+                      "outcomeName": "1",
+                      "value": "2.55"
+                    },
+                    {
+                      "outcomeId": "2",
+                      "outcomeName": "X",
+                      "value": "3.33"
+                    },
+                    {
+                      "outcomeId": "3",
+                      "outcomeName": "2",
+                      "value": "2.72"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "74",
+                      "outcomeName": "GG",
+                      "value": "1.63"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "10",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "9",
+                      "outcomeName": "1X",
+                      "value": "1.43"
+                    },
+                    {
+                      "outcomeId": "11",
+                      "outcomeName": "X2",
+                      "value": "1.48"
+                    },
+                    {
+                      "outcomeId": "10",
+                      "outcomeName": "12",
+                      "value": "1.32"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "76",
+                      "outcomeName": "NG",
+                      "value": "2"
+                    }
+                  ]
+                }
+              ],
+              "hasSpecials": false
+            },
+            {
+              "eventId": "73086672",
+              "eventName": "Concordia Chiajna vs. CSC Selimbar",
+              "eventNo": "4754",
+              "eventDate": "2026-10-17T11:00:00+03:00",
+              "marketsNo": 388,
+              "markets": [
+                {
+                  "marketId": "1",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "1",
+                      "outcomeName": "1",
+                      "value": "1.47"
+                    },
+                    {
+                      "outcomeId": "2",
+                      "outcomeName": "X",
+                      "value": "4.48"
+                    },
+                    {
+                      "outcomeId": "3",
+                      "outcomeName": "2",
+                      "value": "6.35"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "74",
+                      "outcomeName": "GG",
+                      "value": "1.75"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "10",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "9",
+                      "outcomeName": "1X",
+                      "value": "1.13"
+                    },
+                    {
+                      "outcomeId": "11",
+                      "outcomeName": "X2",
+                      "value": "2.45"
+                    },
+                    {
+                      "outcomeId": "10",
+                      "outcomeName": "12",
+                      "value": "1.2"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "76",
+                      "outcomeName": "NG",
+                      "value": "1.85"
+                    }
+                  ]
+                }
+              ],
+              "hasSpecials": false
+            },
+            {
+              "eventId": "73086656",
+              "eventName": "SCM Ramnicu Valcea vs. Poli Timisoara",
+              "eventNo": "3069",
+              "eventDate": "2026-10-17T12:30:00+03:00",
+              "marketsNo": 386,
+              "markets": [
+                {
+                  "marketId": "1",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "1",
+                      "outcomeName": "1",
+                      "value": "5.05"
+                    },
+                    {
+                      "outcomeId": "2",
+                      "outcomeName": "X",
+                      "value": "4.1"
+                    },
+                    {
+                      "outcomeId": "3",
+                      "outcomeName": "2",
+                      "value": "1.62"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "74",
+                      "outcomeName": "GG",
+                      "value": "1.66"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "10",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "9",
+                      "outcomeName": "1X",
+                      "value": "2.15"
+                    },
+                    {
+                      "outcomeId": "11",
+                      "outcomeName": "X2",
+                      "value": "1.17"
+                    },
+                    {
+                      "outcomeId": "10",
+                      "outcomeName": "12",
+                      "value": "1.23"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "76",
+                      "outcomeName": "NG",
+                      "value": "1.97"
+                    }
+                  ]
+                }
+              ],
+              "hasSpecials": false
+            },
+            {
+              "eventId": "73086662",
+              "eventName": " FC Bacau vs. Gloria Bistrita",
+              "eventNo": "4336",
+              "eventDate": "2026-10-18T13:30:00+03:00",
+              "marketsNo": 385,
+              "markets": [
+                {
+                  "marketId": "1",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "1",
+                      "outcomeName": "1",
+                      "value": "2.16"
+                    },
+                    {
+                      "outcomeId": "2",
+                      "outcomeName": "X",
+                      "value": "3.38"
+                    },
+                    {
+                      "outcomeId": "3",
+                      "outcomeName": "2",
+                      "value": "3.33"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "74",
+                      "outcomeName": "GG",
+                      "value": "1.73"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "10",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "9",
+                      "outcomeName": "1X",
+                      "value": "1.32"
+                    },
+                    {
+                      "outcomeId": "11",
+                      "outcomeName": "X2",
+                      "value": "1.63"
+                    },
+                    {
+                      "outcomeId": "10",
+                      "outcomeName": "12",
+                      "value": "1.32"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "76",
+                      "outcomeName": "NG",
+                      "value": "1.87"
+                    }
+                  ]
+                }
+              ],
+              "hasSpecials": false
+            },
+            {
+              "eventId": "75374504",
+              "eventName": "ASA Targu Mures vs. Chindia Targ.",
+              "eventNo": "6604",
+              "eventDate": "2026-10-20T17:30:00+03:00",
+              "marketsNo": 8,
+              "markets": [
+                {
+                  "marketId": "1",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "1",
+                      "outcomeName": "1",
+                      "value": "2.47"
+                    },
+                    {
+                      "outcomeId": "2",
+                      "outcomeName": "X",
+                      "value": "3.31"
+                    },
+                    {
+                      "outcomeId": "3",
+                      "outcomeName": "2",
+                      "value": "2.85"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "74",
+                      "outcomeName": "GG",
+                      "value": "-"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "10",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "9",
+                      "outcomeName": "1X",
+                      "value": "1.4"
+                    },
+                    {
+                      "outcomeId": "11",
+                      "outcomeName": "X2",
+                      "value": "1.5"
+                    },
+                    {
+                      "outcomeId": "10",
+                      "outcomeName": "12",
+                      "value": "1.33"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "76",
+                      "outcomeName": "NG",
+                      "value": "-"
+                    }
+                  ]
+                }
+              ],
+              "hasSpecials": false
+            }
+          ],
+          "categoryId": "77",
+          "categoryName": "România"
+        },
+        {
+          "leagueId": "7_151665",
+          "leagueName": "UEFA Champions League",
+          "displayName": "UEFA Liga Campionilor",
+          "sortOrder": 400,
+          "events": [
+            {
+              "eventId": "74165906",
+              "eventName": " Sabah Baku vs. Slavia Praga",
+              "eventNo": "2819",
+              "eventDate": "2026-10-13T19:45:00+03:00",
+              "marketsNo": 475,
+              "markets": [
+                {
+                  "marketId": "1",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "1",
+                      "outcomeName": "1",
+                      "value": "3.32"
+                    },
+                    {
+                      "outcomeId": "2",
+                      "outcomeName": "X",
+                      "value": "3.65"
+                    },
+                    {
+                      "outcomeId": "3",
+                      "outcomeName": "2",
+                      "value": "2.06"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "74",
+                      "outcomeName": "GG",
+                      "value": "1.55"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "10",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "9",
+                      "outcomeName": "1X",
+                      "value": "1.7"
+                    },
+                    {
+                      "outcomeId": "11",
+                      "outcomeName": "X2",
+                      "value": "1.32"
+                    },
+                    {
+                      "outcomeId": "10",
+                      "outcomeName": "12",
+                      "value": "1.28"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "76",
+                      "outcomeName": "NG",
+                      "value": "2.25"
+                    }
+                  ]
+                }
+              ],
+              "hasSpecials": true
+            },
+            {
+              "eventId": "74165904",
+              "eventName": "Lens vs. Sporting Lisabona",
+              "eventNo": "2663",
+              "eventDate": "2026-10-13T19:45:00+03:00",
+              "marketsNo": 475,
+              "markets": [
+                {
+                  "marketId": "1",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "1",
+                      "outcomeName": "1",
+                      "value": "2.5"
+                    },
+                    {
+                      "outcomeId": "2",
+                      "outcomeName": "X",
+                      "value": "3.67"
+                    },
+                    {
+                      "outcomeId": "3",
+                      "outcomeName": "2",
+                      "value": "2.6"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "74",
+                      "outcomeName": "GG",
+                      "value": "1.48"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "10",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "9",
+                      "outcomeName": "1X",
+                      "value": "1.47"
+                    },
+                    {
+                      "outcomeId": "11",
+                      "outcomeName": "X2",
+                      "value": "1.5"
+                    },
+                    {
+                      "outcomeId": "10",
+                      "outcomeName": "12",
+                      "value": "1.28"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "76",
+                      "outcomeName": "NG",
+                      "value": "2.42"
+                    }
+                  ]
+                }
+              ],
+              "hasSpecials": true
+            },
+            {
+              "eventId": "74165910",
+              "eventName": "Atl.Madrid vs. Manchester Utd",
+              "eventNo": "2831",
+              "eventDate": "2026-10-13T22:00:00+03:00",
+              "marketsNo": 475,
+              "markets": [
+                {
+                  "marketId": "1",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "1",
+                      "outcomeName": "1",
+                      "value": "1.95"
+                    },
+                    {
+                      "outcomeId": "2",
+                      "outcomeName": "X",
+                      "value": "3.83"
+                    },
+                    {
+                      "outcomeId": "3",
+                      "outcomeName": "2",
+                      "value": "3.51"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "74",
+                      "outcomeName": "GG",
+                      "value": "1.47"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "10",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "9",
+                      "outcomeName": "1X",
+                      "value": "1.28"
+                    },
+                    {
+                      "outcomeId": "11",
+                      "outcomeName": "X2",
+                      "value": "1.78"
+                    },
+                    {
+                      "outcomeId": "10",
+                      "outcomeName": "12",
+                      "value": "1.27"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "76",
+                      "outcomeName": "NG",
+                      "value": "2.43"
+                    }
+                  ]
+                }
+              ],
+              "hasSpecials": true
+            },
+            {
+              "eventId": "74165914",
+              "eventName": "Galatasaray vs. Barcelona",
+              "eventNo": "2924",
+              "eventDate": "2026-10-13T22:00:00+03:00",
+              "marketsNo": 484,
+              "markets": [
+                {
+                  "marketId": "1",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "1",
+                      "outcomeName": "1",
+                      "value": "7.85"
+                    },
+                    {
+                      "outcomeId": "2",
+                      "outcomeName": "X",
+                      "value": "6.65"
+                    },
+                    {
+                      "outcomeId": "3",
+                      "outcomeName": "2",
+                      "value": "1.28"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "74",
+                      "outcomeName": "GG",
+                      "value": "1.42"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "10",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "9",
+                      "outcomeName": "1X",
+                      "value": "3.24"
+                    },
+                    {
+                      "outcomeId": "11",
+                      "outcomeName": "X2",
+                      "value": "1.09"
+                    },
+                    {
+                      "outcomeId": "10",
+                      "outcomeName": "12",
+                      "value": "1.11"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "76",
+                      "outcomeName": "NG",
+                      "value": "2.6"
+                    }
+                  ]
+                }
+              ],
+              "hasSpecials": true
+            },
+            {
+              "eventId": "74165908",
+              "eventName": "Arsenal vs. Lille",
+              "eventNo": "2823",
+              "eventDate": "2026-10-13T22:00:00+03:00",
+              "marketsNo": 480,
+              "markets": [
+                {
+                  "marketId": "1",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "1",
+                      "outcomeName": "1",
+                      "value": "1.23"
+                    },
+                    {
+                      "outcomeId": "2",
+                      "outcomeName": "X",
+                      "value": "6.25"
+                    },
+                    {
+                      "outcomeId": "3",
+                      "outcomeName": "2",
+                      "value": "11.5"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "74",
+                      "outcomeName": "GG",
+                      "value": "2.13"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "10",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "9",
+                      "outcomeName": "1X",
+                      "value": "1.06"
+                    },
+                    {
+                      "outcomeId": "11",
+                      "outcomeName": "X2",
+                      "value": "3.51"
+                    },
+                    {
+                      "outcomeId": "10",
+                      "outcomeName": "12",
+                      "value": "1.11"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "76",
+                      "outcomeName": "NG",
+                      "value": "1.62"
+                    }
+                  ]
+                }
+              ],
+              "hasSpecials": true
+            },
+            {
+              "eventId": "74165918",
+              "eventName": "Viking  vs. Bayern Munchen",
+              "eventNo": "3132",
+              "eventDate": "2026-10-13T22:00:00+03:00",
+              "marketsNo": 478,
+              "markets": [
+                {
+                  "marketId": "1",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "1",
+                      "outcomeName": "1",
+                      "value": "16.5"
+                    },
+                    {
+                      "outcomeId": "2",
+                      "outcomeName": "X",
+                      "value": "10.4"
+                    },
+                    {
+                      "outcomeId": "3",
+                      "outcomeName": "2",
+                      "value": "1.11"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "74",
+                      "outcomeName": "GG",
+                      "value": "1.65"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "10",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "9",
+                      "outcomeName": "1X",
+                      "value": "5"
+                    },
+                    {
+                      "outcomeId": "11",
+                      "outcomeName": "X2",
+                      "value": "1.03"
+                    },
+                    {
+                      "outcomeId": "10",
+                      "outcomeName": "12",
+                      "value": "1.05"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "76",
+                      "outcomeName": "NG",
+                      "value": "2.06"
+                    }
+                  ]
+                }
+              ],
+              "hasSpecials": true
+            },
+            {
+              "eventId": "74165912",
+              "eventName": "Inter M. vs. Club Brugge",
+              "eventNo": "2850",
+              "eventDate": "2026-10-13T22:00:00+03:00",
+              "marketsNo": 478,
+              "markets": [
+                {
+                  "marketId": "1",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "1",
+                      "outcomeName": "1",
+                      "value": "1.25"
+                    },
+                    {
+                      "outcomeId": "2",
+                      "outcomeName": "X",
+                      "value": "6.2"
+                    },
+                    {
+                      "outcomeId": "3",
+                      "outcomeName": "2",
+                      "value": "9.9"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "74",
+                      "outcomeName": "GG",
+                      "value": "1.83"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "10",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "9",
+                      "outcomeName": "1X",
+                      "value": "1.07"
+                    },
+                    {
+                      "outcomeId": "11",
+                      "outcomeName": "X2",
+                      "value": "3.39"
+                    },
+                    {
+                      "outcomeId": "10",
+                      "outcomeName": "12",
+                      "value": "1.12"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "76",
+                      "outcomeName": "NG",
+                      "value": "1.83"
+                    }
+                  ]
+                }
+              ],
+              "hasSpecials": true
+            },
+            {
+              "eventId": "74165916",
+              "eventName": "RB Leipzig vs. PSV ",
+              "eventNo": "2971",
+              "eventDate": "2026-10-13T22:00:00+03:00",
+              "marketsNo": 477,
+              "markets": [
+                {
+                  "marketId": "1",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "1",
+                      "outcomeName": "1",
+                      "value": "1.77"
+                    },
+                    {
+                      "outcomeId": "2",
+                      "outcomeName": "X",
+                      "value": "4.3"
+                    },
+                    {
+                      "outcomeId": "3",
+                      "outcomeName": "2",
+                      "value": "3.8"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "74",
+                      "outcomeName": "GG",
+                      "value": "1.35"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "10",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "9",
+                      "outcomeName": "1X",
+                      "value": "1.25"
+                    },
+                    {
+                      "outcomeId": "11",
+                      "outcomeName": "X2",
+                      "value": "1.95"
+                    },
+                    {
+                      "outcomeId": "10",
+                      "outcomeName": "12",
+                      "value": "1.22"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "76",
+                      "outcomeName": "NG",
+                      "value": "2.88"
+                    }
+                  ]
+                }
+              ],
+              "hasSpecials": true
+            },
+            {
+              "eventId": "74165920",
+              "eventName": "Villarreal  vs. Napoli",
+              "eventNo": "3231",
+              "eventDate": "2026-10-13T22:00:00+03:00",
+              "marketsNo": 475,
+              "markets": [
+                {
+                  "marketId": "1",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "1",
+                      "outcomeName": "1",
+                      "value": "2.17"
+                    },
+                    {
+                      "outcomeId": "2",
+                      "outcomeName": "X",
+                      "value": "3.66"
+                    },
+                    {
+                      "outcomeId": "3",
+                      "outcomeName": "2",
+                      "value": "3.07"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "74",
+                      "outcomeName": "GG",
+                      "value": "1.52"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "10",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "9",
+                      "outcomeName": "1X",
+                      "value": "1.35"
+                    },
+                    {
+                      "outcomeId": "11",
+                      "outcomeName": "X2",
+                      "value": "1.65"
+                    },
+                    {
+                      "outcomeId": "10",
+                      "outcomeName": "12",
+                      "value": "1.28"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "76",
+                      "outcomeName": "NG",
+                      "value": "2.32"
+                    }
+                  ]
+                }
+              ],
+              "hasSpecials": true
+            },
+            {
+              "eventId": "74165924",
+              "eventName": "LASK Linz vs. Liverpool",
+              "eventNo": "3331",
+              "eventDate": "2026-10-14T19:45:00+03:00",
+              "marketsNo": 455,
+              "markets": [
+                {
+                  "marketId": "1",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "1",
+                      "outcomeName": "1",
+                      "value": "9.05"
+                    },
+                    {
+                      "outcomeId": "2",
+                      "outcomeName": "X",
+                      "value": "6.4"
+                    },
+                    {
+                      "outcomeId": "3",
+                      "outcomeName": "2",
+                      "value": "1.27"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "74",
+                      "outcomeName": "GG",
+                      "value": "1.7"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "10",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "9",
+                      "outcomeName": "1X",
+                      "value": "3.3"
+                    },
+                    {
+                      "outcomeId": "11",
+                      "outcomeName": "X2",
+                      "value": "1.07"
+                    },
+                    {
+                      "outcomeId": "10",
+                      "outcomeName": "12",
+                      "value": "1.11"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "76",
+                      "outcomeName": "NG",
+                      "value": "2"
+                    }
+                  ]
+                }
+              ],
+              "hasSpecials": true
+            },
+            {
+              "eventId": "74165922",
+              "eventName": "Feyenoord vs. Como ",
+              "eventNo": "3285",
+              "eventDate": "2026-10-14T19:45:00+03:00",
+              "marketsNo": 450,
+              "markets": [
+                {
+                  "marketId": "1",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "1",
+                      "outcomeName": "1",
+                      "value": "3.44"
+                    },
+                    {
+                      "outcomeId": "2",
+                      "outcomeName": "X",
+                      "value": "3.97"
+                    },
+                    {
+                      "outcomeId": "3",
+                      "outcomeName": "2",
+                      "value": "1.93"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "74",
+                      "outcomeName": "GG",
+                      "value": "1.4"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "10",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "9",
+                      "outcomeName": "1X",
+                      "value": "1.8"
+                    },
+                    {
+                      "outcomeId": "11",
+                      "outcomeName": "X2",
+                      "value": "1.3"
+                    },
+                    {
+                      "outcomeId": "10",
+                      "outcomeName": "12",
+                      "value": "1.25"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "76",
+                      "outcomeName": "NG",
+                      "value": "2.63"
+                    }
+                  ]
+                }
+              ],
+              "hasSpecials": true
+            },
+            {
+              "eventId": "74165930",
+              "eventName": "Shakhtar D. vs. AEK Atena",
+              "eventNo": "4365",
+              "eventDate": "2026-10-14T22:00:00+03:00",
+              "marketsNo": 450,
+              "markets": [
+                {
+                  "marketId": "1",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "1",
+                      "outcomeName": "1",
+                      "value": "2.6"
+                    },
+                    {
+                      "outcomeId": "2",
+                      "outcomeName": "X",
+                      "value": "3.42"
+                    },
+                    {
+                      "outcomeId": "3",
+                      "outcomeName": "2",
+                      "value": "2.6"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "74",
+                      "outcomeName": "GG",
+                      "value": "1.66"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "10",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "9",
+                      "outcomeName": "1X",
+                      "value": "1.47"
+                    },
+                    {
+                      "outcomeId": "11",
+                      "outcomeName": "X2",
+                      "value": "1.47"
+                    },
+                    {
+                      "outcomeId": "10",
+                      "outcomeName": "12",
+                      "value": "1.3"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "76",
+                      "outcomeName": "NG",
+                      "value": "2.05"
+                    }
+                  ]
+                }
+              ],
+              "hasSpecials": true
+            },
+            {
+              "eventId": "74165934",
+              "eventName": "Manchester City vs. PSG",
+              "eventNo": "4523",
+              "eventDate": "2026-10-14T22:00:00+03:00",
+              "marketsNo": 450,
+              "markets": [
+                {
+                  "marketId": "1",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "1",
+                      "outcomeName": "1",
+                      "value": "2.18"
+                    },
+                    {
+                      "outcomeId": "2",
+                      "outcomeName": "X",
+                      "value": "3.87"
+                    },
+                    {
+                      "outcomeId": "3",
+                      "outcomeName": "2",
+                      "value": "2.9"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "74",
+                      "outcomeName": "GG",
+                      "value": "1.38"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "10",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "9",
+                      "outcomeName": "1X",
+                      "value": "1.38"
+                    },
+                    {
+                      "outcomeId": "11",
+                      "outcomeName": "X2",
+                      "value": "1.62"
+                    },
+                    {
+                      "outcomeId": "10",
+                      "outcomeName": "12",
+                      "value": "1.27"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "76",
+                      "outcomeName": "NG",
+                      "value": "2.72"
+                    }
+                  ]
+                }
+              ],
+              "hasSpecials": true
+            },
+            {
+              "eventId": "74165932",
+              "eventName": "Bodo/Glimt vs. Dortmund",
+              "eventNo": "4499",
+              "eventDate": "2026-10-14T22:00:00+03:00",
+              "marketsNo": 450,
+              "markets": [
+                {
+                  "marketId": "1",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "1",
+                      "outcomeName": "1",
+                      "value": "3.06"
+                    },
+                    {
+                      "outcomeId": "2",
+                      "outcomeName": "X",
+                      "value": "3.9"
+                    },
+                    {
+                      "outcomeId": "3",
+                      "outcomeName": "2",
+                      "value": "2.1"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "74",
+                      "outcomeName": "GG",
+                      "value": "1.37"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "10",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "9",
+                      "outcomeName": "1X",
+                      "value": "1.67"
+                    },
+                    {
+                      "outcomeId": "11",
+                      "outcomeName": "X2",
+                      "value": "1.35"
+                    },
+                    {
+                      "outcomeId": "10",
+                      "outcomeName": "12",
+                      "value": "1.25"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "76",
+                      "outcomeName": "NG",
+                      "value": "2.8"
+                    }
+                  ]
+                }
+              ],
+              "hasSpecials": true
+            },
+            {
+              "eventId": "74165926",
+              "eventName": "AS Roma vs. Real Madrid",
+              "eventNo": "3763",
+              "eventDate": "2026-10-14T22:00:00+03:00",
+              "marketsNo": 450,
+              "markets": [
+                {
+                  "marketId": "1",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "1",
+                      "outcomeName": "1",
+                      "value": "3.6"
+                    },
+                    {
+                      "outcomeId": "2",
+                      "outcomeName": "X",
+                      "value": "3.91"
+                    },
+                    {
+                      "outcomeId": "3",
+                      "outcomeName": "2",
+                      "value": "1.9"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "74",
+                      "outcomeName": "GG",
+                      "value": "1.4"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "10",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "9",
+                      "outcomeName": "1X",
+                      "value": "1.8"
+                    },
+                    {
+                      "outcomeId": "11",
+                      "outcomeName": "X2",
+                      "value": "1.28"
+                    },
+                    {
+                      "outcomeId": "10",
+                      "outcomeName": "12",
+                      "value": "1.25"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "76",
+                      "outcomeName": "NG",
+                      "value": "2.68"
+                    }
+                  ]
+                }
+              ],
+              "hasSpecials": true
+            },
+            {
+              "eventId": "74165938",
+              "eventName": "Slovan Brat. vs. Stuttgart",
+              "eventNo": "4669",
+              "eventDate": "2026-10-14T22:00:00+03:00",
+              "marketsNo": 455,
+              "markets": [
+                {
+                  "marketId": "1",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "1",
+                      "outcomeName": "1",
+                      "value": "8.75"
+                    },
+                    {
+                      "outcomeId": "2",
+                      "outcomeName": "X",
+                      "value": "6.15"
+                    },
+                    {
+                      "outcomeId": "3",
+                      "outcomeName": "2",
+                      "value": "1.28"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "74",
+                      "outcomeName": "GG",
+                      "value": "1.66"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "10",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "9",
+                      "outcomeName": "1X",
+                      "value": "3.21"
+                    },
+                    {
+                      "outcomeId": "11",
+                      "outcomeName": "X2",
+                      "value": "1.08"
+                    },
+                    {
+                      "outcomeId": "10",
+                      "outcomeName": "12",
+                      "value": "1.12"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "76",
+                      "outcomeName": "NG",
+                      "value": "2.05"
+                    }
+                  ]
+                }
+              ],
+              "hasSpecials": true
+            },
+            {
+              "eventId": "74165928",
+              "eventName": "Aston Villa vs. Fenerbahce",
+              "eventNo": "4318",
+              "eventDate": "2026-10-14T22:00:00+03:00",
+              "marketsNo": 450,
+              "markets": [
+                {
+                  "marketId": "1",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "1",
+                      "outcomeName": "1",
+                      "value": "1.68"
+                    },
+                    {
+                      "outcomeId": "2",
+                      "outcomeName": "X",
+                      "value": "3.92"
+                    },
+                    {
+                      "outcomeId": "3",
+                      "outcomeName": "2",
+                      "value": "4.75"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "74",
+                      "outcomeName": "GG",
+                      "value": "1.6"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "10",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "9",
+                      "outcomeName": "1X",
+                      "value": "1.2"
+                    },
+                    {
+                      "outcomeId": "11",
+                      "outcomeName": "X2",
+                      "value": "2.05"
+                    },
+                    {
+                      "outcomeId": "10",
+                      "outcomeName": "12",
+                      "value": "1.25"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "76",
+                      "outcomeName": "NG",
+                      "value": "2.13"
+                    }
+                  ]
+                }
+              ],
+              "hasSpecials": true
+            },
+            {
+              "eventId": "74165936",
+              "eventName": "Betis vs. Porto",
+              "eventNo": "4649",
+              "eventDate": "2026-10-14T22:00:00+03:00",
+              "marketsNo": 450,
+              "markets": [
+                {
+                  "marketId": "1",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "1",
+                      "outcomeName": "1",
+                      "value": "2.1"
+                    },
+                    {
+                      "outcomeId": "2",
+                      "outcomeName": "X",
+                      "value": "3.6"
+                    },
+                    {
+                      "outcomeId": "3",
+                      "outcomeName": "2",
+                      "value": "3.24"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "74",
+                      "outcomeName": "GG",
+                      "value": "1.57"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "10",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "9",
+                      "outcomeName": "1X",
+                      "value": "1.33"
+                    },
+                    {
+                      "outcomeId": "11",
+                      "outcomeName": "X2",
+                      "value": "1.67"
+                    },
+                    {
+                      "outcomeId": "10",
+                      "outcomeName": "12",
+                      "value": "1.28"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "76",
+                      "outcomeName": "NG",
+                      "value": "2.22"
+                    }
+                  ]
+                }
+              ],
+              "hasSpecials": true
+            }
+          ],
+          "categoryId": "393",
+          "categoryName": "Int. Cluburi"
+        },
+        {
+          "leagueId": "679_151681",
+          "leagueName": "UEFA Europa League",
+          "displayName": "UEFA Europa League",
+          "sortOrder": 500,
+          "events": [
+            {
+              "eventId": "74172954",
+              "eventName": " RB Salzburg vs.  AC Milan",
+              "eventNo": "7308",
+              "eventDate": "2026-10-15T19:45:00+03:00",
+              "marketsNo": 390,
+              "markets": [
+                {
+                  "marketId": "1",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "1",
+                      "outcomeName": "1",
+                      "value": "3.81"
+                    },
+                    {
+                      "outcomeId": "2",
+                      "outcomeName": "X",
+                      "value": "3.8"
+                    },
+                    {
+                      "outcomeId": "3",
+                      "outcomeName": "2",
+                      "value": "1.87"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "74",
+                      "outcomeName": "GG",
+                      "value": "1.55"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "10",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "9",
+                      "outcomeName": "1X",
+                      "value": "1.9"
+                    },
+                    {
+                      "outcomeId": "11",
+                      "outcomeName": "X2",
+                      "value": "1.25"
+                    },
+                    {
+                      "outcomeId": "10",
+                      "outcomeName": "12",
+                      "value": "1.25"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "76",
+                      "outcomeName": "NG",
+                      "value": "2.25"
+                    }
+                  ]
+                }
+              ],
+              "hasSpecials": false
+            },
+            {
+              "eventId": "74172964",
+              "eventName": " Torreense vs. Sunderland",
+              "eventNo": "7313",
+              "eventDate": "2026-10-15T19:45:00+03:00",
+              "marketsNo": 395,
+              "markets": [
+                {
+                  "marketId": "1",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "1",
+                      "outcomeName": "1",
+                      "value": "7.25"
+                    },
+                    {
+                      "outcomeId": "2",
+                      "outcomeName": "X",
+                      "value": "5.1"
+                    },
+                    {
+                      "outcomeId": "3",
+                      "outcomeName": "2",
+                      "value": "1.38"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "74",
+                      "outcomeName": "GG",
+                      "value": "1.73"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "10",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "9",
+                      "outcomeName": "1X",
+                      "value": "2.75"
+                    },
+                    {
+                      "outcomeId": "11",
+                      "outcomeName": "X2",
+                      "value": "1.1"
+                    },
+                    {
+                      "outcomeId": "10",
+                      "outcomeName": "12",
+                      "value": "1.16"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "76",
+                      "outcomeName": "NG",
+                      "value": "1.95"
+                    }
+                  ]
+                }
+              ],
+              "hasSpecials": false
+            },
+            {
+              "eventId": "74172952",
+              "eventName": "AZ Alkmaar vs. Hap.Beer Sheva",
+              "eventNo": "7307",
+              "eventDate": "2026-10-15T19:45:00+03:00",
+              "marketsNo": 393,
+              "markets": [
+                {
+                  "marketId": "1",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "1",
+                      "outcomeName": "1",
+                      "value": "1.3"
+                    },
+                    {
+                      "outcomeId": "2",
+                      "outcomeName": "X",
+                      "value": "5.7"
+                    },
+                    {
+                      "outcomeId": "3",
+                      "outcomeName": "2",
+                      "value": "8.7"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "74",
+                      "outcomeName": "GG",
+                      "value": "1.82"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "10",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "9",
+                      "outcomeName": "1X",
+                      "value": "1.08"
+                    },
+                    {
+                      "outcomeId": "11",
+                      "outcomeName": "X2",
+                      "value": "3.12"
+                    },
+                    {
+                      "outcomeId": "10",
+                      "outcomeName": "12",
+                      "value": "1.13"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "76",
+                      "outcomeName": "NG",
+                      "value": "1.85"
+                    }
+                  ]
+                }
+              ],
+              "hasSpecials": false
+            },
+            {
+              "eventId": "74172958",
+              "eventName": "Celje vs. Omonia ",
+              "eventNo": "7310",
+              "eventDate": "2026-10-15T19:45:00+03:00",
+              "marketsNo": 390,
+              "markets": [
+                {
+                  "marketId": "1",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "1",
+                      "outcomeName": "1",
+                      "value": "2.5"
+                    },
+                    {
+                      "outcomeId": "2",
+                      "outcomeName": "X",
+                      "value": "3.42"
+                    },
+                    {
+                      "outcomeId": "3",
+                      "outcomeName": "2",
+                      "value": "2.72"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "74",
+                      "outcomeName": "GG",
+                      "value": "1.65"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "10",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "9",
+                      "outcomeName": "1X",
+                      "value": "1.43"
+                    },
+                    {
+                      "outcomeId": "11",
+                      "outcomeName": "X2",
+                      "value": "1.5"
+                    },
+                    {
+                      "outcomeId": "10",
+                      "outcomeName": "12",
+                      "value": "1.3"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "76",
+                      "outcomeName": "NG",
+                      "value": "2.07"
+                    }
+                  ]
+                }
+              ],
+              "hasSpecials": false
+            },
+            {
+              "eventId": "74172960",
+              "eventName": "Lyon vs. Crystal Palace",
+              "eventNo": "7311",
+              "eventDate": "2026-10-15T19:45:00+03:00",
+              "marketsNo": 390,
+              "markets": [
+                {
+                  "marketId": "1",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "1",
+                      "outcomeName": "1",
+                      "value": "2.27"
+                    },
+                    {
+                      "outcomeId": "2",
+                      "outcomeName": "X",
+                      "value": "3.53"
+                    },
+                    {
+                      "outcomeId": "3",
+                      "outcomeName": "2",
+                      "value": "2.98"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "74",
+                      "outcomeName": "GG",
+                      "value": "1.53"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "10",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "9",
+                      "outcomeName": "1X",
+                      "value": "1.37"
+                    },
+                    {
+                      "outcomeId": "11",
+                      "outcomeName": "X2",
+                      "value": "1.6"
+                    },
+                    {
+                      "outcomeId": "10",
+                      "outcomeName": "12",
+                      "value": "1.3"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "76",
+                      "outcomeName": "NG",
+                      "value": "2.27"
+                    }
+                  ]
+                }
+              ],
+              "hasSpecials": false
+            },
+            {
+              "eventId": "74172956",
+              "eventName": "Lech Poznan vs. Leverkusen",
+              "eventNo": "7309",
+              "eventDate": "2026-10-15T19:45:00+03:00",
+              "marketsNo": 390,
+              "markets": [
+                {
+                  "marketId": "1",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "1",
+                      "outcomeName": "1",
+                      "value": "4.57"
+                    },
+                    {
+                      "outcomeId": "2",
+                      "outcomeName": "X",
+                      "value": "4.25"
+                    },
+                    {
+                      "outcomeId": "3",
+                      "outcomeName": "2",
+                      "value": "1.65"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "74",
+                      "outcomeName": "GG",
+                      "value": "1.52"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "10",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "9",
+                      "outcomeName": "1X",
+                      "value": "2.08"
+                    },
+                    {
+                      "outcomeId": "11",
+                      "outcomeName": "X2",
+                      "value": "1.2"
+                    },
+                    {
+                      "outcomeId": "10",
+                      "outcomeName": "12",
+                      "value": "1.22"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "76",
+                      "outcomeName": "NG",
+                      "value": "2.33"
+                    }
+                  ]
+                }
+              ],
+              "hasSpecials": false
+            },
+            {
+              "eventId": "74172950",
+              "eventName": "Sparta Praga vs. Lillestrom",
+              "eventNo": "7306",
+              "eventDate": "2026-10-15T19:45:00+03:00",
+              "marketsNo": 395,
+              "markets": [
+                {
+                  "marketId": "1",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "1",
+                      "outcomeName": "1",
+                      "value": "1.35"
+                    },
+                    {
+                      "outcomeId": "2",
+                      "outcomeName": "X",
+                      "value": "5.3"
+                    },
+                    {
+                      "outcomeId": "3",
+                      "outcomeName": "2",
+                      "value": "7.7"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "74",
+                      "outcomeName": "GG",
+                      "value": "1.8"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "10",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "9",
+                      "outcomeName": "1X",
+                      "value": "1.1"
+                    },
+                    {
+                      "outcomeId": "11",
+                      "outcomeName": "X2",
+                      "value": "2.85"
+                    },
+                    {
+                      "outcomeId": "10",
+                      "outcomeName": "12",
+                      "value": "1.15"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "76",
+                      "outcomeName": "NG",
+                      "value": "1.88"
+                    }
+                  ]
+                }
+              ],
+              "hasSpecials": false
+            },
+            {
+              "eventId": "74172962",
+              "eventName": "Royale Union SG vs. Sociedad",
+              "eventNo": "7312",
+              "eventDate": "2026-10-15T19:45:00+03:00",
+              "marketsNo": 390,
+              "markets": [
+                {
+                  "marketId": "1",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "1",
+                      "outcomeName": "1",
+                      "value": "2.37"
+                    },
+                    {
+                      "outcomeId": "2",
+                      "outcomeName": "X",
+                      "value": "3.52"
+                    },
+                    {
+                      "outcomeId": "3",
+                      "outcomeName": "2",
+                      "value": "2.82"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "74",
+                      "outcomeName": "GG",
+                      "value": "1.6"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "10",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "9",
+                      "outcomeName": "1X",
+                      "value": "1.4"
+                    },
+                    {
+                      "outcomeId": "11",
+                      "outcomeName": "X2",
+                      "value": "1.55"
+                    },
+                    {
+                      "outcomeId": "10",
+                      "outcomeName": "12",
+                      "value": "1.3"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "76",
+                      "outcomeName": "NG",
+                      "value": "2.15"
+                    }
+                  ]
+                }
+              ],
+              "hasSpecials": false
+            },
+            {
+              "eventId": "74172980",
+              "eventName": "Benfica vs. Celtic ",
+              "eventNo": "7322",
+              "eventDate": "2026-10-15T22:00:00+03:00",
+              "marketsNo": 395,
+              "markets": [
+                {
+                  "marketId": "1",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "1",
+                      "outcomeName": "1",
+                      "value": "1.25"
+                    },
+                    {
+                      "outcomeId": "2",
+                      "outcomeName": "X",
+                      "value": "6.35"
+                    },
+                    {
+                      "outcomeId": "3",
+                      "outcomeName": "2",
+                      "value": "10.1"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "74",
+                      "outcomeName": "GG",
+                      "value": "1.88"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "10",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "9",
+                      "outcomeName": "1X",
+                      "value": "1.07"
+                    },
+                    {
+                      "outcomeId": "11",
+                      "outcomeName": "X2",
+                      "value": "3.41"
+                    },
+                    {
+                      "outcomeId": "10",
+                      "outcomeName": "12",
+                      "value": "1.11"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "76",
+                      "outcomeName": "NG",
+                      "value": "1.8"
+                    }
+                  ]
+                }
+              ],
+              "hasSpecials": false
+            },
+            {
+              "eventId": "74172984",
+              "eventName": "Hoffenheim vs. Besiktas",
+              "eventNo": "7324",
+              "eventDate": "2026-10-15T22:00:00+03:00",
+              "marketsNo": 390,
+              "markets": [
+                {
+                  "marketId": "1",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "1",
+                      "outcomeName": "1",
+                      "value": "1.97"
+                    },
+                    {
+                      "outcomeId": "2",
+                      "outcomeName": "X",
+                      "value": "3.92"
+                    },
+                    {
+                      "outcomeId": "3",
+                      "outcomeName": "2",
+                      "value": "3.37"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "74",
+                      "outcomeName": "GG",
+                      "value": "1.42"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "10",
+                  "marketName": "Final",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "9",
+                      "outcomeName": "1X",
+                      "value": "1.3"
+                    },
+                    {
+                      "outcomeId": "11",
+                      "outcomeName": "X2",
+                      "value": "1.75"
+                    },
+                    {
+                      "outcomeId": "10",
+                      "outcomeName": "12",
+                      "value": "1.25"
+                    }
+                  ]
+                },
+                {
+                  "marketId": "29",
+                  "marketName": "Da gol nu da gol in meci",
+                  "specifier": "",
+                  "outcomes": [
+                    {
+                      "outcomeId": "76",
+                      "outcomeName": "NG",
+                      "value": "2.6"
+                    }
+                  ]
+                }
+              ],
+              "hasSpecials": false
+            }
+          ],
+          "categoryId": "393",
+          "categoryName": "Int. Cluburi"
+        }
+      ],
+      "headers": {
+        "id": "5cf124270e1c890cceaa1ef3",
+        "sportId": "1",
+        "markets": [
+          {
+            "marketId": "1",
+            "marketName": "Final",
+            "specifier": "",
+            "outcomes": [
+              {
+                "outcomeId": "1",
+                "outcomeName": "1"
+              },
+              {
+                "outcomeId": "2",
+                "outcomeName": "X"
+              },
+              {
+                "outcomeId": "3",
+                "outcomeName": "2"
+              }
+            ]
+          },
+          {
+            "marketId": "29",
+            "marketName": "Da gol nu da gol in meci",
+            "specifier": "",
+            "outcomes": [
+              {
+                "outcomeId": "74",
+                "outcomeName": "GG"
+              }
+            ]
+          },
+          {
+            "marketId": "10",
+            "marketName": "Final",
+            "specifier": "",
+            "outcomes": [
+              {
+                "outcomeId": "9",
+                "outcomeName": "1X"
+              },
+              {
+                "outcomeId": "11",
+                "outcomeName": "X2"
+              },
+              {
+                "outcomeId": "10",
+                "outcomeName": "12"
+              }
+            ]
+          },
+          {
+            "marketId": "29",
+            "marketName": "Da gol nu da gol in meci",
+            "specifier": "",
+            "outcomes": [
+              {
+                "outcomeId": "76",
+                "outcomeName": "NG"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

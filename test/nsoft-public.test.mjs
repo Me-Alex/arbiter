@@ -2,9 +2,13 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
-import NSoft from '../src/scrapers/nsoft.mjs';
+import NSoft, {
+  TENANT_SPORTS,
+  NSOFT_SPORT_ID_MAP,
+  NSOFT_SPORT_NAME_TO_ID,
+} from '../src/scrapers/nsoft.mjs';
 import { instantiate } from '../src/scrapers/index.mjs';
-import { resolveContract, canonicalOutcomeFor } from '../src/scanner/market-contracts.mjs';
+import { resolveContract, canonicalOutcomeFor, bucketKeyForContract } from '../src/scanner/market-contracts.mjs';
 
 const fixture = JSON.parse(await fs.readFile(new URL('./fixtures/nsoft-public.json', import.meta.url)));
 const config = JSON.parse(await fs.readFile(new URL('../config/scrapers.json', import.meta.url)));
@@ -493,4 +497,884 @@ test('betmen: its interval totals and combination markets are not published', ()
     assert.ok(feedIds.has(id), `fixture should carry market ${id}`);
   }
 });
+
+test('NSoft exports sport mapping and tenant taxonomy constants', () => {
+  assert.equal(TENANT_SPORTS.admiral.football, 4);
+  assert.equal(TENANT_SPORTS.admiral.basketball, 13);
+  assert.equal(TENANT_SPORTS.admiral.tennis, 16);
+  assert.equal(TENANT_SPORTS.maxbet.football, 2);
+  assert.equal(TENANT_SPORTS.maxbet.basketball, 17);
+  assert.equal(TENANT_SPORTS.betmen.football, 18);
+  assert.equal(TENANT_SPORTS.betmen.basketball, 36);
+
+  assert.equal(NSOFT_SPORT_ID_MAP[4], 'Football');
+  assert.equal(NSOFT_SPORT_ID_MAP[13], 'Basketball');
+  assert.equal(NSOFT_SPORT_ID_MAP[16], 'Tennis');
+  assert.equal(NSOFT_SPORT_NAME_TO_ID.football, 4);
+  assert.equal(NSOFT_SPORT_NAME_TO_ID.basketball, 13);
+  assert.equal(NSOFT_SPORT_NAME_TO_ID.tennis, 16);
+});
+
+test('NSoft multi-sport: basketball 2-way winner, points total, and point spread', () => {
+  const s = new NSoft('admiral', { sport: 'basketball', windowHours: 24 });
+  const basketballEvent = {
+    id: 5551234,
+    sportId: 13, // Basketball on Admiral
+    active: 1,
+    startsAt: new Date(Date.now() + 3600000).toISOString(),
+    tournamentName: 'NBA',
+    competitors: [
+      { id: 101, type: 1, name: 'Boston Celtics' },
+      { id: 102, type: 2, name: 'Golden State Warriors' },
+    ],
+    markets: [
+      // 2-way match winner
+      {
+        id: 7001,
+        marketId: 85,
+        name: 'Castigator (incl. OT)',
+        active: 1,
+        specialValues: [],
+        outcomes: [
+          { id: 801, outcomeId: 1, active: 1, name: '1', odd: 1.75 },
+          { id: 802, outcomeId: 2, active: 1, name: '2', odd: 2.10 },
+        ],
+      },
+      // Points total (Over / Under 220.5)
+      {
+        id: 7002,
+        marketId: 530,
+        name: 'Total puncte (incl. OT)',
+        active: 1,
+        specialValues: ['220.5'],
+        outcomes: [
+          { id: 803, outcomeId: 10, active: 1, name: 'Peste 220.5', odd: 1.90 },
+          { id: 804, outcomeId: 11, active: 1, name: 'Sub 220.5', odd: 1.90 },
+        ],
+      },
+      // Point spread (H1 -4.5 / H2 4.5)
+      {
+        id: 7003,
+        marketId: 524,
+        name: 'Handicap (incl. OT)',
+        active: 1,
+        specialValues: ['-4.5'],
+        outcomes: [
+          { id: 805, outcomeId: 20, active: 1, name: 'H1 -4.5', odd: 1.92 },
+          { id: 806, outcomeId: 21, active: 1, name: 'H2 4.5', odd: 1.88 },
+        ],
+      },
+    ],
+  };
+
+  const out = s.extractEvents([basketballEvent]);
+  assert.equal(out.length, 1);
+  const ev = out[0];
+  assert.equal(ev.sport, 'Basketball');
+  assert.equal(ev.homeTeam, 'Boston Celtics');
+  assert.equal(ev.awayTeam, 'Golden State Warriors');
+  assert.equal(ev.markets.length, 3);
+
+  // 1. Moneyline
+  const ml = ev.markets.find((m) => m.key === 'MATCH_ODDS');
+  assert.ok(ml);
+  assert.equal(ml.selections.length, 2);
+  const mlContract = resolveContract(ml);
+  assert.equal(mlContract.family, 'MATCH_ODDS');
+  assert.deepEqual(mlContract.outcomes, ['home', 'away']);
+
+  // 2. Points total
+  const pt = ev.markets.find((m) => m.key === 'POINTS_OVER_UNDER');
+  assert.ok(pt);
+  assert.equal(pt.line, '220.5');
+  assert.equal(pt.subject, 'points');
+  const ptContract = resolveContract(pt);
+  assert.equal(ptContract.family, 'OVER_UNDER');
+  assert.equal(ptContract.subject, 'points');
+
+  // 3. Point spread
+  const ps = ev.markets.find((m) => m.key === 'POINT_SPREAD');
+  assert.ok(ps);
+  assert.equal(ps.line, '-4.5');
+  const psContract = resolveContract(ps);
+  assert.equal(psContract.family, 'ASIAN_HANDICAP');
+});
+
+test('NSoft multi-sport: tennis 2-way winner and games total', () => {
+  const s = new NSoft('admiral', { sport: 'tennis', windowHours: 24 });
+  const tennisEvent = {
+    id: 6661234,
+    sportId: 16, // Tennis on Admiral
+    active: 1,
+    startsAt: new Date(Date.now() + 3600000).toISOString(),
+    tournamentName: 'ATP Wimbledon',
+    competitors: [
+      { id: 201, type: 1, name: 'Novak Djokovic' },
+      { id: 202, type: 2, name: 'Carlos Alcaraz' },
+    ],
+    markets: [
+      // 2-way match winner
+      {
+        id: 9001,
+        marketId: 34,
+        name: 'Castigator',
+        active: 1,
+        specialValues: [],
+        outcomes: [
+          { id: 901, outcomeId: 1, active: 1, name: '1', odd: 1.80 },
+          { id: 902, outcomeId: 2, active: 1, name: '2', odd: 2.05 },
+        ],
+      },
+      // Games total (Over / Under 38.5)
+      {
+        id: 9002,
+        marketId: 79,
+        name: 'Total game-uri',
+        active: 1,
+        specialValues: ['38.5'],
+        outcomes: [
+          { id: 903, outcomeId: 10, active: 1, name: 'Peste 38.5', odd: 1.85 },
+          { id: 904, outcomeId: 11, active: 1, name: 'Sub 38.5', odd: 1.95 },
+        ],
+      },
+    ],
+  };
+
+  const out = s.extractEvents([tennisEvent]);
+  assert.equal(out.length, 1);
+  const ev = out[0];
+  assert.equal(ev.sport, 'Tennis');
+  assert.equal(ev.markets.length, 2);
+
+  const ml = ev.markets.find((m) => m.key === 'MATCH_ODDS');
+  assert.ok(ml);
+  assert.equal(ml.selections.length, 2);
+  const mlContract = resolveContract(ml);
+  assert.equal(mlContract.family, 'MATCH_ODDS');
+  assert.deepEqual(mlContract.outcomes, ['home', 'away']);
+
+  const gt = ev.markets.find((m) => m.key === 'TOTAL_GAMES');
+  assert.ok(gt);
+  assert.equal(gt.line, '38.5');
+  assert.equal(gt.subject, 'games');
+  const gtContract = resolveContract(gt);
+  assert.equal(gtContract.family, 'OVER_UNDER');
+  assert.equal(gtContract.subject, 'games');
+});
+
+test('NSoft: includeLive flag passes in-play events', () => {
+  const s = new NSoft('admiral', { includeLive: true });
+  const liveEvent = {
+    id: 7771234,
+    sportId: 4, // Football
+    active: 2, // Live active state
+    live: true,
+    startsAt: new Date(Date.now() - 3600000).toISOString(), // started 1h ago
+    tournamentName: 'Liga 1',
+    competitors: [
+      { id: 301, type: 1, name: 'FCSB' },
+      { id: 302, type: 2, name: 'CFR Cluj' },
+    ],
+    markets: [
+      {
+        id: 1,
+        marketId: 1,
+        name: 'Rezultat Final',
+        active: 1,
+        specialValues: [],
+        outcomes: [
+          { id: 1, outcomeId: 1, active: 1, name: '1', odd: 2.10 },
+          { id: 4, outcomeId: 4, active: 1, name: 'X', odd: 3.20 },
+          { id: 7, outcomeId: 7, active: 1, name: '2', odd: 3.50 },
+        ],
+      },
+    ],
+  };
+
+  const out = s.extractEvents([liveEvent]);
+  assert.equal(out.length, 1);
+  assert.equal(out[0].live, true);
+  assert.equal(out[0].isLive, true);
+  assert.equal(out[0].sport, 'Football');
+  assert.equal(out[0].markets[0].live, true);
+});
+
+test('NSoft multi-sport: basketball quarter sub-window derivative markets and bucket isolation', () => {
+  const s = new NSoft('admiral', { sport: 'basketball', windowHours: 24 });
+  const event = {
+    id: 8881234,
+    sportId: 13,
+    active: 1,
+    startsAt: new Date(Date.now() + 3600000).toISOString(),
+    tournamentName: 'NBA',
+    competitors: [
+      { id: 101, type: 1, name: 'Boston Celtics' },
+      { id: 102, type: 2, name: 'Golden State Warriors' },
+    ],
+    markets: [
+      // FT Moneyline
+      {
+        id: 1001,
+        marketId: 85,
+        name: 'Castigator Meci',
+        active: 1,
+        specialValues: [],
+        outcomes: [
+          { id: 801, outcomeId: 1, active: 1, name: '1', odd: 1.75 },
+          { id: 802, outcomeId: 2, active: 1, name: '2', odd: 2.10 },
+        ],
+      },
+      // FT Points total
+      {
+        id: 1002,
+        marketId: 530,
+        name: 'Total puncte',
+        active: 1,
+        specialValues: ['215.5'],
+        outcomes: [
+          { id: 803, outcomeId: 10, active: 1, name: 'Peste 215.5', odd: 1.90 },
+          { id: 804, outcomeId: 11, active: 1, name: 'Sub 215.5', odd: 1.90 },
+        ],
+      },
+      // Q1 Points total
+      {
+        id: 1003,
+        marketId: 531,
+        name: 'Total puncte Sfert 1',
+        active: 1,
+        specialValues: ['52.5'],
+        outcomes: [
+          { id: 805, outcomeId: 12, active: 1, name: 'Peste 52.5', odd: 1.85 },
+          { id: 806, outcomeId: 13, active: 1, name: 'Sub 52.5', odd: 1.95 },
+        ],
+      },
+      // Q2 Point spread
+      {
+        id: 1004,
+        marketId: 525,
+        name: 'Handicap Sfertul 2',
+        active: 1,
+        specialValues: ['-2.5'],
+        outcomes: [
+          { id: 807, outcomeId: 22, active: 1, name: 'H1 -2.5', odd: 1.90 },
+          { id: 808, outcomeId: 23, active: 1, name: 'H2 2.5', odd: 1.90 },
+        ],
+      },
+      // Q3 2-way winner
+      {
+        id: 1005,
+        marketId: 526,
+        name: 'Castigator Sfertul 3',
+        active: 1,
+        specialValues: [],
+        outcomes: [
+          { id: 809, outcomeId: 30, active: 1, name: '1', odd: 1.82 },
+          { id: 810, outcomeId: 31, active: 1, name: '2', odd: 2.02 },
+        ],
+      },
+    ],
+  };
+
+  const out = s.extractEvents([event]);
+  assert.equal(out.length, 1);
+  const markets = out[0].markets;
+  assert.equal(markets.length, 5);
+
+  const ftMl = markets.find((m) => m.name === 'Castigator Meci');
+  const ftTot = markets.find((m) => m.name === 'Total puncte');
+  const q1Tot = markets.find((m) => m.name === 'Total puncte Sfert 1');
+  const q2Spr = markets.find((m) => m.name === 'Handicap Sfertul 2');
+  const q3Win = markets.find((m) => m.name === 'Castigator Sfertul 3');
+
+  assert.equal(ftMl.period, 'fulltime');
+  assert.equal(ftTot.period, 'fulltime');
+  assert.equal(q1Tot.period, 'q1');
+  assert.equal(q2Spr.period, 'q2');
+  assert.equal(q3Win.period, 'q3');
+
+  const ftMlContract = resolveContract(ftMl);
+  const ftTotContract = resolveContract(ftTot);
+  const q1TotContract = resolveContract(q1Tot);
+  const q2SprContract = resolveContract(q2Spr);
+  const q3WinContract = resolveContract(q3Win);
+
+  assert.equal(ftMlContract.family, 'MATCH_ODDS');
+  assert.equal(ftTotContract.family, 'OVER_UNDER');
+  assert.equal(q1TotContract.family, 'OVER_UNDER');
+  assert.equal(q2SprContract.family, 'ASIAN_HANDICAP');
+  assert.equal(q3WinContract.family, 'MATCH_ODDS');
+
+  const ftMlKey = bucketKeyForContract('ev1', ftMlContract);
+  const ftTotKey = bucketKeyForContract('ev1', ftTotContract);
+  const q1TotKey = bucketKeyForContract('ev1', q1TotContract);
+  const q2SprKey = bucketKeyForContract('ev1', q2SprContract);
+  const q3WinKey = bucketKeyForContract('ev1', q3WinContract);
+
+  assert.equal(ftMlKey, 'ev1::MATCH_ODDS::fulltime::_::home+away::_::_');
+  assert.equal(ftTotKey, 'ev1::OVER_UNDER::fulltime::215.5::over+under::points::match');
+  assert.equal(q1TotKey, 'ev1::OVER_UNDER::q1::52.5::over+under::points::match');
+  assert.equal(q2SprKey, 'ev1::ASIAN_HANDICAP::q2::-2.5/2.5::home+away::points::_');
+  assert.equal(q3WinKey, 'ev1::MATCH_ODDS::q3::_::home+away::_::_');
+
+  // Verify full-time and sub-window bucket isolation
+  assert.notEqual(ftMlKey, q3WinKey);
+  assert.notEqual(ftTotKey, q1TotKey);
+});
+
+test('NSoft multi-sport: tennis set sub-window derivative markets and bucket isolation', () => {
+  const s = new NSoft('stanleybet', { sport: 'tennis', windowHours: 24 });
+  const event = {
+    id: 9991234,
+    sportId: 16,
+    active: 1,
+    startsAt: new Date(Date.now() + 3600000).toISOString(),
+    tournamentName: 'Roland Garros',
+    competitors: [
+      { id: 201, type: 1, name: 'Carlos Alcaraz' },
+      { id: 202, type: 2, name: 'Jannik Sinner' },
+    ],
+    markets: [
+      // FT Winner
+      {
+        id: 2001,
+        marketId: 34,
+        name: 'Castigator',
+        active: 1,
+        specialValues: [],
+        outcomes: [
+          { id: 901, outcomeId: 1, active: 1, name: '1', odd: 1.85 },
+          { id: 902, outcomeId: 2, active: 1, name: '2', odd: 1.95 },
+        ],
+      },
+      // FT Games total
+      {
+        id: 2002,
+        marketId: 79,
+        name: 'Total game-uri',
+        active: 1,
+        specialValues: ['22.5'],
+        outcomes: [
+          { id: 903, outcomeId: 10, active: 1, name: 'Peste 22.5', odd: 1.80 },
+          { id: 904, outcomeId: 11, active: 1, name: 'Sub 22.5', odd: 2.00 },
+        ],
+      },
+      // Set 1 Winner
+      {
+        id: 2003,
+        marketId: 110,
+        name: 'Castigator Set 1',
+        active: 1,
+        specialValues: [],
+        outcomes: [
+          { id: 905, outcomeId: 1, active: 1, name: '1', odd: 1.88 },
+          { id: 906, outcomeId: 2, active: 1, name: '2', odd: 1.92 },
+        ],
+      },
+      // Set 1 Games total
+      {
+        id: 2004,
+        marketId: 111,
+        name: 'Total game-uri Set 1',
+        active: 1,
+        specialValues: ['9.5'],
+        outcomes: [
+          { id: 907, outcomeId: 10, active: 1, name: 'Peste 9.5', odd: 1.90 },
+          { id: 908, outcomeId: 11, active: 1, name: 'Sub 9.5', odd: 1.90 },
+        ],
+      },
+      // Set 1 Games handicap
+      {
+        id: 2005,
+        marketId: 112,
+        name: 'Handicap Set 1',
+        active: 1,
+        specialValues: ['-1.5'],
+        outcomes: [
+          { id: 909, outcomeId: 20, active: 1, name: 'H1 -1.5', odd: 1.85 },
+          { id: 910, outcomeId: 21, active: 1, name: 'H2 1.5', odd: 1.95 },
+        ],
+      },
+    ],
+  };
+
+  const out = s.extractEvents([event]);
+  assert.equal(out.length, 1);
+  const markets = out[0].markets;
+  assert.equal(markets.length, 5);
+
+  const ftMl = markets.find((m) => m.name === 'Castigator');
+  const ftTot = markets.find((m) => m.name === 'Total game-uri');
+  const s1Ml = markets.find((m) => m.name === 'Castigator Set 1');
+  const s1Tot = markets.find((m) => m.name === 'Total game-uri Set 1');
+  const s1Ah = markets.find((m) => m.name === 'Handicap Set 1');
+
+  assert.equal(ftMl.period, 'fulltime');
+  assert.equal(ftTot.period, 'fulltime');
+  assert.equal(s1Ml.period, 'set1');
+  assert.equal(s1Tot.period, 'set1');
+  assert.equal(s1Ah.period, 'set1');
+
+  const ftMlContract = resolveContract(ftMl);
+  const ftTotContract = resolveContract(ftTot);
+  const s1MlContract = resolveContract(s1Ml);
+  const s1TotContract = resolveContract(s1Tot);
+  const s1AhContract = resolveContract(s1Ah);
+
+  assert.equal(ftMlContract.family, 'MATCH_ODDS');
+  assert.equal(ftTotContract.family, 'OVER_UNDER');
+  assert.equal(s1MlContract.family, 'MATCH_ODDS');
+  assert.equal(s1TotContract.family, 'OVER_UNDER');
+  assert.equal(s1AhContract.family, 'ASIAN_HANDICAP');
+
+  const ftMlKey = bucketKeyForContract('ev2', ftMlContract);
+  const ftTotKey = bucketKeyForContract('ev2', ftTotContract);
+  const s1MlKey = bucketKeyForContract('ev2', s1MlContract);
+  const s1TotKey = bucketKeyForContract('ev2', s1TotContract);
+  const s1AhKey = bucketKeyForContract('ev2', s1AhContract);
+
+  assert.equal(ftMlKey, 'ev2::MATCH_ODDS::fulltime::_::home+away::_::_');
+  assert.equal(ftTotKey, 'ev2::OVER_UNDER::fulltime::22.5::over+under::games::match');
+  assert.equal(s1MlKey, 'ev2::MATCH_ODDS::set1::_::home+away::_::_');
+  assert.equal(s1TotKey, 'ev2::OVER_UNDER::set1::9.5::over+under::games::match');
+  assert.equal(s1AhKey, 'ev2::ASIAN_HANDICAP::set1::-1.5/1.5::home+away::_::_');
+
+  assert.notEqual(ftMlKey, s1MlKey);
+  assert.notEqual(ftTotKey, s1TotKey);
+});
+
+test('NSoft: full-time match winner prioritized over sub-window 2-way winner when appearing second in feed', () => {
+  const s = new NSoft('maxbet', { sport: 'tennis', windowHours: 24 });
+  const event = {
+    id: 777999,
+    sportId: 3, // Tennis on MaxBet
+    active: 1,
+    startsAt: new Date(Date.now() + 3600000).toISOString(),
+    tournamentName: 'US Open',
+    competitors: [
+      { id: 301, type: 1, name: 'Daniil Medvedev' },
+      { id: 302, type: 2, name: 'Alexander Zverev' },
+    ],
+    markets: [
+      // Set 1 Winner appears FIRST in raw feed array
+      {
+        id: 3001,
+        marketId: 44,
+        name: 'Castigator Set 1',
+        active: 1,
+        specialValues: [],
+        outcomes: [
+          { id: 701, outcomeId: 1, active: 1, name: '1', odd: 1.80 },
+          { id: 702, outcomeId: 2, active: 1, name: '2', odd: 2.05 },
+        ],
+      },
+      // FT Winner appears SECOND in raw feed array
+      {
+        id: 3002,
+        marketId: 33,
+        name: 'Castigator Meci',
+        active: 1,
+        specialValues: [],
+        outcomes: [
+          { id: 703, outcomeId: 1, active: 1, name: '1', odd: 1.75 },
+          { id: 704, outcomeId: 2, active: 1, name: '2', odd: 2.15 },
+        ],
+      },
+    ],
+  };
+
+  const out = s.extractEvents([event]);
+  assert.equal(out.length, 1);
+  const markets = out[0].markets;
+  assert.equal(markets.length, 2);
+
+  // First market emitted is the full-time match winner
+  assert.equal(markets[0].name, 'Castigator Meci');
+  assert.equal(markets[0].period, 'fulltime');
+  assert.equal(resolveContract(markets[0]).family, 'MATCH_ODDS');
+
+  // Second market is the Set 1 winner
+  assert.equal(markets[1].name, 'Castigator Set 1');
+  assert.equal(markets[1].period, 'set1');
+  assert.equal(resolveContract(markets[1]).family, 'MATCH_ODDS');
+});
+
+test('NSoft: basketball 3-way quarter 1X2 market extraction and deterministic bucket isolation', () => {
+  const s = new NSoft('admiral', { sport: 'basketball', windowHours: 24 });
+  const event = {
+    id: 555111,
+    sportId: 13, // Basketball on Admiral
+    active: 1,
+    startsAt: new Date(Date.now() + 3600000).toISOString(),
+    tournamentName: 'EuroLeague',
+    competitors: [
+      { id: 401, type: 1, name: 'Real Madrid' },
+      { id: 402, type: 2, name: 'Barcelona' },
+    ],
+    markets: [
+      // FT Winner (2-way)
+      {
+        id: 5001,
+        marketId: 85,
+        name: 'Castigator meci (inc. OT)',
+        active: 1,
+        specialValues: [],
+        outcomes: [
+          { id: 801, outcomeId: 1, active: 1, name: '1', odd: 1.65 },
+          { id: 802, outcomeId: 2, active: 1, name: '2', odd: 2.25 },
+        ],
+      },
+      // Q1 1X2 (3-way)
+      {
+        id: 5002,
+        marketId: 211,
+        name: 'Rezultat Sfertul 1',
+        active: 1,
+        specialValues: [],
+        outcomes: [
+          { id: 803, outcomeId: 1, active: 1, name: '1', odd: 1.85 },
+          { id: 804, outcomeId: 4, active: 1, name: 'X', odd: 11.0 },
+          { id: 805, outcomeId: 7, active: 1, name: '2', odd: 2.10 },
+        ],
+      },
+      // Q2 1X2 (3-way)
+      {
+        id: 5003,
+        marketId: 212,
+        name: '1X2 Sfertul 2',
+        active: 1,
+        specialValues: [],
+        outcomes: [
+          { id: 806, outcomeId: 1, active: 1, name: '1', odd: 1.80 },
+          { id: 807, outcomeId: 4, active: 1, name: 'X', odd: 12.0 },
+          { id: 808, outcomeId: 7, active: 1, name: '2', odd: 2.15 },
+        ],
+      },
+    ],
+  };
+
+  const out = s.extractEvents([event]);
+  assert.equal(out.length, 1);
+  const markets = out[0].markets;
+  assert.equal(markets.length, 3);
+
+  const ftWinner = markets.find((m) => m.name === 'Castigator meci (inc. OT)');
+  const q1Result = markets.find((m) => m.name === 'Rezultat Sfertul 1');
+  const q2Result = markets.find((m) => m.name === '1X2 Sfertul 2');
+
+  assert.equal(ftWinner.period, 'fulltime');
+  assert.equal(q1Result.period, 'q1');
+  assert.equal(q2Result.period, 'q2');
+
+  assert.equal(q1Result.key, '1X2');
+  assert.equal(q2Result.key, '1X2');
+  assert.equal(q1Result.selections.length, 3);
+  assert.equal(q2Result.selections.length, 3);
+
+  const ftContract = resolveContract(ftWinner);
+  const q1Contract = resolveContract(q1Result);
+  const q2Contract = resolveContract(q2Result);
+
+  assert.equal(ftContract.family, 'MATCH_ODDS');
+  assert.equal(q1Contract.family, 'MATCH_ODDS');
+  assert.equal(q2Contract.family, 'MATCH_ODDS');
+
+  const ftKey = bucketKeyForContract('evB', ftContract);
+  const q1Key = bucketKeyForContract('evB', q1Contract);
+  const q2Key = bucketKeyForContract('evB', q2Contract);
+
+  assert.equal(ftKey, 'evB::MATCH_ODDS::fulltime::_::home+away::_::_');
+  assert.equal(q1Key, 'evB::MATCH_ODDS::q1::_::home+draw+away::_::_');
+  assert.equal(q2Key, 'evB::MATCH_ODDS::q2::_::home+draw+away::_::_');
+
+  assert.notEqual(ftKey, q1Key);
+  assert.notEqual(q1Key, q2Key);
+});
+
+test('NSoft: basketball half sub-window derivatives and bucket isolation', () => {
+  const s = new NSoft('maxbet', { sport: 'basketball', windowHours: 24 });
+  const event = {
+    id: 666222,
+    sportId: 17, // Basketball on MaxBet
+    active: 1,
+    startsAt: new Date(Date.now() + 3600000).toISOString(),
+    tournamentName: 'NBA',
+    competitors: [
+      { id: 501, type: 1, name: 'Boston Celtics' },
+      { id: 502, type: 2, name: 'Miami Heat' },
+    ],
+    markets: [
+      // FT Winner
+      {
+        id: 6001,
+        marketId: 101,
+        name: 'Castigator Meci',
+        active: 1,
+        specialValues: [],
+        outcomes: [
+          { id: 811, outcomeId: 1, active: 1, name: '1', odd: 1.45 },
+          { id: 812, outcomeId: 2, active: 1, name: '2', odd: 2.80 },
+        ],
+      },
+      // Half 1 Winner (2-way)
+      {
+        id: 6002,
+        marketId: 102,
+        name: 'Castigator Prima Repriza',
+        active: 1,
+        specialValues: [],
+        outcomes: [
+          { id: 813, outcomeId: 1, active: 1, name: '1', odd: 1.55 },
+          { id: 814, outcomeId: 2, active: 1, name: '2', odd: 2.45 },
+        ],
+      },
+      // Half 1 Points Total
+      {
+        id: 6003,
+        marketId: 103,
+        name: 'Total puncte Repriza 1',
+        active: 1,
+        specialValues: ['105.5'],
+        outcomes: [
+          { id: 815, outcomeId: 10, active: 1, name: 'Peste 105.5', odd: 1.90 },
+          { id: 816, outcomeId: 11, active: 1, name: 'Sub 105.5', odd: 1.90 },
+        ],
+      },
+      // Half 1 Point Spread
+      {
+        id: 6004,
+        marketId: 104,
+        name: 'Handicap Repriza 1',
+        active: 1,
+        specialValues: ['-3.5'],
+        outcomes: [
+          { id: 817, outcomeId: 20, active: 1, name: 'H1 -3.5', odd: 1.88 },
+          { id: 818, outcomeId: 21, active: 1, name: 'H2 3.5', odd: 1.92 },
+        ],
+      },
+    ],
+  };
+
+  const out = s.extractEvents([event]);
+  assert.equal(out.length, 1);
+  const markets = out[0].markets;
+  assert.equal(markets.length, 4);
+
+  const ftWin = markets.find((m) => m.name === 'Castigator Meci');
+  const h1Win = markets.find((m) => m.name === 'Castigator Prima Repriza');
+  const h1Tot = markets.find((m) => m.name === 'Total puncte Repriza 1');
+  const h1Spr = markets.find((m) => m.name === 'Handicap Repriza 1');
+
+  assert.equal(ftWin.period, 'fulltime');
+  assert.equal(h1Win.period, 'half1');
+  assert.equal(h1Tot.period, 'half1');
+  assert.equal(h1Spr.period, 'half1');
+
+  const ftWinContract = resolveContract(ftWin);
+  const h1WinContract = resolveContract(h1Win);
+  const h1TotContract = resolveContract(h1Tot);
+  const h1SprContract = resolveContract(h1Spr);
+
+  assert.equal(ftWinContract.family, 'MATCH_ODDS');
+  assert.equal(h1WinContract.family, 'MATCH_ODDS');
+  assert.equal(h1TotContract.family, 'OVER_UNDER');
+  assert.equal(h1SprContract.family, 'ASIAN_HANDICAP');
+
+  const ftKey = bucketKeyForContract('evH', ftWinContract);
+  const h1WinKey = bucketKeyForContract('evH', h1WinContract);
+  const h1TotKey = bucketKeyForContract('evH', h1TotContract);
+  const h1SprKey = bucketKeyForContract('evH', h1SprContract);
+
+  assert.equal(ftKey, 'evH::MATCH_ODDS::fulltime::_::home+away::_::_');
+  assert.equal(h1WinKey, 'evH::MATCH_ODDS::half1::_::home+away::_::_');
+  assert.equal(h1TotKey, 'evH::OVER_UNDER::half1::105.5::over+under::points::match');
+  assert.equal(h1SprKey, 'evH::ASIAN_HANDICAP::half1::-3.5/3.5::home+away::points::_');
+
+  assert.notEqual(ftKey, h1WinKey);
+});
+
+test('NSoft: tennis multi-set sub-window derivatives (set1, set2, set3)', () => {
+  const s = new NSoft('stanleybet', { sport: 'tennis', windowHours: 24 });
+  const event = {
+    id: 777333,
+    sportId: 16, // Tennis on Stanleybet
+    active: 1,
+    startsAt: new Date(Date.now() + 3600000).toISOString(),
+    tournamentName: 'Wimbledon',
+    competitors: [
+      { id: 601, type: 1, name: 'Novak Djokovic' },
+      { id: 602, type: 2, name: 'Rafael Nadal' },
+    ],
+    markets: [
+      // FT Winner
+      {
+        id: 7001,
+        marketId: 34,
+        name: 'Castigator',
+        active: 1,
+        specialValues: [],
+        outcomes: [
+          { id: 821, outcomeId: 1, active: 1, name: '1', odd: 1.70 },
+          { id: 822, outcomeId: 2, active: 1, name: '2', odd: 2.15 },
+        ],
+      },
+      // Set 1 Winner
+      {
+        id: 7002,
+        marketId: 461,
+        name: 'Castigator Set 1',
+        active: 1,
+        specialValues: [],
+        outcomes: [
+          { id: 823, outcomeId: 1, active: 1, name: '1', odd: 1.75 },
+          { id: 824, outcomeId: 2, active: 1, name: '2', odd: 2.10 },
+        ],
+      },
+      // Set 2 Winner
+      {
+        id: 7003,
+        marketId: 462,
+        name: 'Castigator Set 2',
+        active: 1,
+        specialValues: [],
+        outcomes: [
+          { id: 825, outcomeId: 1, active: 1, name: '1', odd: 1.80 },
+          { id: 826, outcomeId: 2, active: 1, name: '2', odd: 2.00 },
+        ],
+      },
+      // Set 3 Winner
+      {
+        id: 7004,
+        marketId: 463,
+        name: 'Castigator Set 3',
+        active: 1,
+        specialValues: [],
+        outcomes: [
+          { id: 827, outcomeId: 1, active: 1, name: '1', odd: 1.85 },
+          { id: 828, outcomeId: 2, active: 1, name: '2', odd: 1.95 },
+        ],
+      },
+      // Set 2 Total Games
+      {
+        id: 7005,
+        marketId: 464,
+        name: 'Total game-uri Set 2',
+        active: 1,
+        specialValues: ['9.5'],
+        outcomes: [
+          { id: 829, outcomeId: 10, active: 1, name: 'Peste 9.5', odd: 1.95 },
+          { id: 830, outcomeId: 11, active: 1, name: 'Sub 9.5', odd: 1.85 },
+        ],
+      },
+    ],
+  };
+
+  const out = s.extractEvents([event]);
+  assert.equal(out.length, 1);
+  const markets = out[0].markets;
+  assert.equal(markets.length, 5);
+
+  const ftWin = markets.find((m) => m.name === 'Castigator');
+  const s1Win = markets.find((m) => m.name === 'Castigator Set 1');
+  const s2Win = markets.find((m) => m.name === 'Castigator Set 2');
+  const s3Win = markets.find((m) => m.name === 'Castigator Set 3');
+  const s2Tot = markets.find((m) => m.name === 'Total game-uri Set 2');
+
+  assert.equal(ftWin.period, 'fulltime');
+  assert.equal(s1Win.period, 'set1');
+  assert.equal(s2Win.period, 'set2');
+  assert.equal(s3Win.period, 'set3');
+  assert.equal(s2Tot.period, 'set2');
+
+  const ftKey = bucketKeyForContract('evT', resolveContract(ftWin));
+  const s1Key = bucketKeyForContract('evT', resolveContract(s1Win));
+  const s2Key = bucketKeyForContract('evT', resolveContract(s2Win));
+  const s3Key = bucketKeyForContract('evT', resolveContract(s3Win));
+  const s2TotKey = bucketKeyForContract('evT', resolveContract(s2Tot));
+
+  assert.equal(ftKey, 'evT::MATCH_ODDS::fulltime::_::home+away::_::_');
+  assert.equal(s1Key, 'evT::MATCH_ODDS::set1::_::home+away::_::_');
+  assert.equal(s2Key, 'evT::MATCH_ODDS::set2::_::home+away::_::_');
+  assert.equal(s3Key, 'evT::MATCH_ODDS::set3::_::home+away::_::_');
+  assert.equal(s2TotKey, 'evT::OVER_UNDER::set2::9.5::over+under::games::match');
+
+  assert.notEqual(ftKey, s1Key);
+  assert.notEqual(s1Key, s2Key);
+  assert.notEqual(s2Key, s3Key);
+});
+
+test('NSoft: 3-way period outcome extraction with PR labels and shortcut 0 for draw', () => {
+  const s = new NSoft('stanleybet', { sport: 'basketball', windowHours: 24 });
+  const event = {
+    id: 888111,
+    sportId: 13, // Basketball on Stanleybet
+    active: 1,
+    startsAt: new Date(Date.now() + 3600000).toISOString(),
+    tournamentName: 'Euroleague',
+    competitors: [
+      { id: 701, type: 1, name: 'Panathinaikos' },
+      { id: 702, type: 2, name: 'Olympiacos' },
+    ],
+    markets: [
+      // FT Winner
+      {
+        id: 8001,
+        marketId: 50,
+        name: 'Castigator Meci',
+        active: 1,
+        specialValues: [],
+        outcomes: [
+          { id: 901, outcomeId: 1, active: 1, name: '1', odd: 1.80 },
+          { id: 902, outcomeId: 2, active: 1, name: '2', odd: 2.05 },
+        ],
+      },
+      // Quarter 1 1X2 with PR-style outcome naming and shortcut '0' for draw
+      {
+        id: 8002,
+        marketId: 51,
+        name: 'Prima Repriza 1X2',
+        active: 1,
+        specialValues: [],
+        outcomes: [
+          { id: 903, outcomeId: 19, shortcut: '1', active: 1, name: 'PR 1', odd: 2.20 },
+          { id: 904, outcomeId: 22, shortcut: '0', active: 1, name: 'PR X', odd: 3.10 },
+          { id: 905, outcomeId: 25, shortcut: '2', active: 1, name: 'PR 2', odd: 2.30 },
+        ],
+      },
+    ],
+  };
+
+  const out = s.extractEvents([event]);
+  assert.equal(out.length, 1);
+  const markets = out[0].markets;
+  assert.equal(markets.length, 2);
+
+  const ftWin = markets.find((m) => m.name === 'Castigator Meci');
+  const h1_1x2 = markets.find((m) => m.name === 'Prima Repriza 1X2');
+
+  assert.ok(ftWin);
+  assert.ok(h1_1x2);
+  assert.equal(ftWin.period, 'fulltime');
+  assert.equal(h1_1x2.period, 'half1');
+  assert.equal(h1_1x2.key, '1X2');
+  assert.deepEqual(h1_1x2.selections.map((sel) => sel.name), ['1', 'X', '2']);
+
+  const ftContract = resolveContract(ftWin);
+  const h1Contract = resolveContract(h1_1x2);
+
+  assert.equal(ftContract.family, 'MATCH_ODDS');
+  assert.equal(ftContract.period, 'fulltime');
+  assert.deepEqual(ftContract.outcomes, ['home', 'away']);
+
+  assert.equal(h1Contract.family, 'MATCH_ODDS');
+  assert.equal(h1Contract.period, 'half1');
+  assert.deepEqual(h1Contract.outcomes, ['home', 'draw', 'away']);
+
+  const ftBucket = bucketKeyForContract('evN', ftContract);
+  const h1Bucket = bucketKeyForContract('evN', h1Contract);
+
+  assert.equal(ftBucket, 'evN::MATCH_ODDS::fulltime::_::home+away::_::_');
+  assert.equal(h1Bucket, 'evN::MATCH_ODDS::half1::_::home+draw+away::_::_');
+  assert.notEqual(ftBucket, h1Bucket, 'Fulltime 2-way and Half 1 3-way must never share bucket key');
+});
+
 

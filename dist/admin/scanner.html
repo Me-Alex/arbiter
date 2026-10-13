@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="ro">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <title>Arbiter — Scanner</title>
+  <script src="/js/theme.js"></script>
+  <link rel="stylesheet" href="/css/theme.css">
+  <link rel="stylesheet" href="/css/arbedge.css">
+  <link rel="stylesheet" href="/css/scanner.css">
+</head>
+<body>
+  <main>
+    <div class="page-header">
+      <div>
+        <h1 data-i18n="scanner">Scanner</h1>
+        <div class="text-xs muted mt-1" data-i18n="scannerSubtitle">Run a manual scan against the current workspace</div>
+      </div>
+      <div class="meta">
+        <span class="sse-status chip green" id="sse-status" data-connected-text="Live" data-disconnected-text="Reconnecting"><span class="dot live"></span><span data-i18n="live">Live</span></span>
+        <button class="ghost lang-toggle" data-lang-toggle>RO</button>
+      </div>
+    </div>
+
+    <div id="scan-empty" class="hidden"></div>
+    <section class="scan-summary" aria-label="Scan overview">
+      <div class="summary-item"><span class="summary-label" data-i18n="dataHealth">Data health</span><strong id="health-state">—</strong><span id="health-detail" class="summary-detail">—</span></div>
+      <div class="summary-item"><span class="summary-label" data-i18n="lastUpdated">Last updated</span><strong id="scan-updated">—</strong><span id="scan-events" class="summary-detail">—</span></div>
+      <div class="summary-item"><span class="summary-label" data-i18n="signalMix">Signal mix</span><strong id="signal-mix">—</strong><span class="summary-detail" data-i18n="sortedByMargin">Margin-sorted opportunities</span></div>
+      <div class="summary-item"><span class="summary-label" data-i18n="liveSignals">In-play signals</span><strong id="live-count">—</strong><span class="summary-detail" data-i18n="liveSignalsNote">Settle on the score as it stands</span></div>
+      <div class="summary-item"><span class="summary-label" data-i18n="verificationTotals">Verification</span><strong id="verification-mix" aria-live="polite">—</strong><span class="summary-detail" data-i18n="verificationTotalsNote">Rejected and expired rows are dropped from the tables below</span></div>
+    </section>
+
+    <div id="scan-sport-indicator" class="hidden mb-3"></div>
+
+    <!-- Alerts: the same scan, filtered down to what is worth interrupting for -->
+    <div class="card mb-5" id="alerts-card">
+      <h3>
+        <span><span class="text-red">●</span> <span data-i18n="alertsLabel">Alerts</span></span>
+        <span class="h3-meta" id="alerts-count" aria-live="polite">—</span>
+      </h3>
+      <div class="grid cols-6 gap-4">
+        <div class="field"><label for="alert-min-roi" data-i18n="alertMinMargin">Min arb margin %</label><input type="number" id="alert-min-roi" step="0.1" min="0"></div>
+        <div class="field"><label for="alert-mid-roi" data-i18n="alertMinMiddleRoi">Min middle ROI %</label><input type="number" id="alert-mid-roi" step="0.5" min="0"></div>
+        <div class="field"><label for="alert-cooldown" data-i18n="alertCooldown">Cooldown (s)</label><input type="number" id="alert-cooldown" step="5" min="0"></div>
+        <div class="field"><label for="alert-quiet-from" data-i18n="alertQuietFrom">Quiet from</label><input type="time" id="alert-quiet-from"></div>
+        <div class="field"><label for="alert-quiet-to" data-i18n="alertQuietTo">Quiet to</label><input type="time" id="alert-quiet-to"></div>
+        <div class="field">
+          <label data-i18n="alertChannels">Channels</label>
+          <label class="checkbox"><input type="checkbox" id="alert-desktop"><span data-i18n="alertDesktop">desktop</span></label>
+          <label class="checkbox"><input type="checkbox" id="alert-sound"><span data-i18n="alertSound">sound</span></label>
+          <label class="checkbox"><input type="checkbox" id="alert-quiet-enabled"><span data-i18n="alertQuietEnabled">quiet hours</span></label>
+          <label class="checkbox" title="In-play prices expire in 90 seconds — an alert naming one is usually an alert you cannot act on"><input type="checkbox" id="alert-live"><span data-i18n="alertIncludeLive">in-play</span></label>
+        </div>
+      </div>
+      <div class="mt-2 row">
+        <button class="primary" id="alerts-save" data-i18n="alertsSave">Save alerts</button>
+        <span class="muted text-xs" id="alerts-note">—</span>
+      </div>
+      <div class="table-wrap table-clean mt-3">
+        <table class="compact" id="alerts-table">
+          <caption class="sr-only">Signals clearing the alert thresholds</caption>
+          <thead><tr>
+            <th scope="col" data-i18n="match">Match</th>
+            <th scope="col" data-i18n="market">Market</th>
+            <th scope="col" class="num" data-i18n="roi">ROI %</th>
+            <th scope="col" class="num" data-i18n="riskPct">Risk %</th>
+            <th scope="col" data-i18n="bookmaker">Book</th>
+            <th scope="col" data-i18n="status">Status</th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Scan parameters -->
+    <div class="card scan-controls mb-5" aria-label="Scan parameters">
+          <h3>
+          <span data-i18n="scanParams">Scan parameters</span>
+          <span class="h3-meta" data-i18n="previewOnly">Preview only · does not replace the published run</span>
+        </h3>
+      <div class="grid cols-6 gap-4">
+        <div class="field"><label for="sport-filter" data-i18n="sport">Sport</label><select id="sport-filter"><option value="" data-i18n="allSports">All sports</option></select></div>
+        <div class="field"><label for="bankroll" data-i18n="bankroll">Bankroll</label><input type="number" id="bankroll" value="1000" min="10"></div>
+        <div class="field"><label for="min-roi" data-i18n="minMargin">Min margin %</label><input type="number" id="min-roi" value="0" step="0.1"></div>
+        <div class="field"><label for="mid-risk" data-i18n="maxMiddleRisk">Max middle risk %</label><input type="number" id="mid-risk" value="15" step="0.5"></div>
+        <div class="field"><label for="mid-roi" data-i18n="minMiddleRoi">Min middle ROI %</label><input type="number" id="mid-roi" value="20" step="0.5"></div>
+        <div class="field"><label for="profile" data-i18n="profile">Profile</label><select id="profile"></select></div>
+      </div>
+      <div class="mt-2 row">
+        <button class="primary" id="rescan" data-i18n="rescan">Re-scan</button>
+        <button class="ghost" id="reverify" data-i18n="reverify" title="Re-check the legs of the published scan against the books, and retire confirmations whose event has settled">Re-verify</button>
+        <label class="checkbox" title="In-play events settle on the score as it stands, and their prices expire in 90 seconds">
+          <input type="checkbox" id="inc-live"><span data-i18n="includeLive">include live</span>
+        </label>
+        <span class="muted text-xs" id="live-window-note">—</span>
+      </div>
+    </div>
+
+    <!-- Arbitrage + Middles -->
+    <div class="grid cols-2 mb-5">
+      <div class="card scanner-section">
+        <h3>
+          <span><span class="text-green">●</span> <span data-i18n="arbitrage">Arbitrage</span></span>
+          <span class="h3-meta" id="arb-count" aria-live="polite">0</span>
+          <a class="meta accent" href="/api/scan/export.csv?type=opportunities" download data-i18n="exportCsvArbitrage">Export CSV · Arbitrage</a>
+        </h3>
+        <div class="table-wrap table-clean">
+          <table class="compact" id="arb-table">
+            <caption class="sr-only">Cross-book arbitrage opportunities</caption>
+            <thead><tr>
+              <th scope="col" data-i18n="match">Match</th>
+              <th scope="col" data-i18n="market">Market</th>
+              <th scope="col" class="num" data-i18n="roi">ROI %</th>
+              <th scope="col" class="num" data-i18n="stake">Stake</th>
+              <th scope="col" class="num" data-i18n="profit">Profit</th>
+              <th scope="col" data-i18n="status">Status</th>
+            </tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card scanner-section">
+        <h3>
+          <span><span class="text-purple">●</span> <span data-i18n="middlesLabel">Middles</span></span>
+          <span class="h3-meta" id="mid-count" aria-live="polite">0</span>
+          <a class="meta accent" href="/api/scan/export.csv?type=middles" download data-i18n="exportCsvMiddles">Export CSV · Middles</a>
+        </h3>
+        <div class="table-wrap table-clean">
+          <table class="compact" id="mid-table">
+            <caption class="sr-only">Cross-book middle opportunities</caption>
+            <thead><tr>
+              <th scope="col" data-i18n="match">Match</th>
+              <th scope="col" data-i18n="lines">Lines</th>
+              <th scope="col" class="num" data-i18n="roi">ROI %</th>
+              <th scope="col" class="num" data-i18n="riskPct">Risk %</th>
+              <th scope="col" data-i18n="status">Status</th>
+            </tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- +EV -->
+    <div class="card scanner-section">
+      <h3>
+        <span><span class="text-yellow">●</span> <span data-i18n="positiveEv">Positive EV</span></span>
+        <span class="h3-meta" data-i18n="top100ByEv">Top 100 by EV</span>
+        <a class="meta accent" href="/api/scan/export.csv?type=positiveEv" download data-i18n="exportCsvPositiveEv">Export CSV · Positive EV</a>
+      </h3>
+      <div class="table-wrap table-clean">
+        <table class="compact" id="ev-table">
+          <caption class="sr-only">Top 100 selections by expected value</caption>
+          <thead><tr>
+            <th scope="col" data-i18n="match">Match</th>
+            <th scope="col" data-i18n="selection">Selection</th>
+            <th scope="col" data-i18n="bookmaker">Book</th>
+            <th scope="col" class="num" data-i18n="odds">Odds</th>
+            <th scope="col" class="num" data-i18n="evPct">EV %</th>
+            <th scope="col" class="num" data-i18n="consensus">Consensus</th>
+            <th scope="col" class="num" data-i18n="stake">Stake</th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Low hold: the one family the engine computes on every scan and no page
+         rendered. Analytics counted the array; the signals themselves had no
+         table until here, while `lowHoldLabel` sat translated in both
+         dictionaries waiting for it. -->
+    <div class="card scanner-section">
+      <h3>
+        <span><span class="text-blue">●</span> <span data-i18n="lowHoldLabel">Low hold</span></span>
+        <span class="h3-meta" id="low-count" aria-live="polite">0</span>
+        <a class="meta accent" href="/api/scan/export.csv?type=lowHold" download data-i18n="exportCsvLowHold">Export CSV · Low hold</a>
+      </h3>
+      <div class="table-wrap table-clean">
+        <table class="compact" id="low-table">
+          <caption class="sr-only">Markets priced below the usual margin</caption>
+          <thead><tr>
+            <th scope="col" data-i18n="match">Match</th>
+            <th scope="col" data-i18n="market">Market</th>
+            <th scope="col" data-i18n="bookmaker">Book</th>
+            <th scope="col" class="num" data-i18n="selections">Selections</th>
+            <th scope="col" class="num" data-i18n="holdPct">Hold %</th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/i18n.js"></script>
+  <script src="/js/sse.js"></script>
+  <script src="/js/app.js"></script>
+  <script src="/js/pages/common.js"></script>
+  <script src="/js/connection-status.js"></script>
+  <script src="/js/alerts.js"></script>
+    <script src="/js/pages/scanner.js"></script>
+</body>
+</html>

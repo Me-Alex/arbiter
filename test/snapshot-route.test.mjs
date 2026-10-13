@@ -24,46 +24,77 @@ import assert from 'node:assert/strict';
 import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { codeOnly } from './helpers/code-only.mjs';
+import { createRequire } from 'node:module';
+const { parse } = createRequire(import.meta.url)('espree');
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url));
 const read = (rel) => readFileSync(join(ROOT, rel), 'utf8');
 
 /* ── the writer ────────────────────────────────────────────────────────────── */
 
-/**
- * The keys one `_serializable` puts into the document it returns.
- *
- * Both written forms, because the base uses the shorthand and every override
- * uses the explicit one: `dataStatus,` is a key, and an instrument that reads
- * only `key:` calls it a key the files invented. The first version of this did,
- * and reported 6 keys where the base has 9.
- *
- * Bounded twice, both times because getting it wrong is silent rather than loud.
- * The outer bound stops at the next `}` in column 2, which is where the method
- * ends — without it the scan runs into `extractEvents` and credits that method's
- * keys to the document. The inner bound stops at the `};` that closes the
- * returned literal, because a `return { ...spread, key }` can be followed by more
- * code in the same method; without it `promise` came out as an emitted key and
- * was then reported missing on all 22 captures.
- *
- * @param {string} source one adapter's source, comments already blanked
- * @returns {string[]|null} null when the file declares no `_serializable`
+/** Read returned object keys by syntax, including spreads and local aliases.
+ * Unknown shapes fail explicitly; nested value keys are not document keys.
  */
-function serializableKeys(source) {
-  const lines = source.split(/\r?\n/);
-  const at = lines.findIndex((line) => /^ {2}_serializable\(/.test(line));
-  if (at === -1) return null;
-  const close = lines.findIndex((line, i) => i > at && line === '  }');
-  const body = lines.slice(at, close === -1 ? undefined : close).join('\n');
-  const ret = body.indexOf('return {');
-  if (ret === -1) throw new Error('a _serializable with no `return {` — the cut moved');
-  const literal = body.slice(ret, body.indexOf('};', ret));
-  const keys = new Set([
-    ...[...literal.matchAll(/^ {4,6}(\w+):/gm)].map((m) => m[1]),
-    ...[...literal.matchAll(/^ {4,6}(\w+),$/gm)].map((m) => m[1]),
-  ]);
-  if (!keys.size) throw new Error('a _serializable whose returned literal yields no keys — the cut moved');
+function serializableKeys(source, inherited = []) {
+  const tree = parse(source, { ecmaVersion: 'latest', sourceType: 'module' });
+  const methods = [];
+  function walk(node, visit) {
+    if (!node || typeof node !== 'object') return;
+    if (Array.isArray(node)) { node.forEach((child) => walk(child, visit)); return; }
+    visit(node);
+    for (const value of Object.values(node)) if (value && typeof value === 'object') walk(value, visit);
+  }
+  walk(tree, (node) => {
+    if (node.type === 'MethodDefinition' && (node.key.name || node.key.value) === '_serializable') methods.push(node);
+  });
+  if (!methods.length) return null;
+  const keys = new Set();
+  for (const method of methods) {
+    const bindings = new Map();
+    const writes = new Map();
+    const returns = [];
+    walk(method.value.body, (node) => {
+      if (node.type === 'VariableDeclarator') bindings.set(node.id.name, node.init);
+      if (node.type === 'ReturnStatement') returns.push(node.argument);
+      if (node.type === 'AssignmentExpression' && node.left.type === 'MemberExpression') {
+        let member = node.left;
+        while (member.object.type === 'MemberExpression') member = member.object;
+        if (member.object.type === 'Identifier') {
+          const key = member.computed ? member.property.value : member.property.name;
+          assert.equal(typeof key, 'string', 'unresolved computed serializer property');
+          const name = member.object.name;
+          if (!writes.has(name)) writes.set(name, new Set());
+          writes.get(name).add(key);
+        }
+      }
+      assert.ok(!(node.type === 'UnaryExpression' && node.operator === 'delete'),
+        'a serializer deletes a key; its returned shape needs explicit analysis');
+    });
+    function returned(node, seen = new Set()) {
+      assert.ok(node, 'a serializer returns no document');
+      if (node.type === 'ObjectExpression') return node.properties.flatMap((p) => {
+        if (p.type === 'SpreadElement') return returned(p.argument, seen);
+        const key = p.computed ? p.key.value : p.key.name ?? p.key.value;
+        assert.equal(typeof key, 'string', 'unresolved serializer key');
+        return [key];
+      });
+      if (node.type === 'Identifier') {
+        assert.ok(!seen.has(node.name) && bindings.has(node.name), `unresolved serializer alias: ${node.name}`);
+        return [...returned(bindings.get(node.name), new Set([...seen, node.name])), ...(writes.get(node.name) || [])];
+      }
+      if (node.type === 'CallExpression' && node.callee.type === 'MemberExpression') {
+        if (node.callee.object.type === 'Super' && node.callee.property.name === '_serializable') return inherited;
+        if (node.callee.object.name === 'Object' && node.callee.property.name === 'assign') {
+          return node.arguments.flatMap((arg) => returned(arg, seen));
+        }
+      }
+      if (node.type === 'ConditionalExpression') return [...returned(node.consequent, seen), ...returned(node.alternate, seen)];
+      throw new Error(`unresolved serializer return shape: ${node.type}`);
+    }
+    assert.ok(returns.length > 0, 'a serializer has no return');
+    for (const value of returns) for (const key of returned(value)) keys.add(key);
+  }
+  assert.ok(keys.size > 0, 'a serializer yielded no document keys');
   return [...keys].sort();
 }
 
@@ -79,40 +110,16 @@ function mjsFiles(dir) {
 }
 
 const adapterFiles = mjsFiles('src/scrapers');
+const BASE_KEYS = serializableKeys(read('src/scrapers/base.mjs'));
 const overrides = new Map();
 for (const file of adapterFiles) {
-  const keys = serializableKeys(codeOnly(read(file), true));
+  const keys = serializableKeys(read(file), BASE_KEYS);
   if (keys) overrides.set(file, keys);
 }
 
-/** The base writer's own keys — read by the same instrument, not a second rule. */
-const BASE_KEYS = serializableKeys(codeOnly(read('src/scrapers/base.mjs'), true));
-
-/**
- * Every key the route can publish, base included.
- *
- * The union rather than the base, because an override spreads the base's
- * document and adds its own keys — `...super._serializable(events, raw)` is in
- * every one of them, so nothing an override writes is lost, and everything the
- * base writes survives unless an override deletes it. No override does, which is
- * asserted below rather than assumed.
- */
-const PUBLISHED = [...new Set([...BASE_KEYS, ...[...overrides.values()].flat()])].sort();
-
-/**
- * What `GET /api/snapshot/:sourceId` publishes, measured.
- *
- * 13 keys. Four of them come from overrides rather than the base: `coverage`
- * from 9 adapters, `sourceUrl` from 7, `transport` from 6, `scrapeLimits` from
- * `favbet.mjs` alone. The route serves the document verbatim — readSnapshotRoute
- * hands the parsed file straight to sendJson — so this list is the payload.
- */
-const SNAPSHOT_TOP = [
-  'capturedAt', 'coverage', 'dataStatus', 'discovery', 'events', 'extraction',
-  'observedAt', 'runId', 'schemaVersion', 'scrapeLimits', 'sourceId', 'sourceUrl', 'transport',
-];
-
-/* ── the stored sample ─────────────────────────────────────────────────────── */
+// Parent serializers also join this union, so forwarding an inherited
+// document does not lose keys introduced between an adapter and the base.
+const PUBLISHED = [...new Set([...overrides.values()].flat())].sort();
 
 const SAMPLE_DIR = 'data-market-run/workspace';
 const sampleFiles = readdirSync(join(ROOT, SAMPLE_DIR)).filter((f) => f.endsWith('_events.json'));
@@ -244,20 +251,40 @@ const unreachable = [...sampleKeys].filter((k) => !PUBLISHED.includes(k)).sort()
  * It is the same shape as the pinned list in field-census.test.mjs, for the same
  * reason — a hand-kept list is a list that stops being true quietly.
  */
-test('the snapshot route publishes exactly the keys the writers write', () => {
-  assert.deepEqual(PUBLISHED, SNAPSHOT_TOP,
-    'a writer gained or lost a key — re-measure it and decide whether the route still means to serve it verbatim');
-  assert.deepEqual(BASE_KEYS,
-    ['capturedAt', 'dataStatus', 'discovery', 'events', 'extraction', 'observedAt', 'runId', 'schemaVersion', 'sourceId'],
-    'the base writer no longer emits this set — every override spreads it, so a change here lands on all 26 books');
-  // The union is only the published shape because no override drops a base key,
-  // and every one of them spreads rather than rebuilds. Both are claims about
-  // 13 files, and both are cheap to check and impossible to notice by reading.
-  assert.ok(overrides.size >= 13, `found ${overrides.size} _serializable overrides — the scan missed some`);
-  const rebuilding = [...overrides].filter(([file]) => file !== 'src/scrapers/base.mjs'
-    && !/\.\.\.super\._serializable\(/.test(read(file)));
-  assert.deepEqual(rebuilding, [],
-    'these overrides do not spread the base document, so the union above is not the published shape');
+test('the snapshot route publishes exactly the keys the writers write', async () => {
+  const runtimeKeys = new Set();
+  const measuredFiles = new Set();
+  for (const file of adapterFiles) {
+    const exports = await import(new URL(`../${file}`, import.meta.url));
+    for (const value of Object.values(exports)) {
+      if (typeof value?.prototype?._serializable !== 'function') continue;
+      // Serialization needs no constructor, browser, network or persisted data.
+      const receiver = Object.assign(Object.create(value.prototype), {
+        id: 'census', runId: 'census', sports: ['football'], maxEvents: 1,
+      });
+      const doc = receiver._serializable([], {});
+      assert.ok(doc && Object.keys(doc).length > 0, `${file}: serializer returned no keys`);
+      for (const key of BASE_KEYS) assert.ok(Object.hasOwn(doc, key), `${file}: lost base key ${key}`);
+      Object.keys(doc).forEach((key) => runtimeKeys.add(key));
+      if (Object.hasOwn(value.prototype, '_serializable')) measuredFiles.add(file);
+    }
+  }
+  assert.ok(measuredFiles.size > 0, 'no serializer exports were exercised');
+  assert.deepEqual([...measuredFiles].sort(), [...overrides.keys()].sort(), 'a declared serializer was not exercised');
+  assert.deepEqual(PUBLISHED, [...runtimeKeys].sort(), 'the parser missed a key returned by a real serializer');
+});
+
+test('the serializer census handles returned aliases and compact objects', () => {
+  const inherited = ['events', 'sourceId'];
+  for (const body of [
+    'return { ...super._serializable(events, raw), coverage: { nested: true }, sourceUrl: this.url };',
+    'const doc = super._serializable(events, raw); doc.coverage = {}; doc.sourceUrl = this.url; return doc;',
+    'const doc = { ...super._serializable(events, raw), coverage: {} }; const alias = doc; return Object.assign(alias, { sourceUrl: this.url });',
+  ]) {
+    assert.deepEqual(serializableKeys(`class Writer { _serializable(events, raw) { ${body} } }`, inherited),
+      [...inherited, 'coverage', 'sourceUrl'].sort());
+  }
+  assert.throws(() => serializableKeys('class Writer { _serializable() { return {}; } }'), /no document keys/);
 });
 
 /**
@@ -291,31 +318,54 @@ test('the stored captures describe a writer this tree no longer has', () => {
 });
 
 /**
- * The excuse the closure check carries for this route names only fields the
- * route can actually serve.
+ * The route is wired to a page, and what that page receives is the union above.
  *
- * `api-surface.test.mjs` holds the only entry that lets `/api/snapshot/` have no
- * consumer, and its reason used to list four "keys nothing else publishes" —
- * two of them (`marketDiagnostics`, `scrapeLimits`) among keys no fresh capture
- * carries, and `marketDiagnostics` among them because it was in 16 of the 22
- * files above. An excuse is only as good as what it claims, so the claim is
- * checked here against the writers this file measures.
+ * This used to audit an excuse: `/api/snapshot/` sat in api-surface's
+ * BACKEND_ONLY with a reason describing the payload, and the claim was checked
+ * here against the writers this file measures. It was a check on a sentence.
+ *
+ * The sentence was wrong, and wrong in the direction this file exists to
+ * prevent: the dashboard has shipped a link to this route for longer than the
+ * excuse existed — one download icon per source in the source-health rows,
+ * `href="/api/snapshot/${…sourceId…}"`. So the route was never diagnostic-only;
+ * a page reads it, by name, per click. The excuse is gone from
+ * api-surface.test.mjs and the closure check verifies the consumer instead.
+ *
+ * What replaces the audit is the two facts that make the consumer safe, both
+ * measured here rather than asserted from a paragraph: the route is not excused
+ * (so the check cannot be switched off again by re-adding a sentence), and the
+ * document the link receives is the whole capture — no column list between the
+ * read and the send, because the payload is whatever `_serializable` returned.
  */
-test('the closure check\'s excuse for this route names only reachable keys', () => {
+test('the snapshot route is wired to the page that links to it, unfiltered', () => {
+  // The forward guard, in the direction the old file could not check. If the
+  // entry comes back, the closure check skips this route again while the
+  // dashboard still links to it — the census reporting full closure over a
+  // route it is no longer reading. That is the same hole twice, and this is
+  // where it is seen rather than nowhere.
   const surface = read('test/api-surface.test.mjs');
-  const at = surface.indexOf("route: 'GET /api/snapshot/'");
-  assert.notEqual(at, -1, '/api/snapshot/ left BACKEND_ONLY — the census here may be answering a question nothing asks');
-  const reason = /reason:\s*'((?:[^'\\]|\\.)*)'/.exec(surface.slice(at))?.[1] ?? '';
-  assert.ok(reason.length > 40, 'the entry carries no reason to check');
-  const named = [...new Set([...reason.matchAll(/`(\w+)`/g)].map((m) => m[1]))]
-    // A leading underscore marks a member of the code, not a field of the
-    // document — the reason names `_serializable`, the method that builds the
-    // payload, and the check below is about the payload.
-    .filter((k) => !k.startsWith('_'));
-  assert.ok(named.length >= 3, `the reason names ${named.length} document keys — the check below has nothing to check`);
-  const unreachableNamed = named.filter((k) => !PUBLISHED.includes(k));
-  assert.deepEqual(unreachableNamed, [],
-    `the excuse names keys this route cannot serve: ${unreachableNamed.join(', ')} — measured against the writers above`);
+  assert.equal(surface.includes("route: 'GET /api/snapshot/'"), false,
+    '/api/snapshot/ is excused again — the closure check will skip the link the dashboard ships, and the two files disagree');
+
+  // The link itself, read out of the page rather than out of this paragraph.
+  const dashboard = read('public/js/pages/dashboard.js');
+  assert.match(dashboard, /href="\/api\/snapshot\/\$\{[^"]*sourceId[^"]*}"[^>]*\bdownload\b/,
+    'the dashboard no longer offers a snapshot download');
+
+  // And the payload that link receives. `readSnapshotRoute` reads the parsed
+  // capture and hands it straight to sendJson, so the union this file measures
+  // is the contract; a column list appearing between the two would make every
+  // key above unreachable through the route the page calls.
+  const router = read('src/router.mjs');
+  const start = router.indexOf('async function readSnapshotRoute');
+  assert.notEqual(start, -1, 'readSnapshotRoute is gone — the dashboard link has nothing to call');
+  const body = router.slice(start, router.indexOf('\n}', start));
+  assert.match(body, /sendJson\(res, 200, snapshot\)/,
+    'the snapshot route no longer answers with the capture it read');
+  assert.doesNotMatch(body.slice(body.indexOf('readJson'), body.indexOf('sendJson')), /\bmap\(|\.filter\(|\[[^\]]*(?:coverage|sourceUrl|transport)\b/,
+    'a column list appeared between the read and the send — the writers\' union above is no longer what the page receives');
+  assert.ok(PUBLISHED.length >= 9, `the measured union has ${PUBLISHED.length} keys, so the guards above would pass on a payload with none`);
+  for (const key of BASE_KEYS) assert.ok(PUBLISHED.includes(key), `base key ${key} is not in the measured union`);
 });
 
 /**

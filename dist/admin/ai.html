@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="ro">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <title>Arbiter — Scan Insights</title>
+  <script src="/js/theme.js"></script>
+  <link rel="stylesheet" href="/css/theme.css">
+  <link rel="stylesheet" href="/css/arbedge.css">
+  <link rel="stylesheet" href="/css/ai.css">
+  <meta name="description" content="Deterministic insights and published scan data health">
+</head>
+<body>
+  <main>
+    <div class="page-header">
+      <div>
+        <h1 data-i18n="ai">AI Insights</h1>
+        <div class="text-xs muted mt-1" data-i18n="aiSubtitle">Deterministic summaries from the current verified scan</div>
+      </div>
+      <div class="meta">
+        <span class="chip outline" data-i18n="scanDerived">scan-derived</span>
+        <span class="sse-status chip green" id="sse-status" data-connected-text="Live" data-disconnected-text="Reconnecting"><span class="dot live"></span><span data-i18n="live">Live</span></span>
+        <button class="ghost lang-toggle" data-lang-toggle>RO</button>
+      </div>
+    </div>
+
+    <div class="grid cols-2 ai-overview gap-5">
+      <div class="card card-elevated ai-health-card">
+        <h3>
+          <span data-i18n="dataHealth">Data health</span>
+          <span class="h3-meta" data-i18n="fromPublishedScan">from the published scan</span>
+        </h3>
+        <div id="scan-health" class="empty" data-i18n="loadingScanHealth" aria-live="polite">loading published scan health…</div>
+      </div>
+
+      <!-- Insights -->
+      <div class="card">
+        <h3>
+          <span data-i18n="insights">Insights</span>
+          <span class="h3-meta" id="insights-count">—</span>
+        </h3>
+        <div id="ai-insights" class="empty" data-i18n="noInsights" aria-live="polite">no insights yet</div>
+      </div>
+    </div>
+  </main>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/i18n.js"></script>
+  <script src="/js/sse.js"></script>
+  <script src="/js/app.js"></script>
+  <script src="/js/pages/common.js"></script>
+  <script src="/js/connection-status.js"></script>
+  <script src="/js/pages/ai.js"></script>
+</body>
+</html>

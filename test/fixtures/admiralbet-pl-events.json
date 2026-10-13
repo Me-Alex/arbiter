@@ -1,0 +1,2589 @@
+{
+  "type": "r-events",
+  "subId": "6f43db8b-9d11-4f08-ab1a-5e4070e887a2",
+  "offset": 0,
+  "size": 9,
+  "total": 9,
+  "items": [
+    {
+      "id": "BRUF#sr:match:72043200",
+      "event": {
+        "mn": 112,
+        "mnp": null,
+        "mnl": null,
+        "hasMarginZeroMarket": false,
+        "id": "BRUF#sr:match:72043200",
+        "version": 11,
+        "mappings": {
+          "BRUF": "sr:match:72043200"
+        },
+        "bettableVotes": [],
+        "fixture": {
+          "path": {
+            "sportId": "1",
+            "categoryId": "47",
+            "competitionId": "BRUF#sr:tournament:202",
+            "seasonId": "142342",
+            "competitionOrder": "0",
+            "competitionGroupOrder": "1",
+            "competitionName": "Ekstraklasa",
+            "competitionIcon": "Poland",
+            "competitionIconType": "NPSCountryFlags",
+            "roundName": "UNAVAILABLE",
+            "sportNodeId": "pilka_nozna",
+            "competitionPath": "pilka_nozna/polska/ekstraklasa"
+          },
+          "sportNodeId": "pilka_nozna",
+          "categoryNodeId": "polska",
+          "competitionNodeId": "ekstraklasa",
+          "startTime": "2026-10-16T16:00:00Z",
+          "eventName": {
+            "name": "Wieczysta Krakow vs. RKS Rakow Czestochowa",
+            "localizedName": {
+              "pl": "Wieczysta Krakow vs. Raków Częstochowa"
+            }
+          },
+          "isVirtual": false,
+          "competitors": [
+            {
+              "id": "sr:competitor:406863",
+              "mappings": {
+                "BRUF": "sr:competitor:406863"
+              },
+              "name": {
+                "name": "Wieczysta Krakow",
+                "localizedName": {}
+              },
+              "homeAway": "HOME",
+              "abbreviations": {
+                "name": "WIE",
+                "localizedName": {}
+              }
+            },
+            {
+              "id": "sr:competitor:35268",
+              "mappings": {
+                "BRUF": "sr:competitor:35268"
+              },
+              "name": {
+                "name": "RKS Rakow Czestochowa",
+                "localizedName": {
+                  "pl": "Raków Częstochowa"
+                }
+              },
+              "homeAway": "AWAY",
+              "abbreviations": {
+                "name": "CZE",
+                "localizedName": {}
+              }
+            }
+          ],
+          "players": [],
+          "exProperties": {},
+          "expectedResultingTime": "2026-10-16T16:00:00Z",
+          "tvChannels": [],
+          "extraInfo": null,
+          "isLive": false,
+          "isOutright": false,
+          "isFantasy": false,
+          "isLiveFeed": true
+        },
+        "markets": [
+          {
+            "id": "BRUF#sr:match:72043200#1",
+            "oddsSource": {
+              "providerId": "BRUF",
+              "subProviderId": "9903"
+            },
+            "attributes": {
+              "BRUF": {
+                "TYPE_ID": "1"
+              }
+            },
+            "marketType": "10",
+            "state": "OPEN",
+            "isLiveFeed": false,
+            "name": {
+              "name": "1X2",
+              "localizedName": {
+                "en": "1X2",
+                "pl": "1X2"
+              }
+            },
+            "isNamed": false,
+            "isFreeText": false,
+            "groups": [
+              "all"
+            ],
+            "selections": [
+              {
+                "id": "1",
+                "typeId": "1",
+                "mappings": {},
+                "isPlayer": false,
+                "name": {
+                  "name": "Wieczysta Krakow",
+                  "localizedName": {
+                    "en": "Wieczysta Krakow",
+                    "pl": "Wieczysta Krakow"
+                  }
+                },
+                "segments": {
+                  "DEFAULT": {
+                    "price": "2.36"
+                  }
+                },
+                "probability": "0.4038568172016512",
+                "results": [],
+                "ordinal": 0,
+                "isNamed": false,
+                "isActive": true
+              },
+              {
+                "id": "2",
+                "typeId": "2",
+                "mappings": {},
+                "isPlayer": false,
+                "name": {
+                  "name": "Draw",
+                  "localizedName": {
+                    "en": "Draw",
+                    "pl": "Remis"
+                  }
+                },
+                "segments": {
+                  "DEFAULT": {
+                    "price": "3.8"
+                  }
+                },
+                "probability": "0.2508163391041834",
+                "results": [],
+                "ordinal": 1,
+                "isNamed": false,
+                "isActive": true
+              },
+              {
+                "id": "3",
+                "typeId": "3",
+                "mappings": {},
+                "isPlayer": false,
+                "name": {
+                  "name": "RKS Rakow Czestochowa",
+                  "localizedName": {
+                    "en": "RKS Rakow Czestochowa",
+                    "pl": "Raków Częstochowa"
+                  }
+                },
+                "segments": {
+                  "DEFAULT": {
+                    "price": "2.76"
+                  }
+                },
+                "probability": "0.34532684369416555",
+                "results": [],
+                "ordinal": 2,
+                "isNamed": false,
+                "isActive": true
+              }
+            ],
+            "specifierValues": {},
+            "isBettable": true,
+            "bettableVotes": [],
+            "isDerived": false,
+            "orderNumber": 1,
+            "marginZeroMarket": null
+          },
+          {
+            "id": "BRUF#sr:match:72043200#29",
+            "oddsSource": {
+              "providerId": "BRUF",
+              "subProviderId": "9903"
+            },
+            "attributes": {
+              "BRUF": {
+                "TYPE_ID": "29"
+              }
+            },
+            "marketType": "43",
+            "state": "OPEN",
+            "isLiveFeed": false,
+            "name": {
+              "name": "Both Teams to Score",
+              "localizedName": {
+                "en": "Both Teams to Score",
+                "pl": "Obie drużyny strzelą gola"
+              }
+            },
+            "isNamed": false,
+            "isFreeText": false,
+            "groups": [
+              "all"
+            ],
+            "selections": [
+              {
+                "id": "74",
+                "typeId": "74",
+                "mappings": {},
+                "isPlayer": false,
+                "name": {
+                  "name": "Yes",
+                  "localizedName": {
+                    "en": "Yes",
+                    "pl": "Tak"
+                  }
+                },
+                "segments": {
+                  "DEFAULT": {
+                    "price": "1.47"
+                  }
+                },
+                "probability": "0.6466346153846154",
+                "results": [],
+                "ordinal": 0,
+                "isNamed": false,
+                "isActive": true
+              },
+              {
+                "id": "76",
+                "typeId": "76",
+                "mappings": {},
+                "isPlayer": false,
+                "name": {
+                  "name": "No",
+                  "localizedName": {
+                    "en": "No",
+                    "pl": "Nie"
+                  }
+                },
+                "segments": {
+                  "DEFAULT": {
+                    "price": "2.69"
+                  }
+                },
+                "probability": "0.35336538461538464",
+                "results": [],
+                "ordinal": 1,
+                "isNamed": false,
+                "isActive": true
+              }
+            ],
+            "specifierValues": {},
+            "isBettable": true,
+            "bettableVotes": [],
+            "isDerived": false,
+            "orderNumber": 15,
+            "marginZeroMarket": null
+          }
+        ],
+        "outrightMarkets": [],
+        "matchInfo": {
+          "eventStatus": "NOTSTARTED",
+          "matchScore": null,
+          "matchTime": null,
+          "matchInfoDetails": null,
+          "matchStatus": 0,
+          "matchStatusDescription": {
+            "pl": "Not started"
+          },
+          "lastUpdate": "2026-10-09T17:13:18.604Z"
+        },
+        "isBettable": true
+      }
+    },
+    {
+      "id": "BRUF#sr:match:72043206",
+      "event": {
+        "mn": 111,
+        "mnp": null,
+        "mnl": null,
+        "hasMarginZeroMarket": false,
+        "id": "BRUF#sr:match:72043206",
+        "version": 25,
+        "mappings": {
+          "BRUF": "sr:match:72043206"
+        },
+        "bettableVotes": [],
+        "fixture": {
+          "path": {
+            "sportId": "1",
+            "categoryId": "47",
+            "competitionId": "BRUF#sr:tournament:202",
+            "groupId": "Ekstraklasa",
+            "seasonId": "142342",
+            "competitionOrder": "0",
+            "competitionGroupOrder": "1",
+            "competitionName": "Ekstraklasa",
+            "competitionIcon": "Poland",
+            "competitionIconType": "NPSCountryFlags",
+            "roundName": "UNAVAILABLE",
+            "sportNodeId": "pilka_nozna",
+            "competitionPath": "pilka_nozna/polska/ekstraklasa"
+          },
+          "sportNodeId": "pilka_nozna",
+          "categoryNodeId": "polska",
+          "competitionNodeId": "ekstraklasa",
+          "startTime": "2026-10-16T18:30:00Z",
+          "eventName": {
+            "name": "Widzew Lodz vs. Wisla Krakow",
+            "localizedName": {
+              "pl": "Widzew Łódź vs. Wisła Kraków"
+            }
+          },
+          "isVirtual": false,
+          "competitors": [
+            {
+              "id": "sr:competitor:3115",
+              "mappings": {
+                "BRUF": "sr:competitor:3115"
+              },
+              "name": {
+                "name": "Widzew Lodz",
+                "localizedName": {
+                  "pl": "Widzew Łódź"
+                }
+              },
+              "homeAway": "HOME",
+              "abbreviations": {
+                "name": "WLO",
+                "localizedName": {
+                  "pl": "LOD"
+                }
+              }
+            },
+            {
+              "id": "sr:competitor:3111",
+              "mappings": {
+                "BRUF": "sr:competitor:3111"
+              },
+              "name": {
+                "name": "Wisla Krakow",
+                "localizedName": {
+                  "pl": "Wisła Kraków"
+                }
+              },
+              "homeAway": "AWAY",
+              "abbreviations": {
+                "name": "WIS",
+                "localizedName": {}
+              }
+            }
+          ],
+          "players": [],
+          "exProperties": {
+            "BR_HAS_HOSTED_STATISTICS": "true"
+          },
+          "expectedResultingTime": "2026-10-16T18:30:00Z",
+          "tvChannels": [],
+          "extraInfo": null,
+          "isLive": false,
+          "isOutright": false,
+          "isFantasy": false,
+          "isLiveFeed": false
+        },
+        "markets": [
+          {
+            "id": "BRUF#sr:match:72043206#1",
+            "oddsSource": {
+              "providerId": "BRUF",
+              "subProviderId": "9903"
+            },
+            "attributes": {
+              "BRUF": {
+                "TYPE_ID": "1"
+              }
+            },
+            "marketType": "10",
+            "state": "OPEN",
+            "isLiveFeed": false,
+            "name": {
+              "name": "1X2",
+              "localizedName": {
+                "en": "1X2",
+                "pl": "1X2"
+              }
+            },
+            "isNamed": false,
+            "isFreeText": false,
+            "groups": [
+              "all"
+            ],
+            "selections": [
+              {
+                "id": "1",
+                "typeId": "1",
+                "mappings": {},
+                "isPlayer": false,
+                "name": {
+                  "name": "Widzew Lodz",
+                  "localizedName": {
+                    "en": "Widzew Lodz",
+                    "pl": "Widzew Łódź"
+                  }
+                },
+                "segments": {
+                  "DEFAULT": {
+                    "price": "2.35"
+                  }
+                },
+                "probability": "0.4055949490043711",
+                "results": [],
+                "ordinal": 0,
+                "isNamed": false,
+                "isActive": true
+              },
+              {
+                "id": "2",
+                "typeId": "2",
+                "mappings": {},
+                "isPlayer": false,
+                "name": {
+                  "name": "Draw",
+                  "localizedName": {
+                    "en": "Draw",
+                    "pl": "Remis"
+                  }
+                },
+                "segments": {
+                  "DEFAULT": {
+                    "price": "3.65"
+                  }
+                },
+                "probability": "0.2611364740165129",
+                "results": [],
+                "ordinal": 1,
+                "isNamed": false,
+                "isActive": true
+              },
+              {
+                "id": "3",
+                "typeId": "3",
+                "mappings": {},
+                "isPlayer": false,
+                "name": {
+                  "name": "Wisla Krakow",
+                  "localizedName": {
+                    "en": "Wisla Krakow",
+                    "pl": "Wisła Kraków"
+                  }
+                },
+                "segments": {
+                  "DEFAULT": {
+                    "price": "2.86"
+                  }
+                },
+                "probability": "0.33326857697911616",
+                "results": [],
+                "ordinal": 2,
+                "isNamed": false,
+                "isActive": true
+              }
+            ],
+            "specifierValues": {},
+            "isBettable": true,
+            "bettableVotes": [],
+            "isDerived": false,
+            "orderNumber": 1,
+            "marginZeroMarket": null
+          },
+          {
+            "id": "BRUF#sr:match:72043206#29",
+            "oddsSource": {
+              "providerId": "BRUF",
+              "subProviderId": "9903"
+            },
+            "attributes": {
+              "BRUF": {
+                "TYPE_ID": "29"
+              }
+            },
+            "marketType": "43",
+            "state": "OPEN",
+            "isLiveFeed": false,
+            "name": {
+              "name": "Both Teams to Score",
+              "localizedName": {
+                "en": "Both Teams to Score",
+                "pl": "Obie drużyny strzelą gola"
+              }
+            },
+            "isNamed": false,
+            "isFreeText": false,
+            "groups": [
+              "all"
+            ],
+            "selections": [
+              {
+                "id": "74",
+                "typeId": "74",
+                "mappings": {},
+                "isPlayer": false,
+                "name": {
+                  "name": "Yes",
+                  "localizedName": {
+                    "en": "Yes",
+                    "pl": "Tak"
+                  }
+                },
+                "segments": {
+                  "DEFAULT": {
+                    "price": "1.59"
+                  }
+                },
+                "probability": "0.5994962216624685",
+                "results": [],
+                "ordinal": 0,
+                "isNamed": false,
+                "isActive": true
+              },
+              {
+                "id": "76",
+                "typeId": "76",
+                "mappings": {},
+                "isPlayer": false,
+                "name": {
+                  "name": "No",
+                  "localizedName": {
+                    "en": "No",
+                    "pl": "Nie"
+                  }
+                },
+                "segments": {
+                  "DEFAULT": {
+                    "price": "2.38"
+                  }
+                },
+                "probability": "0.40050377833753154",
+                "results": [],
+                "ordinal": 1,
+                "isNamed": false,
+                "isActive": true
+              }
+            ],
+            "specifierValues": {},
+            "isBettable": true,
+            "bettableVotes": [],
+            "isDerived": false,
+            "orderNumber": 15,
+            "marginZeroMarket": null
+          }
+        ],
+        "outrightMarkets": [],
+        "matchInfo": {
+          "eventStatus": "NOTSTARTED",
+          "matchScore": null,
+          "matchTime": null,
+          "matchInfoDetails": null,
+          "matchStatus": 0,
+          "matchStatusDescription": {
+            "pl": "Not started"
+          },
+          "lastUpdate": "2026-10-09T19:44:18.344Z"
+        },
+        "isBettable": true
+      }
+    },
+    {
+      "id": "BRUF#sr:match:72043198",
+      "event": {
+        "mn": 109,
+        "mnp": null,
+        "mnl": null,
+        "hasMarginZeroMarket": false,
+        "id": "BRUF#sr:match:72043198",
+        "version": 15,
+        "mappings": {
+          "BRUF": "sr:match:72043198"
+        },
+        "bettableVotes": [],
+        "fixture": {
+          "path": {
+            "sportId": "1",
+            "categoryId": "47",
+            "competitionId": "BRUF#sr:tournament:202",
+            "seasonId": "142342",
+            "competitionOrder": "0",
+            "competitionGroupOrder": "1",
+            "competitionName": "Ekstraklasa",
+            "competitionIcon": "Poland",
+            "competitionIconType": "NPSCountryFlags",
+            "roundName": "UNAVAILABLE",
+            "sportNodeId": "pilka_nozna",
+            "competitionPath": "pilka_nozna/polska/ekstraklasa"
+          },
+          "sportNodeId": "pilka_nozna",
+          "categoryNodeId": "polska",
+          "competitionNodeId": "ekstraklasa",
+          "startTime": "2026-10-17T12:45:00Z",
+          "eventName": {
+            "name": "LKP Motor Lublin vs. WKS Slask Wroclaw",
+            "localizedName": {
+              "pl": "Motor Lublin vs. Śląsk Wrocław"
+            }
+          },
+          "isVirtual": false,
+          "competitors": [
+            {
+              "id": "sr:competitor:7915",
+              "mappings": {
+                "BRUF": "sr:competitor:7915"
+              },
+              "name": {
+                "name": "LKP Motor Lublin",
+                "localizedName": {
+                  "pl": "Motor Lublin"
+                }
+              },
+              "homeAway": "HOME",
+              "abbreviations": {
+                "name": "MOT",
+                "localizedName": {}
+              }
+            },
+            {
+              "id": "sr:competitor:3108",
+              "mappings": {
+                "BRUF": "sr:competitor:3108"
+              },
+              "name": {
+                "name": "WKS Slask Wroclaw",
+                "localizedName": {
+                  "pl": "Śląsk Wrocław"
+                }
+              },
+              "homeAway": "AWAY",
+              "abbreviations": {
+                "name": "SLA",
+                "localizedName": {}
+              }
+            }
+          ],
+          "players": [],
+          "exProperties": {},
+          "expectedResultingTime": "2026-10-17T12:45:00Z",
+          "tvChannels": [],
+          "extraInfo": null,
+          "isLive": false,
+          "isOutright": false,
+          "isFantasy": false,
+          "isLiveFeed": false
+        },
+        "markets": [
+          {
+            "id": "BRUF#sr:match:72043198#1",
+            "oddsSource": {
+              "providerId": "BRUF",
+              "subProviderId": "9903"
+            },
+            "attributes": {
+              "BRUF": {
+                "TYPE_ID": "1"
+              }
+            },
+            "marketType": "10",
+            "state": "OPEN",
+            "isLiveFeed": false,
+            "name": {
+              "name": "1X2",
+              "localizedName": {
+                "en": "1X2",
+                "pl": "1X2"
+              }
+            },
+            "isNamed": false,
+            "isFreeText": false,
+            "groups": [
+              "all"
+            ],
+            "selections": [
+              {
+                "id": "1",
+                "typeId": "1",
+                "mappings": {},
+                "isPlayer": false,
+                "name": {
+                  "name": "LKP Motor Lublin",
+                  "localizedName": {
+                    "en": "LKP Motor Lublin",
+                    "pl": "Motor Lublin"
+                  }
+                },
+                "segments": {
+                  "DEFAULT": {
+                    "price": "2.02"
+                  }
+                },
+                "probability": "0.4723473248063413",
+                "results": [],
+                "ordinal": 0,
+                "isNamed": false,
+                "isActive": true
+              },
+              {
+                "id": "2",
+                "typeId": "2",
+                "mappings": {},
+                "isPlayer": false,
+                "name": {
+                  "name": "Draw",
+                  "localizedName": {
+                    "en": "Draw",
+                    "pl": "Remis"
+                  }
+                },
+                "segments": {
+                  "DEFAULT": {
+                    "price": "3.8"
+                  }
+                },
+                "probability": "0.25108989371284457",
+                "results": [],
+                "ordinal": 1,
+                "isNamed": false,
+                "isActive": true
+              },
+              {
+                "id": "3",
+                "typeId": "3",
+                "mappings": {},
+                "isPlayer": false,
+                "name": {
+                  "name": "WKS Slask Wroclaw",
+                  "localizedName": {
+                    "en": "WKS Slask Wroclaw",
+                    "pl": "Śląsk Wrocław"
+                  }
+                },
+                "segments": {
+                  "DEFAULT": {
+                    "price": "3.45"
+                  }
+                },
+                "probability": "0.27656278148081426",
+                "results": [],
+                "ordinal": 2,
+                "isNamed": false,
+                "isActive": true
+              }
+            ],
+            "specifierValues": {},
+            "isBettable": true,
+            "bettableVotes": [],
+            "isDerived": false,
+            "orderNumber": 1,
+            "marginZeroMarket": null
+          },
+          {
+            "id": "BRUF#sr:match:72043198#29",
+            "oddsSource": {
+              "providerId": "BRUF",
+              "subProviderId": "9903"
+            },
+            "attributes": {
+              "BRUF": {
+                "TYPE_ID": "29"
+              }
+            },
+            "marketType": "43",
+            "state": "OPEN",
+            "isLiveFeed": false,
+            "name": {
+              "name": "Both Teams to Score",
+              "localizedName": {
+                "en": "Both Teams to Score",
+                "pl": "Obie drużyny strzelą gola"
+              }
+            },
+            "isNamed": false,
+            "isFreeText": false,
+            "groups": [
+              "all"
+            ],
+            "selections": [
+              {
+                "id": "74",
+                "typeId": "74",
+                "mappings": {},
+                "isPlayer": false,
+                "name": {
+                  "name": "Yes",
+                  "localizedName": {
+                    "en": "Yes",
+                    "pl": "Tak"
+                  }
+                },
+                "segments": {
+                  "DEFAULT": {
+                    "price": "1.54"
+                  }
+                },
+                "probability": "0.6178660049627792",
+                "results": [],
+                "ordinal": 0,
+                "isNamed": false,
+                "isActive": true
+              },
+              {
+                "id": "76",
+                "typeId": "76",
+                "mappings": {},
+                "isPlayer": false,
+                "name": {
+                  "name": "No",
+                  "localizedName": {
+                    "en": "No",
+                    "pl": "Nie"
+                  }
+                },
+                "segments": {
+                  "DEFAULT": {
+                    "price": "2.49"
+                  }
+                },
+                "probability": "0.3821339950372209",
+                "results": [],
+                "ordinal": 1,
+                "isNamed": false,
+                "isActive": true
+              }
+            ],
+            "specifierValues": {},
+            "isBettable": true,
+            "bettableVotes": [],
+            "isDerived": false,
+            "orderNumber": 15,
+            "marginZeroMarket": null
+          }
+        ],
+        "outrightMarkets": [],
+        "matchInfo": {
+          "eventStatus": "NOTSTARTED",
+          "matchScore": null,
+          "matchTime": null,
+          "matchInfoDetails": null,
+          "matchStatus": 0,
+          "matchStatusDescription": {
+            "pl": "Not started"
+          },
+          "lastUpdate": "2026-10-10T13:25:02.629Z"
+        },
+        "isBettable": true
+      }
+    },
+    {
+      "id": "BRUF#sr:match:72043204",
+      "event": {
+        "mn": 111,
+        "mnp": null,
+        "mnl": null,
+        "hasMarginZeroMarket": false,
+        "id": "BRUF#sr:match:72043204",
+        "version": 17,
+        "mappings": {
+          "BRUF": "sr:match:72043204"
+        },
+        "bettableVotes": [],
+        "fixture": {
+          "path": {
+            "sportId": "1",
+            "categoryId": "47",
+            "competitionId": "BRUF#sr:tournament:202",
+            "seasonId": "142342",
+            "competitionOrder": "0",
+            "competitionGroupOrder": "1",
+            "competitionName": "Ekstraklasa",
+            "competitionIcon": "Poland",
+            "competitionIconType": "NPSCountryFlags",
+            "roundName": "UNAVAILABLE",
+            "sportNodeId": "pilka_nozna",
+            "competitionPath": "pilka_nozna/polska/ekstraklasa"
+          },
+          "sportNodeId": "pilka_nozna",
+          "categoryNodeId": "polska",
+          "competitionNodeId": "ekstraklasa",
+          "startTime": "2026-10-17T15:30:00Z",
+          "eventName": {
+            "name": "GKS Katowice vs. Pogon Szczecin",
+            "localizedName": {
+              "pl": "GKS Katowice vs. Pogoń Szczecin"
+            }
+          },
+          "isVirtual": false,
+          "competitors": [
+            {
+              "id": "sr:competitor:3112",
+              "mappings": {
+                "BRUF": "sr:competitor:3112"
+              },
+              "name": {
+                "name": "GKS Katowice",
+                "localizedName": {}
+              },
+              "homeAway": "HOME",
+              "abbreviations": {
+                "name": "KAT",
+                "localizedName": {}
+              }
+            },
+            {
+              "id": "sr:competitor:3117",
+              "mappings": {
+                "BRUF": "sr:competitor:3117"
+              },
+              "name": {
+                "name": "Pogon Szczecin",
+                "localizedName": {
+                  "pl": "Pogoń Szczecin"
+                }
+              },
+              "homeAway": "AWAY",
+              "abbreviations": {
+                "name": "PSZ",
+                "localizedName": {}
+              }
+            }
+          ],
+          "players": [],
+          "exProperties": {},
+          "expectedResultingTime": "2026-10-17T15:30:00Z",
+          "tvChannels": [],
+          "extraInfo": null,
+          "isLive": false,
+          "isOutright": false,
+          "isFantasy": false,
+          "isLiveFeed": false
+        },
+        "markets": [
+          {
+            "id": "BRUF#sr:match:72043204#1",
+            "oddsSource": {
+              "providerId": "BRUF",
+              "subProviderId": "9903"
+            },
+            "attributes": {
+              "BRUF": {
+                "TYPE_ID": "1"
+              }
+            },
+            "marketType": "10",
+            "state": "OPEN",
+            "isLiveFeed": false,
+            "name": {
+              "name": "1X2",
+              "localizedName": {
+                "en": "1X2",
+                "pl": "1X2"
+              }
+            },
+            "isNamed": false,
+            "isFreeText": false,
+            "groups": [
+              "all"
+            ],
+            "selections": [
+              {
+                "id": "1",
+                "typeId": "1",
+                "mappings": {},
+                "isPlayer": false,
+                "name": {
+                  "name": "GKS Katowice",
+                  "localizedName": {
+                    "en": "GKS Katowice",
+                    "pl": "GKS Katowice"
+                  }
+                },
+                "segments": {
+                  "DEFAULT": {
+                    "price": "2.09"
+                  }
+                },
+                "probability": "0.4559803577692038",
+                "results": [],
+                "ordinal": 0,
+                "isNamed": false,
+                "isActive": true
+              },
+              {
+                "id": "2",
+                "typeId": "2",
+                "mappings": {},
+                "isPlayer": false,
+                "name": {
+                  "name": "Draw",
+                  "localizedName": {
+                    "en": "Draw",
+                    "pl": "Remis"
+                  }
+                },
+                "segments": {
+                  "DEFAULT": {
+                    "price": "3.8"
+                  }
+                },
+                "probability": "0.2507891967730621",
+                "results": [],
+                "ordinal": 1,
+                "isNamed": false,
+                "isActive": true
+              },
+              {
+                "id": "3",
+                "typeId": "3",
+                "mappings": {},
+                "isPlayer": false,
+                "name": {
+                  "name": "Pogon Szczecin",
+                  "localizedName": {
+                    "en": "Pogon Szczecin",
+                    "pl": "Pogoń Szczecin"
+                  }
+                },
+                "segments": {
+                  "DEFAULT": {
+                    "price": "3.25"
+                  }
+                },
+                "probability": "0.29323044545773413",
+                "results": [],
+                "ordinal": 2,
+                "isNamed": false,
+                "isActive": true
+              }
+            ],
+            "specifierValues": {},
+            "isBettable": true,
+            "bettableVotes": [],
+            "isDerived": false,
+            "orderNumber": 1,
+            "marginZeroMarket": null
+          },
+          {
+            "id": "BRUF#sr:match:72043204#29",
+            "oddsSource": {
+              "providerId": "BRUF",
+              "subProviderId": "9903"
+            },
+            "attributes": {
+              "BRUF": {
+                "TYPE_ID": "29"
+              }
+            },
+            "marketType": "43",
+            "state": "OPEN",
+            "isLiveFeed": false,
+            "name": {
+              "name": "Both Teams to Score",
+              "localizedName": {
+                "en": "Both Teams to Score",
+                "pl": "Obie drużyny strzelą gola"
+              }
+            },
+            "isNamed": false,
+            "isFreeText": false,
+            "groups": [
+              "all"
+            ],
+            "selections": [
+              {
+                "id": "74",
+                "typeId": "74",
+                "mappings": {},
+                "isPlayer": false,
+                "name": {
+                  "name": "Yes",
+                  "localizedName": {
+                    "en": "Yes",
+                    "pl": "Tak"
+                  }
+                },
+                "segments": {
+                  "DEFAULT": {
+                    "price": "1.49"
+                  }
+                },
+                "probability": "0.6383495145631067",
+                "results": [],
+                "ordinal": 0,
+                "isNamed": false,
+                "isActive": true
+              },
+              {
+                "id": "76",
+                "typeId": "76",
+                "mappings": {},
+                "isPlayer": false,
+                "name": {
+                  "name": "No",
+                  "localizedName": {
+                    "en": "No",
+                    "pl": "Nie"
+                  }
+                },
+                "segments": {
+                  "DEFAULT": {
+                    "price": "2.63"
+                  }
+                },
+                "probability": "0.3616504854368932",
+                "results": [],
+                "ordinal": 1,
+                "isNamed": false,
+                "isActive": true
+              }
+            ],
+            "specifierValues": {},
+            "isBettable": true,
+            "bettableVotes": [],
+            "isDerived": false,
+            "orderNumber": 15,
+            "marginZeroMarket": null
+          }
+        ],
+        "outrightMarkets": [],
+        "matchInfo": {
+          "eventStatus": "NOTSTARTED",
+          "matchScore": null,
+          "matchTime": null,
+          "matchInfoDetails": null,
+          "matchStatus": 0,
+          "matchStatusDescription": {
+            "pl": "Not started"
+          },
+          "lastUpdate": "2026-10-10T16:01:38.526Z"
+        },
+        "isBettable": true
+      }
+    },
+    {
+      "id": "BRUF#sr:match:72043202",
+      "event": {
+        "mn": 108,
+        "mnp": null,
+        "mnl": null,
+        "hasMarginZeroMarket": false,
+        "id": "BRUF#sr:match:72043202",
+        "version": 17,
+        "mappings": {
+          "BRUF": "sr:match:72043202"
+        },
+        "bettableVotes": [],
+        "fixture": {
+          "path": {
+            "sportId": "1",
+            "categoryId": "47",
+            "competitionId": "BRUF#sr:tournament:202",
+            "seasonId": "142342",
+            "competitionOrder": "0",
+            "competitionGroupOrder": "1",
+            "competitionName": "Ekstraklasa",
+            "competitionIcon": "Poland",
+            "competitionIconType": "NPSCountryFlags",
+            "roundName": "UNAVAILABLE",
+            "sportNodeId": "pilka_nozna",
+            "competitionPath": "pilka_nozna/polska/ekstraklasa"
+          },
+          "sportNodeId": "pilka_nozna",
+          "categoryNodeId": "polska",
+          "competitionNodeId": "ekstraklasa",
+          "startTime": "2026-10-17T18:15:00Z",
+          "eventName": {
+            "name": "KS Cracovia Krakow vs. Legia Warszawa",
+            "localizedName": {
+              "pl": "Cracovia Kraków vs. Legia Warszawa"
+            }
+          },
+          "isVirtual": false,
+          "competitors": [
+            {
+              "id": "sr:competitor:4901",
+              "mappings": {
+                "BRUF": "sr:competitor:4901"
+              },
+              "name": {
+                "name": "KS Cracovia Krakow",
+                "localizedName": {
+                  "pl": "Cracovia Kraków"
+                }
+              },
+              "homeAway": "HOME",
+              "abbreviations": {
+                "name": "CRA",
+                "localizedName": {}
+              }
+            },
+            {
+              "id": "sr:competitor:3106",
+              "mappings": {
+                "BRUF": "sr:competitor:3106"
+              },
+              "name": {
+                "name": "Legia Warszawa",
+                "localizedName": {}
+              },
+              "homeAway": "AWAY",
+              "abbreviations": {
+                "name": "LEG",
+                "localizedName": {}
+              }
+            }
+          ],
+          "players": [],
+          "exProperties": {},
+          "expectedResultingTime": "2026-10-17T18:15:00Z",
+          "tvChannels": [],
+          "extraInfo": null,
+          "isLive": false,
+          "isOutright": false,
+          "isFantasy": false,
+          "isLiveFeed": false
+        },
+        "markets": [
+          {
+            "id": "BRUF#sr:match:72043202#1",
+            "oddsSource": {
+              "providerId": "BRUF",
+              "subProviderId": "9903"
+            },
+            "attributes": {
+              "BRUF": {
+                "TYPE_ID": "1"
+              }
+            },
+            "marketType": "10",
+            "state": "OPEN",
+            "isLiveFeed": false,
+            "name": {
+              "name": "1X2",
+              "localizedName": {
+                "en": "1X2",
+                "pl": "1X2"
+              }
+            },
+            "isNamed": false,
+            "isFreeText": false,
+            "groups": [
+              "all"
+            ],
+            "selections": [
+              {
+                "id": "1",
+                "typeId": "1",
+                "mappings": {},
+                "isPlayer": false,
+                "name": {
+                  "name": "KS Cracovia Krakow",
+                  "localizedName": {
+                    "en": "KS Cracovia Krakow",
+                    "pl": "Cracovia Kraków"
+                  }
+                },
+                "segments": {
+                  "DEFAULT": {
+                    "price": "2.85"
+                  }
+                },
+                "probability": "0.33441271710332643",
+                "results": [],
+                "ordinal": 0,
+                "isNamed": false,
+                "isActive": true
+              },
+              {
+                "id": "2",
+                "typeId": "2",
+                "mappings": {},
+                "isPlayer": false,
+                "name": {
+                  "name": "Draw",
+                  "localizedName": {
+                    "en": "Draw",
+                    "pl": "Remis"
+                  }
+                },
+                "segments": {
+                  "DEFAULT": {
+                    "price": "3.55"
+                  }
+                },
+                "probability": "0.2684721813364733",
+                "results": [],
+                "ordinal": 1,
+                "isNamed": false,
+                "isActive": true
+              },
+              {
+                "id": "3",
+                "typeId": "3",
+                "mappings": {},
+                "isPlayer": false,
+                "name": {
+                  "name": "Legia Warszawa",
+                  "localizedName": {
+                    "en": "Legia Warszawa",
+                    "pl": "Legia Warszawa"
+                  }
+                },
+                "segments": {
+                  "DEFAULT": {
+                    "price": "2.4"
+                  }
+                },
+                "probability": "0.39711510156020013",
+                "results": [],
+                "ordinal": 2,
+                "isNamed": false,
+                "isActive": true
+              }
+            ],
+            "specifierValues": {},
+            "isBettable": true,
+            "bettableVotes": [],
+            "isDerived": false,
+            "orderNumber": 1,
+            "marginZeroMarket": null
+          },
+          {
+            "id": "BRUF#sr:match:72043202#29",
+            "oddsSource": {
+              "providerId": "BRUF",
+              "subProviderId": "9903"
+            },
+            "attributes": {
+              "BRUF": {
+                "TYPE_ID": "29"
+              }
+            },
+            "marketType": "43",
+            "state": "OPEN",
+            "isLiveFeed": false,
+            "name": {
+              "name": "Both Teams to Score",
+              "localizedName": {
+                "en": "Both Teams to Score",
+                "pl": "Obie drużyny strzelą gola"
+              }
+            },
+            "isNamed": false,
+            "isFreeText": false,
+            "groups": [
+              "all"
+            ],
+            "selections": [
+              {
+                "id": "74",
+                "typeId": "74",
+                "mappings": {},
+                "isPlayer": false,
+                "name": {
+                  "name": "Yes",
+                  "localizedName": {
+                    "en": "Yes",
+                    "pl": "Tak"
+                  }
+                },
+                "segments": {
+                  "DEFAULT": {
+                    "price": "1.72"
+                  }
+                },
+                "probability": "0.5532467532467532",
+                "results": [],
+                "ordinal": 0,
+                "isNamed": false,
+                "isActive": true
+              },
+              {
+                "id": "76",
+                "typeId": "76",
+                "mappings": {},
+                "isPlayer": false,
+                "name": {
+                  "name": "No",
+                  "localizedName": {
+                    "en": "No",
+                    "pl": "Nie"
+                  }
+                },
+                "segments": {
+                  "DEFAULT": {
+                    "price": "2.13"
+                  }
+                },
+                "probability": "0.44675324675324674",
+                "results": [],
+                "ordinal": 1,
+                "isNamed": false,
+                "isActive": true
+              }
+            ],
+            "specifierValues": {},
+            "isBettable": true,
+            "bettableVotes": [],
+            "isDerived": false,
+            "orderNumber": 15,
+            "marginZeroMarket": null
+          }
+        ],
+        "outrightMarkets": [],
+        "matchInfo": {
+          "eventStatus": "NOTSTARTED",
+          "matchScore": null,
+          "matchTime": null,
+          "matchInfoDetails": null,
+          "matchStatus": 0,
+          "matchStatusDescription": {
+            "pl": "Not started"
+          },
+          "lastUpdate": "2026-10-10T18:57:09.265Z"
+        },
+        "isBettable": true
+      }
+    },
+    {
+      "id": "BRUF#sr:match:72043208",
+      "event": {
+        "mn": 107,
+        "mnp": null,
+        "mnl": null,
+        "hasMarginZeroMarket": false,
+        "id": "BRUF#sr:match:72043208",
+        "version": 15,
+        "mappings": {
+          "BRUF": "sr:match:72043208"
+        },
+        "bettableVotes": [],
+        "fixture": {
+          "path": {
+            "sportId": "1",
+            "categoryId": "47",
+            "competitionId": "BRUF#sr:tournament:202",
+            "seasonId": "142342",
+            "competitionOrder": "0",
+            "competitionGroupOrder": "1",
+            "competitionName": "Ekstraklasa",
+            "competitionIcon": "Poland",
+            "competitionIconType": "NPSCountryFlags",
+            "roundName": "UNAVAILABLE",
+            "sportNodeId": "pilka_nozna",
+            "competitionPath": "pilka_nozna/polska/ekstraklasa"
+          },
+          "sportNodeId": "pilka_nozna",
+          "categoryNodeId": "polska",
+          "competitionNodeId": "ekstraklasa",
+          "startTime": "2026-10-18T10:15:00Z",
+          "eventName": {
+            "name": "Gornik Zabrze vs. GKS Piast Gliwice",
+            "localizedName": {
+              "pl": "Górnik Zabrze vs. Piast Gliwice"
+            }
+          },
+          "isVirtual": false,
+          "competitors": [
+            {
+              "id": "sr:competitor:3110",
+              "mappings": {
+                "BRUF": "sr:competitor:3110"
+              },
+              "name": {
+                "name": "Gornik Zabrze",
+                "localizedName": {
+                  "pl": "Górnik Zabrze"
+                }
+              },
+              "homeAway": "HOME",
+              "abbreviations": {
+                "name": "GOR",
+                "localizedName": {}
+              }
+            },
+            {
+              "id": "sr:competitor:7918",
+              "mappings": {
+                "BRUF": "sr:competitor:7918"
+              },
+              "name": {
+                "name": "GKS Piast Gliwice",
+                "localizedName": {
+                  "pl": "Piast Gliwice"
+                }
+              },
+              "homeAway": "AWAY",
+              "abbreviations": {
+                "name": "PGL",
+                "localizedName": {}
+              }
+            }
+          ],
+          "players": [],
+          "exProperties": {},
+          "expectedResultingTime": "2026-10-18T10:15:00Z",
+          "tvChannels": [],
+          "extraInfo": null,
+          "isLive": false,
+          "isOutright": false,
+          "isFantasy": false,
+          "isLiveFeed": false
+        },
+        "markets": [
+          {
+            "id": "BRUF#sr:match:72043208#1",
+            "oddsSource": {
+              "providerId": "BRUF",
+              "subProviderId": "9903"
+            },
+            "attributes": {
+              "BRUF": {
+                "TYPE_ID": "1"
+              }
+            },
+            "marketType": "10",
+            "state": "OPEN",
+            "isLiveFeed": false,
+            "name": {
+              "name": "1X2",
+              "localizedName": {
+                "en": "1X2",
+                "pl": "1X2"
+              }
+            },
+            "isNamed": false,
+            "isFreeText": false,
+            "groups": [
+              "all"
+            ],
+            "selections": [
+              {
+                "id": "1",
+                "typeId": "1",
+                "mappings": {},
+                "isPlayer": false,
+                "name": {
+                  "name": "Gornik Zabrze",
+                  "localizedName": {
+                    "en": "Gornik Zabrze",
+                    "pl": "Górnik Zabrze"
+                  }
+                },
+                "segments": {
+                  "DEFAULT": {
+                    "price": "1.71"
+                  }
+                },
+                "probability": "0.5582444992131128",
+                "results": [],
+                "ordinal": 0,
+                "isNamed": false,
+                "isActive": true
+              },
+              {
+                "id": "2",
+                "typeId": "2",
+                "mappings": {},
+                "isPlayer": false,
+                "name": {
+                  "name": "Draw",
+                  "localizedName": {
+                    "en": "Draw",
+                    "pl": "Remis"
+                  }
+                },
+                "segments": {
+                  "DEFAULT": {
+                    "price": "4.0"
+                  }
+                },
+                "probability": "0.2386495234136057",
+                "results": [],
+                "ordinal": 1,
+                "isNamed": false,
+                "isActive": true
+              },
+              {
+                "id": "3",
+                "typeId": "3",
+                "mappings": {},
+                "isPlayer": false,
+                "name": {
+                  "name": "GKS Piast Gliwice",
+                  "localizedName": {
+                    "en": "GKS Piast Gliwice",
+                    "pl": "Piast Gliwice"
+                  }
+                },
+                "segments": {
+                  "DEFAULT": {
+                    "price": "4.7"
+                  }
+                },
+                "probability": "0.20310597737328143",
+                "results": [],
+                "ordinal": 2,
+                "isNamed": false,
+                "isActive": true
+              }
+            ],
+            "specifierValues": {},
+            "isBettable": true,
+            "bettableVotes": [],
+            "isDerived": false,
+            "orderNumber": 1,
+            "marginZeroMarket": null
+          },
+          {
+            "id": "BRUF#sr:match:72043208#29",
+            "oddsSource": {
+              "providerId": "BRUF",
+              "subProviderId": "9903"
+            },
+            "attributes": {
+              "BRUF": {
+                "TYPE_ID": "29"
+              }
+            },
+            "marketType": "43",
+            "state": "OPEN",
+            "isLiveFeed": false,
+            "name": {
+              "name": "Both Teams to Score",
+              "localizedName": {
+                "en": "Both Teams to Score",
+                "pl": "Obie drużyny strzelą gola"
+              }
+            },
+            "isNamed": false,
+            "isFreeText": false,
+            "groups": [
+              "all"
+            ],
+            "selections": [
+              {
+                "id": "74",
+                "typeId": "74",
+                "mappings": {},
+                "isPlayer": false,
+                "name": {
+                  "name": "Yes",
+                  "localizedName": {
+                    "en": "Yes",
+                    "pl": "Tak"
+                  }
+                },
+                "segments": {
+                  "DEFAULT": {
+                    "price": "1.7"
+                  }
+                },
+                "probability": "0.5607235142118864",
+                "results": [],
+                "ordinal": 0,
+                "isNamed": false,
+                "isActive": true
+              },
+              {
+                "id": "76",
+                "typeId": "76",
+                "mappings": {},
+                "isPlayer": false,
+                "name": {
+                  "name": "No",
+                  "localizedName": {
+                    "en": "No",
+                    "pl": "Nie"
+                  }
+                },
+                "segments": {
+                  "DEFAULT": {
+                    "price": "2.17"
+                  }
+                },
+                "probability": "0.43927648578811374",
+                "results": [],
+                "ordinal": 1,
+                "isNamed": false,
+                "isActive": true
+              }
+            ],
+            "specifierValues": {},
+            "isBettable": true,
+            "bettableVotes": [],
+            "isDerived": false,
+            "orderNumber": 15,
+            "marginZeroMarket": null
+          }
+        ],
+        "outrightMarkets": [],
+        "matchInfo": {
+          "eventStatus": "NOTSTARTED",
+          "matchScore": null,
+          "matchTime": null,
+          "matchInfoDetails": null,
+          "matchStatus": 0,
+          "matchStatusDescription": {
+            "pl": "Not started"
+          },
+          "lastUpdate": "2026-10-11T10:45:54.917Z"
+        },
+        "isBettable": true
+      }
+    },
+    {
+      "id": "BRUF#sr:match:72043210",
+      "event": {
+        "mn": 108,
+        "mnp": null,
+        "mnl": null,
+        "hasMarginZeroMarket": false,
+        "id": "BRUF#sr:match:72043210",
+        "version": 8,
+        "mappings": {
+          "BRUF": "sr:match:72043210"
+        },
+        "bettableVotes": [],
+        "fixture": {
+          "path": {
+            "sportId": "1",
+            "categoryId": "47",
+            "competitionId": "BRUF#sr:tournament:202",
+            "seasonId": "142342",
+            "competitionOrder": "0",
+            "competitionGroupOrder": "1",
+            "competitionName": "Ekstraklasa",
+            "competitionIcon": "Poland",
+            "competitionIconType": "NPSCountryFlags",
+            "roundName": "UNAVAILABLE",
+            "sportNodeId": "pilka_nozna",
+            "competitionPath": "pilka_nozna/polska/ekstraklasa"
+          },
+          "sportNodeId": "pilka_nozna",
+          "categoryNodeId": "polska",
+          "competitionNodeId": "ekstraklasa",
+          "startTime": "2026-10-18T12:45:00Z",
+          "eventName": {
+            "name": "Zaglebie Lubin vs. Jagiellonia Bialystok",
+            "localizedName": {
+              "pl": "Zagłębie Lubin vs. Jagiellonia Białystok"
+            }
+          },
+          "isVirtual": false,
+          "competitors": [
+            {
+              "id": "sr:competitor:3113",
+              "mappings": {
+                "BRUF": "sr:competitor:3113"
+              },
+              "name": {
+                "name": "Zaglebie Lubin",
+                "localizedName": {
+                  "pl": "Zagłębie Lubin"
+                }
+              },
+              "homeAway": "HOME",
+              "abbreviations": {
+                "name": "ZAG",
+                "localizedName": {}
+              }
+            },
+            {
+              "id": "sr:competitor:7691",
+              "mappings": {
+                "BRUF": "sr:competitor:7691"
+              },
+              "name": {
+                "name": "Jagiellonia Bialystok",
+                "localizedName": {
+                  "pl": "Jagiellonia Białystok"
+                }
+              },
+              "homeAway": "AWAY",
+              "abbreviations": {
+                "name": "JAG",
+                "localizedName": {}
+              }
+            }
+          ],
+          "players": [],
+          "exProperties": {},
+          "expectedResultingTime": "2026-10-18T12:45:00Z",
+          "tvChannels": [],
+          "extraInfo": null,
+          "isLive": false,
+          "isOutright": false,
+          "isFantasy": false,
+          "isLiveFeed": false
+        },
+        "markets": [
+          {
+            "id": "BRUF#sr:match:72043210#1",
+            "oddsSource": {
+              "providerId": "BRUF",
+              "subProviderId": "9903"
+            },
+            "attributes": {
+              "BRUF": {
+                "TYPE_ID": "1"
+              }
+            },
+            "marketType": "10",
+            "state": "OPEN",
+            "isLiveFeed": false,
+            "name": {
+              "name": "1X2",
+              "localizedName": {
+                "en": "1X2",
+                "pl": "1X2"
+              }
+            },
+            "isNamed": false,
+            "isFreeText": false,
+            "groups": [
+              "all"
+            ],
+            "selections": [
+              {
+                "id": "1",
+                "typeId": "1",
+                "mappings": {},
+                "isPlayer": false,
+                "name": {
+                  "name": "Zaglebie Lubin",
+                  "localizedName": {
+                    "en": "Zaglebie Lubin",
+                    "pl": "Zagłębie Lubin"
+                  }
+                },
+                "segments": {
+                  "DEFAULT": {
+                    "price": "2.81"
+                  }
+                },
+                "probability": "0.3395431744329116",
+                "results": [],
+                "ordinal": 0,
+                "isNamed": false,
+                "isActive": true
+              },
+              {
+                "id": "2",
+                "typeId": "2",
+                "mappings": {},
+                "isPlayer": false,
+                "name": {
+                  "name": "Draw",
+                  "localizedName": {
+                    "en": "Draw",
+                    "pl": "Remis"
+                  }
+                },
+                "segments": {
+                  "DEFAULT": {
+                    "price": "3.5"
+                  }
+                },
+                "probability": "0.27260466290185187",
+                "results": [],
+                "ordinal": 1,
+                "isNamed": false,
+                "isActive": true
+              },
+              {
+                "id": "3",
+                "typeId": "3",
+                "mappings": {},
+                "isPlayer": false,
+                "name": {
+                  "name": "Jagiellonia Bialystok",
+                  "localizedName": {
+                    "en": "Jagiellonia Bialystok",
+                    "pl": "Jagiellonia Białystok"
+                  }
+                },
+                "segments": {
+                  "DEFAULT": {
+                    "price": "2.46"
+                  }
+                },
+                "probability": "0.3878521626652364",
+                "results": [],
+                "ordinal": 2,
+                "isNamed": false,
+                "isActive": true
+              }
+            ],
+            "specifierValues": {},
+            "isBettable": true,
+            "bettableVotes": [],
+            "isDerived": false,
+            "orderNumber": 1,
+            "marginZeroMarket": null
+          },
+          {
+            "id": "BRUF#sr:match:72043210#29",
+            "oddsSource": {
+              "providerId": "BRUF",
+              "subProviderId": "9903"
+            },
+            "attributes": {
+              "BRUF": {
+                "TYPE_ID": "29"
+              }
+            },
+            "marketType": "43",
+            "state": "OPEN",
+            "isLiveFeed": false,
+            "name": {
+              "name": "Both Teams to Score",
+              "localizedName": {
+                "en": "Both Teams to Score",
+                "pl": "Obie drużyny strzelą gola"
+              }
+            },
+            "isNamed": false,
+            "isFreeText": false,
+            "groups": [
+              "all"
+            ],
+            "selections": [
+              {
+                "id": "74",
+                "typeId": "74",
+                "mappings": {},
+                "isPlayer": false,
+                "name": {
+                  "name": "Yes",
+                  "localizedName": {
+                    "en": "Yes",
+                    "pl": "Tak"
+                  }
+                },
+                "segments": {
+                  "DEFAULT": {
+                    "price": "1.66"
+                  }
+                },
+                "probability": "0.5743589743589743",
+                "results": [],
+                "ordinal": 0,
+                "isNamed": false,
+                "isActive": true
+              },
+              {
+                "id": "76",
+                "typeId": "76",
+                "mappings": {},
+                "isPlayer": false,
+                "name": {
+                  "name": "No",
+                  "localizedName": {
+                    "en": "No",
+                    "pl": "Nie"
+                  }
+                },
+                "segments": {
+                  "DEFAULT": {
+                    "price": "2.24"
+                  }
+                },
+                "probability": "0.42564102564102557",
+                "results": [],
+                "ordinal": 1,
+                "isNamed": false,
+                "isActive": true
+              }
+            ],
+            "specifierValues": {},
+            "isBettable": true,
+            "bettableVotes": [],
+            "isDerived": false,
+            "orderNumber": 15,
+            "marginZeroMarket": null
+          }
+        ],
+        "outrightMarkets": [],
+        "matchInfo": {
+          "eventStatus": "NOTSTARTED",
+          "matchScore": null,
+          "matchTime": null,
+          "matchInfoDetails": null,
+          "matchStatus": 0,
+          "matchStatusDescription": {
+            "pl": "Not started"
+          },
+          "lastUpdate": "2026-10-11T14:03:31.709Z"
+        },
+        "isBettable": true
+      }
+    },
+    {
+      "id": "BRUF#sr:match:72043214",
+      "event": {
+        "mn": 113,
+        "mnp": null,
+        "mnl": null,
+        "hasMarginZeroMarket": false,
+        "id": "BRUF#sr:match:72043214",
+        "version": 8,
+        "mappings": {
+          "BRUF": "sr:match:72043214"
+        },
+        "bettableVotes": [],
+        "fixture": {
+          "path": {
+            "sportId": "1",
+            "categoryId": "47",
+            "competitionId": "BRUF#sr:tournament:202",
+            "seasonId": "142342",
+            "competitionOrder": "0",
+            "competitionGroupOrder": "1",
+            "competitionName": "Ekstraklasa",
+            "competitionIcon": "Poland",
+            "competitionIconType": "NPSCountryFlags",
+            "roundName": "UNAVAILABLE",
+            "sportNodeId": "pilka_nozna",
+            "competitionPath": "pilka_nozna/polska/ekstraklasa"
+          },
+          "sportNodeId": "pilka_nozna",
+          "categoryNodeId": "polska",
+          "competitionNodeId": "ekstraklasa",
+          "startTime": "2026-10-18T15:30:00Z",
+          "eventName": {
+            "name": "KKS Lech Poznan vs. Korona Kielce",
+            "localizedName": {
+              "pl": "Lech Poznań vs. Korona Kielce"
+            }
+          },
+          "isVirtual": false,
+          "competitors": [
+            {
+              "id": "sr:competitor:3121",
+              "mappings": {
+                "BRUF": "sr:competitor:3121"
+              },
+              "name": {
+                "name": "KKS Lech Poznan",
+                "localizedName": {
+                  "pl": "Lech Poznań"
+                }
+              },
+              "homeAway": "HOME",
+              "abbreviations": {
+                "name": "LPO",
+                "localizedName": {}
+              }
+            },
+            {
+              "id": "sr:competitor:5065",
+              "mappings": {
+                "BRUF": "sr:competitor:5065"
+              },
+              "name": {
+                "name": "Korona Kielce",
+                "localizedName": {}
+              },
+              "homeAway": "AWAY",
+              "abbreviations": {
+                "name": "KOR",
+                "localizedName": {}
+              }
+            }
+          ],
+          "players": [],
+          "exProperties": {},
+          "expectedResultingTime": "2026-10-18T15:30:00Z",
+          "tvChannels": [],
+          "extraInfo": null,
+          "isLive": false,
+          "isOutright": false,
+          "isFantasy": false,
+          "isLiveFeed": false
+        },
+        "markets": [
+          {
+            "id": "BRUF#sr:match:72043214#1",
+            "oddsSource": {
+              "providerId": "BRUF",
+              "subProviderId": "9903"
+            },
+            "attributes": {
+              "BRUF": {
+                "TYPE_ID": "1"
+              }
+            },
+            "marketType": "10",
+            "state": "OPEN",
+            "isLiveFeed": false,
+            "name": {
+              "name": "1X2",
+              "localizedName": {
+                "en": "1X2",
+                "pl": "1X2"
+              }
+            },
+            "isNamed": false,
+            "isFreeText": false,
+            "groups": [
+              "all"
+            ],
+            "selections": [
+              {
+                "id": "1",
+                "typeId": "1",
+                "mappings": {},
+                "isPlayer": false,
+                "name": {
+                  "name": "KKS Lech Poznan",
+                  "localizedName": {
+                    "en": "KKS Lech Poznan",
+                    "pl": "Lech Poznań"
+                  }
+                },
+                "segments": {
+                  "DEFAULT": {
+                    "price": "1.52"
+                  }
+                },
+                "probability": "0.6288264710006074",
+                "results": [],
+                "ordinal": 0,
+                "isNamed": false,
+                "isActive": true
+              },
+              {
+                "id": "2",
+                "typeId": "2",
+                "mappings": {},
+                "isPlayer": false,
+                "name": {
+                  "name": "Draw",
+                  "localizedName": {
+                    "en": "Draw",
+                    "pl": "Remis"
+                  }
+                },
+                "segments": {
+                  "DEFAULT": {
+                    "price": "4.6"
+                  }
+                },
+                "probability": "0.207786138243679",
+                "results": [],
+                "ordinal": 1,
+                "isNamed": false,
+                "isActive": true
+              },
+              {
+                "id": "3",
+                "typeId": "3",
+                "mappings": {},
+                "isPlayer": false,
+                "name": {
+                  "name": "Korona Kielce",
+                  "localizedName": {
+                    "en": "Korona Kielce",
+                    "pl": "Korona Kielce"
+                  }
+                },
+                "segments": {
+                  "DEFAULT": {
+                    "price": "5.85"
+                  }
+                },
+                "probability": "0.1633873907557134",
+                "results": [],
+                "ordinal": 2,
+                "isNamed": false,
+                "isActive": true
+              }
+            ],
+            "specifierValues": {},
+            "isBettable": true,
+            "bettableVotes": [],
+            "isDerived": false,
+            "orderNumber": 1,
+            "marginZeroMarket": null
+          },
+          {
+            "id": "BRUF#sr:match:72043214#29",
+            "oddsSource": {
+              "providerId": "BRUF",
+              "subProviderId": "9903"
+            },
+            "attributes": {
+              "BRUF": {
+                "TYPE_ID": "29"
+              }
+            },
+            "marketType": "43",
+            "state": "OPEN",
+            "isLiveFeed": false,
+            "name": {
+              "name": "Both Teams to Score",
+              "localizedName": {
+                "en": "Both Teams to Score",
+                "pl": "Obie drużyny strzelą gola"
+              }
+            },
+            "isNamed": false,
+            "isFreeText": false,
+            "groups": [
+              "all"
+            ],
+            "selections": [
+              {
+                "id": "74",
+                "typeId": "74",
+                "mappings": {},
+                "isPlayer": false,
+                "name": {
+                  "name": "Yes",
+                  "localizedName": {
+                    "en": "Yes",
+                    "pl": "Tak"
+                  }
+                },
+                "segments": {
+                  "DEFAULT": {
+                    "price": "1.64"
+                  }
+                },
+                "probability": "0.5816326530612245",
+                "results": [],
+                "ordinal": 0,
+                "isNamed": false,
+                "isActive": true
+              },
+              {
+                "id": "76",
+                "typeId": "76",
+                "mappings": {},
+                "isPlayer": false,
+                "name": {
+                  "name": "No",
+                  "localizedName": {
+                    "en": "No",
+                    "pl": "Nie"
+                  }
+                },
+                "segments": {
+                  "DEFAULT": {
+                    "price": "2.28"
+                  }
+                },
+                "probability": "0.41836734693877553",
+                "results": [],
+                "ordinal": 1,
+                "isNamed": false,
+                "isActive": true
+              }
+            ],
+            "specifierValues": {},
+            "isBettable": true,
+            "bettableVotes": [],
+            "isDerived": false,
+            "orderNumber": 15,
+            "marginZeroMarket": null
+          }
+        ],
+        "outrightMarkets": [],
+        "matchInfo": {
+          "eventStatus": "NOTSTARTED",
+          "matchScore": null,
+          "matchTime": null,
+          "matchInfoDetails": null,
+          "matchStatus": 0,
+          "matchStatusDescription": {
+            "pl": "Not started"
+          },
+          "lastUpdate": "2026-10-11T16:26:50.396Z"
+        },
+        "isBettable": true
+      }
+    },
+    {
+      "id": "BRUF#sr:match:72043212",
+      "event": {
+        "mn": 96,
+        "mnp": null,
+        "mnl": null,
+        "hasMarginZeroMarket": false,
+        "id": "BRUF#sr:match:72043212",
+        "version": 7,
+        "mappings": {
+          "BRUF": "sr:match:72043212"
+        },
+        "bettableVotes": [],
+        "fixture": {
+          "path": {
+            "sportId": "1",
+            "categoryId": "47",
+            "competitionId": "BRUF#sr:tournament:202",
+            "seasonId": "142342",
+            "competitionOrder": "0",
+            "competitionGroupOrder": "1",
+            "competitionName": "Ekstraklasa",
+            "competitionIcon": "Poland",
+            "competitionIconType": "NPSCountryFlags",
+            "roundName": "UNAVAILABLE",
+            "sportNodeId": "pilka_nozna",
+            "competitionPath": "pilka_nozna/polska/ekstraklasa"
+          },
+          "sportNodeId": "pilka_nozna",
+          "categoryNodeId": "polska",
+          "competitionNodeId": "ekstraklasa",
+          "startTime": "2026-10-19T17:00:00Z",
+          "eventName": {
+            "name": "Wisla Plock vs. RKS Radomiak Radom",
+            "localizedName": {
+              "pl": "Wisła Płock vs. Radomiak Radom"
+            }
+          },
+          "isVirtual": false,
+          "competitors": [
+            {
+              "id": "sr:competitor:3122",
+              "mappings": {
+                "BRUF": "sr:competitor:3122"
+              },
+              "name": {
+                "name": "Wisla Plock",
+                "localizedName": {
+                  "pl": "Wisła Płock"
+                }
+              },
+              "homeAway": "HOME",
+              "abbreviations": {
+                "name": "PLO",
+                "localizedName": {}
+              }
+            },
+            {
+              "id": "sr:competitor:7295",
+              "mappings": {
+                "BRUF": "sr:competitor:7295"
+              },
+              "name": {
+                "name": "RKS Radomiak Radom",
+                "localizedName": {
+                  "pl": "Radomiak Radom"
+                }
+              },
+              "homeAway": "AWAY",
+              "abbreviations": {
+                "name": "RAD",
+                "localizedName": {}
+              }
+            }
+          ],
+          "players": [],
+          "exProperties": {},
+          "expectedResultingTime": "2026-10-19T17:00:00Z",
+          "tvChannels": [],
+          "extraInfo": null,
+          "isLive": false,
+          "isOutright": false,
+          "isFantasy": false,
+          "isLiveFeed": true
+        },
+        "markets": [
+          {
+            "id": "BRUF#sr:match:72043212#1",
+            "oddsSource": {
+              "providerId": "BRUF",
+              "subProviderId": "9903"
+            },
+            "attributes": {
+              "BRUF": {
+                "TYPE_ID": "1"
+              }
+            },
+            "marketType": "10",
+            "state": "OPEN",
+            "isLiveFeed": false,
+            "name": {
+              "name": "1X2",
+              "localizedName": {
+                "en": "1X2",
+                "pl": "1X2"
+              }
+            },
+            "isNamed": false,
+            "isFreeText": false,
+            "groups": [
+              "all"
+            ],
+            "selections": [
+              {
+                "id": "1",
+                "typeId": "1",
+                "mappings": {},
+                "isPlayer": false,
+                "name": {
+                  "name": "Wisla Plock",
+                  "localizedName": {
+                    "en": "Wisla Plock",
+                    "pl": "Wisła Płock"
+                  }
+                },
+                "segments": {
+                  "DEFAULT": {
+                    "price": "2.06"
+                  }
+                },
+                "probability": "0.46264489226077854",
+                "results": [],
+                "ordinal": 0,
+                "isNamed": false,
+                "isActive": true
+              },
+              {
+                "id": "2",
+                "typeId": "2",
+                "mappings": {},
+                "isPlayer": false,
+                "name": {
+                  "name": "Draw",
+                  "localizedName": {
+                    "en": "Draw",
+                    "pl": "Remis"
+                  }
+                },
+                "segments": {
+                  "DEFAULT": {
+                    "price": "3.65"
+                  }
+                },
+                "probability": "0.2611091720704668",
+                "results": [],
+                "ordinal": 1,
+                "isNamed": false,
+                "isActive": true
+              },
+              {
+                "id": "3",
+                "typeId": "3",
+                "mappings": {},
+                "isPlayer": false,
+                "name": {
+                  "name": "RKS Radomiak Radom",
+                  "localizedName": {
+                    "en": "RKS Radomiak Radom",
+                    "pl": "Radomiak Radom"
+                  }
+                },
+                "segments": {
+                  "DEFAULT": {
+                    "price": "3.45"
+                  }
+                },
+                "probability": "0.2762459356687547",
+                "results": [],
+                "ordinal": 2,
+                "isNamed": false,
+                "isActive": true
+              }
+            ],
+            "specifierValues": {},
+            "isBettable": true,
+            "bettableVotes": [],
+            "isDerived": false,
+            "orderNumber": 1,
+            "marginZeroMarket": null
+          },
+          {
+            "id": "BRUF#sr:match:72043212#29",
+            "oddsSource": {
+              "providerId": "BRUF",
+              "subProviderId": "9903"
+            },
+            "attributes": {
+              "BRUF": {
+                "TYPE_ID": "29"
+              }
+            },
+            "marketType": "43",
+            "state": "OPEN",
+            "isLiveFeed": false,
+            "name": {
+              "name": "Both Teams to Score",
+              "localizedName": {
+                "en": "Both Teams to Score",
+                "pl": "Obie drużyny strzelą gola"
+              }
+            },
+            "isNamed": false,
+            "isFreeText": false,
+            "groups": [
+              "all"
+            ],
+            "selections": [
+              {
+                "id": "74",
+                "typeId": "74",
+                "mappings": {},
+                "isPlayer": false,
+                "name": {
+                  "name": "Yes",
+                  "localizedName": {
+                    "en": "Yes",
+                    "pl": "Tak"
+                  }
+                },
+                "segments": {
+                  "DEFAULT": {
+                    "price": "1.6"
+                  }
+                },
+                "probability": "0.595959595959596",
+                "results": [],
+                "ordinal": 0,
+                "isNamed": false,
+                "isActive": true
+              },
+              {
+                "id": "76",
+                "typeId": "76",
+                "mappings": {},
+                "isPlayer": false,
+                "name": {
+                  "name": "No",
+                  "localizedName": {
+                    "en": "No",
+                    "pl": "Nie"
+                  }
+                },
+                "segments": {
+                  "DEFAULT": {
+                    "price": "2.36"
+                  }
+                },
+                "probability": "0.4040404040404041",
+                "results": [],
+                "ordinal": 1,
+                "isNamed": false,
+                "isActive": true
+              }
+            ],
+            "specifierValues": {},
+            "isBettable": true,
+            "bettableVotes": [],
+            "isDerived": false,
+            "orderNumber": 15,
+            "marginZeroMarket": null
+          }
+        ],
+        "outrightMarkets": [],
+        "matchInfo": {
+          "eventStatus": "NOTSTARTED",
+          "matchScore": null,
+          "matchTime": null,
+          "matchInfoDetails": null,
+          "matchStatus": 0,
+          "matchStatusDescription": {
+            "pl": "Not started"
+          },
+          "lastUpdate": "2026-10-12T18:07:15.894Z"
+        },
+        "isBettable": true
+      }
+    }
+  ]
+}

@@ -1,0 +1,1279 @@
+{
+  "dates": [
+    {
+      "dateTime": "2026-09-21T20:00:00Z",
+      "eventIds": [
+        17953590,
+        17965235,
+        17946271,
+        17946258
+      ]
+    }
+  ],
+  "topSports": [
+    {
+      "id": 66,
+      "name": "Soccer",
+      "iconName": "soccer",
+      "hasStream": false,
+      "count": 1261
+    },
+    {
+      "id": 67,
+      "name": "Basketball",
+      "iconName": "basketball",
+      "hasStream": false,
+      "count": 218
+    },
+    {
+      "id": 68,
+      "name": "Tennis",
+      "iconName": "tennis",
+      "hasStream": false,
+      "count": 470
+    },
+    {
+      "id": 77,
+      "name": "Table Tennis",
+      "iconName": "table-tennis",
+      "hasStream": false,
+      "count": 317
+    },
+    {
+      "id": 70,
+      "name": "Ice Hockey",
+      "iconName": "ice-hockey",
+      "hasStream": false,
+      "count": 190
+    },
+    {
+      "id": 69,
+      "name": "Volleyball",
+      "iconName": "volleyball",
+      "hasStream": false,
+      "count": 78
+    },
+    {
+      "id": -1,
+      "name": "Other",
+      "iconName": "Other",
+      "hasStream": false,
+      "count": 765
+    }
+  ],
+  "headers": [
+    {
+      "typeId": 1,
+      "name": "1x2",
+      "mst": 0,
+      "odds": [
+        {
+          "id": 1,
+          "name": "1"
+        },
+        {
+          "id": 2,
+          "name": "X"
+        },
+        {
+          "id": 3,
+          "name": "2"
+        }
+      ]
+    },
+    {
+      "typeId": 18,
+      "name": "Total",
+      "mst": 0,
+      "odds": [
+        {
+          "id": 12,
+          "name": "peste"
+        },
+        {
+          "id": 13,
+          "name": "sub"
+        }
+      ],
+      "specialOdd": {
+        "typeId": 1,
+        "name": "Goluri"
+      }
+    },
+    {
+      "typeId": 29,
+      "name": "Ambele echipe să înscrie",
+      "mst": 0,
+      "odds": [
+        {
+          "id": 74,
+          "name": "da"
+        },
+        {
+          "id": 76,
+          "name": "nu"
+        }
+      ]
+    },
+    {
+      "typeId": 10,
+      "name": "Șansă dublă",
+      "mst": 0,
+      "odds": [
+        {
+          "id": 9,
+          "name": "1X\t"
+        },
+        {
+          "id": 10,
+          "name": "12"
+        },
+        {
+          "id": 11,
+          "name": "X2"
+        }
+      ]
+    },
+    {
+      "typeId": 11,
+      "name": "Egal pariu nul",
+      "mst": 0,
+      "odds": [
+        {
+          "id": 1,
+          "name": "1"
+        },
+        {
+          "id": 3,
+          "name": "2"
+        }
+      ]
+    }
+  ],
+  "pageCount": 1,
+  "page": 1,
+  "markets": [
+    {
+      "oddIds": [
+        4611407874,
+        4611407875,
+        4611407876
+      ],
+      "typeId": 1,
+      "sportMarketId": 70472,
+      "id": 1767905677,
+      "name": "1x2"
+    },
+    {
+      "oddIds": [
+        4611407947,
+        4611407949,
+        4611407948
+      ],
+      "variant": 9,
+      "lines": [],
+      "typeId": 8,
+      "sportMarketId": 70491,
+      "sv": "1",
+      "sn": "Primul",
+      "id": 1767905703,
+      "name": "Golul primul"
+    },
+    {
+      "oddIds": [
+        4611407724,
+        4611407722,
+        4611407723
+      ],
+      "typeId": 10,
+      "sportMarketId": 70495,
+      "id": 1767905642,
+      "name": "Șansă dublă"
+    },
+    {
+      "oddIds": [
+        4611407584,
+        4611407585
+      ],
+      "typeId": 18,
+      "sportMarketId": 70520,
+      "sv": "3.5",
+      "sn": "3.5",
+      "id": 1767905598,
+      "name": "Total"
+    },
+    {
+      "oddIds": [
+        4611407654,
+        4611407655
+      ],
+      "typeId": 29,
+      "sportMarketId": 70545,
+      "id": 1767905633,
+      "name": "Ambele echipe să înscrie"
+    },
+    {
+      "oddIds": [
+        4638542966,
+        4638542967,
+        4638542968
+      ],
+      "typeId": 1,
+      "sportMarketId": 70472,
+      "id": 1776904301,
+      "name": "1x2"
+    },
+    {
+      "oddIds": [
+        4638543036,
+        4638543038,
+        4638543037
+      ],
+      "variant": 9,
+      "lines": [],
+      "typeId": 8,
+      "sportMarketId": 70491,
+      "sv": "1",
+      "sn": "Primul",
+      "id": 1776904326,
+      "name": "Golul primul"
+    },
+    {
+      "oddIds": [
+        4638542804,
+        4638542802,
+        4638542803
+      ],
+      "typeId": 10,
+      "sportMarketId": 70495,
+      "id": 1776904264,
+      "name": "Șansă dublă"
+    },
+    {
+      "oddIds": [
+        4638542847,
+        4638542848
+      ],
+      "typeId": 11,
+      "sportMarketId": 70500,
+      "id": 1776904273,
+      "name": "Egal pariu nul"
+    },
+    {
+      "oddIds": [
+        4638542407,
+        4638542408
+      ],
+      "typeId": 18,
+      "sportMarketId": 70520,
+      "sv": "3.5",
+      "sn": "3.5",
+      "id": 1776904185,
+      "name": "Total"
+    },
+    {
+      "oddIds": [
+        4638542738,
+        4638542739
+      ],
+      "typeId": 29,
+      "sportMarketId": 70545,
+      "id": 1776904256,
+      "name": "Ambele echipe să înscrie"
+    },
+    {
+      "oddIds": [
+        4619793581,
+        4619793582,
+        4619793583
+      ],
+      "typeId": 1,
+      "sportMarketId": 70472,
+      "id": 1770392517,
+      "name": "1x2"
+    },
+    {
+      "oddIds": [
+        4633057763,
+        4633057765,
+        4633057764
+      ],
+      "variant": 9,
+      "lines": [],
+      "typeId": 8,
+      "sportMarketId": 70491,
+      "sv": "1",
+      "sn": "Primul",
+      "id": 1775043207,
+      "name": "Golul primul"
+    },
+    {
+      "oddIds": [
+        4633057771,
+        4633057769,
+        4633057770
+      ],
+      "typeId": 10,
+      "sportMarketId": 70495,
+      "id": 1775043209,
+      "name": "Șansă dublă"
+    },
+    {
+      "oddIds": [
+        4633057772,
+        4633057773
+      ],
+      "typeId": 11,
+      "sportMarketId": 70500,
+      "id": 1775043210,
+      "name": "Egal pariu nul"
+    },
+    {
+      "oddIds": [
+        4619793440,
+        4619793441
+      ],
+      "typeId": 18,
+      "sportMarketId": 70520,
+      "sv": "2.5",
+      "sn": "2.5",
+      "id": 1770392461,
+      "name": "Total"
+    },
+    {
+      "oddIds": [
+        4638434668,
+        4638434670
+      ],
+      "typeId": 29,
+      "sportMarketId": 70545,
+      "id": 1776859302,
+      "name": "Ambele echipe să înscrie"
+    },
+    {
+      "oddIds": [
+        4617237488,
+        4617237489,
+        4617237490
+      ],
+      "typeId": 1,
+      "sportMarketId": 70472,
+      "id": 1769648739,
+      "name": "1x2"
+    },
+    {
+      "oddIds": [
+        4617237561,
+        4617237563,
+        4617237562
+      ],
+      "variant": 9,
+      "lines": [],
+      "typeId": 8,
+      "sportMarketId": 70491,
+      "sv": "1",
+      "sn": "Primul",
+      "id": 1769648765,
+      "name": "Golul primul"
+    },
+    {
+      "oddIds": [
+        4617237338,
+        4617237336,
+        4617237337
+      ],
+      "typeId": 10,
+      "sportMarketId": 70495,
+      "id": 1769648704,
+      "name": "Șansă dublă"
+    },
+    {
+      "oddIds": [
+        4617237375,
+        4617237376
+      ],
+      "typeId": 11,
+      "sportMarketId": 70500,
+      "id": 1769648712,
+      "name": "Egal pariu nul"
+    },
+    {
+      "oddIds": [
+        4617237198,
+        4617237199
+      ],
+      "typeId": 18,
+      "sportMarketId": 70520,
+      "sv": "3.5",
+      "sn": "3.5",
+      "id": 1769648660,
+      "name": "Total"
+    },
+    {
+      "oddIds": [
+        4617237268,
+        4617237269
+      ],
+      "typeId": 29,
+      "sportMarketId": 70545,
+      "id": 1769648695,
+      "name": "Ambele echipe să înscrie"
+    }
+  ],
+  "odds": [
+    {
+      "typeId": 1,
+      "price": 1.1667,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 43832,
+      "isDBB": true,
+      "id": 4611407874,
+      "name": "1"
+    },
+    {
+      "typeId": 2,
+      "price": 7,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4611407875,
+      "name": "Egal"
+    },
+    {
+      "typeId": 3,
+      "price": 13,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 48152,
+      "isDBB": true,
+      "id": 4611407876,
+      "name": "2"
+    },
+    {
+      "typeId": 1,
+      "price": 1.1819,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 43832,
+      "isDBB": true,
+      "id": 4611407947,
+      "name": "1"
+    },
+    {
+      "typeId": 7,
+      "price": 21,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4611407949,
+      "name": "Niciunul"
+    },
+    {
+      "typeId": 3,
+      "price": 4,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 48152,
+      "isDBB": true,
+      "id": 4611407948,
+      "name": "2"
+    },
+    {
+      "typeId": 9,
+      "price": 1.04,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 43832,
+      "isDBB": true,
+      "id": 4611407724,
+      "name": "1 sau egal"
+    },
+    {
+      "typeId": 10,
+      "price": 1.0715,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4611407722,
+      "name": "1 sau 2"
+    },
+    {
+      "typeId": 11,
+      "price": 3.5,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 48152,
+      "isDBB": true,
+      "id": 4611407723,
+      "name": "Egal sau 2"
+    },
+    {
+      "typeId": 12,
+      "price": 1.95,
+      "isMB": true,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4611407584,
+      "name": "Peste 3.5"
+    },
+    {
+      "typeId": 13,
+      "price": 1.75,
+      "isMB": true,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4611407585,
+      "name": "Sub 3.5"
+    },
+    {
+      "typeId": 74,
+      "price": 1.95,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4611407654,
+      "name": "Da"
+    },
+    {
+      "typeId": 76,
+      "price": 1.75,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4611407655,
+      "name": "Nu"
+    },
+    {
+      "typeId": 1,
+      "price": 1.8667,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 64250,
+      "isDBB": true,
+      "id": 4638542966,
+      "name": "1"
+    },
+    {
+      "typeId": 2,
+      "price": 4,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4638542967,
+      "name": "Egal"
+    },
+    {
+      "typeId": 3,
+      "price": 3.4,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 65773,
+      "isDBB": true,
+      "id": 4638542968,
+      "name": "2"
+    },
+    {
+      "typeId": 1,
+      "price": 1.5834,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 64250,
+      "isDBB": true,
+      "id": 4638543036,
+      "name": "1"
+    },
+    {
+      "typeId": 7,
+      "price": 21,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4638543038,
+      "name": "Niciunul"
+    },
+    {
+      "typeId": 3,
+      "price": 2.1667,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 65773,
+      "isDBB": true,
+      "id": 4638543037,
+      "name": "2"
+    },
+    {
+      "typeId": 9,
+      "price": 1.2667,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 64250,
+      "isDBB": true,
+      "id": 4638542804,
+      "name": "1 sau egal"
+    },
+    {
+      "typeId": 10,
+      "price": 1.2223,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4638542802,
+      "name": "1 sau 2"
+    },
+    {
+      "typeId": 11,
+      "price": 1.75,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 65773,
+      "isDBB": true,
+      "id": 4638542803,
+      "name": "Egal sau 2"
+    },
+    {
+      "typeId": 1,
+      "price": 1.4546,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 64250,
+      "id": 4638542847,
+      "name": "1"
+    },
+    {
+      "typeId": 3,
+      "price": 2.5455,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 65773,
+      "id": 4638542848,
+      "name": "2"
+    },
+    {
+      "typeId": 12,
+      "price": 2.05,
+      "isMB": true,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4638542407,
+      "name": "Peste 3.5"
+    },
+    {
+      "typeId": 13,
+      "price": 1.7,
+      "isMB": true,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4638542408,
+      "name": "Sub 3.5"
+    },
+    {
+      "typeId": 74,
+      "price": 1.4,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4638542738,
+      "name": "Da"
+    },
+    {
+      "typeId": 76,
+      "price": 2.7143,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4638542739,
+      "name": "Nu"
+    },
+    {
+      "typeId": 1,
+      "price": 1.9091,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 55719,
+      "isDBB": true,
+      "id": 4619793581,
+      "name": "1"
+    },
+    {
+      "typeId": 2,
+      "price": 3.3334,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4619793582,
+      "name": "Egal"
+    },
+    {
+      "typeId": 3,
+      "price": 3.75,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 56863,
+      "isDBB": true,
+      "id": 4619793583,
+      "name": "2"
+    },
+    {
+      "typeId": 1,
+      "price": 1.6,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 55719,
+      "isDBB": true,
+      "id": 4633057763,
+      "name": "1"
+    },
+    {
+      "typeId": 7,
+      "price": 11,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4633057765,
+      "name": "Niciunul"
+    },
+    {
+      "typeId": 3,
+      "price": 2.3637,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 56863,
+      "isDBB": true,
+      "id": 4633057764,
+      "name": "2"
+    },
+    {
+      "typeId": 9,
+      "price": 1.2308,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 55719,
+      "isDBB": true,
+      "id": 4633057771,
+      "name": "1 sau egal"
+    },
+    {
+      "typeId": 10,
+      "price": 1.2728,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4633057769,
+      "name": "1 sau 2"
+    },
+    {
+      "typeId": 11,
+      "price": 1.7143,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 56863,
+      "isDBB": true,
+      "id": 4633057770,
+      "name": "Egal sau 2"
+    },
+    {
+      "typeId": 1,
+      "price": 1.4,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 55719,
+      "id": 4633057772,
+      "name": "1"
+    },
+    {
+      "typeId": 3,
+      "price": 2.7143,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 56863,
+      "id": 4633057773,
+      "name": "2"
+    },
+    {
+      "typeId": 12,
+      "price": 1.8334,
+      "isMB": true,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4619793440,
+      "name": "Peste 2.5"
+    },
+    {
+      "typeId": 13,
+      "price": 1.8334,
+      "isMB": true,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4619793441,
+      "name": "Sub 2.5"
+    },
+    {
+      "typeId": 74,
+      "price": 1.75,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4638434668,
+      "name": "Da"
+    },
+    {
+      "typeId": 76,
+      "price": 1.95,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4638434670,
+      "name": "Nu"
+    },
+    {
+      "typeId": 1,
+      "price": 1.4445,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 50687,
+      "isDBB": true,
+      "id": 4617237488,
+      "name": "1"
+    },
+    {
+      "typeId": 2,
+      "price": 4.75,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4617237489,
+      "name": "Egal"
+    },
+    {
+      "typeId": 3,
+      "price": 5.6667,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 57020,
+      "isDBB": true,
+      "id": 4617237490,
+      "name": "2"
+    },
+    {
+      "typeId": 1,
+      "price": 1.375,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 50687,
+      "isDBB": true,
+      "id": 4617237561,
+      "name": "1"
+    },
+    {
+      "typeId": 7,
+      "price": 18,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4617237563,
+      "name": "Niciunul"
+    },
+    {
+      "typeId": 3,
+      "price": 2.8,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 57020,
+      "isDBB": true,
+      "id": 4617237562,
+      "name": "2"
+    },
+    {
+      "typeId": 9,
+      "price": 1.125,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 50687,
+      "isDBB": true,
+      "id": 4617237338,
+      "name": "1 sau egal"
+    },
+    {
+      "typeId": 10,
+      "price": 1.1667,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4617237336,
+      "name": "1 sau 2"
+    },
+    {
+      "typeId": 11,
+      "price": 2.3,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 57020,
+      "isDBB": true,
+      "id": 4617237337,
+      "name": "Egal sau 2"
+    },
+    {
+      "typeId": 1,
+      "price": 1.1667,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 50687,
+      "id": 4617237375,
+      "name": "1"
+    },
+    {
+      "typeId": 3,
+      "price": 4.3334,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 57020,
+      "id": 4617237376,
+      "name": "2"
+    },
+    {
+      "typeId": 12,
+      "price": 2.2858,
+      "isMB": true,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4617237198,
+      "name": "Peste 3.5"
+    },
+    {
+      "typeId": 13,
+      "price": 1.5556,
+      "isMB": true,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4617237199,
+      "name": "Sub 3.5"
+    },
+    {
+      "typeId": 74,
+      "price": 1.7,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4617237268,
+      "name": "Da"
+    },
+    {
+      "typeId": 76,
+      "price": 2.05,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4617237269,
+      "name": "Nu"
+    }
+  ],
+  "events": [
+    {
+      "marketIds": [
+        1767905677,
+        1767905703,
+        1767905642,
+        1767905598,
+        1767905633
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "code": 7436,
+      "hasStream": true,
+      "extId": "fp32_ar:match:688126",
+      "sc": 2076,
+      "mc": 240,
+      "rc": false,
+      "pId": 32,
+      "et": 0,
+      "hasStats": true,
+      "competitorIds": [
+        43832,
+        48152
+      ],
+      "sportId": 66,
+      "catId": 602,
+      "champId": 4825,
+      "status": 0,
+      "startDate": "2026-09-21T20:00:00Z",
+      "id": 17953590,
+      "name": "IFK Norrkoping FK vs. GIF Sundsvall"
+    },
+    {
+      "marketIds": [
+        1776904301,
+        1776904326,
+        1776904264,
+        1776904273,
+        1776904185,
+        1776904256
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "code": 491,
+      "hasStream": false,
+      "extId": "fp32_ar:match:691139",
+      "sc": 1592,
+      "mc": 179,
+      "rc": false,
+      "pId": 32,
+      "et": 0,
+      "hasStats": true,
+      "competitorIds": [
+        64250,
+        65773
+      ],
+      "sportId": 66,
+      "catId": 589,
+      "champId": 42093,
+      "status": 0,
+      "startDate": "2026-09-21T20:00:00Z",
+      "id": 17965235,
+      "name": "Buchbach vs. FC Augsburg II"
+    },
+    {
+      "marketIds": [
+        1770392517,
+        1775043207,
+        1775043209,
+        1775043210,
+        1770392461,
+        1776859302
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "code": 1493,
+      "hasStream": false,
+      "extId": "fp32_ar:match:689414",
+      "sc": 956,
+      "mc": 90,
+      "rc": false,
+      "pId": 32,
+      "et": 0,
+      "hasStats": false,
+      "competitorIds": [
+        55719,
+        56863
+      ],
+      "sportId": 66,
+      "catId": 507,
+      "champId": 3113,
+      "status": 0,
+      "startDate": "2026-09-21T20:00:00Z",
+      "id": 17946271,
+      "name": "Pendikspor vs. Van Spor FK"
+    },
+    {
+      "marketIds": [
+        1769648739,
+        1769648765,
+        1769648704,
+        1769648712,
+        1769648660,
+        1769648695
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "code": 3132,
+      "hasStream": false,
+      "extId": "fp32_ar:match:689361",
+      "sc": 2345,
+      "mc": 240,
+      "rc": false,
+      "pId": 32,
+      "et": 0,
+      "hasStats": true,
+      "competitorIds": [
+        50687,
+        57020
+      ],
+      "sportId": 66,
+      "catId": 506,
+      "champId": 3044,
+      "status": 0,
+      "startDate": "2026-09-21T20:00:00Z",
+      "id": 17946258,
+      "name": "Rot-Weiss Essen vs. SC Fortuna Cologne"
+    }
+  ],
+  "sports": [
+    {
+      "catIds": [
+        826,
+        1132,
+        602,
+        809,
+        589,
+        507,
+        506,
+        783,
+        574,
+        517,
+        1134,
+        1133,
+        515,
+        561,
+        495,
+        497,
+        1173,
+        548,
+        1131,
+        593,
+        935,
+        511,
+        510,
+        512
+      ],
+      "typeId": 1,
+      "iconName": "soccer",
+      "hasLiveEvents": false,
+      "id": 66,
+      "name": "Soccer"
+    }
+  ],
+  "categories": [
+    {
+      "champIds": [
+        4825
+      ],
+      "iso": "SWE",
+      "hasLiveEvents": false,
+      "id": 602,
+      "name": "Sweden"
+    },
+    {
+      "champIds": [
+        42093
+      ],
+      "iso": "DEU",
+      "hasLiveEvents": false,
+      "id": 589,
+      "name": "Germany Amateur"
+    },
+    {
+      "champIds": [
+        3113
+      ],
+      "iso": "TUR",
+      "hasLiveEvents": false,
+      "id": 507,
+      "name": "Turkey"
+    },
+    {
+      "champIds": [
+        3044
+      ],
+      "iso": "DEU",
+      "hasLiveEvents": false,
+      "id": 506,
+      "name": "Germany"
+    }
+  ],
+  "champs": [
+    {
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "hasLiveEvents": false,
+      "id": 4825,
+      "name": "Superettan"
+    },
+    {
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "hasLiveEvents": false,
+      "id": 42093,
+      "name": "German Regionalliga"
+    },
+    {
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "hasLiveEvents": false,
+      "id": 3113,
+      "name": "1. Lig"
+    },
+    {
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "hasLiveEvents": false,
+      "id": 3044,
+      "name": "3rd Liga"
+    }
+  ],
+  "competitors": [
+    {
+      "hasConfigJersey": true,
+      "abbreviation": "NKP",
+      "id": 43832,
+      "name": "IFK Norrkoping FK"
+    },
+    {
+      "hasConfigJersey": true,
+      "abbreviation": "SUN",
+      "id": 48152,
+      "name": "GIF Sundsvall"
+    },
+    {
+      "abbreviation": "BUC",
+      "id": 64250,
+      "name": "Buchbach"
+    },
+    {
+      "abbreviation": "AUG",
+      "id": 65773,
+      "name": "FC Augsburg II"
+    },
+    {
+      "abbreviation": "PEN",
+      "id": 55719,
+      "name": "Pendikspor"
+    },
+    {
+      "abbreviation": "VAS",
+      "id": 56863,
+      "name": "Van Spor FK"
+    },
+    {
+      "abbreviation": "RWE",
+      "id": 50687,
+      "name": "Rot-Weiss Essen"
+    },
+    {
+      "abbreviation": "FOR",
+      "id": 57020,
+      "name": "SC Fortuna Cologne"
+    }
+  ]
+}

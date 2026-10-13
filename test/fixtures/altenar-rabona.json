@@ -1,0 +1,1964 @@
+{
+  "dates": [
+    {
+      "dateTime": "2026-09-21T20:00:00Z",
+      "eventIds": [
+        17936679,
+        15516506,
+        17661555,
+        17926355,
+        17926270,
+        17937197,
+        17937195,
+        17937196
+      ]
+    }
+  ],
+  "topSports": [
+    {
+      "id": 66,
+      "name": "Soccer",
+      "iconName": "soccer",
+      "hasStream": false,
+      "count": 1580
+    },
+    {
+      "id": 68,
+      "name": "Tennis",
+      "iconName": "tennis",
+      "hasStream": false,
+      "count": 234
+    },
+    {
+      "id": 67,
+      "name": "Basketball",
+      "iconName": "basketball",
+      "hasStream": false,
+      "count": 283
+    },
+    {
+      "id": 70,
+      "name": "Ice Hockey",
+      "iconName": "ice-hockey",
+      "hasStream": false,
+      "count": 158
+    },
+    {
+      "id": 77,
+      "name": "Table Tennis",
+      "iconName": "table-tennis",
+      "hasStream": false,
+      "count": 308
+    },
+    {
+      "id": 69,
+      "name": "Volleyball",
+      "iconName": "volleyball",
+      "hasStream": false,
+      "count": 56
+    },
+    {
+      "id": 75,
+      "name": "American Football",
+      "iconName": "american-football",
+      "hasStream": false,
+      "count": 38
+    },
+    {
+      "id": 76,
+      "name": "Baseball",
+      "iconName": "baseball",
+      "hasStream": false,
+      "count": 6
+    },
+    {
+      "id": 101,
+      "name": "Rugby League",
+      "iconName": "rugby-league",
+      "hasStream": false,
+      "count": 5
+    },
+    {
+      "id": 106,
+      "name": "Aussie Rules",
+      "iconName": "aussie-rules",
+      "hasStream": false,
+      "count": 1
+    },
+    {
+      "id": -1,
+      "name": "Other",
+      "iconName": "Other",
+      "hasStream": false,
+      "count": 233
+    }
+  ],
+  "headers": [
+    {
+      "typeId": 1,
+      "name": "1x2",
+      "mst": 0,
+      "odds": [
+        {
+          "id": 1,
+          "name": "1"
+        },
+        {
+          "id": 2,
+          "name": "X"
+        },
+        {
+          "id": 3,
+          "name": "2"
+        }
+      ]
+    },
+    {
+      "typeId": 18,
+      "name": "Total",
+      "mst": 0,
+      "odds": [
+        {
+          "id": 12,
+          "name": "peste"
+        },
+        {
+          "id": 13,
+          "name": "sub"
+        }
+      ]
+    },
+    {
+      "typeId": 29,
+      "name": "Ambele echipe să înscrie",
+      "mst": 0,
+      "odds": [
+        {
+          "id": 74,
+          "name": "da"
+        },
+        {
+          "id": 76,
+          "name": "nu"
+        }
+      ]
+    }
+  ],
+  "pageCount": 1,
+  "page": 1,
+  "markets": [
+    {
+      "oddIds": [
+        4621116463,
+        4621116464,
+        4621116465
+      ],
+      "typeId": 1,
+      "sportMarketId": 70472,
+      "id": 1770847043,
+      "name": "1x2"
+    },
+    {
+      "oddIds": [
+        4621116506,
+        4621116508,
+        4621116507
+      ],
+      "variant": 9,
+      "lines": [],
+      "typeId": 8,
+      "sportMarketId": 70491,
+      "sv": "1",
+      "sn": "Primul",
+      "id": 1770847057,
+      "name": "Golul 1"
+    },
+    {
+      "oddIds": [
+        4621116290,
+        4621116291
+      ],
+      "typeId": 18,
+      "sportMarketId": 70520,
+      "sv": "1.5",
+      "sn": "1,5",
+      "id": 1770846988,
+      "name": "Total goluri"
+    },
+    {
+      "oddIds": [
+        4621116358,
+        4621116359
+      ],
+      "typeId": 29,
+      "sportMarketId": 70545,
+      "id": 1770847022,
+      "name": "Ambele echipe să înscrie"
+    },
+    {
+      "oddIds": [
+        4536596916,
+        4536596917,
+        4536596918
+      ],
+      "typeId": 1,
+      "sportMarketId": 70472,
+      "id": 1743590209,
+      "name": "1x2"
+    },
+    {
+      "oddIds": [
+        4536597049,
+        4536597055,
+        4536597052
+      ],
+      "variant": 9,
+      "lines": [],
+      "typeId": 8,
+      "sportMarketId": 70491,
+      "sv": "1",
+      "sn": "Primul",
+      "id": 1743590235,
+      "name": "Golul 1"
+    },
+    {
+      "oddIds": [
+        4536596609,
+        4536596610
+      ],
+      "typeId": 18,
+      "sportMarketId": 70520,
+      "sv": "0.5",
+      "sn": "0,5",
+      "id": 1743590127,
+      "name": "Total goluri"
+    },
+    {
+      "oddIds": [
+        4536596685,
+        4536596686
+      ],
+      "typeId": 29,
+      "sportMarketId": 70545,
+      "id": 1743590165,
+      "name": "Ambele echipe să înscrie"
+    },
+    {
+      "oddIds": [
+        4569176146,
+        4569176148,
+        4569176150
+      ],
+      "typeId": 1,
+      "sportMarketId": 70472,
+      "id": 1754079211,
+      "name": "1x2"
+    },
+    {
+      "oddIds": [
+        4569176764,
+        4569176766,
+        4569176765
+      ],
+      "variant": 9,
+      "lines": [],
+      "typeId": 8,
+      "sportMarketId": 70491,
+      "sv": "1",
+      "sn": "Primul",
+      "id": 1754079329,
+      "name": "Golul 1"
+    },
+    {
+      "oddIds": [
+        4569176363,
+        4569176364
+      ],
+      "typeId": 18,
+      "sportMarketId": 70520,
+      "sv": "2.5",
+      "sn": "2.5",
+      "id": 1754079265,
+      "name": "Total goluri"
+    },
+    {
+      "oddIds": [
+        4569176443,
+        4569176444
+      ],
+      "typeId": 29,
+      "sportMarketId": 70545,
+      "id": 1754079294,
+      "name": "Ambele echipe să înscrie"
+    },
+    {
+      "oddIds": [
+        4612633450,
+        4612633451,
+        4612633453
+      ],
+      "typeId": 1,
+      "sportMarketId": 70472,
+      "id": 1768250633,
+      "name": "1x2"
+    },
+    {
+      "oddIds": [
+        4612633530,
+        4612633533,
+        4612633532
+      ],
+      "variant": 9,
+      "lines": [],
+      "typeId": 8,
+      "sportMarketId": 70491,
+      "sv": "1",
+      "sn": "Primul",
+      "id": 1768250656,
+      "name": "Golul 1"
+    },
+    {
+      "oddIds": [
+        4612632994,
+        4612632996
+      ],
+      "typeId": 18,
+      "sportMarketId": 70520,
+      "sv": "2.5",
+      "sn": "2.5",
+      "id": 1768250573,
+      "name": "Total goluri"
+    },
+    {
+      "oddIds": [
+        4612633051,
+        4612633052
+      ],
+      "typeId": 29,
+      "sportMarketId": 70545,
+      "id": 1768250594,
+      "name": "Ambele echipe să înscrie"
+    },
+    {
+      "oddIds": [
+        4612632051,
+        4612632052,
+        4612632053
+      ],
+      "typeId": 1,
+      "sportMarketId": 70472,
+      "id": 1768250085,
+      "name": "1x2"
+    },
+    {
+      "oddIds": [
+        4612632115,
+        4612632117,
+        4612632116
+      ],
+      "variant": 9,
+      "lines": [],
+      "typeId": 8,
+      "sportMarketId": 70491,
+      "sv": "1",
+      "sn": "Primul",
+      "id": 1768250108,
+      "name": "Golul 1"
+    },
+    {
+      "oddIds": [
+        4612631791,
+        4612631792
+      ],
+      "typeId": 18,
+      "sportMarketId": 70520,
+      "sv": "0.5",
+      "sn": "0,5",
+      "id": 1768250011,
+      "name": "Total goluri"
+    },
+    {
+      "oddIds": [
+        4612631861,
+        4612631862
+      ],
+      "typeId": 29,
+      "sportMarketId": 70545,
+      "id": 1768250046,
+      "name": "Ambele echipe să înscrie"
+    },
+    {
+      "oddIds": [
+        4624036836,
+        4624036837,
+        4624036838
+      ],
+      "typeId": 1,
+      "sportMarketId": 70472,
+      "id": 1771831497,
+      "name": "1x2"
+    },
+    {
+      "oddIds": [
+        4624036906,
+        4624036908,
+        4624036907
+      ],
+      "variant": 9,
+      "lines": [],
+      "typeId": 8,
+      "sportMarketId": 70491,
+      "sv": "1",
+      "sn": "Primul",
+      "id": 1771831522,
+      "name": "Golul 1"
+    },
+    {
+      "oddIds": [
+        4624036515,
+        4624036516
+      ],
+      "typeId": 18,
+      "sportMarketId": 70520,
+      "sv": "1.5",
+      "sn": "1,5",
+      "id": 1771831405,
+      "name": "Total goluri"
+    },
+    {
+      "oddIds": [
+        4624036610,
+        4624036611
+      ],
+      "typeId": 29,
+      "sportMarketId": 70545,
+      "id": 1771831452,
+      "name": "Ambele echipe să înscrie"
+    },
+    {
+      "oddIds": [
+        4618363609,
+        4618363610,
+        4618363611
+      ],
+      "typeId": 1,
+      "sportMarketId": 70472,
+      "id": 1770028422,
+      "name": "1x2"
+    },
+    {
+      "oddIds": [
+        4618363679,
+        4618363681,
+        4618363680
+      ],
+      "variant": 9,
+      "lines": [],
+      "typeId": 8,
+      "sportMarketId": 70491,
+      "sv": "1",
+      "sn": "Primul",
+      "id": 1770028447,
+      "name": "Golul 1"
+    },
+    {
+      "oddIds": [
+        4618363331,
+        4618363332
+      ],
+      "typeId": 18,
+      "sportMarketId": 70520,
+      "sv": "1.5",
+      "sn": "1,5",
+      "id": 1770028347,
+      "name": "Total goluri"
+    },
+    {
+      "oddIds": [
+        4618363395,
+        4618363396
+      ],
+      "typeId": 29,
+      "sportMarketId": 70545,
+      "id": 1770028379,
+      "name": "Ambele echipe să înscrie"
+    },
+    {
+      "oddIds": [
+        4618362187,
+        4618362188,
+        4618362189
+      ],
+      "typeId": 1,
+      "sportMarketId": 70472,
+      "id": 1770027869,
+      "name": "1x2"
+    },
+    {
+      "oddIds": [
+        4618362257,
+        4618362259,
+        4618362258
+      ],
+      "variant": 9,
+      "lines": [],
+      "typeId": 8,
+      "sportMarketId": 70491,
+      "sv": "1",
+      "sn": "Primul",
+      "id": 1770027894,
+      "name": "Golul 1"
+    },
+    {
+      "oddIds": [
+        4618361905,
+        4618361906
+      ],
+      "typeId": 18,
+      "sportMarketId": 70520,
+      "sv": "1.5",
+      "sn": "1,5",
+      "id": 1770027792,
+      "name": "Total goluri"
+    },
+    {
+      "oddIds": [
+        4618361973,
+        4618361974
+      ],
+      "typeId": 29,
+      "sportMarketId": 70545,
+      "id": 1770027826,
+      "name": "Ambele echipe să înscrie"
+    }
+  ],
+  "odds": [
+    {
+      "typeId": 1,
+      "price": 2.25,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 1790301,
+      "isDBB": true,
+      "id": 4621116463,
+      "name": "Av Alta FC"
+    },
+    {
+      "typeId": 2,
+      "price": 3,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4621116464,
+      "name": "X"
+    },
+    {
+      "typeId": 3,
+      "price": 3.1,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 106133,
+      "isDBB": true,
+      "id": 4621116465,
+      "name": "Greenville Triumph SC"
+    },
+    {
+      "typeId": 1,
+      "price": 1.7334,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 1790301,
+      "isDBB": true,
+      "id": 4621116506,
+      "name": "Av Alta FC"
+    },
+    {
+      "typeId": 7,
+      "price": 13,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4621116508,
+      "name": "Niciunul"
+    },
+    {
+      "typeId": 3,
+      "price": 2.05,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 106133,
+      "isDBB": true,
+      "id": 4621116507,
+      "name": "Greenville Triumph SC"
+    },
+    {
+      "typeId": 12,
+      "price": 1.1667,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4621116290,
+      "name": "Peste 1,5"
+    },
+    {
+      "typeId": 13,
+      "price": 4.3334,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4621116291,
+      "name": "Sub 1,5"
+    },
+    {
+      "typeId": 74,
+      "price": 1.48,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4621116358,
+      "name": "Da"
+    },
+    {
+      "typeId": 76,
+      "price": 2.4,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4621116359,
+      "name": "Nu"
+    },
+    {
+      "typeId": 1,
+      "price": 2.375,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 62023,
+      "isDBB": true,
+      "id": 4536596916,
+      "name": "Los Angeles FC"
+    },
+    {
+      "typeId": 2,
+      "price": 3.6,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4536596917,
+      "name": "X"
+    },
+    {
+      "typeId": 3,
+      "price": 2.625,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 68167,
+      "isDBB": true,
+      "id": 4536596918,
+      "name": "Vancouver Whitecaps"
+    },
+    {
+      "typeId": 1,
+      "price": 1.8182,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 62023,
+      "isDBB": true,
+      "id": 4536597049,
+      "name": "Los Angeles FC"
+    },
+    {
+      "typeId": 7,
+      "price": 18,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4536597055,
+      "name": "Niciunul"
+    },
+    {
+      "typeId": 3,
+      "price": 1.9091,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 68167,
+      "isDBB": true,
+      "id": 4536597052,
+      "name": "Vancouver Whitecaps"
+    },
+    {
+      "typeId": 12,
+      "price": 1.0304,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4536596609,
+      "name": "Peste 0,5"
+    },
+    {
+      "typeId": 13,
+      "price": 10,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4536596610,
+      "name": "Sub 0,5"
+    },
+    {
+      "typeId": 74,
+      "price": 1.4546,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4536596685,
+      "name": "Da"
+    },
+    {
+      "typeId": 76,
+      "price": 2.5455,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4536596686,
+      "name": "Nu"
+    },
+    {
+      "typeId": 1,
+      "price": 1.85,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 46417,
+      "isDBB": true,
+      "id": 4569176146,
+      "name": "America"
+    },
+    {
+      "typeId": 2,
+      "price": 3.5,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4569176148,
+      "name": "X"
+    },
+    {
+      "typeId": 3,
+      "price": 4.2,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 46415,
+      "isDBB": true,
+      "id": 4569176150,
+      "name": "Monterrey"
+    },
+    {
+      "typeId": 1,
+      "price": 1.5715,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 46417,
+      "isDBB": true,
+      "id": 4569176764,
+      "name": "America"
+    },
+    {
+      "typeId": 7,
+      "price": 16,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4569176766,
+      "name": "Niciunul"
+    },
+    {
+      "typeId": 3,
+      "price": 2.375,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 46415,
+      "isDBB": true,
+      "id": 4569176765,
+      "name": "Monterrey"
+    },
+    {
+      "typeId": 12,
+      "price": 1.0304,
+      "isMB": false,
+      "oddStatus": 0,
+      "id": 4569176363,
+      "name": "Peste 1"
+    },
+    {
+      "typeId": 13,
+      "price": 11,
+      "isMB": false,
+      "oddStatus": 0,
+      "id": 4569176364,
+      "name": "Sub 1"
+    },
+    {
+      "typeId": 74,
+      "price": 1.5556,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4569176443,
+      "name": "Da"
+    },
+    {
+      "typeId": 76,
+      "price": 2.2858,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4569176444,
+      "name": "Nu"
+    },
+    {
+      "typeId": 1,
+      "price": 2.6667,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 63615,
+      "isDBB": true,
+      "id": 4612633450,
+      "name": "Roasso Kumamoto"
+    },
+    {
+      "typeId": 2,
+      "price": 3.25,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4612633451,
+      "name": "X"
+    },
+    {
+      "typeId": 3,
+      "price": 2.4,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 62328,
+      "isDBB": true,
+      "id": 4612633453,
+      "name": "Ehime FC"
+    },
+    {
+      "typeId": 1,
+      "price": 2,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 63615,
+      "isDBB": true,
+      "id": 4612633530,
+      "name": "Roasso Kumamoto"
+    },
+    {
+      "typeId": 7,
+      "price": 10,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4612633533,
+      "name": "Niciunul"
+    },
+    {
+      "typeId": 3,
+      "price": 1.85,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 62328,
+      "isDBB": true,
+      "id": 4612633532,
+      "name": "Ehime FC"
+    },
+    {
+      "typeId": 12,
+      "price": 1.04,
+      "isMB": false,
+      "oddStatus": 0,
+      "id": 4612632994,
+      "name": "Peste 1"
+    },
+    {
+      "typeId": 13,
+      "price": 8,
+      "isMB": false,
+      "oddStatus": 0,
+      "id": 4612632996,
+      "name": "Sub 1"
+    },
+    {
+      "typeId": 74,
+      "price": 1.6667,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4612633051,
+      "name": "Da"
+    },
+    {
+      "typeId": 76,
+      "price": 2.05,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4612633052,
+      "name": "Nu"
+    },
+    {
+      "typeId": 1,
+      "price": 3.1,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 62329,
+      "isDBB": true,
+      "id": 4612632051,
+      "name": "Matsumoto Yamaga FC"
+    },
+    {
+      "typeId": 2,
+      "price": 3.1,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4612632052,
+      "name": "X"
+    },
+    {
+      "typeId": 3,
+      "price": 2.2,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 63621,
+      "isDBB": true,
+      "id": 4612632053,
+      "name": "Kagoshima United"
+    },
+    {
+      "typeId": 1,
+      "price": 2.1429,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 62329,
+      "isDBB": true,
+      "id": 4612632115,
+      "name": "Matsumoto Yamaga FC"
+    },
+    {
+      "typeId": 7,
+      "price": 9,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4612632117,
+      "name": "Niciunul"
+    },
+    {
+      "typeId": 3,
+      "price": 1.7778,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 63621,
+      "isDBB": true,
+      "id": 4612632116,
+      "name": "Kagoshima United"
+    },
+    {
+      "typeId": 12,
+      "price": 1.04,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4612631791,
+      "name": "Peste 0,5"
+    },
+    {
+      "typeId": 13,
+      "price": 8,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4612631792,
+      "name": "Sub 0,5"
+    },
+    {
+      "typeId": 74,
+      "price": 1.7778,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4612631861,
+      "name": "Da"
+    },
+    {
+      "typeId": 76,
+      "price": 1.9,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4612631862,
+      "name": "Nu"
+    },
+    {
+      "typeId": 1,
+      "price": 3.25,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 63613,
+      "isDBB": true,
+      "id": 4624036836,
+      "name": "Grulla Morioka"
+    },
+    {
+      "typeId": 2,
+      "price": 3.4,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4624036837,
+      "name": "X"
+    },
+    {
+      "typeId": 3,
+      "price": 1.96,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 118019,
+      "isDBB": true,
+      "id": 4624036838,
+      "name": "Honda FC"
+    },
+    {
+      "typeId": 1,
+      "price": 2.1667,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 63613,
+      "isDBB": true,
+      "id": 4624036906,
+      "name": "Grulla Morioka"
+    },
+    {
+      "typeId": 7,
+      "price": 12,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4624036908,
+      "name": "Niciunul"
+    },
+    {
+      "typeId": 3,
+      "price": 1.68,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 118019,
+      "isDBB": true,
+      "id": 4624036907,
+      "name": "Honda FC"
+    },
+    {
+      "typeId": 12,
+      "price": 1.25,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4624036515,
+      "name": "Peste 1,5"
+    },
+    {
+      "typeId": 13,
+      "price": 3.6,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4624036516,
+      "name": "Sub 1,5"
+    },
+    {
+      "typeId": 74,
+      "price": 1.7,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4624036610,
+      "name": "Da"
+    },
+    {
+      "typeId": 76,
+      "price": 2.05,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4624036611,
+      "name": "Nu"
+    },
+    {
+      "typeId": 1,
+      "price": 2.8572,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 211723,
+      "isDBB": true,
+      "id": 4618363609,
+      "name": "Briobecca Urayasu"
+    },
+    {
+      "typeId": 2,
+      "price": 3.1,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4618363610,
+      "name": "X"
+    },
+    {
+      "typeId": 3,
+      "price": 2.2858,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 118036,
+      "isDBB": true,
+      "id": 4618363611,
+      "name": "Veertien Mie"
+    },
+    {
+      "typeId": 1,
+      "price": 2.1,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 211723,
+      "isDBB": true,
+      "id": 4618363679,
+      "name": "Briobecca Urayasu"
+    },
+    {
+      "typeId": 7,
+      "price": 8.5,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4618363681,
+      "name": "Niciunul"
+    },
+    {
+      "typeId": 3,
+      "price": 1.8334,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 118036,
+      "isDBB": true,
+      "id": 4618363680,
+      "name": "Veertien Mie"
+    },
+    {
+      "typeId": 12,
+      "price": 1.4,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4618363331,
+      "name": "Peste 1,5"
+    },
+    {
+      "typeId": 13,
+      "price": 2.7143,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4618363332,
+      "name": "Sub 1,5"
+    },
+    {
+      "typeId": 74,
+      "price": 1.9,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4618363395,
+      "name": "Da"
+    },
+    {
+      "typeId": 76,
+      "price": 1.8,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4618363396,
+      "name": "Nu"
+    },
+    {
+      "typeId": 1,
+      "price": 1.76,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 118056,
+      "isDBB": true,
+      "id": 4618362187,
+      "name": "Tiamo Hirakata"
+    },
+    {
+      "typeId": 2,
+      "price": 3.6,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4618362188,
+      "name": "X"
+    },
+    {
+      "typeId": 3,
+      "price": 3.8,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 118032,
+      "isDBB": true,
+      "id": 4618362189,
+      "name": "Yokogawa Musashino FC"
+    },
+    {
+      "typeId": 1,
+      "price": 1.5715,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 118056,
+      "isDBB": true,
+      "id": 4618362257,
+      "name": "Tiamo Hirakata"
+    },
+    {
+      "typeId": 7,
+      "price": 11,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4618362259,
+      "name": "Niciunul"
+    },
+    {
+      "typeId": 3,
+      "price": 2.4286,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 118032,
+      "isDBB": true,
+      "id": 4618362258,
+      "name": "Yokogawa Musashino FC"
+    },
+    {
+      "typeId": 12,
+      "price": 1.2728,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4618361905,
+      "name": "Peste 1,5"
+    },
+    {
+      "typeId": 13,
+      "price": 3.4,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4618361906,
+      "name": "Sub 1,5"
+    },
+    {
+      "typeId": 74,
+      "price": 1.8,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4618361973,
+      "name": "Da"
+    },
+    {
+      "typeId": 76,
+      "price": 1.9,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4618361974,
+      "name": "Nu"
+    }
+  ],
+  "champs": [
+    {
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "hasLiveEvents": false,
+      "id": 11276,
+      "name": "USL League One"
+    },
+    {
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "hasLiveEvents": false,
+      "id": 4610,
+      "name": "Major League Soccer"
+    },
+    {
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "hasLiveEvents": false,
+      "id": 10009,
+      "name": "Mexico Liga MX"
+    },
+    {
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "hasLiveEvents": false,
+      "id": 4270,
+      "name": "J.League 3"
+    },
+    {
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "hasLiveEvents": false,
+      "id": 9606,
+      "name": "Japan Football League"
+    }
+  ],
+  "categories": [
+    {
+      "champIds": [
+        11276,
+        4610,
+        35670,
+        48358,
+        5005,
+        11305
+      ],
+      "iso": "USA",
+      "hasLiveEvents": false,
+      "id": 882,
+      "name": "USA"
+    },
+    {
+      "champIds": [
+        37703,
+        9650,
+        4270,
+        9606,
+        44566,
+        4173,
+        3951
+      ],
+      "iso": "JPN",
+      "hasLiveEvents": false,
+      "id": 767,
+      "name": "Japan"
+    },
+    {
+      "champIds": [
+        10009,
+        47917,
+        55103,
+        3668,
+        48463,
+        35652,
+        3103
+      ],
+      "iso": "MEX",
+      "hasLiveEvents": false,
+      "id": 560,
+      "name": "Mexico"
+    }
+  ],
+  "competitors": [
+    {
+      "abbreviation": "ALT",
+      "id": 1790301,
+      "name": "Av Alta FC"
+    },
+    {
+      "abbreviation": "GRE",
+      "id": 106133,
+      "name": "Greenville Triumph SC"
+    },
+    {
+      "jerseyChamps": [
+        4610
+      ],
+      "abbreviation": "LAN",
+      "id": 62023,
+      "name": "Los Angeles FC"
+    },
+    {
+      "jerseyChamps": [
+        4610
+      ],
+      "abbreviation": "VAN",
+      "id": 68167,
+      "name": "Vancouver Whitecaps"
+    },
+    {
+      "jerseyChamps": [
+        10009
+      ],
+      "abbreviation": "AME",
+      "id": 46417,
+      "name": "America"
+    },
+    {
+      "jerseyChamps": [
+        10009
+      ],
+      "abbreviation": "MON",
+      "id": 46415,
+      "name": "Monterrey"
+    },
+    {
+      "abbreviation": "ROA",
+      "id": 63615,
+      "name": "Roasso Kumamoto"
+    },
+    {
+      "abbreviation": "EHI",
+      "id": 62328,
+      "name": "Ehime FC"
+    },
+    {
+      "abbreviation": "MAT",
+      "id": 62329,
+      "name": "Matsumoto Yamaga FC"
+    },
+    {
+      "abbreviation": "KAG",
+      "id": 63621,
+      "name": "Kagoshima United"
+    },
+    {
+      "abbreviation": "GRU",
+      "id": 63613,
+      "name": "Grulla Morioka"
+    },
+    {
+      "abbreviation": "HON",
+      "id": 118019,
+      "name": "Honda FC"
+    },
+    {
+      "abbreviation": "URA",
+      "id": 211723,
+      "name": "Briobecca Urayasu"
+    },
+    {
+      "abbreviation": "VEM",
+      "id": 118036,
+      "name": "Veertien Mie"
+    },
+    {
+      "abbreviation": "TIA",
+      "id": 118056,
+      "name": "Tiamo Hirakata"
+    },
+    {
+      "abbreviation": "MUS",
+      "id": 118032,
+      "name": "Yokogawa Musashino FC"
+    }
+  ],
+  "events": [
+    {
+      "marketIds": [
+        1770847043,
+        1770847057,
+        1770846988,
+        1770847003,
+        1770846989,
+        1770847004,
+        1770846990,
+        1770847005,
+        1770846991,
+        1770847022
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "code": 1530,
+      "hasStream": false,
+      "extId": "fp32_ar:match:685262",
+      "sc": 1257,
+      "mc": 123,
+      "rc": false,
+      "pId": 32,
+      "et": 0,
+      "hasStats": true,
+      "competitorIds": [
+        1790301,
+        106133
+      ],
+      "sportId": 66,
+      "catId": 882,
+      "champId": 11276,
+      "status": 0,
+      "startDate": "2026-09-21T20:00:00Z",
+      "id": 17936679,
+      "name": "Av Alta FC vs. Greenville Triumph SC"
+    },
+    {
+      "marketIds": [
+        1743590209,
+        1743590235,
+        1743590127,
+        1743590143,
+        1743590151,
+        1743590128,
+        1743590159,
+        1743590144,
+        1743590152,
+        1743590129,
+        1743590160,
+        1743590145,
+        1743590153,
+        1743590130,
+        1743590161,
+        1743590146,
+        1743590154,
+        1743590131,
+        1743590162,
+        1743590147,
+        1743590132,
+        1743590133,
+        1743590165
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "offers": [
+        {
+          "type": 5
+        },
+        {
+          "type": 6
+        }
+      ],
+      "code": 3619,
+      "hasStream": false,
+      "extId": "fp32_ar:match:652048",
+      "sc": 16798,
+      "mc": 375,
+      "rc": false,
+      "pId": 32,
+      "et": 0,
+      "hasStats": false,
+      "competitorIds": [
+        62023,
+        68167
+      ],
+      "sportId": 66,
+      "catId": 882,
+      "champId": 4610,
+      "status": 0,
+      "startDate": "2026-09-21T20:00:00Z",
+      "id": 15516506,
+      "name": "Los Angeles FC vs. Vancouver Whitecaps"
+    },
+    {
+      "marketIds": [
+        1754079211,
+        1754079329,
+        1754079265,
+        1754079273,
+        1754079251,
+        1754079288,
+        1754079266,
+        1754079274,
+        1754079252,
+        1754079289,
+        1754079267,
+        1754079275,
+        1754079253,
+        1754079290,
+        1754079268,
+        1754079294
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "offers": [
+        {
+          "type": 5
+        },
+        {
+          "type": 6
+        }
+      ],
+      "code": 428,
+      "hasStream": false,
+      "extId": "fp32_ar:match:654457",
+      "sc": 8424,
+      "mc": 390,
+      "rc": false,
+      "pId": 32,
+      "et": 0,
+      "hasStats": false,
+      "competitorIds": [
+        46417,
+        46415
+      ],
+      "sportId": 66,
+      "catId": 560,
+      "champId": 10009,
+      "status": 0,
+      "startDate": "2026-09-21T20:00:00Z",
+      "id": 17661555,
+      "name": "America vs. Monterrey"
+    },
+    {
+      "marketIds": [
+        1768250633,
+        1768250656,
+        1768250573,
+        1768250560,
+        1768250574,
+        1768250561,
+        1768250575,
+        1768250562,
+        1768250576,
+        1768250563,
+        1768250594
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "code": 6212,
+      "hasStream": false,
+      "extId": "fp32_ar:match:685874",
+      "sc": 1500,
+      "mc": 188,
+      "rc": false,
+      "pId": 32,
+      "et": 0,
+      "hasStats": true,
+      "competitorIds": [
+        63615,
+        62328
+      ],
+      "sportId": 66,
+      "catId": 767,
+      "champId": 4270,
+      "status": 0,
+      "startDate": "2026-09-21T20:00:00Z",
+      "id": 17926355,
+      "name": "Roasso Kumamoto vs. Ehime FC"
+    },
+    {
+      "marketIds": [
+        1768250085,
+        1768250108,
+        1768250011,
+        1768250025,
+        1768250012,
+        1768250026,
+        1768250013,
+        1768250027,
+        1768250014,
+        1768250028,
+        1768250015,
+        1768250046
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "code": 6210,
+      "hasStream": false,
+      "extId": "fp32_ar:match:685873",
+      "sc": 1494,
+      "mc": 186,
+      "rc": false,
+      "pId": 32,
+      "et": 0,
+      "hasStats": true,
+      "competitorIds": [
+        62329,
+        63621
+      ],
+      "sportId": 66,
+      "catId": 767,
+      "champId": 4270,
+      "status": 0,
+      "startDate": "2026-09-21T20:00:00Z",
+      "id": 17926270,
+      "name": "Matsumoto Yamaga FC vs. Kagoshima United"
+    },
+    {
+      "marketIds": [
+        1771831497,
+        1771831522,
+        1771831405,
+        1771831406,
+        1771831407,
+        1771831452
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "code": 8883,
+      "hasStream": false,
+      "extId": "fp32_ar:match:685812",
+      "sc": 1473,
+      "mc": 175,
+      "rc": false,
+      "pId": 32,
+      "et": 0,
+      "hasStats": false,
+      "competitorIds": [
+        63613,
+        118019
+      ],
+      "sportId": 66,
+      "catId": 767,
+      "champId": 9606,
+      "status": 0,
+      "startDate": "2026-09-21T20:00:00Z",
+      "id": 17937197,
+      "name": "Grulla Morioka vs. Honda FC"
+    },
+    {
+      "marketIds": [
+        1770028422,
+        1770028447,
+        1770028347,
+        1770028348,
+        1770028349,
+        1770028379
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "code": 1978,
+      "hasStream": false,
+      "extId": "fp32_ar:match:685810",
+      "sc": 1475,
+      "mc": 181,
+      "rc": false,
+      "pId": 32,
+      "et": 0,
+      "hasStats": false,
+      "competitorIds": [
+        211723,
+        118036
+      ],
+      "sportId": 66,
+      "catId": 767,
+      "champId": 9606,
+      "status": 0,
+      "startDate": "2026-09-21T20:00:00Z",
+      "id": 17937195,
+      "name": "Briobecca Urayasu vs. Veertien Mie"
+    },
+    {
+      "marketIds": [
+        1770027869,
+        1770027894,
+        1770027792,
+        1770027793,
+        1770027794,
+        1770027826
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "code": 2809,
+      "hasStream": false,
+      "extId": "fp32_ar:match:685811",
+      "sc": 1484,
+      "mc": 182,
+      "rc": false,
+      "pId": 32,
+      "et": 0,
+      "hasStats": false,
+      "competitorIds": [
+        118056,
+        118032
+      ],
+      "sportId": 66,
+      "catId": 767,
+      "champId": 9606,
+      "status": 0,
+      "startDate": "2026-09-21T20:00:00Z",
+      "id": 17937196,
+      "name": "Tiamo Hirakata vs. Yokogawa Musashino FC"
+    }
+  ],
+  "sports": [
+    {
+      "catIds": [
+        1571,
+        1728,
+        882,
+        1595,
+        767,
+        775,
+        1165,
+        560,
+        579,
+        854,
+        1177,
+        806,
+        1155,
+        902,
+        1243,
+        501,
+        507,
+        557,
+        515,
+        606,
+        1162,
+        590,
+        812,
+        585,
+        591,
+        566,
+        850,
+        738,
+        502,
+        803,
+        816,
+        506,
+        876,
+        691,
+        561,
+        503,
+        810,
+        716,
+        703,
+        565,
+        899,
+        582,
+        1134,
+        811,
+        569,
+        602,
+        908,
+        888,
+        512,
+        898,
+        497,
+        840,
+        568,
+        567,
+        573,
+        513,
+        818,
+        563,
+        842,
+        589,
+        604,
+        544,
+        781,
+        564,
+        1173,
+        605,
+        879,
+        820,
+        884,
+        939,
+        907,
+        697,
+        835,
+        580,
+        575,
+        885,
+        597,
+        509,
+        593,
+        603,
+        729,
+        1159,
+        588,
+        508,
+        496,
+        890,
+        574,
+        517,
+        845,
+        783,
+        934,
+        826,
+        920,
+        555,
+        548,
+        693,
+        554,
+        500,
+        1424,
+        595,
+        830,
+        493,
+        578,
+        814,
+        594,
+        795,
+        852,
+        1865,
+        796,
+        598,
+        516,
+        2324,
+        518,
+        727,
+        797,
+        707,
+        847,
+        1160,
+        681,
+        759,
+        808,
+        505,
+        819,
+        916,
+        1131,
+        499,
+        1133,
+        1178,
+        550,
+        511
+      ],
+      "typeId": 318,
+      "iconName": "soccer",
+      "hasLiveEvents": false,
+      "id": 66,
+      "name": "Soccer"
+    }
+  ]
+}

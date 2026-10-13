@@ -1,0 +1,33 @@
+Implemented the first redesign pass across **19 files under `public/`**, preserving vanilla HTML/CSS/JS, the token system, API calls, and existing scripts’ relative load order.
+
+The prioritized plan is:
+
+| Priority | Finding and improvement | Status |
+|---|---|---|
+| P0 | Shared components referenced colors available only on `body.edge`. Unify both style layers through design-token aliases. | Implemented |
+| P0 | Conflicting breakpoints narrowed the mobile drawer and caused content overlap. Align navigation widths, content offsets, and mobile spacing. | Implemented |
+| P1 | Pale text, small headings, and inconsistent controls weakened hierarchy. Improve contrast, heading sizes, spacing, focus indicators, and control sizing. | Implemented |
+| P1 | Light-only colors conflicted with dark native controls. Add persistent Light/Dark/System selection and theme-aware surfaces. | Implemented |
+| P2 | Simplify scanner controls, standardize filter/export toolbars, and unify loading/empty/error states across pages. | Follow-up; requires broader workflow changes |
+
+Exactly these files changed for this task:
+
+| File | Changes |
+|---|---|
+| [design-tokens.css](</E:/AI Folder Projects/arbiter/public/css/design-tokens.css>) | Higher-contrast colors, dark palette, shared ArbEdge/scrape aliases, control-size tokens. |
+| [theme.css](</E:/AI Folder Projects/arbiter/public/css/theme.css>) | Heading hierarchy, spacing, native color scheme, button states, keyboard focus, forms, mobile sizing, responsive login card. |
+| [arbedge.css](</E:/AI Folder Projects/arbiter/public/css/arbedge.css>) | Consistent sidebar/drawer geometry, content widths, theme-aware components, opaque table headers, numeric alignment, switch sizing; removed generic card lift. |
+| [scanner.css](</E:/AI Folder Projects/arbiter/public/css/scanner.css>) | More readable summary labels and safer wrapping on narrow screens. |
+| [analytics.css](</E:/AI Folder Projects/arbiter/public/css/analytics.css>) | Wrapping toolbars and single-column, scrollable mobile dialogs. |
+| [scrape.css](</E:/AI Folder Projects/arbiter/public/css/scrape.css>) | Removed doubled section spacing caused by margins plus flex gaps. |
+| [app.js](</E:/AI Folder Projects/arbiter/public/js/app.js>) | Localized theme selector, preserved theme preferences, included selector in drawer keyboard navigation. |
+| [theme.js](</E:/AI Folder Projects/arbiter/public/js/theme.js>) **New** | Applies preference before styles load; handles persistence, system changes, cross-tab updates, and unavailable storage. |
+| [index.html](</E:/AI Folder Projects/arbiter/public/index.html>) | Theme initialization and a translated dashboard heading. |
+| [scanner.html](</E:/AI Folder Projects/arbiter/public/admin/scanner.html>) | Theme initialization, semantic page heading, explicit form-label associations. |
+| [analytics.html](</E:/AI Folder Projects/arbiter/public/admin/analytics.html>) | Theme initialization, semantic heading, stylesheet moved into `<head>`. |
+| [ai.html](</E:/AI Folder Projects/arbiter/public/admin/ai.html>) | Theme initialization and semantic page heading. |
+| [event.html](</E:/AI Folder Projects/arbiter/public/event.html>), [arbitrage.html](</E:/AI Folder Projects/arbiter/public/admin/arbitrage.html>), [bookies.html](</E:/AI Folder Projects/arbiter/public/admin/bookies.html>), [live.html](</E:/AI Folder Projects/arbiter/public/admin/live.html>), [login.html](</E:/AI Folder Projects/arbiter/public/admin/login.html>), [scrape.html](</E:/AI Folder Projects/arbiter/public/admin/scrape.html>), [settings.html](</E:/AI Folder Projects/arbiter/public/admin/settings.html>) | Added early theme initialization only. |
+
+Validation: **331 regression tests passed**, plus 22 theme/HTML compatibility checks. All 54 tested text/surface color pairs exceed 4.5:1 contrast. JavaScript lint and diff checks passed.
+
+Rendered desktop/mobile verification remains outstanding: no browser session was available, and Chromium launch was sandbox-blocked. Existing uncommitted work was preserved.

@@ -1,4 +1,5 @@
 import { join } from 'node:path';
+import { canonicalSportName } from '../sports/registry.mjs';
 import { promises as fs } from 'node:fs';
 import { groupByEvent, findArbitrage, findMiddles, findPositiveEV, findLowHold, buildSelectionIndex } from './engine.mjs';
 import { roundedArbitrageAllocation } from './market-contracts.mjs';
@@ -404,7 +405,15 @@ export async function scanWorkspace(args) {
   const stakeBudget = maxStake === undefined || maxStake === null ? bankroll : Math.min(bankroll, maxStake);
 
   const qualityOptions = { prematchMaxAgeMs, liveMaxAgeMs, expectedRunId: scrapeRunId };
-  const { events, sources } = await loadWorkspace(dataDir, qualityOptions);
+  const loaded = await loadWorkspace(dataDir, qualityOptions);
+  // One sport label per sport before anything downstream reads it. See
+  // canonicalSportName: adapters disagree on casing, and the raw strings
+  // reached the console as two separate filter options.
+  const events = loaded.events.map((event) => {
+    const sport = canonicalSportName(event.sport);
+    return sport && sport !== event.sport ? { ...event, sport } : event;
+  });
+  const { sources } = loaded;
   // Markets priced below break-even were already dropped, per market, in
   // loadWorkspace. A source-level exclusion is deliberately NOT applied here:
   // contibet measures 9% on the current capture and 22% on an older one, so any
@@ -424,7 +433,7 @@ export async function scanWorkspace(args) {
   const actionableEvents = filtered.filter((event) => event.live === true || isActionableKickoff(event.kickoff));
   const actionableGrouped = groupByEvent(actionableEvents);
 
-  const opportunities = findArbitrage(actionableGrouped, { minMarginPercent })
+  const opportunities = findArbitrage(actionableGrouped, { minMarginPercent, includeSynthetic: true })
     .map((opportunity) => withBankroll(opportunity, stakeBudget))
     .filter(Boolean);
   // Middling and positive-EV calculations remain informational until each market

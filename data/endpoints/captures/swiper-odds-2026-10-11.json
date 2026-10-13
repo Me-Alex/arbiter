@@ -1,0 +1,1635 @@
+{
+  "dates": [
+    {
+      "dateTime": "2026-10-10T21:00:00Z",
+      "eventIds": [
+        17989078,
+        17989016,
+        17989150,
+        17989071,
+        17989079,
+        17785962,
+        17945408,
+        17976600,
+        17998934,
+        17998938
+      ]
+    }
+  ],
+  "topSports": [
+    {
+      "id": 66,
+      "name": "Soccer",
+      "iconName": "soccer",
+      "hasStream": false,
+      "count": 1586
+    },
+    {
+      "id": 68,
+      "name": "Tennis",
+      "iconName": "tennis",
+      "hasStream": false,
+      "count": 232
+    },
+    {
+      "id": 67,
+      "name": "Basketball",
+      "iconName": "basketball",
+      "hasStream": false,
+      "count": 286
+    },
+    {
+      "id": 70,
+      "name": "Ice Hockey",
+      "iconName": "ice-hockey",
+      "hasStream": false,
+      "count": 152
+    },
+    {
+      "id": 77,
+      "name": "Table Tennis",
+      "iconName": "table-tennis",
+      "hasStream": false,
+      "count": 292
+    },
+    {
+      "id": 69,
+      "name": "Volleyball",
+      "iconName": "volleyball",
+      "hasStream": false,
+      "count": 56
+    },
+    {
+      "id": 75,
+      "name": "American Football",
+      "iconName": "american-football",
+      "hasStream": false,
+      "count": 38
+    },
+    {
+      "id": 76,
+      "name": "Baseball",
+      "iconName": "baseball",
+      "hasStream": false,
+      "count": 6
+    },
+    {
+      "id": 101,
+      "name": "Rugby League",
+      "iconName": "rugby-league",
+      "hasStream": false,
+      "count": 5
+    },
+    {
+      "id": 106,
+      "name": "Aussie Rules",
+      "iconName": "aussie-rules",
+      "hasStream": false,
+      "count": 3
+    },
+    {
+      "id": -1,
+      "name": "Other",
+      "iconName": "Other",
+      "hasStream": false,
+      "count": 234
+    }
+  ],
+  "headers": [
+    {
+      "typeId": 1,
+      "name": "1x2",
+      "mst": 0,
+      "odds": [
+        {
+          "id": 1,
+          "name": "1"
+        },
+        {
+          "id": 2,
+          "name": "X"
+        },
+        {
+          "id": 3,
+          "name": "2"
+        }
+      ]
+    },
+    {
+      "typeId": 18,
+      "name": "Total",
+      "mst": 0,
+      "odds": [
+        {
+          "id": 12,
+          "name": "peste"
+        },
+        {
+          "id": 13,
+          "name": "sub"
+        }
+      ]
+    },
+    {
+      "typeId": 29,
+      "name": "Ambele echipe să înscrie",
+      "mst": 0,
+      "odds": [
+        {
+          "id": 74,
+          "name": "da"
+        },
+        {
+          "id": 76,
+          "name": "nu"
+        }
+      ]
+    }
+  ],
+  "pageCount": 157,
+  "page": 1,
+  "markets": [
+    {
+      "oddIds": [
+        4625599354,
+        4625599355,
+        4625599356
+      ],
+      "typeId": 1,
+      "sportMarketId": 72858,
+      "id": 1772290305,
+      "name": "1x2"
+    },
+    {
+      "oddIds": [
+        4625599359,
+        4625599360,
+        4625599361
+      ],
+      "variant": 9,
+      "lines": [],
+      "typeId": 8,
+      "sportMarketId": 72859,
+      "sv": "1",
+      "sn": "Primul Goal",
+      "id": 1772290307,
+      "name": "Golul primul"
+    },
+    {
+      "oddIds": [
+        4625599425,
+        4625599426
+      ],
+      "typeId": 18,
+      "sportMarketId": 72862,
+      "sv": "9.5",
+      "sn": "9.5",
+      "id": 1772290312,
+      "name": "Total"
+    },
+    {
+      "oddIds": [
+        4628991022,
+        4628991023,
+        4628991024
+      ],
+      "typeId": 1,
+      "sportMarketId": 72858,
+      "id": 1773619522,
+      "name": "1x2"
+    },
+    {
+      "oddIds": [
+        4628991033,
+        4628991034,
+        4628991035
+      ],
+      "variant": 9,
+      "lines": [],
+      "typeId": 8,
+      "sportMarketId": 72859,
+      "sv": "1",
+      "sn": "Primul Goal",
+      "id": 1773619527,
+      "name": "Golul primul"
+    },
+    {
+      "oddIds": [
+        4628991025,
+        4628991026
+      ],
+      "typeId": 18,
+      "sportMarketId": 72862,
+      "sv": "6.5",
+      "sn": "6.5",
+      "id": 1773619523,
+      "name": "Total"
+    },
+    {
+      "oddIds": [
+        4628991029,
+        4628991030
+      ],
+      "typeId": 29,
+      "sportMarketId": 72866,
+      "id": 1773619525,
+      "name": "Ambele echipe să înscrie"
+    },
+    {
+      "oddIds": [
+        4628990741,
+        4628990742,
+        4628990743
+      ],
+      "typeId": 1,
+      "sportMarketId": 72858,
+      "id": 1773619397,
+      "name": "1x2"
+    },
+    {
+      "oddIds": [
+        4628990752,
+        4628990753,
+        4628990754
+      ],
+      "variant": 9,
+      "lines": [],
+      "typeId": 8,
+      "sportMarketId": 72859,
+      "sv": "1",
+      "sn": "Primul Goal",
+      "id": 1773619402,
+      "name": "Golul primul"
+    },
+    {
+      "oddIds": [
+        4628990744,
+        4628990745
+      ],
+      "typeId": 18,
+      "sportMarketId": 72862,
+      "sv": "5.5",
+      "sn": "5.5",
+      "id": 1773619398,
+      "name": "Total"
+    },
+    {
+      "oddIds": [
+        4628990748,
+        4628990749
+      ],
+      "typeId": 29,
+      "sportMarketId": 72866,
+      "id": 1773619400,
+      "name": "Ambele echipe să înscrie"
+    },
+    {
+      "oddIds": [
+        4628952492,
+        4628952493,
+        4628952494
+      ],
+      "typeId": 1,
+      "sportMarketId": 72858,
+      "id": 1773602363,
+      "name": "1x2"
+    },
+    {
+      "oddIds": [
+        4628952497,
+        4628952498,
+        4628952499
+      ],
+      "variant": 9,
+      "lines": [],
+      "typeId": 8,
+      "sportMarketId": 72859,
+      "sv": "1",
+      "sn": "Primul Goal",
+      "id": 1773602365,
+      "name": "Golul primul"
+    },
+    {
+      "oddIds": [
+        4628952553,
+        4628952554
+      ],
+      "typeId": 18,
+      "sportMarketId": 72862,
+      "sv": "6.5",
+      "sn": "6.5",
+      "id": 1773602370,
+      "name": "Total"
+    },
+    {
+      "oddIds": [
+        4628951601,
+        4628951602,
+        4628951603
+      ],
+      "typeId": 1,
+      "sportMarketId": 72858,
+      "id": 1773601989,
+      "name": "1x2"
+    },
+    {
+      "oddIds": [
+        4628951608,
+        4628951609,
+        4628951610
+      ],
+      "variant": 9,
+      "lines": [],
+      "typeId": 8,
+      "sportMarketId": 72859,
+      "sv": "1",
+      "sn": "Primul Goal",
+      "id": 1773601992,
+      "name": "Golul primul"
+    },
+    {
+      "oddIds": [
+        4628951661,
+        4628951662
+      ],
+      "typeId": 18,
+      "sportMarketId": 72862,
+      "sv": "5.5",
+      "sn": "5.5",
+      "id": 1773601997,
+      "name": "Total"
+    },
+    {
+      "oddIds": [
+        4628951604,
+        4628951605
+      ],
+      "typeId": 29,
+      "sportMarketId": 72866,
+      "id": 1773601990,
+      "name": "Ambele echipe să înscrie"
+    },
+    {
+      "oddIds": [
+        4600018677,
+        4600018678,
+        4600018679
+      ],
+      "typeId": 1,
+      "sportMarketId": 70472,
+      "id": 1764063907,
+      "name": "1x2"
+    },
+    {
+      "oddIds": [
+        4600018716,
+        4600018718,
+        4600018717
+      ],
+      "variant": 9,
+      "lines": [],
+      "typeId": 8,
+      "sportMarketId": 70491,
+      "sv": "1",
+      "sn": "Primul",
+      "id": 1764063920,
+      "name": "Golul 1"
+    },
+    {
+      "oddIds": [
+        4600018528,
+        4600018529
+      ],
+      "typeId": 18,
+      "sportMarketId": 70520,
+      "sv": "2.5",
+      "sn": "2.5",
+      "id": 1764063858,
+      "name": "Total goluri"
+    },
+    {
+      "oddIds": [
+        4620591769,
+        4620591770,
+        4620591771
+      ],
+      "typeId": 1,
+      "sportMarketId": 70472,
+      "id": 1770678742,
+      "name": "1x2"
+    },
+    {
+      "oddIds": [
+        4620591793,
+        4620591795,
+        4620591794
+      ],
+      "variant": 9,
+      "lines": [],
+      "typeId": 8,
+      "sportMarketId": 70491,
+      "sv": "1",
+      "sn": "Primul",
+      "id": 1770678749,
+      "name": "Golul 1"
+    },
+    {
+      "oddIds": [
+        4620591674,
+        4620591675
+      ],
+      "typeId": 18,
+      "sportMarketId": 70520,
+      "sv": "2.5",
+      "sn": "2.5",
+      "id": 1770678701,
+      "name": "Total goluri"
+    },
+    {
+      "oddIds": [
+        4627950980,
+        4627950981,
+        4627950982
+      ],
+      "typeId": 1,
+      "sportMarketId": 70472,
+      "id": 1773207029,
+      "name": "1x2"
+    },
+    {
+      "oddIds": [
+        4627950842,
+        4627950843
+      ],
+      "typeId": 18,
+      "sportMarketId": 70520,
+      "sv": "2.5",
+      "sn": "2.5",
+      "id": 1773206983,
+      "name": "Total goluri"
+    },
+    {
+      "oddIds": [
+        4629018625,
+        4629018624,
+        4629018626
+      ],
+      "typeId": 1,
+      "sportMarketId": 72858,
+      "id": 1773631426,
+      "name": "1x2"
+    },
+    {
+      "oddIds": [
+        4629018595,
+        4629018593,
+        4629018594
+      ],
+      "typeId": 1,
+      "sportMarketId": 72858,
+      "id": 1773631412,
+      "name": "1x2"
+    }
+  ],
+  "odds": [
+    {
+      "typeId": 1,
+      "price": 1.7,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 2651622,
+      "id": 4625599354,
+      "name": "Real Madrid (zaha)"
+    },
+    {
+      "typeId": 2,
+      "price": 6.3334,
+      "isMB": false,
+      "oddStatus": 0,
+      "id": 4625599355,
+      "name": "Egal"
+    },
+    {
+      "typeId": 3,
+      "price": 2.7143,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 3031188,
+      "id": 4625599356,
+      "name": "Barcelona (nicky)"
+    },
+    {
+      "typeId": 1,
+      "price": 1.68,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 2651622,
+      "id": 4625599359,
+      "name": "Real Madrid (zaha)"
+    },
+    {
+      "typeId": 7,
+      "price": 16,
+      "isMB": false,
+      "oddStatus": 0,
+      "id": 4625599360,
+      "name": "Niciunul"
+    },
+    {
+      "typeId": 3,
+      "price": 1.9231,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 3031188,
+      "id": 4625599361,
+      "name": "Barcelona (nicky)"
+    },
+    {
+      "typeId": 12,
+      "price": 1.8334,
+      "isMB": false,
+      "oddStatus": 0,
+      "id": 4625599425,
+      "name": "Peste 9.5"
+    },
+    {
+      "typeId": 13,
+      "price": 1.8334,
+      "isMB": false,
+      "oddStatus": 0,
+      "id": 4625599426,
+      "name": "Sub 9.5"
+    },
+    {
+      "typeId": 1,
+      "price": 1.2728,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 2326103,
+      "id": 4628991022,
+      "name": "Arsenal (Nightxx)"
+    },
+    {
+      "typeId": 2,
+      "price": 6.5,
+      "isMB": false,
+      "oddStatus": 0,
+      "id": 4628991023,
+      "name": "Egal"
+    },
+    {
+      "typeId": 3,
+      "price": 4.75,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 3677368,
+      "id": 4628991024,
+      "name": "Juventus (kkikus)"
+    },
+    {
+      "typeId": 1,
+      "price": 1.4167,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 2326103,
+      "id": 4628991033,
+      "name": "Arsenal (Nightxx)"
+    },
+    {
+      "typeId": 7,
+      "price": 16,
+      "isMB": false,
+      "oddStatus": 0,
+      "id": 4628991034,
+      "name": "Niciunul"
+    },
+    {
+      "typeId": 3,
+      "price": 2.5,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 3677368,
+      "id": 4628991035,
+      "name": "Juventus (kkikus)"
+    },
+    {
+      "typeId": 12,
+      "price": 2,
+      "isMB": false,
+      "oddStatus": 0,
+      "id": 4628991025,
+      "name": "Peste 6.5"
+    },
+    {
+      "typeId": 13,
+      "price": 1.6667,
+      "isMB": false,
+      "oddStatus": 0,
+      "id": 4628991026,
+      "name": "Sub 6.5"
+    },
+    {
+      "typeId": 74,
+      "price": 1.0834,
+      "isMB": false,
+      "oddStatus": 0,
+      "id": 4628991029,
+      "name": "Da"
+    },
+    {
+      "typeId": 76,
+      "price": 5.5,
+      "isMB": false,
+      "oddStatus": 0,
+      "id": 4628991030,
+      "name": "Nu"
+    },
+    {
+      "typeId": 1,
+      "price": 1.5715,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 2580695,
+      "id": 4628990741,
+      "name": "Borussia Dortmund (Grellz)"
+    },
+    {
+      "typeId": 2,
+      "price": 5.5,
+      "isMB": false,
+      "oddStatus": 0,
+      "id": 4628990742,
+      "name": "Egal"
+    },
+    {
+      "typeId": 3,
+      "price": 3,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 3295602,
+      "id": 4628990743,
+      "name": "Sporting CP (noeN)"
+    },
+    {
+      "typeId": 1,
+      "price": 1.5834,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 2580695,
+      "id": 4628990752,
+      "name": "Borussia Dortmund (Grellz)"
+    },
+    {
+      "typeId": 7,
+      "price": 16,
+      "isMB": false,
+      "oddStatus": 0,
+      "id": 4628990753,
+      "name": "Niciunul"
+    },
+    {
+      "typeId": 3,
+      "price": 2.0834,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 3295602,
+      "id": 4628990754,
+      "name": "Sporting CP (noeN)"
+    },
+    {
+      "typeId": 12,
+      "price": 1.8334,
+      "isMB": false,
+      "oddStatus": 0,
+      "id": 4628990744,
+      "name": "Peste 5.5"
+    },
+    {
+      "typeId": 13,
+      "price": 1.8334,
+      "isMB": false,
+      "oddStatus": 0,
+      "id": 4628990745,
+      "name": "Sub 5.5"
+    },
+    {
+      "typeId": 74,
+      "price": 1.0834,
+      "isMB": false,
+      "oddStatus": 0,
+      "id": 4628990748,
+      "name": "Da"
+    },
+    {
+      "typeId": 76,
+      "price": 5.5,
+      "isMB": false,
+      "oddStatus": 0,
+      "id": 4628990749,
+      "name": "Nu"
+    },
+    {
+      "typeId": 1,
+      "price": 2.4,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 3577151,
+      "id": 4628952492,
+      "name": "Liverpool (curuza)"
+    },
+    {
+      "typeId": 2,
+      "price": 4.5,
+      "isMB": false,
+      "oddStatus": 0,
+      "id": 4628952493,
+      "name": "Egal"
+    },
+    {
+      "typeId": 3,
+      "price": 1.96,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 3577149,
+      "id": 4628952494,
+      "name": "Atleti (Kholys)"
+    },
+    {
+      "typeId": 1,
+      "price": 1.8572,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 3577151,
+      "id": 4628952497,
+      "name": "Liverpool (curuza)"
+    },
+    {
+      "typeId": 7,
+      "price": 16,
+      "isMB": false,
+      "oddStatus": 0,
+      "id": 4628952498,
+      "name": "Niciunul"
+    },
+    {
+      "typeId": 3,
+      "price": 1.7273,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 3577149,
+      "id": 4628952499,
+      "name": "Atleti (Kholys)"
+    },
+    {
+      "typeId": 12,
+      "price": 2.1,
+      "isMB": false,
+      "oddStatus": 0,
+      "id": 4628952553,
+      "name": "Peste 6.5"
+    },
+    {
+      "typeId": 13,
+      "price": 1.6,
+      "isMB": false,
+      "oddStatus": 0,
+      "id": 4628952554,
+      "name": "Sub 6.5"
+    },
+    {
+      "typeId": 1,
+      "price": 4,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 3577152,
+      "id": 4628951601,
+      "name": "Paris (Skif)"
+    },
+    {
+      "typeId": 2,
+      "price": 3.8,
+      "isMB": false,
+      "oddStatus": 0,
+      "id": 4628951602,
+      "name": "Egal"
+    },
+    {
+      "typeId": 3,
+      "price": 1.5715,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 3577150,
+      "id": 4628951603,
+      "name": "Bayern Munchen (kirman)"
+    },
+    {
+      "typeId": 1,
+      "price": 2.1667,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 3577152,
+      "id": 4628951608,
+      "name": "Paris (Skif)"
+    },
+    {
+      "typeId": 7,
+      "price": 16,
+      "isMB": false,
+      "oddStatus": 0,
+      "id": 4628951609,
+      "name": "Niciunul"
+    },
+    {
+      "typeId": 3,
+      "price": 1.5455,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 3577150,
+      "id": 4628951610,
+      "name": "Bayern Munchen (kirman)"
+    },
+    {
+      "typeId": 12,
+      "price": 2.1,
+      "isMB": false,
+      "oddStatus": 0,
+      "id": 4628951661,
+      "name": "Peste 5.5"
+    },
+    {
+      "typeId": 13,
+      "price": 1.6,
+      "isMB": false,
+      "oddStatus": 0,
+      "id": 4628951662,
+      "name": "Sub 5.5"
+    },
+    {
+      "typeId": 74,
+      "price": 1.1,
+      "isMB": false,
+      "oddStatus": 0,
+      "id": 4628951604,
+      "name": "Da"
+    },
+    {
+      "typeId": 76,
+      "price": 5.3334,
+      "isMB": false,
+      "oddStatus": 0,
+      "id": 4628951605,
+      "name": "Nu"
+    },
+    {
+      "typeId": 1,
+      "price": 3,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 55061,
+      "isDBB": true,
+      "id": 4600018677,
+      "name": "Lobos UPNFM"
+    },
+    {
+      "typeId": 2,
+      "price": 3.1,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4600018678,
+      "name": "X"
+    },
+    {
+      "typeId": 3,
+      "price": 2.2,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 55060,
+      "isDBB": true,
+      "id": 4600018679,
+      "name": "Marathon"
+    },
+    {
+      "typeId": 1,
+      "price": 2.0834,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 55061,
+      "isDBB": true,
+      "id": 4600018716,
+      "name": "Lobos UPNFM"
+    },
+    {
+      "typeId": 7,
+      "price": 10,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4600018718,
+      "name": "Niciunul"
+    },
+    {
+      "typeId": 3,
+      "price": 1.75,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 55060,
+      "isDBB": true,
+      "id": 4600018717,
+      "name": "Marathon"
+    },
+    {
+      "typeId": 12,
+      "price": 1.8334,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4600018528,
+      "name": "Peste 2.5"
+    },
+    {
+      "typeId": 13,
+      "price": 1.8334,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4600018529,
+      "name": "Sub 2.5"
+    },
+    {
+      "typeId": 1,
+      "price": 2.375,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 73599,
+      "isDBB": true,
+      "id": 4620591769,
+      "name": "AD Cariari Pococi"
+    },
+    {
+      "typeId": 2,
+      "price": 3.25,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4620591770,
+      "name": "X"
+    },
+    {
+      "typeId": 3,
+      "price": 2.625,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 57478,
+      "isDBB": true,
+      "id": 4620591771,
+      "name": "Consultants Desamparados"
+    },
+    {
+      "typeId": 1,
+      "price": 1.8334,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 73599,
+      "isDBB": true,
+      "id": 4620591793,
+      "name": "AD Cariari Pococi"
+    },
+    {
+      "typeId": 7,
+      "price": 11,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4620591795,
+      "name": "Niciunul"
+    },
+    {
+      "typeId": 3,
+      "price": 1.95,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 57478,
+      "isDBB": true,
+      "id": 4620591794,
+      "name": "Consultants Desamparados"
+    },
+    {
+      "typeId": 12,
+      "price": 1.8,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4620591674,
+      "name": "Peste 2.5"
+    },
+    {
+      "typeId": 13,
+      "price": 1.85,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4620591675,
+      "name": "Sub 2.5"
+    },
+    {
+      "typeId": 1,
+      "price": 1.625,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 55063,
+      "isDBB": true,
+      "id": 4627950980,
+      "name": "CD Vida"
+    },
+    {
+      "typeId": 2,
+      "price": 3.4,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4627950981,
+      "name": "X"
+    },
+    {
+      "typeId": 3,
+      "price": 4.5,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 3559472,
+      "isDBB": true,
+      "id": 4627950982,
+      "name": "Municipal San Esteban"
+    },
+    {
+      "typeId": 12,
+      "price": 1.95,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4627950842,
+      "name": "Peste 2.5"
+    },
+    {
+      "typeId": 13,
+      "price": 1.7,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4627950843,
+      "name": "Sub 2.5"
+    },
+    {
+      "typeId": 1,
+      "price": 2.9,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 3514144,
+      "id": 4629018625,
+      "name": "Como (lost)"
+    },
+    {
+      "typeId": 2,
+      "price": 5.3334,
+      "isMB": false,
+      "oddStatus": 0,
+      "id": 4629018624,
+      "name": "Egal"
+    },
+    {
+      "typeId": 3,
+      "price": 1.6154,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 3752062,
+      "id": 4629018626,
+      "name": "Club Brugge (alpha)"
+    },
+    {
+      "typeId": 1,
+      "price": 3.4,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 3752073,
+      "id": 4629018595,
+      "name": "Galatasaray (troy)"
+    },
+    {
+      "typeId": 2,
+      "price": 6,
+      "isMB": false,
+      "oddStatus": 0,
+      "id": 4629018593,
+      "name": "Egal"
+    },
+    {
+      "typeId": 3,
+      "price": 1.4546,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 3752072,
+      "id": 4629018594,
+      "name": "Real Betis (monster)"
+    }
+  ],
+  "events": [
+    {
+      "marketIds": [
+        1772290305,
+        1772290307,
+        1772290312
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "code": 1973,
+      "hasStream": true,
+      "extId": "fp61_bt:match:01a1232c-a6e5-7bda-b3ff-4df940140238",
+      "sc": 64,
+      "mc": 7,
+      "rc": false,
+      "pId": 61,
+      "et": 0,
+      "hasStats": false,
+      "competitorIds": [
+        2651622,
+        3031188
+      ],
+      "sportId": 66,
+      "catId": 1728,
+      "champId": 49425,
+      "status": 0,
+      "startDate": "2026-10-11T01:26:00Z",
+      "id": 17989078,
+      "name": "Real Madrid (zaha) vs. Barcelona (nicky)"
+    },
+    {
+      "marketIds": [
+        1773619522,
+        1773619527,
+        1773619523,
+        1773619525
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "code": 1744,
+      "hasStream": true,
+      "extId": "fp61_bt:match:01a1232c-5795-7fae-bca8-4e2b3b55e29c",
+      "sc": 45,
+      "mc": 8,
+      "rc": false,
+      "pId": 61,
+      "et": 0,
+      "hasStats": false,
+      "competitorIds": [
+        2326103,
+        3677368
+      ],
+      "sportId": 66,
+      "catId": 1728,
+      "champId": 58885,
+      "status": 0,
+      "startDate": "2026-10-11T01:27:00Z",
+      "id": 17989016,
+      "name": "Arsenal (Nightxx) vs. Juventus (kkikus)"
+    },
+    {
+      "marketIds": [
+        1773619397,
+        1773619402,
+        1773619398,
+        1773619400
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "code": 1983,
+      "hasStream": true,
+      "extId": "fp61_bt:match:01a1232d-16b9-76bf-a7bc-b1878b6ceec4",
+      "sc": 45,
+      "mc": 8,
+      "rc": false,
+      "pId": 61,
+      "et": 0,
+      "hasStats": false,
+      "competitorIds": [
+        2580695,
+        3295602
+      ],
+      "sportId": 66,
+      "catId": 1728,
+      "champId": 58885,
+      "status": 0,
+      "startDate": "2026-10-11T01:27:00Z",
+      "id": 17989150,
+      "name": "Borussia Dortmund (Grellz) vs. Sporting CP (noeN)"
+    },
+    {
+      "marketIds": [
+        1773602363,
+        1773602365,
+        1773602370
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "code": 520,
+      "hasStream": true,
+      "extId": "fp61_bt:match:01a1232c-9e18-7cb9-bf38-5889d3fa4f4b",
+      "sc": 54,
+      "mc": 7,
+      "rc": false,
+      "pId": 61,
+      "et": 0,
+      "hasStats": false,
+      "competitorIds": [
+        3577151,
+        3577149
+      ],
+      "sportId": 66,
+      "catId": 1728,
+      "champId": 58885,
+      "status": 0,
+      "startDate": "2026-10-11T01:28:00Z",
+      "id": 17989071,
+      "name": "Liverpool (curuza) vs. Atleti (Kholys)"
+    },
+    {
+      "marketIds": [
+        1773601989,
+        1773601992,
+        1773601997,
+        1773601990
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "code": 592,
+      "hasStream": true,
+      "extId": "fp61_bt:match:01a1232c-af18-70fe-895b-c7f49a80bdfb",
+      "sc": 53,
+      "mc": 8,
+      "rc": false,
+      "pId": 61,
+      "et": 0,
+      "hasStats": false,
+      "competitorIds": [
+        3577152,
+        3577150
+      ],
+      "sportId": 66,
+      "catId": 1728,
+      "champId": 58885,
+      "status": 0,
+      "startDate": "2026-10-11T01:28:00Z",
+      "id": 17989079,
+      "name": "Paris (Skif) vs. Bayern Munchen (kirman)"
+    },
+    {
+      "marketIds": [
+        1764063907,
+        1764063920,
+        1764063858
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "code": 2015,
+      "hasStream": false,
+      "extId": "fp32_ar:match:666992",
+      "sc": 1300,
+      "mc": 123,
+      "rc": false,
+      "pId": 32,
+      "et": 0,
+      "hasStats": false,
+      "competitorIds": [
+        55061,
+        55060
+      ],
+      "sportId": 66,
+      "catId": 759,
+      "champId": 3685,
+      "status": 0,
+      "startDate": "2026-10-11T01:30:00Z",
+      "id": 17785962,
+      "name": "Lobos UPNFM vs. Marathon"
+    },
+    {
+      "marketIds": [
+        1770678742,
+        1770678749,
+        1770678701
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "code": 2571,
+      "hasStream": false,
+      "extId": "fp32_ar:match:686744",
+      "sc": 934,
+      "mc": 87,
+      "rc": false,
+      "pId": 32,
+      "et": 0,
+      "hasStats": false,
+      "competitorIds": [
+        73599,
+        57478
+      ],
+      "sportId": 66,
+      "catId": 727,
+      "champId": 3818,
+      "status": 0,
+      "startDate": "2026-10-11T01:30:00Z",
+      "id": 17945408,
+      "name": "AD Cariari Pococi vs. Consultants Desamparados"
+    },
+    {
+      "marketIds": [
+        1773207029,
+        1773206983
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "code": 7163,
+      "hasStream": false,
+      "extId": "fp32_ar:match:691407",
+      "sc": 741,
+      "mc": 69,
+      "rc": false,
+      "pId": 32,
+      "et": 0,
+      "hasStats": false,
+      "competitorIds": [
+        55063,
+        3559472
+      ],
+      "sportId": 66,
+      "catId": 759,
+      "champId": 21896,
+      "status": 0,
+      "startDate": "2026-10-11T01:30:00Z",
+      "id": 17976600,
+      "name": "CD Vida vs. Municipal San Esteban"
+    },
+    {
+      "marketIds": [
+        1773631426
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "code": 2992,
+      "hasStream": false,
+      "extId": "fp62_ls:match:20482403",
+      "sc": 7,
+      "mc": 3,
+      "rc": false,
+      "pId": 62,
+      "et": 0,
+      "hasStats": false,
+      "competitorIds": [
+        3514144,
+        3752062
+      ],
+      "sportId": 66,
+      "catId": 1595,
+      "champId": 56505,
+      "status": 0,
+      "startDate": "2026-10-11T01:30:00Z",
+      "id": 17998934,
+      "name": "Como (lost) vs. Club Brugge (alpha)"
+    },
+    {
+      "marketIds": [
+        1773631412
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "code": 3322,
+      "hasStream": false,
+      "extId": "fp62_ls:match:20482412",
+      "sc": 7,
+      "mc": 3,
+      "rc": false,
+      "pId": 62,
+      "et": 0,
+      "hasStats": false,
+      "competitorIds": [
+        3752073,
+        3752072
+      ],
+      "sportId": 66,
+      "catId": 1595,
+      "champId": 56505,
+      "status": 0,
+      "startDate": "2026-10-11T01:30:00Z",
+      "id": 17998938,
+      "name": "Galatasaray (troy) vs. Real Betis (monster)"
+    }
+  ],
+  "sports": [
+    {
+      "catIds": [
+        1728,
+        759,
+        727,
+        1595
+      ],
+      "typeId": 318,
+      "iconName": "soccer",
+      "hasLiveEvents": false,
+      "id": 66,
+      "name": "Soccer"
+    }
+  ],
+  "categories": [
+    {
+      "champIds": [
+        49425,
+        58885
+      ],
+      "iso": "",
+      "hasLiveEvents": false,
+      "id": 1728,
+      "name": "E-battles"
+    },
+    {
+      "champIds": [
+        3685,
+        21896
+      ],
+      "iso": "HND",
+      "hasLiveEvents": false,
+      "id": 759,
+      "name": "Honduras"
+    },
+    {
+      "champIds": [
+        3818
+      ],
+      "iso": "CRI",
+      "hasLiveEvents": false,
+      "id": 727,
+      "name": "Costa Rica"
+    },
+    {
+      "champIds": [
+        56505
+      ],
+      "iso": "",
+      "hasLiveEvents": false,
+      "id": 1595,
+      "name": "Gt Sports League"
+    }
+  ],
+  "champs": [
+    {
+      "hasLiveEvents": false,
+      "id": 49425,
+      "name": "ESportsBattle. La Liga (2x6 mins)"
+    },
+    {
+      "hasLiveEvents": false,
+      "id": 58885,
+      "name": "Champions League"
+    },
+    {
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "hasLiveEvents": false,
+      "id": 3685,
+      "name": "Liga Nacional"
+    },
+    {
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "hasLiveEvents": false,
+      "id": 3818,
+      "name": "Liga de Ascenso"
+    },
+    {
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "hasLiveEvents": false,
+      "id": 21896,
+      "name": "Liga de Ascenso"
+    },
+    {
+      "hasLiveEvents": false,
+      "id": 56505,
+      "name": "GT Leagues (E) (2x6 mins)"
+    }
+  ],
+  "competitors": [
+    {
+      "id": 2651622,
+      "name": "Real Madrid (zaha)"
+    },
+    {
+      "id": 3031188,
+      "name": "Barcelona (nicky)"
+    },
+    {
+      "id": 2326103,
+      "name": "Arsenal (Nightxx)"
+    },
+    {
+      "id": 3677368,
+      "name": "Juventus (kkikus)"
+    },
+    {
+      "id": 2580695,
+      "name": "Borussia Dortmund (Grellz)"
+    },
+    {
+      "id": 3295602,
+      "name": "Sporting CP (noeN)"
+    },
+    {
+      "id": 3577151,
+      "name": "Liverpool (curuza)"
+    },
+    {
+      "id": 3577149,
+      "name": "Atleti (Kholys)"
+    },
+    {
+      "id": 3577152,
+      "name": "Paris (Skif)"
+    },
+    {
+      "id": 3577150,
+      "name": "Bayern Munchen (kirman)"
+    },
+    {
+      "jerseyChamps": [
+        3685
+      ],
+      "abbreviation": "UPN",
+      "id": 55061,
+      "name": "Lobos UPNFM"
+    },
+    {
+      "jerseyChamps": [
+        3685
+      ],
+      "abbreviation": "CDM",
+      "id": 55060,
+      "name": "Marathon"
+    },
+    {
+      "abbreviation": "CAP",
+      "id": 73599,
+      "name": "AD Cariari Pococi"
+    },
+    {
+      "abbreviation": "FCD",
+      "id": 57478,
+      "name": "Consultants Desamparados"
+    },
+    {
+      "abbreviation": "VID",
+      "id": 55063,
+      "name": "CD Vida"
+    },
+    {
+      "id": 3559472,
+      "name": "Municipal San Esteban"
+    },
+    {
+      "id": 3514144,
+      "name": "Como (lost)"
+    },
+    {
+      "id": 3752062,
+      "name": "Club Brugge (alpha)"
+    },
+    {
+      "id": 3752073,
+      "name": "Galatasaray (troy)"
+    },
+    {
+      "id": 3752072,
+      "name": "Real Betis (monster)"
+    }
+  ]
+}

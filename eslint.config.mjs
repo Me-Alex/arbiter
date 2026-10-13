@@ -68,6 +68,9 @@ export default [
     },
   },
   {
-    ignores: ['node_modules/', 'data/'],
+    // scratch/ holds throwaway measurement/probe scripts and old file copies;
+    // they are git-ignored tooling, not source, so they carry no lint signal
+    // (the `npm run lint` scope already excludes them).
+    ignores: ['node_modules/', 'data/', 'scratch/'],
   },
 ];

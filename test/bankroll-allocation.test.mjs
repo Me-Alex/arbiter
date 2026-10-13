@@ -120,3 +120,15 @@ test('the rounding risk is reachable, so a page has something to disclose', () =
   assert.equal(thin.marginPercent, 0, 'the theoretical edge rounds to nothing');
   assert.equal(thin.guaranteedProfit, -0.01, 'while the rounded split loses a cent');
 });
+
+test('roundedArbitrageAllocation folds residual cent into the largest stake (lowest odds), not index 0', () => {
+  const out = roundedArbitrageAllocation([
+    { sourceId: 'underdog_1', odds: 4.6 },
+    { sourceId: 'underdog_2', odds: 4.3 },
+    { sourceId: 'favorite', odds: 2.1 },
+  ], 1000);
+  const sum = out.legs.reduce((acc, l) => acc + l.stake, 0);
+  assert.equal(Math.round(sum * 100) / 100, 1000);
+  const maxStakeLeg = out.legs.reduce((max, l) => (l.stake > max.stake ? l : max), out.legs[0]);
+  assert.equal(maxStakeLeg.sourceId, 'favorite');
+});

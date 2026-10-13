@@ -1,4 +1,6 @@
 import Superbet from './superbet.mjs';
+import SuperbetPl from './superbet-pl.mjs';
+import AdmiralBetPl from './admiralbet-pl.mjs';
 import NSoft, { matchesNSoftConfig, NSOFT_TENANT_IDS } from './nsoft.mjs';
 import Egt, { matchesEgtConfig, EGT_TENANT_IDS } from './egt.mjs';
 import AltenarPublic, { matchesAltenarConfig } from './altenar-public.mjs';
@@ -18,7 +20,34 @@ import Winner from './winner.mjs';
 import GetsBet from './getsbet.mjs';
 import ContiBet from './contibet.mjs';
 import Favbet from './favbet.mjs';
+import MrPlay from './mrplay.mjs';
+import Sport888 from './888sport.mjs';
+import Bet7 from './bet7.mjs';
+import Betvictor from './betvictor.mjs';
+import Pinnacle from './pinnacle.mjs';
+import VipBet from './vipbet.mjs';
+import Betfair from './betfair.mjs';
 import { TENANTS as ALTENAR_TENANTS, createAltenarTenant } from './altenar-sites.mjs';
+import Winmasters from './winmasters.mjs';
+import Pariuriplus from './pariuriplus.mjs';
+import Kingcasino from './kingcasino.mjs';
+import Eliteslots from './eliteslots.mjs';
+import Ladycasino from './ladycasino.mjs';
+import Pacanele from './pacanele.mjs';
+import Hotspins from './hotspins.mjs';
+import Fortunapalace from './fortunapalace.mjs';
+import Maxwin from './maxwin.mjs';
+import Luckyseven from './luckyseven.mjs';
+import Onecasino from './onecasino.mjs';
+import Player from './player.mjs';
+import Vivabet from './vivabet.mjs';
+import TotalBet from './totalbet.mjs';
+import Cashpot from './cashpot.mjs';
+import Etoto from './etoto.mjs';
+import Fuksiarz from './fuksiarz.mjs';
+import TotalBetPl from './totalbet-pl.mjs';
+import Lvbet from './lvbet.mjs';
+import Betfan from './betfan.mjs';
 
 
 /**
@@ -35,6 +64,8 @@ import { TENANTS as ALTENAR_TENANTS, createAltenarTenant } from './altenar-sites
 
 const DIRECT = {
   superbet: Superbet,
+  'superbet-pl': SuperbetPl,
+  'admiralbet-pl': AdmiralBetPl,
   betano: Betano,
   fortuna: Fortuna,
   // Active again since 2026-09-28: the feed was recovered as a REST crawl
@@ -59,7 +90,34 @@ const DIRECT = {
   getsbet: GetsBet,
   contibet: ContiBet,
   favbet: Favbet,
+  mrplay: MrPlay,
+  '888sport': Sport888,
+  bet7: Bet7,
+  vipbet: VipBet,
+  betfair: Betfair,
   'las-vegas': LasVegas,
+  "winmasters": Winmasters,
+  "pariuriplus": Pariuriplus,
+  "kingcasino": Kingcasino,
+  "eliteslots": Eliteslots,
+  "ladycasino": Ladycasino,
+  "pacanele": Pacanele,
+  "hotspins": Hotspins,
+  "fortunapalace": Fortunapalace,
+  "maxwin": Maxwin,
+  "luckyseven": Luckyseven,
+  "onecasino": Onecasino,
+  "player": Player,
+  "vivabet": Vivabet,
+  "totalbet": TotalBet,
+  "cashpot": Cashpot,
+  "etoto": Etoto,
+  "fuksiarz": Fuksiarz,
+  "totalbet-pl": TotalBetPl,
+  betvictor: Betvictor,
+  pinnacle: Pinnacle,
+  "lvbet": Lvbet,
+  "betfan": Betfan,
 };
 
 /**
@@ -72,6 +130,11 @@ const DIRECT = {
  * config/scrapers.json — the routing test fails when the two drift.
  */
 const DIRECT_CONTRACTS = {
+  mrplay: { engine: 'digitain', transport: 'digitain-public-json', script: 'mrplay.mjs' },
+  '888sport': { engine: 'digitain', transport: 'digitain-public-json', script: '888sport.mjs' },
+  bet7: { engine: 'digitain', transport: 'digitain-public-json', script: 'bet7.mjs' },
+  vipbet: { engine: 'egt-public-sports-api', transport: 'egt-public-sports-json', script: 'vipbet.mjs' },
+  betfair: { engine: 'betfair-exchange-api', transport: 'betfair-exchange-readonly-json', script: 'betfair.mjs' },
   betano: { engine: 'top-events-v2-json', transport: 'betano-top-events-json', script: 'betano.mjs' },
   fortuna: { engine: 'fortuna-bff-rest', transport: 'fortuna-bff-rest-json', script: 'fortuna.mjs' },
   'casa-pariurilor': { engine: 'fortuna-bff-rest', transport: 'fortuna-bff-rest-json', script: 'casa-pariurilor.mjs' },
@@ -89,6 +152,30 @@ const DIRECT_CONTRACTS = {
   admiral: { engine: 'nsoft-public-json', transport: 'bookmaker-public-json', script: 'admiral.mjs' },
   stanleybet: { engine: 'nsoft-public-json', transport: 'nsoft-public-sports-json', script: 'stanleybet.mjs' },
   maxbet: { engine: 'nsoft', transport: 'nsoft-public-sports-json', script: 'maxbet.mjs' },
+  "winmasters": { engine: "custom-json", transport: "custom-json", script: "winmasters.mjs" },
+  "pariuriplus": { engine: "custom-json", transport: "custom-json", script: "pariuriplus.mjs" },
+  "kingcasino": { engine: "custom-json", transport: "custom-json", script: "kingcasino.mjs" },
+  "eliteslots": { engine: "digitain", transport: "digitain-public-json", script: "eliteslots.mjs" },
+  "ladycasino": { engine: "digitain", transport: "digitain-public-json", script: "ladycasino.mjs" },
+  "pacanele": { engine: "digitain", transport: "digitain-public-json", script: "pacanele.mjs" },
+  "hotspins": { engine: "digitain", transport: "digitain-public-json", script: "hotspins.mjs" },
+  "fortunapalace": { engine: "egt-public-sports-api", transport: "egt-public-sports-json", script: "fortunapalace.mjs" },
+  "maxwin": { engine: "egt-public-sports-api", transport: "egt-public-sports-json", script: "maxwin.mjs" },
+  "luckyseven": { engine: "egt-public-sports-api", transport: "egt-public-sports-json", script: "luckyseven.mjs" },
+  "onecasino": { engine: "egt-public-sports-api", transport: "egt-public-sports-json", script: "onecasino.mjs" },
+  "player": { engine: "everymatrix-odds-wamp", transport: "everymatrix-odds-wamp", script: "player.mjs" },
+  "vivabet": { engine: "egt-public-sports-api", transport: "egt-public-sports-json", script: "vivabet.mjs" },
+  "totalbet": { engine: "oddin-platform", transport: "oddin-public-sports-json", script: "totalbet.mjs" },
+  "cashpot": { engine: "exalogic-xsport", transport: "exalogic-xsport-public-json", script: "cashpot.mjs" },
+  "superbet-pl": { engine: "public-offer-v3", transport: "bookmaker-public-json", script: "superbet-pl.mjs" },
+  "admiralbet-pl": { engine: "admiralbet-ws", transport: "admiralbet-ws", script: "admiralbet-pl.mjs" },
+  "etoto": { engine: "etoto-rest-v1", transport: "etoto-public-json", script: "etoto.mjs" },
+  "fuksiarz": { engine: "fuksiarz-rest-v1", transport: "fuksiarz-public-json", script: "fuksiarz.mjs" },
+  "totalbet-pl": { engine: "totalbet-rest-v1", transport: "totalbet-public-json", script: "totalbet-pl.mjs" },
+  betvictor: { engine: "custom-json", transport: "custom-json", script: "betvictor.mjs" },
+  pinnacle: { engine: "custom-json", transport: "custom-json", script: "pinnacle.mjs" },
+  "lvbet": { engine: "custom-json", transport: "custom-json", script: "lvbet.mjs" },
+  "betfan": { engine: "custom-json", transport: "custom-json", script: "betfan.mjs" },
 };
 
 const ALTENAR_IDS = new Set(ALTENAR_TENANTS.map((t) => t.id));
@@ -113,6 +200,8 @@ export function instantiate(jobId, opts = {}) {
       err.code = 'ESCRAPERCONFIG';
       throw err;
     }
+    // A caller's explicit limit wins; otherwise use the measured per-job cap.
+    opts = { ...opts, maxEvents: opts.maxEvents ?? cfg.maxEvents };
     // TinyFish scraping is disabled — reject any TinyFish configuration.
     if (cfg.engine === 'tinyfish' || cfg.transport === 'tinyfish-browser'
         || cfg.script === 'tinyfish-scraper.mjs') {
@@ -126,6 +215,10 @@ export function instantiate(jobId, opts = {}) {
     if (jobId === 'superbet' && cfg.engine === 'public-offer-v3'
         && cfg.transport === 'bookmaker-public-json' && cfg.script === 'superbet.mjs') {
       return new Superbet(opts);
+    }
+    if (jobId === 'superbet-pl' && cfg.engine === 'public-offer-v3'
+        && cfg.transport === 'bookmaker-public-json' && cfg.script === 'superbet-pl.mjs') {
+      return new SuperbetPl(opts);
     }
     if (matchesNSoftConfig(jobId, cfg)) return new NSoft(jobId, opts);
     if (matchesEgtConfig(jobId, cfg)) return new Egt(jobId, opts);

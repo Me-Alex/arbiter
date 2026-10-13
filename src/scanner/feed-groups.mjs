@@ -47,9 +47,14 @@
 
 /** @type {ReadonlyArray<{ id: string, brand: string, provider: string, members: readonly string[] }>} */
 export const FEED_GROUPS = Object.freeze([
-  { id: 'exalogic-xsport', brand: 'Exalogic XSport', provider: 'Exalogic', members: Object.freeze(['excelbet', 'winboss', 'las-vegas', 'magnumbet']) },
-  { id: 'altenar-tenancy', brand: 'Altenar tenancy', provider: 'Altenar', members: Object.freeze(['don', 'topbet', 'million', 'baumbet', 'powerbet', 'winbet']) },
-  { id: 'nsoft-company', brand: 'NSoft company', provider: 'NSoft', members: Object.freeze(['admiral', 'stanleybet']) },
+  // docs/platform-findings.json: 1,262 shared football fixtures, 1,262
+  // identical 1X2 vectors and zero differing across the three public hosts.
+  // Tenant parameters do not select different prices. These aliases add no
+  // independent price source; never pair them against each other or Winner.
+  { id: 'digitain-public', brand: 'Digitain public feed', provider: 'Digitain', members: Object.freeze(['winner', 'mrplay', '888sport', 'bet7', 'eliteslots', 'ladycasino', 'pacanele', 'hotspins']) },
+  { id: 'exalogic-xsport', brand: 'Exalogic XSport', provider: 'Exalogic', members: Object.freeze(['excelbet', 'winboss', 'las-vegas', 'magnumbet', 'cashpot']) },
+  { id: 'altenar-tenancy', brand: 'Altenar tenancy', provider: 'Altenar', members: Object.freeze(['don', 'topbet', 'million', 'baumbet', 'powerbet', 'winbet', 'frankcasino', 'mrbit', 'slotv', 'betinia', 'win2ro', 'swiper', 'rabona', 'campobet', 'librabet', 'sportaza', 'greatwin', 'fezbet', 'wazamba', 'nomini', 'casinia', 'quickwin', 'stake', 'bcgame', 'sportsbetio', 'duelbits', 'solcasino', 'betriot', 'spinanga', 'powbet', 'sportuna', 'casinoly', 'excitewin', 'cazimbo', 'slotspalace', 'malinacasino', 'zet', 'kingmaker', 'crownplay', '5gringos', 'ohmyspins', 'boomerang', 'goldenbet', 'casombie', 'campeonbet', 'betsamigo', 'betalright', 'fairspin', 'spinight', 'goldspin', 'wildsino', 'betstro', 'evobet', 'svenbet', 'sonsofslots', 'wallacebet', 'betrebels', 'prontobet', 'betovo', 'quickslot', 'betbeast', 'slotparadise', 'joker8', 'betway']) },
+  { id: 'nsoft-company', brand: 'NSoft company', provider: 'NSoft', members: Object.freeze(['admiral', 'stanleybet', 'seven', 'gameworld', 'redsevens']) },
   { id: 'fortuna-bff', brand: 'Fortuna BFF', provider: 'Fortuna', members: Object.freeze(['fortuna', 'casa-pariurilor']) },
   { id: 'everymatrix-wamp', brand: 'EveryMatrix WAMP', provider: 'EveryMatrix', members: Object.freeze(['getsbet', 'contibet']) },
   // prowin, ultrabet and vipbet are three EGT Digital brands and ONE upstream
@@ -74,7 +79,7 @@ export const FEED_GROUPS = Object.freeze([
   // Consequence: enabling all three would add three brands and zero independent
   // price sources. The jobs are therefore registered DISABLED. See
   // config/scrapers.json for the measurement that says so.
-  { id: 'egt-digital', brand: 'EGT Digital', provider: 'EGT Digital', members: Object.freeze(['prowin', 'ultrabet', 'vipbet']) },
+  { id: 'egt-digital', brand: 'EGT Digital', provider: 'EGT Digital', members: Object.freeze(['prowin', 'ultrabet', 'vipbet', 'fortunapalace', 'maxwin', 'luckyseven', 'onecasino', 'vivabet']) },
 ]);
 
 /** @type {Map<string, string>} sourceId → group id */

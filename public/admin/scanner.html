@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <title>Arbiter — Scanner</title>
+  <script src="/js/theme.js"></script>
   <link rel="stylesheet" href="/css/theme.css">
   <link rel="stylesheet" href="/css/arbedge.css">
   <link rel="stylesheet" href="/css/scanner.css">
@@ -13,7 +14,7 @@
   <main>
     <div class="page-header">
       <div>
-        <h2 data-i18n="scanner">Scanner</h2>
+        <h1 data-i18n="scanner">Scanner</h1>
         <div class="text-xs muted mt-1" data-i18n="scannerSubtitle">Run a manual scan against the current workspace</div>
       </div>
       <div class="meta">
@@ -40,11 +41,11 @@
         <span class="h3-meta" id="alerts-count" aria-live="polite">—</span>
       </h3>
       <div class="grid cols-6 gap-4">
-        <div class="field"><label data-i18n="alertMinMargin">Min arb margin %</label><input type="number" id="alert-min-roi" step="0.1" min="0"></div>
-        <div class="field"><label data-i18n="alertMinMiddleRoi">Min middle ROI %</label><input type="number" id="alert-mid-roi" step="0.5" min="0"></div>
-        <div class="field"><label data-i18n="alertCooldown">Cooldown (s)</label><input type="number" id="alert-cooldown" step="5" min="0"></div>
-        <div class="field"><label data-i18n="alertQuietFrom">Quiet from</label><input type="time" id="alert-quiet-from"></div>
-        <div class="field"><label data-i18n="alertQuietTo">Quiet to</label><input type="time" id="alert-quiet-to"></div>
+        <div class="field"><label for="alert-min-roi" data-i18n="alertMinMargin">Min arb margin %</label><input type="number" id="alert-min-roi" step="0.1" min="0"></div>
+        <div class="field"><label for="alert-mid-roi" data-i18n="alertMinMiddleRoi">Min middle ROI %</label><input type="number" id="alert-mid-roi" step="0.5" min="0"></div>
+        <div class="field"><label for="alert-cooldown" data-i18n="alertCooldown">Cooldown (s)</label><input type="number" id="alert-cooldown" step="5" min="0"></div>
+        <div class="field"><label for="alert-quiet-from" data-i18n="alertQuietFrom">Quiet from</label><input type="time" id="alert-quiet-from"></div>
+        <div class="field"><label for="alert-quiet-to" data-i18n="alertQuietTo">Quiet to</label><input type="time" id="alert-quiet-to"></div>
         <div class="field">
           <label data-i18n="alertChannels">Channels</label>
           <label class="checkbox"><input type="checkbox" id="alert-desktop"><span data-i18n="alertDesktop">desktop</span></label>
@@ -80,12 +81,12 @@
           <span class="h3-meta" data-i18n="previewOnly">Preview only · does not replace the published run</span>
         </h3>
       <div class="grid cols-6 gap-4">
-        <div class="field"><label data-i18n="sport">Sport</label><select id="sport-filter"><option value="" data-i18n="allSports">All sports</option></select></div>
-        <div class="field"><label data-i18n="bankroll">Bankroll</label><input type="number" id="bankroll" value="1000" min="10"></div>
-        <div class="field"><label data-i18n="minMargin">Min margin %</label><input type="number" id="min-roi" value="0" step="0.1"></div>
-        <div class="field"><label data-i18n="maxMiddleRisk">Max middle risk %</label><input type="number" id="mid-risk" value="15" step="0.5"></div>
-        <div class="field"><label data-i18n="minMiddleRoi">Min middle ROI %</label><input type="number" id="mid-roi" value="20" step="0.5"></div>
-        <div class="field"><label data-i18n="profile">Profile</label><select id="profile"></select></div>
+        <div class="field"><label for="sport-filter" data-i18n="sport">Sport</label><select id="sport-filter"><option value="" data-i18n="allSports">All sports</option></select></div>
+        <div class="field"><label for="bankroll" data-i18n="bankroll">Bankroll</label><input type="number" id="bankroll" value="1000" min="10"></div>
+        <div class="field"><label for="min-roi" data-i18n="minMargin">Min margin %</label><input type="number" id="min-roi" value="0" step="0.1"></div>
+        <div class="field"><label for="mid-risk" data-i18n="maxMiddleRisk">Max middle risk %</label><input type="number" id="mid-risk" value="15" step="0.5"></div>
+        <div class="field"><label for="mid-roi" data-i18n="minMiddleRoi">Min middle ROI %</label><input type="number" id="mid-roi" value="20" step="0.5"></div>
+        <div class="field"><label for="profile" data-i18n="profile">Profile</label><select id="profile"></select></div>
       </div>
       <div class="mt-2 row">
         <button class="primary" id="rescan" data-i18n="rescan">Re-scan</button>

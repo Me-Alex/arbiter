@@ -14,7 +14,7 @@ export class SchedulerService {
     this.configPath = configPath;
     this.orchestrator = orchestrator;
     this.logger = logger;
-    this.intervalMinutes = Number(process.env.ARBITER_SCHEDULER_INTERVAL_MINUTES || 15);
+    this.intervalMinutes = clampInterval(process.env.ARBITER_SCHEDULER_INTERVAL_MINUTES, 5);
     this._timer = null;
     this.lastRun = null;
     this.lastError = null;
@@ -134,6 +134,6 @@ export class SchedulerService {
 
 function clampInterval(value, fallback) {
   const parsed = Number(value);
-  if (!Number.isFinite(parsed)) return Math.max(1, Math.min(1440, Number(fallback) || 15));
+  if (!Number.isFinite(parsed)) return Math.max(1, Math.min(1440, Number(fallback) || 5));
   return Math.max(1, Math.min(1440, Math.round(parsed)));
 }

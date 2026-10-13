@@ -2,10 +2,39 @@
   "jobs": [
     {
       "id": "superbet",
+      "maxEvents": "all",
       "name": "Superbet (public offer v3)",
       "enabled": true,
       "supportedSports": [
-        "football"
+        "football",
+        "tennis",
+        "basketball",
+        "ice-hockey",
+        "american-football",
+        "handball",
+        "volleyball",
+        "table-tennis",
+        "esports",
+        "counter-strike-2",
+        "australian-football",
+        "badminton",
+        "baseball",
+        "boxing",
+        "cricket",
+        "cycling",
+        "darts",
+        "dota-2",
+        "f1",
+        "floorball",
+        "futsal",
+        "golf",
+        "league-of-legends",
+        "mma",
+        "motorsport",
+        "overwatch",
+        "rainbow-six",
+        "rugby",
+        "water-polo"
       ],
       "engine": "public-offer-v3",
       "transport": "bookmaker-public-json",
@@ -18,15 +47,191 @@
       "platform": "superbet-offer",
       "feedStatus": "verified",
       "fullMarkets": true,
-      "detailLimit": 100,
+      "detailLimit": "all",
       "endpointVerifiedAt": "2026-09-01"
     },
     {
+      "id": "superbet-pl",
+      "maxEvents": "all",
+      "name": "Superbet Poland (public offer v3)",
+      "enabled": true,
+      "supportedSports": [
+        "football",
+        "tennis",
+        "basketball",
+        "ice-hockey",
+        "american-football",
+        "handball",
+        "volleyball",
+        "table-tennis",
+        "esports",
+        "counter-strike-2",
+        "australian-football",
+        "badminton",
+        "baseball",
+        "boxing",
+        "cricket",
+        "cycling",
+        "darts",
+        "dota-2",
+        "f1",
+        "floorball",
+        "futsal",
+        "golf",
+        "league-of-legends",
+        "mma",
+        "motorsport",
+        "overwatch",
+        "rainbow-six",
+        "rugby",
+        "water-polo"
+      ],
+      "engine": "public-offer-v3",
+      "transport": "bookmaker-public-json",
+      "script": "superbet-pl.mjs",
+      "sourceIds": [
+        "superbet-pl"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Public offer v3 feed verified against Polish production endpoint on 2026-10-12; Fastly edge CDN /v3/pl-PL/events prematch index with /v2/pl-PL/events/{eventId} detail enrichment. Exact on-screen odds parity verified against live superbet.pl in-browser.",
+      "platform": "superbet-offer",
+      "feedStatus": "verified",
+      "fullMarkets": true,
+      "detailLimit": "all",
+      "endpointVerifiedAt": "2026-10-12"
+    },
+    {
+      "id": "etoto",
+      "maxEvents": "all",
+      "name": "ETOTO Poland (public REST)",
+      "enabled": true,
+      "supportedSports": [
+        "football",
+        "tennis",
+        "basketball",
+        "ice-hockey",
+        "handball",
+        "volleyball",
+        "table-tennis",
+        "baseball",
+        "american-football",
+        "rugby",
+        "floorball",
+        "cricket",
+        "darts",
+        "snooker"
+      ],
+      "engine": "etoto-rest-v1",
+      "transport": "etoto-public-json",
+      "script": "etoto.mjs",
+      "sourceIds": [
+        "etoto"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "ETOTO Polish licensed bookmaker public REST API smoke-tested and verified on 2026-10-12. Exact on-screen odds parity verified against live etoto.pl in-browser.",
+      "platform": "etoto-rest",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-10-12"
+    },
+    {
+      "id": "fuksiarz",
+      "maxEvents": "all",
+      "name": "Fuksiarz Poland (public REST)",
+      "enabled": true,
+      "supportedSports": [
+        "football",
+        "tennis",
+        "basketball",
+        "ice-hockey",
+        "handball",
+        "volleyball",
+        "table-tennis",
+        "baseball",
+        "american-football",
+        "rugby",
+        "floorball",
+        "cricket",
+        "darts",
+        "snooker"
+      ],
+      "engine": "fuksiarz-rest-v1",
+      "transport": "fuksiarz-public-json",
+      "script": "fuksiarz.mjs",
+      "sourceIds": [
+        "fuksiarz"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Fuksiarz Polish licensed sportsbook public REST API smoke-tested and verified on 2026-10-12. Exact on-screen odds parity verified against live fuksiarz.pl in-browser.",
+      "platform": "fuksiarz-rest",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-10-12"
+    },
+    {
+      "id": "admiralbet-pl",
+      "maxEvents": "all",
+      "name": "AdmiralBet Poland (WebSocket)",
+      "enabled": true,
+      "supportedSports": [
+        "football",
+        "tennis",
+        "basketball",
+        "ice-hockey",
+        "american-football",
+        "handball",
+        "volleyball",
+        "table-tennis",
+        "esports",
+        "counter-strike-2",
+        "australian-football",
+        "badminton",
+        "baseball",
+        "boxing",
+        "cricket",
+        "cycling",
+        "darts",
+        "dota-2",
+        "f1",
+        "floorball",
+        "futsal",
+        "golf",
+        "league-of-legends",
+        "mma",
+        "motorsport",
+        "overwatch",
+        "rainbow-six",
+        "rugby",
+        "water-polo"
+      ],
+      "engine": "admiralbet-ws",
+      "transport": "admiralbet-ws",
+      "script": "admiralbet-pl.mjs",
+      "sourceIds": [
+        "admiralbet-pl"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "WebSocket feed verified against AdmiralBet Poland live site; events and markets parity with on-screen odds.",
+      "platform": "admiralbet-ws",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-10-12"
+    },
+    {
       "id": "betano",
+      "maxEvents": "all",
       "name": "Betano",
       "enabled": true,
       "supportedSports": [
-        "football"
+        "football",
+        "tennis",
+        "basketball",
+        "ice-hockey",
+        "handball",
+        "volleyball",
+        "futsal",
+        "baseball",
+        "table-tennis",
+        "esports",
+        "water-polo",
+        "american-football"
       ],
       "engine": "top-events-v2-json",
       "transport": "betano-top-events-json",
@@ -45,10 +250,18 @@
     },
     {
       "id": "fortuna",
+      "maxEvents": "all",
       "name": "Fortuna",
       "enabled": true,
       "supportedSports": [
-        "football"
+        "football",
+        "tennis",
+        "basketball",
+        "ice-hockey",
+        "handball",
+        "rugby",
+        "darts",
+        "futsal"
       ],
       "engine": "fortuna-bff-rest",
       "transport": "fortuna-bff-rest-json",
@@ -77,10 +290,25 @@
       "platform": "kindred-xns",
       "feedStatus": "verified",
       "fullMarkets": true,
-      "detailLimit": 700
+      "detailLimit": "all",
+      "supportedSports": [
+        "football",
+        "tennis",
+        "basketball",
+        "ice-hockey",
+        "american-football",
+        "table-tennis",
+        "esports",
+        "handball",
+        "rugby",
+        "mma",
+        "baseball",
+        "volleyball"
+      ]
     },
     {
       "id": "stanleybet",
+      "maxEvents": "all",
       "name": "Stanleybet",
       "enabled": true,
       "supportedSports": [
@@ -100,6 +328,7 @@
     },
     {
       "id": "betmen",
+      "maxEvents": "all",
       "name": "Betmen (NSoft public JSON)",
       "enabled": true,
       "supportedSports": [
@@ -195,10 +424,18 @@
     },
     {
       "id": "casa-pariurilor",
+      "maxEvents": "all",
       "name": "Casa Pariurilor",
       "enabled": true,
       "supportedSports": [
-        "football"
+        "football",
+        "tennis",
+        "basketball",
+        "ice-hockey",
+        "handball",
+        "rugby",
+        "darts",
+        "futsal"
       ],
       "engine": "fortuna-bff-rest",
       "transport": "fortuna-bff-rest-json",
@@ -214,6 +451,7 @@
     },
     {
       "id": "excelbet",
+      "maxEvents": "all",
       "name": "ExcelBet",
       "enabled": true,
       "supportedSports": [
@@ -233,10 +471,35 @@
     },
     {
       "id": "netbet",
+      "maxEvents": "all",
       "name": "NetBet (Sportify public JSON)",
       "enabled": true,
       "supportedSports": [
-        "football"
+        "football",
+        "tennis",
+        "basketball",
+        "ice-hockey",
+        "american-football",
+        "handball",
+        "rugby",
+        "cricket",
+        "baseball",
+        "boxing",
+        "mma",
+        "darts",
+        "volleyball",
+        "futsal",
+        "esports",
+        "billiards",
+        "f1",
+        "motogp",
+        "alpine-skiing",
+        "figure-skating",
+        "kitesurfing",
+        "swimming",
+        "wrestling",
+        "canoeing",
+        "snooker"
       ],
       "engine": "sportify-public-json",
       "transport": "bookmaker-public-json",
@@ -252,6 +515,7 @@
     },
     {
       "id": "admiral",
+      "maxEvents": "all",
       "name": "Admiral (NSoft public JSON)",
       "enabled": true,
       "supportedSports": [
@@ -271,6 +535,7 @@
     },
     {
       "id": "winboss",
+      "maxEvents": "all",
       "name": "WinBoss",
       "enabled": true,
       "supportedSports": [
@@ -290,6 +555,7 @@
     },
     {
       "id": "maxbet",
+      "maxEvents": "all",
       "name": "MaxBet",
       "enabled": true,
       "supportedSports": [
@@ -309,6 +575,7 @@
     },
     {
       "id": "las-vegas",
+      "maxEvents": "all",
       "name": "Las Vegas",
       "enabled": true,
       "supportedSports": [
@@ -328,10 +595,39 @@
     },
     {
       "id": "don",
+      "maxEvents": "all",
       "name": "Don",
       "enabled": true,
       "supportedSports": [
-        "football"
+        "football",
+        "tennis",
+        "basketball",
+        "ice-hockey",
+        "handball",
+        "volleyball",
+        "baseball",
+        "american-football",
+        "futsal",
+        "mma",
+        "darts",
+        "golf",
+        "cricket",
+        "boxing",
+        "badminton",
+        "table-tennis",
+        "motorsport",
+        "snooker",
+        "rugby",
+        "rugby-league",
+        "esports",
+        "australian-football",
+        "padel",
+        "biathlon",
+        "cycling",
+        "water-polo",
+        "floorball",
+        "surfing",
+        "ski-cross-country"
       ],
       "engine": "altenar-tenancy",
       "transport": "altenar-sb2-widget-json",
@@ -347,10 +643,39 @@
     },
     {
       "id": "topbet",
+      "maxEvents": "all",
       "name": "TopBet",
       "enabled": true,
       "supportedSports": [
-        "football"
+        "football",
+        "tennis",
+        "basketball",
+        "ice-hockey",
+        "handball",
+        "volleyball",
+        "baseball",
+        "american-football",
+        "futsal",
+        "mma",
+        "darts",
+        "golf",
+        "cricket",
+        "boxing",
+        "badminton",
+        "table-tennis",
+        "motorsport",
+        "snooker",
+        "rugby",
+        "rugby-league",
+        "esports",
+        "australian-football",
+        "padel",
+        "biathlon",
+        "cycling",
+        "water-polo",
+        "floorball",
+        "surfing",
+        "ski-cross-country"
       ],
       "engine": "altenar-tenancy",
       "transport": "altenar-sb2-widget-json",
@@ -366,10 +691,39 @@
     },
     {
       "id": "million",
+      "maxEvents": "all",
       "name": "Million",
       "enabled": true,
       "supportedSports": [
-        "football"
+        "football",
+        "tennis",
+        "basketball",
+        "ice-hockey",
+        "handball",
+        "volleyball",
+        "baseball",
+        "american-football",
+        "futsal",
+        "mma",
+        "darts",
+        "golf",
+        "cricket",
+        "boxing",
+        "badminton",
+        "table-tennis",
+        "motorsport",
+        "snooker",
+        "rugby",
+        "rugby-league",
+        "esports",
+        "australian-football",
+        "padel",
+        "biathlon",
+        "cycling",
+        "water-polo",
+        "floorball",
+        "surfing",
+        "ski-cross-country"
       ],
       "engine": "altenar-tenancy",
       "transport": "altenar-sb2-widget-json",
@@ -385,10 +739,39 @@
     },
     {
       "id": "baumbet",
+      "maxEvents": "all",
       "name": "Baumbet",
       "enabled": true,
       "supportedSports": [
-        "football"
+        "football",
+        "tennis",
+        "basketball",
+        "ice-hockey",
+        "handball",
+        "volleyball",
+        "baseball",
+        "american-football",
+        "futsal",
+        "mma",
+        "darts",
+        "golf",
+        "cricket",
+        "boxing",
+        "badminton",
+        "table-tennis",
+        "motorsport",
+        "snooker",
+        "rugby",
+        "rugby-league",
+        "esports",
+        "australian-football",
+        "padel",
+        "biathlon",
+        "cycling",
+        "water-polo",
+        "floorball",
+        "surfing",
+        "ski-cross-country"
       ],
       "engine": "altenar-tenancy",
       "transport": "altenar-sb2-widget-json",
@@ -404,10 +787,39 @@
     },
     {
       "id": "powerbet",
+      "maxEvents": "all",
       "name": "Powerbet",
       "enabled": true,
       "supportedSports": [
-        "football"
+        "football",
+        "tennis",
+        "basketball",
+        "ice-hockey",
+        "handball",
+        "volleyball",
+        "baseball",
+        "american-football",
+        "futsal",
+        "mma",
+        "darts",
+        "golf",
+        "cricket",
+        "boxing",
+        "badminton",
+        "table-tennis",
+        "motorsport",
+        "snooker",
+        "rugby",
+        "rugby-league",
+        "esports",
+        "australian-football",
+        "padel",
+        "biathlon",
+        "cycling",
+        "water-polo",
+        "floorball",
+        "surfing",
+        "ski-cross-country"
       ],
       "engine": "altenar-tenancy",
       "transport": "altenar-sb2-widget-json",
@@ -423,10 +835,39 @@
     },
     {
       "id": "winbet",
+      "maxEvents": "all",
       "name": "Winbet",
       "enabled": true,
       "supportedSports": [
-        "football"
+        "football",
+        "tennis",
+        "basketball",
+        "ice-hockey",
+        "handball",
+        "volleyball",
+        "baseball",
+        "american-football",
+        "futsal",
+        "mma",
+        "darts",
+        "golf",
+        "cricket",
+        "boxing",
+        "badminton",
+        "table-tennis",
+        "motorsport",
+        "snooker",
+        "rugby",
+        "rugby-league",
+        "esports",
+        "australian-football",
+        "padel",
+        "biathlon",
+        "cycling",
+        "water-polo",
+        "floorball",
+        "surfing",
+        "ski-cross-country"
       ],
       "engine": "altenar-tenancy",
       "transport": "altenar-sb2-widget-json",
@@ -461,6 +902,7 @@
     },
     {
       "id": "favbet",
+      "maxEvents": "all",
       "name": "Favbet",
       "enabled": true,
       "supportedSports": [
@@ -480,10 +922,35 @@
     },
     {
       "id": "winner",
+      "maxEvents": "all",
       "name": "Winner",
       "enabled": true,
       "supportedSports": [
-        "football"
+        "football",
+        "tennis",
+        "basketball",
+        "ice-hockey",
+        "american-football",
+        "baseball",
+        "volleyball",
+        "handball",
+        "rugby",
+        "futsal",
+        "cricket",
+        "darts",
+        "badminton",
+        "table-tennis",
+        "esports",
+        "motorsport",
+        "mma",
+        "golf",
+        "boxing",
+        "water-polo",
+        "australian-football",
+        "cycling",
+        "snooker",
+        "floorball",
+        "rugby-league"
       ],
       "engine": "digitain",
       "transport": "winner-digitain-public-json",
@@ -499,6 +966,7 @@
     },
     {
       "id": "magnumbet",
+      "maxEvents": "all",
       "name": "MagnumBet",
       "enabled": true,
       "supportedSports": [
@@ -534,6 +1002,1685 @@
       "platform": "everymatrix-odds",
       "feedStatus": "verified",
       "endpointVerifiedAt": "2026-09-01"
+    },
+    {
+      "id": "vipbet",
+      "name": "VipBet",
+      "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
+      "engine": "egt-public-sports-api",
+      "transport": "egt-public-sports-json",
+      "script": "vipbet.mjs",
+      "sourceIds": [
+        "vipbet"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Public endpoint recorded in data/endpoints; real capture + live smoke passed 2026-10-08 (100 events, 1-2.5s). Shared feed: EGT Digital (prowin/ultrabet).",
+      "platform": "egt-digital"
+    },
+    {
+      "id": "mrplay",
+      "maxEvents": "all",
+      "name": "MrPlay",
+      "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
+      "engine": "digitain",
+      "transport": "digitain-public-json",
+      "script": "mrplay.mjs",
+      "sourceIds": [
+        "mrplay"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Public endpoint recorded in data/endpoints; real capture + live smoke passed 2026-10-08 (100 events, 1-2.5s). Shared feed: Digitain (winner/mrplay/888sport/bet7).",
+      "platform": "digitain"
+    },
+    {
+      "id": "888sport",
+      "maxEvents": "all",
+      "name": "888sport",
+      "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
+      "engine": "digitain",
+      "transport": "digitain-public-json",
+      "script": "888sport.mjs",
+      "sourceIds": [
+        "888sport"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Public endpoint recorded in data/endpoints; real capture + live smoke passed 2026-10-08 (100 events, 1-2.5s). Shared feed: Digitain (winner/mrplay/888sport/bet7).",
+      "platform": "digitain"
+    },
+    {
+      "id": "bet7",
+      "maxEvents": "all",
+      "name": "Bet7",
+      "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
+      "engine": "digitain",
+      "transport": "digitain-public-json",
+      "script": "bet7.mjs",
+      "sourceIds": [
+        "bet7"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Public endpoint recorded in data/endpoints; real capture + live smoke passed 2026-10-08 (100 events, 1-2.5s). Shared feed: Digitain (winner/mrplay/888sport/bet7).",
+      "platform": "digitain"
+    },
+    {
+      "id": "betfair",
+      "name": "Betfair",
+      "enabled": true,
+      "supportedSports": [
+        "football",
+        "tennis",
+        "basketball"
+      ],
+      "engine": "betfair-exchange-api",
+      "transport": "betfair-exchange-readonly-json",
+      "script": "betfair.mjs",
+      "sourceIds": [
+        "betfair"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Betfair Exchange public readonly REST API (scan-inbf for event/market discovery, ERO bymarket for order book depth). Verified on 2026-10-10 with multi-sport coverage (football, tennis, basketball) across 1X2, Over/Under totals, and BTTS.",
+      "platform": "betfair-exchange"
+    },
+    {
+      "id": "winmasters",
+      "maxEvents": "all",
+      "name": "Winmasters",
+      "enabled": false,
+      "supportedSports": [
+        "football"
+      ],
+      "engine": "custom-json",
+      "transport": "custom-json",
+      "script": "winmasters.mjs",
+      "sourceIds": [
+        "winmasters"
+      ],
+      "validationStatus": "candidate",
+      "validationReason": "Digitain system cards REST endpoint (sport.winmasters.ro/b73f1f2d-e2da-48b0-a29c-16088b5a6b4f/account/getsystemcardsbysportid). Adapter implemented and verified against capture fixture winmasters-odds-2026-10-11.json with full 1X2 market extraction and kickoff parsing. Kept candidate/disabled because live hosts enforce Cloudflare managed challenges.",
+      "platform": "custom"
+    },
+    {
+      "id": "pariuriplus",
+      "maxEvents": "all",
+      "name": "PariuriPlus",
+      "enabled": false,
+      "supportedSports": [
+        "football"
+      ],
+      "engine": "custom-json",
+      "transport": "custom-json",
+      "script": "pariuriplus.mjs",
+      "sourceIds": [
+        "pariuriplus"
+      ],
+      "validationStatus": "candidate",
+      "validationReason": "Digitain system cards REST endpoint (sport.pariuriplus.ro/d2d48a66-a582-45cc-919d-c0ed8da3a853/account/getsystemcardsbysportid). Adapter implemented and verified against capture fixture pariuriplus-odds-2026-10-11.json with full 1X2 market extraction and kickoff parsing. Kept candidate/disabled because live hosts enforce Cloudflare managed challenges.",
+      "platform": "custom"
+    },
+    {
+      "id": "kingcasino",
+      "maxEvents": "all",
+      "name": "King Casino",
+      "enabled": false,
+      "supportedSports": [
+        "football"
+      ],
+      "engine": "custom-json",
+      "transport": "custom-json",
+      "script": "kingcasino.mjs",
+      "sourceIds": [
+        "kingcasino"
+      ],
+      "validationStatus": "candidate",
+      "validationReason": "Digitain system cards REST endpoint (sport.kingcasino.ro/60110724-301d-4b7d-9255-0ef71c533840/account/getsystemcardsbysportid). Adapter implemented and verified against capture fixture kingcasino-odds-2026-10-11.json with full 1X2 market extraction and kickoff parsing. Kept candidate/disabled because live hosts enforce Cloudflare managed challenges.",
+      "platform": "custom"
+    },
+    {
+      "id": "frankcasino",
+      "maxEvents": "all",
+      "name": "Frank Casino",
+      "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
+      "engine": "altenar-tenancy",
+      "transport": "altenar-sb2-widget-json",
+      "script": "altenar-sites.mjs",
+      "sourceIds": [
+        "frankcasino"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Scaffolded 2026-10-11 from the endpoint recorded in data/endpoints/endpoints.json (platform altenar-sb2). Nothing is measured yet: no capture, no fixtures, no live smoke.",
+      "platform": "altenar-sb2"
+    },
+    {
+      "id": "mrbit",
+      "maxEvents": "all",
+      "name": "Mr Bit",
+      "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
+      "engine": "altenar-tenancy",
+      "transport": "altenar-sb2-widget-json",
+      "script": "altenar-sites.mjs",
+      "sourceIds": [
+        "mrbit"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Scaffolded 2026-10-11 from the endpoint recorded in data/endpoints/endpoints.json (platform altenar-sb2). Nothing is measured yet: no capture, no fixtures, no live smoke.",
+      "platform": "altenar-sb2"
+    },
+    {
+      "id": "slotv",
+      "maxEvents": "all",
+      "name": "SlotV",
+      "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
+      "engine": "altenar-tenancy",
+      "transport": "altenar-sb2-widget-json",
+      "script": "altenar-sites.mjs",
+      "sourceIds": [
+        "slotv"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Scaffolded 2026-10-11 from the endpoint recorded in data/endpoints/endpoints.json (platform altenar-sb2). Nothing is measured yet: no capture, no fixtures, no live smoke.",
+      "platform": "altenar-sb2"
+    },
+    {
+      "id": "betinia",
+      "maxEvents": "all",
+      "name": "Betinia",
+      "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
+      "engine": "altenar-tenancy",
+      "transport": "altenar-sb2-widget-json",
+      "script": "altenar-sites.mjs",
+      "sourceIds": [
+        "betinia"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Scaffolded 2026-10-11 from the endpoint recorded in data/endpoints/endpoints.json (platform altenar-sb2). Nothing is measured yet: no capture, no fixtures, no live smoke.",
+      "platform": "altenar-sb2"
+    },
+    {
+      "id": "win2ro",
+      "maxEvents": "all",
+      "name": "Win2",
+      "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
+      "engine": "altenar-tenancy",
+      "transport": "altenar-sb2-widget-json",
+      "script": "altenar-sites.mjs",
+      "sourceIds": [
+        "win2ro"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Scaffolded 2026-10-11 from the endpoint recorded in data/endpoints/endpoints.json (platform altenar-sb2). Nothing is measured yet: no capture, no fixtures, no live smoke.",
+      "platform": "altenar-sb2"
+    },
+    {
+      "id": "swiper",
+      "maxEvents": "all",
+      "name": "Swiper",
+      "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
+      "engine": "altenar-tenancy",
+      "transport": "altenar-sb2-widget-json",
+      "script": "altenar-sites.mjs",
+      "sourceIds": [
+        "swiper"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Scaffolded 2026-10-11 from the endpoint recorded in data/endpoints/endpoints.json (platform altenar-sb2). Nothing is measured yet: no capture, no fixtures, no live smoke.",
+      "platform": "altenar-sb2"
+    },
+    {
+      "id": "eliteslots",
+      "maxEvents": "all",
+      "name": "Elite Slots",
+      "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
+      "engine": "digitain",
+      "transport": "digitain-public-json",
+      "script": "eliteslots.mjs",
+      "sourceIds": [
+        "eliteslots"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Scaffolded 2026-10-11 from the endpoint recorded in data/endpoints/endpoints.json (platform digitain). Nothing is measured yet: no capture, no fixtures, no live smoke.",
+      "platform": "digitain"
+    },
+    {
+      "id": "ladycasino",
+      "maxEvents": "all",
+      "name": "Lady Casino",
+      "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
+      "engine": "digitain",
+      "transport": "digitain-public-json",
+      "script": "ladycasino.mjs",
+      "sourceIds": [
+        "ladycasino"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Scaffolded 2026-10-11 from the endpoint recorded in data/endpoints/endpoints.json (platform digitain). Nothing is measured yet: no capture, no fixtures, no live smoke.",
+      "platform": "digitain"
+    },
+    {
+      "id": "pacanele",
+      "maxEvents": "all",
+      "name": "Pacanele",
+      "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
+      "engine": "digitain",
+      "transport": "digitain-public-json",
+      "script": "pacanele.mjs",
+      "sourceIds": [
+        "pacanele"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Scaffolded 2026-10-11 from the endpoint recorded in data/endpoints/endpoints.json (platform digitain). Nothing is measured yet: no capture, no fixtures, no live smoke.",
+      "platform": "digitain"
+    },
+    {
+      "id": "hotspins",
+      "maxEvents": "all",
+      "name": "HotSpins",
+      "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
+      "engine": "digitain",
+      "transport": "digitain-public-json",
+      "script": "hotspins.mjs",
+      "sourceIds": [
+        "hotspins"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Scaffolded 2026-10-11 from the endpoint recorded in data/endpoints/endpoints.json (platform digitain). Nothing is measured yet: no capture, no fixtures, no live smoke.",
+      "platform": "digitain"
+    },
+    {
+      "id": "fortunapalace",
+      "maxEvents": "all",
+      "name": "Fortuna Palace",
+      "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
+      "engine": "egt-public-sports-api",
+      "transport": "egt-public-sports-json",
+      "script": "fortunapalace.mjs",
+      "sourceIds": [
+        "fortunapalace"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Scaffolded 2026-10-11 from the endpoint recorded in data/endpoints/endpoints.json (platform egt-digital). Nothing is measured yet: no capture, no fixtures, no live smoke.",
+      "platform": "egt-digital"
+    },
+    {
+      "id": "maxwin",
+      "maxEvents": "all",
+      "name": "MaxWin",
+      "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
+      "engine": "egt-public-sports-api",
+      "transport": "egt-public-sports-json",
+      "script": "maxwin.mjs",
+      "sourceIds": [
+        "maxwin"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Scaffolded 2026-10-11 from the endpoint recorded in data/endpoints/endpoints.json (platform egt-digital). Nothing is measured yet: no capture, no fixtures, no live smoke.",
+      "platform": "egt-digital"
+    },
+    {
+      "id": "luckyseven",
+      "maxEvents": "all",
+      "name": "Lucky Seven",
+      "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
+      "engine": "egt-public-sports-api",
+      "transport": "egt-public-sports-json",
+      "script": "luckyseven.mjs",
+      "sourceIds": [
+        "luckyseven"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Scaffolded 2026-10-11 from the endpoint recorded in data/endpoints/endpoints.json (platform egt-digital). Nothing is measured yet: no capture, no fixtures, no live smoke.",
+      "platform": "egt-digital"
+    },
+    {
+      "id": "onecasino",
+      "maxEvents": "all",
+      "name": "OneCasino",
+      "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
+      "engine": "egt-public-sports-api",
+      "transport": "egt-public-sports-json",
+      "script": "onecasino.mjs",
+      "sourceIds": [
+        "onecasino"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Scaffolded 2026-10-11 from the endpoint recorded in data/endpoints/endpoints.json (platform egt-digital). Nothing is measured yet: no capture, no fixtures, no live smoke.",
+      "platform": "egt-digital"
+    },
+    {
+      "id": "player",
+      "maxEvents": "all",
+      "name": "Player",
+      "enabled": false,
+      "supportedSports": [
+        "football"
+      ],
+      "engine": "everymatrix-odds-wamp",
+      "transport": "everymatrix-odds-wamp",
+      "script": "player.mjs",
+      "sourceIds": [
+        "player"
+      ],
+      "validationStatus": "candidate",
+      "validationReason": "Scaffolded 2026-10-11 from the endpoint recorded in data/endpoints/endpoints.json (platform everymatrix-odds). Nothing is measured yet: no capture, no fixtures, no live smoke.",
+      "platform": "everymatrix-odds"
+    },
+    {
+      "id": "rabona",
+      "maxEvents": "all",
+      "name": "Rabona",
+      "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
+      "engine": "altenar-tenancy",
+      "transport": "altenar-sb2-widget-json",
+      "script": "altenar-sites.mjs",
+      "sourceIds": [
+        "rabona"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Scaffolded 2026-10-11 from the endpoint recorded in data/endpoints/endpoints.json (platform altenar-sb2). Nothing is measured yet: no capture, no fixtures, no live smoke.",
+      "platform": "altenar-sb2"
+    },
+    {
+      "id": "campobet",
+      "maxEvents": "all",
+      "name": "CampoBet",
+      "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
+      "engine": "altenar-tenancy",
+      "transport": "altenar-sb2-widget-json",
+      "script": "altenar-sites.mjs",
+      "sourceIds": [
+        "campobet"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Scaffolded 2026-10-11 from the endpoint recorded in data/endpoints/endpoints.json (platform altenar-sb2). Nothing is measured yet: no capture, no fixtures, no live smoke.",
+      "platform": "altenar-sb2"
+    },
+    {
+      "id": "librabet",
+      "maxEvents": "all",
+      "name": "LibraBet",
+      "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
+      "engine": "altenar-tenancy",
+      "transport": "altenar-sb2-widget-json",
+      "script": "altenar-sites.mjs",
+      "sourceIds": [
+        "librabet"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Scaffolded 2026-10-11 from the endpoint recorded in data/endpoints/endpoints.json (platform altenar-sb2). Nothing is measured yet: no capture, no fixtures, no live smoke.",
+      "platform": "altenar-sb2"
+    },
+    {
+      "id": "sportaza",
+      "maxEvents": "all",
+      "name": "Sportaza",
+      "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
+      "engine": "altenar-tenancy",
+      "transport": "altenar-sb2-widget-json",
+      "script": "altenar-sites.mjs",
+      "sourceIds": [
+        "sportaza"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Scaffolded 2026-10-11 from the endpoint recorded in data/endpoints/endpoints.json (platform altenar-sb2). Nothing is measured yet: no capture, no fixtures, no live smoke.",
+      "platform": "altenar-sb2"
+    },
+    {
+      "id": "greatwin",
+      "maxEvents": "all",
+      "name": "GreatWin",
+      "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
+      "engine": "altenar-tenancy",
+      "transport": "altenar-sb2-widget-json",
+      "script": "altenar-sites.mjs",
+      "sourceIds": [
+        "greatwin"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Scaffolded 2026-10-11 from the endpoint recorded in data/endpoints/endpoints.json (platform altenar-sb2). Nothing is measured yet: no capture, no fixtures, no live smoke.",
+      "platform": "altenar-sb2"
+    },
+    {
+      "id": "fezbet",
+      "maxEvents": "all",
+      "name": "FezBet",
+      "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
+      "engine": "altenar-tenancy",
+      "transport": "altenar-sb2-widget-json",
+      "script": "altenar-sites.mjs",
+      "sourceIds": [
+        "fezbet"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Scaffolded 2026-10-11 from the endpoint recorded in data/endpoints/endpoints.json (platform altenar-sb2). Nothing is measured yet: no capture, no fixtures, no live smoke.",
+      "platform": "altenar-sb2"
+    },
+    {
+      "id": "wazamba",
+      "maxEvents": "all",
+      "name": "Wazamba",
+      "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
+      "engine": "altenar-tenancy",
+      "transport": "altenar-sb2-widget-json",
+      "script": "altenar-sites.mjs",
+      "sourceIds": [
+        "wazamba"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Scaffolded 2026-10-11 from the endpoint recorded in data/endpoints/endpoints.json (platform altenar-sb2). Nothing is measured yet: no capture, no fixtures, no live smoke.",
+      "platform": "altenar-sb2"
+    },
+    {
+      "id": "nomini",
+      "maxEvents": "all",
+      "name": "Nomini",
+      "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
+      "engine": "altenar-tenancy",
+      "transport": "altenar-sb2-widget-json",
+      "script": "altenar-sites.mjs",
+      "sourceIds": [
+        "nomini"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Scaffolded 2026-10-11 from the endpoint recorded in data/endpoints/endpoints.json (platform altenar-sb2). Nothing is measured yet: no capture, no fixtures, no live smoke.",
+      "platform": "altenar-sb2"
+    },
+    {
+      "id": "casinia",
+      "maxEvents": "all",
+      "name": "Casinia",
+      "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
+      "engine": "altenar-tenancy",
+      "transport": "altenar-sb2-widget-json",
+      "script": "altenar-sites.mjs",
+      "sourceIds": [
+        "casinia"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Scaffolded 2026-10-11 from the endpoint recorded in data/endpoints/endpoints.json (platform altenar-sb2). Nothing is measured yet: no capture, no fixtures, no live smoke.",
+      "platform": "altenar-sb2"
+    },
+    {
+      "id": "quickwin",
+      "maxEvents": "all",
+      "name": "QuickWin",
+      "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
+      "engine": "altenar-tenancy",
+      "transport": "altenar-sb2-widget-json",
+      "script": "altenar-sites.mjs",
+      "sourceIds": [
+        "quickwin"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Scaffolded 2026-10-11 from the endpoint recorded in data/endpoints/endpoints.json (platform altenar-sb2). Nothing is measured yet: no capture, no fixtures, no live smoke.",
+      "platform": "altenar-sb2"
+    },
+    {
+      "id": "stake",
+      "maxEvents": "all",
+      "name": "Stake",
+      "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
+      "engine": "altenar-tenancy",
+      "transport": "altenar-sb2-widget-json",
+      "script": "altenar-sites.mjs",
+      "sourceIds": [
+        "stake"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Scaffolded 2026-10-11 from the endpoint recorded in data/endpoints/endpoints.json (platform altenar-sb2). Nothing is measured yet: no capture, no fixtures, no live smoke.",
+      "platform": "altenar-sb2"
+    },
+    {
+      "id": "bcgame",
+      "maxEvents": "all",
+      "name": "BC.Game",
+      "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
+      "engine": "altenar-tenancy",
+      "transport": "altenar-sb2-widget-json",
+      "script": "altenar-sites.mjs",
+      "sourceIds": [
+        "bcgame"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Scaffolded 2026-10-11 from the endpoint recorded in data/endpoints/endpoints.json (platform altenar-sb2). Nothing is measured yet: no capture, no fixtures, no live smoke.",
+      "platform": "altenar-sb2"
+    },
+    {
+      "id": "sportsbetio",
+      "maxEvents": "all",
+      "name": "Sportsbet.io",
+      "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
+      "engine": "altenar-tenancy",
+      "transport": "altenar-sb2-widget-json",
+      "script": "altenar-sites.mjs",
+      "sourceIds": [
+        "sportsbetio"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Scaffolded 2026-10-11 from the endpoint recorded in data/endpoints/endpoints.json (platform altenar-sb2). Nothing is measured yet: no capture, no fixtures, no live smoke.",
+      "platform": "altenar-sb2"
+    },
+    {
+      "id": "duelbits",
+      "maxEvents": "all",
+      "name": "Duelbits",
+      "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
+      "engine": "altenar-tenancy",
+      "transport": "altenar-sb2-widget-json",
+      "script": "altenar-sites.mjs",
+      "sourceIds": [
+        "duelbits"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Scaffolded 2026-10-11 from the endpoint recorded in data/endpoints/endpoints.json (platform altenar-sb2). Nothing is measured yet: no capture, no fixtures, no live smoke.",
+      "platform": "altenar-sb2"
+    },
+    {
+      "id": "solcasino",
+      "maxEvents": "all",
+      "name": "Sol Casino",
+      "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
+      "engine": "altenar-tenancy",
+      "transport": "altenar-sb2-widget-json",
+      "script": "altenar-sites.mjs",
+      "sourceIds": [
+        "solcasino"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Scaffolded 2026-10-11 from the endpoint recorded in data/endpoints/endpoints.json (platform altenar-sb2). Nothing is measured yet: no capture, no fixtures, no live smoke.",
+      "platform": "altenar-sb2"
+    },
+    {
+      "id": "betriot",
+      "maxEvents": "all",
+      "name": "BetRiot",
+      "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
+      "engine": "altenar-tenancy",
+      "transport": "altenar-sb2-widget-json",
+      "script": "altenar-sites.mjs",
+      "sourceIds": [
+        "betriot"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Scaffolded 2026-10-11 from the endpoint recorded in data/endpoints/endpoints.json (platform altenar-sb2). Nothing is measured yet: no capture, no fixtures, no live smoke.",
+      "platform": "altenar-sb2"
+    },
+    {
+      "id": "spinanga",
+      "maxEvents": "all",
+      "name": "Spinanga",
+      "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
+      "engine": "altenar-tenancy",
+      "transport": "altenar-sb2-widget-json",
+      "script": "altenar-sites.mjs",
+      "sourceIds": [
+        "spinanga"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Scaffolded 2026-10-11 from the endpoint recorded in data/endpoints/endpoints.json (platform altenar-sb2). Nothing is measured yet: no capture, no fixtures, no live smoke.",
+      "platform": "altenar-sb2"
+    },
+    {
+      "id": "seven",
+      "maxEvents": "all",
+      "name": "Seven Bet",
+      "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
+      "engine": "nsoft-public-json",
+      "transport": "nsoft-public-sports-json",
+      "script": "nsoft.mjs",
+      "sourceIds": [
+        "seven"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "NSoft public sports events endpoint verified live on 2026-10-12 against seven.ro in-browser odds (companyUuid 682e6a38-b5ad-4c58-a743-3b06c79e55cd).",
+      "platform": "nsoft",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-10-12"
+    },
+    {
+      "id": "gameworld",
+      "maxEvents": "all",
+      "name": "Game World",
+      "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
+      "engine": "nsoft-public-json",
+      "transport": "nsoft-public-sports-json",
+      "script": "nsoft.mjs",
+      "sourceIds": [
+        "gameworld"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "NSoft public sports events endpoint verified live on 2026-10-12 against gameworld.ro in-browser odds (companyUuid 682e6a38-b5ad-4c58-a743-3b06c79e55cd).",
+      "platform": "nsoft",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-10-12"
+    },
+    {
+      "id": "vivabet",
+      "maxEvents": "all",
+      "name": "Vivabet",
+      "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
+      "engine": "egt-public-sports-api",
+      "transport": "egt-public-sports-json",
+      "script": "vivabet.mjs",
+      "sourceIds": [
+        "vivabet"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "EGT Digital public sports API (VVRO, vivabet-ro-api.egt-digital.com) verified live on 2026-10-12 via in-browser navigation on vivabet.ro and upstream normalized containers: exact 100% parity across on-screen 1X2 odds and API outcomes for FC Arges vs CFR Cluj, U Cluj vs Rapid Bucuresti, and Levante UD vs FC Sevilla. Assigned to egt-digital feed group.",
+      "platform": "egt-digital",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-10-12"
+    },
+    {
+      "id": "totalbet",
+      "maxEvents": "all",
+      "name": "TotalBet",
+      "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
+      "engine": "oddin-platform",
+      "transport": "oddin-public-sports-json",
+      "script": "totalbet.mjs",
+      "sourceIds": [
+        "totalbet"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Oddin sports distribution platform public offer pagination (tbet-sofferapi.oddin-platform.com/sofferapi/api/offer/) verified live on 2026-10-12 via in-browser navigation on totalbet.ro/pariuri-sportive: exact 100% parity across on-screen 1X2 odds and API outcomes for FC Arges vs CFR Cluj and U Cluj vs Rapid Bucuresti. Independent platform pricing.",
+      "platform": "oddin-platform",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-10-12"
+    },
+    {
+      "id": "cashpot",
+      "maxEvents": 500,
+      "name": "Cashpot",
+      "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
+      "engine": "exalogic-xsport",
+      "transport": "exalogic-xsport-public-json",
+      "script": "cashpot.mjs",
+      "sourceIds": [
+        "cashpot"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Exalogic XSport platform (exalogic.cashpot.ro/XSportDatastore) verified live on 2026-10-12 via in-browser navigation on cashpot.ro/sport: exact 100% parity across on-screen 1X2 odds and API outcomes for FC Arges vs CFR Cluj, 'U' Cluj vs Rapid Bucuresti, and Levante UD vs Sevilla. Exalogic tenant grouped under exalogic-xsport.",
+      "platform": "exalogic-xsport",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-10-12"
+    },
+    {
+      "id": "redsevens",
+      "maxEvents": "all",
+      "name": "RedSevens",
+      "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
+      "engine": "nsoft-public-json",
+      "transport": "nsoft-public-sports-json",
+      "script": "nsoft.mjs",
+      "sourceIds": [
+        "redsevens"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "NSoft public sports events endpoint verified live on 2026-10-12 against redsevens.ro in-browser odds (companyUuid 682e6a38-b5ad-4c58-a743-3b06c79e55cd).",
+      "platform": "nsoft",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-10-12"
+    },
+    {
+      "id": "betvictor",
+      "maxEvents": "all",
+      "name": "BetVictor (custom stub)",
+      "enabled": false,
+      "supportedSports": [
+        "football",
+        "tennis",
+        "basketball",
+        "ice-hockey",
+        "volleyball"
+      ],
+      "engine": "custom-json",
+      "transport": "custom-json",
+      "script": "betvictor.mjs",
+      "sourceIds": [
+        "betvictor"
+      ],
+      "validationStatus": "unvalidated",
+      "validationReason": "Placeholder scraper for BetVictor – no public API discovered yet.",
+      "platform": "custom"
+    },
+    {
+      "id": "totalbet-pl",
+      "maxEvents": "all",
+      "name": "TotalBet Poland",
+      "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
+      "engine": "totalbet-rest-v1",
+      "transport": "totalbet-public-json",
+      "script": "totalbet-pl.mjs",
+      "sourceIds": [
+        "totalbet-pl"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "TotalBet Poland REST API verified on 2026-10-12; matches on-screen odds for football.",
+      "platform": "totalbet-rest",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-10-12"
+    },
+    {
+      "id": "pinnacle",
+      "maxEvents": "all",
+      "name": "Pinnacle (custom stub)",
+      "enabled": false,
+      "supportedSports": [
+        "football"
+      ],
+      "engine": "custom-json",
+      "transport": "custom-json",
+      "script": "pinnacle.mjs",
+      "sourceIds": [
+        "pinnacle"
+      ],
+      "validationStatus": "unvalidated",
+      "validationReason": "Placeholder scraper for Pinnacle – no public API discovered yet.",
+      "platform": "custom"
+    },
+    {
+      "id": "lvbet",
+      "maxEvents": 500,
+      "name": "LV BET",
+      "enabled": true,
+      "supportedSports": [
+        "football",
+        "basketball",
+        "tennis",
+        "ice-hockey"
+      ],
+      "engine": "custom-json",
+      "transport": "custom-json",
+      "script": "lvbet.mjs",
+      "sourceIds": [
+        "lvbet"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "LV BET European sportsbook client-api v5 verified on 2026-10-13 with prematch matches and primary markets (1X2, BTTS, Over/Under, Double Chance, Asian Handicap).",
+      "platform": "custom",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-10-13"
+    },
+    {
+      "id": "betfan",
+      "maxEvents": 500,
+      "name": "BETFAN",
+      "enabled": true,
+      "supportedSports": [
+        "football",
+        "basketball",
+        "tennis",
+        "ice-hockey"
+      ],
+      "engine": "custom-json",
+      "transport": "custom-json",
+      "script": "betfan.mjs",
+      "sourceIds": [
+        "betfan"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "BETFAN Polish licensed sportsbook public REST API v2 (/api/v2/event/all) verified on 2026-10-13 with prematch matches and full market coverage (1X2, BTTS, Over/Under, Double Chance, Asian Handicap).",
+      "platform": "custom",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-10-13"
+    },
+    {
+      "id": "powbet",
+      "maxEvents": "all",
+      "name": "PowBet",
+      "enabled": true,
+      "supportedSports": [
+        "football",
+        "tennis",
+        "basketball",
+        "ice-hockey"
+      ],
+      "engine": "altenar-tenancy",
+      "transport": "altenar-sb2-widget-json",
+      "script": "altenar-sites.mjs",
+      "sourceIds": [
+        "powbet"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "PowBet European sportsbook on Altenar SB2 verified against live production endpoint on 2026-10-13. Multi-sport odds parity verified across Football, Tennis, Basketball, and Ice Hockey.",
+      "platform": "altenar-sb2",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-10-13"
+    },
+    {
+      "id": "sportuna",
+      "maxEvents": "all",
+      "name": "Sportuna",
+      "enabled": true,
+      "supportedSports": [
+        "football",
+        "tennis",
+        "basketball",
+        "ice-hockey"
+      ],
+      "engine": "altenar-tenancy",
+      "transport": "altenar-sb2-widget-json",
+      "script": "altenar-sites.mjs",
+      "sourceIds": [
+        "sportuna"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Sportuna European sportsbook on Altenar SB2 verified against live production endpoint on 2026-10-13. Multi-sport odds parity verified across Football, Tennis, Basketball, and Ice Hockey.",
+      "platform": "altenar-sb2",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-10-13"
+    },
+    {
+      "id": "casinoly",
+      "maxEvents": "all",
+      "name": "Casinoly",
+      "enabled": true,
+      "supportedSports": [
+        "football",
+        "tennis",
+        "basketball",
+        "ice-hockey"
+      ],
+      "engine": "altenar-tenancy",
+      "transport": "altenar-sb2-widget-json",
+      "script": "altenar-sites.mjs",
+      "sourceIds": [
+        "casinoly"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Casinoly European sportsbook on Altenar SB2 verified against live production endpoint on 2026-10-13. Multi-sport odds parity verified across Football, Tennis, Basketball, and Ice Hockey.",
+      "platform": "altenar-sb2",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-10-13"
+    },
+    {
+      "id": "excitewin",
+      "maxEvents": "all",
+      "name": "ExciteWin",
+      "enabled": true,
+      "supportedSports": [
+        "football",
+        "tennis",
+        "basketball",
+        "ice-hockey"
+      ],
+      "engine": "altenar-tenancy",
+      "transport": "altenar-sb2-widget-json",
+      "script": "altenar-sites.mjs",
+      "sourceIds": [
+        "excitewin"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "ExciteWin European sportsbook on Altenar SB2 verified against live production endpoint on 2026-10-13. Multi-sport odds parity verified across Football, Tennis, Basketball, and Ice Hockey.",
+      "platform": "altenar-sb2",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-10-13"
+    },
+    {
+      "id": "cazimbo",
+      "maxEvents": "all",
+      "name": "Cazimbo",
+      "enabled": true,
+      "supportedSports": [
+        "football",
+        "tennis",
+        "basketball",
+        "ice-hockey"
+      ],
+      "engine": "altenar-tenancy",
+      "transport": "altenar-sb2-widget-json",
+      "script": "altenar-sites.mjs",
+      "sourceIds": [
+        "cazimbo"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Cazimbo European sportsbook on Altenar SB2 verified against live production endpoint on 2026-10-13. Multi-sport odds parity verified across Football, Tennis, Basketball, and Ice Hockey.",
+      "platform": "altenar-sb2",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-10-13"
+    },
+    {
+      "id": "slotspalace",
+      "maxEvents": 500,
+      "name": "SlotsPalace",
+      "enabled": true,
+      "supportedSports": [
+        "football",
+        "tennis",
+        "basketball",
+        "ice-hockey"
+      ],
+      "engine": "altenar-tenancy",
+      "transport": "altenar-sb2-widget-json",
+      "script": "altenar-sites.mjs",
+      "sourceIds": [
+        "slotspalace"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "SlotsPalace European sportsbook on Altenar SB2 verified against live production endpoint on 2026-10-13. Multi-sport odds parity verified across Football, Tennis, Basketball, and Ice Hockey.",
+      "platform": "altenar-sb2",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-10-13"
+    },
+    {
+      "id": "malinacasino",
+      "maxEvents": 500,
+      "name": "MalinaCasino",
+      "enabled": true,
+      "supportedSports": [
+        "football",
+        "tennis",
+        "basketball",
+        "ice-hockey"
+      ],
+      "engine": "altenar-tenancy",
+      "transport": "altenar-sb2-widget-json",
+      "script": "altenar-sites.mjs",
+      "sourceIds": [
+        "malinacasino"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "MalinaCasino European sportsbook on Altenar SB2 verified against live production endpoint on 2026-10-13. Multi-sport odds parity verified across Football, Tennis, Basketball, and Ice Hockey.",
+      "platform": "altenar-sb2",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-10-13"
+    },
+    {
+      "id": "zet",
+      "maxEvents": 500,
+      "name": "ZetCasino",
+      "enabled": true,
+      "supportedSports": [
+        "football",
+        "tennis",
+        "basketball",
+        "ice-hockey"
+      ],
+      "engine": "altenar-tenancy",
+      "transport": "altenar-sb2-widget-json",
+      "script": "altenar-sites.mjs",
+      "sourceIds": [
+        "zet"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "ZetCasino European sportsbook on Altenar SB2 verified against live production endpoint on 2026-10-13. Multi-sport odds parity verified across Football, Tennis, Basketball, and Ice Hockey.",
+      "platform": "altenar-sb2",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-10-13"
+    },
+    {
+      "id": "kingmaker",
+      "maxEvents": 500,
+      "name": "Kingmaker",
+      "enabled": true,
+      "supportedSports": [
+        "football",
+        "tennis",
+        "basketball",
+        "ice-hockey"
+      ],
+      "engine": "altenar-tenancy",
+      "transport": "altenar-sb2-widget-json",
+      "script": "altenar-sites.mjs",
+      "sourceIds": [
+        "kingmaker"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Kingmaker European sportsbook on Altenar SB2 verified against live production endpoint on 2026-10-13. Multi-sport odds parity verified across Football, Tennis, Basketball, and Ice Hockey.",
+      "platform": "altenar-sb2",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-10-13"
+    },
+    {
+      "id": "crownplay",
+      "maxEvents": 500,
+      "name": "CrownPlay",
+      "enabled": true,
+      "supportedSports": [
+        "football",
+        "tennis",
+        "basketball",
+        "ice-hockey"
+      ],
+      "engine": "altenar-tenancy",
+      "transport": "altenar-sb2-widget-json",
+      "script": "altenar-sites.mjs",
+      "sourceIds": [
+        "crownplay"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "CrownPlay European sportsbook on Altenar SB2 verified against live production endpoint on 2026-10-13. Multi-sport odds parity verified across Football, Tennis, Basketball, and Ice Hockey.",
+      "platform": "altenar-sb2",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-10-13"
+    },
+    {
+      "id": "5gringos",
+      "maxEvents": 500,
+      "name": "5Gringos",
+      "enabled": true,
+      "supportedSports": [
+        "football",
+        "tennis",
+        "basketball",
+        "ice-hockey"
+      ],
+      "engine": "altenar-tenancy",
+      "transport": "altenar-sb2-widget-json",
+      "script": "altenar-sites.mjs",
+      "sourceIds": [
+        "5gringos"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "5Gringos European sportsbook on Altenar SB2 verified against live production endpoint on 2026-10-13. Multi-sport odds parity verified across Football, Tennis, Basketball, and Ice Hockey.",
+      "platform": "altenar-sb2",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-10-13"
+    },
+    {
+      "id": "ohmyspins",
+      "maxEvents": 500,
+      "name": "Ohmyspins",
+      "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
+      "engine": "altenar-tenancy",
+      "transport": "altenar-sb2-widget-json",
+      "script": "altenar-sites.mjs",
+      "sourceIds": [
+        "ohmyspins"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "OhMySpins European sportsbook on Altenar SB2 verified against live production endpoint on 2026-10-13. Multi-sport odds parity verified across Football, Tennis, Basketball, and Ice Hockey.",
+      "platform": "altenar-sb2",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-10-13"
+    },
+    {
+      "id": "boomerang",
+      "maxEvents": 500,
+      "name": "Boomerang",
+      "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
+      "engine": "altenar-tenancy",
+      "transport": "altenar-sb2-widget-json",
+      "script": "altenar-sites.mjs",
+      "sourceIds": [
+        "boomerang"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Boomerang European sportsbook on Altenar SB2 verified against live production endpoint on 2026-10-13. Multi-sport odds parity verified across Football, Tennis, Basketball, and Ice Hockey.",
+      "platform": "altenar-sb2",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-10-13"
+    },
+    {
+      "id": "goldenbet",
+      "maxEvents": 500,
+      "name": "Goldenbet",
+      "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
+      "engine": "altenar-tenancy",
+      "transport": "altenar-sb2-widget-json",
+      "script": "altenar-sites.mjs",
+      "sourceIds": [
+        "goldenbet"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Goldenbet European sportsbook on Altenar SB2 verified against live production endpoint on 2026-10-13. Multi-sport odds parity verified across Football, Tennis, Basketball, and Ice Hockey.",
+      "platform": "altenar-sb2",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-10-13"
+    },
+    {
+      "id": "casombie",
+      "maxEvents": 500,
+      "name": "Casombie",
+      "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
+      "engine": "altenar-tenancy",
+      "transport": "altenar-sb2-widget-json",
+      "script": "altenar-sites.mjs",
+      "sourceIds": [
+        "casombie"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Casombie European sportsbook on Altenar SB2 verified against live production endpoint on 2026-10-13. Multi-sport odds parity verified across Football, Tennis, Basketball, and Ice Hockey.",
+      "platform": "altenar-sb2",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-10-13"
+    },
+    {
+      "id": "campeonbet",
+      "maxEvents": 500,
+      "name": "Campeonbet",
+      "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
+      "engine": "altenar-tenancy",
+      "transport": "altenar-sb2-widget-json",
+      "script": "altenar-sites.mjs",
+      "sourceIds": [
+        "campeonbet"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Campeonbet European sportsbook on Altenar SB2 verified against live production endpoint on 2026-10-13. Multi-sport odds parity verified across Football, Tennis, Basketball, and Ice Hockey.",
+      "platform": "altenar-sb2",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-10-13"
+    },
+    {
+      "id": "betsamigo",
+      "maxEvents": 500,
+      "name": "Betsamigo",
+      "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
+      "engine": "altenar-tenancy",
+      "transport": "altenar-sb2-widget-json",
+      "script": "altenar-sites.mjs",
+      "sourceIds": [
+        "betsamigo"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "BetsAmigo European sportsbook on Altenar SB2 verified against live production endpoint on 2026-10-13. Multi-sport odds parity verified across Football, Tennis, Basketball, and Ice Hockey.",
+      "platform": "altenar-sb2",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-10-13"
+    },
+    {
+      "id": "betalright",
+      "maxEvents": 500,
+      "name": "Betalright",
+      "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
+      "engine": "altenar-tenancy",
+      "transport": "altenar-sb2-widget-json",
+      "script": "altenar-sites.mjs",
+      "sourceIds": [
+        "betalright"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "BetAlright European sportsbook on Altenar SB2 verified against live production endpoint on 2026-10-13. Multi-sport odds parity verified across Football, Tennis, Basketball, and Ice Hockey.",
+      "platform": "altenar-sb2",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-10-13"
+    },
+    {
+      "id": "fairspin",
+      "maxEvents": 500,
+      "name": "Fairspin",
+      "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
+      "engine": "altenar-tenancy",
+      "transport": "altenar-sb2-widget-json",
+      "script": "altenar-sites.mjs",
+      "sourceIds": [
+        "fairspin"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Fairspin European sportsbook on Altenar SB2 verified against live production endpoint on 2026-10-13. Multi-sport odds parity verified across Football, Tennis, Basketball, and Ice Hockey.",
+      "platform": "altenar-sb2",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-10-13"
+    },
+    {
+      "id": "spinight",
+      "maxEvents": 500,
+      "name": "Spinight",
+      "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
+      "engine": "altenar-tenancy",
+      "transport": "altenar-sb2-widget-json",
+      "script": "altenar-sites.mjs",
+      "sourceIds": [
+        "spinight"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Spinight European sportsbook on Altenar SB2 verified against live production endpoint on 2026-10-13. Multi-sport odds parity verified across Football, Tennis, Basketball, and Ice Hockey.",
+      "platform": "altenar-sb2",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-10-13"
+    },
+    {
+      "id": "goldspin",
+      "maxEvents": 500,
+      "name": "Goldspin",
+      "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
+      "engine": "altenar-tenancy",
+      "transport": "altenar-sb2-widget-json",
+      "script": "altenar-sites.mjs",
+      "sourceIds": [
+        "goldspin"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Goldspin European sportsbook on Altenar SB2 verified against live production endpoint on 2026-10-13. Multi-sport odds parity verified across Football, Tennis, Basketball, and Ice Hockey.",
+      "platform": "altenar-sb2",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-10-13"
+    },
+    {
+      "id": "wildsino",
+      "maxEvents": 500,
+      "name": "Wildsino",
+      "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
+      "engine": "altenar-tenancy",
+      "transport": "altenar-sb2-widget-json",
+      "script": "altenar-sites.mjs",
+      "sourceIds": [
+        "wildsino"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Wildsino European sportsbook on Altenar SB2 verified against live production endpoint on 2026-10-13. Multi-sport odds parity verified across Football, Tennis, Basketball, and Ice Hockey.",
+      "platform": "altenar-sb2",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-10-13"
+    },
+    {
+      "id": "betstro",
+      "maxEvents": 500,
+      "name": "Betstro",
+      "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
+      "engine": "altenar-tenancy",
+      "transport": "altenar-sb2-widget-json",
+      "script": "altenar-sites.mjs",
+      "sourceIds": [
+        "betstro"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Betstro European sportsbook on Altenar SB2 verified against live production endpoint on 2026-10-13. Multi-sport odds parity verified across Football, Tennis, Basketball, and Ice Hockey.",
+      "platform": "altenar-sb2",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-10-13"
+    },
+    {
+      "id": "evobet",
+      "maxEvents": 500,
+      "name": "Evobet",
+      "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
+      "engine": "altenar-tenancy",
+      "transport": "altenar-sb2-widget-json",
+      "script": "altenar-sites.mjs",
+      "sourceIds": [
+        "evobet"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Evobet European sportsbook on Altenar SB2 verified against live production endpoint on 2026-10-13. Multi-sport odds parity verified across Football, Tennis, Basketball, and Ice Hockey.",
+      "platform": "altenar-sb2",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-10-13"
+    },
+    {
+      "id": "svenbet",
+      "maxEvents": 500,
+      "name": "Svenbet",
+      "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
+      "engine": "altenar-tenancy",
+      "transport": "altenar-sb2-widget-json",
+      "script": "altenar-sites.mjs",
+      "sourceIds": [
+        "svenbet"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Svenbet European sportsbook on Altenar SB2 verified against live production endpoint on 2026-10-13. Multi-sport odds parity verified across Football, Tennis, Basketball, and Ice Hockey.",
+      "platform": "altenar-sb2",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-10-13"
+    },
+    {
+      "id": "sonsofslots",
+      "maxEvents": 500,
+      "name": "SonsOfSlots",
+      "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
+      "engine": "altenar-tenancy",
+      "transport": "altenar-sb2-widget-json",
+      "script": "altenar-sites.mjs",
+      "sourceIds": [
+        "sonsofslots"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "SonsOfSlots European sportsbook on Altenar SB2 verified against live production endpoint on 2026-10-13. Multi-sport odds parity verified across Football, Tennis, Basketball, and Ice Hockey.",
+      "platform": "altenar-sb2",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-10-13"
+    },
+    {
+      "id": "wallacebet",
+      "maxEvents": 500,
+      "name": "Wallacebet",
+      "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
+      "engine": "altenar-tenancy",
+      "transport": "altenar-sb2-widget-json",
+      "script": "altenar-sites.mjs",
+      "sourceIds": [
+        "wallacebet"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Wallacebet European sportsbook on Altenar SB2 verified against live production endpoint on 2026-10-13. Multi-sport odds parity verified across Football, Tennis, Basketball, and Ice Hockey.",
+      "platform": "altenar-sb2",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-10-13"
+    },
+    {
+      "id": "betrebels",
+      "maxEvents": 500,
+      "name": "Betrebels",
+      "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
+      "engine": "altenar-tenancy",
+      "transport": "altenar-sb2-widget-json",
+      "script": "altenar-sites.mjs",
+      "sourceIds": [
+        "betrebels"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Betrebels European sportsbook on Altenar SB2 verified against live production endpoint on 2026-10-13. Multi-sport odds parity verified across Football, Tennis, Basketball, and Ice Hockey.",
+      "platform": "altenar-sb2",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-10-13"
+    },
+    {
+      "id": "prontobet",
+      "maxEvents": 500,
+      "name": "Prontobet",
+      "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
+      "engine": "altenar-tenancy",
+      "transport": "altenar-sb2-widget-json",
+      "script": "altenar-sites.mjs",
+      "sourceIds": [
+        "prontobet"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Prontobet European sportsbook on Altenar SB2 verified against live production endpoint on 2026-10-13.",
+      "platform": "altenar-sb2",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-10-13"
+    },
+    {
+      "id": "betovo",
+      "maxEvents": 500,
+      "name": "Betovo",
+      "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
+      "engine": "altenar-tenancy",
+      "transport": "altenar-sb2-widget-json",
+      "script": "altenar-sites.mjs",
+      "sourceIds": [
+        "betovo"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Betovo European sportsbook on Altenar SB2 verified against live production endpoint on 2026-10-13.",
+      "platform": "altenar-sb2",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-10-13"
+    },
+    {
+      "id": "quickslot",
+      "maxEvents": 500,
+      "name": "Quickslot",
+      "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
+      "engine": "altenar-tenancy",
+      "transport": "altenar-sb2-widget-json",
+      "script": "altenar-sites.mjs",
+      "sourceIds": [
+        "quickslot"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Quickslot European sportsbook on Altenar SB2 verified against live production endpoint on 2026-10-13.",
+      "platform": "altenar-sb2",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-10-13"
+    },
+    {
+      "id": "betbeast",
+      "maxEvents": 500,
+      "name": "Betbeast",
+      "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
+      "engine": "altenar-tenancy",
+      "transport": "altenar-sb2-widget-json",
+      "script": "altenar-sites.mjs",
+      "sourceIds": [
+        "betbeast"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Betbeast European sportsbook on Altenar SB2 verified against live production endpoint on 2026-10-13.",
+      "platform": "altenar-sb2",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-10-13"
+    },
+    {
+      "id": "slotparadise",
+      "maxEvents": 500,
+      "name": "Slotparadise",
+      "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
+      "engine": "altenar-tenancy",
+      "transport": "altenar-sb2-widget-json",
+      "script": "altenar-sites.mjs",
+      "sourceIds": [
+        "slotparadise"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Slotparadise European sportsbook on Altenar SB2 verified against live production endpoint on 2026-10-13.",
+      "platform": "altenar-sb2",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-10-13"
+    },
+    {
+      "id": "joker8",
+      "maxEvents": 500,
+      "name": "Joker8",
+      "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
+      "engine": "altenar-tenancy",
+      "transport": "altenar-sb2-widget-json",
+      "script": "altenar-sites.mjs",
+      "sourceIds": [
+        "joker8"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Joker8 European sportsbook on Altenar SB2 verified against live production endpoint on 2026-10-13.",
+      "platform": "altenar-sb2",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-10-13"
+    },
+    {
+      "id": "betway",
+      "maxEvents": 500,
+      "name": "Betway",
+      "enabled": true,
+      "supportedSports": [
+        "football"
+      ],
+      "engine": "altenar-tenancy",
+      "transport": "altenar-sb2-widget-json",
+      "script": "altenar-sites.mjs",
+      "sourceIds": [
+        "betway"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Betway European sportsbook on Altenar SB2 verified against live production endpoint on 2026-10-13.",
+      "platform": "altenar-sb2",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-10-13"
     }
   ]
 }

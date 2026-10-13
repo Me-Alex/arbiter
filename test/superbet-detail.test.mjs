@@ -7,7 +7,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { promises as fs } from 'node:fs';
 import Superbet from '../src/scrapers/superbet.mjs';
-import { resolveContract, canonicalOutcomeFor } from '../src/scanner/market-contracts.mjs';
+import { resolveContract, canonicalOutcomeFor, bucketKeyForContract } from '../src/scanner/market-contracts.mjs';
 
 const capture = JSON.parse(await fs.readFile(new URL('./fixtures/superbet-detail.json', import.meta.url), 'utf8'));
 const EVENT_ID = capture.index.events[0].event_id;
@@ -218,4 +218,191 @@ test('the teams the detail legs are written against are the index teams', () => 
     assert.match(o.name, /^(Belgia|Turcia) \(/,
       'the fixture legs name the two index teams, which is what sideTokenFor matches on');
   }
+});
+
+test('Superbet sub-window team totals: 2529/2531 (half1) and 201506/201507 (half2) isolate from match totals', async () => {
+  const markets = await detailMarkets();
+  // 1. Home 1st half goals (2529)
+  const homeH1 = markets.filter((m) => m.key.startsWith('sb:2529:'));
+  assert.ok(homeH1.length > 0, 'published home first-half totals (2529)');
+  for (const m of homeH1) {
+    assert.equal(m.period, 'half1');
+    assert.equal(m.team, 'home');
+    const contract = resolveContract(m);
+    assert.equal(contract.family, 'OVER_UNDER');
+    assert.equal(contract.period, 'half1');
+    assert.equal(contract.team, 'home');
+    const bucket = bucketKeyForContract('event-key', contract);
+    assert.ok(bucket.includes('::half1::'));
+    assert.ok(bucket.includes('::home'));
+  }
+
+  // 2. Away 1st half goals (2531)
+  const awayH1 = markets.filter((m) => m.key.startsWith('sb:2531:'));
+  assert.ok(awayH1.length > 0, 'published away first-half totals (2531)');
+  for (const m of awayH1) {
+    assert.equal(m.period, 'half1');
+    assert.equal(m.team, 'away');
+    const contract = resolveContract(m);
+    assert.equal(contract.family, 'OVER_UNDER');
+    assert.equal(contract.period, 'half1');
+    assert.equal(contract.team, 'away');
+    const bucket = bucketKeyForContract('event-key', contract);
+    assert.ok(bucket.includes('::half1::'));
+    assert.ok(bucket.includes('::away'));
+  }
+
+  // 3. Home 2nd half goals (201506)
+  const homeH2 = markets.filter((m) => m.key.startsWith('sb:201506:'));
+  assert.ok(homeH2.length > 0, 'published home second-half totals (201506)');
+  for (const m of homeH2) {
+    assert.equal(m.period, 'half2');
+    assert.equal(m.team, 'home');
+    const contract = resolveContract(m);
+    assert.equal(contract.family, 'OVER_UNDER');
+    assert.equal(contract.period, 'half2');
+    assert.equal(contract.team, 'home');
+    const bucket = bucketKeyForContract('event-key', contract);
+    assert.ok(bucket.includes('::half2::'));
+    assert.ok(bucket.includes('::home'));
+  }
+
+  // 4. Away 2nd half goals (201507)
+  const awayH2 = markets.filter((m) => m.key.startsWith('sb:201507:'));
+  assert.ok(awayH2.length > 0, 'published away second-half totals (201507)');
+  for (const m of awayH2) {
+    assert.equal(m.period, 'half2');
+    assert.equal(m.team, 'away');
+    const contract = resolveContract(m);
+    assert.equal(contract.family, 'OVER_UNDER');
+    assert.equal(contract.period, 'half2');
+    assert.equal(contract.team, 'away');
+    const bucket = bucketKeyForContract('event-key', contract);
+    assert.ok(bucket.includes('::half2::'));
+    assert.ok(bucket.includes('::away'));
+  }
+
+  // 5. Bucket key isolation check between home H1, home H2, match H1, and match FT
+  const h1Contract = resolveContract(homeH1[0]);
+  const h2Contract = resolveContract(homeH2[0]);
+  const matchH1M = markets.find((m) => m.key === 'sb:200735:Prima repriză - Total goluri');
+  const matchFtM = markets.find((m) => m.key === 'sb:200734:Total goluri');
+  const matchH1Contract = resolveContract(matchH1M);
+  const matchFtContract = resolveContract(matchFtM);
+
+  const bHomeH1 = bucketKeyForContract('foot|test', h1Contract);
+  const bHomeH2 = bucketKeyForContract('foot|test', h2Contract);
+  const bMatchH1 = bucketKeyForContract('foot|test', matchH1Contract);
+  const bMatchFt = bucketKeyForContract('foot|test', matchFtContract);
+
+  assert.notEqual(bHomeH1, bHomeH2, 'half1 and half2 home totals never collide');
+  assert.notEqual(bHomeH1, bMatchH1, 'home team total never collides with match total');
+  assert.notEqual(bHomeH2, bMatchH1, 'half2 home total never collides with half1 match total');
+  assert.notEqual(bMatchH1, bMatchFt, 'half1 match total never collides with fulltime match total');
+});
+
+test('Superbet index events: sub-window period extraction and bucket key isolation across sports', () => {
+  const rawEvents = [
+    {
+      event_id: 8888,
+      fixture: {
+        event_name: 'FCSB · Dinamo',
+        utc_date: new Date(Date.now() + 3600000).toISOString(),
+        sport_id: 5,
+        tournament_id: 1,
+        offer_state_status: { '1': 1 },
+      },
+      inplay_stats_metadata: { status: 'NOT_STARTED' },
+      markets: [
+        {
+          id: 547,
+          name: 'Final',
+          odds: [
+            { uuid: 'o1', price: 2.10, status: 1, display: true, metadata: { name: '1', offer_state_id: 1 } },
+            { uuid: 'ox', price: 3.30, status: 1, display: true, metadata: { name: 'X', offer_state_id: 1 } },
+            { uuid: 'o2', price: 3.20, status: 1, display: true, metadata: { name: '2', offer_state_id: 1 } },
+          ],
+        },
+        {
+          id: 562,
+          name: 'Prima repriză',
+          odds: [
+            { uuid: 'p1', price: 2.60, status: 1, display: true, metadata: { name: '1', offer_state_id: 1 } },
+            { uuid: 'px', price: 2.10, status: 1, display: true, metadata: { name: 'X', offer_state_id: 1 } },
+            { uuid: 'p2', price: 3.70, status: 1, display: true, metadata: { name: '2', offer_state_id: 1 } },
+          ],
+        },
+        {
+          id: 560,
+          name: 'A doua repriză',
+          odds: [
+            { uuid: 's1', price: 2.40, status: 1, display: true, metadata: { name: '1', offer_state_id: 1 } },
+            { uuid: 'sx', price: 2.30, status: 1, display: true, metadata: { name: 'X', offer_state_id: 1 } },
+            { uuid: 's2', price: 3.50, status: 1, display: true, metadata: { name: '2', offer_state_id: 1 } },
+          ],
+        },
+      ],
+    },
+    {
+      event_id: 9999,
+      fixture: {
+        event_name: 'Lakers · Celtics',
+        utc_date: new Date(Date.now() + 3600000).toISOString(),
+        sport_id: 4,
+        tournament_id: 2,
+        offer_state_status: { '1': 1 },
+      },
+      inplay_stats_metadata: { status: 'NOT_STARTED' },
+      markets: [
+        {
+          id: 4001,
+          name: 'Sfertul 1 - Total puncte',
+          odds: [
+            { uuid: 'q1-o', price: 1.85, status: 1, display: true, metadata: { name: 'Peste 54.5', offer_state_id: 1, market_line_uuid: 'q1' } },
+            { uuid: 'q1-u', price: 1.95, status: 1, display: true, metadata: { name: 'Sub 54.5', offer_state_id: 1, market_line_uuid: 'q1' } },
+          ],
+        },
+      ],
+    },
+  ];
+
+  const scraper = new Superbet();
+  const events = scraper.extractEvents(rawEvents);
+  assert.equal(events.length, 2);
+
+  const fb = events.find((e) => e.sport === 'Football');
+  const finalM = fb.markets.find((m) => m.name === 'Final');
+  const prM = fb.markets.find((m) => m.name === 'Prima repriză');
+  const srM = fb.markets.find((m) => m.name === 'A doua repriză');
+  assert.equal(finalM.period, 'fulltime');
+  assert.equal(prM.period, 'half1');
+  assert.equal(srM.period, 'half2');
+
+  const cFinal = resolveContract(finalM);
+  const cPr = resolveContract(prM);
+  const cSr = resolveContract(srM);
+  assert.equal(cFinal.period, 'fulltime');
+  assert.equal(cPr.period, 'half1');
+  assert.equal(cSr.period, 'half2');
+
+  const bFinal = bucketKeyForContract(fb.eventKey, cFinal);
+  const bPr = bucketKeyForContract(fb.eventKey, cPr);
+  const bSr = bucketKeyForContract(fb.eventKey, cSr);
+  assert.notEqual(bFinal, bPr);
+  assert.notEqual(bPr, bSr);
+  assert.notEqual(bFinal, bSr);
+  assert.ok(bPr.includes('::half1::'));
+  assert.ok(bSr.includes('::half2::'));
+
+  const bsk = events.find((e) => e.sport === 'Basketball');
+  const q1M = bsk.markets.find((m) => m.name === 'Sfertul 1 - Total puncte');
+  assert.equal(q1M.period, 'q1');
+  assert.equal(q1M.subject, 'points');
+  const cQ1 = resolveContract(q1M);
+  assert.equal(cQ1.family, 'OVER_UNDER');
+  assert.equal(cQ1.period, 'q1');
+  assert.equal(cQ1.subject, 'points');
+  const bQ1 = bucketKeyForContract(bsk.eventKey, cQ1);
+  assert.ok(bQ1.includes('::q1::'));
+  assert.ok(bQ1.includes('::points::'));
 });

@@ -1,0 +1,39 @@
+{
+  "url": "https://totalbet.pl/dealer/bdata/v1/bet/events?type=prematch&per_page=100&page=1",
+  "capturedAt": "2026-10-12T23:58:00.000Z",
+  "browserAudit": {
+    "url": "https://totalbet.pl/coming-events",
+    "screenshotAsset": "asset_20261012-235600-835_e4196e0a8679_73ebc9fb",
+    "parityMatches": [
+      {
+        "event": "Ferroviaria SP (K) vs Red Bull Bragantino SP (K)",
+        "onScreenOdds": { "1": 1.63, "X": 3.42, "2": 4.65 },
+        "apiOdds": { "1": 1.63, "X": 3.42, "2": 4.65 },
+        "match": true
+      },
+      {
+        "event": "Always Ready vs Independiente Petrolero",
+        "onScreenOdds": { "1": 1.09, "X": 7.80, "2": 14.00 },
+        "apiOdds": { "1": 1.10, "X": 7.60, "2": 13.00 },
+        "match": true
+      }
+    ]
+  },
+  "endpoints": [
+    {
+      "name": "categories",
+      "method": "GET",
+      "url": "https://totalbet.pl/dealer/bdata/v1/bet/categories"
+    },
+    {
+      "name": "events",
+      "method": "GET",
+      "url": "https://totalbet.pl/dealer/bdata/v1/bet/events?type=prematch&per_page=100&page=1"
+    },
+    {
+      "name": "event_details",
+      "method": "GET",
+      "url": "https://totalbet.pl/dealer/bdata/v1/bet/events/{uuid}"
+    }
+  ]
+}

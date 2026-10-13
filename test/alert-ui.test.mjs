@@ -12,7 +12,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import vm from 'node:vm';
-import { codeOnly } from './helpers/code-only.mjs';
+import { codeOnly, functionSource, guardedPropertyReads, objectKeys } from './helpers/code-only.mjs';
+import { ALERT_PREFERENCES } from './helpers/scanner-page.mjs';
 
 const read = (path) => readFileSync(new URL(`../${path}`, import.meta.url), 'utf8');
 const scannerSource = read('public/js/pages/scanner.js');
@@ -283,7 +284,7 @@ const PUBLISHED = [
 const UNREAD_BY_DESIGN = {
   schemaVersion: [
     'A version marker. Measured across the whole tree: six builders write one',
-    '(src/router.mjs:294, src/alert-engine.mjs, src/tracker-service.mjs,',
+    '(src/router.mjs:323, src/alert-engine.mjs, src/tracker-service.mjs,',
     'src/scanner/scanner.mjs, src/scanner/market-catalog.mjs, src/scrapers/base.mjs) and',
     'no page reads any of them. Four of the sibling documents have a test that',
     'pins their value — test/router.test.mjs:492, test/tracker-service.test.mjs:274,',
@@ -309,7 +310,7 @@ const UNREAD_BY_DESIGN = {
     '(src/alert-engine.mjs:131) and then publishes `prefs.minMarginPercent`,',
     '`prefs.minMiddleRoiPercent` and `prefs.includeLive` again under this name',
     '(:152-156), while the route publishes the same normalised object as',
-    '`preferences` (src/router.mjs:292). The page fills its form from',
+    '`preferences` (src/router.mjs:328). The page fills its form from',
     '`payload.preferences` and shows nothing from `thresholds`, so the duplicate',
     'is a second name for one number and the two can never disagree — which is',
     'the only argument for keeping it that it can never be the wrong one.',
@@ -317,7 +318,7 @@ const UNREAD_BY_DESIGN = {
   evaluatedAt: [
     'The moment the list was computed, and the route recomputes on every call',
     '(`...evaluateAlerts(scan, preferences)` inside readAlertPayload,',
-    'src/router.mjs:300), so its value is the moment the request arrived. A page',
+    'src/router.mjs:329), so its value is the moment the request arrived. A page',
     'rendering it would display the time the reader pressed refresh. The date the',
     'list is actually good for is `scan.scrapedAt`, which the note already prints',
     '— and the difference between the two is the reason',
@@ -417,6 +418,91 @@ test('the census instruments are the ones they claim to be', () => {
     'the fixture still carries the schema version the engine publishes');
 });
 
+// ---- the preferences subtree -----------------------------------------------
+
+/**
+ * The `preferences` half of the payload, as the route publishes it.
+ *
+ * Sliced out of PUBLISHED rather than written out here, because that list is
+ * already the normaliser's own output: a preference added to
+ * src/alert-engine.mjs reaches this comparison without a second list being
+ * edited, and one that is edited here alone is a census of a copy.
+ */
+const PREFERENCE_PATHS = PUBLISHED
+  .filter((p) => p.startsWith('preferences.'))
+  .map((p) => p.slice('preferences.'.length));
+
+/** What the page reads off a preferences object, as dot paths. */
+function preferenceReads(name) {
+  const fragment = functionSource(scannerSource, name);
+  // Comments blanked before the search, for the reason the rest of this file
+  // does it: a field named in prose is not a field read.
+  const text = codeOnly(fragment.text, true);
+  return new Set(guardedPropertyReads(fragment.text, ['prefs', 'prefs.channels', 'prefs.quietHours'])
+    .flatMap((r) => [...text.matchAll(/(?<![.\w$])(prefs(?:\.\w+)+)/g)].map((m) => m[1].slice('prefs.'.length))));
+}
+
+/** What the page posts to `POST /api/alerts`, the keys of the object it sends. */
+function preferenceWrites() {
+  // `return {` rather than a receiver: `readAlertForm` builds a fresh literal,
+  // so there is no name to anchor on, and the marker names the line that opens
+  // it. Nested `channels` / `quietHours` stay whole — `objectKeys` returns one
+  // nesting level, which is the level the route reads at.
+  return objectKeys(functionSource(scannerSource, 'readAlertForm').text, 'return {');
+}
+
+test('the preferences a page harness serves are the ones the route publishes', () => {
+  // The direction the census above cannot see. That one asks what the route
+  // publishes and nobody reads; this asks what a fixture claims the route
+  // publishes, and a fixture is a claim nothing checks unless it is checked.
+  // `minRoiPercent` is the field that was here: the scan-options spelling of a
+  // threshold that `normalizeAlertPreferences` has never read. No test went red
+  // on it, because the page treats a missing preference as "clear the box" and
+  // no test in the tree reads that box from this harness.
+  assert.deepEqual(leafPaths(ALERT_PREFERENCES).sort(), [...PREFERENCE_PATHS].sort(),
+    'the fixture the page harness serves no longer matches the published preferences');
+});
+
+test('the preferences fixture check can tell a wrong fixture from the real one', () => {
+  const surplus = (o) => leafPaths(o).filter((p) => !PREFERENCE_PATHS.includes(p)).sort();
+  const missing = (o) => PREFERENCE_PATHS.filter((p) => !leafPaths(o).includes(p)).sort();
+
+  // Both directions, or the check could be satisfied by an instrument that
+  // reports nothing at all.
+  assert.deepEqual(surplus({ ...ALERT_PREFERENCES, minRoiPercent: 1 }), ['minRoiPercent'],
+    'a key the route does not publish is caught');
+  assert.equal(missing({}).length, PREFERENCE_PATHS.length,
+    'and a fixture that drops a field is reported as missing it');
+  assert.ok(missing({ channels: ALERT_PREFERENCES.channels }).includes('quietHours.enabled'),
+    'a fixture that drops the nested object is missing its leaves, not just the object');
+  assert.deepEqual([surplus(ALERT_PREFERENCES), missing(ALERT_PREFERENCES)], [[], []],
+    'the real fixture passes both directions');
+});
+
+test('the page posts exactly the preferences the route reads, and reads only those', () => {
+  // POST /api/alerts. The page builds `wanted` from the form and the route hands
+  // `body.preferences` to the same normaliser the response is built from, so a
+  // key added to one list and not the other is a setting the user believes was
+  // saved and was not — the shape the `?sport=` and the scan-options defects
+  // both took.
+  assert.deepEqual(preferenceWrites(), Object.keys(alertEngine.normalizeAlertPreferences({})).sort(),
+    'the page posts a preference the route does not read, or omits one it does');
+
+  // GET /api/alerts, the other direction: a page reading a preference the route
+  // never publishes gets `undefined`, which `fillAlertForm` renders as an empty
+  // box rather than as an error.
+  const reads = preferenceReads('fillAlertForm');
+  const unpublished = [...reads].filter((p) => !PREFERENCE_PATHS.includes(p)).sort();
+  assert.deepEqual(unpublished, [],
+    `the page reads these and the route publishes no such preference: ${unpublished.join(', ')}`);
+
+  // The search resolves both levels and invents nothing.
+  assert.ok(reads.has('minMarginPercent') && reads.has('channels.desktop') && reads.has('quietHours.from'),
+    `the read list is missing a field the page really reads: ${[...reads].sort().join(', ')}`);
+  assert.ok(!reads.has('quietHours.nope') && !reads.has('channels.loud'),
+    'and does not invent a read for a preference nobody names');
+});
+
 // ---- the alert items themselves ---------------------------------------------
 
 /**
@@ -451,8 +537,8 @@ const ITEM_KEYS = itemKeys(SIGNAL_WITH_EVERYTHING);
 /**
  * The row the alerts table renders, cut out of the page's source.
  *
- * A whole-file search for `a.eventKey` finds the scan table's two rows
- * (scanner.js:576, 601) and would count an alert field as read because a
+ * A whole-file search for `eventKey` finds the scan table's two rows
+ * (scanner.js:676, 702) and would count an alert field as read because a
  * different table on the same page reads the same name — which is how a field
  * ends up excused for a reader it does not have. So the search is this row, plus
  * the other reader of this payload that ships on this page.
@@ -493,8 +579,8 @@ const UNREAD_ITEM_BY_DESIGN = {
     'for the cooldown map and the notification tag. The row itself prints the two',
     'team names the projection carries beside it, so a column here would be the same',
     'event written twice in two notations — and the one on screen is the one a reader',
-    'can read. The row slice is what makes this falsifiable: `a.eventKey` appears at',
-    'scanner.js:576 and 601, on the scan tables, and never in the alerts row.',
+    'can read. The row slice is what makes this falsifiable: `eventKey` is read at',
+    'scanner.js:676 and 702, on the scan tables, and never in the alerts row.',
   ].join(' '),
 };
 

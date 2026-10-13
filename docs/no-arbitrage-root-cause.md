@@ -457,9 +457,12 @@ a scraper set that is otherwise stateless polling.
 - `getsbet` and `contibet` return 11 events each. Their dealer publishes only
   three Romanian football divisions, which is a coverage limit upstream, not in
   the adapter.
-- Unibet stays disabled, so the independent-source count is 11 rather than 12.
-  The reason is a transport change rather than an unimplemented adapter — see
-  above — so re-enabling it is a build, not a configuration flip.
+- Unibet was disabled while this section was measured, so the independent-source
+  count below is 11 rather than 12. The reason was a transport change rather
+  than an unimplemented adapter — see above. It was re-measured on 2026-10-08:
+  the menu crawl covers 12 declared sports and captured 3,486 events, the job
+  is enabled again, and the count is 12 — but the measurements in this document
+  were taken against 11 and were not re-run. Treat them as the 11-book picture.
 
 ## Reproduce
 

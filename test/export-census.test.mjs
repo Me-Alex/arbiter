@@ -42,9 +42,11 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readdirSync, readFileSync } from 'node:fs';
 import { join, relative, sep } from 'node:path';
+import { createRequire } from 'node:module';
 import { codeOnly } from './helpers/code-only.mjs';
 
 const ROOT = join(import.meta.dirname, '..');
+const { parse } = createRequire(import.meta.url)('espree');
 
 /** Every file under `dir` ending in an extension we read, repo-relative. */
 function walk(dir, out = []) {
@@ -83,12 +85,11 @@ const SOURCES = new Map(SRC.concat(CONSUMERS).map((f) => [f, sourceOf(f)]));
  * A name is a declaration when it is introduced by `export function`, `export
  * const|let|var` or `export class`. The three forms are separate patterns on
  * purpose: one alternation over them cannot report WHICH form matched, and the
- * pinned count below is quoted per form, so a rename that silently changed the
- * shape would otherwise just move the total.
+ * census below checks that every named declaration is accounted for.
  *
- * `export { a, b }` and `export default` are not read here. Neither appears in
- * src/ — measured, not assumed, and asserted by the count test below, which is
- * where a re-export form would show up first as a total that stopped moving.
+ * Default exports and export lists are outside this declaration census.
+ * The coverage check below independently parses declarations so additions
+ * change the measured population without requiring a fixed total.
  */
 const DECLARATIONS = [
   { form: 'function', re: /^[ \t]*export[ \t]+(?:async[ \t]+)?function[ \t]+(\w+)/gm },
@@ -130,7 +131,7 @@ function classify(name, ownSrc, siblings, others) {
   return inSrc ? 'backend-only' : 'dead';
 }
 
-/** Every src module's text, read once: 178 symbols would otherwise re-read the tree each time. */
+/** Every src module's text, read once rather than once per exported symbol. */
 const SRC_SOURCES = SRC.map((f) => SOURCES.get(f));
 const OTHER_SOURCES = CONSUMERS.map((f) => SOURCES.get(f));
 
@@ -155,11 +156,28 @@ function scan() {
 const ROWS = scan();
 
 test('the scan read the tree it claims to census', () => {
-  // A census over an empty list reports zero dead and means nothing. The counts
-  // are the floor: a walk that stopped early, or a filter that matched nothing,
-  // still produces a passing "no dead exports" two lines below.
-  assert.equal(SRC.length, 70, `src/ holds ${SRC.length} modules, not 70 — re-measure before quoting any count here`);
-  assert.ok(SOURCES.size >= SRC.length, 'the source map is smaller than src/ itself');
+  // Compare the walk with an independent recursive directory listing. New
+  // modules join the census automatically; a missed directory still fails.
+  const onDisk = readdirSync(join(ROOT, 'src'), { recursive: true })
+    .map((file) => `src/${file.split(sep).join('/')}`)
+    .filter((file) => /\.(mjs|js)$/.test(file) && !/(?:^|\/)(?:node_modules|\.git)\//.test(file));
+  assert.ok(onDisk.length > 0, 'src/ has no modules to census');
+  assert.deepEqual([...SRC].sort(), onDisk.sort(), 'the walk missed a source module');
+  const consumersOnDisk = ['scripts', 'electron', 'test', 'public/js'].flatMap((dir) =>
+    readdirSync(join(ROOT, dir), { recursive: true })
+      .map((file) => `${dir}/${file.split(sep).join('/')}`)
+      .filter((file) => /\.(mjs|js)$/.test(file)
+        && !/(?:^|\/)(?:node_modules|\.git)\//.test(file) && file !== SELF));
+  assert.deepEqual([...CONSUMERS].sort(), consumersOnDisk.sort(), 'the walk missed a consumer');
+  for (const file of onDisk) {
+    const tree = parse(readFileSync(join(ROOT, file), 'utf8'), { ecmaVersion: 'latest', sourceType: 'module' });
+    const declarations = tree.body.filter((node) => node.type === 'ExportNamedDeclaration' && node.declaration);
+    if (declarations.length) {
+      assert.ok(ROWS.some((row) => row.file === file), `${file}: the census counted zero declared exports`);
+    }
+  }
+  assert.deepEqual([...SOURCES.keys()].sort(), [...new Set([...SRC, ...CONSUMERS])].sort(),
+    'the source map must cover every discovered source and consumer');
   const publicJs = CONSUMERS.filter((f) => f.startsWith('public/js/'));
   assert.ok(publicJs.length > 0, 'no frontend file was read, so "no page calls it" would be vacuous');
   assert.ok(CONSUMERS.filter((f) => f.startsWith('test/')).length > 0, 'no test file was read either');
@@ -198,26 +216,39 @@ test('the symbols only another src module reaches are the ones named here', () =
   // surprise.
   //
   // None of these is unwired functionality, and the difference matters. They are
-  // consumed by a sibling module in src/ — `sportOptions` is called by router.mjs
-  // and serves GET /api/sports, which three pages read; `round4` rounds the stake
+  // consumed by a sibling module in src/ — `getSport` is called by router.mjs:109
+  // to reject an unknown sport before a scan starts; `round4` rounds the stake
   // split the scanner publishes. What the bucket records is narrower: no page,
   // script, electron file or test names them, so nothing OUTSIDE the backend
   // pins their behaviour by name. The link from them to a page runs through the
   // module that imports them, and the payload censuses are what prove that
   // link; this file cannot see it and does not claim to.
   //
-  // What is left to say is that the `export` keyword is redundant on all 40 — they
-  // are module-internal helpers. Dropping it is a cleanup, not a fix, and the pin
-  // exists so the cleanup is a decision rather than a diff nobody reads.
+  // `sportOptions` sat here until test/sports-payload-census.test.mjs started
+  // calling it, to compare the body GET /api/sports really serves against the
+  // registry the route derives from. A test naming the symbol is what this
+  // bucket means by wired, so the move out of it is the census doing its job on
+  // a new consumer — the pin below changed in the same commit as that consumer.
+  //
+  // `getSport` was in this bucket for the same reason until
+  // test/sport-registry-consistency.test.mjs named it, checking that every sport
+  // a job declares resolves and every registered sport is declared. The router
+  // still calls it at request time (src/router.mjs:109, unknown sport → 400);
+  // what changed is that a test now pins the table from the other side.
+  //
+  // These names are reached only within src/. Some are imported by siblings,
+  // so their exports are required even without an outside consumer.
   const backendOnly = ROWS.filter((r) => r.verdict === 'backend-only').map((r) => `${r.file}  ${r.name}`).sort();
   assert.deepEqual(backendOnly, [
     'src/router.mjs  parseBody',
-    'src/scanner/engine.mjs  SIGNAL_TYPES',
+    // SIGNAL_TYPES left backendOnly when test/back-to-lay.test.mjs
+    // wired it to verify the BACK_TO_LAY signal type definition.
     'src/scanner/event-arbs.mjs  DETAIL_BANKROLL',
-    'src/scanner/market-contracts.mjs  isDeclaredFullTimeMarket',
+    // isDeclaredFullTimeMarket left backendOnly when test/market-contracts-families.test.mjs
+    // wired it to verify full-time settlement assertions.
     'src/scanner/market-contracts.mjs  isOpaqueMatchResultKey',
-    'src/scanner/market-contracts.mjs  subjectFor',
-    'src/scanner/market-contracts.mjs  teamFor',
+    // subjectFor and teamFor left backendOnly when test/multibook-proposition-matching.test.mjs
+    // wired them to verify proposition matching and team-side total resolution.
     'src/scanner/scanner.mjs  isImplausible1x2',
     'src/scanner/scanner.mjs  scanOptionsPayload',
     'src/scanner/scanner.mjs  worstSourceStatus',
@@ -228,6 +259,10 @@ test('the symbols only another src module reaches are the ones named here', () =
     'src/scrapers/altenar-public.mjs  matchesAltenarConfig',
     'src/scrapers/altenar-sites.mjs  createAltenarTenant',
     'src/scrapers/egt.mjs  EGT_TENANT_IDS',
+    // eventLimit left this list when scripts/add-book.mjs arrived: the scaffold
+    // generates an EGT brand subclass that imports it, so it is wired by a real
+    // consumer now and is no longer backend-only. Same rule the header states for
+    // names mentioned in a comment — a name in generated code is a caller.
     'src/scrapers/feg-common.mjs  FegCatalogueScraper',
     'src/scrapers/feg-common.mjs  isFegMarketTypeWithheld',
     'src/scrapers/live-status.mjs  FEG_MARKET_KIND',
@@ -243,8 +278,7 @@ test('the symbols only another src module reaches are the ones named here', () =
     'src/shared/event-limit.mjs  serializedMaxEvents',
     'src/shared/math.mjs  round4',
     'src/shared/text.mjs  decimalOdds',
-    'src/sports/registry.mjs  getSport',
-    'src/sports/registry.mjs  sportOptions',
+    'src/sports/registry.mjs  canonicalSportName',
     'src/tinyfish/browser-discovery.mjs  discoverLinksViaBrowser',
     'src/tinyfish/browser-discovery.mjs  inferTeamsFromText',
     'src/tinyfish/client.mjs  TinyfishError',
@@ -254,13 +288,20 @@ test('the symbols only another src module reaches are the ones named here', () =
   ], 'the backend-only set moved: name the new one, or drop its `export`, in the same commit');
 });
 
-test('the census still counts what it counted', () => {
-  // The total is the canary for the declaration scan itself: a re-export form
-  // appearing in src/ would leave the dead test passing and show up here first,
-  // as a total that stopped moving.
-  assert.equal(ROWS.length, 178, `src/ now exports ${ROWS.length} names, not 178 — a declaration form this scan cannot read has probably appeared`);
-  assert.equal(ROWS.filter((r) => r.verdict === 'wired').length, 138,
-    'the wired count moved, so the pinned list above was re-measured on a different tree');
+test('the census accounts for every named export and classifies every row', () => {
+  assert.ok(ROWS.length > 0, 'no exported names were read');
+  for (const file of SRC) {
+    const tree = parse(SOURCES.get(file), { ecmaVersion: 'latest', sourceType: 'module' });
+    const declared = tree.body
+      .filter((node) => node.type === 'ExportNamedDeclaration' && node.declaration)
+      .flatMap(({ declaration }) => declaration.type === 'VariableDeclaration'
+        ? declaration.declarations.map(({ id }) => id.name)
+        : [declaration.id.name]);
+    assert.deepEqual(ROWS.filter((r) => r.file === file).map((r) => r.name).sort(), declared.sort(),
+      `${file}: a named export form was missed by the declaration scan`);
+  }
+  assert.equal(new Set(ROWS.map((r) => `${r.file}  ${r.name}`)).size, ROWS.length,
+    'an exported name was counted more than once');
   // The three verdicts have to account for every row. A row that is none of them
   // is a row the census read and did not judge, which is the one state a total
   // alone would hide.

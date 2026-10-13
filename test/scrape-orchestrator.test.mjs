@@ -311,6 +311,12 @@ test('restoreState recovers a mid-scrape state left by a crashed process', async
   const configPath = join(dataDir, 'scrapers.json');
   await writeFile(configPath, JSON.stringify({ jobs: [] }));
   // Simulate a process that died mid-scrape: a running state left on disk.
+  //
+  // The two prose values here are deliberate and are the old format, not a slip:
+  // this is what a machine that ran before `currentActivity` became a dictionary
+  // key has on disk, so recovering it is the case this test actually covers.
+  // Recovery nulls both fields, which is why nothing downstream ever has to
+  // translate a value the backend no longer writes.
   const corruptState = {
     runId: 'dead-run',
     status: 'running',

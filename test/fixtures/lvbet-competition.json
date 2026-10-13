@@ -1,0 +1,6962 @@
+{
+  "matches": [
+    {
+      "match_id": "bc:31111901",
+      "teams_reversed": false,
+      "date": "2026-10-18T15:00:00+00:00",
+      "info": "",
+      "event_restriction": "not_with_same_event",
+      "integrations": {
+        "abios_enabled": null,
+        "betbuilder_id": null,
+        "bg_betbuilder": false,
+        "score_tracker": null,
+        "scoreframe_id": null,
+        "livescorepro_id": null,
+        "smart_stream_id": null
+      },
+      "streams": [],
+      "sports_groups_ids": [
+        1,
+        35521,
+        37664
+      ],
+      "state": {
+        "is_pre": true,
+        "status": "open",
+        "is_live": false,
+        "markets_count": 85
+      },
+      "home": [
+        "Valerenga"
+      ],
+      "away": [
+        "SK Brann"
+      ],
+      "home_labels": [
+        "Valerenga"
+      ],
+      "away_labels": [
+        "SK Brann"
+      ],
+      "pinned": null
+    },
+    {
+      "match_id": "bc:31169981",
+      "teams_reversed": false,
+      "date": "2026-10-13T16:00:00+00:00",
+      "info": "",
+      "event_restriction": "not_with_same_event",
+      "integrations": {
+        "abios_enabled": false,
+        "betbuilder_id": null,
+        "bg_betbuilder": false,
+        "score_tracker": true,
+        "scoreframe_id": 6721544,
+        "livescorepro_id": 6721544,
+        "smart_stream_id": null
+      },
+      "streams": [],
+      "sports_groups_ids": [
+        1,
+        35303,
+        37630
+      ],
+      "state": {
+        "is_pre": true,
+        "status": "open",
+        "is_live": false,
+        "markets_count": 359
+      },
+      "home": [
+        "Al Sadd SC Doha"
+      ],
+      "away": [
+        "Al Hilal Riyadh"
+      ],
+      "home_labels": [
+        "Al Sadd SC Doha"
+      ],
+      "away_labels": [
+        "Al Hilal Riyadh"
+      ],
+      "pinned": null
+    },
+    {
+      "match_id": "bc:31201240",
+      "teams_reversed": false,
+      "date": "2026-10-13T12:15:00+00:00",
+      "info": "",
+      "event_restriction": "not_with_same_event",
+      "integrations": {
+        "abios_enabled": false,
+        "betbuilder_id": null,
+        "bg_betbuilder": false,
+        "score_tracker": true,
+        "scoreframe_id": 6721543,
+        "livescorepro_id": 6721543,
+        "smart_stream_id": null
+      },
+      "streams": [],
+      "sports_groups_ids": [
+        1,
+        35303,
+        37630
+      ],
+      "state": {
+        "is_pre": true,
+        "status": "open",
+        "is_live": false,
+        "markets_count": 360
+      },
+      "home": [
+        "Cong An Ha Noi FC"
+      ],
+      "away": [
+        "Kashima Antlers"
+      ],
+      "home_labels": [
+        "Cong An Ha Noi FC"
+      ],
+      "away_labels": [
+        "Kashima Antlers"
+      ],
+      "pinned": null
+    },
+    {
+      "match_id": "bc:31112048",
+      "teams_reversed": false,
+      "date": "2026-10-18T13:30:00+00:00",
+      "info": "",
+      "event_restriction": "not_with_same_event",
+      "integrations": {
+        "abios_enabled": null,
+        "betbuilder_id": null,
+        "bg_betbuilder": false,
+        "score_tracker": null,
+        "scoreframe_id": null,
+        "livescorepro_id": null,
+        "smart_stream_id": null
+      },
+      "streams": [],
+      "sports_groups_ids": [
+        1,
+        35148,
+        37550
+      ],
+      "state": {
+        "is_pre": true,
+        "status": "open",
+        "is_live": false,
+        "markets_count": 77
+      },
+      "home": [
+        "Manchester City LFC (Wom)"
+      ],
+      "away": [
+        "Brighton and Hove Albion WFC (Wom)"
+      ],
+      "home_labels": [
+        "Manchester City LFC (Wom)"
+      ],
+      "away_labels": [
+        "Brighton and Hove Albion WFC (Wom)"
+      ],
+      "pinned": null
+    },
+    {
+      "match_id": "bc:31189353",
+      "teams_reversed": false,
+      "date": "2026-10-17T05:00:00+00:00",
+      "info": "",
+      "event_restriction": "not_with_same_event",
+      "integrations": {
+        "abios_enabled": null,
+        "betbuilder_id": null,
+        "bg_betbuilder": false,
+        "score_tracker": null,
+        "scoreframe_id": null,
+        "livescorepro_id": null,
+        "smart_stream_id": null
+      },
+      "streams": [],
+      "sports_groups_ids": [
+        1,
+        35419,
+        37479
+      ],
+      "state": {
+        "is_pre": true,
+        "status": "open",
+        "is_live": false,
+        "markets_count": 33
+      },
+      "home": [
+        "Fujieda MYFC"
+      ],
+      "away": [
+        "Montedio Yamagata"
+      ],
+      "home_labels": [
+        "Fujieda MYFC"
+      ],
+      "away_labels": [
+        "Montedio Yamagata"
+      ],
+      "pinned": null
+    },
+    {
+      "match_id": "bc:31189352",
+      "teams_reversed": false,
+      "date": "2026-10-17T05:00:00+00:00",
+      "info": "",
+      "event_restriction": "not_with_same_event",
+      "integrations": {
+        "abios_enabled": null,
+        "betbuilder_id": null,
+        "bg_betbuilder": false,
+        "score_tracker": null,
+        "scoreframe_id": null,
+        "livescorepro_id": null,
+        "smart_stream_id": null
+      },
+      "streams": [],
+      "sports_groups_ids": [
+        1,
+        35419,
+        37479
+      ],
+      "state": {
+        "is_pre": true,
+        "status": "open",
+        "is_live": false,
+        "markets_count": 31
+      },
+      "home": [
+        "Vegalta Sendai"
+      ],
+      "away": [
+        "Tokushima Vortis"
+      ],
+      "home_labels": [
+        "Vegalta Sendai"
+      ],
+      "away_labels": [
+        "Tokushima Vortis"
+      ],
+      "pinned": null
+    },
+    {
+      "match_id": "bc:31045703",
+      "teams_reversed": false,
+      "date": "2026-10-27T16:30:00+00:00",
+      "info": "",
+      "event_restriction": "not_with_same_event",
+      "integrations": {
+        "abios_enabled": null,
+        "betbuilder_id": null,
+        "bg_betbuilder": false,
+        "score_tracker": null,
+        "scoreframe_id": null,
+        "livescorepro_id": null,
+        "smart_stream_id": null
+      },
+      "streams": [],
+      "sports_groups_ids": [
+        1,
+        35481,
+        37593
+      ],
+      "state": {
+        "is_pre": true,
+        "status": "open",
+        "is_live": false,
+        "markets_count": 7
+      },
+      "primary_markets": null,
+      "home": [
+        "FK Arda Kardzhali"
+      ],
+      "away": [
+        "PFK Levski Sofia"
+      ],
+      "home_labels": [
+        "FK Arda Kardzhali"
+      ],
+      "away_labels": [
+        "PFK Levski Sofia"
+      ],
+      "pinned": null
+    },
+    {
+      "match_id": "bc:31112076",
+      "teams_reversed": false,
+      "date": "2026-10-14T00:00:00+00:00",
+      "info": "",
+      "event_restriction": "not_with_same_event",
+      "integrations": {
+        "abios_enabled": false,
+        "betbuilder_id": null,
+        "bg_betbuilder": false,
+        "score_tracker": true,
+        "scoreframe_id": 6810106,
+        "livescorepro_id": 6810106,
+        "smart_stream_id": null
+      },
+      "streams": [],
+      "sports_groups_ids": [
+        1,
+        35488,
+        36353
+      ],
+      "state": {
+        "is_pre": true,
+        "status": "open",
+        "is_live": false,
+        "markets_count": 57
+      },
+      "home": [
+        "Portmore United FC"
+      ],
+      "away": [
+        "Violette AC"
+      ],
+      "home_labels": [
+        "Portmore United FC"
+      ],
+      "away_labels": [
+        "Violette AC"
+      ],
+      "pinned": null
+    },
+    {
+      "match_id": "bc:31144314",
+      "teams_reversed": false,
+      "date": "2026-10-17T03:00:00+00:00",
+      "info": "",
+      "event_restriction": "not_with_same_event",
+      "integrations": {
+        "abios_enabled": null,
+        "betbuilder_id": "sc:536789",
+        "bg_betbuilder": true,
+        "score_tracker": null,
+        "scoreframe_id": null,
+        "livescorepro_id": null,
+        "smart_stream_id": null
+      },
+      "streams": [],
+      "sports_groups_ids": [
+        1,
+        35417,
+        37452
+      ],
+      "state": {
+        "is_pre": true,
+        "status": "open",
+        "is_live": false,
+        "markets_count": 223
+      },
+      "home": [
+        "Club Tijuana"
+      ],
+      "away": [
+        "Puebla FC"
+      ],
+      "home_labels": [
+        "Club Tijuana"
+      ],
+      "away_labels": [
+        "Puebla FC"
+      ],
+      "pinned": null
+    },
+    {
+      "match_id": "bc:31112045",
+      "teams_reversed": false,
+      "date": "2026-10-18T11:00:00+00:00",
+      "info": "",
+      "event_restriction": "not_with_same_event",
+      "integrations": {
+        "abios_enabled": null,
+        "betbuilder_id": null,
+        "bg_betbuilder": false,
+        "score_tracker": null,
+        "scoreframe_id": null,
+        "livescorepro_id": null,
+        "smart_stream_id": null
+      },
+      "streams": [],
+      "sports_groups_ids": [
+        1,
+        35148,
+        37550
+      ],
+      "state": {
+        "is_pre": true,
+        "status": "open",
+        "is_live": false,
+        "markets_count": 75
+      },
+      "home": [
+        "Chelsea LFC (Wom)"
+      ],
+      "away": [
+        "Tottenham Hotspur LFC (Wom)"
+      ],
+      "home_labels": [
+        "Chelsea LFC (Wom)"
+      ],
+      "away_labels": [
+        "Tottenham Hotspur LFC (Wom)"
+      ],
+      "pinned": null
+    },
+    {
+      "match_id": "bc:31112043",
+      "teams_reversed": false,
+      "date": "2026-10-18T13:00:00+00:00",
+      "info": "",
+      "event_restriction": "not_with_same_event",
+      "integrations": {
+        "abios_enabled": null,
+        "betbuilder_id": null,
+        "bg_betbuilder": false,
+        "score_tracker": null,
+        "scoreframe_id": null,
+        "livescorepro_id": null,
+        "smart_stream_id": null
+      },
+      "streams": [],
+      "sports_groups_ids": [
+        1,
+        35148,
+        37550
+      ],
+      "state": {
+        "is_pre": true,
+        "status": "open",
+        "is_live": false,
+        "markets_count": 73
+      },
+      "home": [
+        "Aston Villa (Wom)"
+      ],
+      "away": [
+        "Liverpool LFC (Wom)"
+      ],
+      "home_labels": [
+        "Aston Villa (Wom)"
+      ],
+      "away_labels": [
+        "Liverpool LFC (Wom)"
+      ],
+      "pinned": null
+    },
+    {
+      "match_id": "bc:31112044",
+      "teams_reversed": false,
+      "date": "2026-10-18T13:00:00+00:00",
+      "info": "",
+      "event_restriction": "not_with_same_event",
+      "integrations": {
+        "abios_enabled": null,
+        "betbuilder_id": null,
+        "bg_betbuilder": false,
+        "score_tracker": null,
+        "scoreframe_id": null,
+        "livescorepro_id": null,
+        "smart_stream_id": null
+      },
+      "streams": [],
+      "sports_groups_ids": [
+        1,
+        35148,
+        37550
+      ],
+      "state": {
+        "is_pre": true,
+        "status": "open",
+        "is_live": false,
+        "markets_count": 74
+      },
+      "home": [
+        "Charlton Athletic (Wom)"
+      ],
+      "away": [
+        "Manchester United LFC (Wom)"
+      ],
+      "home_labels": [
+        "Charlton Athletic (Wom)"
+      ],
+      "away_labels": [
+        "Manchester United LFC (Wom)"
+      ],
+      "pinned": null
+    },
+    {
+      "match_id": "bc:31145061",
+      "teams_reversed": false,
+      "date": "2026-10-18T05:00:00+00:00",
+      "info": "",
+      "event_restriction": "not_with_same_event",
+      "integrations": {
+        "abios_enabled": null,
+        "betbuilder_id": null,
+        "bg_betbuilder": false,
+        "score_tracker": null,
+        "scoreframe_id": null,
+        "livescorepro_id": null,
+        "smart_stream_id": null
+      },
+      "streams": [],
+      "sports_groups_ids": [
+        1,
+        36300,
+        37471
+      ],
+      "state": {
+        "is_pre": true,
+        "status": "open",
+        "is_live": false,
+        "markets_count": 64
+      },
+      "home": [
+        "Suwon Bluewings"
+      ],
+      "away": [
+        "Hwaseong FC"
+      ],
+      "home_labels": [
+        "Suwon Bluewings"
+      ],
+      "away_labels": [
+        "Hwaseong FC"
+      ],
+      "pinned": null
+    },
+    {
+      "match_id": "bc:31177396",
+      "teams_reversed": false,
+      "date": "2026-10-15T23:00:00+00:00",
+      "info": "",
+      "event_restriction": "not_with_same_event",
+      "integrations": {
+        "abios_enabled": false,
+        "betbuilder_id": null,
+        "bg_betbuilder": false,
+        "score_tracker": true,
+        "scoreframe_id": 6693311,
+        "livescorepro_id": 6693311,
+        "smart_stream_id": null
+      },
+      "streams": [],
+      "sports_groups_ids": [
+        1,
+        35248,
+        37582
+      ],
+      "state": {
+        "is_pre": true,
+        "status": "open",
+        "is_live": false,
+        "markets_count": 62
+      },
+      "home": [
+        "Internacional FC de Palmira"
+      ],
+      "away": [
+        "Orsomarso SC"
+      ],
+      "home_labels": [
+        "Internacional FC de Palmira"
+      ],
+      "away_labels": [
+        "Orsomarso SC"
+      ],
+      "pinned": null
+    },
+    {
+      "match_id": "bc:31177397",
+      "teams_reversed": false,
+      "date": "2026-10-16T23:00:00+00:00",
+      "info": "",
+      "event_restriction": "not_with_same_event",
+      "integrations": {
+        "abios_enabled": false,
+        "betbuilder_id": null,
+        "bg_betbuilder": false,
+        "score_tracker": true,
+        "scoreframe_id": 6381335,
+        "livescorepro_id": 6381335,
+        "smart_stream_id": null
+      },
+      "streams": [],
+      "sports_groups_ids": [
+        1,
+        35192,
+        35193
+      ],
+      "state": {
+        "is_pre": true,
+        "status": "open",
+        "is_live": false,
+        "markets_count": 35
+      },
+      "home": [
+        "FC Supra du Quebec"
+      ],
+      "away": [
+        "Inter Toronto FC"
+      ],
+      "home_labels": [
+        "FC Supra du Quebec"
+      ],
+      "away_labels": [
+        "Inter Toronto FC"
+      ],
+      "pinned": null
+    }
+  ],
+  "primary_column_markets": [
+    {
+      "market_id": "bc:2483751850",
+      "match_id": "bc:31111901",
+      "line": 0,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": true,
+      "position": 1,
+      "markets_class_id": 2669,
+      "name": "Match Result",
+      "label": "Match Result",
+      "primary_column": 26,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Primary Markets",
+        "position": 1,
+        "sports_group_id": 1,
+        "markets_group_id": 204
+      },
+      "selections": [
+        {
+          "name": "Valerenga",
+          "label": "Valerenga",
+          "rate": {
+            "decimal": 2.47,
+            "american": 147,
+            "fractional": "22/15"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2483751850",
+          "selection_id": "bc:7319485447"
+        },
+        {
+          "name": "Draw",
+          "label": "Draw",
+          "rate": {
+            "decimal": 3.75,
+            "american": 275,
+            "fractional": "11/4"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2483751850",
+          "selection_id": "bc:7319485448"
+        },
+        {
+          "name": "SK Brann",
+          "label": "SK Brann",
+          "rate": {
+            "decimal": 2.5,
+            "american": 150,
+            "fractional": "3/2"
+          },
+          "order": 2,
+          "status": "open",
+          "market_id": "bc:2483751850",
+          "selection_id": "bc:7319485449"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2483751848",
+      "match_id": "bc:31111901",
+      "line": 3.5,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": true,
+      "position": 4,
+      "markets_class_id": 3499,
+      "name": "Total Goals",
+      "label": "Total Goals",
+      "primary_column": 33,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Totals",
+        "position": 2,
+        "sports_group_id": 1,
+        "markets_group_id": 280
+      },
+      "selections": [
+        {
+          "name": "Over (3.5)",
+          "label": "Over (3.5)",
+          "rate": {
+            "decimal": 1.95,
+            "american": -105,
+            "fractional": "19/20"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2483751848",
+          "selection_id": "bc:7319485443"
+        },
+        {
+          "name": "Under (3.5)",
+          "label": "Under (3.5)",
+          "rate": {
+            "decimal": 1.77,
+            "american": -130,
+            "fractional": "7/9"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2483751848",
+          "selection_id": "bc:7319485444"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2485665727",
+      "match_id": "bc:31111901",
+      "line": 0,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": true,
+      "position": 8,
+      "markets_class_id": 5747,
+      "name": "Asian Handicap",
+      "label": "Asian Handicap",
+      "primary_column": 40,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Handicap",
+        "position": 3,
+        "sports_group_id": 1,
+        "markets_group_id": 278
+      },
+      "selections": [
+        {
+          "name": "Valerenga (0.0)",
+          "label": "Valerenga (0.0)",
+          "rate": {
+            "decimal": 1.85,
+            "american": -118,
+            "fractional": "6/7"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2485665727",
+          "selection_id": "bc:7324417685"
+        },
+        {
+          "name": "SK Brann (0.0)",
+          "label": "SK Brann (0.0)",
+          "rate": {
+            "decimal": 1.85,
+            "american": -118,
+            "fractional": "6/7"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2485665727",
+          "selection_id": "bc:7324417686"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2485811394",
+      "match_id": "bc:31111901",
+      "line": 0,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": true,
+      "position": 15,
+      "markets_class_id": 2551,
+      "name": "Double Chance",
+      "label": "Double Chance",
+      "primary_column": 41,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Primary Markets",
+        "position": 1,
+        "sports_group_id": 1,
+        "markets_group_id": 204
+      },
+      "selections": [
+        {
+          "name": "Valerenga or Draw",
+          "label": "Valerenga or Draw",
+          "rate": {
+            "decimal": 1.47,
+            "american": -213,
+            "fractional": "7/15"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2485811394",
+          "selection_id": "bc:7324774379"
+        },
+        {
+          "name": "Valerenga or SK Brann",
+          "label": "Valerenga or SK Brann",
+          "rate": {
+            "decimal": 1.25,
+            "american": -400,
+            "fractional": "1/4"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2485811394",
+          "selection_id": "bc:7324774381"
+        },
+        {
+          "name": "SK Brann or Draw",
+          "label": "SK Brann or Draw",
+          "rate": {
+            "decimal": 1.47,
+            "american": -213,
+            "fractional": "7/15"
+          },
+          "order": 2,
+          "status": "open",
+          "market_id": "bc:2485811394",
+          "selection_id": "bc:7324774382"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2485811372",
+      "match_id": "bc:31111901",
+      "line": 0,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": true,
+      "position": 7,
+      "markets_class_id": 3151,
+      "name": "Both Teams To Score",
+      "label": "Both Teams To Score",
+      "primary_column": 42,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Primary Markets",
+        "position": 1,
+        "sports_group_id": 1,
+        "markets_group_id": 204
+      },
+      "selections": [
+        {
+          "name": "Yes",
+          "label": "Yes",
+          "rate": {
+            "decimal": 1.35,
+            "american": -286,
+            "fractional": "7/20"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2485811372",
+          "selection_id": "bc:7324774302"
+        },
+        {
+          "name": "No",
+          "label": "No",
+          "rate": {
+            "decimal": 2.95,
+            "american": 195,
+            "fractional": "39/20"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2485811372",
+          "selection_id": "bc:7324774303"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2483751839",
+      "match_id": "bc:31111901",
+      "line": 1.5,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": true,
+      "position": 5,
+      "markets_class_id": 6568,
+      "name": "1st Half: Total Goals",
+      "label": "1st Half: Total Goals",
+      "primary_column": 302,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "1st half",
+        "position": 4,
+        "sports_group_id": 1,
+        "markets_group_id": 282
+      },
+      "selections": [
+        {
+          "name": "Over (1.5)",
+          "label": "Over (1.5)",
+          "rate": {
+            "decimal": 1.95,
+            "american": -105,
+            "fractional": "19/20"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2483751839",
+          "selection_id": "bc:7319485428"
+        },
+        {
+          "name": "Under (1.5)",
+          "label": "Under (1.5)",
+          "rate": {
+            "decimal": 1.77,
+            "american": -130,
+            "fractional": "7/9"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2483751839",
+          "selection_id": "bc:7319485429"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2485811389",
+      "match_id": "bc:31111901",
+      "line": 1.5,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": false,
+      "position": 1,
+      "markets_class_id": 3368,
+      "name": "Home Team: Total Goals",
+      "label": "Home Team: Total Goals",
+      "primary_column": 303,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Team 1",
+        "position": 12,
+        "sports_group_id": 1,
+        "markets_group_id": 298
+      },
+      "selections": [
+        {
+          "name": "Over (1.5)",
+          "label": "Over (1.5)",
+          "rate": {
+            "decimal": 1.75,
+            "american": -133,
+            "fractional": "3/4"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2485811389",
+          "selection_id": "bc:7324774336"
+        },
+        {
+          "name": "Under (1.5)",
+          "label": "Under (1.5)",
+          "rate": {
+            "decimal": 1.92,
+            "american": -109,
+            "fractional": "11/12"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2485811389",
+          "selection_id": "bc:7324774337"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2485811380",
+      "match_id": "bc:31111901",
+      "line": 1.5,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": false,
+      "position": 1,
+      "markets_class_id": 6495,
+      "name": "Away Team: Total Goals",
+      "label": "Away Team: Total Goals",
+      "primary_column": 304,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Team 2",
+        "position": 13,
+        "sports_group_id": 1,
+        "markets_group_id": 300
+      },
+      "selections": [
+        {
+          "name": "Over (1.5)",
+          "label": "Over (1.5)",
+          "rate": {
+            "decimal": 1.77,
+            "american": -130,
+            "fractional": "7/9"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2485811380",
+          "selection_id": "bc:7324774318"
+        },
+        {
+          "name": "Under (1.5)",
+          "label": "Under (1.5)",
+          "rate": {
+            "decimal": 1.9,
+            "american": -111,
+            "fractional": "9/10"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2485811380",
+          "selection_id": "bc:7324774319"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2479372586",
+      "match_id": "bc:31169981",
+      "line": 0,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": true,
+      "position": 1,
+      "markets_class_id": 2669,
+      "name": "Match Result",
+      "label": "Match Result",
+      "primary_column": 26,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Primary Markets",
+        "position": 1,
+        "sports_group_id": 1,
+        "markets_group_id": 204
+      },
+      "selections": [
+        {
+          "name": "Al Sadd SC Doha",
+          "label": "Al Sadd SC Doha",
+          "rate": {
+            "decimal": 4.95,
+            "american": 395,
+            "fractional": "79/20"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2479372586",
+          "selection_id": "bc:7307165780"
+        },
+        {
+          "name": "Draw",
+          "label": "Draw",
+          "rate": {
+            "decimal": 4.65,
+            "american": 365,
+            "fractional": "73/20"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2479372586",
+          "selection_id": "bc:7307165781"
+        },
+        {
+          "name": "Al Hilal Riyadh",
+          "label": "Al Hilal Riyadh",
+          "rate": {
+            "decimal": 1.52,
+            "american": -192,
+            "fractional": "13/25"
+          },
+          "order": 2,
+          "status": "open",
+          "market_id": "bc:2479372586",
+          "selection_id": "bc:7307165782"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2479372664",
+      "match_id": "bc:31169981",
+      "line": 3.5,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": true,
+      "position": 4,
+      "markets_class_id": 3499,
+      "name": "Total Goals",
+      "label": "Total Goals",
+      "primary_column": 33,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Totals",
+        "position": 2,
+        "sports_group_id": 1,
+        "markets_group_id": 280
+      },
+      "selections": [
+        {
+          "name": "Over (3.5)",
+          "label": "Over (3.5)",
+          "rate": {
+            "decimal": 1.92,
+            "american": -109,
+            "fractional": "11/12"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2479372664",
+          "selection_id": "bc:7307165965"
+        },
+        {
+          "name": "Under (3.5)",
+          "label": "Under (3.5)",
+          "rate": {
+            "decimal": 1.77,
+            "american": -130,
+            "fractional": "7/9"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2479372664",
+          "selection_id": "bc:7307165966"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2479372653",
+      "match_id": "bc:31169981",
+      "line": 0,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": true,
+      "position": 8,
+      "markets_class_id": 5747,
+      "name": "Asian Handicap",
+      "label": "Asian Handicap",
+      "primary_column": 40,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Handicap",
+        "position": 3,
+        "sports_group_id": 1,
+        "markets_group_id": 278
+      },
+      "selections": [
+        {
+          "name": "Al Sadd SC Doha (0.0)",
+          "label": "Al Sadd SC Doha (0.0)",
+          "rate": {
+            "decimal": 3.7,
+            "american": 270,
+            "fractional": "27/10"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2479372653",
+          "selection_id": "bc:7307165943"
+        },
+        {
+          "name": "Al Hilal Riyadh (0.0)",
+          "label": "Al Hilal Riyadh (0.0)",
+          "rate": {
+            "decimal": 1.25,
+            "american": -400,
+            "fractional": "1/4"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2479372653",
+          "selection_id": "bc:7307165944"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2479372565",
+      "match_id": "bc:31169981",
+      "line": 0,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": true,
+      "position": 15,
+      "markets_class_id": 2551,
+      "name": "Double Chance",
+      "label": "Double Chance",
+      "primary_column": 41,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Primary Markets",
+        "position": 1,
+        "sports_group_id": 1,
+        "markets_group_id": 204
+      },
+      "selections": [
+        {
+          "name": "Al Sadd SC Doha or Draw",
+          "label": "Al Sadd SC Doha or Draw",
+          "rate": {
+            "decimal": 2.35,
+            "american": 135,
+            "fractional": "27/20"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2479372565",
+          "selection_id": "bc:7307165730"
+        },
+        {
+          "name": "Al Sadd SC Doha or Al Hilal Riyadh",
+          "label": "Al Sadd SC Doha or Al Hilal Riyadh",
+          "rate": {
+            "decimal": 1.18,
+            "american": -556,
+            "fractional": "2/11"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2479372565",
+          "selection_id": "bc:7307165731"
+        },
+        {
+          "name": "Al Hilal Riyadh or Draw",
+          "label": "Al Hilal Riyadh or Draw",
+          "rate": {
+            "decimal": 1.16,
+            "american": -625,
+            "fractional": "4/25"
+          },
+          "order": 2,
+          "status": "open",
+          "market_id": "bc:2479372565",
+          "selection_id": "bc:7307165732"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2479372546",
+      "match_id": "bc:31169981",
+      "line": 0,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": true,
+      "position": 7,
+      "markets_class_id": 3151,
+      "name": "Both Teams To Score",
+      "label": "Both Teams To Score",
+      "primary_column": 42,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Primary Markets",
+        "position": 1,
+        "sports_group_id": 1,
+        "markets_group_id": 204
+      },
+      "selections": [
+        {
+          "name": "Yes",
+          "label": "Yes",
+          "rate": {
+            "decimal": 1.5,
+            "american": -200,
+            "fractional": "1/2"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2479372546",
+          "selection_id": "bc:7307165658"
+        },
+        {
+          "name": "No",
+          "label": "No",
+          "rate": {
+            "decimal": 2.45,
+            "american": 145,
+            "fractional": "13/9"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2479372546",
+          "selection_id": "bc:7307165659"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2479372584",
+      "match_id": "bc:31169981",
+      "line": 1.5,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": true,
+      "position": 5,
+      "markets_class_id": 6568,
+      "name": "1st Half: Total Goals",
+      "label": "1st Half: Total Goals",
+      "primary_column": 302,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "1st half",
+        "position": 4,
+        "sports_group_id": 1,
+        "markets_group_id": 282
+      },
+      "selections": [
+        {
+          "name": "Over (1.5)",
+          "label": "Over (1.5)",
+          "rate": {
+            "decimal": 1.98,
+            "american": -102,
+            "fractional": "49/50"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2479372584",
+          "selection_id": "bc:7307165776"
+        },
+        {
+          "name": "Under (1.5)",
+          "label": "Under (1.5)",
+          "rate": {
+            "decimal": 1.75,
+            "american": -133,
+            "fractional": "3/4"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2479372584",
+          "selection_id": "bc:7307165777"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2479372562",
+      "match_id": "bc:31169981",
+      "line": 1,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": false,
+      "position": 1,
+      "markets_class_id": 3368,
+      "name": "Home Team: Total Goals",
+      "label": "Home Team: Total Goals",
+      "primary_column": 303,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Team 1",
+        "position": 12,
+        "sports_group_id": 1,
+        "markets_group_id": 298
+      },
+      "selections": [
+        {
+          "name": "Over (1.0)",
+          "label": "Over (1.0)",
+          "rate": {
+            "decimal": 1.77,
+            "american": -130,
+            "fractional": "7/9"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2479372562",
+          "selection_id": "bc:7307165690"
+        },
+        {
+          "name": "Under (1.0)",
+          "label": "Under (1.0)",
+          "rate": {
+            "decimal": 1.9,
+            "american": -111,
+            "fractional": "9/10"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2479372562",
+          "selection_id": "bc:7307165691"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2479372556",
+      "match_id": "bc:31169981",
+      "line": 2,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": false,
+      "position": 1,
+      "markets_class_id": 6495,
+      "name": "Away Team: Total Goals",
+      "label": "Away Team: Total Goals",
+      "primary_column": 304,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Team 2",
+        "position": 13,
+        "sports_group_id": 1,
+        "markets_group_id": 300
+      },
+      "selections": [
+        {
+          "name": "Over (2.0)",
+          "label": "Over (2.0)",
+          "rate": {
+            "decimal": 1.65,
+            "american": -154,
+            "fractional": "13/20"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2479372556",
+          "selection_id": "bc:7307165678"
+        },
+        {
+          "name": "Under (2.0)",
+          "label": "Under (2.0)",
+          "rate": {
+            "decimal": 2.07,
+            "american": 107,
+            "fractional": "16/15"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2479372556",
+          "selection_id": "bc:7307165679"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2485182225",
+      "match_id": "bc:31201240",
+      "line": 0,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": true,
+      "position": 1,
+      "markets_class_id": 2669,
+      "name": "Match Result",
+      "label": "Match Result",
+      "primary_column": 26,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Primary Markets",
+        "position": 1,
+        "sports_group_id": 1,
+        "markets_group_id": 204
+      },
+      "selections": [
+        {
+          "name": "Cong An Ha Noi FC",
+          "label": "Cong An Ha Noi FC",
+          "rate": {
+            "decimal": 5.05,
+            "american": 405,
+            "fractional": "81/20"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2485182225",
+          "selection_id": "bc:7323181742"
+        },
+        {
+          "name": "Draw",
+          "label": "Draw",
+          "rate": {
+            "decimal": 5.65,
+            "american": 465,
+            "fractional": "93/20"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2485182225",
+          "selection_id": "bc:7323181743"
+        },
+        {
+          "name": "Kashima Antlers",
+          "label": "Kashima Antlers",
+          "rate": {
+            "decimal": 1.45,
+            "american": -222,
+            "fractional": "4/9"
+          },
+          "order": 2,
+          "status": "open",
+          "market_id": "bc:2485182225",
+          "selection_id": "bc:7323181744"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2485182170",
+      "match_id": "bc:31201240",
+      "line": 3,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": true,
+      "position": 4,
+      "markets_class_id": 3499,
+      "name": "Total Goals",
+      "label": "Total Goals",
+      "primary_column": 33,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Totals",
+        "position": 2,
+        "sports_group_id": 1,
+        "markets_group_id": 280
+      },
+      "selections": [
+        {
+          "name": "Over (3.0)",
+          "label": "Over (3.0)",
+          "rate": {
+            "decimal": 1.7,
+            "american": -143,
+            "fractional": "7/10"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2485182170",
+          "selection_id": "bc:7323181630"
+        },
+        {
+          "name": "Under (3.0)",
+          "label": "Under (3.0)",
+          "rate": {
+            "decimal": 2.05,
+            "american": 105,
+            "fractional": "21/20"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2485182170",
+          "selection_id": "bc:7323181632"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2485182059",
+      "match_id": "bc:31201240",
+      "line": 0,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": true,
+      "position": 8,
+      "markets_class_id": 5747,
+      "name": "Asian Handicap",
+      "label": "Asian Handicap",
+      "primary_column": 40,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Handicap",
+        "position": 3,
+        "sports_group_id": 1,
+        "markets_group_id": 278
+      },
+      "selections": [
+        {
+          "name": "Cong An Ha Noi FC (0.0)",
+          "label": "Cong An Ha Noi FC (0.0)",
+          "rate": {
+            "decimal": 4,
+            "american": 300,
+            "fractional": "3"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2485182059",
+          "selection_id": "bc:7323181385"
+        },
+        {
+          "name": "Kashima Antlers (0.0)",
+          "label": "Kashima Antlers (0.0)",
+          "rate": {
+            "decimal": 1.2,
+            "american": -500,
+            "fractional": "1/5"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2485182059",
+          "selection_id": "bc:7323181387"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2485181846",
+      "match_id": "bc:31201240",
+      "line": 0,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": true,
+      "position": 7,
+      "markets_class_id": 3151,
+      "name": "Both Teams To Score",
+      "label": "Both Teams To Score",
+      "primary_column": 42,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Primary Markets",
+        "position": 1,
+        "sports_group_id": 1,
+        "markets_group_id": 204
+      },
+      "selections": [
+        {
+          "name": "Yes",
+          "label": "Yes",
+          "rate": {
+            "decimal": 1.7,
+            "american": -143,
+            "fractional": "7/10"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2485181846",
+          "selection_id": "bc:7323180652"
+        },
+        {
+          "name": "No",
+          "label": "No",
+          "rate": {
+            "decimal": 2.07,
+            "american": 107,
+            "fractional": "16/15"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2485181846",
+          "selection_id": "bc:7323180653"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2485182035",
+      "match_id": "bc:31201240",
+      "line": 1.5,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": true,
+      "position": 5,
+      "markets_class_id": 6568,
+      "name": "1st Half: Total Goals",
+      "label": "1st Half: Total Goals",
+      "primary_column": 302,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "1st half",
+        "position": 4,
+        "sports_group_id": 1,
+        "markets_group_id": 282
+      },
+      "selections": [
+        {
+          "name": "Over (1.5)",
+          "label": "Over (1.5)",
+          "rate": {
+            "decimal": 2.1,
+            "american": 110,
+            "fractional": "11/10"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2485182035",
+          "selection_id": "bc:7323181337"
+        },
+        {
+          "name": "Under (1.5)",
+          "label": "Under (1.5)",
+          "rate": {
+            "decimal": 1.65,
+            "american": -154,
+            "fractional": "13/20"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2485182035",
+          "selection_id": "bc:7323181338"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2485181879",
+      "match_id": "bc:31201240",
+      "line": 1,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": false,
+      "position": 1,
+      "markets_class_id": 3368,
+      "name": "Home Team: Total Goals",
+      "label": "Home Team: Total Goals",
+      "primary_column": 303,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Team 1",
+        "position": 12,
+        "sports_group_id": 1,
+        "markets_group_id": 298
+      },
+      "selections": [
+        {
+          "name": "Over (1.0)",
+          "label": "Over (1.0)",
+          "rate": {
+            "decimal": 2.15,
+            "american": 115,
+            "fractional": "23/20"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2485181879",
+          "selection_id": "bc:7323180783"
+        },
+        {
+          "name": "Under (1.0)",
+          "label": "Under (1.0)",
+          "rate": {
+            "decimal": 1.6,
+            "american": -167,
+            "fractional": "3/5"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2485181879",
+          "selection_id": "bc:7323180784"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2485181860",
+      "match_id": "bc:31201240",
+      "line": 2,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": false,
+      "position": 1,
+      "markets_class_id": 6495,
+      "name": "Away Team: Total Goals",
+      "label": "Away Team: Total Goals",
+      "primary_column": 304,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Team 2",
+        "position": 13,
+        "sports_group_id": 1,
+        "markets_group_id": 300
+      },
+      "selections": [
+        {
+          "name": "Over (2.0)",
+          "label": "Over (2.0)",
+          "rate": {
+            "decimal": 1.65,
+            "american": -154,
+            "fractional": "13/20"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2485181860",
+          "selection_id": "bc:7323180724"
+        },
+        {
+          "name": "Under (2.0)",
+          "label": "Under (2.0)",
+          "rate": {
+            "decimal": 2.1,
+            "american": 110,
+            "fractional": "11/10"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2485181860",
+          "selection_id": "bc:7323180725"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2485181858",
+      "match_id": "bc:31201240",
+      "line": 2.5,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": false,
+      "position": 1,
+      "markets_class_id": 6495,
+      "name": "Away Team: Total Goals",
+      "label": "Away Team: Total Goals",
+      "primary_column": 304,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Team 2",
+        "position": 13,
+        "sports_group_id": 1,
+        "markets_group_id": 300
+      },
+      "selections": [
+        {
+          "name": "Over (2.5)",
+          "label": "Over (2.5)",
+          "rate": {
+            "decimal": 2.15,
+            "american": 115,
+            "fractional": "23/20"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2485181858",
+          "selection_id": "bc:7323180716"
+        },
+        {
+          "name": "Under (2.5)",
+          "label": "Under (2.5)",
+          "rate": {
+            "decimal": 1.6,
+            "american": -167,
+            "fractional": "3/5"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2485181858",
+          "selection_id": "bc:7323180717"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2475211173",
+      "match_id": "bc:31112048",
+      "line": 0,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": true,
+      "position": 1,
+      "markets_class_id": 2669,
+      "name": "Match Result",
+      "label": "Match Result",
+      "primary_column": 26,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Primary Markets",
+        "position": 1,
+        "sports_group_id": 1,
+        "markets_group_id": 204
+      },
+      "selections": [
+        {
+          "name": "Manchester City LFC (Wom)",
+          "label": "Manchester City LFC (Wom)",
+          "rate": {
+            "decimal": 1.33,
+            "american": -303,
+            "fractional": "1/3"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2475211173",
+          "selection_id": "bc:7296744247"
+        },
+        {
+          "name": "Draw",
+          "label": "Draw",
+          "rate": {
+            "decimal": 5.35,
+            "american": 435,
+            "fractional": "87/20"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2475211173",
+          "selection_id": "bc:7296744248"
+        },
+        {
+          "name": "Brighton and Hove Albion WFC (Wom)",
+          "label": "Brighton and Hove Albion WFC (Wom)",
+          "rate": {
+            "decimal": 6.5,
+            "american": 550,
+            "fractional": "11/2"
+          },
+          "order": 2,
+          "status": "open",
+          "market_id": "bc:2475211173",
+          "selection_id": "bc:7296744249"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2475211172",
+      "match_id": "bc:31112048",
+      "line": 3.5,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": true,
+      "position": 4,
+      "markets_class_id": 3499,
+      "name": "Total Goals",
+      "label": "Total Goals",
+      "primary_column": 33,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Totals",
+        "position": 2,
+        "sports_group_id": 1,
+        "markets_group_id": 280
+      },
+      "selections": [
+        {
+          "name": "Over (3.5)",
+          "label": "Over (3.5)",
+          "rate": {
+            "decimal": 1.77,
+            "american": -130,
+            "fractional": "7/9"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2475211172",
+          "selection_id": "bc:7296744245"
+        },
+        {
+          "name": "Under (3.5)",
+          "label": "Under (3.5)",
+          "rate": {
+            "decimal": 1.85,
+            "american": -118,
+            "fractional": "6/7"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2475211172",
+          "selection_id": "bc:7296744246"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2475211133",
+      "match_id": "bc:31112048",
+      "line": -1.5,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": true,
+      "position": 8,
+      "markets_class_id": 5747,
+      "name": "Asian Handicap",
+      "label": "Asian Handicap",
+      "primary_column": 40,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Handicap",
+        "position": 3,
+        "sports_group_id": 1,
+        "markets_group_id": 278
+      },
+      "selections": [
+        {
+          "name": "Manchester City LFC (Wom) (-1.5)",
+          "label": "Manchester City LFC (Wom) (-1.5)",
+          "rate": {
+            "decimal": 1.8,
+            "american": -125,
+            "fractional": "4/5"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2475211133",
+          "selection_id": "bc:7296744166"
+        },
+        {
+          "name": "Brighton and Hove Albion WFC (Wom) (1.5)",
+          "label": "Brighton and Hove Albion WFC (Wom) (1.5)",
+          "rate": {
+            "decimal": 1.82,
+            "american": -122,
+            "fractional": "9/11"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2475211133",
+          "selection_id": "bc:7296744167"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2475217513",
+      "match_id": "bc:31112048",
+      "line": 0,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": true,
+      "position": 15,
+      "markets_class_id": 2551,
+      "name": "Double Chance",
+      "label": "Double Chance",
+      "primary_column": 41,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Primary Markets",
+        "position": 1,
+        "sports_group_id": 1,
+        "markets_group_id": 204
+      },
+      "selections": [
+        {
+          "name": "Manchester City LFC (Wom) or Draw",
+          "label": "Manchester City LFC (Wom) or Draw",
+          "rate": {
+            "decimal": 1.1,
+            "american": -1000,
+            "fractional": "1/10"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2475217513",
+          "selection_id": "bc:7296761210"
+        },
+        {
+          "name": "Manchester City LFC (Wom) or Brighton and Hove Albion WFC (Wom)",
+          "label": "Manchester City LFC (Wom) or Brighton and Hove Albion WFC (Wom)",
+          "rate": {
+            "decimal": 1.14,
+            "american": -714,
+            "fractional": "1/7"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2475217513",
+          "selection_id": "bc:7296761211"
+        },
+        {
+          "name": "Brighton and Hove Albion WFC (Wom) or Draw",
+          "label": "Brighton and Hove Albion WFC (Wom) or Draw",
+          "rate": {
+            "decimal": 2.95,
+            "american": 195,
+            "fractional": "39/20"
+          },
+          "order": 2,
+          "status": "open",
+          "market_id": "bc:2475217513",
+          "selection_id": "bc:7296761212"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2475217427",
+      "match_id": "bc:31112048",
+      "line": 0,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": true,
+      "position": 7,
+      "markets_class_id": 3151,
+      "name": "Both Teams To Score",
+      "label": "Both Teams To Score",
+      "primary_column": 42,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Primary Markets",
+        "position": 1,
+        "sports_group_id": 1,
+        "markets_group_id": 204
+      },
+      "selections": [
+        {
+          "name": "Yes",
+          "label": "Yes",
+          "rate": {
+            "decimal": 1.55,
+            "american": -182,
+            "fractional": "5/9"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2475217427",
+          "selection_id": "bc:7296760929"
+        },
+        {
+          "name": "No",
+          "label": "No",
+          "rate": {
+            "decimal": 2.3,
+            "american": 130,
+            "fractional": "13/10"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2475217427",
+          "selection_id": "bc:7296760931"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2475211125",
+      "match_id": "bc:31112048",
+      "line": 1.5,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": true,
+      "position": 5,
+      "markets_class_id": 6568,
+      "name": "1st Half: Total Goals",
+      "label": "1st Half: Total Goals",
+      "primary_column": 302,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "1st half",
+        "position": 4,
+        "sports_group_id": 1,
+        "markets_group_id": 282
+      },
+      "selections": [
+        {
+          "name": "Over (1.5)",
+          "label": "Over (1.5)",
+          "rate": {
+            "decimal": 1.88,
+            "american": -114,
+            "fractional": "7/8"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2475211125",
+          "selection_id": "bc:7296744149"
+        },
+        {
+          "name": "Under (1.5)",
+          "label": "Under (1.5)",
+          "rate": {
+            "decimal": 1.82,
+            "american": -122,
+            "fractional": "9/11"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2475211125",
+          "selection_id": "bc:7296744150"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2475217469",
+      "match_id": "bc:31112048",
+      "line": 2.5,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": false,
+      "position": 1,
+      "markets_class_id": 3368,
+      "name": "Home Team: Total Goals",
+      "label": "Home Team: Total Goals",
+      "primary_column": 303,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Team 1",
+        "position": 12,
+        "sports_group_id": 1,
+        "markets_group_id": 298
+      },
+      "selections": [
+        {
+          "name": "Over (2.5)",
+          "label": "Over (2.5)",
+          "rate": {
+            "decimal": 1.82,
+            "american": -122,
+            "fractional": "9/11"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2475217469",
+          "selection_id": "bc:7296761013"
+        },
+        {
+          "name": "Under (2.5)",
+          "label": "Under (2.5)",
+          "rate": {
+            "decimal": 1.82,
+            "american": -122,
+            "fractional": "9/11"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2475217469",
+          "selection_id": "bc:7296761014"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2475217438",
+      "match_id": "bc:31112048",
+      "line": 1,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": false,
+      "position": 1,
+      "markets_class_id": 6495,
+      "name": "Away Team: Total Goals",
+      "label": "Away Team: Total Goals",
+      "primary_column": 304,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Team 2",
+        "position": 13,
+        "sports_group_id": 1,
+        "markets_group_id": 300
+      },
+      "selections": [
+        {
+          "name": "Over (1.0)",
+          "label": "Over (1.0)",
+          "rate": {
+            "decimal": 2.02,
+            "american": 102,
+            "fractional": "51/50"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2475217438",
+          "selection_id": "bc:7296760950"
+        },
+        {
+          "name": "Under (1.0)",
+          "label": "Under (1.0)",
+          "rate": {
+            "decimal": 1.67,
+            "american": -149,
+            "fractional": "2/3"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2475217438",
+          "selection_id": "bc:7296760952"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2482828788",
+      "match_id": "bc:31189353",
+      "line": 0,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": true,
+      "position": 1,
+      "markets_class_id": 2669,
+      "name": "Match Result",
+      "label": "Match Result",
+      "primary_column": 26,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Primary Markets",
+        "position": 1,
+        "sports_group_id": 1,
+        "markets_group_id": 204
+      },
+      "selections": [
+        {
+          "name": "Fujieda MYFC",
+          "label": "Fujieda MYFC",
+          "rate": {
+            "decimal": 2.5,
+            "american": 150,
+            "fractional": "3/2"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2482828788",
+          "selection_id": "bc:7316911614"
+        },
+        {
+          "name": "Draw",
+          "label": "Draw",
+          "rate": {
+            "decimal": 3.1,
+            "american": 210,
+            "fractional": "21/10"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2482828788",
+          "selection_id": "bc:7316911615"
+        },
+        {
+          "name": "Montedio Yamagata",
+          "label": "Montedio Yamagata",
+          "rate": {
+            "decimal": 2.7,
+            "american": 170,
+            "fractional": "17/10"
+          },
+          "order": 2,
+          "status": "open",
+          "market_id": "bc:2482828788",
+          "selection_id": "bc:7316911616"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2482828785",
+      "match_id": "bc:31189353",
+      "line": 2.5,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": true,
+      "position": 4,
+      "markets_class_id": 3499,
+      "name": "Total Goals",
+      "label": "Total Goals",
+      "primary_column": 33,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Totals",
+        "position": 2,
+        "sports_group_id": 1,
+        "markets_group_id": 280
+      },
+      "selections": [
+        {
+          "name": "Over (2.5)",
+          "label": "Over (2.5)",
+          "rate": {
+            "decimal": 1.88,
+            "american": -114,
+            "fractional": "7/8"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2482828785",
+          "selection_id": "bc:7316911607"
+        },
+        {
+          "name": "Under (2.5)",
+          "label": "Under (2.5)",
+          "rate": {
+            "decimal": 1.75,
+            "american": -133,
+            "fractional": "3/4"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2482828785",
+          "selection_id": "bc:7316911608"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2482828769",
+      "match_id": "bc:31189353",
+      "line": 0,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": true,
+      "position": 8,
+      "markets_class_id": 5747,
+      "name": "Asian Handicap",
+      "label": "Asian Handicap",
+      "primary_column": 40,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Handicap",
+        "position": 3,
+        "sports_group_id": 1,
+        "markets_group_id": 278
+      },
+      "selections": [
+        {
+          "name": "Fujieda MYFC (0.0)",
+          "label": "Fujieda MYFC (0.0)",
+          "rate": {
+            "decimal": 1.75,
+            "american": -133,
+            "fractional": "3/4"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2482828769",
+          "selection_id": "bc:7316911575"
+        },
+        {
+          "name": "Montedio Yamagata (0.0)",
+          "label": "Montedio Yamagata (0.0)",
+          "rate": {
+            "decimal": 1.88,
+            "american": -114,
+            "fractional": "7/8"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2482828769",
+          "selection_id": "bc:7316911576"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2482828726",
+      "match_id": "bc:31189353",
+      "line": 0,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": true,
+      "position": 15,
+      "markets_class_id": 2551,
+      "name": "Double Chance",
+      "label": "Double Chance",
+      "primary_column": 41,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Primary Markets",
+        "position": 1,
+        "sports_group_id": 1,
+        "markets_group_id": 204
+      },
+      "selections": [
+        {
+          "name": "Fujieda MYFC or Draw",
+          "label": "Fujieda MYFC or Draw",
+          "rate": {
+            "decimal": 1.4,
+            "american": -250,
+            "fractional": "2/5"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2482828726",
+          "selection_id": "bc:7316911488"
+        },
+        {
+          "name": "Fujieda MYFC or Montedio Yamagata",
+          "label": "Fujieda MYFC or Montedio Yamagata",
+          "rate": {
+            "decimal": 1.33,
+            "american": -303,
+            "fractional": "1/3"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2482828726",
+          "selection_id": "bc:7316911489"
+        },
+        {
+          "name": "Montedio Yamagata or Draw",
+          "label": "Montedio Yamagata or Draw",
+          "rate": {
+            "decimal": 1.5,
+            "american": -200,
+            "fractional": "1/2"
+          },
+          "order": 2,
+          "status": "open",
+          "market_id": "bc:2482828726",
+          "selection_id": "bc:7316911490"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2482828707",
+      "match_id": "bc:31189353",
+      "line": 0,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": true,
+      "position": 7,
+      "markets_class_id": 3151,
+      "name": "Both Teams To Score",
+      "label": "Both Teams To Score",
+      "primary_column": 42,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Primary Markets",
+        "position": 1,
+        "sports_group_id": 1,
+        "markets_group_id": 204
+      },
+      "selections": [
+        {
+          "name": "Yes",
+          "label": "Yes",
+          "rate": {
+            "decimal": 1.7,
+            "american": -143,
+            "fractional": "7/10"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2482828707",
+          "selection_id": "bc:7316911379"
+        },
+        {
+          "name": "No",
+          "label": "No",
+          "rate": {
+            "decimal": 2.02,
+            "american": 102,
+            "fractional": "51/50"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2482828707",
+          "selection_id": "bc:7316911380"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2482828748",
+      "match_id": "bc:31189353",
+      "line": 1,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": true,
+      "position": 5,
+      "markets_class_id": 6568,
+      "name": "1st Half: Total Goals",
+      "label": "1st Half: Total Goals",
+      "primary_column": 302,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "1st half",
+        "position": 4,
+        "sports_group_id": 1,
+        "markets_group_id": 282
+      },
+      "selections": [
+        {
+          "name": "Over (1.0)",
+          "label": "Over (1.0)",
+          "rate": {
+            "decimal": 1.82,
+            "american": -122,
+            "fractional": "9/11"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2482828748",
+          "selection_id": "bc:7316911532"
+        },
+        {
+          "name": "Under (1.0)",
+          "label": "Under (1.0)",
+          "rate": {
+            "decimal": 1.88,
+            "american": -114,
+            "fractional": "7/8"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2482828748",
+          "selection_id": "bc:7316911533"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2482828718",
+      "match_id": "bc:31189353",
+      "line": 1,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": false,
+      "position": 1,
+      "markets_class_id": 3368,
+      "name": "Home Team: Total Goals",
+      "label": "Home Team: Total Goals",
+      "primary_column": 303,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Team 1",
+        "position": 12,
+        "sports_group_id": 1,
+        "markets_group_id": 298
+      },
+      "selections": [
+        {
+          "name": "Over (1.0)",
+          "label": "Over (1.0)",
+          "rate": {
+            "decimal": 1.57,
+            "american": -175,
+            "fractional": "4/7"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2482828718",
+          "selection_id": "bc:7316911435"
+        },
+        {
+          "name": "Under (1.0)",
+          "label": "Under (1.0)",
+          "rate": {
+            "decimal": 2.2,
+            "american": 120,
+            "fractional": "6/5"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2482828718",
+          "selection_id": "bc:7316911436"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2482828714",
+      "match_id": "bc:31189353",
+      "line": 1,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": false,
+      "position": 1,
+      "markets_class_id": 6495,
+      "name": "Away Team: Total Goals",
+      "label": "Away Team: Total Goals",
+      "primary_column": 304,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Team 2",
+        "position": 13,
+        "sports_group_id": 1,
+        "markets_group_id": 300
+      },
+      "selections": [
+        {
+          "name": "Over (1.0)",
+          "label": "Over (1.0)",
+          "rate": {
+            "decimal": 1.65,
+            "american": -154,
+            "fractional": "13/20"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2482828714",
+          "selection_id": "bc:7316911393"
+        },
+        {
+          "name": "Under (1.0)",
+          "label": "Under (1.0)",
+          "rate": {
+            "decimal": 2.07,
+            "american": 107,
+            "fractional": "16/15"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2482828714",
+          "selection_id": "bc:7316911394"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2482828787",
+      "match_id": "bc:31189352",
+      "line": 0,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": true,
+      "position": 1,
+      "markets_class_id": 2669,
+      "name": "Match Result",
+      "label": "Match Result",
+      "primary_column": 26,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Primary Markets",
+        "position": 1,
+        "sports_group_id": 1,
+        "markets_group_id": 204
+      },
+      "selections": [
+        {
+          "name": "Vegalta Sendai",
+          "label": "Vegalta Sendai",
+          "rate": {
+            "decimal": 1.6,
+            "american": -167,
+            "fractional": "3/5"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2482828787",
+          "selection_id": "bc:7316911611"
+        },
+        {
+          "name": "Draw",
+          "label": "Draw",
+          "rate": {
+            "decimal": 3.9,
+            "american": 290,
+            "fractional": "29/10"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2482828787",
+          "selection_id": "bc:7316911612"
+        },
+        {
+          "name": "Tokushima Vortis",
+          "label": "Tokushima Vortis",
+          "rate": {
+            "decimal": 4.65,
+            "american": 365,
+            "fractional": "73/20"
+          },
+          "order": 2,
+          "status": "open",
+          "market_id": "bc:2482828787",
+          "selection_id": "bc:7316911613"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2482828778",
+      "match_id": "bc:31189352",
+      "line": 2.5,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": true,
+      "position": 4,
+      "markets_class_id": 3499,
+      "name": "Total Goals",
+      "label": "Total Goals",
+      "primary_column": 33,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Totals",
+        "position": 2,
+        "sports_group_id": 1,
+        "markets_group_id": 280
+      },
+      "selections": [
+        {
+          "name": "Over (2.5)",
+          "label": "Over (2.5)",
+          "rate": {
+            "decimal": 1.88,
+            "american": -114,
+            "fractional": "7/8"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2482828778",
+          "selection_id": "bc:7316911593"
+        },
+        {
+          "name": "Under (2.5)",
+          "label": "Under (2.5)",
+          "rate": {
+            "decimal": 1.75,
+            "american": -133,
+            "fractional": "3/4"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2482828778",
+          "selection_id": "bc:7316911594"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2482828755",
+      "match_id": "bc:31189352",
+      "line": -0.75,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": false,
+      "position": 10,
+      "markets_class_id": 4581,
+      "name": "Asian Handicap",
+      "label": "Asian Handicap",
+      "primary_column": 40,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Handicap",
+        "position": 3,
+        "sports_group_id": 1,
+        "markets_group_id": 278
+      },
+      "selections": [
+        {
+          "name": "Vegalta Sendai (-0.75)",
+          "label": "Vegalta Sendai (-0.75)",
+          "rate": {
+            "decimal": 1.75,
+            "american": -133,
+            "fractional": "3/4"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2482828755",
+          "selection_id": "bc:7316911546"
+        },
+        {
+          "name": "Tokushima Vortis (0.75)",
+          "label": "Tokushima Vortis (0.75)",
+          "rate": {
+            "decimal": 1.88,
+            "american": -114,
+            "fractional": "7/8"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2482828755",
+          "selection_id": "bc:7316911547"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2482828723",
+      "match_id": "bc:31189352",
+      "line": 0,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": true,
+      "position": 15,
+      "markets_class_id": 2551,
+      "name": "Double Chance",
+      "label": "Double Chance",
+      "primary_column": 41,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Primary Markets",
+        "position": 1,
+        "sports_group_id": 1,
+        "markets_group_id": 204
+      },
+      "selections": [
+        {
+          "name": "Vegalta Sendai or Draw",
+          "label": "Vegalta Sendai or Draw",
+          "rate": {
+            "decimal": 1.18,
+            "american": -556,
+            "fractional": "2/11"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2482828723",
+          "selection_id": "bc:7316911479"
+        },
+        {
+          "name": "Vegalta Sendai or Tokushima Vortis",
+          "label": "Vegalta Sendai or Tokushima Vortis",
+          "rate": {
+            "decimal": 1.22,
+            "american": -455,
+            "fractional": "2/9"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2482828723",
+          "selection_id": "bc:7316911480"
+        },
+        {
+          "name": "Tokushima Vortis or Draw",
+          "label": "Tokushima Vortis or Draw",
+          "rate": {
+            "decimal": 2.2,
+            "american": 120,
+            "fractional": "6/5"
+          },
+          "order": 2,
+          "status": "open",
+          "market_id": "bc:2482828723",
+          "selection_id": "bc:7316911481"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2482828701",
+      "match_id": "bc:31189352",
+      "line": 0,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": true,
+      "position": 7,
+      "markets_class_id": 3151,
+      "name": "Both Teams To Score",
+      "label": "Both Teams To Score",
+      "primary_column": 42,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Primary Markets",
+        "position": 1,
+        "sports_group_id": 1,
+        "markets_group_id": 204
+      },
+      "selections": [
+        {
+          "name": "Yes",
+          "label": "Yes",
+          "rate": {
+            "decimal": 1.95,
+            "american": -105,
+            "fractional": "19/20"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2482828701",
+          "selection_id": "bc:7316911365"
+        },
+        {
+          "name": "No",
+          "label": "No",
+          "rate": {
+            "decimal": 1.75,
+            "american": -133,
+            "fractional": "3/4"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2482828701",
+          "selection_id": "bc:7316911366"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2482828744",
+      "match_id": "bc:31189352",
+      "line": 1,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": true,
+      "position": 5,
+      "markets_class_id": 6568,
+      "name": "1st Half: Total Goals",
+      "label": "1st Half: Total Goals",
+      "primary_column": 302,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "1st half",
+        "position": 4,
+        "sports_group_id": 1,
+        "markets_group_id": 282
+      },
+      "selections": [
+        {
+          "name": "Over (1.0)",
+          "label": "Over (1.0)",
+          "rate": {
+            "decimal": 1.85,
+            "american": -118,
+            "fractional": "6/7"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2482828744",
+          "selection_id": "bc:7316911523"
+        },
+        {
+          "name": "Under (1.0)",
+          "label": "Under (1.0)",
+          "rate": {
+            "decimal": 1.85,
+            "american": -118,
+            "fractional": "6/7"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2482828744",
+          "selection_id": "bc:7316911524"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2482828713",
+      "match_id": "bc:31189352",
+      "line": 1.5,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": false,
+      "position": 1,
+      "markets_class_id": 3368,
+      "name": "Home Team: Total Goals",
+      "label": "Home Team: Total Goals",
+      "primary_column": 303,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Team 1",
+        "position": 12,
+        "sports_group_id": 1,
+        "markets_group_id": 298
+      },
+      "selections": [
+        {
+          "name": "Over (1.5)",
+          "label": "Over (1.5)",
+          "rate": {
+            "decimal": 1.75,
+            "american": -133,
+            "fractional": "3/4"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2482828713",
+          "selection_id": "bc:7316911391"
+        },
+        {
+          "name": "Under (1.5)",
+          "label": "Under (1.5)",
+          "rate": {
+            "decimal": 1.92,
+            "american": -109,
+            "fractional": "11/12"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2482828713",
+          "selection_id": "bc:7316911392"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2482828704",
+      "match_id": "bc:31189352",
+      "line": 0.5,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": false,
+      "position": 1,
+      "markets_class_id": 6495,
+      "name": "Away Team: Total Goals",
+      "label": "Away Team: Total Goals",
+      "primary_column": 304,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Team 2",
+        "position": 13,
+        "sports_group_id": 1,
+        "markets_group_id": 300
+      },
+      "selections": [
+        {
+          "name": "Over (0.5)",
+          "label": "Over (0.5)",
+          "rate": {
+            "decimal": 1.62,
+            "american": -161,
+            "fractional": "5/8"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2482828704",
+          "selection_id": "bc:7316911372"
+        },
+        {
+          "name": "Under (0.5)",
+          "label": "Under (0.5)",
+          "rate": {
+            "decimal": 2.1,
+            "american": 110,
+            "fractional": "11/10"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2482828704",
+          "selection_id": "bc:7316911373"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2486012629",
+      "match_id": "bc:31112076",
+      "line": 0,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": true,
+      "position": 1,
+      "markets_class_id": 2669,
+      "name": "Match Result",
+      "label": "Match Result",
+      "primary_column": 26,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Primary Markets",
+        "position": 1,
+        "sports_group_id": 1,
+        "markets_group_id": 204
+      },
+      "selections": [
+        {
+          "name": "Portmore United FC",
+          "label": "Portmore United FC",
+          "rate": {
+            "decimal": 2.5,
+            "american": 150,
+            "fractional": "3/2"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2486012629",
+          "selection_id": "bc:7325297173"
+        },
+        {
+          "name": "Draw",
+          "label": "Draw",
+          "rate": {
+            "decimal": 3.3,
+            "american": 230,
+            "fractional": "23/10"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2486012629",
+          "selection_id": "bc:7325297174"
+        },
+        {
+          "name": "Violette AC",
+          "label": "Violette AC",
+          "rate": {
+            "decimal": 2.45,
+            "american": 145,
+            "fractional": "13/9"
+          },
+          "order": 2,
+          "status": "open",
+          "market_id": "bc:2486012629",
+          "selection_id": "bc:7325297175"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2486012628",
+      "match_id": "bc:31112076",
+      "line": 2.5,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": true,
+      "position": 4,
+      "markets_class_id": 3499,
+      "name": "Total Goals",
+      "label": "Total Goals",
+      "primary_column": 33,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Totals",
+        "position": 2,
+        "sports_group_id": 1,
+        "markets_group_id": 280
+      },
+      "selections": [
+        {
+          "name": "Over (2.5)",
+          "label": "Over (2.5)",
+          "rate": {
+            "decimal": 1.88,
+            "american": -114,
+            "fractional": "7/8"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2486012628",
+          "selection_id": "bc:7325297171"
+        },
+        {
+          "name": "Under (2.5)",
+          "label": "Under (2.5)",
+          "rate": {
+            "decimal": 1.75,
+            "american": -133,
+            "fractional": "3/4"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2486012628",
+          "selection_id": "bc:7325297172"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2486145453",
+      "match_id": "bc:31112076",
+      "line": 0,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": true,
+      "position": 8,
+      "markets_class_id": 5747,
+      "name": "Asian Handicap",
+      "label": "Asian Handicap",
+      "primary_column": 40,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Handicap",
+        "position": 3,
+        "sports_group_id": 1,
+        "markets_group_id": 278
+      },
+      "selections": [
+        {
+          "name": "Portmore United FC (0.0)",
+          "label": "Portmore United FC (0.0)",
+          "rate": {
+            "decimal": 1.8,
+            "american": -125,
+            "fractional": "4/5"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2486145453",
+          "selection_id": "bc:7325663654"
+        },
+        {
+          "name": "Violette AC (0.0)",
+          "label": "Violette AC (0.0)",
+          "rate": {
+            "decimal": 1.8,
+            "american": -125,
+            "fractional": "4/5"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2486145453",
+          "selection_id": "bc:7325663655"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2486221919",
+      "match_id": "bc:31112076",
+      "line": 0,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": true,
+      "position": 15,
+      "markets_class_id": 2551,
+      "name": "Double Chance",
+      "label": "Double Chance",
+      "primary_column": 41,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Primary Markets",
+        "position": 1,
+        "sports_group_id": 1,
+        "markets_group_id": 204
+      },
+      "selections": [
+        {
+          "name": "Portmore United FC or Draw",
+          "label": "Portmore United FC or Draw",
+          "rate": {
+            "decimal": 1.47,
+            "american": -213,
+            "fractional": "7/15"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2486221919",
+          "selection_id": "bc:7325867706"
+        },
+        {
+          "name": "Portmore United FC or Violette AC",
+          "label": "Portmore United FC or Violette AC",
+          "rate": {
+            "decimal": 1.3,
+            "american": -333,
+            "fractional": "3/10"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2486221919",
+          "selection_id": "bc:7325867707"
+        },
+        {
+          "name": "Violette AC or Draw",
+          "label": "Violette AC or Draw",
+          "rate": {
+            "decimal": 1.47,
+            "american": -213,
+            "fractional": "7/15"
+          },
+          "order": 2,
+          "status": "open",
+          "market_id": "bc:2486221919",
+          "selection_id": "bc:7325867708"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2486221890",
+      "match_id": "bc:31112076",
+      "line": 0,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": true,
+      "position": 7,
+      "markets_class_id": 3151,
+      "name": "Both Teams To Score",
+      "label": "Both Teams To Score",
+      "primary_column": 42,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Primary Markets",
+        "position": 1,
+        "sports_group_id": 1,
+        "markets_group_id": 204
+      },
+      "selections": [
+        {
+          "name": "Yes",
+          "label": "Yes",
+          "rate": {
+            "decimal": 1.75,
+            "american": -133,
+            "fractional": "3/4"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2486221890",
+          "selection_id": "bc:7325867614"
+        },
+        {
+          "name": "No",
+          "label": "No",
+          "rate": {
+            "decimal": 1.9,
+            "american": -111,
+            "fractional": "9/10"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2486221890",
+          "selection_id": "bc:7325867615"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2486012627",
+      "match_id": "bc:31112076",
+      "line": 1,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": true,
+      "position": 5,
+      "markets_class_id": 6568,
+      "name": "1st Half: Total Goals",
+      "label": "1st Half: Total Goals",
+      "primary_column": 302,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "1st half",
+        "position": 4,
+        "sports_group_id": 1,
+        "markets_group_id": 282
+      },
+      "selections": [
+        {
+          "name": "Over (1.0)",
+          "label": "Over (1.0)",
+          "rate": {
+            "decimal": 1.88,
+            "american": -114,
+            "fractional": "7/8"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2486012627",
+          "selection_id": "bc:7325297169"
+        },
+        {
+          "name": "Under (1.0)",
+          "label": "Under (1.0)",
+          "rate": {
+            "decimal": 1.72,
+            "american": -139,
+            "fractional": "5/7"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2486012627",
+          "selection_id": "bc:7325297170"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2486221901",
+      "match_id": "bc:31112076",
+      "line": 1,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": false,
+      "position": 1,
+      "markets_class_id": 3368,
+      "name": "Home Team: Total Goals",
+      "label": "Home Team: Total Goals",
+      "primary_column": 303,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Team 1",
+        "position": 12,
+        "sports_group_id": 1,
+        "markets_group_id": 298
+      },
+      "selections": [
+        {
+          "name": "Over (1.0)",
+          "label": "Over (1.0)",
+          "rate": {
+            "decimal": 1.62,
+            "american": -161,
+            "fractional": "5/8"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2486221901",
+          "selection_id": "bc:7325867636"
+        },
+        {
+          "name": "Under (1.0)",
+          "label": "Under (1.0)",
+          "rate": {
+            "decimal": 2.07,
+            "american": 107,
+            "fractional": "16/15"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2486221901",
+          "selection_id": "bc:7325867637"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2486221895",
+      "match_id": "bc:31112076",
+      "line": 1,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": false,
+      "position": 1,
+      "markets_class_id": 6495,
+      "name": "Away Team: Total Goals",
+      "label": "Away Team: Total Goals",
+      "primary_column": 304,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Team 2",
+        "position": 13,
+        "sports_group_id": 1,
+        "markets_group_id": 300
+      },
+      "selections": [
+        {
+          "name": "Over (1.0)",
+          "label": "Over (1.0)",
+          "rate": {
+            "decimal": 1.6,
+            "american": -167,
+            "fractional": "3/5"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2486221895",
+          "selection_id": "bc:7325867624"
+        },
+        {
+          "name": "Under (1.0)",
+          "label": "Under (1.0)",
+          "rate": {
+            "decimal": 2.1,
+            "american": 110,
+            "fractional": "11/10"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2486221895",
+          "selection_id": "bc:7325867625"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2480985395",
+      "match_id": "bc:31144314",
+      "line": 0,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": true,
+      "position": 1,
+      "markets_class_id": 2669,
+      "name": "Match Result",
+      "label": "Match Result",
+      "primary_column": 26,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Primary Markets",
+        "position": 1,
+        "sports_group_id": 1,
+        "markets_group_id": 204
+      },
+      "selections": [
+        {
+          "name": "Club Tijuana",
+          "label": "Club Tijuana",
+          "rate": {
+            "decimal": 1.85,
+            "american": -118,
+            "fractional": "6/7"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2480985395",
+          "selection_id": "bc:7311493055"
+        },
+        {
+          "name": "Draw",
+          "label": "Draw",
+          "rate": {
+            "decimal": 3.75,
+            "american": 275,
+            "fractional": "11/4"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2480985395",
+          "selection_id": "bc:7311493056"
+        },
+        {
+          "name": "Puebla FC",
+          "label": "Puebla FC",
+          "rate": {
+            "decimal": 4.2,
+            "american": 320,
+            "fractional": "16/5"
+          },
+          "order": 2,
+          "status": "open",
+          "market_id": "bc:2480985395",
+          "selection_id": "bc:7311493057"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2480985388",
+      "match_id": "bc:31144314",
+      "line": 2.5,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": true,
+      "position": 4,
+      "markets_class_id": 3499,
+      "name": "Total Goals",
+      "label": "Total Goals",
+      "primary_column": 33,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Totals",
+        "position": 2,
+        "sports_group_id": 1,
+        "markets_group_id": 280
+      },
+      "selections": [
+        {
+          "name": "Over (2.5)",
+          "label": "Over (2.5)",
+          "rate": {
+            "decimal": 1.8,
+            "american": -125,
+            "fractional": "4/5"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2480985388",
+          "selection_id": "bc:7311493039"
+        },
+        {
+          "name": "Under (2.5)",
+          "label": "Under (2.5)",
+          "rate": {
+            "decimal": 2.02,
+            "american": 102,
+            "fractional": "51/50"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2480985388",
+          "selection_id": "bc:7311493040"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2482445162",
+      "match_id": "bc:31144314",
+      "line": 0,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": true,
+      "position": 8,
+      "markets_class_id": 5747,
+      "name": "Asian Handicap",
+      "label": "Asian Handicap",
+      "primary_column": 40,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Handicap",
+        "position": 3,
+        "sports_group_id": 1,
+        "markets_group_id": 278
+      },
+      "selections": [
+        {
+          "name": "Club Tijuana (0.0)",
+          "label": "Club Tijuana (0.0)",
+          "rate": {
+            "decimal": 1.35,
+            "american": -286,
+            "fractional": "7/20"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2482445162",
+          "selection_id": "bc:7315869686"
+        },
+        {
+          "name": "Puebla FC (0.0)",
+          "label": "Puebla FC (0.0)",
+          "rate": {
+            "decimal": 2.95,
+            "american": 195,
+            "fractional": "39/20"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2482445162",
+          "selection_id": "bc:7315869687"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2482445010",
+      "match_id": "bc:31144314",
+      "line": 0,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": true,
+      "position": 15,
+      "markets_class_id": 2551,
+      "name": "Double Chance",
+      "label": "Double Chance",
+      "primary_column": 41,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Primary Markets",
+        "position": 1,
+        "sports_group_id": 1,
+        "markets_group_id": 204
+      },
+      "selections": [
+        {
+          "name": "Club Tijuana or Draw",
+          "label": "Club Tijuana or Draw",
+          "rate": {
+            "decimal": 1.2,
+            "american": -500,
+            "fractional": "1/5"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2482445010",
+          "selection_id": "bc:7315869089"
+        },
+        {
+          "name": "Club Tijuana or Puebla FC",
+          "label": "Club Tijuana or Puebla FC",
+          "rate": {
+            "decimal": 1.25,
+            "american": -400,
+            "fractional": "1/4"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2482445010",
+          "selection_id": "bc:7315869090"
+        },
+        {
+          "name": "Puebla FC or Draw",
+          "label": "Puebla FC or Draw",
+          "rate": {
+            "decimal": 1.88,
+            "american": -114,
+            "fractional": "7/8"
+          },
+          "order": 2,
+          "status": "open",
+          "market_id": "bc:2482445010",
+          "selection_id": "bc:7315869091"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2482444982",
+      "match_id": "bc:31144314",
+      "line": 0,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": true,
+      "position": 7,
+      "markets_class_id": 3151,
+      "name": "Both Teams To Score",
+      "label": "Both Teams To Score",
+      "primary_column": 42,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Primary Markets",
+        "position": 1,
+        "sports_group_id": 1,
+        "markets_group_id": 204
+      },
+      "selections": [
+        {
+          "name": "Yes",
+          "label": "Yes",
+          "rate": {
+            "decimal": 1.67,
+            "american": -149,
+            "fractional": "2/3"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2482444982",
+          "selection_id": "bc:7315868994"
+        },
+        {
+          "name": "No",
+          "label": "No",
+          "rate": {
+            "decimal": 2.12,
+            "american": 112,
+            "fractional": "9/8"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2482444982",
+          "selection_id": "bc:7315868995"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2480985363",
+      "match_id": "bc:31144314",
+      "line": 1,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": true,
+      "position": 5,
+      "markets_class_id": 6568,
+      "name": "1st Half: Total Goals",
+      "label": "1st Half: Total Goals",
+      "primary_column": 302,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "1st half",
+        "position": 4,
+        "sports_group_id": 1,
+        "markets_group_id": 282
+      },
+      "selections": [
+        {
+          "name": "Over (1.0)",
+          "label": "Over (1.0)",
+          "rate": {
+            "decimal": 1.7,
+            "american": -143,
+            "fractional": "7/10"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2480985363",
+          "selection_id": "bc:7311492983"
+        },
+        {
+          "name": "Under (1.0)",
+          "label": "Under (1.0)",
+          "rate": {
+            "decimal": 2.07,
+            "american": 107,
+            "fractional": "16/15"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2480985363",
+          "selection_id": "bc:7311492984"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2482445001",
+      "match_id": "bc:31144314",
+      "line": 1.5,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": false,
+      "position": 1,
+      "markets_class_id": 3368,
+      "name": "Home Team: Total Goals",
+      "label": "Home Team: Total Goals",
+      "primary_column": 303,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Team 1",
+        "position": 12,
+        "sports_group_id": 1,
+        "markets_group_id": 298
+      },
+      "selections": [
+        {
+          "name": "Over (1.5)",
+          "label": "Over (1.5)",
+          "rate": {
+            "decimal": 1.8,
+            "american": -125,
+            "fractional": "4/5"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2482445001",
+          "selection_id": "bc:7315869037"
+        },
+        {
+          "name": "Under (1.5)",
+          "label": "Under (1.5)",
+          "rate": {
+            "decimal": 1.92,
+            "american": -109,
+            "fractional": "11/12"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2482445001",
+          "selection_id": "bc:7315869038"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2482444992",
+      "match_id": "bc:31144314",
+      "line": 1,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": false,
+      "position": 1,
+      "markets_class_id": 6495,
+      "name": "Away Team: Total Goals",
+      "label": "Away Team: Total Goals",
+      "primary_column": 304,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Team 2",
+        "position": 13,
+        "sports_group_id": 1,
+        "markets_group_id": 300
+      },
+      "selections": [
+        {
+          "name": "Over (1.0)",
+          "label": "Over (1.0)",
+          "rate": {
+            "decimal": 1.98,
+            "american": -102,
+            "fractional": "49/50"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2482444992",
+          "selection_id": "bc:7315869019"
+        },
+        {
+          "name": "Under (1.0)",
+          "label": "Under (1.0)",
+          "rate": {
+            "decimal": 1.75,
+            "american": -133,
+            "fractional": "3/4"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2482444992",
+          "selection_id": "bc:7315869020"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2475211046",
+      "match_id": "bc:31112045",
+      "line": 0,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": true,
+      "position": 1,
+      "markets_class_id": 2669,
+      "name": "Match Result",
+      "label": "Match Result",
+      "primary_column": 26,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Primary Markets",
+        "position": 1,
+        "sports_group_id": 1,
+        "markets_group_id": 204
+      },
+      "selections": [
+        {
+          "name": "Chelsea LFC (Wom)",
+          "label": "Chelsea LFC (Wom)",
+          "rate": {
+            "decimal": 1.22,
+            "american": -455,
+            "fractional": "2/9"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2475211046",
+          "selection_id": "bc:7296743985"
+        },
+        {
+          "name": "Draw",
+          "label": "Draw",
+          "rate": {
+            "decimal": 5.9,
+            "american": 490,
+            "fractional": "49/10"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2475211046",
+          "selection_id": "bc:7296743986"
+        },
+        {
+          "name": "Tottenham Hotspur LFC (Wom)",
+          "label": "Tottenham Hotspur LFC (Wom)",
+          "rate": {
+            "decimal": 9,
+            "american": 800,
+            "fractional": "8"
+          },
+          "order": 2,
+          "status": "open",
+          "market_id": "bc:2475211046",
+          "selection_id": "bc:7296743987"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2475211032",
+      "match_id": "bc:31112045",
+      "line": 3.5,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": true,
+      "position": 4,
+      "markets_class_id": 3499,
+      "name": "Total Goals",
+      "label": "Total Goals",
+      "primary_column": 33,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Totals",
+        "position": 2,
+        "sports_group_id": 1,
+        "markets_group_id": 280
+      },
+      "selections": [
+        {
+          "name": "Over (3.5)",
+          "label": "Over (3.5)",
+          "rate": {
+            "decimal": 1.98,
+            "american": -102,
+            "fractional": "49/50"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2475211032",
+          "selection_id": "bc:7296743956"
+        },
+        {
+          "name": "Under (3.5)",
+          "label": "Under (3.5)",
+          "rate": {
+            "decimal": 1.7,
+            "american": -143,
+            "fractional": "7/10"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2475211032",
+          "selection_id": "bc:7296743957"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2475211024",
+      "match_id": "bc:31112045",
+      "line": -1.75,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": false,
+      "position": 10,
+      "markets_class_id": 4581,
+      "name": "Asian Handicap",
+      "label": "Asian Handicap",
+      "primary_column": 40,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Handicap",
+        "position": 3,
+        "sports_group_id": 1,
+        "markets_group_id": 278
+      },
+      "selections": [
+        {
+          "name": "Chelsea LFC (Wom) (-1.75)",
+          "label": "Chelsea LFC (Wom) (-1.75)",
+          "rate": {
+            "decimal": 1.85,
+            "american": -118,
+            "fractional": "6/7"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2475211024",
+          "selection_id": "bc:7296743940"
+        },
+        {
+          "name": "Tottenham Hotspur LFC (Wom) (1.75)",
+          "label": "Tottenham Hotspur LFC (Wom) (1.75)",
+          "rate": {
+            "decimal": 1.77,
+            "american": -130,
+            "fractional": "7/9"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2475211024",
+          "selection_id": "bc:7296743941"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2475217348",
+      "match_id": "bc:31112045",
+      "line": 0,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": true,
+      "position": 15,
+      "markets_class_id": 2551,
+      "name": "Double Chance",
+      "label": "Double Chance",
+      "primary_column": 41,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Primary Markets",
+        "position": 1,
+        "sports_group_id": 1,
+        "markets_group_id": 204
+      },
+      "selections": [
+        {
+          "name": "Chelsea LFC (Wom) or Draw",
+          "label": "Chelsea LFC (Wom) or Draw",
+          "rate": {
+            "decimal": 1.06,
+            "american": -1667,
+            "fractional": "2/33"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2475217348",
+          "selection_id": "bc:7296760632"
+        },
+        {
+          "name": "Chelsea LFC (Wom) or Tottenham Hotspur LFC (Wom)",
+          "label": "Chelsea LFC (Wom) or Tottenham Hotspur LFC (Wom)",
+          "rate": {
+            "decimal": 1.12,
+            "american": -833,
+            "fractional": "1/8"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2475217348",
+          "selection_id": "bc:7296760633"
+        },
+        {
+          "name": "Tottenham Hotspur LFC (Wom) or Draw",
+          "label": "Tottenham Hotspur LFC (Wom) or Draw",
+          "rate": {
+            "decimal": 3.5,
+            "american": 250,
+            "fractional": "5/2"
+          },
+          "order": 2,
+          "status": "open",
+          "market_id": "bc:2475217348",
+          "selection_id": "bc:7296760634"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2475217272",
+      "match_id": "bc:31112045",
+      "line": 0,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": true,
+      "position": 7,
+      "markets_class_id": 3151,
+      "name": "Both Teams To Score",
+      "label": "Both Teams To Score",
+      "primary_column": 42,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Primary Markets",
+        "position": 1,
+        "sports_group_id": 1,
+        "markets_group_id": 204
+      },
+      "selections": [
+        {
+          "name": "Yes",
+          "label": "Yes",
+          "rate": {
+            "decimal": 1.77,
+            "american": -130,
+            "fractional": "7/9"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2475217272",
+          "selection_id": "bc:7296760380"
+        },
+        {
+          "name": "No",
+          "label": "No",
+          "rate": {
+            "decimal": 1.95,
+            "american": -105,
+            "fractional": "19/20"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2475217272",
+          "selection_id": "bc:7296760381"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2475211007",
+      "match_id": "bc:31112045",
+      "line": 1.5,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": true,
+      "position": 5,
+      "markets_class_id": 6568,
+      "name": "1st Half: Total Goals",
+      "label": "1st Half: Total Goals",
+      "primary_column": 302,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "1st half",
+        "position": 4,
+        "sports_group_id": 1,
+        "markets_group_id": 282
+      },
+      "selections": [
+        {
+          "name": "Over (1.5)",
+          "label": "Over (1.5)",
+          "rate": {
+            "decimal": 2,
+            "american": 100,
+            "fractional": "1"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2475211007",
+          "selection_id": "bc:7296743904"
+        },
+        {
+          "name": "Under (1.5)",
+          "label": "Under (1.5)",
+          "rate": {
+            "decimal": 1.7,
+            "american": -143,
+            "fractional": "7/10"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2475211007",
+          "selection_id": "bc:7296743905"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2475217317",
+      "match_id": "bc:31112045",
+      "line": 2.5,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": false,
+      "position": 1,
+      "markets_class_id": 3368,
+      "name": "Home Team: Total Goals",
+      "label": "Home Team: Total Goals",
+      "primary_column": 303,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Team 1",
+        "position": 12,
+        "sports_group_id": 1,
+        "markets_group_id": 298
+      },
+      "selections": [
+        {
+          "name": "Over (2.5)",
+          "label": "Over (2.5)",
+          "rate": {
+            "decimal": 1.85,
+            "american": -118,
+            "fractional": "6/7"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2475217317",
+          "selection_id": "bc:7296760462"
+        },
+        {
+          "name": "Under (2.5)",
+          "label": "Under (2.5)",
+          "rate": {
+            "decimal": 1.8,
+            "american": -125,
+            "fractional": "4/5"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2475217317",
+          "selection_id": "bc:7296760463"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2475217280",
+      "match_id": "bc:31112045",
+      "line": 0.5,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": false,
+      "position": 1,
+      "markets_class_id": 6495,
+      "name": "Away Team: Total Goals",
+      "label": "Away Team: Total Goals",
+      "primary_column": 304,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Team 2",
+        "position": 13,
+        "sports_group_id": 1,
+        "markets_group_id": 300
+      },
+      "selections": [
+        {
+          "name": "Over (0.5)",
+          "label": "Over (0.5)",
+          "rate": {
+            "decimal": 1.65,
+            "american": -154,
+            "fractional": "13/20"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2475217280",
+          "selection_id": "bc:7296760396"
+        },
+        {
+          "name": "Under (0.5)",
+          "label": "Under (0.5)",
+          "rate": {
+            "decimal": 2.07,
+            "american": 107,
+            "fractional": "16/15"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2475217280",
+          "selection_id": "bc:7296760397"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2475211156",
+      "match_id": "bc:31112043",
+      "line": 0,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": true,
+      "position": 1,
+      "markets_class_id": 2669,
+      "name": "Match Result",
+      "label": "Match Result",
+      "primary_column": 26,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Primary Markets",
+        "position": 1,
+        "sports_group_id": 1,
+        "markets_group_id": 204
+      },
+      "selections": [
+        {
+          "name": "Aston Villa (Wom)",
+          "label": "Aston Villa (Wom)",
+          "rate": {
+            "decimal": 3.35,
+            "american": 235,
+            "fractional": "47/20"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2475211156",
+          "selection_id": "bc:7296744212"
+        },
+        {
+          "name": "Draw",
+          "label": "Draw",
+          "rate": {
+            "decimal": 3.8,
+            "american": 280,
+            "fractional": "14/5"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2475211156",
+          "selection_id": "bc:7296744213"
+        },
+        {
+          "name": "Liverpool LFC (Wom)",
+          "label": "Liverpool LFC (Wom)",
+          "rate": {
+            "decimal": 1.88,
+            "american": -114,
+            "fractional": "7/8"
+          },
+          "order": 2,
+          "status": "open",
+          "market_id": "bc:2475211156",
+          "selection_id": "bc:7296744215"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2475211138",
+      "match_id": "bc:31112043",
+      "line": 3,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": true,
+      "position": 4,
+      "markets_class_id": 3499,
+      "name": "Total Goals",
+      "label": "Total Goals",
+      "primary_column": 33,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Totals",
+        "position": 2,
+        "sports_group_id": 1,
+        "markets_group_id": 280
+      },
+      "selections": [
+        {
+          "name": "Over (3.0)",
+          "label": "Over (3.0)",
+          "rate": {
+            "decimal": 2.02,
+            "american": 102,
+            "fractional": "51/50"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2475211138",
+          "selection_id": "bc:7296744176"
+        },
+        {
+          "name": "Under (3.0)",
+          "label": "Under (3.0)",
+          "rate": {
+            "decimal": 1.65,
+            "american": -154,
+            "fractional": "13/20"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2475211138",
+          "selection_id": "bc:7296744177"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2475211152",
+      "match_id": "bc:31112043",
+      "line": 2.5,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": true,
+      "position": 4,
+      "markets_class_id": 3499,
+      "name": "Total Goals",
+      "label": "Total Goals",
+      "primary_column": 33,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Totals",
+        "position": 2,
+        "sports_group_id": 1,
+        "markets_group_id": 280
+      },
+      "selections": [
+        {
+          "name": "Over (2.5)",
+          "label": "Over (2.5)",
+          "rate": {
+            "decimal": 1.62,
+            "american": -161,
+            "fractional": "5/8"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2475211152",
+          "selection_id": "bc:7296744204"
+        },
+        {
+          "name": "Under (2.5)",
+          "label": "Under (2.5)",
+          "rate": {
+            "decimal": 2.05,
+            "american": 105,
+            "fractional": "21/20"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2475211152",
+          "selection_id": "bc:7296744205"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2475211099",
+      "match_id": "bc:31112043",
+      "line": 0,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": true,
+      "position": 8,
+      "markets_class_id": 5747,
+      "name": "Asian Handicap",
+      "label": "Asian Handicap",
+      "primary_column": 40,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Handicap",
+        "position": 3,
+        "sports_group_id": 1,
+        "markets_group_id": 278
+      },
+      "selections": [
+        {
+          "name": "Aston Villa (Wom) (0.0)",
+          "label": "Aston Villa (Wom) (0.0)",
+          "rate": {
+            "decimal": 2.47,
+            "american": 147,
+            "fractional": "22/15"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2475211099",
+          "selection_id": "bc:7296744094"
+        },
+        {
+          "name": "Liverpool LFC (Wom) (0.0)",
+          "label": "Liverpool LFC (Wom) (0.0)",
+          "rate": {
+            "decimal": 1.45,
+            "american": -222,
+            "fractional": "4/9"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2475211099",
+          "selection_id": "bc:7296744095"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2475247908",
+      "match_id": "bc:31112043",
+      "line": 0,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": true,
+      "position": 15,
+      "markets_class_id": 2551,
+      "name": "Double Chance",
+      "label": "Double Chance",
+      "primary_column": 41,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Primary Markets",
+        "position": 1,
+        "sports_group_id": 1,
+        "markets_group_id": 204
+      },
+      "selections": [
+        {
+          "name": "Aston Villa (Wom) or Draw",
+          "label": "Aston Villa (Wom) or Draw",
+          "rate": {
+            "decimal": 1.8,
+            "american": -125,
+            "fractional": "4/5"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2475247908",
+          "selection_id": "bc:7296837965"
+        },
+        {
+          "name": "Aston Villa (Wom) or Liverpool LFC (Wom)",
+          "label": "Aston Villa (Wom) or Liverpool LFC (Wom)",
+          "rate": {
+            "decimal": 1.25,
+            "american": -400,
+            "fractional": "1/4"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2475247908",
+          "selection_id": "bc:7296837966"
+        },
+        {
+          "name": "Liverpool LFC (Wom) or Draw",
+          "label": "Liverpool LFC (Wom) or Draw",
+          "rate": {
+            "decimal": 1.28,
+            "american": -357,
+            "fractional": "2/7"
+          },
+          "order": 2,
+          "status": "open",
+          "market_id": "bc:2475247908",
+          "selection_id": "bc:7296837967"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2475247883",
+      "match_id": "bc:31112043",
+      "line": 0,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": true,
+      "position": 7,
+      "markets_class_id": 3151,
+      "name": "Both Teams To Score",
+      "label": "Both Teams To Score",
+      "primary_column": 42,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Primary Markets",
+        "position": 1,
+        "sports_group_id": 1,
+        "markets_group_id": 204
+      },
+      "selections": [
+        {
+          "name": "Yes",
+          "label": "Yes",
+          "rate": {
+            "decimal": 1.62,
+            "american": -161,
+            "fractional": "5/8"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2475247883",
+          "selection_id": "bc:7296837877"
+        },
+        {
+          "name": "No",
+          "label": "No",
+          "rate": {
+            "decimal": 2.15,
+            "american": 115,
+            "fractional": "23/20"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2475247883",
+          "selection_id": "bc:7296837878"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2475247946",
+      "match_id": "bc:31112043",
+      "line": 1,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": true,
+      "position": 5,
+      "markets_class_id": 6568,
+      "name": "1st Half: Total Goals",
+      "label": "1st Half: Total Goals",
+      "primary_column": 302,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "1st half",
+        "position": 4,
+        "sports_group_id": 1,
+        "markets_group_id": 282
+      },
+      "selections": [
+        {
+          "name": "Over (1.0)",
+          "label": "Over (1.0)",
+          "rate": {
+            "decimal": 1.62,
+            "american": -161,
+            "fractional": "5/8"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2475247946",
+          "selection_id": "bc:7296838076"
+        },
+        {
+          "name": "Under (1.0)",
+          "label": "Under (1.0)",
+          "rate": {
+            "decimal": 2.15,
+            "american": 115,
+            "fractional": "23/20"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2475247946",
+          "selection_id": "bc:7296838077"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2475247897",
+      "match_id": "bc:31112043",
+      "line": 1,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": false,
+      "position": 1,
+      "markets_class_id": 3368,
+      "name": "Home Team: Total Goals",
+      "label": "Home Team: Total Goals",
+      "primary_column": 303,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Team 1",
+        "position": 12,
+        "sports_group_id": 1,
+        "markets_group_id": 298
+      },
+      "selections": [
+        {
+          "name": "Over (1.0)",
+          "label": "Over (1.0)",
+          "rate": {
+            "decimal": 1.72,
+            "american": -139,
+            "fractional": "5/7"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2475247897",
+          "selection_id": "bc:7296837909"
+        },
+        {
+          "name": "Under (1.0)",
+          "label": "Under (1.0)",
+          "rate": {
+            "decimal": 1.95,
+            "american": -105,
+            "fractional": "19/20"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2475247897",
+          "selection_id": "bc:7296837910"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2475247891",
+      "match_id": "bc:31112043",
+      "line": 1.5,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": false,
+      "position": 1,
+      "markets_class_id": 6495,
+      "name": "Away Team: Total Goals",
+      "label": "Away Team: Total Goals",
+      "primary_column": 304,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Team 2",
+        "position": 13,
+        "sports_group_id": 1,
+        "markets_group_id": 300
+      },
+      "selections": [
+        {
+          "name": "Over (1.5)",
+          "label": "Over (1.5)",
+          "rate": {
+            "decimal": 1.77,
+            "american": -130,
+            "fractional": "7/9"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2475247891",
+          "selection_id": "bc:7296837897"
+        },
+        {
+          "name": "Under (1.5)",
+          "label": "Under (1.5)",
+          "rate": {
+            "decimal": 1.88,
+            "american": -114,
+            "fractional": "7/8"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2475247891",
+          "selection_id": "bc:7296837898"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2475211163",
+      "match_id": "bc:31112044",
+      "line": 0,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": true,
+      "position": 1,
+      "markets_class_id": 2669,
+      "name": "Match Result",
+      "label": "Match Result",
+      "primary_column": 26,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Primary Markets",
+        "position": 1,
+        "sports_group_id": 1,
+        "markets_group_id": 204
+      },
+      "selections": [
+        {
+          "name": "Charlton Athletic (Wom)",
+          "label": "Charlton Athletic (Wom)",
+          "rate": {
+            "decimal": 8.25,
+            "american": 725,
+            "fractional": "29/4"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2475211163",
+          "selection_id": "bc:7296744227"
+        },
+        {
+          "name": "Draw",
+          "label": "Draw",
+          "rate": {
+            "decimal": 5.3,
+            "american": 430,
+            "fractional": "43/10"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2475211163",
+          "selection_id": "bc:7296744228"
+        },
+        {
+          "name": "Manchester United LFC (Wom)",
+          "label": "Manchester United LFC (Wom)",
+          "rate": {
+            "decimal": 1.28,
+            "american": -357,
+            "fractional": "2/7"
+          },
+          "order": 2,
+          "status": "open",
+          "market_id": "bc:2475211163",
+          "selection_id": "bc:7296744229"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2475211128",
+      "match_id": "bc:31112044",
+      "line": 3,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": true,
+      "position": 4,
+      "markets_class_id": 3499,
+      "name": "Total Goals",
+      "label": "Total Goals",
+      "primary_column": 33,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Totals",
+        "position": 2,
+        "sports_group_id": 1,
+        "markets_group_id": 280
+      },
+      "selections": [
+        {
+          "name": "Over (3.0)",
+          "label": "Over (3.0)",
+          "rate": {
+            "decimal": 1.98,
+            "american": -102,
+            "fractional": "49/50"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2475211128",
+          "selection_id": "bc:7296744155"
+        },
+        {
+          "name": "Under (3.0)",
+          "label": "Under (3.0)",
+          "rate": {
+            "decimal": 1.67,
+            "american": -149,
+            "fractional": "2/3"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2475211128",
+          "selection_id": "bc:7296744156"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2475211115",
+      "match_id": "bc:31112044",
+      "line": 1.75,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": false,
+      "position": 10,
+      "markets_class_id": 4581,
+      "name": "Asian Handicap",
+      "label": "Asian Handicap",
+      "primary_column": 40,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Handicap",
+        "position": 3,
+        "sports_group_id": 1,
+        "markets_group_id": 278
+      },
+      "selections": [
+        {
+          "name": "Charlton Athletic (Wom) (1.75)",
+          "label": "Charlton Athletic (Wom) (1.75)",
+          "rate": {
+            "decimal": 1.67,
+            "american": -149,
+            "fractional": "2/3"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2475211115",
+          "selection_id": "bc:7296744128"
+        },
+        {
+          "name": "Manchester United LFC (Wom) (-1.75)",
+          "label": "Manchester United LFC (Wom) (-1.75)",
+          "rate": {
+            "decimal": 1.98,
+            "american": -102,
+            "fractional": "49/50"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2475211115",
+          "selection_id": "bc:7296744129"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2475211107",
+      "match_id": "bc:31112044",
+      "line": 1.5,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": true,
+      "position": 8,
+      "markets_class_id": 5747,
+      "name": "Asian Handicap",
+      "label": "Asian Handicap",
+      "primary_column": 40,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Handicap",
+        "position": 3,
+        "sports_group_id": 1,
+        "markets_group_id": 278
+      },
+      "selections": [
+        {
+          "name": "Charlton Athletic (Wom) (1.5)",
+          "label": "Charlton Athletic (Wom) (1.5)",
+          "rate": {
+            "decimal": 1.85,
+            "american": -118,
+            "fractional": "6/7"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2475211107",
+          "selection_id": "bc:7296744112"
+        },
+        {
+          "name": "Manchester United LFC (Wom) (-1.5)",
+          "label": "Manchester United LFC (Wom) (-1.5)",
+          "rate": {
+            "decimal": 1.8,
+            "american": -125,
+            "fractional": "4/5"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2475211107",
+          "selection_id": "bc:7296744113"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2475217504",
+      "match_id": "bc:31112044",
+      "line": 0,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": true,
+      "position": 15,
+      "markets_class_id": 2551,
+      "name": "Double Chance",
+      "label": "Double Chance",
+      "primary_column": 41,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Primary Markets",
+        "position": 1,
+        "sports_group_id": 1,
+        "markets_group_id": 204
+      },
+      "selections": [
+        {
+          "name": "Charlton Athletic (Wom) or Draw",
+          "label": "Charlton Athletic (Wom) or Draw",
+          "rate": {
+            "decimal": 3.2,
+            "american": 220,
+            "fractional": "11/5"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2475217504",
+          "selection_id": "bc:7296761185"
+        },
+        {
+          "name": "Charlton Athletic (Wom) or Manchester United LFC (Wom)",
+          "label": "Charlton Athletic (Wom) or Manchester United LFC (Wom)",
+          "rate": {
+            "decimal": 1.14,
+            "american": -714,
+            "fractional": "1/7"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2475217504",
+          "selection_id": "bc:7296761186"
+        },
+        {
+          "name": "Manchester United LFC (Wom) or Draw",
+          "label": "Manchester United LFC (Wom) or Draw",
+          "rate": {
+            "decimal": 1.07,
+            "american": -1429,
+            "fractional": "1/15"
+          },
+          "order": 2,
+          "status": "open",
+          "market_id": "bc:2475217504",
+          "selection_id": "bc:7296761187"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2475217428",
+      "match_id": "bc:31112044",
+      "line": 0,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": true,
+      "position": 7,
+      "markets_class_id": 3151,
+      "name": "Both Teams To Score",
+      "label": "Both Teams To Score",
+      "primary_column": 42,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Primary Markets",
+        "position": 1,
+        "sports_group_id": 1,
+        "markets_group_id": 204
+      },
+      "selections": [
+        {
+          "name": "Yes",
+          "label": "Yes",
+          "rate": {
+            "decimal": 2.1,
+            "american": 110,
+            "fractional": "11/10"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2475217428",
+          "selection_id": "bc:7296760930"
+        },
+        {
+          "name": "No",
+          "label": "No",
+          "rate": {
+            "decimal": 1.65,
+            "american": -154,
+            "fractional": "13/20"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2475217428",
+          "selection_id": "bc:7296760932"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2475223070",
+      "match_id": "bc:31112044",
+      "line": 1,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": true,
+      "position": 5,
+      "markets_class_id": 6568,
+      "name": "1st Half: Total Goals",
+      "label": "1st Half: Total Goals",
+      "primary_column": 302,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "1st half",
+        "position": 4,
+        "sports_group_id": 1,
+        "markets_group_id": 282
+      },
+      "selections": [
+        {
+          "name": "Over (1.0)",
+          "label": "Over (1.0)",
+          "rate": {
+            "decimal": 1.6,
+            "american": -167,
+            "fractional": "3/5"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2475223070",
+          "selection_id": "bc:7296777145"
+        },
+        {
+          "name": "Under (1.0)",
+          "label": "Under (1.0)",
+          "rate": {
+            "decimal": 2.2,
+            "american": 120,
+            "fractional": "6/5"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2475223070",
+          "selection_id": "bc:7296777146"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2475217475",
+      "match_id": "bc:31112044",
+      "line": 0.5,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": false,
+      "position": 1,
+      "markets_class_id": 3368,
+      "name": "Home Team: Total Goals",
+      "label": "Home Team: Total Goals",
+      "primary_column": 303,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Team 1",
+        "position": 12,
+        "sports_group_id": 1,
+        "markets_group_id": 298
+      },
+      "selections": [
+        {
+          "name": "Over (0.5)",
+          "label": "Over (0.5)",
+          "rate": {
+            "decimal": 1.85,
+            "american": -118,
+            "fractional": "6/7"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2475217475",
+          "selection_id": "bc:7296761025"
+        },
+        {
+          "name": "Under (0.5)",
+          "label": "Under (0.5)",
+          "rate": {
+            "decimal": 1.8,
+            "american": -125,
+            "fractional": "4/5"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2475217475",
+          "selection_id": "bc:7296761026"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2475217458",
+      "match_id": "bc:31112044",
+      "line": 2,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": false,
+      "position": 1,
+      "markets_class_id": 6495,
+      "name": "Away Team: Total Goals",
+      "label": "Away Team: Total Goals",
+      "primary_column": 304,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Team 2",
+        "position": 13,
+        "sports_group_id": 1,
+        "markets_group_id": 300
+      },
+      "selections": [
+        {
+          "name": "Over (2.0)",
+          "label": "Over (2.0)",
+          "rate": {
+            "decimal": 1.67,
+            "american": -149,
+            "fractional": "2/3"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2475217458",
+          "selection_id": "bc:7296760991"
+        },
+        {
+          "name": "Under (2.0)",
+          "label": "Under (2.0)",
+          "rate": {
+            "decimal": 2.02,
+            "american": 102,
+            "fractional": "51/50"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2475217458",
+          "selection_id": "bc:7296760992"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2482952546",
+      "match_id": "bc:31145061",
+      "line": 0,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": true,
+      "position": 1,
+      "markets_class_id": 2669,
+      "name": "Match Result",
+      "label": "Match Result",
+      "primary_column": 26,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Primary Markets",
+        "position": 1,
+        "sports_group_id": 1,
+        "markets_group_id": 204
+      },
+      "selections": [
+        {
+          "name": "Suwon Bluewings",
+          "label": "Suwon Bluewings",
+          "rate": {
+            "decimal": 1.65,
+            "american": -154,
+            "fractional": "13/20"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2482952546",
+          "selection_id": "bc:7317228623"
+        },
+        {
+          "name": "Draw",
+          "label": "Draw",
+          "rate": {
+            "decimal": 4,
+            "american": 300,
+            "fractional": "3"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2482952546",
+          "selection_id": "bc:7317228624"
+        },
+        {
+          "name": "Hwaseong FC",
+          "label": "Hwaseong FC",
+          "rate": {
+            "decimal": 4.2,
+            "american": 320,
+            "fractional": "16/5"
+          },
+          "order": 2,
+          "status": "open",
+          "market_id": "bc:2482952546",
+          "selection_id": "bc:7317228625"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2482952543",
+      "match_id": "bc:31145061",
+      "line": 2.5,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": true,
+      "position": 4,
+      "markets_class_id": 3499,
+      "name": "Total Goals",
+      "label": "Total Goals",
+      "primary_column": 33,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Totals",
+        "position": 2,
+        "sports_group_id": 1,
+        "markets_group_id": 280
+      },
+      "selections": [
+        {
+          "name": "Over (2.5)",
+          "label": "Over (2.5)",
+          "rate": {
+            "decimal": 1.65,
+            "american": -154,
+            "fractional": "13/20"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2482952543",
+          "selection_id": "bc:7317228621"
+        },
+        {
+          "name": "Under (2.5)",
+          "label": "Under (2.5)",
+          "rate": {
+            "decimal": 2.02,
+            "american": 102,
+            "fractional": "51/50"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2482952543",
+          "selection_id": "bc:7317228622"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2482952535",
+      "match_id": "bc:31145061",
+      "line": 0,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": true,
+      "position": 8,
+      "markets_class_id": 5747,
+      "name": "Asian Handicap",
+      "label": "Asian Handicap",
+      "primary_column": 40,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Handicap",
+        "position": 3,
+        "sports_group_id": 1,
+        "markets_group_id": 278
+      },
+      "selections": [
+        {
+          "name": "Suwon Bluewings (0.0)",
+          "label": "Suwon Bluewings (0.0)",
+          "rate": {
+            "decimal": 1.3,
+            "american": -333,
+            "fractional": "3/10"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2482952535",
+          "selection_id": "bc:7317228605"
+        },
+        {
+          "name": "Hwaseong FC (0.0)",
+          "label": "Hwaseong FC (0.0)",
+          "rate": {
+            "decimal": 3.05,
+            "american": 205,
+            "fractional": "41/20"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2482952535",
+          "selection_id": "bc:7317228606"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2482952475",
+      "match_id": "bc:31145061",
+      "line": 0,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": true,
+      "position": 15,
+      "markets_class_id": 2551,
+      "name": "Double Chance",
+      "label": "Double Chance",
+      "primary_column": 41,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Primary Markets",
+        "position": 1,
+        "sports_group_id": 1,
+        "markets_group_id": 204
+      },
+      "selections": [
+        {
+          "name": "Suwon Bluewings or Draw",
+          "label": "Suwon Bluewings or Draw",
+          "rate": {
+            "decimal": 1.2,
+            "american": -500,
+            "fractional": "1/5"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2482952475",
+          "selection_id": "bc:7317228476"
+        },
+        {
+          "name": "Suwon Bluewings or Hwaseong FC",
+          "label": "Suwon Bluewings or Hwaseong FC",
+          "rate": {
+            "decimal": 1.22,
+            "american": -455,
+            "fractional": "2/9"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2482952475",
+          "selection_id": "bc:7317228477"
+        },
+        {
+          "name": "Hwaseong FC or Draw",
+          "label": "Hwaseong FC or Draw",
+          "rate": {
+            "decimal": 2.05,
+            "american": 105,
+            "fractional": "21/20"
+          },
+          "order": 2,
+          "status": "open",
+          "market_id": "bc:2482952475",
+          "selection_id": "bc:7317228478"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2482952455",
+      "match_id": "bc:31145061",
+      "line": 0,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": true,
+      "position": 7,
+      "markets_class_id": 3151,
+      "name": "Both Teams To Score",
+      "label": "Both Teams To Score",
+      "primary_column": 42,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Primary Markets",
+        "position": 1,
+        "sports_group_id": 1,
+        "markets_group_id": 204
+      },
+      "selections": [
+        {
+          "name": "Yes",
+          "label": "Yes",
+          "rate": {
+            "decimal": 1.7,
+            "american": -143,
+            "fractional": "7/10"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2482952455",
+          "selection_id": "bc:7317228402"
+        },
+        {
+          "name": "No",
+          "label": "No",
+          "rate": {
+            "decimal": 2.05,
+            "american": 105,
+            "fractional": "21/20"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2482952455",
+          "selection_id": "bc:7317228403"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2482952524",
+      "match_id": "bc:31145061",
+      "line": 1,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": true,
+      "position": 5,
+      "markets_class_id": 6568,
+      "name": "1st Half: Total Goals",
+      "label": "1st Half: Total Goals",
+      "primary_column": 302,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "1st half",
+        "position": 4,
+        "sports_group_id": 1,
+        "markets_group_id": 282
+      },
+      "selections": [
+        {
+          "name": "Over (1.0)",
+          "label": "Over (1.0)",
+          "rate": {
+            "decimal": 1.65,
+            "american": -154,
+            "fractional": "13/20"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2482952524",
+          "selection_id": "bc:7317228562"
+        },
+        {
+          "name": "Under (1.0)",
+          "label": "Under (1.0)",
+          "rate": {
+            "decimal": 2.1,
+            "american": 110,
+            "fractional": "11/10"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2482952524",
+          "selection_id": "bc:7317228563"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2482952469",
+      "match_id": "bc:31145061",
+      "line": 1.5,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": false,
+      "position": 1,
+      "markets_class_id": 3368,
+      "name": "Home Team: Total Goals",
+      "label": "Home Team: Total Goals",
+      "primary_column": 303,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Team 1",
+        "position": 12,
+        "sports_group_id": 1,
+        "markets_group_id": 298
+      },
+      "selections": [
+        {
+          "name": "Over (1.5)",
+          "label": "Over (1.5)",
+          "rate": {
+            "decimal": 1.67,
+            "american": -149,
+            "fractional": "2/3"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2482952469",
+          "selection_id": "bc:7317228430"
+        },
+        {
+          "name": "Under (1.5)",
+          "label": "Under (1.5)",
+          "rate": {
+            "decimal": 2.02,
+            "american": 102,
+            "fractional": "51/50"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2482952469",
+          "selection_id": "bc:7317228431"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2482952460",
+      "match_id": "bc:31145061",
+      "line": 1,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": false,
+      "position": 1,
+      "markets_class_id": 6495,
+      "name": "Away Team: Total Goals",
+      "label": "Away Team: Total Goals",
+      "primary_column": 304,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Team 2",
+        "position": 13,
+        "sports_group_id": 1,
+        "markets_group_id": 300
+      },
+      "selections": [
+        {
+          "name": "Over (1.0)",
+          "label": "Over (1.0)",
+          "rate": {
+            "decimal": 2.02,
+            "american": 102,
+            "fractional": "51/50"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2482952460",
+          "selection_id": "bc:7317228412"
+        },
+        {
+          "name": "Under (1.0)",
+          "label": "Under (1.0)",
+          "rate": {
+            "decimal": 1.67,
+            "american": -149,
+            "fractional": "2/3"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2482952460",
+          "selection_id": "bc:7317228413"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2483042112",
+      "match_id": "bc:31177396",
+      "line": 0,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": true,
+      "position": 1,
+      "markets_class_id": 2669,
+      "name": "Match Result",
+      "label": "Match Result",
+      "primary_column": 26,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Primary Markets",
+        "position": 1,
+        "sports_group_id": 1,
+        "markets_group_id": 204
+      },
+      "selections": [
+        {
+          "name": "Internacional FC de Palmira",
+          "label": "Internacional FC de Palmira",
+          "rate": {
+            "decimal": 1.98,
+            "american": -102,
+            "fractional": "49/50"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2483042112",
+          "selection_id": "bc:7317453227"
+        },
+        {
+          "name": "Draw",
+          "label": "Draw",
+          "rate": {
+            "decimal": 3.2,
+            "american": 220,
+            "fractional": "11/5"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2483042112",
+          "selection_id": "bc:7317453228"
+        },
+        {
+          "name": "Orsomarso SC",
+          "label": "Orsomarso SC",
+          "rate": {
+            "decimal": 3.6,
+            "american": 260,
+            "fractional": "13/5"
+          },
+          "order": 2,
+          "status": "open",
+          "market_id": "bc:2483042112",
+          "selection_id": "bc:7317453229"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2483042110",
+      "match_id": "bc:31177396",
+      "line": 2.5,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": true,
+      "position": 4,
+      "markets_class_id": 3499,
+      "name": "Total Goals",
+      "label": "Total Goals",
+      "primary_column": 33,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Totals",
+        "position": 2,
+        "sports_group_id": 1,
+        "markets_group_id": 280
+      },
+      "selections": [
+        {
+          "name": "Over (2.5)",
+          "label": "Over (2.5)",
+          "rate": {
+            "decimal": 1.98,
+            "american": -102,
+            "fractional": "49/50"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2483042110",
+          "selection_id": "bc:7317453218"
+        },
+        {
+          "name": "Under (2.5)",
+          "label": "Under (2.5)",
+          "rate": {
+            "decimal": 1.7,
+            "american": -143,
+            "fractional": "7/10"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2483042110",
+          "selection_id": "bc:7317453220"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2486051286",
+      "match_id": "bc:31177396",
+      "line": 0,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": true,
+      "position": 8,
+      "markets_class_id": 5747,
+      "name": "Asian Handicap",
+      "label": "Asian Handicap",
+      "primary_column": 40,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Handicap",
+        "position": 3,
+        "sports_group_id": 1,
+        "markets_group_id": 278
+      },
+      "selections": [
+        {
+          "name": "Internacional FC de Palmira (0.0)",
+          "label": "Internacional FC de Palmira (0.0)",
+          "rate": {
+            "decimal": 1.45,
+            "american": -222,
+            "fractional": "4/9"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2486051286",
+          "selection_id": "bc:7325394190"
+        },
+        {
+          "name": "Orsomarso SC (0.0)",
+          "label": "Orsomarso SC (0.0)",
+          "rate": {
+            "decimal": 2.47,
+            "american": 147,
+            "fractional": "22/15"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2486051286",
+          "selection_id": "bc:7325394192"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2486114310",
+      "match_id": "bc:31177396",
+      "line": 0,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": true,
+      "position": 15,
+      "markets_class_id": 2551,
+      "name": "Double Chance",
+      "label": "Double Chance",
+      "primary_column": 41,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Primary Markets",
+        "position": 1,
+        "sports_group_id": 1,
+        "markets_group_id": 204
+      },
+      "selections": [
+        {
+          "name": "Internacional FC de Palmira or Draw",
+          "label": "Internacional FC de Palmira or Draw",
+          "rate": {
+            "decimal": 1.25,
+            "american": -400,
+            "fractional": "1/4"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2486114310",
+          "selection_id": "bc:7325570002"
+        },
+        {
+          "name": "Internacional FC de Palmira or Orsomarso SC",
+          "label": "Internacional FC de Palmira or Orsomarso SC",
+          "rate": {
+            "decimal": 1.3,
+            "american": -333,
+            "fractional": "3/10"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2486114310",
+          "selection_id": "bc:7325570003"
+        },
+        {
+          "name": "Orsomarso SC or Draw",
+          "label": "Orsomarso SC or Draw",
+          "rate": {
+            "decimal": 1.72,
+            "american": -139,
+            "fractional": "5/7"
+          },
+          "order": 2,
+          "status": "open",
+          "market_id": "bc:2486114310",
+          "selection_id": "bc:7325570004"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2486114261",
+      "match_id": "bc:31177396",
+      "line": 0,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": true,
+      "position": 7,
+      "markets_class_id": 3151,
+      "name": "Both Teams To Score",
+      "label": "Both Teams To Score",
+      "primary_column": 42,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Primary Markets",
+        "position": 1,
+        "sports_group_id": 1,
+        "markets_group_id": 204
+      },
+      "selections": [
+        {
+          "name": "Yes",
+          "label": "Yes",
+          "rate": {
+            "decimal": 1.8,
+            "american": -125,
+            "fractional": "4/5"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2486114261",
+          "selection_id": "bc:7325569848"
+        },
+        {
+          "name": "No",
+          "label": "No",
+          "rate": {
+            "decimal": 1.9,
+            "american": -111,
+            "fractional": "9/10"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2486114261",
+          "selection_id": "bc:7325569849"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2486077548",
+      "match_id": "bc:31177396",
+      "line": 1,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": true,
+      "position": 5,
+      "markets_class_id": 6568,
+      "name": "1st Half: Total Goals",
+      "label": "1st Half: Total Goals",
+      "primary_column": 302,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "1st half",
+        "position": 4,
+        "sports_group_id": 1,
+        "markets_group_id": 282
+      },
+      "selections": [
+        {
+          "name": "Over (1.0)",
+          "label": "Over (1.0)",
+          "rate": {
+            "decimal": 1.98,
+            "american": -102,
+            "fractional": "49/50"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2486077548",
+          "selection_id": "bc:7325464373"
+        },
+        {
+          "name": "Under (1.0)",
+          "label": "Under (1.0)",
+          "rate": {
+            "decimal": 1.75,
+            "american": -133,
+            "fractional": "3/4"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2486077548",
+          "selection_id": "bc:7325464374"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2486114303",
+      "match_id": "bc:31177396",
+      "line": 1.5,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": false,
+      "position": 1,
+      "markets_class_id": 3368,
+      "name": "Home Team: Total Goals",
+      "label": "Home Team: Total Goals",
+      "primary_column": 303,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Team 1",
+        "position": 12,
+        "sports_group_id": 1,
+        "markets_group_id": 298
+      },
+      "selections": [
+        {
+          "name": "Over (1.5)",
+          "label": "Over (1.5)",
+          "rate": {
+            "decimal": 2.07,
+            "american": 107,
+            "fractional": "16/15"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2486114303",
+          "selection_id": "bc:7325569950"
+        },
+        {
+          "name": "Under (1.5)",
+          "label": "Under (1.5)",
+          "rate": {
+            "decimal": 1.65,
+            "american": -154,
+            "fractional": "13/20"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2486114303",
+          "selection_id": "bc:7325569951"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2486114268",
+      "match_id": "bc:31177396",
+      "line": 1,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": false,
+      "position": 1,
+      "markets_class_id": 6495,
+      "name": "Away Team: Total Goals",
+      "label": "Away Team: Total Goals",
+      "primary_column": 304,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Team 2",
+        "position": 13,
+        "sports_group_id": 1,
+        "markets_group_id": 300
+      },
+      "selections": [
+        {
+          "name": "Over (1.0)",
+          "label": "Over (1.0)",
+          "rate": {
+            "decimal": 2.02,
+            "american": 102,
+            "fractional": "51/50"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2486114268",
+          "selection_id": "bc:7325569858"
+        },
+        {
+          "name": "Under (1.0)",
+          "label": "Under (1.0)",
+          "rate": {
+            "decimal": 1.67,
+            "american": -149,
+            "fractional": "2/3"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2486114268",
+          "selection_id": "bc:7325569859"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2484247417",
+      "match_id": "bc:31177397",
+      "line": 0,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": true,
+      "position": 1,
+      "markets_class_id": 2669,
+      "name": "Match Result",
+      "label": "Match Result",
+      "primary_column": 26,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Primary Markets",
+        "position": 1,
+        "sports_group_id": 1,
+        "markets_group_id": 204
+      },
+      "selections": [
+        {
+          "name": "FC Supra du Quebec",
+          "label": "FC Supra du Quebec",
+          "rate": {
+            "decimal": 1.72,
+            "american": -139,
+            "fractional": "5/7"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2484247417",
+          "selection_id": "bc:7320928932"
+        },
+        {
+          "name": "Draw",
+          "label": "Draw",
+          "rate": {
+            "decimal": 3.95,
+            "american": 295,
+            "fractional": "59/20"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2484247417",
+          "selection_id": "bc:7320928933"
+        },
+        {
+          "name": "Inter Toronto FC",
+          "label": "Inter Toronto FC",
+          "rate": {
+            "decimal": 3.85,
+            "american": 285,
+            "fractional": "20/7"
+          },
+          "order": 2,
+          "status": "open",
+          "market_id": "bc:2484247417",
+          "selection_id": "bc:7320928934"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2484247414",
+      "match_id": "bc:31177397",
+      "line": 3.5,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": true,
+      "position": 4,
+      "markets_class_id": 3499,
+      "name": "Total Goals",
+      "label": "Total Goals",
+      "primary_column": 33,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Totals",
+        "position": 2,
+        "sports_group_id": 1,
+        "markets_group_id": 280
+      },
+      "selections": [
+        {
+          "name": "Over (3.5)",
+          "label": "Over (3.5)",
+          "rate": {
+            "decimal": 1.88,
+            "american": -114,
+            "fractional": "7/8"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2484247414",
+          "selection_id": "bc:7320928926"
+        },
+        {
+          "name": "Under (3.5)",
+          "label": "Under (3.5)",
+          "rate": {
+            "decimal": 1.75,
+            "american": -133,
+            "fractional": "3/4"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2484247414",
+          "selection_id": "bc:7320928927"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2485420286",
+      "match_id": "bc:31177397",
+      "line": -0.75,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": false,
+      "position": 10,
+      "markets_class_id": 4581,
+      "name": "Asian Handicap",
+      "label": "Asian Handicap",
+      "primary_column": 40,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Handicap",
+        "position": 3,
+        "sports_group_id": 1,
+        "markets_group_id": 278
+      },
+      "selections": [
+        {
+          "name": "FC Supra du Quebec (-0.75)",
+          "label": "FC Supra du Quebec (-0.75)",
+          "rate": {
+            "decimal": 1.85,
+            "american": -118,
+            "fractional": "6/7"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2485420286",
+          "selection_id": "bc:7323787809"
+        },
+        {
+          "name": "Inter Toronto FC (0.75)",
+          "label": "Inter Toronto FC (0.75)",
+          "rate": {
+            "decimal": 1.77,
+            "american": -130,
+            "fractional": "7/9"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2485420286",
+          "selection_id": "bc:7323787810"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2485420587",
+      "match_id": "bc:31177397",
+      "line": 0,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": true,
+      "position": 15,
+      "markets_class_id": 2551,
+      "name": "Double Chance",
+      "label": "Double Chance",
+      "primary_column": 41,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Primary Markets",
+        "position": 1,
+        "sports_group_id": 1,
+        "markets_group_id": 204
+      },
+      "selections": [
+        {
+          "name": "FC Supra du Quebec or Draw",
+          "label": "FC Supra du Quebec or Draw",
+          "rate": {
+            "decimal": 1.22,
+            "american": -455,
+            "fractional": "2/9"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2485420587",
+          "selection_id": "bc:7323788550"
+        },
+        {
+          "name": "FC Supra du Quebec or Inter Toronto FC",
+          "label": "FC Supra du Quebec or Inter Toronto FC",
+          "rate": {
+            "decimal": 1.22,
+            "american": -455,
+            "fractional": "2/9"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2485420587",
+          "selection_id": "bc:7323788551"
+        },
+        {
+          "name": "Inter Toronto FC or Draw",
+          "label": "Inter Toronto FC or Draw",
+          "rate": {
+            "decimal": 1.95,
+            "american": -105,
+            "fractional": "19/20"
+          },
+          "order": 2,
+          "status": "open",
+          "market_id": "bc:2485420587",
+          "selection_id": "bc:7323788552"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2485413719",
+      "match_id": "bc:31177397",
+      "line": 1.5,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": true,
+      "position": 5,
+      "markets_class_id": 6568,
+      "name": "1st Half: Total Goals",
+      "label": "1st Half: Total Goals",
+      "primary_column": 302,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "1st half",
+        "position": 4,
+        "sports_group_id": 1,
+        "markets_group_id": 282
+      },
+      "selections": [
+        {
+          "name": "Over (1.5)",
+          "label": "Over (1.5)",
+          "rate": {
+            "decimal": 2.1,
+            "american": 110,
+            "fractional": "11/10"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2485413719",
+          "selection_id": "bc:7323772113"
+        },
+        {
+          "name": "Under (1.5)",
+          "label": "Under (1.5)",
+          "rate": {
+            "decimal": 1.65,
+            "american": -154,
+            "fractional": "13/20"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2485413719",
+          "selection_id": "bc:7323772115"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2485420584",
+      "match_id": "bc:31177397",
+      "line": 2,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": false,
+      "position": 1,
+      "markets_class_id": 3368,
+      "name": "Home Team: Total Goals",
+      "label": "Home Team: Total Goals",
+      "primary_column": 303,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Team 1",
+        "position": 12,
+        "sports_group_id": 1,
+        "markets_group_id": 298
+      },
+      "selections": [
+        {
+          "name": "Over (2.0)",
+          "label": "Over (2.0)",
+          "rate": {
+            "decimal": 1.85,
+            "american": -118,
+            "fractional": "6/7"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2485420584",
+          "selection_id": "bc:7323788510"
+        },
+        {
+          "name": "Under (2.0)",
+          "label": "Under (2.0)",
+          "rate": {
+            "decimal": 1.8,
+            "american": -125,
+            "fractional": "4/5"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2485420584",
+          "selection_id": "bc:7323788511"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    },
+    {
+      "market_id": "bc:2485420579",
+      "match_id": "bc:31177397",
+      "line": 1.5,
+      "selections_reversible": false,
+      "sort_selections_by_odds_asc": false,
+      "is_primary": false,
+      "position": 1,
+      "markets_class_id": 6495,
+      "name": "Away Team: Total Goals",
+      "label": "Away Team: Total Goals",
+      "primary_column": 304,
+      "state": {
+        "status": "open"
+      },
+      "markets_group": {
+        "name": "Team 2",
+        "position": 13,
+        "sports_group_id": 1,
+        "markets_group_id": 300
+      },
+      "selections": [
+        {
+          "name": "Over (1.5)",
+          "label": "Over (1.5)",
+          "rate": {
+            "decimal": 2.2,
+            "american": 120,
+            "fractional": "6/5"
+          },
+          "order": 0,
+          "status": "open",
+          "market_id": "bc:2485420579",
+          "selection_id": "bc:7323788500"
+        },
+        {
+          "name": "Under (1.5)",
+          "label": "Under (1.5)",
+          "rate": {
+            "decimal": 1.55,
+            "american": -182,
+            "fractional": "5/9"
+          },
+          "order": 1,
+          "status": "open",
+          "market_id": "bc:2485420579",
+          "selection_id": "bc:7323788501"
+        }
+      ],
+      "expanded": null,
+      "group_key": null,
+      "description": null
+    }
+  ]
+}

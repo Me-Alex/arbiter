@@ -1,0 +1,14 @@
+{
+    "xhr_urls": [
+        "https://cdn-ukwest.onetrust.com/scripttemplates/202501.2.0/assets/otFlat.json",
+        "https://www.betfair.ro/cdn-cgi/rum?",
+        "https://cdn-ukwest.onetrust.com/consent/06b5aa0f-ee8e-410d-93e2-97cae014b258/06b5aa0f-ee8e-410d-93e2-97cae014b258.json",
+        "https://cdn-ukwest.onetrust.com/scripttemplates/202501.2.0/assets/otCommonStyles.css",
+        "https://cdn-ukwest.onetrust.com/logos/static/ot_guard_logo.svg",
+        "https://www.betfair.ro/cdn-cgi/challenge-platform/h/g/jsd/oneshot/4df4a60fa397/0.9407159567404556:1791550825:O-xIOS1Is3zfa4-UL01cuqnG6N9miHNqNgbkACmoScw/a47dbe2c9ca6d275",
+        "https://geolocation.onetrust.com/cookieconsentpub/v1/geo/location",
+        "https://regstat.betfair.com/fp/clear.png",
+        "https://cdn-ukwest.onetrust.com/scripttemplates/202501.2.0/assets/v2/otPcPanel.json",
+        "https://cdn-ukwest.onetrust.com/consent/06b5aa0f-ee8e-410d-93e2-97cae014b258/01a11ba1-9148-7691-a146-e6f13dd449b2/ro.json"
+    ]
+}

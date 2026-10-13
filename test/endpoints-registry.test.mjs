@@ -96,20 +96,25 @@ test('unscrapedBooks tells the rows that have evidence from the rows that do not
   const un = unscrapedBooks();
   const byBook = new Map(un.map((b) => [b.book, b]));
   const names = [...byBook.keys()];
-  // The two rows this test has always named are named for a reason: they are on
-  // the list because a capture exists, not only a platform string. That is the
-  // claim the function's own note overreached on — it described the whole list
-  // as books waiting for an adapter, while `realCapture` is what earns a row
-  // its place and most rows do not carry it. No total is pinned here: it moves
-  // every time the crawl gains a row, and pinning one would train the reader to
-  // bump it without reading what it is for.
-  for (const book of ['888sport', 'mrplay']) {
-    assert.ok(names.includes(book), `${book} has a digitain capture and no job`);
-    assert.equal(byBook.get(book).realCapture, true,
-      `${book} is named here as a book that already has evidence, and its capture no longer says so`);
+  // This helper reads the archived registry, not today's scraper config.
+  const records = Object.values(loadEndpointRegistry().books);
+  assert.ok(records.length > 0, 'the registry census must read some books');
+  const expected = records.filter((r) => !r.scraped
+    && (r.platform || r.captureFiles?.some((f) => f.real)));
+  assert.deepEqual(names.sort(), expected.map((r) => r.book).sort());
+  assert.equal(un.length, byBook.size, 'a book must appear only once');
+  for (const record of expected) {
+    assert.equal(byBook.get(record.book).realCapture,
+      Boolean(record.captureFiles?.some((f) => f.real)), record.book);
   }
-  assert.ok(!names.includes('favbet'), 'a scraped book must not be listed as a candidate');
-  for (const job of jobs) assert.ok(!names.includes(job.id), `${job.id} is configured`);
+  // Keep both branches observable even when the real registry changes shape.
+  const control = unscrapedBooks({ books: {
+    evidence: { book: 'evidence', captureFiles: [{ real: true }] },
+    platform: { book: 'platform', platform: 'known' },
+    scraped: { book: 'scraped', scraped: true, captureFiles: [{ real: true }] },
+  } });
+  assert.deepEqual(control.map(({ book, realCapture }) => [book, realCapture]),
+    [['evidence', true], ['platform', false]]);
 });
 
 test('feedStatusConflicts is clean: unibet is no longer a conflict', () => {
@@ -148,5 +153,5 @@ test('feedStatusConflicts is clean: unibet is no longer a conflict', () => {
 
 test('booksOnPlatform returns a sorted member list', () => {
   const exa = booksOnPlatform('exalogic-xsport');
-  assert.deepEqual(exa, ['excelbet', 'las-vegas', 'magnumbet', 'winboss']);
+  assert.deepEqual(exa, ['cashpot', 'excelbet', 'las-vegas', 'magnumbet', 'winboss']);
 });

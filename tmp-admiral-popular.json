@@ -1,0 +1,2244 @@
+{
+  "events": [
+    {
+      "id": "BRUF#sr:match:73265380",
+      "fixture": {
+        "categoryNodeId": "argentyna",
+        "competitionNodeId": "1_liga",
+        "competitors": [
+          {
+            "id": "sr:competitor:189099",
+            "name": {
+              "name": "Gimnasia y Esgrima Mendoza",
+              "localizedName": {}
+            },
+            "homeAway": "HOME"
+          },
+          {
+            "id": "sr:competitor:3212",
+            "name": {
+              "name": "Newell's Old Boys",
+              "localizedName": {
+                "pl": "Newell´s Old Boys"
+              }
+            },
+            "homeAway": "AWAY"
+          }
+        ],
+        "eventName": {
+          "name": "Gimnasia y Esgrima Mendoza vs. Newell's Old Boys",
+          "localizedName": {
+            "pl": "Gimnasia y Esgrima Mendoza vs. Newell´s Old Boys"
+          }
+        },
+        "expectedResultingTime": "2026-10-12T21:30:00Z",
+        "isFantasy": false,
+        "isLive": true,
+        "isOutright": false,
+        "isVirtual": false,
+        "path": {
+          "sportId": "1",
+          "categoryId": "48",
+          "competitionId": "BRUF#sr:tournament:155",
+          "seasonId": "sr:season:137974"
+        },
+        "sportNodeId": "pilka_nozna",
+        "startTime": "2026-10-12T21:30:00Z"
+      },
+      "version": 90,
+      "markets": [
+        {
+          "id": "BRUF#sr:match:73265380#1",
+          "marketType": "10",
+          "name": {
+            "name": "1X2",
+            "localizedName": {
+              "en": "1X2",
+              "pl": "1X2"
+            }
+          },
+          "selections": [
+            {
+              "id": "1",
+              "name": {
+                "name": "Gimnasia y Esgrima Mendoza",
+                "localizedName": {
+                  "en": "Gimnasia y Esgrima Mendoza",
+                  "pl": "Gimnasia y Esgrima Mendoza"
+                }
+              },
+              "status": "OPEN",
+              "price": 2.55
+            },
+            {
+              "id": "2",
+              "name": {
+                "name": "Draw",
+                "localizedName": {
+                  "en": "Draw",
+                  "pl": "Remis"
+                }
+              },
+              "status": "OPEN",
+              "price": 2.95
+            },
+            {
+              "id": "3",
+              "name": {
+                "name": "Newell's Old Boys",
+                "localizedName": {
+                  "en": "Newell's Old Boys",
+                  "pl": "Newell´s Old Boys"
+                }
+              },
+              "status": "OPEN",
+              "price": 3.15
+            }
+          ],
+          "marginZeroMarket": null
+        }
+      ],
+      "marginZeroMarket": null,
+      "matchInfo": {
+        "eventStatus": "LIVE",
+        "matchStatus": 6,
+        "matchStatusDescription": {
+          "pl": "1. połowa"
+        },
+        "matchScore": {
+          "awayScore": 0,
+          "homeScore": 0,
+          "matchScoreDetails": null,
+          "periodScores": [
+            {
+              "awayScore": 0,
+              "homeScore": 0,
+              "periodNumber": 1,
+              "periodType": "REGULARPERIOD"
+            }
+          ]
+        },
+        "matchTime": {
+          "time": "8:36",
+          "matchTimeDetails": {}
+        },
+        "matchInfoDetails": {
+          "corners": {
+            "home": 0,
+            "away": 0
+          },
+          "redCards": {
+            "home": 0,
+            "away": 0
+          },
+          "yellowCards": {
+            "home": 0,
+            "away": 0
+          },
+          "yellowRedCards": {
+            "home": 0,
+            "away": 0
+          }
+        }
+      },
+      "fantasyCategory": null,
+      "mn": 160
+    },
+    {
+      "id": "BRUF#sr:match:75060876",
+      "fixture": {
+        "categoryNodeId": "usa",
+        "competitionNodeId": "mlb",
+        "competitors": [
+          {
+            "id": "sr:competitor:3630",
+            "name": {
+              "name": "Milwaukee Brewers",
+              "localizedName": {}
+            },
+            "homeAway": "HOME"
+          },
+          {
+            "id": "sr:competitor:3638",
+            "name": {
+              "name": "Los Angeles Dodgers",
+              "localizedName": {}
+            },
+            "homeAway": "AWAY"
+          }
+        ],
+        "eventName": {
+          "name": "Milwaukee Brewers vs. Los Angeles Dodgers",
+          "localizedName": {}
+        },
+        "expectedResultingTime": "2026-10-12T21:00:00Z",
+        "isFantasy": false,
+        "isLive": true,
+        "isOutright": false,
+        "isVirtual": false,
+        "path": {
+          "sportId": "3",
+          "categoryId": "16",
+          "competitionId": "BRUF#sr:tournament:109",
+          "seasonId": "sr:season:134469"
+        },
+        "sportNodeId": "baseball",
+        "startTime": "2026-10-12T21:00:00Z"
+      },
+      "version": 619,
+      "markets": [
+        {
+          "id": "BRUF#sr:match:75060876#251",
+          "marketType": "3000020",
+          "name": {
+            "name": "2way",
+            "localizedName": {
+              "en": "2way",
+              "pl": "Zwycięzca (włącznie z extra innings)"
+            }
+          },
+          "selections": [
+            {
+              "id": "4",
+              "name": {
+                "name": "Milwaukee Brewers",
+                "localizedName": {
+                  "en": "Milwaukee Brewers",
+                  "pl": "Milwaukee Brewers"
+                }
+              },
+              "status": "OPEN",
+              "price": 1.9
+            },
+            {
+              "id": "5",
+              "name": {
+                "name": "Los Angeles Dodgers",
+                "localizedName": {
+                  "en": "Los Angeles Dodgers",
+                  "pl": "Los Angeles Dodgers"
+                }
+              },
+              "status": "OPEN",
+              "price": 1.95
+            }
+          ],
+          "marginZeroMarket": null
+        }
+      ],
+      "marginZeroMarket": null,
+      "matchInfo": {
+        "eventStatus": "LIVE",
+        "matchStatus": 423,
+        "matchStatusDescription": {
+          "pl": "Break top2-bottom2"
+        },
+        "matchScore": {
+          "awayScore": 1,
+          "homeScore": 1,
+          "matchScoreDetails": null,
+          "periodScores": [
+            {
+              "awayScore": 1,
+              "homeScore": 1,
+              "periodNumber": 1,
+              "periodType": "REGULARPERIOD"
+            },
+            {
+              "awayScore": 0,
+              "homeScore": 0,
+              "periodNumber": 2,
+              "periodType": "REGULARPERIOD"
+            }
+          ]
+        },
+        "matchTime": null,
+        "matchInfoDetails": {
+          "balls": 0,
+          "bases": "0,0,0",
+          "batter": {
+            "home": 6,
+            "away": 1
+          },
+          "outs": 0,
+          "strikes": 0
+        }
+      },
+      "fantasyCategory": null,
+      "mn": 119
+    },
+    {
+      "id": "BRUF#sr:match:73038596",
+      "fixture": {
+        "categoryNodeId": "paragwaj",
+        "competitionNodeId": "1_liga-2",
+        "competitors": [
+          {
+            "id": "sr:competitor:5992",
+            "name": {
+              "name": "CS 2 de Mayo",
+              "localizedName": {}
+            },
+            "homeAway": "HOME"
+          },
+          {
+            "id": "sr:competitor:607728",
+            "name": {
+              "name": "Sportivo Ameliano",
+              "localizedName": {}
+            },
+            "homeAway": "AWAY"
+          }
+        ],
+        "eventName": {
+          "name": "CS 2 de Mayo vs. Sportivo Ameliano",
+          "localizedName": {}
+        },
+        "expectedResultingTime": "2026-10-12T20:00:00Z",
+        "isFantasy": false,
+        "isLive": true,
+        "isOutright": false,
+        "isVirtual": false,
+        "path": {
+          "sportId": "1",
+          "categoryId": "280",
+          "competitionId": "BRUF#sr:tournament:27098",
+          "groupId": "Division de Honor, Clausura",
+          "seasonId": "sr:season:137594"
+        },
+        "sportNodeId": "pilka_nozna",
+        "startTime": "2026-10-12T20:00:00Z"
+      },
+      "version": 412,
+      "markets": [
+        {
+          "id": "BRUF#sr:match:73038596#1",
+          "marketType": "10",
+          "name": {
+            "name": "1X2",
+            "localizedName": {
+              "en": "1X2",
+              "pl": "1X2"
+            }
+          },
+          "selections": [
+            {
+              "id": "1",
+              "name": {
+                "name": "CS 2 de Mayo",
+                "localizedName": {
+                  "en": "CS 2 de Mayo",
+                  "pl": "CS 2 de Mayo"
+                }
+              },
+              "status": "OPEN",
+              "price": 1.2
+            },
+            {
+              "id": "2",
+              "name": {
+                "name": "Draw",
+                "localizedName": {
+                  "en": "Draw",
+                  "pl": "Remis"
+                }
+              },
+              "status": "OPEN",
+              "price": 5.3
+            },
+            {
+              "id": "3",
+              "name": {
+                "name": "Sportivo Ameliano",
+                "localizedName": {
+                  "en": "Sportivo Ameliano",
+                  "pl": "Sportivo Ameliano"
+                }
+              },
+              "status": "OPEN",
+              "price": 45
+            }
+          ],
+          "marginZeroMarket": null
+        }
+      ],
+      "marginZeroMarket": null,
+      "matchInfo": {
+        "eventStatus": "LIVE",
+        "matchStatus": 7,
+        "matchStatusDescription": {
+          "pl": "2. połowa"
+        },
+        "matchScore": {
+          "awayScore": 0,
+          "homeScore": 1,
+          "matchScoreDetails": null,
+          "periodScores": [
+            {
+              "awayScore": 0,
+              "homeScore": 0,
+              "periodNumber": 1,
+              "periodType": "REGULARPERIOD"
+            },
+            {
+              "awayScore": 0,
+              "homeScore": 1,
+              "periodNumber": 2,
+              "periodType": "REGULARPERIOD"
+            }
+          ]
+        },
+        "matchTime": {
+          "time": "77:04",
+          "matchTimeDetails": {}
+        },
+        "matchInfoDetails": {
+          "corners": {
+            "home": 5,
+            "away": 3
+          },
+          "redCards": {
+            "home": 0,
+            "away": 0
+          },
+          "yellowCards": {
+            "home": 2,
+            "away": 0
+          },
+          "yellowRedCards": {
+            "home": 0,
+            "away": 0
+          }
+        }
+      },
+      "fantasyCategory": null,
+      "mn": 40
+    },
+    {
+      "id": "BRUF#sr:match:75311858",
+      "fixture": {
+        "categoryNodeId": "maroko",
+        "competitionNodeId": "1_liga",
+        "competitors": [
+          {
+            "id": "sr:competitor:55039",
+            "name": {
+              "name": "Hassania Union Sport Agadir",
+              "localizedName": {}
+            },
+            "homeAway": "HOME"
+          },
+          {
+            "id": "sr:competitor:24394",
+            "name": {
+              "name": "AS Far Rabat",
+              "localizedName": {}
+            },
+            "homeAway": "AWAY"
+          }
+        ],
+        "eventName": {
+          "name": "Hassania Union Sport Agadir vs. AS Far Rabat",
+          "localizedName": {}
+        },
+        "expectedResultingTime": "2026-10-12T20:00:00Z",
+        "isFantasy": false,
+        "isLive": true,
+        "isOutright": false,
+        "isVirtual": false,
+        "path": {
+          "sportId": "1",
+          "categoryId": "303",
+          "competitionId": "BRUF#sr:tournament:937",
+          "groupId": "Botola Pro D1",
+          "seasonId": "sr:season:145978"
+        },
+        "sportNodeId": "pilka_nozna",
+        "startTime": "2026-10-12T20:00:00Z"
+      },
+      "version": 253,
+      "markets": [
+        {
+          "id": "BRUF#sr:match:75311858#1",
+          "marketType": "10",
+          "name": {
+            "name": "1X2",
+            "localizedName": {
+              "en": "1X2",
+              "pl": "1X2"
+            }
+          },
+          "selections": [
+            {
+              "id": "1",
+              "name": {
+                "name": "Hassania Union Sport Agadir",
+                "localizedName": {
+                  "en": "Hassania Union Sport Agadir",
+                  "pl": "Hassania Union Sport Agadir"
+                }
+              },
+              "status": "OPEN",
+              "price": 1.35
+            },
+            {
+              "id": "2",
+              "name": {
+                "name": "Draw",
+                "localizedName": {
+                  "en": "Draw",
+                  "pl": "Remis"
+                }
+              },
+              "status": "OPEN",
+              "price": 3.95
+            },
+            {
+              "id": "3",
+              "name": {
+                "name": "AS Far Rabat",
+                "localizedName": {
+                  "en": "AS Far Rabat",
+                  "pl": "AS Far Rabat"
+                }
+              },
+              "status": "OPEN",
+              "price": 22
+            }
+          ],
+          "marginZeroMarket": null
+        }
+      ],
+      "marginZeroMarket": null,
+      "matchInfo": {
+        "eventStatus": "LIVE",
+        "matchStatus": 7,
+        "matchStatusDescription": {
+          "pl": "2. połowa"
+        },
+        "matchScore": {
+          "awayScore": 1,
+          "homeScore": 2,
+          "matchScoreDetails": null,
+          "periodScores": [
+            {
+              "awayScore": 1,
+              "homeScore": 1,
+              "periodNumber": 1,
+              "periodType": "REGULARPERIOD"
+            },
+            {
+              "awayScore": 0,
+              "homeScore": 1,
+              "periodNumber": 2,
+              "periodType": "REGULARPERIOD"
+            }
+          ]
+        },
+        "matchTime": {
+          "time": "78:18",
+          "matchTimeDetails": {}
+        },
+        "matchInfoDetails": {
+          "corners": {
+            "home": 2,
+            "away": 4
+          },
+          "redCards": {
+            "home": 0,
+            "away": 0
+          },
+          "yellowCards": {
+            "home": 0,
+            "away": 1
+          },
+          "yellowRedCards": {
+            "home": 0,
+            "away": 0
+          }
+        }
+      },
+      "fantasyCategory": null,
+      "mn": 21
+    },
+    {
+      "id": "BRUF#sr:match:75521922",
+      "fixture": {
+        "categoryNodeId": "challenger",
+        "competitionNodeId": "santa_cruz_2",
+        "competitors": [
+          {
+            "id": "sr:competitor:185434",
+            "name": {
+              "name": "Rodriguez Taverna Santiago",
+              "localizedName": {}
+            },
+            "homeAway": "HOME"
+          },
+          {
+            "id": "sr:competitor:978717",
+            "name": {
+              "name": "Zeitune Maximo",
+              "localizedName": {}
+            },
+            "homeAway": "AWAY"
+          }
+        ],
+        "eventName": {
+          "name": "Rodriguez Taverna Santiago vs. Zeitune Maximo",
+          "localizedName": {}
+        },
+        "expectedResultingTime": "2026-10-12T20:30:00Z",
+        "isFantasy": false,
+        "isLive": true,
+        "isOutright": false,
+        "isVirtual": false,
+        "path": {
+          "sportId": "5",
+          "categoryId": "72",
+          "competitionId": "BRUF#sr:tournament:36093",
+          "seasonId": "sr:season:142962"
+        },
+        "sportNodeId": "tenis",
+        "startTime": "2026-10-12T20:30:00Z"
+      },
+      "version": 450,
+      "markets": [
+        {
+          "id": "BRUF#sr:match:75521922#186",
+          "marketType": "5000020",
+          "name": {
+            "name": "2way",
+            "localizedName": {
+              "en": "2way",
+              "pl": "Zwycięzca"
+            }
+          },
+          "selections": [
+            {
+              "id": "4",
+              "name": {
+                "name": "Rodriguez Taverna Santiago",
+                "localizedName": {
+                  "en": "Rodriguez Taverna Santiago",
+                  "pl": "Rodriguez Taverna Santiago"
+                }
+              },
+              "status": "OPEN",
+              "price": 9.75
+            },
+            {
+              "id": "5",
+              "name": {
+                "name": "Zeitune Maximo",
+                "localizedName": {
+                  "en": "Zeitune Maximo",
+                  "pl": "Zeitune Maximo"
+                }
+              },
+              "status": "OPEN",
+              "price": 1.03
+            }
+          ],
+          "marginZeroMarket": null
+        }
+      ],
+      "marginZeroMarket": null,
+      "matchInfo": {
+        "eventStatus": "LIVE",
+        "matchStatus": 9,
+        "matchStatusDescription": {
+          "pl": "2. set"
+        },
+        "matchScore": {
+          "awayScore": 1,
+          "homeScore": 0,
+          "matchScoreDetails": {
+            "homeGameScore": 0,
+            "awayGameScore": 15,
+            "homeLegScore": 0,
+            "awayLegScore": 0
+          },
+          "periodScores": [
+            {
+              "awayScore": 6,
+              "homeScore": 1,
+              "periodNumber": 1,
+              "periodType": "REGULARPERIOD"
+            },
+            {
+              "awayScore": 3,
+              "homeScore": 2,
+              "periodNumber": 2,
+              "periodType": "REGULARPERIOD"
+            }
+          ]
+        },
+        "matchTime": null,
+        "matchInfoDetails": {
+          "server": 2,
+          "isTieBreak": false
+        }
+      },
+      "fantasyCategory": null,
+      "mn": 2
+    },
+    {
+      "id": "BRUF#sr:match:68098142",
+      "fixture": {
+        "categoryNodeId": "chile",
+        "competitionNodeId": "2_liga",
+        "competitors": [
+          {
+            "id": "sr:competitor:33596",
+            "name": {
+              "name": "Deportes Iquique",
+              "localizedName": {}
+            },
+            "homeAway": "HOME"
+          },
+          {
+            "id": "sr:competitor:3153",
+            "name": {
+              "name": "Union Espanola",
+              "localizedName": {}
+            },
+            "homeAway": "AWAY"
+          }
+        ],
+        "eventName": {
+          "name": "Deportes Iquique vs. Union Espanola",
+          "localizedName": {}
+        },
+        "expectedResultingTime": "2026-10-12T20:30:00Z",
+        "isFantasy": false,
+        "isLive": true,
+        "isOutright": false,
+        "isVirtual": false,
+        "path": {
+          "sportId": "1",
+          "categoryId": "49",
+          "competitionId": "BRUF#sr:tournament:1240",
+          "groupId": "Liga de Ascenso",
+          "seasonId": "sr:season:139054"
+        },
+        "sportNodeId": "pilka_nozna",
+        "startTime": "2026-10-12T20:30:00Z"
+      },
+      "version": 173,
+      "markets": [
+        {
+          "id": "BRUF#sr:match:68098142#1",
+          "marketType": "10",
+          "name": {
+            "name": "1X2",
+            "localizedName": {
+              "en": "1X2",
+              "pl": "1X2"
+            }
+          },
+          "selections": [
+            {
+              "id": "1",
+              "name": {
+                "name": "Deportes Iquique",
+                "localizedName": {
+                  "en": "Deportes Iquique",
+                  "pl": "Deportes Iquique"
+                }
+              },
+              "status": "OPEN",
+              "price": 1.32
+            },
+            {
+              "id": "2",
+              "name": {
+                "name": "Draw",
+                "localizedName": {
+                  "en": "Draw",
+                  "pl": "Remis"
+                }
+              },
+              "status": "OPEN",
+              "price": 4.55
+            },
+            {
+              "id": "3",
+              "name": {
+                "name": "Union Espanola",
+                "localizedName": {
+                  "en": "Union Espanola",
+                  "pl": "Union Espanola"
+                }
+              },
+              "status": "OPEN",
+              "price": 14.5
+            }
+          ],
+          "marginZeroMarket": null
+        }
+      ],
+      "marginZeroMarket": null,
+      "matchInfo": {
+        "eventStatus": "LIVE",
+        "matchStatus": 7,
+        "matchStatusDescription": {
+          "pl": "2. połowa"
+        },
+        "matchScore": {
+          "awayScore": 0,
+          "homeScore": 1,
+          "matchScoreDetails": null,
+          "periodScores": [
+            {
+              "awayScore": 0,
+              "homeScore": 1,
+              "periodNumber": 1,
+              "periodType": "REGULARPERIOD"
+            },
+            {
+              "awayScore": 0,
+              "homeScore": 0,
+              "periodNumber": 2,
+              "periodType": "REGULARPERIOD"
+            }
+          ]
+        },
+        "matchTime": {
+          "time": "47:47",
+          "matchTimeDetails": {}
+        },
+        "matchInfoDetails": {
+          "corners": {
+            "home": 2,
+            "away": 2
+          },
+          "redCards": {
+            "home": 0,
+            "away": 0
+          },
+          "yellowCards": {
+            "home": 2,
+            "away": 1
+          },
+          "yellowRedCards": {
+            "home": 0,
+            "away": 0
+          }
+        }
+      },
+      "fantasyCategory": null,
+      "mn": 25
+    },
+    {
+      "id": "BROD#od:match:3288356",
+      "fixture": {
+        "categoryNodeId": "counterstrike",
+        "competitionNodeId": "esl_challenger_league_season_52_south_america_cup_3-od_tournament_15144",
+        "competitors": [
+          {
+            "id": "od:competitor:12541",
+            "name": {
+              "name": "Galorys",
+              "localizedName": {}
+            },
+            "homeAway": "HOME"
+          },
+          {
+            "id": "od:competitor:10258",
+            "name": {
+              "name": "Bounty Hunters Esports",
+              "localizedName": {}
+            },
+            "homeAway": "AWAY"
+          }
+        ],
+        "eventName": {
+          "name": "Galorys vs. Bounty Hunters Esports",
+          "localizedName": {}
+        },
+        "expectedResultingTime": "2026-10-12T21:05:00Z",
+        "isFantasy": false,
+        "isLive": true,
+        "isOutright": false,
+        "isVirtual": false,
+        "path": {
+          "sportId": "109",
+          "categoryId": "30000",
+          "competitionId": "BROD#od:tournament:15144"
+        },
+        "sportNodeId": "counterstrike",
+        "startTime": "2026-10-12T21:05:00Z"
+      },
+      "version": 442,
+      "markets": [],
+      "marginZeroMarket": null,
+      "matchInfo": {
+        "eventStatus": "LIVE",
+        "matchStatus": 141,
+        "matchStatusDescription": {
+          "pl": "1. mapa"
+        },
+        "matchScore": {
+          "awayScore": 0,
+          "homeScore": 0,
+          "matchScoreDetails": null,
+          "periodScores": [
+            {
+              "awayScore": 0,
+              "homeScore": 0,
+              "periodNumber": 1,
+              "periodType": "REGULARPERIOD"
+            },
+            {
+              "awayScore": 0,
+              "homeScore": 0,
+              "periodNumber": 2,
+              "periodType": "REGULARPERIOD"
+            },
+            {
+              "awayScore": 0,
+              "homeScore": 0,
+              "periodNumber": 3,
+              "periodType": "REGULARPERIOD"
+            }
+          ]
+        },
+        "matchTime": null,
+        "matchInfoDetails": null
+      },
+      "fantasyCategory": null,
+      "mn": 114
+    },
+    {
+      "id": "BRUF#sr:match:75486050",
+      "fixture": {
+        "categoryNodeId": "challenger",
+        "competitionNodeId": "santa_cruz_2",
+        "competitors": [
+          {
+            "id": "sr:competitor:574371",
+            "name": {
+              "name": "Torres Juan Bautista",
+              "localizedName": {}
+            },
+            "homeAway": "HOME"
+          },
+          {
+            "id": "sr:competitor:517028",
+            "name": {
+              "name": "Barrena Alex",
+              "localizedName": {}
+            },
+            "homeAway": "AWAY"
+          }
+        ],
+        "eventName": {
+          "name": "Torres Juan Bautista vs. Barrena Alex",
+          "localizedName": {}
+        },
+        "expectedResultingTime": "2026-10-12T21:50:00Z",
+        "isFantasy": false,
+        "isLive": false,
+        "isOutright": false,
+        "isVirtual": false,
+        "path": {
+          "sportId": "5",
+          "categoryId": "72",
+          "competitionId": "BRUF#sr:tournament:36093",
+          "seasonId": "sr:season:142962"
+        },
+        "sportNodeId": "tenis",
+        "startTime": "2026-10-12T21:50:00Z"
+      },
+      "version": 80,
+      "markets": [
+        {
+          "id": "BRUF#sr:match:75486050#186",
+          "marketType": "5000020",
+          "name": {
+            "name": "2way",
+            "localizedName": {
+              "en": "2way",
+              "pl": "Zwycięzca"
+            }
+          },
+          "selections": [
+            {
+              "id": "4",
+              "name": {
+                "name": "Torres Juan Bautista",
+                "localizedName": {
+                  "en": "Torres Juan Bautista",
+                  "pl": "Torres Juan Bautista"
+                }
+              },
+              "status": "OPEN",
+              "price": 2.5
+            },
+            {
+              "id": "5",
+              "name": {
+                "name": "Barrena Alex",
+                "localizedName": {
+                  "en": "Barrena Alex",
+                  "pl": "Barrena Alex"
+                }
+              },
+              "status": "OPEN",
+              "price": 1.54
+            }
+          ],
+          "marginZeroMarket": null
+        }
+      ],
+      "marginZeroMarket": null,
+      "matchInfo": {
+        "eventStatus": "NOTSTARTED",
+        "matchStatus": 0,
+        "matchStatusDescription": {
+          "pl": "Not started"
+        },
+        "matchScore": null,
+        "matchTime": null,
+        "matchInfoDetails": null
+      },
+      "fantasyCategory": null,
+      "mn": 71
+    },
+    {
+      "id": "BRUF#sr:match:73038598",
+      "fixture": {
+        "categoryNodeId": "paragwaj",
+        "competitionNodeId": "1_liga-2",
+        "competitors": [
+          {
+            "id": "sr:competitor:33001",
+            "name": {
+              "name": "Nacional Asuncion",
+              "localizedName": {}
+            },
+            "homeAway": "HOME"
+          },
+          {
+            "id": "sr:competitor:463345",
+            "name": {
+              "name": "Recoleta FC",
+              "localizedName": {}
+            },
+            "homeAway": "AWAY"
+          }
+        ],
+        "eventName": {
+          "name": "Nacional Asuncion vs. Recoleta FC",
+          "localizedName": {}
+        },
+        "expectedResultingTime": "2026-10-12T22:20:00Z",
+        "isFantasy": false,
+        "isLive": false,
+        "isOutright": false,
+        "isVirtual": false,
+        "path": {
+          "sportId": "1",
+          "categoryId": "280",
+          "competitionId": "BRUF#sr:tournament:27098",
+          "seasonId": "sr:season:137594"
+        },
+        "sportNodeId": "pilka_nozna",
+        "startTime": "2026-10-12T22:20:00Z"
+      },
+      "version": 29,
+      "markets": [
+        {
+          "id": "BRUF#sr:match:73038598#1",
+          "marketType": "10",
+          "name": {
+            "name": "1X2",
+            "localizedName": {
+              "en": "1X2",
+              "pl": "1X2"
+            }
+          },
+          "selections": [
+            {
+              "id": "1",
+              "name": {
+                "name": "Nacional Asuncion",
+                "localizedName": {
+                  "en": "Nacional Asuncion",
+                  "pl": "Nacional Asuncion"
+                }
+              },
+              "status": "OPEN",
+              "price": 1.73
+            },
+            {
+              "id": "2",
+              "name": {
+                "name": "Draw",
+                "localizedName": {
+                  "en": "Draw",
+                  "pl": "Remis"
+                }
+              },
+              "status": "OPEN",
+              "price": 3.8
+            },
+            {
+              "id": "3",
+              "name": {
+                "name": "Recoleta FC",
+                "localizedName": {
+                  "en": "Recoleta FC",
+                  "pl": "Recoleta FC"
+                }
+              },
+              "status": "OPEN",
+              "price": 4.8
+            }
+          ],
+          "marginZeroMarket": null
+        }
+      ],
+      "marginZeroMarket": null,
+      "matchInfo": {
+        "eventStatus": "NOTSTARTED",
+        "matchStatus": 0,
+        "matchStatusDescription": {
+          "pl": "Not started"
+        },
+        "matchScore": null,
+        "matchTime": null,
+        "matchInfoDetails": null
+      },
+      "fantasyCategory": null,
+      "mn": 92
+    },
+    {
+      "id": "BRUF#sr:match:66887076",
+      "fixture": {
+        "categoryNodeId": "brazylia",
+        "competitionNodeId": "serie_a",
+        "competitors": [
+          {
+            "id": "sr:competitor:21845",
+            "name": {
+              "name": "Chapecoense SC",
+              "localizedName": {}
+            },
+            "homeAway": "HOME"
+          },
+          {
+            "id": "sr:competitor:1967",
+            "name": {
+              "name": "CA Paranaense PR",
+              "localizedName": {}
+            },
+            "homeAway": "AWAY"
+          }
+        ],
+        "eventName": {
+          "name": "Chapecoense SC vs. CA Paranaense PR",
+          "localizedName": {}
+        },
+        "expectedResultingTime": "2026-10-12T22:30:00Z",
+        "isFantasy": false,
+        "isLive": false,
+        "isOutright": false,
+        "isVirtual": false,
+        "path": {
+          "sportId": "1",
+          "categoryId": "13",
+          "competitionId": "BRUF#sr:tournament:325",
+          "seasonId": "sr:season:137706"
+        },
+        "sportNodeId": "pilka_nozna",
+        "startTime": "2026-10-12T22:30:00Z"
+      },
+      "version": 98,
+      "markets": [
+        {
+          "id": "BRUF#sr:match:66887076#1",
+          "marketType": "10",
+          "name": {
+            "name": "1X2",
+            "localizedName": {
+              "en": "1X2",
+              "pl": "1X2"
+            }
+          },
+          "selections": [
+            {
+              "id": "1",
+              "name": {
+                "name": "Chapecoense SC",
+                "localizedName": {
+                  "en": "Chapecoense SC",
+                  "pl": "Chapecoense SC"
+                }
+              },
+              "status": "OPEN",
+              "price": 4
+            },
+            {
+              "id": "2",
+              "name": {
+                "name": "Draw",
+                "localizedName": {
+                  "en": "Draw",
+                  "pl": "Remis"
+                }
+              },
+              "status": "OPEN",
+              "price": 3.8
+            },
+            {
+              "id": "3",
+              "name": {
+                "name": "CA Paranaense PR",
+                "localizedName": {
+                  "en": "CA Paranaense PR",
+                  "pl": "CA Paranaense PR"
+                }
+              },
+              "status": "OPEN",
+              "price": 1.87
+            }
+          ],
+          "marginZeroMarket": null
+        }
+      ],
+      "marginZeroMarket": null,
+      "matchInfo": {
+        "eventStatus": "NOTSTARTED",
+        "matchStatus": 0,
+        "matchStatusDescription": {
+          "pl": "Not started"
+        },
+        "matchScore": null,
+        "matchTime": null,
+        "matchInfoDetails": null
+      },
+      "fantasyCategory": null,
+      "mn": 97
+    },
+    {
+      "id": "BRUF#sr:match:72909020",
+      "fixture": {
+        "categoryNodeId": "usa",
+        "competitionNodeId": "nhl",
+        "competitors": [
+          {
+            "id": "sr:competitor:3704",
+            "name": {
+              "name": "New Jersey Devils",
+              "localizedName": {}
+            },
+            "homeAway": "HOME"
+          },
+          {
+            "id": "sr:competitor:3700",
+            "name": {
+              "name": "Ottawa Senators",
+              "localizedName": {}
+            },
+            "homeAway": "AWAY"
+          }
+        ],
+        "eventName": {
+          "name": "New Jersey Devils vs. Ottawa Senators",
+          "localizedName": {}
+        },
+        "expectedResultingTime": "2026-10-12T23:00:00Z",
+        "isFantasy": false,
+        "isLive": false,
+        "isOutright": false,
+        "isVirtual": false,
+        "path": {
+          "sportId": "4",
+          "categoryId": "37",
+          "competitionId": "BRUF#sr:tournament:234",
+          "seasonId": "sr:season:142266"
+        },
+        "sportNodeId": "hokej",
+        "startTime": "2026-10-12T23:00:00Z"
+      },
+      "version": 32,
+      "markets": [
+        {
+          "id": "BRUF#sr:match:72909020#1",
+          "marketType": "4000010",
+          "name": {
+            "name": "1X2",
+            "localizedName": {
+              "en": "1X2",
+              "pl": "1X2"
+            }
+          },
+          "selections": [
+            {
+              "id": "1",
+              "name": {
+                "name": "New Jersey Devils",
+                "localizedName": {
+                  "en": "New Jersey Devils",
+                  "pl": "New Jersey Devils"
+                }
+              },
+              "status": "OPEN",
+              "price": 2.33
+            },
+            {
+              "id": "2",
+              "name": {
+                "name": "Draw",
+                "localizedName": {
+                  "en": "Draw",
+                  "pl": "Remis"
+                }
+              },
+              "status": "OPEN",
+              "price": 4.15
+            },
+            {
+              "id": "3",
+              "name": {
+                "name": "Ottawa Senators",
+                "localizedName": {
+                  "en": "Ottawa Senators",
+                  "pl": "Ottawa Senators"
+                }
+              },
+              "status": "OPEN",
+              "price": 2.57
+            }
+          ],
+          "marginZeroMarket": null
+        }
+      ],
+      "marginZeroMarket": null,
+      "matchInfo": {
+        "eventStatus": "NOTSTARTED",
+        "matchStatus": 0,
+        "matchStatusDescription": {
+          "pl": "Not started"
+        },
+        "matchScore": null,
+        "matchTime": null,
+        "matchInfoDetails": null
+      },
+      "fantasyCategory": null,
+      "mn": 148
+    },
+    {
+      "id": "BRUF#sr:match:75486052",
+      "fixture": {
+        "categoryNodeId": "challenger",
+        "competitionNodeId": "santa_cruz_2",
+        "competitors": [
+          {
+            "id": "sr:competitor:952887",
+            "name": {
+              "name": "Aguilar Cardozo Joaquin",
+              "localizedName": {}
+            },
+            "homeAway": "HOME"
+          },
+          {
+            "id": "sr:competitor:121668",
+            "name": {
+              "name": "Meligeni Alves Felipe",
+              "localizedName": {}
+            },
+            "homeAway": "AWAY"
+          }
+        ],
+        "eventName": {
+          "name": "Aguilar Cardozo Joaquin vs. Meligeni Alves Felipe",
+          "localizedName": {}
+        },
+        "expectedResultingTime": "2026-10-12T23:00:00Z",
+        "isFantasy": false,
+        "isLive": false,
+        "isOutright": false,
+        "isVirtual": false,
+        "path": {
+          "sportId": "5",
+          "categoryId": "72",
+          "competitionId": "BRUF#sr:tournament:36093",
+          "seasonId": "sr:season:142962"
+        },
+        "sportNodeId": "tenis",
+        "startTime": "2026-10-12T23:00:00Z"
+      },
+      "version": 84,
+      "markets": [
+        {
+          "id": "BRUF#sr:match:75486052#186",
+          "marketType": "5000020",
+          "name": {
+            "name": "2way",
+            "localizedName": {
+              "en": "2way",
+              "pl": "Zwycięzca"
+            }
+          },
+          "selections": [
+            {
+              "id": "4",
+              "name": {
+                "name": "Aguilar Cardozo Joaquin",
+                "localizedName": {
+                  "en": "Aguilar Cardozo Joaquin",
+                  "pl": "Aguilar Cardozo Joaquin"
+                }
+              },
+              "status": "OPEN",
+              "price": 1.74
+            },
+            {
+              "id": "5",
+              "name": {
+                "name": "Meligeni Alves Felipe",
+                "localizedName": {
+                  "en": "Meligeni Alves Felipe",
+                  "pl": "Meligeni Alves Felipe"
+                }
+              },
+              "status": "OPEN",
+              "price": 2.03
+            }
+          ],
+          "marginZeroMarket": null
+        }
+      ],
+      "marginZeroMarket": null,
+      "matchInfo": {
+        "eventStatus": "NOTSTARTED",
+        "matchStatus": 0,
+        "matchStatusDescription": {
+          "pl": "Not started"
+        },
+        "matchScore": null,
+        "matchTime": null,
+        "matchInfoDetails": null
+      },
+      "fantasyCategory": null,
+      "mn": 27
+    },
+    {
+      "id": "BRUF#sr:match:73323648",
+      "fixture": {
+        "categoryNodeId": "usa",
+        "competitionNodeId": "nba_preseason",
+        "competitors": [
+          {
+            "id": "sr:competitor:3423",
+            "name": {
+              "name": "Atlanta Hawks",
+              "localizedName": {}
+            },
+            "homeAway": "HOME"
+          },
+          {
+            "id": "sr:competitor:3418",
+            "name": {
+              "name": "Oklahoma City Thunder",
+              "localizedName": {}
+            },
+            "homeAway": "AWAY"
+          }
+        ],
+        "eventName": {
+          "name": "Atlanta Hawks vs. Oklahoma City Thunder",
+          "localizedName": {}
+        },
+        "expectedResultingTime": "2026-10-12T23:00:00Z",
+        "isFantasy": false,
+        "isLive": false,
+        "isOutright": false,
+        "isVirtual": false,
+        "path": {
+          "sportId": "2",
+          "categoryId": "15",
+          "competitionId": "BRUF#sr:tournament:2382",
+          "seasonId": "sr:season:144932"
+        },
+        "sportNodeId": "koszykowka",
+        "startTime": "2026-10-12T23:00:00Z"
+      },
+      "version": 97,
+      "markets": [
+        {
+          "id": "BRUF#sr:match:73323648#219",
+          "marketType": "2000020",
+          "name": {
+            "name": "2way",
+            "localizedName": {
+              "en": "2way",
+              "pl": "Zwycięzca (włącznie z dogrywką)"
+            }
+          },
+          "selections": [
+            {
+              "id": "4",
+              "name": {
+                "name": "Atlanta Hawks",
+                "localizedName": {
+                  "en": "Atlanta Hawks",
+                  "pl": "Atlanta Hawks"
+                }
+              },
+              "status": "OPEN",
+              "price": 1.56
+            },
+            {
+              "id": "5",
+              "name": {
+                "name": "Oklahoma City Thunder",
+                "localizedName": {
+                  "en": "Oklahoma City Thunder",
+                  "pl": "Oklahoma City Thunder"
+                }
+              },
+              "status": "OPEN",
+              "price": 2.35
+            }
+          ],
+          "marginZeroMarket": null
+        }
+      ],
+      "marginZeroMarket": null,
+      "matchInfo": {
+        "eventStatus": "NOTSTARTED",
+        "matchStatus": 0,
+        "matchStatusDescription": {
+          "pl": "Not started"
+        },
+        "matchScore": null,
+        "matchTime": null,
+        "matchInfoDetails": null
+      },
+      "fantasyCategory": null,
+      "mn": 109
+    },
+    {
+      "id": "BRUF#sr:match:73864172",
+      "fixture": {
+        "categoryNodeId": "usa",
+        "competitionNodeId": "nba_preseason",
+        "competitors": [
+          {
+            "id": "sr:competitor:3421",
+            "name": {
+              "name": "New York Knicks",
+              "localizedName": {}
+            },
+            "homeAway": "HOME"
+          },
+          {
+            "id": "sr:competitor:3426",
+            "name": {
+              "name": "Minnesota Timberwolves",
+              "localizedName": {}
+            },
+            "homeAway": "AWAY"
+          }
+        ],
+        "eventName": {
+          "name": "New York Knicks vs. Minnesota Timberwolves",
+          "localizedName": {}
+        },
+        "expectedResultingTime": "2026-10-12T23:30:00Z",
+        "isFantasy": false,
+        "isLive": false,
+        "isOutright": false,
+        "isVirtual": false,
+        "path": {
+          "sportId": "2",
+          "categoryId": "15",
+          "competitionId": "BRUF#sr:tournament:2382",
+          "seasonId": "sr:season:144932"
+        },
+        "sportNodeId": "koszykowka",
+        "startTime": "2026-10-12T23:30:00Z"
+      },
+      "version": 20,
+      "markets": [
+        {
+          "id": "BRUF#sr:match:73864172#219",
+          "marketType": "2000020",
+          "name": {
+            "name": "2way",
+            "localizedName": {
+              "en": "2way",
+              "pl": "Zwycięzca (włącznie z dogrywką)"
+            }
+          },
+          "selections": [
+            {
+              "id": "4",
+              "name": {
+                "name": "New York Knicks",
+                "localizedName": {
+                  "en": "New York Knicks",
+                  "pl": "New York Knicks"
+                }
+              },
+              "status": "OPEN",
+              "price": 1.74
+            },
+            {
+              "id": "5",
+              "name": {
+                "name": "Minnesota Timberwolves",
+                "localizedName": {
+                  "en": "Minnesota Timberwolves",
+                  "pl": "Minnesota Timberwolves"
+                }
+              },
+              "status": "OPEN",
+              "price": 2.02
+            }
+          ],
+          "marginZeroMarket": null
+        }
+      ],
+      "marginZeroMarket": null,
+      "matchInfo": {
+        "eventStatus": "NOTSTARTED",
+        "matchStatus": 0,
+        "matchStatusDescription": {
+          "pl": "Not started"
+        },
+        "matchScore": null,
+        "matchTime": null,
+        "matchInfoDetails": null
+      },
+      "fantasyCategory": null,
+      "mn": 109
+    },
+    {
+      "id": "BRUF#sr:match:66887066",
+      "fixture": {
+        "categoryNodeId": "brazylia",
+        "competitionNodeId": "serie_a",
+        "competitors": [
+          {
+            "id": "sr:competitor:1999",
+            "name": {
+              "name": "Red Bull Bragantino SP",
+              "localizedName": {}
+            },
+            "homeAway": "HOME"
+          },
+          {
+            "id": "sr:competitor:1954",
+            "name": {
+              "name": "Cruzeiro EC MG",
+              "localizedName": {
+                "pl": "Cruzeiro MG"
+              }
+            },
+            "homeAway": "AWAY"
+          }
+        ],
+        "eventName": {
+          "name": "Red Bull Bragantino SP vs. Cruzeiro EC MG",
+          "localizedName": {
+            "pl": "Red Bull Bragantino SP vs. Cruzeiro MG"
+          }
+        },
+        "expectedResultingTime": "2026-10-13T00:00:00Z",
+        "isFantasy": false,
+        "isLive": false,
+        "isOutright": false,
+        "isVirtual": false,
+        "path": {
+          "sportId": "1",
+          "categoryId": "13",
+          "competitionId": "BRUF#sr:tournament:325",
+          "seasonId": "sr:season:137706"
+        },
+        "sportNodeId": "pilka_nozna",
+        "startTime": "2026-10-13T00:00:00Z"
+      },
+      "version": 145,
+      "markets": [
+        {
+          "id": "BRUF#sr:match:66887066#1",
+          "marketType": "10",
+          "name": {
+            "name": "1X2",
+            "localizedName": {
+              "en": "1X2",
+              "pl": "1X2"
+            }
+          },
+          "selections": [
+            {
+              "id": "1",
+              "name": {
+                "name": "Red Bull Bragantino SP",
+                "localizedName": {
+                  "en": "Red Bull Bragantino SP",
+                  "pl": "Red Bull Bragantino SP"
+                }
+              },
+              "status": "OPEN",
+              "price": 2.24
+            },
+            {
+              "id": "2",
+              "name": {
+                "name": "Draw",
+                "localizedName": {
+                  "en": "Draw",
+                  "pl": "Remis"
+                }
+              },
+              "status": "OPEN",
+              "price": 3.65
+            },
+            {
+              "id": "3",
+              "name": {
+                "name": "Cruzeiro EC MG",
+                "localizedName": {
+                  "en": "Cruzeiro EC MG",
+                  "pl": "Cruzeiro MG"
+                }
+              },
+              "status": "OPEN",
+              "price": 3.05
+            }
+          ],
+          "marginZeroMarket": null
+        }
+      ],
+      "marginZeroMarket": null,
+      "matchInfo": {
+        "eventStatus": "NOTSTARTED",
+        "matchStatus": 0,
+        "matchStatusDescription": {
+          "pl": "Not started"
+        },
+        "matchScore": null,
+        "matchTime": null,
+        "matchInfoDetails": null
+      },
+      "fantasyCategory": null,
+      "mn": 101
+    },
+    {
+      "id": "BRUF#sr:match:75060850",
+      "fixture": {
+        "categoryNodeId": "usa",
+        "competitionNodeId": "mlb",
+        "competitors": [
+          {
+            "id": "sr:competitor:3653",
+            "name": {
+              "name": "Tampa Bay Rays",
+              "localizedName": {}
+            },
+            "homeAway": "HOME"
+          },
+          {
+            "id": "sr:competitor:3650",
+            "name": {
+              "name": "Cleveland Guardians",
+              "localizedName": {}
+            },
+            "homeAway": "AWAY"
+          }
+        ],
+        "eventName": {
+          "name": "Tampa Bay Rays vs. Cleveland Guardians",
+          "localizedName": {}
+        },
+        "expectedResultingTime": "2026-10-13T00:00:00Z",
+        "isFantasy": false,
+        "isLive": false,
+        "isOutright": false,
+        "isVirtual": false,
+        "path": {
+          "sportId": "3",
+          "categoryId": "16",
+          "competitionId": "BRUF#sr:tournament:109",
+          "seasonId": "sr:season:134469"
+        },
+        "sportNodeId": "baseball",
+        "startTime": "2026-10-13T00:00:00Z"
+      },
+      "version": 178,
+      "markets": [
+        {
+          "id": "BRUF#sr:match:75060850#251",
+          "marketType": "3000020",
+          "name": {
+            "name": "2way",
+            "localizedName": {
+              "en": "2way",
+              "pl": "Zwycięzca (włącznie z extra innings)"
+            }
+          },
+          "selections": [
+            {
+              "id": "4",
+              "name": {
+                "name": "Tampa Bay Rays",
+                "localizedName": {
+                  "en": "Tampa Bay Rays",
+                  "pl": "Tampa Bay Rays"
+                }
+              },
+              "status": "OPEN",
+              "price": 1.58
+            },
+            {
+              "id": "5",
+              "name": {
+                "name": "Cleveland Guardians",
+                "localizedName": {
+                  "en": "Cleveland Guardians",
+                  "pl": "Cleveland Guardians"
+                }
+              },
+              "status": "OPEN",
+              "price": 2.4
+            }
+          ],
+          "marginZeroMarket": null
+        }
+      ],
+      "marginZeroMarket": null,
+      "matchInfo": {
+        "eventStatus": "NOTSTARTED",
+        "matchStatus": 0,
+        "matchStatusDescription": {
+          "pl": "Not started"
+        },
+        "matchScore": null,
+        "matchTime": null,
+        "matchInfoDetails": null
+      },
+      "fantasyCategory": null,
+      "mn": 117
+    },
+    {
+      "id": "BRUF#sr:match:72909016",
+      "fixture": {
+        "categoryNodeId": "usa",
+        "competitionNodeId": "nhl",
+        "competitors": [
+          {
+            "id": "sr:competitor:3689",
+            "name": {
+              "name": "Minnesota Wild",
+              "localizedName": {}
+            },
+            "homeAway": "HOME"
+          },
+          {
+            "id": "sr:competitor:344158",
+            "name": {
+              "name": "Vegas Golden Knights",
+              "localizedName": {}
+            },
+            "homeAway": "AWAY"
+          }
+        ],
+        "eventName": {
+          "name": "Minnesota Wild vs. Vegas Golden Knights",
+          "localizedName": {}
+        },
+        "expectedResultingTime": "2026-10-13T00:00:00Z",
+        "isFantasy": false,
+        "isLive": false,
+        "isOutright": false,
+        "isVirtual": false,
+        "path": {
+          "sportId": "4",
+          "categoryId": "37",
+          "competitionId": "BRUF#sr:tournament:234",
+          "seasonId": "sr:season:142266"
+        },
+        "sportNodeId": "hokej",
+        "startTime": "2026-10-13T00:00:00Z"
+      },
+      "version": 38,
+      "markets": [
+        {
+          "id": "BRUF#sr:match:72909016#1",
+          "marketType": "4000010",
+          "name": {
+            "name": "1X2",
+            "localizedName": {
+              "en": "1X2",
+              "pl": "1X2"
+            }
+          },
+          "selections": [
+            {
+              "id": "1",
+              "name": {
+                "name": "Minnesota Wild",
+                "localizedName": {
+                  "en": "Minnesota Wild",
+                  "pl": "Minnesota Wild"
+                }
+              },
+              "status": "OPEN",
+              "price": 2.47
+            },
+            {
+              "id": "2",
+              "name": {
+                "name": "Draw",
+                "localizedName": {
+                  "en": "Draw",
+                  "pl": "Remis"
+                }
+              },
+              "status": "OPEN",
+              "price": 4.15
+            },
+            {
+              "id": "3",
+              "name": {
+                "name": "Vegas Golden Knights",
+                "localizedName": {
+                  "en": "Vegas Golden Knights",
+                  "pl": "Vegas Golden Knights"
+                }
+              },
+              "status": "OPEN",
+              "price": 2.41
+            }
+          ],
+          "marginZeroMarket": null
+        }
+      ],
+      "marginZeroMarket": null,
+      "matchInfo": {
+        "eventStatus": "NOTSTARTED",
+        "matchStatus": 0,
+        "matchStatusDescription": {
+          "pl": "Not started"
+        },
+        "matchScore": null,
+        "matchTime": null,
+        "matchInfoDetails": null
+      },
+      "fantasyCategory": null,
+      "mn": 149
+    },
+    {
+      "id": "BRUF#sr:match:71515898",
+      "fixture": {
+        "categoryNodeId": "usa",
+        "competitionNodeId": "nfl",
+        "competitors": [
+          {
+            "id": "sr:competitor:4387",
+            "name": {
+              "name": "Los Angeles Rams",
+              "localizedName": {}
+            },
+            "homeAway": "HOME"
+          },
+          {
+            "id": "sr:competitor:4376",
+            "name": {
+              "name": "Buffalo Bills",
+              "localizedName": {}
+            },
+            "homeAway": "AWAY"
+          }
+        ],
+        "eventName": {
+          "name": "Los Angeles Rams vs. Buffalo Bills",
+          "localizedName": {}
+        },
+        "expectedResultingTime": "2026-10-13T00:15:00Z",
+        "isFantasy": false,
+        "isLive": false,
+        "isOutright": false,
+        "isVirtual": false,
+        "path": {
+          "sportId": "16",
+          "categoryId": "43",
+          "competitionId": "BRUF#sr:tournament:31",
+          "seasonId": "sr:season:139396"
+        },
+        "sportNodeId": "futbol_amerykanski",
+        "startTime": "2026-10-13T00:15:00Z"
+      },
+      "version": 807,
+      "markets": [
+        {
+          "id": "BRUF#sr:match:71515898#219",
+          "marketType": "16000020",
+          "name": {
+            "name": "Winner (Incl. Overtime)",
+            "localizedName": {
+              "en": "Winner (Incl. Overtime)",
+              "pl": "Zwycięzca (włącznie z dogrywką)"
+            }
+          },
+          "selections": [
+            {
+              "id": "4",
+              "name": {
+                "name": "Los Angeles Rams",
+                "localizedName": {
+                  "en": "Los Angeles Rams",
+                  "pl": "Los Angeles Rams"
+                }
+              },
+              "status": "OPEN",
+              "price": 1.61
+            },
+            {
+              "id": "5",
+              "name": {
+                "name": "Buffalo Bills",
+                "localizedName": {
+                  "en": "Buffalo Bills",
+                  "pl": "Buffalo Bills"
+                }
+              },
+              "status": "OPEN",
+              "price": 2.34
+            }
+          ],
+          "marginZeroMarket": null
+        }
+      ],
+      "marginZeroMarket": null,
+      "matchInfo": {
+        "eventStatus": "NOTSTARTED",
+        "matchStatus": 0,
+        "matchStatusDescription": {
+          "pl": "Not started"
+        },
+        "matchScore": null,
+        "matchTime": null,
+        "matchInfoDetails": null
+      },
+      "fantasyCategory": null,
+      "mn": 182
+    },
+    {
+      "id": "BRUF#sr:match:73863896",
+      "fixture": {
+        "categoryNodeId": "usa",
+        "competitionNodeId": "nba_preseason",
+        "competitors": [
+          {
+            "id": "sr:competitor:3434",
+            "name": {
+              "name": "Utah Jazz",
+              "localizedName": {}
+            },
+            "homeAway": "HOME"
+          },
+          {
+            "id": "sr:competitor:3429",
+            "name": {
+              "name": "San Antonio Spurs",
+              "localizedName": {}
+            },
+            "homeAway": "AWAY"
+          }
+        ],
+        "eventName": {
+          "name": "Utah Jazz vs. San Antonio Spurs",
+          "localizedName": {}
+        },
+        "expectedResultingTime": "2026-10-13T01:00:00Z",
+        "isFantasy": false,
+        "isLive": false,
+        "isOutright": false,
+        "isVirtual": false,
+        "path": {
+          "sportId": "2",
+          "categoryId": "15",
+          "competitionId": "BRUF#sr:tournament:2382",
+          "seasonId": "sr:season:144932"
+        },
+        "sportNodeId": "koszykowka",
+        "startTime": "2026-10-13T01:00:00Z"
+      },
+      "version": 40,
+      "markets": [
+        {
+          "id": "BRUF#sr:match:73863896#219",
+          "marketType": "2000020",
+          "name": {
+            "name": "2way",
+            "localizedName": {
+              "en": "2way",
+              "pl": "Zwycięzca (włącznie z dogrywką)"
+            }
+          },
+          "selections": [
+            {
+              "id": "4",
+              "name": {
+                "name": "Utah Jazz",
+                "localizedName": {
+                  "en": "Utah Jazz",
+                  "pl": "Utah Jazz"
+                }
+              },
+              "status": "OPEN",
+              "price": 1.5
+            },
+            {
+              "id": "5",
+              "name": {
+                "name": "San Antonio Spurs",
+                "localizedName": {
+                  "en": "San Antonio Spurs",
+                  "pl": "San Antonio Spurs"
+                }
+              },
+              "status": "OPEN",
+              "price": 2.5
+            }
+          ],
+          "marginZeroMarket": null
+        }
+      ],
+      "marginZeroMarket": null,
+      "matchInfo": {
+        "eventStatus": "NOTSTARTED",
+        "matchStatus": 0,
+        "matchStatusDescription": {
+          "pl": "Not started"
+        },
+        "matchScore": null,
+        "matchTime": null,
+        "matchInfoDetails": null
+      },
+      "fantasyCategory": null,
+      "mn": 109
+    },
+    {
+      "id": "BRUF#sr:match:73835472",
+      "fixture": {
+        "categoryNodeId": "miedzynarodowe_klubow",
+        "competitionNodeId": "liga_mistrzow_afc",
+        "competitors": [
+          {
+            "id": "sr:competitor:2934",
+            "name": {
+              "name": "Newcastle United Jets",
+              "localizedName": {
+                "pl": "Newcastle United Jets FC"
+              }
+            },
+            "homeAway": "HOME"
+          },
+          {
+            "id": "sr:competitor:3138",
+            "name": {
+              "name": "Gamba Osaka",
+              "localizedName": {}
+            },
+            "homeAway": "AWAY"
+          }
+        ],
+        "eventName": {
+          "name": "Newcastle United Jets vs. Gamba Osaka",
+          "localizedName": {
+            "pl": "Newcastle United Jets FC vs. Gamba Osaka"
+          }
+        },
+        "expectedResultingTime": "2026-10-13T07:45:00Z",
+        "isFantasy": false,
+        "isLive": false,
+        "isOutright": false,
+        "isVirtual": false,
+        "path": {
+          "sportId": "1",
+          "categoryId": "393",
+          "competitionId": "BRUF#sr:tournament:463",
+          "seasonId": "sr:season:144602"
+        },
+        "sportNodeId": "pilka_nozna",
+        "startTime": "2026-10-13T07:45:00Z"
+      },
+      "version": 61,
+      "markets": [
+        {
+          "id": "BRUF#sr:match:73835472#1",
+          "marketType": "10",
+          "name": {
+            "name": "1X2",
+            "localizedName": {
+              "en": "1X2",
+              "pl": "1X2"
+            }
+          },
+          "selections": [
+            {
+              "id": "1",
+              "name": {
+                "name": "Newcastle United Jets",
+                "localizedName": {
+                  "en": "Newcastle United Jets",
+                  "pl": "Newcastle United Jets FC"
+                }
+              },
+              "status": "OPEN",
+              "price": 3.8
+            },
+            {
+              "id": "2",
+              "name": {
+                "name": "Draw",
+                "localizedName": {
+                  "en": "Draw",
+                  "pl": "Remis"
+                }
+              },
+              "status": "OPEN",
+              "price": 3.95
+            },
+            {
+              "id": "3",
+              "name": {
+                "name": "Gamba Osaka",
+                "localizedName": {
+                  "en": "Gamba Osaka",
+                  "pl": "Gamba Osaka"
+                }
+              },
+              "status": "OPEN",
+              "price": 1.75
+            }
+          ],
+          "marginZeroMarket": null
+        }
+      ],
+      "marginZeroMarket": null,
+      "matchInfo": {
+        "eventStatus": "NOTSTARTED",
+        "matchStatus": 0,
+        "matchStatusDescription": {
+          "pl": "Not started"
+        },
+        "matchScore": null,
+        "matchTime": null,
+        "matchInfoDetails": null
+      },
+      "fantasyCategory": null,
+      "mn": 28
+    }
+  ],
+  "subscriptionId": "b95e8ad3-09b9-4186-b872-c3d329cd0c85",
+  "type": "R_SET_POPULAR_OFFER"
+}

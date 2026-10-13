@@ -1,0 +1,96 @@
+/**
+ * scanner.css — page-specific layout for /admin/scanner.html
+ *
+ * The shared component vocabulary (cards, chips, grids, tables, buttons) comes
+ * from theme.css. This file only adds what the scan page needs on top: the
+ * control panel, the result summary strip, and the visually-hidden helper that
+ * keeps a label accessible without occupying a column.
+ *
+ * Spacing and type sizes are literal px, matching dashboard.css and
+ * scrape.css — design-tokens.css only defines colour, surface and font-family
+ * tokens, so there is no spacing scale to reference.
+ */
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Control panel: profile, sport and scan options in one card. */
+.scan-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.scanner-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Result summary strip: one cell per headline number. */
+.scan-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.summary-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px 14px;
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.summary-item .num {
+  font-size: 22px;
+  font-weight: 650;
+  line-height: 1.1;
+  color: var(--text-strong);
+  font-variant-numeric: tabular-nums;
+}
+
+.summary-label {
+  font-size: var(--fs-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+}
+
+.summary-detail {
+  font-size: var(--fs-xs);
+  color: var(--text-dim);
+}
+
+/* The data-health verdict on #health-state. scanner.js names one class per
+ * DATA_STATUS value (scanner.js HEALTH_CLASS); before this block existed the
+ * classes were emitted but styled nowhere, so a stale workspace and a fresh
+ * one printed in the same colour. */
+.health-fresh { color: var(--green); }
+.health-stale { color: var(--yellow); }
+.health-partial { color: var(--yellow); }
+.health-empty { color: var(--text-muted); }
+.health-failed { color: var(--red); }
+.health-cancelled { color: var(--text-muted); }
+.health-unknown { color: var(--text-muted); }
+.health-error { color: var(--red); }
+
+@media (max-width: 640px) {
+  .scan-summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.summary-item { min-width: 0; overflow-wrap: anywhere; }

@@ -1,7 +1,8 @@
 import ScraperBase from './base.mjs';
 import { normalizeTeamName } from '../shared/text.mjs';
 import { ValidationError, UpstreamError } from '../shared/errors.mjs';
-import { fegMarketIsLive, eventIsLive, liveCoverageFor } from './live-status.mjs';
+import { fegMarketIsLive, eventIsLive, liveCoverageFor, markMarketsLive } from './live-status.mjs';
+import { extractPeriodFromName } from '../scanner/market-contracts.mjs';
 
 export const FEG_SPORT_NAMES = Object.freeze({
   'ufo:sprt:00': 'Football', 'ufo:sprt:01': 'Tennis', 'ufo:sprt:02': 'Basketball',
@@ -115,8 +116,17 @@ export function normalizeFegMarket(m) {
   })).filter(s => s.name && Number.isFinite(s.odds) && s.odds > 1);
   if (selections.length < 2) return null;
   // Opaque provider IDs and 1/X/2 labels do not establish settlement rules.
-  return { id: m.id, key: m.marketTypeId || 'unknown', name: m.name || 'Market',
-    period: m.period || 'unknown', line: m.line ?? null, selections };
+  const name = m.name || 'Market';
+  const nameLower = name.toLowerCase();
+  let subject = null;
+  if (/\b(?:puncte|points)\b/i.test(nameLower)) subject = 'points';
+  else if (/\b(?:game-?uri|games)\b/i.test(nameLower)) subject = 'games';
+  else if (/\b(?:cornere|corners)\b/i.test(nameLower)) subject = 'corners';
+  else if (/\b(?:cartona[sș]e|cards)\b/i.test(nameLower)) subject = 'cards';
+  const period = extractPeriodFromName(name) || extractPeriodFromName(m.period) || m.period || 'unknown';
+  return { id: m.id, key: m.marketTypeId || 'unknown', name,
+    period, line: m.line ?? null, selections,
+    ...(subject ? { subject } : {}) };
 }
 
 const FEG_MATCHES_PATH = '/offer/structure/api/v1_0/tournament/';
@@ -177,14 +187,15 @@ export class FegCatalogueScraper extends ScraperBase {
     // class doesn't abort the whole run mid-traversal.
     this.timeoutMs = opts.timeoutMs ?? 120_000;
     this.maxAttempts = opts.maxAttempts ?? 1;
-    this.maxEvents = opts.maxEvents === 'all' ? 5000 : Math.min(Number(opts.maxEvents ?? 100), 5000);
-    if (!Number.isInteger(this.maxEvents) || this.maxEvents < 0 || this.maxEvents > 5000) {
+    this.maxEvents = opts.maxEvents === 'all' ? Infinity : Number(opts.maxEvents ?? Infinity);
+    if ((!Number.isInteger(this.maxEvents) && this.maxEvents !== Infinity) || this.maxEvents < 0) {
       throw new ValidationError(`${this.id}: invalid maxEvents`);
     }
     // This feed publishes in-play markets, so the flag is honoured here rather
     // than warned about. It was previously ignored entirely, and the class had
     // no field to read.
     this.includeLive = opts.includeLive === true;
+    this.concurrency = Math.max(1, Number(opts.concurrency ?? 5));
   }
 
   async fetchRaw({ signal } = {}) {
@@ -237,55 +248,73 @@ export class FegCatalogueScraper extends ScraperBase {
     const tourMap = new Map();
     for (const t of allTournaments) tourMap.set(t.id, t);
 
-    for (const t of withFixtures) {
-      signal?.throwIfAborted();
-      attempted += 1;
-      try {
-        const url = `${this.apiBase}${FEG_MATCHES_PATH}${encodeURIComponent(t.id)}/matches`;
-        const resp = await fetch(url, { signal, headers });
-        if (!resp.ok) { recordFailure('matches', `HTTP ${resp.status}`); continue; }
-        const data = await resp.json();
-        const fixtures = data.fixtures || [];
-        for (const f of fixtures) {
-          f._tournamentName = t.name;
-          f._tournamentSeoName = t.seoName || t.name;
-          f._categorySeoName = t.categorySeoName || '';
-          // Stamped by the catalogue loop above for every tournament —
-          // fegSportName is total, so there is no missing case here to
-          // default. The honest fallback for a fixture that reaches
-          // normalize() without a tree label lives there, in normalize().
-          f._sportName = t._sportName;
-          allFixtures.push(f);
+    const concurrency = Math.min(this.concurrency, withFixtures.length || 1);
+    let tIdx = 0;
+    const matchWorker = async () => {
+      while (tIdx < withFixtures.length) {
+        signal?.throwIfAborted();
+        const t = withFixtures[tIdx++];
+        attempted += 1;
+        try {
+          const url = `${this.apiBase}${FEG_MATCHES_PATH}${encodeURIComponent(t.id)}/matches`;
+          const resp = await fetch(url, { signal, headers });
+          if (!resp.ok) { recordFailure('matches', `HTTP ${resp.status}`); continue; }
+          const data = await resp.json();
+          const fixtures = data.fixtures || [];
+          for (const f of fixtures) {
+            f._tournamentName = t.name;
+            f._tournamentSeoName = t.seoName || t.name;
+            f._categorySeoName = t.categorySeoName || '';
+            // Stamped by the catalogue loop above for every tournament —
+            // fegSportName is total, so there is no missing case here to
+            // default. The honest fallback for a fixture that reaches
+            // normalize() without a tree label lives there, in normalize().
+            f._sportName = t._sportName;
+            allFixtures.push(f);
+          }
+        } catch (err) {
+          if (signal?.aborted) throw err;
+          recordFailure('matches', describeError(err));
         }
-      } catch (err) {
-        if (signal?.aborted) throw err;
-        recordFailure('matches', describeError(err));
       }
+    };
+    if (withFixtures.length > 0) {
+      await Promise.all(Array.from({ length: concurrency }, () => matchWorker()));
     }
     this.logger('info', `${this.name}: ${allFixtures.length} fixtures from catalogue`);
 
     // Step 3: hydrate markets in batches.
     const fixtureIds = allFixtures.map((f) => f.id);
     const marketsByFixture = new Map();
+    const batches = [];
     for (let i = 0; i < fixtureIds.length; i += FEG_BATCH_SIZE) {
-      signal?.throwIfAborted();
-      const batch = fixtureIds.slice(i, i + FEG_BATCH_SIZE);
-      attempted += 1;
-      try {
-        const params = batch.map((id) => 'fixtureIds=' + encodeURIComponent(id)).join('&');
-        const url = `${this.apiBase}${FEG_MARKETS_PATH}?${params}`;
-        const resp = await fetch(url, { signal, headers });
-        if (!resp.ok) { recordFailure('markets', `HTTP ${resp.status}`); continue; }
-        const data = await resp.json();
-        for (const [fid, mkts] of Object.entries(data)) {
-          if (Array.isArray(mkts) && mkts.length > 0) {
-            marketsByFixture.set(fid, mkts);
+      batches.push(fixtureIds.slice(i, i + FEG_BATCH_SIZE));
+    }
+    let bIdx = 0;
+    const marketWorker = async () => {
+      while (bIdx < batches.length) {
+        signal?.throwIfAborted();
+        const batch = batches[bIdx++];
+        attempted += 1;
+        try {
+          const params = batch.map((id) => 'fixtureIds=' + encodeURIComponent(id)).join('&');
+          const url = `${this.apiBase}${FEG_MARKETS_PATH}?${params}`;
+          const resp = await fetch(url, { signal, headers });
+          if (!resp.ok) { recordFailure('markets', `HTTP ${resp.status}`); continue; }
+          const data = await resp.json();
+          for (const [fid, mkts] of Object.entries(data)) {
+            if (Array.isArray(mkts) && mkts.length > 0) {
+              marketsByFixture.set(fid, mkts);
+            }
           }
+        } catch (err) {
+          if (signal?.aborted) throw err;
+          recordFailure('markets', describeError(err));
         }
-      } catch (err) {
-        if (signal?.aborted) throw err;
-        recordFailure('markets', describeError(err));
       }
+    };
+    if (batches.length > 0) {
+      await Promise.all(Array.from({ length: Math.min(concurrency, batches.length) }, () => marketWorker()));
     }
     this.logger('info', `${this.name}: ${marketsByFixture.size} fixtures with hydrated markets`);
 
@@ -392,6 +421,7 @@ export class FegCatalogueScraper extends ScraperBase {
         })
         .filter(Boolean);
       if (markets.length === 0) continue;
+      markMarketsLive(markets, (m) => m.live === true);
 
       const eventKey = [
         normalizeTeamName(r.sport), normalizeTeamName(r.league), r.kickoff,

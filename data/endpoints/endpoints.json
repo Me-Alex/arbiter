@@ -117,7 +117,7 @@
       "platform": "digitain",
       "feedStatus": "verified",
       "verifiedAt": "2026-09-27",
-      "scraped": false,
+      "scraped": true,
       "job": null,
       "oddsFeed": null,
       "crawl": null,
@@ -317,6 +317,52 @@
       ],
       "bodyShape": "endpoint-crawl",
       "legacyCaptureRef": "captures/admiral_api.json"
+    },
+    "admiralbet-pl": {
+      "book": "admiralbet-pl",
+      "endpointCount": 0,
+      "capturedAt": null,
+      "keyEndpoints": [],
+      "platform": "admiralbet-ws",
+      "feedStatus": "verified",
+      "verifiedAt": null,
+      "scraped": false,
+      "job": {
+        "id": "admiralbet-pl",
+        "script": "admiralbet-pl.mjs",
+        "engine": "admiralbet-ws",
+        "transport": "admiralbet-ws",
+        "enabled": true
+      },
+      "oddsFeed": null,
+      "crawl": null,
+      "unavailableSports": [],
+      "captureFiles": [],
+      "bodyShape": null,
+      "legacyCaptureRef": null
+    },
+    "betvictor": {
+      "book": "betvictor",
+      "endpointCount": 0,
+      "capturedAt": null,
+      "keyEndpoints": [],
+      "platform": "custom",
+      "feedStatus": "unverified",
+      "verifiedAt": null,
+      "scraped": false,
+      "job": {
+        "id": "betvictor",
+        "script": "betvictor.mjs",
+        "engine": "custom-json",
+        "transport": "custom-json",
+        "enabled": false
+      },
+      "oddsFeed": null,
+      "crawl": null,
+      "unavailableSports": [],
+      "captureFiles": [],
+      "bodyShape": null,
+      "legacyCaptureRef": null
     },
     "baumbet": {
       "book": "baumbet",
@@ -606,7 +652,7 @@
       "platform": "digitain",
       "feedStatus": "verified",
       "verifiedAt": "2026-09-27",
-      "scraped": false,
+      "scraped": true,
       "job": null,
       "oddsFeed": null,
       "crawl": null,
@@ -2863,7 +2909,7 @@
       "platform": "digitain",
       "feedStatus": "verified",
       "verifiedAt": "2026-09-27",
-      "scraped": false,
+      "scraped": true,
       "job": null,
       "oddsFeed": null,
       "crawl": null,
@@ -3650,21 +3696,32 @@
     },
     "seven": {
       "book": "seven",
-      "endpointCount": 0,
-      "capturedAt": "2026-09-27T13:44:53.622Z",
+      "endpointCount": 2,
+      "capturedAt": "2026-10-12T14:48:00.000Z",
       "keyEndpoints": [
         {
           "method": "GET",
-          "url": "https://ncms.seven.ro/api/v1/event?cagecode=SVN",
+          "url": "https://sportsbook-sm-distribution-api.nsoft.com/api/v1/events?companyUuid=682e6a38-b5ad-4c58-a743-3b06c79e55cd",
           "verified": true,
-          "purpose": "Promotional event CMS, same shape as Admiral. Returns a 28-byte empty body for cagecode SVN — same size as the ADR control, so this brand has no CMS content. Not an odds source."
+          "purpose": "NSoft public sports distribution API (companyUuid 682e6a38-b5ad-4c58-a743-3b06c79e55cd). Verified live against on-screen odds on seven.ro/pariuri-sportive."
+        },
+        {
+          "method": "GET",
+          "url": "https://sportsbook-sm-distribution-api.nsoft.com/api/v1/topOffer?companyUuid=682e6a38-b5ad-4c58-a743-3b06c79e55cd",
+          "verified": true
         }
       ],
-      "platform": "ncms CMS (same shape as admiralbet)",
-      "feedStatus": "no-sports-feed",
-      "verifiedAt": null,
-      "scraped": false,
-      "job": null,
+      "platform": "nsoft",
+      "feedStatus": "verified",
+      "verifiedAt": "2026-10-12",
+      "scraped": true,
+      "job": {
+        "id": "seven",
+        "script": "nsoft.mjs",
+        "engine": "nsoft-public-json",
+        "transport": "nsoft-public-sports-json",
+        "enabled": true
+      },
       "oddsFeed": null,
       "crawl": null,
       "unavailableSports": [],
@@ -3893,6 +3950,191 @@
       ],
       "bodyShape": "endpoint-crawl",
       "legacyCaptureRef": "captures/superbet_api.json"
+    },
+    "superbet-pl": {
+      "book": "superbet-pl",
+      "endpointCount": 3,
+      "capturedAt": "2026-10-12T18:30:00.000Z",
+      "keyEndpoints": [
+        {
+          "method": "GET",
+          "url": "https://production-superbet-offer-pl.freetls.fastly.net/v3/pl-PL/events",
+          "verified": true
+        },
+        {
+          "method": "GET",
+          "url": "https://production-superbet-offer-pl.freetls.fastly.net/v2/pl-PL/struct",
+          "verified": true
+        },
+        {
+          "method": "GET",
+          "url": "https://production-superbet-offer-pl.freetls.fastly.net/v2/pl-PL/events/{eventId}",
+          "verified": true
+        }
+      ],
+      "platform": "superbet-offer",
+      "feedStatus": "verified",
+      "verifiedAt": "2026-10-12",
+      "scraped": true,
+      "job": {
+        "id": "superbet-pl",
+        "script": "superbet-pl.mjs",
+        "engine": "public-offer-v3",
+        "transport": "bookmaker-public-json",
+        "enabled": true
+      },
+      "oddsFeed": null,
+      "crawl": {
+        "pages": 1,
+        "target": true,
+        "endpoints": 3,
+        "targetReached": true
+      },
+      "unavailableSports": [],
+      "captureFiles": [
+        {
+          "file": "captures/superbet-pl_api.json",
+          "bytes": 1156,
+          "real": true
+        }
+      ],
+      "bodyShape": "endpoint-crawl",
+      "legacyCaptureRef": "captures/superbet-pl_api.json"
+    },
+    "etoto": {
+      "book": "etoto",
+      "endpointCount": 2,
+      "capturedAt": "2026-10-12T20:30:00.000Z",
+      "keyEndpoints": [
+        {
+          "method": "GET",
+          "url": "https://api.etoto.pl/rest/market/categories",
+          "verified": true
+        },
+        {
+          "method": "GET",
+          "url": "https://api.etoto.pl/rest/market/categories/multi/{categoryIds}/events",
+          "verified": true
+        }
+      ],
+      "platform": "etoto-rest",
+      "feedStatus": "verified",
+      "verifiedAt": "2026-10-12",
+      "scraped": true,
+      "job": {
+        "id": "etoto",
+        "script": "etoto.mjs",
+        "engine": "etoto-rest-v1",
+        "transport": "etoto-public-json",
+        "enabled": true
+      },
+      "oddsFeed": null,
+      "crawl": {
+        "pages": 1,
+        "target": true,
+        "endpoints": 2,
+        "targetReached": true
+      },
+      "unavailableSports": [],
+      "captureFiles": [
+        {
+          "file": "captures/etoto_api.json",
+          "bytes": 1156,
+          "real": true
+        }
+      ],
+      "bodyShape": "endpoint-crawl",
+      "legacyCaptureRef": "captures/etoto_api.json"
+    },
+    "fuksiarz": {
+      "book": "fuksiarz",
+      "endpointCount": 2,
+      "capturedAt": "2026-10-12T20:45:00.000Z",
+      "keyEndpoints": [
+        {
+          "method": "GET",
+          "url": "https://fuksiarz.pl/rest/market/categories",
+          "verified": true
+        },
+        {
+          "method": "GET",
+          "url": "https://fuksiarz.pl/rest/market/categories/multi/{categoryIds}/events",
+          "verified": true
+        }
+      ],
+      "platform": "fuksiarz-rest",
+      "feedStatus": "verified",
+      "verifiedAt": "2026-10-12",
+      "scraped": true,
+      "job": {
+        "id": "fuksiarz",
+        "script": "fuksiarz.mjs",
+        "engine": "fuksiarz-rest-v1",
+        "transport": "fuksiarz-public-json",
+        "enabled": true
+      },
+      "oddsFeed": null,
+      "crawl": {
+        "pages": 1,
+        "target": true,
+        "endpoints": 2,
+        "targetReached": true
+      },
+      "unavailableSports": [],
+      "captureFiles": [
+        {
+          "file": "captures/fuksiarz_api.json",
+          "bytes": 1156,
+          "real": true
+        }
+      ],
+      "bodyShape": "endpoint-crawl",
+      "legacyCaptureRef": "captures/fuksiarz_api.json"
+    },
+    "totalbet-pl": {
+      "book": "totalbet-pl",
+      "endpointCount": 2,
+      "capturedAt": "2026-10-12T23:58:00.000Z",
+      "keyEndpoints": [
+        {
+          "method": "GET",
+          "url": "https://totalbet.pl/dealer/bdata/v1/bet/events?type=prematch&per_page=100&page=1",
+          "verified": true
+        },
+        {
+          "method": "GET",
+          "url": "https://totalbet.pl/dealer/bdata/v1/bet/events/{uuid}",
+          "verified": true
+        }
+      ],
+      "platform": "totalbet-rest",
+      "feedStatus": "verified",
+      "verifiedAt": "2026-10-12",
+      "scraped": true,
+      "job": {
+        "id": "totalbet-pl",
+        "script": "totalbet-pl.mjs",
+        "engine": "totalbet-rest-v1",
+        "transport": "totalbet-public-json",
+        "enabled": true
+      },
+      "oddsFeed": null,
+      "crawl": {
+        "pages": 1,
+        "target": true,
+        "endpoints": 2,
+        "targetReached": true
+      },
+      "unavailableSports": [],
+      "captureFiles": [
+        {
+          "file": "captures/totalbet-pl_api.json",
+          "bytes": 1201,
+          "real": true
+        }
+      ],
+      "bodyShape": "endpoint-crawl",
+      "legacyCaptureRef": "captures/totalbet-pl_api.json"
     },
     "superbet-american-football": {
       "book": "superbet-american-football",
@@ -4128,9 +4370,15 @@
     },
     "swiper": {
       "book": "swiper",
-      "endpointCount": 72,
+      "endpointCount": 26,
       "capturedAt": "2026-09-27T13:07:31.119Z",
       "keyEndpoints": [
+        {
+          "method": "GET",
+          "url": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetUpcoming?integration=swiper",
+          "verified": false,
+          "purpose": "Recorded by npm run new-book on 2026-10-11."
+        },
         {
           "method": "GET",
           "url": "https://swiper.ro/ro/api/v3/project/info",
@@ -4282,11 +4530,17 @@
           "purpose": "Client configuration or build metadata. Not an odds source."
         }
       ],
-      "platform": "sportradar",
-      "feedStatus": "verified",
+      "platform": "altenar-sb2",
+      "feedStatus": "unverified",
       "verifiedAt": "2026-09-27",
       "scraped": false,
-      "job": null,
+      "job": {
+        "id": "swiper",
+        "script": "altenar-sites.mjs",
+        "engine": "altenar-tenancy",
+        "transport": "altenar-sb2-widget-json",
+        "enabled": false
+      },
       "oddsFeed": null,
       "crawl": null,
       "unavailableSports": [],
@@ -5071,7 +5325,7 @@
       "platform": "egt-digital",
       "feedStatus": "verified",
       "verifiedAt": "2026-09-27",
-      "scraped": false,
+      "scraped": true,
       "job": null,
       "oddsFeed": {
         "url": "https://vpro-api.egt-digital.com/api/sportsapi/public/containers/v2/lobby/normalized/{containerId}",
@@ -5640,6 +5894,2503 @@
       ],
       "bodyShape": "endpoint-crawl",
       "legacyCaptureRef": "captures/zinx_api.json"
+    },
+    "betfair": {
+      "book": "betfair",
+      "endpointCount": 2,
+      "capturedAt": "2026-10-10T18:00:00.000Z",
+      "keyEndpoints": [
+        {
+          "method": "POST",
+          "url": "https://scan-inbf.betfair.ro/www/sports/navigation/facet/v1/search",
+          "verified": true,
+          "purpose": "Betfair Exchange facet search and event/market discovery API."
+        },
+        {
+          "method": "GET",
+          "url": "https://ero.betfair.ro/www/sports/exchange/readonly/v1/bymarket",
+          "verified": true,
+          "purpose": "Betfair Exchange order-book depth and live back/lay odds API."
+        }
+      ],
+      "platform": "betfair-exchange",
+      "feedStatus": "verified",
+      "verifiedAt": "2026-10-10",
+      "scraped": true,
+      "job": {
+        "id": "betfair",
+        "name": "Betfair",
+        "enabled": true,
+        "platform": "betfair-exchange"
+      },
+      "oddsFeed": {
+        "url": "https://ero.betfair.ro/www/sports/exchange/readonly/v1/bymarket",
+        "method": "GET"
+      },
+      "crawl": null,
+      "unavailableSports": [],
+      "captureFiles": [
+        {
+          "file": "captures/betfair-odds-2026-10-10.json",
+          "bytes": 50000,
+          "real": true
+        }
+      ],
+      "bodyShape": "endpoint-crawl",
+      "legacyCaptureRef": null
+    },
+    "winmasters": {
+      "book": "winmasters",
+      "endpointCount": 1,
+      "capturedAt": "2026-10-11T12:00:00.000Z",
+      "keyEndpoints": [
+        {
+          "method": "GET",
+          "url": "https://sport.winmasters.ro/b73f1f2d-e2da-48b0-a29c-16088b5a6b4f/account/getsystemcardsbysportid?sportId=1&langId=42&partnerId=3000235&countryCode=RO",
+          "verified": true,
+          "purpose": "Digitain system cards REST endpoint returning football fixtures with 1X2 market odds."
+        }
+      ],
+      "platform": "custom",
+      "feedStatus": "unverified",
+      "verifiedAt": null,
+      "scraped": false,
+      "job": {
+        "id": "winmasters",
+        "script": "winmasters.mjs",
+        "engine": "custom-json",
+        "transport": "custom-json",
+        "enabled": false
+      },
+      "oddsFeed": null,
+      "crawl": null,
+      "unavailableSports": [],
+      "captureFiles": [
+        {
+          "file": "captures/winmasters-odds-2026-10-11.json",
+          "bytes": 16594,
+          "real": true
+        }
+      ],
+      "bodyShape": "endpoint-crawl",
+      "legacyCaptureRef": "captures/winmasters-odds-2026-10-11.json"
+    },
+    "pariuriplus": {
+      "book": "pariuriplus",
+      "endpointCount": 1,
+      "capturedAt": "2026-10-11T12:00:00.000Z",
+      "keyEndpoints": [
+        {
+          "method": "GET",
+          "url": "https://sport.pariuriplus.ro/d2d48a66-a582-45cc-919d-c0ed8da3a853/account/getsystemcardsbysportid",
+          "verified": true,
+          "purpose": "Digitain system cards REST endpoint returning structured football matches and 1X2 market odds (partnerId 3000237, langId 42)."
+        }
+      ],
+      "platform": "custom",
+      "feedStatus": "unverified",
+      "verifiedAt": null,
+      "scraped": false,
+      "job": {
+        "id": "pariuriplus",
+        "script": "pariuriplus.mjs",
+        "engine": "custom-json",
+        "transport": "custom-json",
+        "enabled": false
+      },
+      "oddsFeed": null,
+      "crawl": null,
+      "unavailableSports": [],
+      "captureFiles": [
+        {
+          "file": "captures/pariuriplus-odds-2026-10-11.json",
+          "bytes": 11062,
+          "real": true
+        }
+      ],
+      "bodyShape": "endpoint-crawl",
+      "legacyCaptureRef": "captures/pariuriplus-odds-2026-10-11.json"
+    },
+    "kingcasino": {
+      "book": "kingcasino",
+      "endpointCount": 1,
+      "capturedAt": "2026-10-11T12:00:00.000Z",
+      "keyEndpoints": [
+        {
+          "method": "GET",
+          "url": "https://sport.kingcasino.ro/60110724-301d-4b7d-9255-0ef71c533840/account/getsystemcardsbysportid",
+          "verified": true,
+          "purpose": "Digitain system cards REST endpoint returning structured football matches and 1X2 market odds (partnerId 3000245, langId 42)."
+        }
+      ],
+      "platform": "custom",
+      "feedStatus": "unverified",
+      "verifiedAt": null,
+      "scraped": false,
+      "job": {
+        "id": "kingcasino",
+        "script": "kingcasino.mjs",
+        "engine": "custom-json",
+        "transport": "custom-json",
+        "enabled": false
+      },
+      "oddsFeed": null,
+      "crawl": null,
+      "unavailableSports": [],
+      "captureFiles": [
+        {
+          "file": "captures/kingcasino-odds-2026-10-11.json",
+          "bytes": 10235,
+          "real": true
+        }
+      ],
+      "bodyShape": "endpoint-crawl",
+      "legacyCaptureRef": "captures/kingcasino-odds-2026-10-11.json"
+    },
+    "frankcasino": {
+      "book": "frankcasino",
+      "endpointCount": 1,
+      "capturedAt": null,
+      "keyEndpoints": [
+        {
+          "method": "GET",
+          "url": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetUpcoming?integration=frankcasino",
+          "verified": false,
+          "purpose": "Recorded by `npm run new-book` on 2026-10-11. This is a claim, not a measurement: reach the endpoint, save the response under data/endpoints/captures/, and set verified: true when it answers."
+        }
+      ],
+      "platform": "altenar-sb2",
+      "feedStatus": "unverified",
+      "verifiedAt": null,
+      "scraped": false,
+      "job": {
+        "id": "frankcasino",
+        "script": "altenar-sites.mjs",
+        "engine": "altenar-tenancy",
+        "transport": "altenar-sb2-widget-json",
+        "enabled": false
+      },
+      "oddsFeed": null,
+      "crawl": null,
+      "unavailableSports": [],
+      "captureFiles": [],
+      "bodyShape": "recorded-url-only"
+    },
+    "mrbit": {
+      "book": "mrbit",
+      "endpointCount": 1,
+      "capturedAt": null,
+      "keyEndpoints": [
+        {
+          "method": "GET",
+          "url": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetUpcoming?integration=mrbit",
+          "verified": false,
+          "purpose": "Recorded by `npm run new-book` on 2026-10-11. This is a claim, not a measurement: reach the endpoint, save the response under data/endpoints/captures/, and set verified: true when it answers."
+        }
+      ],
+      "platform": "altenar-sb2",
+      "feedStatus": "unverified",
+      "verifiedAt": null,
+      "scraped": false,
+      "job": {
+        "id": "mrbit",
+        "script": "altenar-sites.mjs",
+        "engine": "altenar-tenancy",
+        "transport": "altenar-sb2-widget-json",
+        "enabled": false
+      },
+      "oddsFeed": null,
+      "crawl": null,
+      "unavailableSports": [],
+      "captureFiles": [],
+      "bodyShape": "recorded-url-only"
+    },
+    "slotv": {
+      "book": "slotv",
+      "endpointCount": 1,
+      "capturedAt": null,
+      "keyEndpoints": [
+        {
+          "method": "GET",
+          "url": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetUpcoming?integration=slotv",
+          "verified": false,
+          "purpose": "Recorded by `npm run new-book` on 2026-10-11. This is a claim, not a measurement: reach the endpoint, save the response under data/endpoints/captures/, and set verified: true when it answers."
+        }
+      ],
+      "platform": "altenar-sb2",
+      "feedStatus": "unverified",
+      "verifiedAt": null,
+      "scraped": false,
+      "job": {
+        "id": "slotv",
+        "script": "altenar-sites.mjs",
+        "engine": "altenar-tenancy",
+        "transport": "altenar-sb2-widget-json",
+        "enabled": false
+      },
+      "oddsFeed": null,
+      "crawl": null,
+      "unavailableSports": [],
+      "captureFiles": [],
+      "bodyShape": "recorded-url-only"
+    },
+    "betinia": {
+      "book": "betinia",
+      "endpointCount": 1,
+      "capturedAt": null,
+      "keyEndpoints": [
+        {
+          "method": "GET",
+          "url": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetUpcoming?integration=betinia",
+          "verified": false,
+          "purpose": "Recorded by `npm run new-book` on 2026-10-11. This is a claim, not a measurement: reach the endpoint, save the response under data/endpoints/captures/, and set verified: true when it answers."
+        }
+      ],
+      "platform": "altenar-sb2",
+      "feedStatus": "unverified",
+      "verifiedAt": null,
+      "scraped": false,
+      "job": {
+        "id": "betinia",
+        "script": "altenar-sites.mjs",
+        "engine": "altenar-tenancy",
+        "transport": "altenar-sb2-widget-json",
+        "enabled": false
+      },
+      "oddsFeed": null,
+      "crawl": null,
+      "unavailableSports": [],
+      "captureFiles": [],
+      "bodyShape": "recorded-url-only"
+    },
+    "win2ro": {
+      "book": "win2ro",
+      "endpointCount": 1,
+      "capturedAt": null,
+      "keyEndpoints": [
+        {
+          "method": "GET",
+          "url": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetUpcoming?integration=win2ro",
+          "verified": false,
+          "purpose": "Recorded by `npm run new-book` on 2026-10-11. This is a claim, not a measurement: reach the endpoint, save the response under data/endpoints/captures/, and set verified: true when it answers."
+        }
+      ],
+      "platform": "altenar-sb2",
+      "feedStatus": "unverified",
+      "verifiedAt": null,
+      "scraped": false,
+      "job": {
+        "id": "win2ro",
+        "script": "altenar-sites.mjs",
+        "engine": "altenar-tenancy",
+        "transport": "altenar-sb2-widget-json",
+        "enabled": false
+      },
+      "oddsFeed": null,
+      "crawl": null,
+      "unavailableSports": [],
+      "captureFiles": [],
+      "bodyShape": "recorded-url-only"
+    },
+    "eliteslots": {
+      "book": "eliteslots",
+      "endpointCount": 1,
+      "capturedAt": null,
+      "keyEndpoints": [
+        {
+          "method": "GET",
+          "url": "https://micros-prod1.gambling-solutions.ro/api/digitain-fetcher/v2/public/events",
+          "verified": false,
+          "purpose": "Recorded by `npm run new-book` on 2026-10-11. This is a claim, not a measurement: reach the endpoint, save the response under data/endpoints/captures/, and set verified: true when it answers."
+        }
+      ],
+      "platform": "digitain",
+      "feedStatus": "unverified",
+      "verifiedAt": null,
+      "scraped": false,
+      "job": {
+        "id": "eliteslots",
+        "script": "eliteslots.mjs",
+        "engine": "digitain",
+        "transport": "digitain-public-json",
+        "enabled": false
+      },
+      "oddsFeed": null,
+      "crawl": null,
+      "unavailableSports": [],
+      "captureFiles": [
+        "eliteslots-odds-2026-10-11.json"
+      ],
+      "bodyShape": "recorded-url-only"
+    },
+    "ladycasino": {
+      "book": "ladycasino",
+      "endpointCount": 1,
+      "capturedAt": null,
+      "keyEndpoints": [
+        {
+          "method": "GET",
+          "url": "https://micros-prod1.gambling-solutions.ro/api/digitain-fetcher/v2/public/events",
+          "verified": false,
+          "purpose": "Recorded by `npm run new-book` on 2026-10-11. This is a claim, not a measurement: reach the endpoint, save the response under data/endpoints/captures/, and set verified: true when it answers."
+        }
+      ],
+      "platform": "digitain",
+      "feedStatus": "unverified",
+      "verifiedAt": null,
+      "scraped": false,
+      "job": {
+        "id": "ladycasino",
+        "script": "ladycasino.mjs",
+        "engine": "digitain",
+        "transport": "digitain-public-json",
+        "enabled": false
+      },
+      "oddsFeed": null,
+      "crawl": null,
+      "unavailableSports": [],
+      "captureFiles": [
+        "ladycasino-odds-2026-10-11.json"
+      ],
+      "bodyShape": "recorded-url-only"
+    },
+    "pacanele": {
+      "book": "pacanele",
+      "endpointCount": 1,
+      "capturedAt": null,
+      "keyEndpoints": [
+        {
+          "method": "GET",
+          "url": "https://micros-prod1.gambling-solutions.ro/api/digitain-fetcher/v2/public/events",
+          "verified": false,
+          "purpose": "Recorded by `npm run new-book` on 2026-10-11. This is a claim, not a measurement: reach the endpoint, save the response under data/endpoints/captures/, and set verified: true when it answers."
+        }
+      ],
+      "platform": "digitain",
+      "feedStatus": "unverified",
+      "verifiedAt": null,
+      "scraped": false,
+      "job": {
+        "id": "pacanele",
+        "script": "pacanele.mjs",
+        "engine": "digitain",
+        "transport": "digitain-public-json",
+        "enabled": false
+      },
+      "oddsFeed": null,
+      "crawl": null,
+      "unavailableSports": [],
+      "captureFiles": [
+        "pacanele-odds-2026-10-11.json"
+      ],
+      "bodyShape": "recorded-url-only"
+    },
+    "hotspins": {
+      "book": "hotspins",
+      "endpointCount": 1,
+      "capturedAt": null,
+      "keyEndpoints": [
+        {
+          "method": "GET",
+          "url": "https://micros-prod1.gambling-solutions.ro/api/digitain-fetcher/v2/public/events",
+          "verified": false,
+          "purpose": "Recorded by `npm run new-book` on 2026-10-11. This is a claim, not a measurement: reach the endpoint, save the response under data/endpoints/captures/, and set verified: true when it answers."
+        }
+      ],
+      "platform": "digitain",
+      "feedStatus": "unverified",
+      "verifiedAt": null,
+      "scraped": false,
+      "job": {
+        "id": "hotspins",
+        "script": "hotspins.mjs",
+        "engine": "digitain",
+        "transport": "digitain-public-json",
+        "enabled": false
+      },
+      "oddsFeed": null,
+      "crawl": null,
+      "unavailableSports": [],
+      "captureFiles": [
+        "hotspins-odds-2026-10-11.json"
+      ],
+      "bodyShape": "recorded-url-only"
+    },
+    "fortunapalace": {
+      "book": "fortunapalace",
+      "endpointCount": 1,
+      "capturedAt": null,
+      "keyEndpoints": [
+        {
+          "method": "GET",
+          "url": "https://fpro-api.egt-digital.com/api/sportsapi/public/sports",
+          "verified": false,
+          "purpose": "Recorded by `npm run new-book` on 2026-10-11. This is a claim, not a measurement: reach the endpoint, save the response under data/endpoints/captures/, and set verified: true when it answers."
+        }
+      ],
+      "platform": "egt-digital",
+      "feedStatus": "unverified",
+      "verifiedAt": null,
+      "scraped": false,
+      "job": {
+        "id": "fortunapalace",
+        "script": "fortunapalace.mjs",
+        "engine": "egt-public-sports-api",
+        "transport": "egt-public-sports-json",
+        "enabled": false
+      },
+      "oddsFeed": null,
+      "crawl": null,
+      "unavailableSports": [],
+      "captureFiles": [
+        "fortunapalace-odds-2026-10-11.json"
+      ],
+      "bodyShape": "recorded-url-only"
+    },
+    "maxwin": {
+      "book": "maxwin",
+      "endpointCount": 1,
+      "capturedAt": null,
+      "keyEndpoints": [
+        {
+          "method": "GET",
+          "url": "https://mxro-api.egt-digital.com/api/sportsapi/public/sports",
+          "verified": false,
+          "purpose": "Recorded by `npm run new-book` on 2026-10-11. This is a claim, not a measurement: reach the endpoint, save the response under data/endpoints/captures/, and set verified: true when it answers."
+        }
+      ],
+      "platform": "egt-digital",
+      "feedStatus": "unverified",
+      "verifiedAt": null,
+      "scraped": false,
+      "job": {
+        "id": "maxwin",
+        "script": "maxwin.mjs",
+        "engine": "egt-public-sports-api",
+        "transport": "egt-public-sports-json",
+        "enabled": false
+      },
+      "oddsFeed": null,
+      "crawl": null,
+      "unavailableSports": [],
+      "captureFiles": [
+        "maxwin-odds-2026-10-11.json"
+      ],
+      "bodyShape": "recorded-url-only"
+    },
+    "luckyseven": {
+      "book": "luckyseven",
+      "endpointCount": 1,
+      "capturedAt": null,
+      "keyEndpoints": [
+        {
+          "method": "GET",
+          "url": "https://luckyseven-ro-api.egt-digital.com/api/sportsapi/public/sports",
+          "verified": false,
+          "purpose": "Recorded by `npm run new-book` on 2026-10-11. This is a claim, not a measurement: reach the endpoint, save the response under data/endpoints/captures/, and set verified: true when it answers."
+        }
+      ],
+      "platform": "egt-digital",
+      "feedStatus": "unverified",
+      "verifiedAt": null,
+      "scraped": false,
+      "job": {
+        "id": "luckyseven",
+        "script": "luckyseven.mjs",
+        "engine": "egt-public-sports-api",
+        "transport": "egt-public-sports-json",
+        "enabled": false
+      },
+      "oddsFeed": null,
+      "crawl": null,
+      "unavailableSports": [],
+      "captureFiles": [
+        "luckyseven-odds-2026-10-11.json"
+      ],
+      "bodyShape": "recorded-url-only"
+    },
+    "onecasino": {
+      "book": "onecasino",
+      "endpointCount": 1,
+      "capturedAt": null,
+      "keyEndpoints": [
+        {
+          "method": "GET",
+          "url": "https://onecasino-ro-api.egt-digital.com/api/sportsapi/public/sports",
+          "verified": false,
+          "purpose": "Recorded by `npm run new-book` on 2026-10-11. This is a claim, not a measurement: reach the endpoint, save the response under data/endpoints/captures/, and set verified: true when it answers."
+        }
+      ],
+      "platform": "egt-digital",
+      "feedStatus": "unverified",
+      "verifiedAt": null,
+      "scraped": false,
+      "job": {
+        "id": "onecasino",
+        "script": "onecasino.mjs",
+        "engine": "egt-public-sports-api",
+        "transport": "egt-public-sports-json",
+        "enabled": false
+      },
+      "oddsFeed": null,
+      "crawl": null,
+      "unavailableSports": [],
+      "captureFiles": [
+        "onecasino-odds-2026-10-11.json"
+      ],
+      "bodyShape": "recorded-url-only"
+    },
+    "player": {
+      "book": "player",
+      "endpointCount": 1,
+      "capturedAt": null,
+      "keyEndpoints": [
+        {
+          "method": "GET",
+          "url": "https://sports2.player.ro",
+          "verified": false,
+          "purpose": "Recorded by `npm run new-book` on 2026-10-11. This is a claim, not a measurement: reach the endpoint, save the response under data/endpoints/captures/, and set verified: true when it answers."
+        }
+      ],
+      "platform": "everymatrix-odds",
+      "feedStatus": "unverified",
+      "verifiedAt": null,
+      "scraped": false,
+      "job": {
+        "id": "player",
+        "script": "player.mjs",
+        "engine": "everymatrix-odds-wamp",
+        "transport": "everymatrix-odds-wamp",
+        "enabled": false
+      },
+      "oddsFeed": null,
+      "crawl": null,
+      "unavailableSports": [],
+      "captureFiles": [
+        "player_api.json"
+      ],
+      "bodyShape": "recorded-url-only"
+    },
+    "rabona": {
+      "book": "rabona",
+      "endpointCount": 1,
+      "capturedAt": null,
+      "keyEndpoints": [
+        {
+          "method": "GET",
+          "url": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetUpcoming?integration=rabona",
+          "verified": false,
+          "purpose": "Recorded by `npm run new-book` on 2026-10-11. This is a claim, not a measurement: reach the endpoint, save the response under data/endpoints/captures/, and set verified: true when it answers."
+        }
+      ],
+      "platform": "altenar-sb2",
+      "feedStatus": "unverified",
+      "verifiedAt": null,
+      "scraped": false,
+      "job": {
+        "id": "rabona",
+        "script": "altenar-sites.mjs",
+        "engine": "altenar-tenancy",
+        "transport": "altenar-sb2-widget-json",
+        "enabled": false
+      },
+      "oddsFeed": null,
+      "crawl": null,
+      "unavailableSports": [],
+      "captureFiles": [
+        "rabona-odds-2026-10-11.json"
+      ],
+      "bodyShape": "recorded-url-only"
+    },
+    "campobet": {
+      "book": "campobet",
+      "endpointCount": 1,
+      "capturedAt": null,
+      "keyEndpoints": [
+        {
+          "method": "GET",
+          "url": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetUpcoming?integration=campobet",
+          "verified": false,
+          "purpose": "Recorded by `npm run new-book` on 2026-10-11. This is a claim, not a measurement: reach the endpoint, save the response under data/endpoints/captures/, and set verified: true when it answers."
+        }
+      ],
+      "platform": "altenar-sb2",
+      "feedStatus": "unverified",
+      "verifiedAt": null,
+      "scraped": false,
+      "job": {
+        "id": "campobet",
+        "script": "altenar-sites.mjs",
+        "engine": "altenar-tenancy",
+        "transport": "altenar-sb2-widget-json",
+        "enabled": false
+      },
+      "oddsFeed": null,
+      "crawl": null,
+      "unavailableSports": [],
+      "captureFiles": [
+        "campobet-odds-2026-10-11.json"
+      ],
+      "bodyShape": "recorded-url-only"
+    },
+    "librabet": {
+      "book": "librabet",
+      "endpointCount": 1,
+      "capturedAt": null,
+      "keyEndpoints": [
+        {
+          "method": "GET",
+          "url": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetUpcoming?integration=librabet",
+          "verified": false,
+          "purpose": "Recorded by `npm run new-book` on 2026-10-11. This is a claim, not a measurement: reach the endpoint, save the response under data/endpoints/captures/, and set verified: true when it answers."
+        }
+      ],
+      "platform": "altenar-sb2",
+      "feedStatus": "unverified",
+      "verifiedAt": null,
+      "scraped": false,
+      "job": {
+        "id": "librabet",
+        "script": "altenar-sites.mjs",
+        "engine": "altenar-tenancy",
+        "transport": "altenar-sb2-widget-json",
+        "enabled": false
+      },
+      "oddsFeed": null,
+      "crawl": null,
+      "unavailableSports": [],
+      "captureFiles": [
+        "librabet-odds-2026-10-11.json"
+      ],
+      "bodyShape": "recorded-url-only"
+    },
+    "sportaza": {
+      "book": "sportaza",
+      "endpointCount": 1,
+      "capturedAt": null,
+      "keyEndpoints": [
+        {
+          "method": "GET",
+          "url": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetUpcoming?integration=sportaza",
+          "verified": false,
+          "purpose": "Recorded by `npm run new-book` on 2026-10-11. This is a claim, not a measurement: reach the endpoint, save the response under data/endpoints/captures/, and set verified: true when it answers."
+        }
+      ],
+      "platform": "altenar-sb2",
+      "feedStatus": "unverified",
+      "verifiedAt": null,
+      "scraped": false,
+      "job": {
+        "id": "sportaza",
+        "script": "altenar-sites.mjs",
+        "engine": "altenar-tenancy",
+        "transport": "altenar-sb2-widget-json",
+        "enabled": false
+      },
+      "oddsFeed": null,
+      "crawl": null,
+      "unavailableSports": [],
+      "captureFiles": [
+        "sportaza-odds-2026-10-11.json"
+      ],
+      "bodyShape": "recorded-url-only"
+    },
+    "greatwin": {
+      "book": "greatwin",
+      "endpointCount": 1,
+      "capturedAt": null,
+      "keyEndpoints": [
+        {
+          "method": "GET",
+          "url": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetUpcoming?integration=greatwin",
+          "verified": false,
+          "purpose": "Recorded by `npm run new-book` on 2026-10-11. This is a claim, not a measurement: reach the endpoint, save the response under data/endpoints/captures/, and set verified: true when it answers."
+        }
+      ],
+      "platform": "altenar-sb2",
+      "feedStatus": "unverified",
+      "verifiedAt": null,
+      "scraped": false,
+      "job": {
+        "id": "greatwin",
+        "script": "altenar-sites.mjs",
+        "engine": "altenar-tenancy",
+        "transport": "altenar-sb2-widget-json",
+        "enabled": false
+      },
+      "oddsFeed": null,
+      "crawl": null,
+      "unavailableSports": [],
+      "captureFiles": [
+        "greatwin-odds-2026-10-11.json"
+      ],
+      "bodyShape": "recorded-url-only"
+    },
+    "fezbet": {
+      "book": "fezbet",
+      "endpointCount": 1,
+      "capturedAt": null,
+      "keyEndpoints": [
+        {
+          "method": "GET",
+          "url": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetUpcoming?integration=fezbet",
+          "verified": false,
+          "purpose": "Recorded by `npm run new-book` on 2026-10-11. This is a claim, not a measurement: reach the endpoint, save the response under data/endpoints/captures/, and set verified: true when it answers."
+        }
+      ],
+      "platform": "altenar-sb2",
+      "feedStatus": "unverified",
+      "verifiedAt": null,
+      "scraped": false,
+      "job": {
+        "id": "fezbet",
+        "script": "altenar-sites.mjs",
+        "engine": "altenar-tenancy",
+        "transport": "altenar-sb2-widget-json",
+        "enabled": false
+      },
+      "oddsFeed": null,
+      "crawl": null,
+      "unavailableSports": [],
+      "captureFiles": [
+        "fezbet-odds-2026-10-11.json"
+      ],
+      "bodyShape": "recorded-url-only"
+    },
+    "wazamba": {
+      "book": "wazamba",
+      "endpointCount": 1,
+      "capturedAt": null,
+      "keyEndpoints": [
+        {
+          "method": "GET",
+          "url": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetUpcoming?integration=wazamba",
+          "verified": false,
+          "purpose": "Recorded by `npm run new-book` on 2026-10-11. This is a claim, not a measurement: reach the endpoint, save the response under data/endpoints/captures/, and set verified: true when it answers."
+        }
+      ],
+      "platform": "altenar-sb2",
+      "feedStatus": "unverified",
+      "verifiedAt": null,
+      "scraped": false,
+      "job": {
+        "id": "wazamba",
+        "script": "altenar-sites.mjs",
+        "engine": "altenar-tenancy",
+        "transport": "altenar-sb2-widget-json",
+        "enabled": false
+      },
+      "oddsFeed": null,
+      "crawl": null,
+      "unavailableSports": [],
+      "captureFiles": [
+        "wazamba-odds-2026-10-11.json"
+      ],
+      "bodyShape": "recorded-url-only"
+    },
+    "nomini": {
+      "book": "nomini",
+      "endpointCount": 1,
+      "capturedAt": null,
+      "keyEndpoints": [
+        {
+          "method": "GET",
+          "url": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetUpcoming?integration=nomini",
+          "verified": false,
+          "purpose": "Recorded by `npm run new-book` on 2026-10-11. This is a claim, not a measurement: reach the endpoint, save the response under data/endpoints/captures/, and set verified: true when it answers."
+        }
+      ],
+      "platform": "altenar-sb2",
+      "feedStatus": "unverified",
+      "verifiedAt": null,
+      "scraped": false,
+      "job": {
+        "id": "nomini",
+        "script": "altenar-sites.mjs",
+        "engine": "altenar-tenancy",
+        "transport": "altenar-sb2-widget-json",
+        "enabled": false
+      },
+      "oddsFeed": null,
+      "crawl": null,
+      "unavailableSports": [],
+      "captureFiles": [
+        "nomini-odds-2026-10-11.json"
+      ],
+      "bodyShape": "recorded-url-only"
+    },
+    "casinia": {
+      "book": "casinia",
+      "endpointCount": 1,
+      "capturedAt": null,
+      "keyEndpoints": [
+        {
+          "method": "GET",
+          "url": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetUpcoming?integration=casinia",
+          "verified": false,
+          "purpose": "Recorded by `npm run new-book` on 2026-10-11. This is a claim, not a measurement: reach the endpoint, save the response under data/endpoints/captures/, and set verified: true when it answers."
+        }
+      ],
+      "platform": "altenar-sb2",
+      "feedStatus": "unverified",
+      "verifiedAt": null,
+      "scraped": false,
+      "job": {
+        "id": "casinia",
+        "script": "altenar-sites.mjs",
+        "engine": "altenar-tenancy",
+        "transport": "altenar-sb2-widget-json",
+        "enabled": false
+      },
+      "oddsFeed": null,
+      "crawl": null,
+      "unavailableSports": [],
+      "captureFiles": [
+        "casinia-odds-2026-10-11.json"
+      ],
+      "bodyShape": "recorded-url-only"
+    },
+    "quickwin": {
+      "book": "quickwin",
+      "endpointCount": 1,
+      "capturedAt": null,
+      "keyEndpoints": [
+        {
+          "method": "GET",
+          "url": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetUpcoming?integration=quickwin",
+          "verified": false,
+          "purpose": "Recorded by `npm run new-book` on 2026-10-11. This is a claim, not a measurement: reach the endpoint, save the response under data/endpoints/captures/, and set verified: true when it answers."
+        }
+      ],
+      "platform": "altenar-sb2",
+      "feedStatus": "unverified",
+      "verifiedAt": null,
+      "scraped": false,
+      "job": {
+        "id": "quickwin",
+        "script": "altenar-sites.mjs",
+        "engine": "altenar-tenancy",
+        "transport": "altenar-sb2-widget-json",
+        "enabled": false
+      },
+      "oddsFeed": null,
+      "crawl": null,
+      "unavailableSports": [],
+      "captureFiles": [
+        "quickwin-odds-2026-10-11.json"
+      ],
+      "bodyShape": "recorded-url-only"
+    },
+    "stake": {
+      "book": "stake",
+      "endpointCount": 1,
+      "capturedAt": null,
+      "keyEndpoints": [
+        {
+          "method": "GET",
+          "url": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetUpcoming?integration=stake",
+          "verified": false,
+          "purpose": "Recorded by `npm run new-book` on 2026-10-11. This is a claim, not a measurement: reach the endpoint, save the response under data/endpoints/captures/, and set verified: true when it answers."
+        }
+      ],
+      "platform": "altenar-sb2",
+      "feedStatus": "unverified",
+      "verifiedAt": null,
+      "scraped": false,
+      "job": {
+        "id": "stake",
+        "script": "altenar-sites.mjs",
+        "engine": "altenar-tenancy",
+        "transport": "altenar-sb2-widget-json",
+        "enabled": false
+      },
+      "oddsFeed": null,
+      "crawl": null,
+      "unavailableSports": [],
+      "captureFiles": [
+        "stake-odds-2026-10-11.json"
+      ],
+      "bodyShape": "recorded-url-only"
+    },
+    "bcgame": {
+      "book": "bcgame",
+      "endpointCount": 1,
+      "capturedAt": null,
+      "keyEndpoints": [
+        {
+          "method": "GET",
+          "url": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetUpcoming?integration=bcgame",
+          "verified": false,
+          "purpose": "Recorded by `npm run new-book` on 2026-10-11. This is a claim, not a measurement: reach the endpoint, save the response under data/endpoints/captures/, and set verified: true when it answers."
+        }
+      ],
+      "platform": "altenar-sb2",
+      "feedStatus": "unverified",
+      "verifiedAt": null,
+      "scraped": false,
+      "job": {
+        "id": "bcgame",
+        "script": "altenar-sites.mjs",
+        "engine": "altenar-tenancy",
+        "transport": "altenar-sb2-widget-json",
+        "enabled": false
+      },
+      "oddsFeed": null,
+      "crawl": null,
+      "unavailableSports": [],
+      "captureFiles": [
+        "bcgame-odds-2026-10-11.json"
+      ],
+      "bodyShape": "recorded-url-only"
+    },
+    "sportsbetio": {
+      "book": "sportsbetio",
+      "endpointCount": 1,
+      "capturedAt": null,
+      "keyEndpoints": [
+        {
+          "method": "GET",
+          "url": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetUpcoming?integration=sportsbetio",
+          "verified": false,
+          "purpose": "Recorded by `npm run new-book` on 2026-10-11. This is a claim, not a measurement: reach the endpoint, save the response under data/endpoints/captures/, and set verified: true when it answers."
+        }
+      ],
+      "platform": "altenar-sb2",
+      "feedStatus": "unverified",
+      "verifiedAt": null,
+      "scraped": false,
+      "job": {
+        "id": "sportsbetio",
+        "script": "altenar-sites.mjs",
+        "engine": "altenar-tenancy",
+        "transport": "altenar-sb2-widget-json",
+        "enabled": false
+      },
+      "oddsFeed": null,
+      "crawl": null,
+      "unavailableSports": [],
+      "captureFiles": [
+        "sportsbetio-odds-2026-10-11.json"
+      ],
+      "bodyShape": "recorded-url-only"
+    },
+    "duelbits": {
+      "book": "duelbits",
+      "endpointCount": 1,
+      "capturedAt": null,
+      "keyEndpoints": [
+        {
+          "method": "GET",
+          "url": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetUpcoming?integration=duelbits",
+          "verified": false,
+          "purpose": "Recorded by `npm run new-book` on 2026-10-11. This is a claim, not a measurement: reach the endpoint, save the response under data/endpoints/captures/, and set verified: true when it answers."
+        }
+      ],
+      "platform": "altenar-sb2",
+      "feedStatus": "unverified",
+      "verifiedAt": null,
+      "scraped": false,
+      "job": {
+        "id": "duelbits",
+        "script": "altenar-sites.mjs",
+        "engine": "altenar-tenancy",
+        "transport": "altenar-sb2-widget-json",
+        "enabled": false
+      },
+      "oddsFeed": null,
+      "crawl": null,
+      "unavailableSports": [],
+      "captureFiles": [
+        "duelbits-odds-2026-10-11.json"
+      ],
+      "bodyShape": "recorded-url-only"
+    },
+    "solcasino": {
+      "book": "solcasino",
+      "endpointCount": 1,
+      "capturedAt": null,
+      "keyEndpoints": [
+        {
+          "method": "GET",
+          "url": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetUpcoming?integration=solcasino",
+          "verified": false,
+          "purpose": "Recorded by `npm run new-book` on 2026-10-11. This is a claim, not a measurement: reach the endpoint, save the response under data/endpoints/captures/, and set verified: true when it answers."
+        }
+      ],
+      "platform": "altenar-sb2",
+      "feedStatus": "unverified",
+      "verifiedAt": null,
+      "scraped": false,
+      "job": {
+        "id": "solcasino",
+        "script": "altenar-sites.mjs",
+        "engine": "altenar-tenancy",
+        "transport": "altenar-sb2-widget-json",
+        "enabled": false
+      },
+      "oddsFeed": null,
+      "crawl": null,
+      "unavailableSports": [],
+      "captureFiles": [
+        "solcasino-odds-2026-10-11.json"
+      ],
+      "bodyShape": "recorded-url-only"
+    },
+    "betriot": {
+      "book": "betriot",
+      "endpointCount": 1,
+      "capturedAt": null,
+      "keyEndpoints": [
+        {
+          "method": "GET",
+          "url": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetUpcoming?integration=betriot",
+          "verified": false,
+          "purpose": "Recorded by `npm run new-book` on 2026-10-11. This is a claim, not a measurement: reach the endpoint, save the response under data/endpoints/captures/, and set verified: true when it answers."
+        }
+      ],
+      "platform": "altenar-sb2",
+      "feedStatus": "unverified",
+      "verifiedAt": null,
+      "scraped": false,
+      "job": {
+        "id": "betriot",
+        "script": "altenar-sites.mjs",
+        "engine": "altenar-tenancy",
+        "transport": "altenar-sb2-widget-json",
+        "enabled": false
+      },
+      "oddsFeed": null,
+      "crawl": null,
+      "unavailableSports": [],
+      "captureFiles": [
+        "betriot-odds-2026-10-11.json"
+      ],
+      "bodyShape": "recorded-url-only"
+    },
+    "spinanga": {
+      "book": "spinanga",
+      "endpointCount": 1,
+      "capturedAt": null,
+      "keyEndpoints": [
+        {
+          "method": "GET",
+          "url": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetUpcoming?integration=spinanga",
+          "verified": false,
+          "purpose": "Recorded by `npm run new-book` on 2026-10-11. This is a claim, not a measurement: reach the endpoint, save the response under data/endpoints/captures/, and set verified: true when it answers."
+        }
+      ],
+      "platform": "altenar-sb2",
+      "feedStatus": "unverified",
+      "verifiedAt": null,
+      "scraped": false,
+      "job": {
+        "id": "spinanga",
+        "script": "altenar-sites.mjs",
+        "engine": "altenar-tenancy",
+        "transport": "altenar-sb2-widget-json",
+        "enabled": false
+      },
+      "oddsFeed": null,
+      "crawl": null,
+      "unavailableSports": [],
+      "captureFiles": [
+        "spinanga-odds-2026-10-11.json"
+      ],
+      "bodyShape": "recorded-url-only"
+    },
+    "gameworld": {
+      "book": "gameworld",
+      "endpointCount": 2,
+      "capturedAt": "2026-10-12T15:54:00.000Z",
+      "keyEndpoints": [
+        {
+          "method": "GET",
+          "url": "https://sportsbook-sm-distribution-api.nsoft.com/api/v1/events?companyUuid=682e6a38-b5ad-4c58-a743-3b06c79e55cd",
+          "verified": true,
+          "purpose": "NSoft public sports distribution API (companyUuid 682e6a38-b5ad-4c58-a743-3b06c79e55cd). Verified live against on-screen odds on gameworld.ro/pariuri-sportive."
+        },
+        {
+          "method": "GET",
+          "url": "https://sportsbook-sm-distribution-api.nsoft.com/api/v1/topOffer?companyUuid=682e6a38-b5ad-4c58-a743-3b06c79e55cd",
+          "verified": true
+        }
+      ],
+      "platform": "nsoft",
+      "feedStatus": "verified",
+      "verifiedAt": "2026-10-12",
+      "scraped": true,
+      "job": {
+        "id": "gameworld",
+        "script": "nsoft.mjs",
+        "engine": "nsoft-public-json",
+        "transport": "nsoft-public-sports-json",
+        "enabled": true
+      },
+      "oddsFeed": null,
+      "crawl": null,
+      "unavailableSports": [],
+      "captureFiles": [
+        {
+          "file": "captures/gameworld_api.json",
+          "bytes": 1007,
+          "real": false
+        }
+      ],
+      "bodyShape": "endpoint-crawl",
+      "legacyCaptureRef": "captures/gameworld_api.json"
+    },
+    "vivabet": {
+      "book": "vivabet",
+      "endpointCount": 2,
+      "capturedAt": "2026-10-12T16:15:00.000Z",
+      "keyEndpoints": [
+        {
+          "method": "GET",
+          "url": "https://vivabet-ro-api.egt-digital.com/api/sportsapi/public/sports",
+          "verified": true,
+          "purpose": "EGT Digital public sports taxonomy and tournament hierarchy (VVRO)."
+        },
+        {
+          "method": "GET",
+          "url": "https://vivabet-ro-api.egt-digital.com/api/sportsapi/public/containers/v2/lobby/normalized/4136",
+          "verified": true,
+          "purpose": "EGT Digital normalized lobby container for prematch top offer football events."
+        }
+      ],
+      "platform": "egt-digital",
+      "feedStatus": "verified",
+      "verifiedAt": "2026-10-12",
+      "scraped": true,
+      "job": {
+        "id": "vivabet",
+        "script": "vivabet.mjs",
+        "engine": "egt-public-sports-api",
+        "transport": "egt-public-sports-json",
+        "enabled": true
+      },
+      "oddsFeed": null,
+      "crawl": null,
+      "unavailableSports": [],
+      "captureFiles": [
+        {
+          "file": "captures/vivabet_api.json",
+          "bytes": 103000,
+          "real": true
+        }
+      ],
+      "bodyShape": "endpoint-crawl",
+      "legacyCaptureRef": "captures/vivabet_api.json"
+    },
+    "totalbet": {
+      "book": "totalbet",
+      "endpointCount": 2,
+      "capturedAt": "2026-10-12T16:45:00.000Z",
+      "keyEndpoints": [
+        {
+          "method": "GET",
+          "url": "https://tbet-sofferapi.oddin-platform.com/sofferapi/api/offer/getOfferPag/1/200/1/0/0/0/0",
+          "verified": true,
+          "purpose": "Oddin sports distribution platform public offer pagination for prematch football."
+        },
+        {
+          "method": "GET",
+          "url": "https://tbet-sofferapi.oddin-platform.com/sofferapi/api/offer/homePageEvents/50",
+          "verified": true,
+          "purpose": "Oddin sports distribution platform homepage events with 1X2 market quotes."
+        }
+      ],
+      "platform": "oddin-platform",
+      "feedStatus": "verified",
+      "verifiedAt": "2026-10-12",
+      "scraped": true,
+      "job": {
+        "id": "totalbet",
+        "script": "totalbet.mjs",
+        "engine": "oddin-platform",
+        "transport": "oddin-public-sports-json",
+        "enabled": true
+      },
+      "oddsFeed": null,
+      "crawl": null,
+      "unavailableSports": [],
+      "captureFiles": [
+        {
+          "file": "captures/totalbet_api.json",
+          "bytes": 50000,
+          "real": true
+        }
+      ],
+      "bodyShape": "endpoint-crawl",
+      "legacyCaptureRef": "captures/totalbet_api.json"
+    },
+    "cashpot": {
+      "book": "cashpot",
+      "endpointCount": 2,
+      "capturedAt": "2026-10-12T17:00:00.000Z",
+      "keyEndpoints": [
+        {
+          "method": "GET",
+          "url": "https://exalogic.cashpot.ro/XSportDatastore/getMenuPrematch?systemCode=CASHPOT&lingua=RO&hash=",
+          "verified": true
+        },
+        {
+          "method": "GET",
+          "url": "https://exalogic.cashpot.ro/XSportDatastore/getPalinsestoDelGiorno?systemCode=CASHPOT&lingua=RO&hash=&data=20261012&idSport=1&idAggregata=1&timezone=3",
+          "verified": true
+        }
+      ],
+      "platform": "exalogic-xsport",
+      "feedStatus": "verified",
+      "verifiedAt": "2026-10-12",
+      "scraped": true,
+      "job": {
+        "id": "cashpot",
+        "script": "cashpot.mjs",
+        "engine": "exalogic-xsport",
+        "transport": "exalogic-xsport-public-json",
+        "enabled": true
+      },
+      "oddsFeed": null,
+      "crawl": null,
+      "unavailableSports": [],
+      "captureFiles": [
+        {
+          "file": "captures/cashpot-odds-2026-10-12.json",
+          "bytes": 423653,
+          "real": true
+        },
+        {
+          "file": "captures/cashpot_api.json",
+          "bytes": 700,
+          "real": true
+        }
+      ],
+      "bodyShape": "endpoint-crawl",
+      "legacyCaptureRef": "captures/cashpot_api.json"
+    },
+    "redsevens": {
+      "book": "redsevens",
+      "endpointCount": 2,
+      "capturedAt": "2026-10-12T17:30:00.000Z",
+      "keyEndpoints": [
+        {
+          "method": "GET",
+          "url": "https://sportsbook-sm-distribution-api.nsoft.com/api/v1/events?companyUuid=682e6a38-b5ad-4c58-a743-3b06c79e55cd",
+          "verified": true,
+          "purpose": "NSoft public sports distribution API (companyUuid 682e6a38-b5ad-4c58-a743-3b06c79e55cd). Verified live against on-screen odds on redsevens.ro/pariuri-sportive."
+        },
+        {
+          "method": "GET",
+          "url": "https://sportsbook-sm-distribution-api.nsoft.com/api/v1/topOffer?companyUuid=682e6a38-b5ad-4c58-a743-3b06c79e55cd",
+          "verified": true
+        }
+      ],
+      "platform": "nsoft",
+      "feedStatus": "verified",
+      "verifiedAt": "2026-10-12",
+      "scraped": true,
+      "job": {
+        "id": "redsevens",
+        "script": "nsoft.mjs",
+        "engine": "nsoft-public-json",
+        "transport": "nsoft-public-sports-json",
+        "enabled": true
+      },
+      "oddsFeed": null,
+      "crawl": null,
+      "unavailableSports": [],
+      "captureFiles": [
+        {
+          "file": "captures/redsevens-odds-2026-10-12.json",
+          "bytes": 8166567,
+          "real": true
+        },
+        {
+          "file": "captures/redsevens_api.json",
+          "bytes": 8166567,
+          "real": true
+        }
+      ],
+      "bodyShape": "endpoint-crawl",
+      "legacyCaptureRef": "captures/redsevens_api.json"
+    },
+    "pinnacle": {
+      "book": "pinnacle",
+      "endpointCount": 0,
+      "capturedAt": null,
+      "keyEndpoints": [],
+      "platform": "custom",
+      "feedStatus": "unverified",
+      "verifiedAt": null,
+      "scraped": false,
+      "job": {
+        "id": "pinnacle",
+        "script": "pinnacle.mjs",
+        "engine": "custom-json",
+        "transport": "custom-json",
+        "enabled": false
+      },
+      "oddsFeed": null,
+      "crawl": null,
+      "unavailableSports": [],
+      "captureFiles": [],
+      "bodyShape": null,
+      "legacyCaptureRef": null
+    },
+    "lvbet": {
+      "book": "lvbet",
+      "endpointCount": 1,
+      "capturedAt": "2026-10-13T12:06:37.889Z",
+      "keyEndpoints": [
+        {
+          "method": "GET",
+          "url": "https://offer.lvbet.pl/client-api/v5/matches/competition-view/?sports_groups_ids=1&lang=en",
+          "verified": true,
+          "purpose": "LV BET public client API v5: competition-view endpoint with prematch events and primary column markets"
+        }
+      ],
+      "platform": "custom",
+      "feedStatus": "verified",
+      "verifiedAt": "2026-10-13",
+      "scraped": true,
+      "job": {
+        "id": "lvbet",
+        "script": "lvbet.mjs",
+        "engine": "custom-json",
+        "transport": "custom-json",
+        "enabled": true
+      },
+      "oddsFeed": null,
+      "crawl": null,
+      "unavailableSports": [],
+      "captureFiles": [
+        {
+          "file": "captures/lvbet-odds-2026-10-13.json",
+          "bytes": 17302189,
+          "real": true
+        }
+      ],
+      "bodyShape": "competition-view"
+    },
+    "betfan": {
+      "book": "betfan",
+      "endpointCount": 1,
+      "capturedAt": "2026-10-13T12:35:00.000Z",
+      "keyEndpoints": [
+        {
+          "method": "GET",
+          "url": "https://betfan.pl/api/v2/event/all",
+          "verified": true,
+          "purpose": "BETFAN public REST API v2: /api/v2/event/all returning prematch and live events with embedded games"
+        }
+      ],
+      "platform": "custom",
+      "feedStatus": "verified",
+      "verifiedAt": "2026-10-13",
+      "scraped": true,
+      "job": {
+        "id": "betfan",
+        "script": "betfan.mjs",
+        "engine": "custom-json",
+        "transport": "custom-json",
+        "enabled": true
+      },
+      "oddsFeed": null,
+      "crawl": null,
+      "unavailableSports": [],
+      "captureFiles": [
+        {
+          "file": "captures/betfan-odds-2026-10-13.json",
+          "bytes": 23147268,
+          "real": true
+        }
+      ],
+      "bodyShape": "event-all"
+    },
+    "powbet": {
+      "book": "powbet",
+      "endpointCount": 1,
+      "capturedAt": "2026-10-13T13:13:00.000Z",
+      "keyEndpoints": [
+        {
+          "method": "GET",
+          "url": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetUpcoming?integration=powbet",
+          "verified": true,
+          "purpose": "Public widget GetUpcoming endpoint returning prematch and in-play odds on Altenar SB2 platform."
+        }
+      ],
+      "platform": "altenar-sb2",
+      "feedStatus": "verified",
+      "verifiedAt": "2026-10-13",
+      "scraped": true,
+      "job": {
+        "id": "powbet",
+        "script": "altenar-sites.mjs",
+        "engine": "altenar-tenancy",
+        "transport": "altenar-sb2-widget-json",
+        "enabled": true
+      },
+      "oddsFeed": null,
+      "crawl": null,
+      "unavailableSports": [],
+      "captureFiles": [
+        "powbet-odds-2026-10-13.json"
+      ],
+      "bodyShape": "recorded-url-only"
+    },
+    "sportuna": {
+      "book": "sportuna",
+      "endpointCount": 1,
+      "capturedAt": "2026-10-13",
+      "keyEndpoints": [
+        {
+          "method": "GET",
+          "url": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetUpcoming?integration=sportuna",
+          "verified": true,
+          "purpose": "Altenar SB2 public widget upcoming odds endpoint returning live events and markets across supported sports."
+        }
+      ],
+      "platform": "altenar-sb2",
+      "feedStatus": "verified",
+      "verifiedAt": "2026-10-13",
+      "scraped": true,
+      "job": {
+        "id": "sportuna",
+        "script": "altenar-sites.mjs",
+        "engine": "altenar-tenancy",
+        "transport": "altenar-sb2-widget-json",
+        "enabled": true
+      },
+      "oddsFeed": null,
+      "crawl": null,
+      "unavailableSports": [],
+      "captureFiles": [
+        "sportuna-odds-2026-10-13.json"
+      ],
+      "bodyShape": "recorded-url-only"
+    },
+    "casinoly": {
+      "book": "casinoly",
+      "endpointCount": 1,
+      "capturedAt": "2026-10-13",
+      "keyEndpoints": [
+        {
+          "method": "GET",
+          "url": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetUpcoming?integration=casinoly",
+          "verified": true,
+          "purpose": "Altenar SB2 public widget upcoming odds endpoint returning live events and markets across supported sports."
+        }
+      ],
+      "platform": "altenar-sb2",
+      "feedStatus": "verified",
+      "verifiedAt": "2026-10-13",
+      "scraped": true,
+      "job": {
+        "id": "casinoly",
+        "script": "altenar-sites.mjs",
+        "engine": "altenar-tenancy",
+        "transport": "altenar-sb2-widget-json",
+        "enabled": true
+      },
+      "oddsFeed": null,
+      "crawl": null,
+      "unavailableSports": [],
+      "captureFiles": [
+        "casinoly-odds-2026-10-13.json"
+      ],
+      "bodyShape": "recorded-url-only"
+    },
+    "excitewin": {
+      "book": "excitewin",
+      "endpointCount": 1,
+      "capturedAt": "2026-10-13",
+      "keyEndpoints": [
+        {
+          "method": "GET",
+          "url": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetUpcoming?integration=excitewin",
+          "verified": true,
+          "purpose": "Altenar SB2 public widget upcoming odds endpoint returning live events and markets across supported sports."
+        }
+      ],
+      "platform": "altenar-sb2",
+      "feedStatus": "verified",
+      "verifiedAt": "2026-10-13",
+      "scraped": true,
+      "job": {
+        "id": "excitewin",
+        "script": "altenar-sites.mjs",
+        "engine": "altenar-tenancy",
+        "transport": "altenar-sb2-widget-json",
+        "enabled": true
+      },
+      "oddsFeed": null,
+      "crawl": null,
+      "unavailableSports": [],
+      "captureFiles": [
+        "excitewin-odds-2026-10-13.json"
+      ],
+      "bodyShape": "recorded-url-only"
+    },
+    "cazimbo": {
+      "book": "cazimbo",
+      "endpointCount": 1,
+      "capturedAt": "2026-10-13",
+      "keyEndpoints": [
+        {
+          "method": "GET",
+          "url": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetUpcoming?integration=cazimbo",
+          "verified": true,
+          "purpose": "Altenar SB2 public widget upcoming odds endpoint returning live events and markets across supported sports."
+        }
+      ],
+      "platform": "altenar-sb2",
+      "feedStatus": "verified",
+      "verifiedAt": "2026-10-13",
+      "scraped": true,
+      "job": {
+        "id": "cazimbo",
+        "script": "altenar-sites.mjs",
+        "engine": "altenar-tenancy",
+        "transport": "altenar-sb2-widget-json",
+        "enabled": true
+      },
+      "oddsFeed": null,
+      "crawl": null,
+      "unavailableSports": [],
+      "captureFiles": [
+        "cazimbo-odds-2026-10-13.json"
+      ],
+      "bodyShape": "recorded-url-only"
+    },
+    "slotspalace": {
+      "book": "slotspalace",
+      "endpointCount": 1,
+      "capturedAt": "2026-10-13",
+      "keyEndpoints": [
+        {
+          "method": "GET",
+          "url": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetUpcoming?integration=slotspalace",
+          "verified": true,
+          "purpose": "Altenar SB2 public widget upcoming odds endpoint returning live events and markets across supported sports."
+        }
+      ],
+      "platform": "altenar-sb2",
+      "feedStatus": "verified",
+      "verifiedAt": "2026-10-13",
+      "scraped": true,
+      "job": {
+        "id": "slotspalace",
+        "script": "altenar-sites.mjs",
+        "engine": "altenar-tenancy",
+        "transport": "altenar-sb2-widget-json",
+        "enabled": true
+      },
+      "oddsFeed": null,
+      "crawl": null,
+      "unavailableSports": [],
+      "captureFiles": [
+        "slotspalace-odds-2026-10-13.json"
+      ],
+      "bodyShape": "recorded-url-only"
+    },
+    "malinacasino": {
+      "book": "malinacasino",
+      "endpointCount": 1,
+      "capturedAt": "2026-10-13",
+      "keyEndpoints": [
+        {
+          "method": "GET",
+          "url": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetUpcoming?integration=malinacasino",
+          "verified": true,
+          "purpose": "Altenar SB2 public widget upcoming odds endpoint returning live events and markets across supported sports."
+        }
+      ],
+      "platform": "altenar-sb2",
+      "feedStatus": "verified",
+      "verifiedAt": "2026-10-13",
+      "scraped": true,
+      "job": {
+        "id": "malinacasino",
+        "script": "altenar-sites.mjs",
+        "engine": "altenar-tenancy",
+        "transport": "altenar-sb2-widget-json",
+        "enabled": true
+      },
+      "oddsFeed": null,
+      "crawl": null,
+      "unavailableSports": [],
+      "captureFiles": [
+        "malinacasino-odds-2026-10-13.json"
+      ],
+      "bodyShape": "recorded-url-only"
+    },
+    "zet": {
+      "book": "zet",
+      "endpointCount": 1,
+      "capturedAt": "2026-10-13",
+      "keyEndpoints": [
+        {
+          "method": "GET",
+          "url": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetUpcoming?integration=zet",
+          "verified": true,
+          "purpose": "Altenar SB2 public widget upcoming odds endpoint returning live events and markets across supported sports."
+        }
+      ],
+      "platform": "altenar-sb2",
+      "feedStatus": "verified",
+      "verifiedAt": "2026-10-13",
+      "scraped": true,
+      "job": {
+        "id": "zet",
+        "script": "altenar-sites.mjs",
+        "engine": "altenar-tenancy",
+        "transport": "altenar-sb2-widget-json",
+        "enabled": true
+      },
+      "oddsFeed": null,
+      "crawl": null,
+      "unavailableSports": [],
+      "captureFiles": [
+        "zet-odds-2026-10-13.json"
+      ],
+      "bodyShape": "recorded-url-only"
+    },
+    "kingmaker": {
+      "book": "kingmaker",
+      "endpointCount": 1,
+      "capturedAt": "2026-10-13",
+      "keyEndpoints": [
+        {
+          "method": "GET",
+          "url": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetUpcoming?integration=kingmaker",
+          "verified": true,
+          "purpose": "Altenar SB2 public widget upcoming odds endpoint returning live events and markets across supported sports."
+        }
+      ],
+      "platform": "altenar-sb2",
+      "feedStatus": "verified",
+      "verifiedAt": "2026-10-13",
+      "scraped": true,
+      "job": {
+        "id": "kingmaker",
+        "script": "altenar-sites.mjs",
+        "engine": "altenar-tenancy",
+        "transport": "altenar-sb2-widget-json",
+        "enabled": true
+      },
+      "oddsFeed": null,
+      "crawl": null,
+      "unavailableSports": [],
+      "captureFiles": [
+        "kingmaker-odds-2026-10-13.json"
+      ],
+      "bodyShape": "recorded-url-only"
+    },
+    "crownplay": {
+      "book": "crownplay",
+      "endpointCount": 1,
+      "capturedAt": "2026-10-13",
+      "keyEndpoints": [
+        {
+          "method": "GET",
+          "url": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetUpcoming?integration=crownplay",
+          "verified": true,
+          "purpose": "Altenar SB2 public widget upcoming odds endpoint returning live events and markets across supported sports."
+        }
+      ],
+      "platform": "altenar-sb2",
+      "feedStatus": "verified",
+      "verifiedAt": "2026-10-13",
+      "scraped": true,
+      "job": {
+        "id": "crownplay",
+        "script": "altenar-sites.mjs",
+        "engine": "altenar-tenancy",
+        "transport": "altenar-sb2-widget-json",
+        "enabled": true
+      },
+      "oddsFeed": null,
+      "crawl": null,
+      "unavailableSports": [],
+      "captureFiles": [
+        "crownplay-odds-2026-10-13.json"
+      ],
+      "bodyShape": "recorded-url-only"
+    },
+    "5gringos": {
+      "book": "5gringos",
+      "endpointCount": 1,
+      "capturedAt": "2026-10-13",
+      "keyEndpoints": [
+        {
+          "method": "GET",
+          "url": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetUpcoming?integration=5gringos",
+          "verified": true,
+          "purpose": "Altenar SB2 public widget upcoming odds endpoint returning live events and markets across supported sports."
+        }
+      ],
+      "platform": "altenar-sb2",
+      "feedStatus": "verified",
+      "verifiedAt": "2026-10-13",
+      "scraped": true,
+      "job": {
+        "id": "5gringos",
+        "script": "altenar-sites.mjs",
+        "engine": "altenar-tenancy",
+        "transport": "altenar-sb2-widget-json",
+        "enabled": true
+      },
+      "oddsFeed": null,
+      "crawl": null,
+      "unavailableSports": [],
+      "captureFiles": [
+        "5gringos-odds-2026-10-13.json"
+      ],
+      "bodyShape": "recorded-url-only"
+    },
+    "ohmyspins": {
+      "book": "ohmyspins",
+      "endpointCount": 1,
+      "capturedAt": "2026-10-13T15:30:00.000Z",
+      "keyEndpoints": [
+        {
+          "method": "GET",
+          "url": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetUpcoming?integration=ohmyspins",
+          "verified": true,
+          "purpose": "Altenar SB2 public widget GetUpcoming pre-match football feed for OhMySpins"
+        }
+      ],
+      "platform": "altenar-sb2",
+      "feedStatus": "verified",
+      "verifiedAt": "2026-10-13T15:30:00.000Z",
+      "scraped": true,
+      "job": {
+        "id": "ohmyspins",
+        "script": "altenar-sites.mjs",
+        "engine": "altenar-tenancy",
+        "transport": "altenar-sb2-widget-json",
+        "enabled": true
+      },
+      "oddsFeed": null,
+      "crawl": null,
+      "unavailableSports": [],
+      "captureFiles": [
+        "ohmyspins-odds-2026-10-13.json"
+      ],
+      "bodyShape": "recorded-url-only"
+    },
+    "boomerang": {
+      "book": "boomerang",
+      "endpointCount": 1,
+      "capturedAt": "2026-10-13T15:40:00.000Z",
+      "keyEndpoints": [
+        {
+          "method": "GET",
+          "url": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetUpcoming?integration=boomerang",
+          "verified": true,
+          "purpose": "Altenar SB2 public widget GetUpcoming pre-match football feed for Boomerang"
+        }
+      ],
+      "platform": "altenar-sb2",
+      "feedStatus": "verified",
+      "verifiedAt": "2026-10-13T15:40:00.000Z",
+      "scraped": true,
+      "job": {
+        "id": "boomerang",
+        "script": "altenar-sites.mjs",
+        "engine": "altenar-tenancy",
+        "transport": "altenar-sb2-widget-json",
+        "enabled": true
+      },
+      "oddsFeed": null,
+      "crawl": null,
+      "unavailableSports": [],
+      "captureFiles": [
+        "boomerang-odds-2026-10-13.json"
+      ],
+      "bodyShape": "recorded-url-only"
+    },
+    "goldenbet": {
+      "book": "goldenbet",
+      "endpointCount": 1,
+      "capturedAt": "2026-10-13T15:45:00.000Z",
+      "keyEndpoints": [
+        {
+          "method": "GET",
+          "url": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetUpcoming?integration=goldenbet",
+          "verified": true,
+          "purpose": "Altenar SB2 public widget GetUpcoming pre-match football feed for Goldenbet"
+        }
+      ],
+      "platform": "altenar-sb2",
+      "feedStatus": "verified",
+      "verifiedAt": "2026-10-13T15:45:00.000Z",
+      "scraped": true,
+      "job": {
+        "id": "goldenbet",
+        "script": "altenar-sites.mjs",
+        "engine": "altenar-tenancy",
+        "transport": "altenar-sb2-widget-json",
+        "enabled": true
+      },
+      "oddsFeed": null,
+      "crawl": null,
+      "unavailableSports": [],
+      "captureFiles": [
+        "goldenbet-odds-2026-10-13.json"
+      ],
+      "bodyShape": "recorded-url-only"
+    },
+    "casombie": {
+      "book": "casombie",
+      "endpointCount": 1,
+      "capturedAt": "2026-10-13T15:50:00.000Z",
+      "keyEndpoints": [
+        {
+          "method": "GET",
+          "url": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetUpcoming?integration=casombie",
+          "verified": true,
+          "purpose": "Altenar SB2 public widget GetUpcoming pre-match football feed for Casombie"
+        }
+      ],
+      "platform": "altenar-sb2",
+      "feedStatus": "verified",
+      "verifiedAt": "2026-10-13T15:50:00.000Z",
+      "scraped": true,
+      "job": {
+        "id": "casombie",
+        "script": "altenar-sites.mjs",
+        "engine": "altenar-tenancy",
+        "transport": "altenar-sb2-widget-json",
+        "enabled": true
+      },
+      "oddsFeed": null,
+      "crawl": null,
+      "unavailableSports": [],
+      "captureFiles": [
+        "casombie-odds-2026-10-13.json"
+      ],
+      "bodyShape": "recorded-url-only"
+    },
+    "campeonbet": {
+      "book": "campeonbet",
+      "endpointCount": 1,
+      "capturedAt": "2026-10-13T15:55:00.000Z",
+      "keyEndpoints": [
+        {
+          "method": "GET",
+          "url": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetUpcoming?integration=campeonbet",
+          "verified": true,
+          "purpose": "Altenar SB2 public widget GetUpcoming pre-match football feed for Campeonbet"
+        }
+      ],
+      "platform": "altenar-sb2",
+      "feedStatus": "verified",
+      "verifiedAt": "2026-10-13T15:55:00.000Z",
+      "scraped": true,
+      "job": {
+        "id": "campeonbet",
+        "script": "altenar-sites.mjs",
+        "engine": "altenar-tenancy",
+        "transport": "altenar-sb2-widget-json",
+        "enabled": true
+      },
+      "oddsFeed": null,
+      "crawl": null,
+      "unavailableSports": [],
+      "captureFiles": [
+        "campeonbet-odds-2026-10-13.json"
+      ],
+      "bodyShape": "recorded-url-only"
+    },
+    "betsamigo": {
+      "book": "betsamigo",
+      "endpointCount": 1,
+      "capturedAt": "2026-10-13T16:00:00.000Z",
+      "keyEndpoints": [
+        {
+          "method": "GET",
+          "url": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetUpcoming?integration=betsamigo",
+          "verified": true,
+          "purpose": "Altenar SB2 public widget GetUpcoming pre-match football feed for BetsAmigo"
+        }
+      ],
+      "platform": "altenar-sb2",
+      "feedStatus": "verified",
+      "verifiedAt": "2026-10-13T16:00:00.000Z",
+      "scraped": true,
+      "job": {
+        "id": "betsamigo",
+        "script": "altenar-sites.mjs",
+        "engine": "altenar-tenancy",
+        "transport": "altenar-sb2-widget-json",
+        "enabled": true
+      },
+      "oddsFeed": null,
+      "crawl": null,
+      "unavailableSports": [],
+      "captureFiles": [
+        "betsamigo-odds-2026-10-13.json"
+      ],
+      "bodyShape": "recorded-url-only"
+    },
+    "betalright": {
+      "book": "betalright",
+      "endpointCount": 1,
+      "capturedAt": "2026-10-13T16:00:00.000Z",
+      "keyEndpoints": [
+        {
+          "method": "GET",
+          "url": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetUpcoming?integration=betalright",
+          "verified": true,
+          "purpose": "Altenar SB2 public widget GetUpcoming pre-match football feed for BetAlright"
+        }
+      ],
+      "platform": "altenar-sb2",
+      "feedStatus": "verified",
+      "verifiedAt": "2026-10-13T16:00:00.000Z",
+      "scraped": true,
+      "job": {
+        "id": "betalright",
+        "script": "altenar-sites.mjs",
+        "engine": "altenar-tenancy",
+        "transport": "altenar-sb2-widget-json",
+        "enabled": true
+      },
+      "oddsFeed": null,
+      "crawl": null,
+      "unavailableSports": [],
+      "captureFiles": [
+        "betalright-odds-2026-10-13.json"
+      ],
+      "bodyShape": "recorded-url-only"
+    },
+    "fairspin": {
+      "book": "fairspin",
+      "endpointCount": 1,
+      "capturedAt": "2026-10-13T16:00:00.000Z",
+      "keyEndpoints": [
+        {
+          "method": "GET",
+          "url": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetUpcoming?integration=fairspin",
+          "verified": true,
+          "purpose": "Altenar SB2 public widget GetUpcoming pre-match football feed for Fairspin"
+        }
+      ],
+      "platform": "altenar-sb2",
+      "feedStatus": "verified",
+      "verifiedAt": "2026-10-13T16:00:00.000Z",
+      "scraped": true,
+      "job": {
+        "id": "fairspin",
+        "script": "altenar-sites.mjs",
+        "engine": "altenar-tenancy",
+        "transport": "altenar-sb2-widget-json",
+        "enabled": true
+      },
+      "oddsFeed": null,
+      "crawl": null,
+      "unavailableSports": [],
+      "captureFiles": [
+        "fairspin-odds-2026-10-13.json"
+      ],
+      "bodyShape": "recorded-url-only"
+    },
+    "spinight": {
+      "book": "spinight",
+      "endpointCount": 1,
+      "capturedAt": "2026-10-13T16:00:00.000Z",
+      "keyEndpoints": [
+        {
+          "method": "GET",
+          "url": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetUpcoming?integration=spinight",
+          "verified": true,
+          "purpose": "Altenar SB2 public widget GetUpcoming pre-match football feed for Spinight"
+        }
+      ],
+      "platform": "altenar-sb2",
+      "feedStatus": "verified",
+      "verifiedAt": "2026-10-13T16:00:00.000Z",
+      "scraped": true,
+      "job": {
+        "id": "spinight",
+        "script": "altenar-sites.mjs",
+        "engine": "altenar-tenancy",
+        "transport": "altenar-sb2-widget-json",
+        "enabled": true
+      },
+      "oddsFeed": null,
+      "crawl": null,
+      "unavailableSports": [],
+      "captureFiles": [
+        "spinight-odds-2026-10-13.json"
+      ],
+      "bodyShape": "recorded-url-only"
+    },
+    "goldspin": {
+      "book": "goldspin",
+      "endpointCount": 1,
+      "capturedAt": "2026-10-13T16:00:00.000Z",
+      "keyEndpoints": [
+        {
+          "method": "GET",
+          "url": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetUpcoming?integration=goldspin",
+          "verified": true,
+          "purpose": "Altenar SB2 public widget GetUpcoming pre-match football feed for Goldspin"
+        }
+      ],
+      "platform": "altenar-sb2",
+      "feedStatus": "verified",
+      "verifiedAt": "2026-10-13T16:00:00.000Z",
+      "scraped": true,
+      "job": {
+        "id": "goldspin",
+        "script": "altenar-sites.mjs",
+        "engine": "altenar-tenancy",
+        "transport": "altenar-sb2-widget-json",
+        "enabled": true
+      },
+      "oddsFeed": null,
+      "crawl": null,
+      "unavailableSports": [],
+      "captureFiles": [
+        "goldspin-odds-2026-10-13.json"
+      ],
+      "bodyShape": "recorded-url-only"
+    },
+    "wildsino": {
+      "book": "wildsino",
+      "endpointCount": 1,
+      "capturedAt": "2026-10-13T16:00:00.000Z",
+      "keyEndpoints": [
+        {
+          "method": "GET",
+          "url": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetUpcoming?integration=wildsino",
+          "verified": true,
+          "purpose": "Altenar SB2 public widget GetUpcoming pre-match football feed for Wildsino"
+        }
+      ],
+      "platform": "altenar-sb2",
+      "feedStatus": "verified",
+      "verifiedAt": "2026-10-13T16:00:00.000Z",
+      "scraped": true,
+      "job": {
+        "id": "wildsino",
+        "script": "altenar-sites.mjs",
+        "engine": "altenar-tenancy",
+        "transport": "altenar-sb2-widget-json",
+        "enabled": true
+      },
+      "oddsFeed": null,
+      "crawl": null,
+      "unavailableSports": [],
+      "captureFiles": [
+        "wildsino-odds-2026-10-13.json"
+      ],
+      "bodyShape": "recorded-url-only"
+    },
+    "betstro": {
+      "book": "betstro",
+      "endpointCount": 1,
+      "capturedAt": "2026-10-13T16:00:00.000Z",
+      "keyEndpoints": [
+        {
+          "method": "GET",
+          "url": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetUpcoming?integration=betstro",
+          "verified": true,
+          "purpose": "Altenar SB2 public widget GetUpcoming pre-match football feed for Betstro"
+        }
+      ],
+      "platform": "altenar-sb2",
+      "feedStatus": "verified",
+      "verifiedAt": "2026-10-13T16:00:00.000Z",
+      "scraped": true,
+      "job": {
+        "id": "betstro",
+        "script": "altenar-sites.mjs",
+        "engine": "altenar-tenancy",
+        "transport": "altenar-sb2-widget-json",
+        "enabled": true
+      },
+      "oddsFeed": null,
+      "crawl": null,
+      "unavailableSports": [],
+      "captureFiles": [
+        "betstro-odds-2026-10-13.json"
+      ],
+      "bodyShape": "recorded-url-only"
+    },
+    "evobet": {
+      "book": "evobet",
+      "endpointCount": 1,
+      "capturedAt": "2026-10-13T16:00:00.000Z",
+      "keyEndpoints": [
+        {
+          "method": "GET",
+          "url": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetUpcoming?integration=evobet",
+          "verified": true,
+          "purpose": "Altenar SB2 public widget GetUpcoming pre-match football feed for Evobet"
+        }
+      ],
+      "platform": "altenar-sb2",
+      "feedStatus": "verified",
+      "verifiedAt": "2026-10-13T16:00:00.000Z",
+      "scraped": true,
+      "job": {
+        "id": "evobet",
+        "script": "altenar-sites.mjs",
+        "engine": "altenar-tenancy",
+        "transport": "altenar-sb2-widget-json",
+        "enabled": true
+      },
+      "oddsFeed": null,
+      "crawl": null,
+      "unavailableSports": [],
+      "captureFiles": [
+        "evobet-odds-2026-10-13.json"
+      ],
+      "bodyShape": "recorded-url-only"
+    },
+    "svenbet": {
+      "book": "svenbet",
+      "endpointCount": 1,
+      "capturedAt": "2026-10-13T16:00:00.000Z",
+      "keyEndpoints": [
+        {
+          "method": "GET",
+          "url": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetUpcoming?integration=svenbet",
+          "verified": true,
+          "purpose": "Altenar SB2 public widget GetUpcoming pre-match football feed for Svenbet"
+        }
+      ],
+      "platform": "altenar-sb2",
+      "feedStatus": "verified",
+      "verifiedAt": "2026-10-13T16:00:00.000Z",
+      "scraped": true,
+      "job": {
+        "id": "svenbet",
+        "script": "altenar-sites.mjs",
+        "engine": "altenar-tenancy",
+        "transport": "altenar-sb2-widget-json",
+        "enabled": true
+      },
+      "oddsFeed": null,
+      "crawl": null,
+      "unavailableSports": [],
+      "captureFiles": [
+        "svenbet-odds-2026-10-13.json"
+      ],
+      "bodyShape": "recorded-url-only"
+    },
+    "sonsofslots": {
+      "book": "sonsofslots",
+      "endpointCount": 1,
+      "capturedAt": "2026-10-13T16:00:00.000Z",
+      "keyEndpoints": [
+        {
+          "method": "GET",
+          "url": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetUpcoming?integration=sonsofslots",
+          "verified": true,
+          "purpose": "Altenar SB2 public widget GetUpcoming pre-match football feed for SonsOfSlots"
+        }
+      ],
+      "platform": "altenar-sb2",
+      "feedStatus": "verified",
+      "verifiedAt": "2026-10-13T16:00:00.000Z",
+      "scraped": true,
+      "job": {
+        "id": "sonsofslots",
+        "script": "altenar-sites.mjs",
+        "engine": "altenar-tenancy",
+        "transport": "altenar-sb2-widget-json",
+        "enabled": true
+      },
+      "oddsFeed": null,
+      "crawl": null,
+      "unavailableSports": [],
+      "captureFiles": [
+        "sonsofslots-odds-2026-10-13.json"
+      ],
+      "bodyShape": "recorded-url-only"
+    },
+    "wallacebet": {
+      "book": "wallacebet",
+      "endpointCount": 1,
+      "capturedAt": "2026-10-13T16:00:00.000Z",
+      "keyEndpoints": [
+        {
+          "method": "GET",
+          "url": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetUpcoming?integration=wallacebet",
+          "verified": true,
+          "purpose": "Altenar SB2 public widget GetUpcoming pre-match football feed for Wallacebet"
+        }
+      ],
+      "platform": "altenar-sb2",
+      "feedStatus": "verified",
+      "verifiedAt": "2026-10-13T16:00:00.000Z",
+      "scraped": true,
+      "job": {
+        "id": "wallacebet",
+        "script": "altenar-sites.mjs",
+        "engine": "altenar-tenancy",
+        "transport": "altenar-sb2-widget-json",
+        "enabled": true
+      },
+      "oddsFeed": null,
+      "crawl": null,
+      "unavailableSports": [],
+      "captureFiles": [
+        "wallacebet-odds-2026-10-13.json"
+      ],
+      "bodyShape": "recorded-url-only"
+    },
+    "betrebels": {
+      "book": "betrebels",
+      "endpointCount": 1,
+      "capturedAt": "2026-10-13T16:00:00.000Z",
+      "keyEndpoints": [
+        {
+          "method": "GET",
+          "url": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetUpcoming?integration=betrebels",
+          "verified": true,
+          "purpose": "Altenar SB2 public widget GetUpcoming pre-match football feed for Betrebels"
+        }
+      ],
+      "platform": "altenar-sb2",
+      "feedStatus": "verified",
+      "verifiedAt": "2026-10-13T16:00:00.000Z",
+      "scraped": true,
+      "job": {
+        "id": "betrebels",
+        "script": "altenar-sites.mjs",
+        "engine": "altenar-tenancy",
+        "transport": "altenar-sb2-widget-json",
+        "enabled": true
+      },
+      "oddsFeed": null,
+      "crawl": null,
+      "unavailableSports": [],
+      "captureFiles": [
+        "betrebels-odds-2026-10-13.json"
+      ],
+      "bodyShape": "recorded-url-only"
+    },
+    "prontobet": {
+      "book": "prontobet",
+      "endpointCount": 1,
+      "capturedAt": "2026-10-13T16:00:00.000Z",
+      "keyEndpoints": [
+        {
+          "method": "GET",
+          "url": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetUpcoming?integration=prontobet",
+          "verified": true,
+          "purpose": "Altenar SB2 public widget feed for Prontobet"
+        }
+      ],
+      "platform": "altenar-sb2",
+      "feedStatus": "verified",
+      "verifiedAt": "2026-10-13T16:00:00.000Z",
+      "scraped": true,
+      "job": {
+        "id": "prontobet",
+        "script": "altenar-sites.mjs",
+        "engine": "altenar-tenancy",
+        "transport": "altenar-sb2-widget-json",
+        "enabled": true
+      },
+      "oddsFeed": null,
+      "crawl": null,
+      "unavailableSports": [],
+      "captureFiles": [
+        "prontobet-odds-2026-10-13.json"
+      ],
+      "bodyShape": "recorded-url-only"
+    },
+    "betovo": {
+      "book": "betovo",
+      "endpointCount": 1,
+      "capturedAt": "2026-10-13T16:00:00.000Z",
+      "keyEndpoints": [
+        {
+          "method": "GET",
+          "url": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetUpcoming?integration=betovo",
+          "verified": true,
+          "purpose": "Altenar SB2 public widget feed for Betovo"
+        }
+      ],
+      "platform": "altenar-sb2",
+      "feedStatus": "verified",
+      "verifiedAt": "2026-10-13T16:00:00.000Z",
+      "scraped": true,
+      "job": {
+        "id": "betovo",
+        "script": "altenar-sites.mjs",
+        "engine": "altenar-tenancy",
+        "transport": "altenar-sb2-widget-json",
+        "enabled": true
+      },
+      "oddsFeed": null,
+      "crawl": null,
+      "unavailableSports": [],
+      "captureFiles": [
+        "betovo-odds-2026-10-13.json"
+      ],
+      "bodyShape": "recorded-url-only"
+    },
+    "quickslot": {
+      "book": "quickslot",
+      "endpointCount": 1,
+      "capturedAt": "2026-10-13T16:00:00.000Z",
+      "keyEndpoints": [
+        {
+          "method": "GET",
+          "url": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetUpcoming?integration=quickslot",
+          "verified": true,
+          "purpose": "Altenar SB2 public widget feed for Quickslot"
+        }
+      ],
+      "platform": "altenar-sb2",
+      "feedStatus": "verified",
+      "verifiedAt": "2026-10-13T16:00:00.000Z",
+      "scraped": true,
+      "job": {
+        "id": "quickslot",
+        "script": "altenar-sites.mjs",
+        "engine": "altenar-tenancy",
+        "transport": "altenar-sb2-widget-json",
+        "enabled": true
+      },
+      "oddsFeed": null,
+      "crawl": null,
+      "unavailableSports": [],
+      "captureFiles": [
+        "quickslot-odds-2026-10-13.json"
+      ],
+      "bodyShape": "recorded-url-only"
+    },
+    "betbeast": {
+      "book": "betbeast",
+      "endpointCount": 1,
+      "capturedAt": "2026-10-13T16:00:00.000Z",
+      "keyEndpoints": [
+        {
+          "method": "GET",
+          "url": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetUpcoming?integration=betbeast",
+          "verified": true,
+          "purpose": "Altenar SB2 public widget feed for Betbeast"
+        }
+      ],
+      "platform": "altenar-sb2",
+      "feedStatus": "verified",
+      "verifiedAt": "2026-10-13T16:00:00.000Z",
+      "scraped": true,
+      "job": {
+        "id": "betbeast",
+        "script": "altenar-sites.mjs",
+        "engine": "altenar-tenancy",
+        "transport": "altenar-sb2-widget-json",
+        "enabled": true
+      },
+      "oddsFeed": null,
+      "crawl": null,
+      "unavailableSports": [],
+      "captureFiles": [
+        "betbeast-odds-2026-10-13.json"
+      ],
+      "bodyShape": "recorded-url-only"
+    },
+    "slotparadise": {
+      "book": "slotparadise",
+      "endpointCount": 1,
+      "capturedAt": "2026-10-13T16:00:00.000Z",
+      "keyEndpoints": [
+        {
+          "method": "GET",
+          "url": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetUpcoming?integration=slotparadise",
+          "verified": true,
+          "purpose": "Altenar SB2 public widget feed for Slotparadise"
+        }
+      ],
+      "platform": "altenar-sb2",
+      "feedStatus": "verified",
+      "verifiedAt": "2026-10-13T16:00:00.000Z",
+      "scraped": true,
+      "job": {
+        "id": "slotparadise",
+        "script": "altenar-sites.mjs",
+        "engine": "altenar-tenancy",
+        "transport": "altenar-sb2-widget-json",
+        "enabled": true
+      },
+      "oddsFeed": null,
+      "crawl": null,
+      "unavailableSports": [],
+      "captureFiles": [
+        "slotparadise-odds-2026-10-13.json"
+      ],
+      "bodyShape": "recorded-url-only"
+    },
+    "joker8": {
+      "book": "joker8",
+      "endpointCount": 1,
+      "capturedAt": "2026-10-13T16:00:00.000Z",
+      "keyEndpoints": [
+        {
+          "method": "GET",
+          "url": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetUpcoming?integration=joker8",
+          "verified": true,
+          "purpose": "Altenar SB2 public widget feed for Joker8"
+        }
+      ],
+      "platform": "altenar-sb2",
+      "feedStatus": "verified",
+      "verifiedAt": "2026-10-13T16:00:00.000Z",
+      "scraped": true,
+      "job": {
+        "id": "joker8",
+        "script": "altenar-sites.mjs",
+        "engine": "altenar-tenancy",
+        "transport": "altenar-sb2-widget-json",
+        "enabled": true
+      },
+      "oddsFeed": null,
+      "crawl": null,
+      "unavailableSports": [],
+      "captureFiles": [
+        "joker8-odds-2026-10-13.json"
+      ],
+      "bodyShape": "recorded-url-only"
+    },
+    "betway": {
+      "book": "betway",
+      "endpointCount": 1,
+      "capturedAt": "2026-10-13T16:00:00.000Z",
+      "keyEndpoints": [
+        {
+          "method": "GET",
+          "url": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetUpcoming?integration=betway",
+          "verified": true,
+          "purpose": "Altenar SB2 public widget feed for Betway"
+        }
+      ],
+      "platform": "altenar-sb2",
+      "feedStatus": "verified",
+      "verifiedAt": "2026-10-13T16:00:00.000Z",
+      "scraped": true,
+      "job": {
+        "id": "betway",
+        "script": "altenar-sites.mjs",
+        "engine": "altenar-tenancy",
+        "transport": "altenar-sb2-widget-json",
+        "enabled": true
+      },
+      "oddsFeed": null,
+      "crawl": null,
+      "unavailableSports": [],
+      "captureFiles": [
+        "betway-odds-2026-10-13.json"
+      ],
+      "bodyShape": "recorded-url-only"
     }
   },
   "sources": {

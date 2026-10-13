@@ -62,13 +62,24 @@
     const odds = Number(l.odds) || 0;
     const hasPayout = Number.isFinite(l.payout) && l.payout > 0;
     const net = hasPayout ? Math.round((l.payout - stake + Number.EPSILON) * 100) / 100 : null;
+    // Same rule as renderArbPanel, for the same reason. This card shows a stake, an
+    // odds and a net profit side by side, so all three have to carry the precision
+    // they were computed at. At whole units it printed "688" and "+313" for a leg
+    // really staked 688.32 paying 312.91: 688 x 0.45 is 309.60, so the card invited
+    // a bettor to conclude the arbitrage was wrong when it was right. Measured over
+    // the stored payload, 1,889 of 2,003 legs with a payout printed a stake that was
+    // not the real one, and 6 failed the stake x (odds - 1) = net check outright, by
+    // up to 3.31 RON. (The odds themselves are published at two decimals, so the
+    // three still only agree to about a leu — a property of the source data, not
+    // something the display can recover.) Older harnesses may lack fmtMoney.
+    const money = (n) => (helpers.fmtMoney || helpers.fmtStake)(n);
     const profitHtml = hasPayout
-      ? `<div class="profit${net < 0 ? ' is-neg' : ''}">${net >= 0 ? '+' : ''}${helpers.fmtStake(net)} RON</div>`
+      ? `<div class="profit${net < 0 ? ' is-neg' : ''}">${net >= 0 ? '+' : ''}${money(net)} RON</div>`
       : `<div class="profit is-muted">${helpers.fmtOdds(odds)}</div>`;
     return `<div class="leg"${url}>
       <div class="head">
         <span class="book" style="color:${pal.color};">${helpers.escapeHtml(l.sourceId)}</span>
-        <span class="stake">${t('stake')} ${helpers.fmtStake(stake)}</span>
+        <span class="stake">${t('stake')} ${money(stake)}</span>
       </div>
       <div class="pick">${helpers.escapeHtml(l.selection)}</div>
       <div class="odds">${helpers.fmtOdds(odds)}</div>
@@ -447,11 +458,21 @@ function collectCardLegs(card) {
     if (!legs.length) return { sections: [] };
     const marketLabel = (snapshot.marketLabel || '').trim() || t('markets');
 
+    // Same rule as renderArbPanel above, and for the same reason. These stakes
+    // are parsed back out of the rendered card (collectCardLegs), so whatever
+    // precision survives is the precision the user is looking at. Re-rounding
+    // them to whole units here made the offline view disagree with the live one
+    // about the same card: at a 2,500 bankroll the card now reads
+    // 1,720.80 + 431.55 + 347.65 = 2,500.00, and fmtStake turned that back into
+    // 1,721 + 432 + 348 = 2,501. The fallback is the view shown when the
+    // event-detail API fails, so it is the last place that can still be trusted
+    // to add up. Older harnesses may not provide fmtMoney.
+    const stakeFmt = helpers.fmtMoney || helpers.fmtStake;
     const rows = legs.map((leg) => {
       const book = leg.book || '—';
       const pal = helpers.paletteFor(book);
       const stakeText = leg.stakeAmount !== null && leg.stakeAmount !== undefined
-        ? `${t('stake')} ${helpers.fmtStake(leg.stakeAmount)}`
+        ? `${t('stake')} ${stakeFmt(leg.stakeAmount)}`
         : leg.stakeLabel || '';
       const url = isEventUrl(leg.eventUrl) ? leg.eventUrl : null;
       const linkIcon = url

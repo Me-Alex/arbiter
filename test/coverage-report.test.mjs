@@ -174,13 +174,12 @@ test('a market the engine refuses is counted nowhere', () => {
   assert.equal(indexEventsByContract([market]).size, 0, 'a refused market produces no row at all');
 });
 
-test('a market whose period the engine cannot name is counted nowhere', () => {
-  // The report mirrors the engine's period guard. This market is NOT refused by
-  // `resolveContract` — it resolves, as a MATCH_ODDS whose period is 'unknown',
-  // because the declared period is explicitly not full-time and names no half
-  // `canonicalPeriod` can read. So the row filter is the only thing standing
-  // between it and a row, and without this test the guard could be deleted and
-  // the suite would still be green.
+test('a market whose period the engine cannot name is counted, but never paired with full-time', () => {
+  // The report mirrors the engine's period guard. This market resolves as a
+  // MATCH_ODDS whose period is 'unknown', because the declared period is
+  // explicitly not full-time and names no half `canonicalPeriod` can read.
+  // As of 2026-10-07 the engine admits unknown-period contracts, so the row
+  // shows in the report rather than being refused outright.
   const market = { ...bookEvent({ bookKey: 'x', home: 'Fulham', away: 'Arsenal', kickoff: '2026-10-03T14:00:00Z', selections: RESULT_1X2 }) };
   market.markets[0].period = 'firsthalf';
 
@@ -188,7 +187,7 @@ test('a market whose period the engine cannot name is counted nowhere', () => {
   // zero below is about the period and not about the fixture.
   const fulltime = { ...bookEvent({ bookKey: 'x', home: 'Fulham', away: 'Arsenal', kickoff: '2026-10-03T14:00:00Z', selections: RESULT_1X2 }) };
   assert.equal(indexEventsByContract([fulltime]).size, 1, 'the full-time market is counted');
-  assert.equal(indexEventsByContract([market]).size, 0, 'the unnameable-period market is not');
+  assert.equal(indexEventsByContract([market]).size, 1, 'the unnameable-period market is also counted under its own period bucket');
 });
 
 test('double chance is catalogued but never advertised as arbitrable', () => {

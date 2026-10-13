@@ -104,6 +104,23 @@ const ORDINALS = new Map([
   ['6th', '6'], ['7th', '7'], ['8th', '8'], ['9th', '9'], ['10th', '10'],
 ]);
 
+// Captured provider slugs/translations for the spelling witnesses in
+// market-reaudit-captures.json. Canonicalize before group/division checks so
+// Romania 1 and Romania 2 remain distinct, including Roman-numeral labels.
+const CAPTURED_LEAGUE_NAMES = new Map([
+  ['romania 1', 'liga 1'], ['liga i', 'liga 1'],
+  // Sepsi v Dinamo, 2026-10-09: captured Romanian top-tier sponsor labels.
+  ['casa liga 1', 'liga 1'], ['superliga', 'liga 1'], ['liga 1 betano', 'liga 1'],
+  ['romania 2', 'liga 2'], ['liga ii', 'liga 2'],
+  ['liga campionilor', 'champions league'],
+  ['cupa suediei feminin', 'svenska cup f'],
+  ['olanda 1', 'eredivisie'],
+  ['columbia 1', 'primera a'],
+  ['egipt cupa ligii', 'league cup'],
+  ['peru 2', 'liga 2'],
+  ['liga pro', 'pro league'],
+]);
+
 function clean(label) {
   // The country qualifier is stripped from the raw form first: normalizeTeamName
   // turns hyphens into spaces, so a slug like "italia-serie-a-1" arrives as
@@ -114,7 +131,7 @@ function clean(label) {
   // Season qualifiers describe when a competition runs, not which competition
   // it is: "Liga I 2026/2027" and "Liga 1 2026/2027" are the same pairing.
   s = s.replace(SEASON, ' ').replace(/\s+/g, ' ').trim();
-  return s;
+  return CAPTURED_LEAGUE_NAMES.get(s) || s;
 }
 
 /**

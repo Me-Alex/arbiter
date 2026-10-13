@@ -34,6 +34,8 @@ export function normalizeTeamName(input) {
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')
     .toLowerCase()
+    // ø has no NFD decomposition: Lillestrøm/Bodø must retain the vowel.
+    .replace(/ø/g, 'o')
     .replace(/[^a-z0-9]+/g, ' ')
     .trim();
 }
@@ -58,14 +60,118 @@ const CLUB_NOISE_TOKENS = new Set([
   'fc', 'sc', 'cf', 'ac', 'acs', 'afc', 'as', 'ss', 'ssc', 'us', 'ud', 'cd', 'ce', 'rc', 'rcd',
   'sv', 'vfl', 'vfb', 'tsv', 'bsc', 'fsv', 'sg', 'spvgg', 'fs', 'acfc', 'fk', 'bk',
   'sport', 'sports', 'club', 'fotbal', 'football', 'calcio', 'the',
+  // Measured in the captures (2026-10-08): redundant organizational wrappers
+  // and gender/period markers that split the same club across feeds.
+  'cso', 'csc', 'afk', 'f', 'miercurea', 'cs',
+]);
+
+// Measured alias pairs from the frozen + live captures: betano spells Sepsi's
+// town short while everymatrix writes 'Sepsi Sf. Gheorghe', getsbet writes
+// 'Bihor Oradea' where contibet writes 'FC Bihor', 'Poli Timisoara' is the
+// same club as 'Politehnica Timisoara', etc. Each entry collapses the
+// longer provider spelling onto the shared one so the identity key pairs
+// the fixture instead of hiding it.
+const CLUB_ALIASES = new Map([
+  // Same kickoff/opponent in data-market-run: UNAM Windhoek v Kabuscorp.
+  ['kabuscorp scp', 'kabuscorp'],
+  ['unam', 'unam windhoek'],
+  // Captured spelling variants with the same opponent and kickoff. Keep these
+  // whole-name aliases: dropping city/United/reserve tokens globally can merge
+  // different clubs. Evidence lives in market-reaudit-captures.json.
+  ['bayern munich', 'bayern munchen'],
+  ['bayern m', 'bayern munchen'],
+  ['inter milano', 'inter milan'],
+  ['inter', 'inter milan'],
+  ['inter m', 'inter milan'],
+  ['ciuc', 'csikszereda ciuc'],
+  ['csik m ciuc', 'csikszereda ciuc'],
+  ['csiks m ciuc', 'csikszereda ciuc'],
+  ['univ craiova', 'universitatea craiova'],
+  ['oh leuven', 'leuven'],
+  ['al ittihad kalba', 'ittihad kalba'],
+  ['guimaraes', 'vitoria guimaraes'],
+  ['brighton and hove albion', 'brighton'],
+  ['denizli idmanyur', 'denizli idman yurdu'],
+  ['u19 rosenborg', 'rosenborg u19'],
+  ['u19 lillestrom sk', 'lillestrom u19'],
+  ['csa steaua bucuresti', 'steaua bucuresti'],
+  ['steaua buc', 'steaua bucuresti'],
+  ['coritiba pr', 'coritiba'],
+  ['botafogo rj', 'botafogo'],
+  ['al khaleej khor fakkan', 'khor fakkan'],
+  ['khorfakkan', 'khor fakkan'],
+  ['zob ahan isfahan', 'zob ahan'],
+  ['psv eindhoven', 'psv'],
+  ['enskede ik', 'enskede'],
+  ['if brommapojkarna', 'brommapojkarna'],
+  ['ssv jeddeloh', 'jeddeloh'],
+  ['hertha berlin', 'hertha'],
+  ['atletico nacional medellin', 'atletico nacional'],
+  ['atl nacional', 'atletico nacional'],
+  ['deportes tolima', 'tolima'],
+  ['ghazl el mahallah', 'ghazl el mahalla'],
+  ['abo qair semads', 'abu qair semad'],
+  ['al ittihad al sakandary', 'al ittihad alexandria'],
+  ['mannucci', 'carlos mannucci'],
+  ['satu mare', 'csm satu mare'],
+  ['unirea 2004', 'unirea slobozia'],
+  ['slobozia', 'unirea slobozia'],
+  ['chindia', 'chindia targoviste'],
+  ['concordia', 'concordia chiajna'],
+  ['cetate suceava', 'cetatea suceava'],
+  ['gloria bistrita nasaud', 'bistrita'],
+  ['scm rm valcea', 'ramnicu valcea'],
+  ['popesti l', 'popesti leordeni'],
+  ['targu mures', 'asa targu mures'],
+  ['csm resita', 'resita'],
+  ['csm slatina', 'slatina'],
+  ['stefanesti de jos', 'csl stefanesti'],
+  ['bacau 2023', 'bacau'],
+  ['bihor oradea', 'bihor'],
+  ['sepsi sf gheorghe', 'sepsi'],
+  ['sepsi sfantu gheorghe', 'sepsi'],
+  ['sepsi osk', 'sepsi'],
+  ['csm olimpia satu mare', 'csm satu mare'],
+  ['poli timisoara', 'politehnica timisoara'],
+  ['cil blaj', 'blaj'],
+  ['csikszereda', 'csikszereda ciuc'],
+  ['csikszereda m ciuc', 'csikszereda ciuc'],
+  ['corvinul hunedoara', 'corvinul'],
+  ['metaloglobus bucuresti', 'metaloglobus'],
+  ['1599 selimbar', 'selimbar'],
+  ['asa tg mures', 'asa targu mures'],
+  ['din bucuresti', 'dinamo bucuresti'],
+  // Sepsi/Dinamo and Inter San Carlos/Perez Zeledon witnesses in data/workspace.
+  ['dinamo b', 'dinamo bucuresti'],
+  ['municipal perez zeledon', 'perez zeledon'],
+  ['zeledon', 'perez zeledon'],
+  // Same opponent and kickoff in the October captures; whole-name aliases
+  // preserve reserves, gender and clubs sharing a city. See coverage evidence.
+  ['q p r', 'qpr'], ['queens park rangers', 'qpr'],
+  ['west ham united', 'west ham'],
+  ['otelul', 'otelul galati'], ['otelul g', 'otelul galati'],
+  ['kapfenberger', 'kapfenberg'],
+  ['rsc anderlecht', 'anderlecht'],
+  ['cercle b', 'cercle brugge'],
+  ['cska 1948 sofia', 'cska 1948'],
+  ['atl san luis', 'atletico san luis'],
+  ['chacarita jrs', 'chacarita juniors'], ['chacarita j', 'chacarita juniors'],
+  ['wolverhampton wanderers', 'wolverhampton'], ['wolves', 'wolverhampton'],
+  ['genoa cfc', 'genoa'],
+  ['rot weiss essen', 'rw essen'],
+  ['harrogate town', 'harrogate'],
 ]);
 
 export function normalizeClubIdentity(input) {
+  // CS Dinamo (Liga II) and Dinamo Bucuresti (Liga I) are separate captured
+  // clubs. Resolve CS abbreviations before removing organizational tokens.
+  if (/^cs din(?:amo)?(?: bucuresti)?$/.test(normalizeTeamName(input))) return 'cs dinamo bucuresti';
   const words = normalizeTeamName(input).split(' ').filter(Boolean);
   const kept = words.filter((w) => !CLUB_NOISE_TOKENS.has(w));
   // Fall back to the full token list rather than returning '' for a name that
   // is entirely made of noise tokens (e.g. "FC" alone).
-  return (kept.length > 0 ? kept : words).join(' ');
+  const normalized = (kept.length > 0 ? kept : words).join(' ');
+  return CLUB_ALIASES.get(normalized) || normalized;
 }
 
 /**
@@ -96,6 +202,26 @@ const SPORT_CANON = new Map(Object.entries({
   // normalizeTeamName turns '-' into a space, so these are the spellings the
   // lookup actually sees.
   'e football': 'esports', 'e sports': 'esports', esports: 'esports', efootball: 'esports',
+  'e-soccer': 'esports', 'esoccer': 'esports', 'esps': 'esports',
+  'esport-football': 'esports', 'esport football': 'esports', 'e-sport football': 'esports',
+  'icehockey': 'ice-hockey', 'hochei pe gheata': 'ice-hockey', 'hochei pee gheata': 'ice-hockey',
+  'counter-strike 2': 'counter-strike-2',
+  'tabl': 'table-tennis',
+  'crichetert': 'cricket', 'crichet': 'cricket',
+  'rugbyunion': 'rugby',
+  'voll': 'volleyball',
+  'hand': 'handball',
+  'wtpl': 'water-polo', 'water polo': 'water-polo',
+  'esport basketball': 'esports', 'esport hockey': 'esports',
+  'sporturi cu motor': 'motorsport',
+  'polo pe apa': 'water-polo',
+  'schi fond': 'ski-cross-country',
+  'speciale': 'esports',
+  'football ai': 'esports',
+  'basketball ai': 'esports',
+  'surf': 'surfing',
+  'padel tenis': 'padel',
+  'fotbal australian': 'australian-football',
 }));
 
 export function canonicalSport(input) {
@@ -128,7 +254,11 @@ export function eventIdentityKey(e) {
   // failed the whole scan. An unusable kickoff becomes an explicit `unknown`
   // bucket, which keeps the event visible instead of crashing the pipeline.
   const ms = Date.parse(e.kickoff || e.startDate || '');
-  const day = Number.isFinite(ms) ? new Date(ms).toISOString().slice(0, 10) : 'unknown';
+  // Keep exact time here. A stateless rounded bucket cannot implement a sliding
+  // tolerance: it splits midnight neighbours and merges same-day rematches.
+  // groupByEvent applies the measured three-hour window with competition and
+  // repeated-fixture guards across the complete capture.
+  const day = Number.isFinite(ms) ? new Date(ms).toISOString() : 'unknown';
   const parts = [
     canonicalSport(e.sport || ''),
     day,

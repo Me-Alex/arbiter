@@ -1,0 +1,827 @@
+{
+  "items": [
+    {
+      "type": "SPORT",
+      "path": "pilka_nozna",
+      "nodeId": "pilka_nozna",
+      "id": "1",
+      "parentNodeId": "all-sports",
+      "parentPath": "all-sports",
+      "children": null,
+      "name": {
+        "name": "Soccer",
+        "localizedName": {
+          "en": "Soccer",
+          "pl": "Piłka Nożna"
+        }
+      },
+      "order": 1,
+      "icon": "soccer",
+      "iconType": "NPSIcons",
+      "prematchCounter": 1150,
+      "outrightCounter": 19,
+      "liveCounter": 10,
+      "nextEventStartTime": "2026-10-12T22:00:00Z",
+      "sportId": "1",
+      "categoryId": null,
+      "competitionId": null
+    },
+    {
+      "type": "SPORT",
+      "path": "tenis",
+      "nodeId": "tenis",
+      "id": "5",
+      "parentNodeId": "all-sports",
+      "parentPath": "all-sports",
+      "children": null,
+      "name": {
+        "name": "Tennis",
+        "localizedName": {
+          "en": "Tennis",
+          "pl": "Tenis"
+        }
+      },
+      "order": 2,
+      "icon": "tennis",
+      "iconType": "NPSIcons",
+      "prematchCounter": 192,
+      "outrightCounter": 5,
+      "liveCounter": 7,
+      "nextEventStartTime": "2026-10-12T21:50:00Z",
+      "sportId": "5",
+      "categoryId": null,
+      "competitionId": null
+    },
+    {
+      "type": "SPORT",
+      "path": "koszykowka",
+      "nodeId": "koszykowka",
+      "id": "2",
+      "parentNodeId": "all-sports",
+      "parentPath": "all-sports",
+      "children": null,
+      "name": {
+        "name": "Basketball",
+        "localizedName": {
+          "en": "Basketball",
+          "pl": "Koszykówka"
+        }
+      },
+      "order": 4,
+      "icon": "basketball",
+      "iconType": "NPSIcons",
+      "prematchCounter": 141,
+      "outrightCounter": 11,
+      "liveCounter": 1,
+      "nextEventStartTime": "2026-10-12T23:00:00Z",
+      "sportId": "2",
+      "categoryId": null,
+      "competitionId": null
+    },
+    {
+      "type": "SPORT",
+      "path": "siatkowka",
+      "nodeId": "siatkowka",
+      "id": "23",
+      "parentNodeId": "all-sports",
+      "parentPath": "all-sports",
+      "children": null,
+      "name": {
+        "name": "Volleyball",
+        "localizedName": {
+          "en": "Volleyball",
+          "pl": "Siatkówka"
+        }
+      },
+      "order": 5,
+      "icon": "volleyball",
+      "iconType": "NPSIcons",
+      "prematchCounter": 16,
+      "outrightCounter": 5,
+      "liveCounter": 1,
+      "nextEventStartTime": "2026-10-13T05:00:00Z",
+      "sportId": "23",
+      "categoryId": null,
+      "competitionId": null
+    },
+    {
+      "type": "SPORT",
+      "path": "hokej",
+      "nodeId": "hokej",
+      "id": "4",
+      "parentNodeId": "all-sports",
+      "parentPath": "all-sports",
+      "children": null,
+      "name": {
+        "name": "Ice Hockey",
+        "localizedName": {
+          "de": "Eishockey",
+          "en": "Ice Hockey",
+          "it": "Hockey su ghiaccio",
+          "pl": "Hokej"
+        }
+      },
+      "order": 6,
+      "icon": "ice-hockey",
+      "iconType": "NPSIcons",
+      "prematchCounter": 148,
+      "outrightCounter": 11,
+      "liveCounter": 1,
+      "nextEventStartTime": "2026-10-12T23:00:00Z",
+      "sportId": "4",
+      "categoryId": null,
+      "competitionId": null
+    },
+    {
+      "type": "SPORT",
+      "path": "pilka_reczna",
+      "nodeId": "pilka_reczna",
+      "id": "6",
+      "parentNodeId": "all-sports",
+      "parentPath": "all-sports",
+      "children": null,
+      "name": {
+        "name": "Handball",
+        "localizedName": {
+          "en": "Handball",
+          "pl": "Piłka ręczna"
+        }
+      },
+      "order": 7,
+      "icon": "handball-3",
+      "iconType": "NPSIcons",
+      "prematchCounter": 33,
+      "outrightCounter": 5,
+      "liveCounter": 0,
+      "nextEventStartTime": "2026-10-13T16:00:00Z",
+      "sportId": "6",
+      "categoryId": null,
+      "competitionId": null
+    },
+    {
+      "type": "SPORT",
+      "path": "tenis_stolowy",
+      "nodeId": "tenis_stolowy",
+      "id": "20",
+      "parentNodeId": "all-sports",
+      "parentPath": "all-sports",
+      "children": null,
+      "name": {
+        "name": "Table Tennis",
+        "localizedName": {
+          "de": "Tischtennis",
+          "en": "Table Tennis",
+          "it": "Tennistavolo",
+          "pl": "Tenis stołowy"
+        }
+      },
+      "order": 8,
+      "icon": "table-tennis",
+      "iconType": "NPSIcons",
+      "prematchCounter": 178,
+      "outrightCounter": 0,
+      "liveCounter": 5,
+      "nextEventStartTime": "2026-10-12T22:00:00Z",
+      "sportId": "20",
+      "categoryId": null,
+      "competitionId": null
+    },
+    {
+      "type": "SPORT",
+      "path": "darts",
+      "nodeId": "darts",
+      "id": "22",
+      "parentNodeId": "all-sports",
+      "parentPath": "all-sports",
+      "children": null,
+      "name": {
+        "name": "Darts",
+        "localizedName": {
+          "en": "Darts",
+          "pl": "Darts"
+        }
+      },
+      "order": 9,
+      "icon": "darts",
+      "iconType": "NPSIcons",
+      "prematchCounter": 10,
+      "outrightCounter": 1,
+      "liveCounter": 0,
+      "nextEventStartTime": "2026-10-13T08:40:00Z",
+      "sportId": "22",
+      "categoryId": null,
+      "competitionId": null
+    },
+    {
+      "type": "SPORT",
+      "path": "baseball",
+      "nodeId": "baseball",
+      "id": "3",
+      "parentNodeId": "all-sports",
+      "parentPath": "all-sports",
+      "children": null,
+      "name": {
+        "name": "Baseball",
+        "localizedName": {
+          "en": "Baseball",
+          "pl": "Baseball"
+        }
+      },
+      "order": 10,
+      "icon": "baseball",
+      "iconType": "NPSIcons",
+      "prematchCounter": 1,
+      "outrightCounter": 0,
+      "liveCounter": 1,
+      "nextEventStartTime": "2026-10-13T00:00:00Z",
+      "sportId": "3",
+      "categoryId": null,
+      "competitionId": null
+    },
+    {
+      "type": "SPORT",
+      "path": "futbol_amerykanski",
+      "nodeId": "futbol_amerykanski",
+      "id": "16",
+      "parentNodeId": "all-sports",
+      "parentPath": "all-sports",
+      "children": null,
+      "name": {
+        "name": "American Football",
+        "localizedName": {
+          "de": "American Football",
+          "en": "American Football",
+          "it": "Football Americano",
+          "pl": "Futbol amerykański"
+        }
+      },
+      "order": 11,
+      "icon": "us-football",
+      "iconType": "NPSIcons",
+      "prematchCounter": 74,
+      "outrightCounter": 1,
+      "liveCounter": 0,
+      "nextEventStartTime": "2026-10-13T00:15:00Z",
+      "sportId": "16",
+      "categoryId": null,
+      "competitionId": null
+    },
+    {
+      "type": "SPORT",
+      "path": "esoccer",
+      "nodeId": "esoccer",
+      "id": "100019",
+      "parentNodeId": "all-sports",
+      "parentPath": "all-sports",
+      "children": null,
+      "name": {
+        "name": "Esport Rush Football",
+        "localizedName": {
+          "en": "Esport Rush Football",
+          "pl": "ePiłka Nożna"
+        }
+      },
+      "order": 12,
+      "icon": "eSoccer",
+      "iconType": "NPSIcons",
+      "prematchCounter": 10,
+      "outrightCounter": 0,
+      "liveCounter": 5,
+      "nextEventStartTime": "2026-10-12T21:49:00Z",
+      "sportId": "100019",
+      "categoryId": null,
+      "competitionId": null
+    },
+    {
+      "type": "SPORT",
+      "path": "ebasketball",
+      "nodeId": "ebasketball",
+      "id": "153",
+      "parentNodeId": "all-sports",
+      "parentPath": "all-sports",
+      "children": null,
+      "name": {
+        "name": "eBasketball",
+        "localizedName": {
+          "en": "eBasketball",
+          "pl": "eKoszykówka"
+        }
+      },
+      "order": 14,
+      "icon": "eBasketball",
+      "iconType": "NPSIcons",
+      "prematchCounter": 4,
+      "outrightCounter": 0,
+      "liveCounter": 2,
+      "nextEventStartTime": "2026-10-12T21:52:00Z",
+      "sportId": "153",
+      "categoryId": null,
+      "competitionId": null
+    },
+    {
+      "type": "SPORT",
+      "path": "counterstrike",
+      "nodeId": "counterstrike",
+      "id": "109",
+      "parentNodeId": "all-sports",
+      "parentPath": "all-sports",
+      "children": null,
+      "name": {
+        "name": "ESport Counter-Strike",
+        "localizedName": {
+          "en": "ESport Counter-Strike",
+          "pl": "Counter-Strike"
+        }
+      },
+      "order": 17,
+      "icon": "CS",
+      "iconType": "NPSIcons",
+      "prematchCounter": 26,
+      "outrightCounter": 0,
+      "liveCounter": 1,
+      "nextEventStartTime": "2026-10-13T10:00:00Z",
+      "sportId": "109",
+      "categoryId": null,
+      "competitionId": null
+    },
+    {
+      "type": "SPORT",
+      "path": "league_of_legends",
+      "nodeId": "league_of_legends",
+      "id": "110",
+      "parentNodeId": "all-sports",
+      "parentPath": "all-sports",
+      "children": null,
+      "name": {
+        "name": "ESport League of Legends",
+        "localizedName": {
+          "en": "ESport League of Legends",
+          "pl": "League of Legends"
+        }
+      },
+      "order": 18,
+      "icon": "LOL",
+      "iconType": "NPSIcons",
+      "prematchCounter": 12,
+      "outrightCounter": 0,
+      "liveCounter": 1,
+      "nextEventStartTime": "2026-10-12T23:00:00Z",
+      "sportId": "110",
+      "categoryId": null,
+      "competitionId": null
+    },
+    {
+      "type": "SPORT",
+      "path": "dota_2",
+      "nodeId": "dota_2",
+      "id": "111",
+      "parentNodeId": "all-sports",
+      "parentPath": "all-sports",
+      "children": null,
+      "name": {
+        "name": "ESport Dota",
+        "localizedName": {
+          "en": "ESport Dota",
+          "pl": "Dota 2"
+        }
+      },
+      "order": 19,
+      "icon": "Dota",
+      "iconType": "NPSIcons",
+      "prematchCounter": 12,
+      "outrightCounter": 0,
+      "liveCounter": 1,
+      "nextEventStartTime": "2026-10-13T04:00:00Z",
+      "sportId": "111",
+      "categoryId": null,
+      "competitionId": null
+    },
+    {
+      "type": "SPORT",
+      "path": "valorant",
+      "nodeId": "valorant",
+      "id": "194",
+      "parentNodeId": "all-sports",
+      "parentPath": "all-sports",
+      "children": null,
+      "name": {
+        "name": "ESport Valorant",
+        "localizedName": {
+          "en": "ESport Valorant",
+          "pl": "Valorant"
+        }
+      },
+      "order": 20,
+      "icon": "Valorant",
+      "iconType": "NPSIcons",
+      "prematchCounter": 2,
+      "outrightCounter": 0,
+      "liveCounter": 0,
+      "nextEventStartTime": "2026-10-16T06:00:00Z",
+      "sportId": "194",
+      "categoryId": null,
+      "competitionId": null
+    },
+    {
+      "type": "SPORT",
+      "path": "rainbow_six",
+      "nodeId": "rainbow_six",
+      "id": "125",
+      "parentNodeId": "all-sports",
+      "parentPath": "all-sports",
+      "children": null,
+      "name": {
+        "name": "ESport Rainbow Six",
+        "localizedName": {
+          "en": "ESport Rainbow Six",
+          "pl": "Rainbow Six"
+        }
+      },
+      "order": 21,
+      "icon": "Rainbow_six",
+      "iconType": "NPSIcons",
+      "prematchCounter": 17,
+      "outrightCounter": 0,
+      "liveCounter": 0,
+      "nextEventStartTime": "2026-10-13T17:00:00Z",
+      "sportId": "125",
+      "categoryId": null,
+      "competitionId": null
+    },
+    {
+      "type": "SPORT",
+      "path": "king_of_glory",
+      "nodeId": "king_of_glory",
+      "id": "134",
+      "parentNodeId": "all-sports",
+      "parentPath": "all-sports",
+      "children": null,
+      "name": {
+        "name": "ESport King of Glory",
+        "localizedName": {
+          "en": "ESport King of Glory",
+          "pl": "King of Glory"
+        }
+      },
+      "order": 23,
+      "icon": "KOG",
+      "iconType": "NPSIcons",
+      "prematchCounter": 10,
+      "outrightCounter": 0,
+      "liveCounter": 0,
+      "nextEventStartTime": "2026-10-14T09:00:00Z",
+      "sportId": "134",
+      "categoryId": null,
+      "competitionId": null
+    },
+    {
+      "type": "SPORT",
+      "path": "warcraft_3",
+      "nodeId": "warcraft_3",
+      "id": "122",
+      "parentNodeId": "all-sports",
+      "parentPath": "all-sports",
+      "children": null,
+      "name": {
+        "name": "ESport WarCraft III",
+        "localizedName": {
+          "en": "ESport WarCraft III",
+          "pl": "WarCraft 3"
+        }
+      },
+      "order": 26,
+      "icon": "W3",
+      "iconType": "NPSIcons",
+      "prematchCounter": 1,
+      "outrightCounter": 0,
+      "liveCounter": 0,
+      "nextEventStartTime": "2026-10-13T11:00:00Z",
+      "sportId": "122",
+      "categoryId": null,
+      "competitionId": null
+    },
+    {
+      "type": "SPORT",
+      "path": "mobile_legends",
+      "nodeId": "mobile_legends",
+      "id": "100031",
+      "parentNodeId": "all-sports",
+      "parentPath": "all-sports",
+      "children": null,
+      "name": {
+        "name": "Esport Mobile Legend",
+        "localizedName": {
+          "en": "Esport Mobile Legend",
+          "pl": "Mobile Legends"
+        }
+      },
+      "order": 27,
+      "icon": "ML",
+      "iconType": "NPSIcons",
+      "prematchCounter": 15,
+      "outrightCounter": 0,
+      "liveCounter": 0,
+      "nextEventStartTime": "2026-10-16T08:00:00Z",
+      "sportId": "100031",
+      "categoryId": null,
+      "competitionId": null
+    },
+    {
+      "type": "SPORT",
+      "path": "snooker",
+      "nodeId": "snooker",
+      "id": "19",
+      "parentNodeId": "all-sports",
+      "parentPath": "all-sports",
+      "children": null,
+      "name": {
+        "name": "Snooker",
+        "localizedName": {
+          "en": "Snooker",
+          "pl": "Snooker"
+        }
+      },
+      "order": 28,
+      "icon": "snooker",
+      "iconType": "NPSIcons",
+      "prematchCounter": 0,
+      "outrightCounter": 3,
+      "liveCounter": 0,
+      "nextEventStartTime": null,
+      "sportId": "19",
+      "categoryId": null,
+      "competitionId": null
+    },
+    {
+      "type": "SPORT",
+      "path": "mma",
+      "nodeId": "mma",
+      "id": "117",
+      "parentNodeId": "all-sports",
+      "parentPath": "all-sports",
+      "children": null,
+      "name": {
+        "name": "mma-117-297546",
+        "localizedName": {
+          "en": "MMA",
+          "pl": "MMA"
+        }
+      },
+      "order": 29,
+      "icon": "mma",
+      "iconType": "NPSIcons",
+      "prematchCounter": 25,
+      "outrightCounter": 0,
+      "liveCounter": 0,
+      "nextEventStartTime": "2026-10-13T23:00:00Z",
+      "sportId": "117",
+      "categoryId": null,
+      "competitionId": null
+    },
+    {
+      "type": "SPORT",
+      "path": "badminton",
+      "nodeId": "badminton",
+      "id": "31",
+      "parentNodeId": "all-sports",
+      "parentPath": "all-sports",
+      "children": null,
+      "name": {
+        "name": "Badminton",
+        "localizedName": {
+          "en": "Badminton",
+          "pl": "Badminton"
+        }
+      },
+      "order": 41,
+      "icon": "badminton",
+      "iconType": "NPSIcons",
+      "prematchCounter": 119,
+      "outrightCounter": 0,
+      "liveCounter": 0,
+      "nextEventStartTime": "2026-10-13T01:30:00Z",
+      "sportId": "31",
+      "categoryId": null,
+      "competitionId": null
+    },
+    {
+      "type": "SPORT",
+      "path": "boks",
+      "nodeId": "boks",
+      "id": "10",
+      "parentNodeId": "all-sports",
+      "parentPath": "all-sports",
+      "children": null,
+      "name": {
+        "name": "Boxing",
+        "localizedName": {
+          "de": "Boxen",
+          "en": "Boxing",
+          "it": "Pugilato",
+          "pl": "Boks"
+        }
+      },
+      "order": 44,
+      "icon": "boxing",
+      "iconType": "NPSIcons",
+      "prematchCounter": 20,
+      "outrightCounter": 0,
+      "liveCounter": 0,
+      "nextEventStartTime": "2026-10-17T21:30:00Z",
+      "sportId": "10",
+      "categoryId": null,
+      "competitionId": null
+    },
+    {
+      "type": "SPORT",
+      "path": "rugby",
+      "nodeId": "rugby",
+      "id": "12",
+      "parentNodeId": "all-sports",
+      "parentPath": "all-sports",
+      "children": null,
+      "name": {
+        "name": "Rugby",
+        "localizedName": {
+          "en": "Rugby",
+          "pl": "Rugby"
+        }
+      },
+      "order": 45,
+      "icon": "rugby",
+      "iconType": "NPSIcons",
+      "prematchCounter": 23,
+      "outrightCounter": 0,
+      "liveCounter": 0,
+      "nextEventStartTime": "2026-10-16T06:10:00Z",
+      "sportId": "12",
+      "categoryId": null,
+      "competitionId": null
+    },
+    {
+      "type": "SPORT",
+      "path": "futbol_australijski",
+      "nodeId": "futbol_australijski",
+      "id": "13",
+      "parentNodeId": "all-sports",
+      "parentPath": "all-sports",
+      "children": null,
+      "name": {
+        "name": "Aussie Rules",
+        "localizedName": {
+          "de": "Australian Football",
+          "en": "Aussie Rules",
+          "it": "Football australiano",
+          "pl": "Futbol australijski"
+        }
+      },
+      "order": 46,
+      "icon": "aussie-rules",
+      "iconType": "NPSIcons",
+      "prematchCounter": 8,
+      "outrightCounter": 0,
+      "liveCounter": 0,
+      "nextEventStartTime": "2026-10-16T08:15:00Z",
+      "sportId": "13",
+      "categoryId": null,
+      "competitionId": null
+    },
+    {
+      "type": "SPORT",
+      "path": "zuzel",
+      "nodeId": "zuzel",
+      "id": "131",
+      "parentNodeId": "all-sports",
+      "parentPath": "all-sports",
+      "children": null,
+      "name": {
+        "name": "Speedway",
+        "localizedName": {
+          "de": "Speedway",
+          "en": "Speedway",
+          "it": "Speedway",
+          "pl": "Żużel"
+        }
+      },
+      "order": 47,
+      "icon": "motorcycle-racing",
+      "iconType": "NPSIcons",
+      "prematchCounter": 0,
+      "outrightCounter": 1,
+      "liveCounter": 0,
+      "nextEventStartTime": null,
+      "sportId": "131",
+      "categoryId": null,
+      "competitionId": null
+    },
+    {
+      "type": "SPORT",
+      "path": "formula_1",
+      "nodeId": "formula_1",
+      "id": "40",
+      "parentNodeId": "all-sports",
+      "parentPath": "all-sports",
+      "children": null,
+      "name": {
+        "name": "Formula 1",
+        "localizedName": {
+          "de": "Formel 1",
+          "en": "Formula 1",
+          "it": "Formula 1",
+          "pl": "Formuła 1"
+        }
+      },
+      "order": 48,
+      "icon": "formula-1",
+      "iconType": "NPSIcons",
+      "prematchCounter": 0,
+      "outrightCounter": 1,
+      "liveCounter": 0,
+      "nextEventStartTime": null,
+      "sportId": "40",
+      "categoryId": null,
+      "competitionId": null
+    },
+    {
+      "type": "SPORT",
+      "path": "unihokej",
+      "nodeId": "unihokej",
+      "id": "7",
+      "parentNodeId": "all-sports",
+      "parentPath": "all-sports",
+      "children": null,
+      "name": {
+        "name": "Floorball",
+        "localizedName": {
+          "en": "Floorball",
+          "pl": "Unihokej"
+        }
+      },
+      "order": 54,
+      "icon": "field-hockey",
+      "iconType": "NPSIcons",
+      "prematchCounter": 1,
+      "outrightCounter": 0,
+      "liveCounter": 0,
+      "nextEventStartTime": "2026-10-13T15:00:00Z",
+      "sportId": "7",
+      "categoryId": null,
+      "competitionId": null
+    },
+    {
+      "type": "SPORT",
+      "path": "krykiet",
+      "nodeId": "krykiet",
+      "id": "21",
+      "parentNodeId": "all-sports",
+      "parentPath": "all-sports",
+      "children": null,
+      "name": {
+        "name": "Cricket",
+        "localizedName": {
+          "en": "Cricket",
+          "pl": "Krykiet"
+        }
+      },
+      "order": 58,
+      "icon": "cricket",
+      "iconType": "NPSIcons",
+      "prematchCounter": 14,
+      "outrightCounter": 0,
+      "liveCounter": 0,
+      "nextEventStartTime": "2026-10-12T23:00:00Z",
+      "sportId": "21",
+      "categoryId": null,
+      "competitionId": null
+    },
+    {
+      "type": "SPORT",
+      "path": "polityka",
+      "nodeId": "polityka",
+      "id": "323",
+      "parentNodeId": "all-sports",
+      "parentPath": "all-sports",
+      "children": null,
+      "name": {
+        "name": "Politics",
+        "localizedName": {
+          "en": "Politics",
+          "pl": "Polityka"
+        }
+      },
+      "order": 87,
+      "icon": "polityka",
+      "iconType": "NPSIcons",
+      "prematchCounter": 0,
+      "outrightCounter": 1,
+      "liveCounter": 0,
+      "nextEventStartTime": null,
+      "sportId": "323",
+      "categoryId": null,
+      "competitionId": null
+    }
+  ],
+  "path": "all-sports",
+  "subscriptionId": "72808af5-1054-4a28-bdb5-0870eb043ecb",
+  "type": "R_PREMATCH_HIERARCHY"
+}

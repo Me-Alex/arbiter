@@ -1,5 +1,7 @@
 /* Design Tokens - extracted from theme.css */
 :root {
+  color-scheme: light;
+  --color-scheme: light;
   /* Surface scale */
   --bg-0: #f8fafc;
   --bg-1: #ffffff;
@@ -26,12 +28,12 @@
   /* Text */
   --text: #475569;
   --text-strong: #0f172a;
-  --text-muted: #94a3b8;
-  --text-dim: #64748b;
-  --text-faint: #94a3b8;
+  --text-muted: #526176;
+  --text-dim: #58677d;
+  --text-faint: #58677d;
 
   /* Restrained teal */
-  --accent: #3b82f6;
+  --accent: #2563eb;
   --accent-2: #2563eb;
   --accent-strong: #1d4ed8;
   --accent-glow: rgba(59,130,246,.16);
@@ -41,33 +43,33 @@
   --accent-grad-soft: linear-gradient(135deg,rgba(59,130,246,.08),transparent);
 
   /* Premium accent (lime) */
-  --lime: #22c55e;
+  --lime: #15803d;
   --lime-soft: rgba(34,197,94,.10);
-  --lime-strong: #16a34a;
+  --lime-strong: #166534;
   --lime-glow: rgba(34,197,94,.25);
 
   /* Semantic colours */
-  --green: #10b981;
+  --green: #047857;
   --green-soft: rgba(16,185,129,.10);
-  --green-strong: #059669;
+  --green-strong: #065f46;
   --green-glow: rgba(16,185,129,.25);
 
-  --yellow: #f59e0b;
+  --yellow: #985c08;
   --yellow-soft: rgba(245,158,11,.10);
   --yellow-strong: #b45309;
 
-  --red: #ef4444;
+  --red: #b91c1c;
   --red-soft: rgba(239,68,68,.10);
   --red-strong: #dc2626;
 
-  --purple: #8b5cf6;
+  --purple: #7c3aed;
   --purple-soft: rgba(139,92,246,.10);
   --purple-strong: #7c3ed8;
 
-  --cyan: #06b6d4;
+  --cyan: #0e7490;
   --cyan-soft: rgba(6,182,212,.10);
 
-  --magenta: #ec4899;
+  --magenta: #be185d;
   --magenta-soft: rgba(236,72,153,.10);
 
   /* Effects */
@@ -136,6 +138,8 @@
   /* Layout */
   --sidebar-w: 224px;
   --header-h: 60px;
+  --control-h: 40px;
+  --touch-target: 44px;
 
   /* Backdrop patterns */
   --grad-page: var(--bg-0);
@@ -163,7 +167,7 @@
   /* Derived surface colors */
   --surface-logo-text: #0f172a;
   --surface-btn-primary-text: #ffffff;
-  --surface-log-bg: #0f172a;
+  --surface-log-bg: var(--bg-2);
   --surface-card-elevated-end: #ffffff;
   --surface-scan-tint: rgba(59,130,246,.06);
 
@@ -173,13 +177,74 @@
   --red-line: rgba(239,68,68,.28);
 }
 
-/* ============================================================
-   Light-mode override — activated by /* The light-mode override is gone: the ArbEdge console has no dark variant,
-   so there is nothing for [data-theme="light"] to override — :root above is
-   light. The selector stays as a no-op so a stale localStorage value from
-   before the retheme cannot ask for a palette that no longer exists. */
-[data-theme] {
-  color-scheme: light;
+/* Explicit dark palette; light remains the default. */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --color-scheme: dark;
+  --bg-0: #0f172a;
+  --bg-1: #172237;
+  --bg-2: #1e293b;
+  --bg-3: #334155;
+  --bg-4: #475569;
+  --bg-5: #64748b;
+  --surface-highlight: rgba(255,255,255,.03);
+  --surface-overlay: rgba(15,23,42,.9);
+  --row-zebra: rgba(255,255,255,.025);
+  --row-hover: rgba(255,255,255,.06);
+  --border: #334155;
+  --border-strong: #526176;
+  --border-bright: #64748b;
+  --border-glass: rgba(255,255,255,.12);
+  --text: #cbd5e1;
+  --text-strong: #f1f5f9;
+  --text-muted: #a8b5c8;
+  --text-dim: #94a3b8;
+  --text-faint: #94a3b8;
+  --accent: #93c5fd;
+  --accent-2: #60a5fa;
+  --accent-strong: #bfdbfe;
+  --accent-soft: rgba(96,165,250,.12);
+  --accent-line: rgba(147,197,253,.4);
+  --accent-grad: linear-gradient(135deg,#93c5fd,#60a5fa);
+  --green: #6ee7b7;
+  --green-strong: #a7f3d0;
+  --yellow: #fcd34d;
+  --yellow-strong: #fde68a;
+  --red: #fca5a5;
+  --red-strong: #fecaca;
+  --purple: #c4b5fd;
+  --purple-strong: #ddd6fe;
+  --cyan: #67e8f9;
+  --magenta: #f9a8d4;
+  --lime: #86efac;
+  --lime-strong: #bbf7d0;
+  --shadow-xs: 0 1px 2px rgba(0,0,0,.15);
+  --shadow-sm: 0 2px 6px rgba(0,0,0,.2);
+  --shadow: 0 4px 16px rgba(0,0,0,.24);
+  --shadow-lg: 0 16px 40px rgba(0,0,0,.32);
+  --shadow-xl: 0 24px 64px rgba(0,0,0,.4);
+  --shadow-inset: inset 0 1px 0 rgba(255,255,255,.04);
+  --surface-btn-primary-text: #0f172a;
+  --surface-card-elevated-end: var(--bg-2);
+}
+
+/* Compatibility aliases keep the console and shared components in sync. */
+:root {
+  --edge-bg: var(--bg-0);
+  --edge-surface: var(--bg-1);
+  --edge-surface2: var(--bg-2);
+  --edge-surface3: var(--bg-3);
+  --edge-border: var(--border);
+  --edge-border2: var(--border-strong);
+  --edge-textBright: var(--text-strong);
+  --edge-text: var(--text);
+  --edge-textMuted: var(--text-muted);
+  --edge-blue: var(--accent);
+  --edge-blueDim: var(--accent-soft);
+  --edge-green: var(--green);
+  --edge-red: var(--red);
+  --edge-amber: var(--yellow);
+  --edge-amberDim: var(--yellow-soft);
 }
 
 
@@ -199,47 +264,47 @@
 :root {
   /* Surfaces: one step lighter than the app, so cards read as panels on the
      page rather than as holes in it. */
-  --sl-0: #f8fafc;
-  --sl-1: #ffffff;
-  --sl-2: #f1f5f9;
-  --sl-3: #e2e8f0;
-  --sl-hover: #f1f5f9;
-  --sl-active: #e2e8f0;
+  --sl-0: var(--bg-0);
+  --sl-1: var(--bg-1);
+  --sl-2: var(--bg-2);
+  --sl-3: var(--bg-3);
+  --sl-hover: var(--bg-2);
+  --sl-active: var(--bg-3);
 
-  --sl-line: #e2e8f0;
-  --sl-line-soft: #f1f5f9;
-  --sl-line-strong: #cbd5e1;
+  --sl-line: var(--border);
+  --sl-line-soft: var(--bg-2);
+  --sl-line-strong: var(--border-strong);
 
   /* One accent. The page has four live states competing for attention, so the
      neutral chrome stays neutral and colour is spent only on state. */
-  --sl-accent: #3b82f6;
-  --sl-accent-dim: #2563eb;
-  --sl-accent-ink: #ffffff;
-  --sl-accent-wash: rgba(59,130,246,.08);
-  --sl-accent-line: rgba(59,130,246,.30);
+  --sl-accent: var(--accent);
+  --sl-accent-dim: var(--accent-2);
+  --sl-accent-ink: var(--surface-btn-primary-text);
+  --sl-accent-wash: var(--accent-soft);
+  --sl-accent-line: var(--accent-line);
 
   /* Status. Each has a text colour, a wash, a line, and a dot — a row has to
      be readable without relying on colour alone, so the label always says
      what the state is. */
-  --sl-ok: #10b981;
-  --sl-ok-wash: rgba(16,185,129,.10);
-  --sl-ok-line: rgba(16,185,129,.30);
-  --sl-warn: #f59e0b;
-  --sl-warn-wash: rgba(245,158,11,.10);
-  --sl-warn-line: rgba(245,158,11,.30);
-  --sl-bad: #ef4444;
-  --sl-bad-wash: rgba(239,68,68,.10);
-  --sl-bad-line: rgba(239,68,68,.32);
-  --sl-idle: #94a3b8;
-  --sl-idle-wash: rgba(148,163,184,.10);
-  --sl-idle-line: rgba(148,163,184,.28);
-  --sl-run: #3b82f6;
-  --sl-run-wash: rgba(59,130,246,.12);
-  --sl-run-line: rgba(59,130,246,.36);
+  --sl-ok: var(--green);
+  --sl-ok-wash: var(--green-soft);
+  --sl-ok-line: var(--green-line);
+  --sl-warn: var(--yellow);
+  --sl-warn-wash: var(--yellow-soft);
+  --sl-warn-line: var(--yellow-line);
+  --sl-bad: var(--red);
+  --sl-bad-wash: var(--red-soft);
+  --sl-bad-line: var(--red-line);
+  --sl-idle: var(--text-muted);
+  --sl-idle-wash: var(--row-hover);
+  --sl-idle-line: var(--border-strong);
+  --sl-run: var(--accent);
+  --sl-run-wash: var(--accent-soft);
+  --sl-run-line: var(--accent-line);
 
-  --sl-text: #0f172a;
-  --sl-text-dim: #475569;
-  --sl-text-faint: #94a3b8;
+  --sl-text: var(--text-strong);
+  --sl-text-dim: var(--text);
+  --sl-text-faint: var(--text-muted);
 
   /* Rhythm for a 26-row table: tighter than the app's cards, because the
      point is to see many rows at once. */
@@ -261,8 +326,8 @@
   --sl-fs-xl: 20px;
   --sl-fs-2xl: 26px;
 
-  --sl-shadow: 0 1px 2px rgba(15,23,42,.05);
-  --sl-shadow-lift: 0 4px 16px rgba(15,23,42,.07);
+  --sl-shadow: var(--shadow-xs);
+  --sl-shadow-lift: var(--shadow-sm);
   --sl-t-fast: 120ms;
   --sl-t-base: 190ms;
   --sl-ease: cubic-bezier(0.2, 0, 0, 1);

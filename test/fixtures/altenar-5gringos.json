@@ -1,0 +1,1000 @@
+{
+  "dates": [
+    {
+      "dateTime": "2026-10-12T21:00:00Z",
+      "eventIds": [
+        18018590,
+        18018586,
+        18018653,
+        18018644,
+        18024779,
+        18013174,
+        18019220,
+        18019240,
+        18013185,
+        18024104,
+        17946266,
+        17946281,
+        18024766,
+        18024763,
+        18018863,
+        18018873,
+        18023972,
+        18023499,
+        17991363,
+        18019046,
+        18019054,
+        18013178,
+        18013168,
+        18018880,
+        18018876,
+        18024102,
+        17861205,
+        17990665,
+        18007818,
+        18023974,
+        18019056,
+        18019048,
+        18023950,
+        18018662,
+        18024103,
+        18019052,
+        18019063,
+        18024105,
+        17998204,
+        18018663,
+        18018886,
+        18018899,
+        18019045,
+        18019055,
+        18024157,
+        18024283,
+        18018673,
+        18018659,
+        18024950,
+        18024946,
+        18024948,
+        18024949,
+        17971169,
+        17963334,
+        17963335,
+        17960479,
+        17888156,
+        17951428,
+        17782422,
+        17888158,
+        17972406,
+        17979941,
+        17950903,
+        17990657,
+        17913938,
+        18002420,
+        17913940,
+        18002469,
+        18018898,
+        18018901,
+        18019047,
+        18019061,
+        17960481,
+        17964429,
+        17965234,
+        17672473,
+        17672472,
+        17668797,
+        17888153,
+        17888154,
+        17888155,
+        17888152,
+        17668798,
+        18007138,
+        17945782,
+        17945783,
+        17946258,
+        17946271,
+        17950904,
+        17953590,
+        17958909,
+        17958910,
+        17960482,
+        17965235,
+        17965236,
+        17965238,
+        17981946,
+        17998205,
+        18015864,
+        17888151
+      ]
+    }
+  ],
+  "topSports": [
+    {
+      "id": 66,
+      "name": "Soccer",
+      "iconName": "soccer",
+      "hasStream": false,
+      "count": 1324
+    },
+    {
+      "id": 67,
+      "name": "Basketball",
+      "iconName": "basketball",
+      "hasStream": false,
+      "count": 219
+    },
+    {
+      "id": 70,
+      "name": "Ice Hockey",
+      "iconName": "ice-hockey",
+      "hasStream": false,
+      "count": 178
+    },
+    {
+      "id": 77,
+      "name": "Table Tennis",
+      "iconName": "table-tennis",
+      "hasStream": false,
+      "count": 373
+    },
+    {
+      "id": 68,
+      "name": "Tennis",
+      "iconName": "tennis",
+      "hasStream": false,
+      "count": 416
+    },
+    {
+      "id": 69,
+      "name": "Volleyball",
+      "iconName": "volleyball",
+      "hasStream": false,
+      "count": 65
+    },
+    {
+      "id": 75,
+      "name": "American Football",
+      "iconName": "american-football",
+      "hasStream": false,
+      "count": 77
+    },
+    {
+      "id": 76,
+      "name": "Baseball",
+      "iconName": "baseball",
+      "hasStream": false,
+      "count": 18
+    },
+    {
+      "id": 101,
+      "name": "Rugby League",
+      "iconName": "rugby-league",
+      "hasStream": false,
+      "count": 9
+    },
+    {
+      "id": 106,
+      "name": "Aussie Rules",
+      "iconName": "aussie-rules",
+      "hasStream": false,
+      "count": 9
+    },
+    {
+      "id": -1,
+      "name": "Other",
+      "iconName": "Other",
+      "hasStream": false,
+      "count": 495
+    }
+  ],
+  "headers": [
+    {
+      "typeId": 1,
+      "name": "1x2",
+      "mst": 0,
+      "odds": [
+        {
+          "id": 1,
+          "name": "1"
+        },
+        {
+          "id": 2,
+          "name": "X"
+        },
+        {
+          "id": 3,
+          "name": "2"
+        }
+      ]
+    },
+    {
+      "typeId": 18,
+      "name": "Total",
+      "mst": 0,
+      "odds": [
+        {
+          "id": 12,
+          "name": "peste"
+        },
+        {
+          "id": 13,
+          "name": "sub"
+        }
+      ]
+    },
+    {
+      "typeId": 29,
+      "name": "Ambele echipe să înscrie",
+      "mst": 0,
+      "odds": [
+        {
+          "id": 74,
+          "name": "da"
+        },
+        {
+          "id": 76,
+          "name": "nu"
+        }
+      ]
+    }
+  ],
+  "pageCount": 13,
+  "page": 1,
+  "markets": [
+    {
+      "oddIds": [
+        4636666188,
+        4636666189,
+        4636666190
+      ],
+      "typeId": 1,
+      "sportMarketId": 70472,
+      "id": 1776199573,
+      "name": "1x2"
+    },
+    {
+      "oddIds": [
+        4636666212,
+        4636666214,
+        4636666213
+      ],
+      "variant": 9,
+      "lines": [],
+      "typeId": 8,
+      "sportMarketId": 70491,
+      "sv": "1",
+      "sn": "Primul",
+      "id": 1776199580,
+      "name": "Golul 1"
+    },
+    {
+      "oddIds": [
+        4636666095,
+        4636666096
+      ],
+      "typeId": 18,
+      "sportMarketId": 70520,
+      "sv": "1.5",
+      "sn": "1.5",
+      "id": 1776199533,
+      "name": "Total goluri"
+    },
+    {
+      "oddIds": [
+        4636666866,
+        4636666867,
+        4636666868
+      ],
+      "typeId": 1,
+      "sportMarketId": 70472,
+      "id": 1776199863,
+      "name": "1x2"
+    },
+    {
+      "oddIds": [
+        4636666890,
+        4636666892,
+        4636666891
+      ],
+      "variant": 9,
+      "lines": [],
+      "typeId": 8,
+      "sportMarketId": 70491,
+      "sv": "1",
+      "sn": "Primul",
+      "id": 1776199870,
+      "name": "Golul 1"
+    },
+    {
+      "oddIds": [
+        4636666773,
+        4636666774
+      ],
+      "typeId": 18,
+      "sportMarketId": 70520,
+      "sv": "1.5",
+      "sn": "1.5",
+      "id": 1776199823,
+      "name": "Total goluri"
+    },
+    {
+      "oddIds": [
+        4637120876,
+        4637120877,
+        4637120878
+      ],
+      "typeId": 1,
+      "sportMarketId": 70472,
+      "id": 1776355902,
+      "name": "1x2"
+    },
+    {
+      "oddIds": [
+        4637120900,
+        4637120902,
+        4637120901
+      ],
+      "variant": 9,
+      "lines": [],
+      "typeId": 8,
+      "sportMarketId": 70491,
+      "sv": "1",
+      "sn": "Primul",
+      "id": 1776355915,
+      "name": "Golul 1"
+    },
+    {
+      "oddIds": [
+        4637120775,
+        4637120776
+      ],
+      "typeId": 18,
+      "sportMarketId": 70520,
+      "sv": "1.5",
+      "sn": "1.5",
+      "id": 1776355813,
+      "name": "Total goluri"
+    },
+    {
+      "oddIds": [
+        4637969098,
+        4637969099
+      ],
+      "typeId": 29,
+      "sportMarketId": 70545,
+      "id": 1776688579,
+      "name": "Ambele echipe să înscrie"
+    },
+    {
+      "oddIds": [
+        4636573453,
+        4636573454,
+        4636573455
+      ],
+      "typeId": 1,
+      "sportMarketId": 70472,
+      "id": 1776174977,
+      "name": "1x2"
+    },
+    {
+      "oddIds": [
+        4636573477,
+        4636573479,
+        4636573478
+      ],
+      "variant": 9,
+      "lines": [],
+      "typeId": 8,
+      "sportMarketId": 70491,
+      "sv": "1",
+      "sn": "Primul",
+      "id": 1776174984,
+      "name": "Golul 1"
+    },
+    {
+      "oddIds": [
+        4636573354,
+        4636573355
+      ],
+      "typeId": 18,
+      "sportMarketId": 70520,
+      "sv": "2.5",
+      "sn": "2.5",
+      "id": 1776174934,
+      "name": "Total goluri"
+    }
+  ],
+  "odds": [
+    {
+      "typeId": 1,
+      "price": 3.75,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 51671,
+      "isDBB": true,
+      "id": 4636666188,
+      "name": "AL Bukayriyah FC"
+    },
+    {
+      "typeId": 2,
+      "price": 2.9,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4636666189,
+      "name": "X"
+    },
+    {
+      "typeId": 3,
+      "price": 2.0834,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 124962,
+      "isDBB": true,
+      "id": 4636666190,
+      "name": "Al-Zulfi FC"
+    },
+    {
+      "typeId": 1,
+      "price": 2.3637,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 51671,
+      "isDBB": true,
+      "id": 4636666212,
+      "name": "AL Bukayriyah FC"
+    },
+    {
+      "typeId": 7,
+      "price": 7.5,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4636666214,
+      "name": "Niciunul"
+    },
+    {
+      "typeId": 3,
+      "price": 1.68,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 124962,
+      "isDBB": true,
+      "id": 4636666213,
+      "name": "Al-Zulfi FC"
+    },
+    {
+      "typeId": 12,
+      "price": 1.3334,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4636666095,
+      "name": "Peste 1.5"
+    },
+    {
+      "typeId": 13,
+      "price": 2.8334,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4636666096,
+      "name": "Sub 1.5"
+    },
+    {
+      "typeId": 1,
+      "price": 4.2,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 176459,
+      "isDBB": true,
+      "id": 4636666866,
+      "name": "AL Saqer FC"
+    },
+    {
+      "typeId": 2,
+      "price": 3.1,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4636666867,
+      "name": "X"
+    },
+    {
+      "typeId": 3,
+      "price": 1.8889,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 50487,
+      "isDBB": true,
+      "id": 4636666868,
+      "name": "Al-Jabalain"
+    },
+    {
+      "typeId": 1,
+      "price": 2.5,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 176459,
+      "isDBB": true,
+      "id": 4636666890,
+      "name": "AL Saqer FC"
+    },
+    {
+      "typeId": 7,
+      "price": 8,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4636666892,
+      "name": "Niciunul"
+    },
+    {
+      "typeId": 3,
+      "price": 1.6,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 50487,
+      "isDBB": true,
+      "id": 4636666891,
+      "name": "Al-Jabalain"
+    },
+    {
+      "typeId": 12,
+      "price": 1.3,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4636666773,
+      "name": "Peste 1.5"
+    },
+    {
+      "typeId": 13,
+      "price": 3,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4636666774,
+      "name": "Sub 1.5"
+    },
+    {
+      "typeId": 1,
+      "price": 1.7858,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 2476969,
+      "isDBB": true,
+      "id": 4637120876,
+      "name": "AL Hazem U21"
+    },
+    {
+      "typeId": 2,
+      "price": 3.5,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4637120877,
+      "name": "X"
+    },
+    {
+      "typeId": 3,
+      "price": 3.8,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 2476954,
+      "isDBB": true,
+      "id": 4637120878,
+      "name": "Damac"
+    },
+    {
+      "typeId": 1,
+      "price": 1.5715,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 2476969,
+      "isDBB": true,
+      "id": 4637120900,
+      "name": "AL Hazem U21"
+    },
+    {
+      "typeId": 7,
+      "price": 12,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4637120902,
+      "name": "Niciunul"
+    },
+    {
+      "typeId": 3,
+      "price": 2.375,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 2476954,
+      "isDBB": true,
+      "id": 4637120901,
+      "name": "Damac"
+    },
+    {
+      "typeId": 12,
+      "price": 1.2223,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4637120775,
+      "name": "Peste 1.5"
+    },
+    {
+      "typeId": 13,
+      "price": 3.75,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4637120776,
+      "name": "Sub 1.5"
+    },
+    {
+      "typeId": 74,
+      "price": 1.7,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4637969098,
+      "name": "Da"
+    },
+    {
+      "typeId": 76,
+      "price": 2.05,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4637969099,
+      "name": "Nu"
+    },
+    {
+      "typeId": 1,
+      "price": 1.7334,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 77334,
+      "isDBB": true,
+      "id": 4636573453,
+      "name": "SK Artis Brno B"
+    },
+    {
+      "typeId": 2,
+      "price": 3.75,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4636573454,
+      "name": "X"
+    },
+    {
+      "typeId": 3,
+      "price": 3.75,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 66337,
+      "isDBB": true,
+      "id": 4636573455,
+      "name": "Zbrojovka Brno B"
+    },
+    {
+      "typeId": 1,
+      "price": 1.5295,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 77334,
+      "isDBB": true,
+      "id": 4636573477,
+      "name": "SK Artis Brno B"
+    },
+    {
+      "typeId": 7,
+      "price": 15,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4636573479,
+      "name": "Niciunul"
+    },
+    {
+      "typeId": 3,
+      "price": 2.3334,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 66337,
+      "isDBB": true,
+      "id": 4636573478,
+      "name": "Zbrojovka Brno B"
+    },
+    {
+      "typeId": 12,
+      "price": 1.5556,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4636573354,
+      "name": "Peste 2.5"
+    },
+    {
+      "typeId": 13,
+      "price": 2.2,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4636573355,
+      "name": "Sub 2.5"
+    }
+  ],
+  "events": [
+    {
+      "marketIds": [
+        1776199573,
+        1776199580,
+        1776199533
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "code": 6098,
+      "hasStream": false,
+      "extId": "fp32_ar:match:688286",
+      "sc": 957,
+      "mc": 91,
+      "rc": false,
+      "pId": 32,
+      "et": 0,
+      "hasStats": true,
+      "competitorIds": [
+        51671,
+        124962
+      ],
+      "sportId": 66,
+      "catId": 496,
+      "champId": 3021,
+      "status": 0,
+      "startDate": "2026-09-21T20:00:00Z",
+      "id": 17946266,
+      "name": "AL Bukayriyah FC vs. Al-Zulfi FC"
+    },
+    {
+      "marketIds": [
+        1776199863,
+        1776199870,
+        1776199823
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "code": 5591,
+      "hasStream": false,
+      "extId": "fp32_ar:match:688285",
+      "sc": 959,
+      "mc": 91,
+      "rc": false,
+      "pId": 32,
+      "et": 0,
+      "hasStats": true,
+      "competitorIds": [
+        176459,
+        50487
+      ],
+      "sportId": 66,
+      "catId": 496,
+      "champId": 3021,
+      "status": 0,
+      "startDate": "2026-09-21T20:00:00Z",
+      "id": 17946281,
+      "name": "AL Saqer FC vs. Al-Jabalain"
+    },
+    {
+      "marketIds": [
+        1776355902,
+        1776355915,
+        1776355813,
+        1776688579
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "code": 5915,
+      "hasStream": false,
+      "extId": "fp32_ar:match:690623",
+      "sc": 806,
+      "mc": 75,
+      "rc": false,
+      "pId": 32,
+      "et": 0,
+      "hasStats": false,
+      "competitorIds": [
+        2476969,
+        2476954
+      ],
+      "sportId": 66,
+      "catId": 496,
+      "champId": 40177,
+      "status": 0,
+      "startDate": "2026-09-21T20:00:00Z",
+      "id": 17991363,
+      "name": "AL Hazem U21 vs. Damac"
+    },
+    {
+      "marketIds": [
+        1776174977,
+        1776174984,
+        1776174934
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "code": 7379,
+      "hasStream": false,
+      "extId": "fp32_ar:match:675211",
+      "sc": 916,
+      "mc": 86,
+      "rc": false,
+      "pId": 32,
+      "et": 0,
+      "hasStats": false,
+      "competitorIds": [
+        77334,
+        66337
+      ],
+      "sportId": 66,
+      "catId": 590,
+      "champId": 5116,
+      "status": 0,
+      "startDate": "2026-09-21T20:00:00Z",
+      "id": 17861205,
+      "name": "SK Artis Brno B vs. Zbrojovka Brno B"
+    }
+  ],
+  "sports": [
+    {
+      "catIds": [
+        1728,
+        1571,
+        496,
+        1595,
+        590,
+        516,
+        1134,
+        934,
+        876,
+        566,
+        1133,
+        1131,
+        568,
+        514,
+        582,
+        589,
+        499,
+        517,
+        506,
+        585,
+        574,
+        507,
+        602,
+        1132,
+        826,
+        783
+      ],
+      "typeId": 318,
+      "iconName": "soccer",
+      "hasLiveEvents": false,
+      "id": 66,
+      "name": "Soccer"
+    }
+  ],
+  "categories": [
+    {
+      "champIds": [
+        3021,
+        40177
+      ],
+      "iso": "SAU",
+      "hasLiveEvents": false,
+      "id": 496,
+      "name": "Saudi Arabia"
+    },
+    {
+      "champIds": [
+        5116
+      ],
+      "iso": "CZE",
+      "hasLiveEvents": false,
+      "id": 590,
+      "name": "Czech Republic"
+    }
+  ],
+  "champs": [
+    {
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "hasLiveEvents": false,
+      "id": 3021,
+      "name": "Division 1"
+    },
+    {
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "hasLiveEvents": false,
+      "id": 40177,
+      "name": "Saudi Reserve League"
+    },
+    {
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "hasLiveEvents": false,
+      "id": 5116,
+      "name": "Czech Third League"
+    }
+  ],
+  "competitors": [
+    {
+      "abbreviation": "BUK",
+      "id": 51671,
+      "name": "AL Bukayriyah FC"
+    },
+    {
+      "abbreviation": "ZUL",
+      "id": 124962,
+      "name": "Al-Zulfi FC"
+    },
+    {
+      "abbreviation": "SAQ",
+      "id": 176459,
+      "name": "AL Saqer FC"
+    },
+    {
+      "abbreviation": "JAB",
+      "id": 50487,
+      "name": "Al-Jabalain"
+    },
+    {
+      "abbreviation": "HAZ",
+      "id": 2476969,
+      "name": "AL Hazem U21"
+    },
+    {
+      "abbreviation": "DAM",
+      "id": 2476954,
+      "name": "Damac"
+    },
+    {
+      "abbreviation": "ART",
+      "id": 77334,
+      "name": "SK Artis Brno B"
+    },
+    {
+      "abbreviation": "ZBR",
+      "id": 66337,
+      "name": "Zbrojovka Brno B"
+    }
+  ]
+}

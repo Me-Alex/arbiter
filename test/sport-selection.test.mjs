@@ -32,12 +32,12 @@ import { page, settle, SHIPPED } from './helpers/scanner-page.mjs';
 
 // Two labelled sports and one record with no sport at all, in every family.
 // The second sport is spelled differently in the data (`TENNIS`) than in the
-// control (`tennis`) on purpose: the registry offers lowercase ids and the
+// control (`tennis`) on purpose: the registry takes lowercase ids and the
 // events carry their own spelling, and a case-sensitive match on either side
-// would export nothing for the only value the page can select. The registry
-// offers football alone today, which is also why no test may assume the
-// control's value is hardcoded anywhere -- the assertion below selects the
-// sport the registry does NOT offer and expects it to travel.
+// would export nothing for the only value the page can select. Neither sport
+// is hardcoded into the exporter — tennis is served by the registry today, so
+// the selection below also proves the option list the registry publishes is
+// what the control sends, not a constant.
 const FAMILIES = ['opportunities', 'middles', 'positiveEv', 'lowHold'];
 
 const FIXTURE = {

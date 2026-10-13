@@ -1,6 +1,7 @@
 import ProviderContract from './provider-contract.mjs';
 import { normalizeTeamName } from '../shared/text.mjs';
 import { buildEventKey, flattenMarkets } from './_http-helpers.mjs';
+import { markMarketsLive } from './live-status.mjs';
 
 /**
  * LEGACY — not the live path for Admiral.
@@ -72,10 +73,13 @@ export default class AdmiralScraper extends ProviderContract {
         markets.push({
           key: 'MATCH_ODDS',
           name: 'Match Odds',
+          period: 'fulltime',
           selections: [one.selections[0], drw.selections[0], two.selections[0]],
         });
       }
       if (markets.length === 0) continue;
+      const isLive = Boolean(r.isLive || r.live);
+      markMarketsLive(markets, () => isLive);
       out.push({
         id: r.id,
         sourceId: 'admiral',
@@ -84,6 +88,7 @@ export default class AdmiralScraper extends ProviderContract {
         kickoff: r.kickoff,
         homeTeam: r.homeTeam,
         awayTeam: r.awayTeam,
+        live: isLive,
         eventKey,
         markets,
         sourceUrl: (this.baseUrl && r.id) ? `${this.baseUrl}/eveniment/${r.id}` : null,

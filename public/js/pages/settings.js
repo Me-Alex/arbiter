@@ -211,6 +211,34 @@
   // exactly those two files so a third cannot arrive unnoticed.
   const FORM_KEYS = ['bankroll', 'minEvPercent', 'maxStake', 'minMarginPercent', 'maxAgeMinutes', 'includePast'];
 
+  /**
+   * The scan options this page stands behind, assembled from three sources.
+   *
+   * In order: what the stored options keep -- everything this form does not
+   * own, `sport` and `maxEvents` included -- then the selected profile's
+   * defaults, then the form. The form is last because it is the only one of the
+   * three whose values are on screen while they are used.
+   *
+   * One function, three callers: the scheduler save and both scrape launches.
+   * They were written out separately, and the two launches were left out -- so
+   * `POST /api/scrape` arrived with `bookIds` alone, `resolveScanRequest({})`
+   * answered with its defaults, and a run started from the page that owns these
+   * six fields ignored every one of them: the bankroll, the margin floor, the
+   * EV floor and both caps. Measured over the real router, eight of eight
+   * configured options dropped, against a control that kept all eight the
+   * moment the same request carried them.
+   *
+   * The route was left alone. `POST /api/scrape` treats an absent
+   * `scanOptions` as "no options given" for every caller, and teaching it to
+   * fall back to whatever the scheduler happens to hold would make an ad-hoc
+   * launch depend on schedule state it never asked about.
+   */
+  function assembledScanOptions() {
+    const stored = (state.scheduler && state.scheduler.scanOptions) || {};
+    const kept = Object.fromEntries(Object.entries(stored).filter(([key]) => !FORM_KEYS.includes(key)));
+    return { ...kept, ...profileDefaults(), ...scanOptionsFromForm() };
+  }
+
   function save() {
     const bookIds = $('set-book').value ? [$('set-book').value] : [];
     const enabled = (state.scheduler && state.scheduler.enabled) === true;
@@ -235,17 +263,11 @@
       toast(t('noBookmakersSelected'), 'error');
       return Promise.resolve();
     }
-    // Three sources, in order: what the stored options keep — everything this
-    // form does not own, `sport` and `maxEvents` included — then the selected
-    // profile's defaults, then the form. The form is last because it is the
-    // only one of the three whose values are on screen while they are saved.
-    const stored = (state.scheduler && state.scheduler.scanOptions) || {};
-    const kept = Object.fromEntries(Object.entries(stored).filter(([key]) => !FORM_KEYS.includes(key)));
     const payload = {
       enabled,
       intervalMinutes: Number($('set-interval').value) || undefined,
       bookIds,
-      scanOptions: { ...kept, ...profileDefaults(), ...scanOptionsFromForm() },
+      scanOptions: assembledScanOptions(),
     };
     $('save-state').textContent = t('saving');
     return arbiterApi.post('/api/scheduler', payload)
@@ -308,25 +330,28 @@
   // `sourceIds` — a scrape job is selected by the book it captures, which is the
   // id in scrapers.json. Sending the other name would silently start a run over
   // every book instead of the one that was clicked.
-  $('btn-scrape-now').addEventListener('click', async () => {
-    const bookIds = $('set-book').value ? [$('set-book').value] : [];
+  //
+  // The options travel too, from the same assembly the save posts. A launch
+  // that sent only `bookIds` ran under resolveScanRequest's defaults: the six
+  // fields on this form configured a schedule and were ignored by the run the
+  // operator started one line below, with nothing on screen to say so.
+  const launchScrape = async (ids, label) => {
     try {
-      await arbiterApi.post('/api/scrape', { bookIds });
-      toast(t('running'), 'success');
+      await arbiterApi.post('/api/scrape', { bookIds: ids, scanOptions: assembledScanOptions() });
+      toast(label || t('running'), 'success');
     } catch (err) {
       toast((err && err.error && err.error.message) || t('failedShort'), 'error');
     }
+  };
+
+  $('btn-scrape-now').addEventListener('click', () => {
+    launchScrape($('set-book').value ? [$('set-book').value] : []);
   });
 
-  document.getElementById('table-sources').addEventListener('click', async (e) => {
+  document.getElementById('table-sources').addEventListener('click', (e) => {
     const btn = e.target.closest('[data-scrape]');
     if (!btn) return;
-    try {
-      await arbiterApi.post('/api/scrape', { bookIds: [btn.dataset.scrape] });
-      toast(btn.dataset.scrape + ' \u2192 ' + t('running'), 'success');
-    } catch (err) {
-      toast((err && err.error && err.error.message) || t('failedShort'), 'error');
-    }
+    launchScrape([btn.dataset.scrape], `${btn.dataset.scrape} \u2192 ${t('running')}`);
   });
 
   // The danger zone does not call an endpoint, because there is no route that

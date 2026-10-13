@@ -1,0 +1,3140 @@
+{
+  "data": {
+    "events": [
+      {
+        "name": "Salwador (K) - Paragwaj (K)",
+        "status": "active",
+        "type": "prematch",
+        "path": [
+          {
+            "name": "Piłka nożna",
+            "uuid": "ff57b93d-f74c-4015-a23b-e89f68b8d2c9"
+          },
+          {
+            "name": "Międzynarodowe",
+            "uuid": "5be64fa1-46a4-43a6-a386-880f32a75336"
+          },
+          {
+            "name": "Towarzyskie (K)",
+            "uuid": "df22bc61-fb2a-4fc1-84a0-5abe6c3cb15b"
+          }
+        ],
+        "result": ":",
+        "components": [],
+        "category": {
+          "name": "Międzynarodowe",
+          "type": "sport",
+          "level": "category",
+          "image": null,
+          "uuid": "5be64fa1-46a4-43a6-a386-880f32a75336",
+          "icon": "https://cdn.totalbet.pl/categories/f5709684-2618-448c-b7a2-023bd58d6288.svg",
+          "parent_uuid": "ff57b93d-f74c-4015-a23b-e89f68b8d2c9",
+          "header_photo": null,
+          "three_d_icon": null
+        },
+        "uuid": "7ab81eb0-38b5-4cbb-97b7-e8e68f634d92",
+        "betbuilder_available": false,
+        "event_layout": "horizontal",
+        "iframe": null,
+        "category_uuid": "5be64fa1-46a4-43a6-a386-880f32a75336",
+        "tournament": {
+          "name": "Towarzyskie (K)",
+          "type": "sport",
+          "level": "tournament",
+          "image": null,
+          "uuid": "df22bc61-fb2a-4fc1-84a0-5abe6c3cb15b",
+          "icon": null,
+          "parent_uuid": "5be64fa1-46a4-43a6-a386-880f32a75336",
+          "header_photo": null,
+          "three_d_icon": null
+        },
+        "discipline_uuid": "ff57b93d-f74c-4015-a23b-e89f68b8d2c9",
+        "tournament_uuid": "df22bc61-fb2a-4fc1-84a0-5abe6c3cb15b",
+        "start_at": "2026-10-13T02:00:00Z",
+        "markets": [
+          {
+            "id": "1",
+            "name": "Wynik meczu",
+            "status": "active",
+            "uuid": "8cf5a6eb-4522-437a-9e72-c2f4a354502d",
+            "outcomes": [
+              {
+                "id": "1",
+                "name": "Salwador (K)",
+                "status": "active",
+                "sort": 1,
+                "uuid": "24085b45-627e-45a4-979d-0d44bb525302",
+                "participant_uuid": "6f8524e3-24a0-4769-bc66-ebd1a388332b",
+                "market_uuid": "8cf5a6eb-4522-437a-9e72-c2f4a354502d",
+                "odds": "3.12"
+              },
+              {
+                "id": "2",
+                "name": "remis",
+                "status": "active",
+                "sort": 2,
+                "uuid": "7b24c336-ed5a-45e6-aa30-184af8e63aa4",
+                "participant_uuid": null,
+                "market_uuid": "8cf5a6eb-4522-437a-9e72-c2f4a354502d",
+                "odds": "3.95"
+              },
+              {
+                "id": "3",
+                "name": "Paragwaj (K)",
+                "status": "active",
+                "sort": 3,
+                "uuid": "c8e83043-f16a-45ee-b3ff-5e5e28a67805",
+                "participant_uuid": "f5510507-fb57-46da-a7ed-307477f7341f",
+                "market_uuid": "8cf5a6eb-4522-437a-9e72-c2f4a354502d",
+                "odds": "1.84"
+              }
+            ],
+            "game_type": "threeway",
+            "game_groups": [
+              {
+                "name": "Główne",
+                "sort_order": 1,
+                "uuid": "dcde9df8-f44f-4073-8444-0969fd472f82"
+              }
+            ],
+            "market_type": "prematch",
+            "product_active": true,
+            "component_slug": null,
+            "game_type_tooltip": "Należy wytypować jakim rozstrzygnięciem zakończy się spotkanie (zakład nie uwzględnia dogrywki, podobnie jak w przypadku pozostałych zakładów, chyba, że ich opis lub specyfika - np. Awans - stanowią inaczej)"
+          }
+        ],
+        "market_count": 1,
+        "participants": [
+          {
+            "name": "Salwador (K)",
+            "uuid": "6f8524e3-24a0-4769-bc66-ebd1a388332b",
+            "image_source": null
+          },
+          {
+            "name": "Paragwaj (K)",
+            "uuid": "f5510507-fb57-46da-a7ed-307477f7341f",
+            "image_source": null
+          }
+        ],
+        "matchday": 1,
+        "additional_info": null,
+        "jackpot_available": false,
+        "live_data": {
+          "away_score": null,
+          "category_id": "sr:sport:1",
+          "clock": null,
+          "home_score": null,
+          "match_status": {
+            "id": "0",
+            "name": "Przed startem",
+            "uuid": "dfb45fd3-3264-4605-89a0-317e439735c0"
+          },
+          "model_name": "soccer",
+          "period_scores": null,
+          "statistics": null
+        },
+        "type_participants": "pair",
+        "discipline": {
+          "name": "Piłka nożna",
+          "type": "sport",
+          "level": "sport",
+          "image": "https://cdn.totalbet.pl/categories/5e27e539-7ee3-47b2-b3cd-e3655300ab06.svg",
+          "uuid": "ff57b93d-f74c-4015-a23b-e89f68b8d2c9",
+          "icon": "https://cdn.totalbet.pl/categories/0abf437f-9ab9-4826-9fcd-c40dafde9c8a.svg",
+          "parent_uuid": null,
+          "header_photo": "https://cdn.totalbet.pl/categories/72e9000b-1a8c-431e-a6e7-d2d17aa7c267.jpg",
+          "three_d_icon": "https://cdn.totalbet.pl/categories/870b3543-eea3-4f3d-8690-3a0ae2659fcf.svg"
+        },
+        "component_lists": [],
+        "next_matchdays": [
+          2,
+          3
+        ]
+      },
+      {
+        "name": "Niemcy (K) - Japonia (K)",
+        "status": "active",
+        "type": "prematch",
+        "path": [
+          {
+            "name": "Piłka nożna",
+            "uuid": "ff57b93d-f74c-4015-a23b-e89f68b8d2c9"
+          },
+          {
+            "name": "Międzynarodowe",
+            "uuid": "5be64fa1-46a4-43a6-a386-880f32a75336"
+          },
+          {
+            "name": "Towarzyskie (K)",
+            "uuid": "df22bc61-fb2a-4fc1-84a0-5abe6c3cb15b"
+          }
+        ],
+        "result": ":",
+        "components": [],
+        "category": {
+          "name": "Międzynarodowe",
+          "type": "sport",
+          "level": "category",
+          "image": null,
+          "uuid": "5be64fa1-46a4-43a6-a386-880f32a75336",
+          "icon": "https://cdn.totalbet.pl/categories/f5709684-2618-448c-b7a2-023bd58d6288.svg",
+          "parent_uuid": "ff57b93d-f74c-4015-a23b-e89f68b8d2c9",
+          "header_photo": null,
+          "three_d_icon": null
+        },
+        "uuid": "75d07696-2640-4595-9d13-26b46dab4741",
+        "betbuilder_available": false,
+        "event_layout": "horizontal",
+        "iframe": null,
+        "category_uuid": "5be64fa1-46a4-43a6-a386-880f32a75336",
+        "tournament": {
+          "name": "Towarzyskie (K)",
+          "type": "sport",
+          "level": "tournament",
+          "image": null,
+          "uuid": "df22bc61-fb2a-4fc1-84a0-5abe6c3cb15b",
+          "icon": null,
+          "parent_uuid": "5be64fa1-46a4-43a6-a386-880f32a75336",
+          "header_photo": null,
+          "three_d_icon": null
+        },
+        "discipline_uuid": "ff57b93d-f74c-4015-a23b-e89f68b8d2c9",
+        "tournament_uuid": "df22bc61-fb2a-4fc1-84a0-5abe6c3cb15b",
+        "start_at": "2026-10-13T15:45:00Z",
+        "markets": [
+          {
+            "id": "1",
+            "name": "Wynik meczu",
+            "status": "active",
+            "uuid": "ff4b7d5e-4d5d-4dcf-9eb9-2c4f203dc35d",
+            "outcomes": [
+              {
+                "id": "1",
+                "name": "Niemcy (K)",
+                "status": "active",
+                "sort": 1,
+                "uuid": "6eb2685b-5552-4d33-86f4-da33e85bf119",
+                "participant_uuid": "0a3beb68-8d33-4de8-a688-77cc2a9a4bf7",
+                "market_uuid": "ff4b7d5e-4d5d-4dcf-9eb9-2c4f203dc35d",
+                "odds": "1.78"
+              },
+              {
+                "id": "2",
+                "name": "remis",
+                "status": "active",
+                "sort": 2,
+                "uuid": "fdad62c8-9e78-4ca2-b046-622c79b31d2a",
+                "participant_uuid": null,
+                "market_uuid": "ff4b7d5e-4d5d-4dcf-9eb9-2c4f203dc35d",
+                "odds": "3.65"
+              },
+              {
+                "id": "3",
+                "name": "Japonia (K)",
+                "status": "active",
+                "sort": 3,
+                "uuid": "7487afec-dc7e-4fc5-a1f0-6f47b33a0d71",
+                "participant_uuid": "06ab6ef5-af81-4ad2-b1c1-3d228bde766b",
+                "market_uuid": "ff4b7d5e-4d5d-4dcf-9eb9-2c4f203dc35d",
+                "odds": "3.50"
+              }
+            ],
+            "game_type": "threeway",
+            "game_groups": [
+              {
+                "name": "Główne",
+                "sort_order": 1,
+                "uuid": "dcde9df8-f44f-4073-8444-0969fd472f82"
+              }
+            ],
+            "market_type": "prematch",
+            "product_active": true,
+            "component_slug": null,
+            "game_type_tooltip": "Należy wytypować jakim rozstrzygnięciem zakończy się spotkanie (zakład nie uwzględnia dogrywki, podobnie jak w przypadku pozostałych zakładów, chyba, że ich opis lub specyfika - np. Awans - stanowią inaczej)"
+          }
+        ],
+        "market_count": 1,
+        "participants": [
+          {
+            "name": "Niemcy (K)",
+            "uuid": "0a3beb68-8d33-4de8-a688-77cc2a9a4bf7",
+            "image_source": null
+          },
+          {
+            "name": "Japonia (K)",
+            "uuid": "06ab6ef5-af81-4ad2-b1c1-3d228bde766b",
+            "image_source": null
+          }
+        ],
+        "matchday": 1,
+        "additional_info": null,
+        "jackpot_available": false,
+        "live_data": {
+          "away_score": null,
+          "category_id": "sr:sport:1",
+          "clock": null,
+          "home_score": null,
+          "match_status": {
+            "id": "0",
+            "name": "Przed startem",
+            "uuid": "dfb45fd3-3264-4605-89a0-317e439735c0"
+          },
+          "model_name": "soccer",
+          "period_scores": null,
+          "statistics": null
+        },
+        "type_participants": "pair",
+        "discipline": {
+          "name": "Piłka nożna",
+          "type": "sport",
+          "level": "sport",
+          "image": "https://cdn.totalbet.pl/categories/5e27e539-7ee3-47b2-b3cd-e3655300ab06.svg",
+          "uuid": "ff57b93d-f74c-4015-a23b-e89f68b8d2c9",
+          "icon": "https://cdn.totalbet.pl/categories/0abf437f-9ab9-4826-9fcd-c40dafde9c8a.svg",
+          "parent_uuid": null,
+          "header_photo": "https://cdn.totalbet.pl/categories/72e9000b-1a8c-431e-a6e7-d2d17aa7c267.jpg",
+          "three_d_icon": "https://cdn.totalbet.pl/categories/870b3543-eea3-4f3d-8690-3a0ae2659fcf.svg"
+        },
+        "component_lists": [],
+        "next_matchdays": [
+          2,
+          3
+        ]
+      },
+      {
+        "name": "Peru (K) - Filipiny (K)",
+        "status": "active",
+        "type": "prematch",
+        "path": [
+          {
+            "name": "Piłka nożna",
+            "uuid": "ff57b93d-f74c-4015-a23b-e89f68b8d2c9"
+          },
+          {
+            "name": "Międzynarodowe",
+            "uuid": "5be64fa1-46a4-43a6-a386-880f32a75336"
+          },
+          {
+            "name": "Towarzyskie (K)",
+            "uuid": "df22bc61-fb2a-4fc1-84a0-5abe6c3cb15b"
+          }
+        ],
+        "result": null,
+        "components": [],
+        "category": {
+          "name": "Międzynarodowe",
+          "type": "sport",
+          "level": "category",
+          "image": null,
+          "uuid": "5be64fa1-46a4-43a6-a386-880f32a75336",
+          "icon": "https://cdn.totalbet.pl/categories/f5709684-2618-448c-b7a2-023bd58d6288.svg",
+          "parent_uuid": "ff57b93d-f74c-4015-a23b-e89f68b8d2c9",
+          "header_photo": null,
+          "three_d_icon": null
+        },
+        "uuid": "7823dba2-a0ee-46f1-a305-c003ce918812",
+        "betbuilder_available": true,
+        "event_layout": "horizontal",
+        "iframe": null,
+        "category_uuid": "5be64fa1-46a4-43a6-a386-880f32a75336",
+        "tournament": {
+          "name": "Towarzyskie (K)",
+          "type": "sport",
+          "level": "tournament",
+          "image": null,
+          "uuid": "df22bc61-fb2a-4fc1-84a0-5abe6c3cb15b",
+          "icon": null,
+          "parent_uuid": "5be64fa1-46a4-43a6-a386-880f32a75336",
+          "header_photo": null,
+          "three_d_icon": null
+        },
+        "discipline_uuid": "ff57b93d-f74c-4015-a23b-e89f68b8d2c9",
+        "tournament_uuid": "df22bc61-fb2a-4fc1-84a0-5abe6c3cb15b",
+        "start_at": "2026-10-13T16:00:00Z",
+        "markets": [
+          {
+            "id": "1",
+            "name": "Wynik meczu",
+            "status": "active",
+            "uuid": "c5926450-91e8-45f9-91af-ff0acf898513",
+            "outcomes": [
+              {
+                "id": "1",
+                "name": "Peru (K)",
+                "status": "active",
+                "sort": 1,
+                "uuid": "49bb1d01-9fe9-4c86-b4aa-174cc0094ab4",
+                "participant_uuid": "544fee2c-37b8-4fa9-b13d-c15c8a9f07c6",
+                "market_uuid": "c5926450-91e8-45f9-91af-ff0acf898513",
+                "odds": "2.18"
+              },
+              {
+                "id": "2",
+                "name": "remis",
+                "status": "active",
+                "sort": 2,
+                "uuid": "2ba5e057-54bd-4319-a385-a0e2084c6f21",
+                "participant_uuid": null,
+                "market_uuid": "c5926450-91e8-45f9-91af-ff0acf898513",
+                "odds": "3.05"
+              },
+              {
+                "id": "3",
+                "name": "Filipiny (K)",
+                "status": "active",
+                "sort": 3,
+                "uuid": "b48d6902-93dc-4bf0-a78f-2874ef77a1ff",
+                "participant_uuid": "0a72579c-435f-469c-87e2-c2b26707c9ef",
+                "market_uuid": "c5926450-91e8-45f9-91af-ff0acf898513",
+                "odds": "3.00"
+              }
+            ],
+            "game_type": "threeway",
+            "game_groups": [
+              {
+                "name": "Główne",
+                "sort_order": 1,
+                "uuid": "dcde9df8-f44f-4073-8444-0969fd472f82"
+              }
+            ],
+            "market_type": "prematch",
+            "product_active": true,
+            "component_slug": null,
+            "game_type_tooltip": "Należy wytypować jakim rozstrzygnięciem zakończy się spotkanie (zakład nie uwzględnia dogrywki, podobnie jak w przypadku pozostałych zakładów, chyba, że ich opis lub specyfika - np. Awans - stanowią inaczej)"
+          }
+        ],
+        "market_count": 29,
+        "participants": [
+          {
+            "name": "Peru (K)",
+            "uuid": "544fee2c-37b8-4fa9-b13d-c15c8a9f07c6",
+            "image_source": null
+          },
+          {
+            "name": "Filipiny (K)",
+            "uuid": "0a72579c-435f-469c-87e2-c2b26707c9ef",
+            "image_source": null
+          }
+        ],
+        "matchday": 1,
+        "additional_info": null,
+        "jackpot_available": false,
+        "live_data": {
+          "away_score": null,
+          "category_id": "sr:sport:1",
+          "clock": null,
+          "home_score": null,
+          "match_status": {
+            "id": "0",
+            "name": "Przed startem",
+            "uuid": "dfb45fd3-3264-4605-89a0-317e439735c0"
+          },
+          "model_name": "soccer",
+          "period_scores": null,
+          "statistics": null
+        },
+        "type_participants": "pair",
+        "discipline": {
+          "name": "Piłka nożna",
+          "type": "sport",
+          "level": "sport",
+          "image": "https://cdn.totalbet.pl/categories/5e27e539-7ee3-47b2-b3cd-e3655300ab06.svg",
+          "uuid": "ff57b93d-f74c-4015-a23b-e89f68b8d2c9",
+          "icon": "https://cdn.totalbet.pl/categories/0abf437f-9ab9-4826-9fcd-c40dafde9c8a.svg",
+          "parent_uuid": null,
+          "header_photo": "https://cdn.totalbet.pl/categories/72e9000b-1a8c-431e-a6e7-d2d17aa7c267.jpg",
+          "three_d_icon": "https://cdn.totalbet.pl/categories/870b3543-eea3-4f3d-8690-3a0ae2659fcf.svg"
+        },
+        "component_lists": [],
+        "next_matchdays": [
+          2,
+          3
+        ]
+      },
+      {
+        "name": "USA (K) - Hiszpania (K)",
+        "status": "active",
+        "type": "prematch",
+        "path": [
+          {
+            "name": "Piłka nożna",
+            "uuid": "ff57b93d-f74c-4015-a23b-e89f68b8d2c9"
+          },
+          {
+            "name": "Międzynarodowe",
+            "uuid": "5be64fa1-46a4-43a6-a386-880f32a75336"
+          },
+          {
+            "name": "Towarzyskie (K)",
+            "uuid": "df22bc61-fb2a-4fc1-84a0-5abe6c3cb15b"
+          }
+        ],
+        "result": ":",
+        "components": [],
+        "category": {
+          "name": "Międzynarodowe",
+          "type": "sport",
+          "level": "category",
+          "image": null,
+          "uuid": "5be64fa1-46a4-43a6-a386-880f32a75336",
+          "icon": "https://cdn.totalbet.pl/categories/f5709684-2618-448c-b7a2-023bd58d6288.svg",
+          "parent_uuid": "ff57b93d-f74c-4015-a23b-e89f68b8d2c9",
+          "header_photo": null,
+          "three_d_icon": null
+        },
+        "uuid": "ef1c89f5-6930-4ad0-a113-704d136e2c8a",
+        "betbuilder_available": false,
+        "event_layout": "horizontal",
+        "iframe": null,
+        "category_uuid": "5be64fa1-46a4-43a6-a386-880f32a75336",
+        "tournament": {
+          "name": "Towarzyskie (K)",
+          "type": "sport",
+          "level": "tournament",
+          "image": null,
+          "uuid": "df22bc61-fb2a-4fc1-84a0-5abe6c3cb15b",
+          "icon": null,
+          "parent_uuid": "5be64fa1-46a4-43a6-a386-880f32a75336",
+          "header_photo": null,
+          "three_d_icon": null
+        },
+        "discipline_uuid": "ff57b93d-f74c-4015-a23b-e89f68b8d2c9",
+        "tournament_uuid": "df22bc61-fb2a-4fc1-84a0-5abe6c3cb15b",
+        "start_at": "2026-10-13T23:00:00Z",
+        "markets": [
+          {
+            "id": "1",
+            "name": "Wynik meczu",
+            "status": "active",
+            "uuid": "85137794-249b-4098-8168-5f26b4b2bf5c",
+            "outcomes": [
+              {
+                "id": "1",
+                "name": "USA (K)",
+                "status": "active",
+                "sort": 1,
+                "uuid": "fded98ea-b60a-4d45-9621-c8431d12119d",
+                "participant_uuid": "ba1e3d10-5696-4a5d-8b5c-6a40cf09bd9d",
+                "market_uuid": "85137794-249b-4098-8168-5f26b4b2bf5c",
+                "odds": "2.62"
+              },
+              {
+                "id": "2",
+                "name": "remis",
+                "status": "active",
+                "sort": 2,
+                "uuid": "efe516b9-2924-4bf4-9219-4de3bc68189b",
+                "participant_uuid": null,
+                "market_uuid": "85137794-249b-4098-8168-5f26b4b2bf5c",
+                "odds": "3.17"
+              },
+              {
+                "id": "3",
+                "name": "Hiszpania (K)",
+                "status": "active",
+                "sort": 3,
+                "uuid": "06835f63-9b64-43f0-b61c-9391a911e7fe",
+                "participant_uuid": "ee844655-3433-4005-8db0-ac8d38a0166a",
+                "market_uuid": "85137794-249b-4098-8168-5f26b4b2bf5c",
+                "odds": "2.36"
+              }
+            ],
+            "game_type": "threeway",
+            "game_groups": [
+              {
+                "name": "Główne",
+                "sort_order": 1,
+                "uuid": "dcde9df8-f44f-4073-8444-0969fd472f82"
+              }
+            ],
+            "market_type": "prematch",
+            "product_active": true,
+            "component_slug": null,
+            "game_type_tooltip": "Należy wytypować jakim rozstrzygnięciem zakończy się spotkanie (zakład nie uwzględnia dogrywki, podobnie jak w przypadku pozostałych zakładów, chyba, że ich opis lub specyfika - np. Awans - stanowią inaczej)"
+          }
+        ],
+        "market_count": 1,
+        "participants": [
+          {
+            "name": "USA (K)",
+            "uuid": "ba1e3d10-5696-4a5d-8b5c-6a40cf09bd9d",
+            "image_source": null
+          },
+          {
+            "name": "Hiszpania (K)",
+            "uuid": "ee844655-3433-4005-8db0-ac8d38a0166a",
+            "image_source": null
+          }
+        ],
+        "matchday": 1,
+        "additional_info": null,
+        "jackpot_available": false,
+        "live_data": {
+          "away_score": null,
+          "category_id": "sr:sport:1",
+          "clock": null,
+          "home_score": null,
+          "match_status": {
+            "id": "0",
+            "name": "Przed startem",
+            "uuid": "dfb45fd3-3264-4605-89a0-317e439735c0"
+          },
+          "model_name": "soccer",
+          "period_scores": null,
+          "statistics": null
+        },
+        "type_participants": "pair",
+        "discipline": {
+          "name": "Piłka nożna",
+          "type": "sport",
+          "level": "sport",
+          "image": "https://cdn.totalbet.pl/categories/5e27e539-7ee3-47b2-b3cd-e3655300ab06.svg",
+          "uuid": "ff57b93d-f74c-4015-a23b-e89f68b8d2c9",
+          "icon": "https://cdn.totalbet.pl/categories/0abf437f-9ab9-4826-9fcd-c40dafde9c8a.svg",
+          "parent_uuid": null,
+          "header_photo": "https://cdn.totalbet.pl/categories/72e9000b-1a8c-431e-a6e7-d2d17aa7c267.jpg",
+          "three_d_icon": "https://cdn.totalbet.pl/categories/870b3543-eea3-4f3d-8690-3a0ae2659fcf.svg"
+        },
+        "component_lists": [],
+        "next_matchdays": [
+          2,
+          3
+        ]
+      },
+      {
+        "name": "Brazylia (K) - Argentyna (K)",
+        "status": "active",
+        "type": "prematch",
+        "path": [
+          {
+            "name": "Piłka nożna",
+            "uuid": "ff57b93d-f74c-4015-a23b-e89f68b8d2c9"
+          },
+          {
+            "name": "Międzynarodowe",
+            "uuid": "5be64fa1-46a4-43a6-a386-880f32a75336"
+          },
+          {
+            "name": "Towarzyskie (K)",
+            "uuid": "df22bc61-fb2a-4fc1-84a0-5abe6c3cb15b"
+          }
+        ],
+        "result": ":",
+        "components": [],
+        "category": {
+          "name": "Międzynarodowe",
+          "type": "sport",
+          "level": "category",
+          "image": null,
+          "uuid": "5be64fa1-46a4-43a6-a386-880f32a75336",
+          "icon": "https://cdn.totalbet.pl/categories/f5709684-2618-448c-b7a2-023bd58d6288.svg",
+          "parent_uuid": "ff57b93d-f74c-4015-a23b-e89f68b8d2c9",
+          "header_photo": null,
+          "three_d_icon": null
+        },
+        "uuid": "6f3be76d-9c03-4fad-af9a-6b40fac4aee9",
+        "betbuilder_available": false,
+        "event_layout": "horizontal",
+        "iframe": null,
+        "category_uuid": "5be64fa1-46a4-43a6-a386-880f32a75336",
+        "tournament": {
+          "name": "Towarzyskie (K)",
+          "type": "sport",
+          "level": "tournament",
+          "image": null,
+          "uuid": "df22bc61-fb2a-4fc1-84a0-5abe6c3cb15b",
+          "icon": null,
+          "parent_uuid": "5be64fa1-46a4-43a6-a386-880f32a75336",
+          "header_photo": null,
+          "three_d_icon": null
+        },
+        "discipline_uuid": "ff57b93d-f74c-4015-a23b-e89f68b8d2c9",
+        "tournament_uuid": "df22bc61-fb2a-4fc1-84a0-5abe6c3cb15b",
+        "start_at": "2026-10-13T23:30:00Z",
+        "markets": [
+          {
+            "id": "1",
+            "name": "Wynik meczu",
+            "status": "active",
+            "uuid": "e4a6f229-99a2-4da5-8dd2-2dec66792c8d",
+            "outcomes": [
+              {
+                "id": "1",
+                "name": "Brazylia (K)",
+                "status": "active",
+                "sort": 1,
+                "uuid": "06d3fb5b-5966-409a-9dac-e195119848f6",
+                "participant_uuid": "6be690b9-8e52-449d-92dc-bb3b2433b6c4",
+                "market_uuid": "e4a6f229-99a2-4da5-8dd2-2dec66792c8d",
+                "odds": "1.15"
+              },
+              {
+                "id": "2",
+                "name": "remis",
+                "status": "active",
+                "sort": 2,
+                "uuid": "8900cc2d-1ee0-4fd2-a121-26a3551886e5",
+                "participant_uuid": null,
+                "market_uuid": "e4a6f229-99a2-4da5-8dd2-2dec66792c8d",
+                "odds": "6.00"
+              },
+              {
+                "id": "3",
+                "name": "Argentyna (K)",
+                "status": "active",
+                "sort": 3,
+                "uuid": "f03cd76b-a552-4fdb-b008-897401a1780e",
+                "participant_uuid": "fabf1cc2-ee65-4bae-95ed-9510b3682275",
+                "market_uuid": "e4a6f229-99a2-4da5-8dd2-2dec66792c8d",
+                "odds": "12.00"
+              }
+            ],
+            "game_type": "threeway",
+            "game_groups": [
+              {
+                "name": "Główne",
+                "sort_order": 1,
+                "uuid": "dcde9df8-f44f-4073-8444-0969fd472f82"
+              }
+            ],
+            "market_type": "prematch",
+            "product_active": true,
+            "component_slug": null,
+            "game_type_tooltip": "Należy wytypować jakim rozstrzygnięciem zakończy się spotkanie (zakład nie uwzględnia dogrywki, podobnie jak w przypadku pozostałych zakładów, chyba, że ich opis lub specyfika - np. Awans - stanowią inaczej)"
+          }
+        ],
+        "market_count": 1,
+        "participants": [
+          {
+            "name": "Brazylia (K)",
+            "uuid": "6be690b9-8e52-449d-92dc-bb3b2433b6c4",
+            "image_source": null
+          },
+          {
+            "name": "Argentyna (K)",
+            "uuid": "fabf1cc2-ee65-4bae-95ed-9510b3682275",
+            "image_source": null
+          }
+        ],
+        "matchday": 1,
+        "additional_info": null,
+        "jackpot_available": false,
+        "live_data": {
+          "away_score": null,
+          "category_id": "sr:sport:1",
+          "clock": null,
+          "home_score": null,
+          "match_status": {
+            "id": "0",
+            "name": "Przed startem",
+            "uuid": "dfb45fd3-3264-4605-89a0-317e439735c0"
+          },
+          "model_name": "soccer",
+          "period_scores": null,
+          "statistics": null
+        },
+        "type_participants": "pair",
+        "discipline": {
+          "name": "Piłka nożna",
+          "type": "sport",
+          "level": "sport",
+          "image": "https://cdn.totalbet.pl/categories/5e27e539-7ee3-47b2-b3cd-e3655300ab06.svg",
+          "uuid": "ff57b93d-f74c-4015-a23b-e89f68b8d2c9",
+          "icon": "https://cdn.totalbet.pl/categories/0abf437f-9ab9-4826-9fcd-c40dafde9c8a.svg",
+          "parent_uuid": null,
+          "header_photo": "https://cdn.totalbet.pl/categories/72e9000b-1a8c-431e-a6e7-d2d17aa7c267.jpg",
+          "three_d_icon": "https://cdn.totalbet.pl/categories/870b3543-eea3-4f3d-8690-3a0ae2659fcf.svg"
+        },
+        "component_lists": [],
+        "next_matchdays": [
+          2,
+          3
+        ]
+      },
+      {
+        "name": "Tanzania (K) - Botswana (K)",
+        "status": "active",
+        "type": "prematch",
+        "path": [
+          {
+            "name": "Piłka nożna",
+            "uuid": "ff57b93d-f74c-4015-a23b-e89f68b8d2c9"
+          },
+          {
+            "name": "Międzynarodowe",
+            "uuid": "5be64fa1-46a4-43a6-a386-880f32a75336"
+          },
+          {
+            "name": "CAF Olimpijskie kwal. (K)",
+            "uuid": "d51e2acc-dcf4-4e83-95df-eec945552a99"
+          }
+        ],
+        "result": null,
+        "components": [],
+        "category": {
+          "name": "Międzynarodowe",
+          "type": "sport",
+          "level": "category",
+          "image": null,
+          "uuid": "5be64fa1-46a4-43a6-a386-880f32a75336",
+          "icon": "https://cdn.totalbet.pl/categories/f5709684-2618-448c-b7a2-023bd58d6288.svg",
+          "parent_uuid": "ff57b93d-f74c-4015-a23b-e89f68b8d2c9",
+          "header_photo": null,
+          "three_d_icon": null
+        },
+        "uuid": "2b701da9-bb01-40cd-a19b-3125e2eb2baa",
+        "betbuilder_available": true,
+        "event_layout": "horizontal",
+        "iframe": null,
+        "category_uuid": "5be64fa1-46a4-43a6-a386-880f32a75336",
+        "tournament": {
+          "name": "CAF Olimpijskie kwal. (K)",
+          "type": "sport",
+          "level": "tournament",
+          "image": null,
+          "uuid": "d51e2acc-dcf4-4e83-95df-eec945552a99",
+          "icon": null,
+          "parent_uuid": "5be64fa1-46a4-43a6-a386-880f32a75336",
+          "header_photo": null,
+          "three_d_icon": null
+        },
+        "discipline_uuid": "ff57b93d-f74c-4015-a23b-e89f68b8d2c9",
+        "tournament_uuid": "d51e2acc-dcf4-4e83-95df-eec945552a99",
+        "start_at": "2026-10-13T13:00:00Z",
+        "markets": [
+          {
+            "id": "1",
+            "name": "Wynik meczu",
+            "status": "active",
+            "uuid": "4218ca91-c203-46e0-aec1-b2d81935e31c",
+            "outcomes": [
+              {
+                "id": "1",
+                "name": "Tanzania (K)",
+                "status": "active",
+                "sort": 1,
+                "uuid": "d39f01dc-d8d3-4f45-bcdd-fc5c18ff2944",
+                "participant_uuid": "45171d6e-51b1-427e-83d3-6eaf7d2a1475",
+                "market_uuid": "4218ca91-c203-46e0-aec1-b2d81935e31c",
+                "odds": "1.58"
+              },
+              {
+                "id": "2",
+                "name": "remis",
+                "status": "active",
+                "sort": 2,
+                "uuid": "4191f50d-7c52-44cd-a154-83a6773fdae6",
+                "participant_uuid": null,
+                "market_uuid": "4218ca91-c203-46e0-aec1-b2d81935e31c",
+                "odds": "3.35"
+              },
+              {
+                "id": "3",
+                "name": "Botswana (K)",
+                "status": "active",
+                "sort": 3,
+                "uuid": "ada6bf6e-31c4-4fcb-9dbc-37218ce0b7cc",
+                "participant_uuid": "eb84e44f-99f7-488c-bec3-5f2768b73e1b",
+                "market_uuid": "4218ca91-c203-46e0-aec1-b2d81935e31c",
+                "odds": "5.00"
+              }
+            ],
+            "game_type": "threeway",
+            "game_groups": [
+              {
+                "name": "Główne",
+                "sort_order": 1,
+                "uuid": "dcde9df8-f44f-4073-8444-0969fd472f82"
+              }
+            ],
+            "market_type": "prematch",
+            "product_active": true,
+            "component_slug": null,
+            "game_type_tooltip": "Należy wytypować jakim rozstrzygnięciem zakończy się spotkanie (zakład nie uwzględnia dogrywki, podobnie jak w przypadku pozostałych zakładów, chyba, że ich opis lub specyfika - np. Awans - stanowią inaczej)"
+          }
+        ],
+        "market_count": 6,
+        "participants": [
+          {
+            "name": "Tanzania (K)",
+            "uuid": "45171d6e-51b1-427e-83d3-6eaf7d2a1475",
+            "image_source": null
+          },
+          {
+            "name": "Botswana (K)",
+            "uuid": "eb84e44f-99f7-488c-bec3-5f2768b73e1b",
+            "image_source": null
+          }
+        ],
+        "matchday": null,
+        "additional_info": null,
+        "jackpot_available": false,
+        "live_data": {
+          "away_score": null,
+          "category_id": "sr:sport:1",
+          "clock": null,
+          "home_score": null,
+          "match_status": {
+            "id": "0",
+            "name": "Przed startem",
+            "uuid": "dfb45fd3-3264-4605-89a0-317e439735c0"
+          },
+          "model_name": "soccer",
+          "period_scores": null,
+          "statistics": null
+        },
+        "type_participants": "pair",
+        "discipline": {
+          "name": "Piłka nożna",
+          "type": "sport",
+          "level": "sport",
+          "image": "https://cdn.totalbet.pl/categories/5e27e539-7ee3-47b2-b3cd-e3655300ab06.svg",
+          "uuid": "ff57b93d-f74c-4015-a23b-e89f68b8d2c9",
+          "icon": "https://cdn.totalbet.pl/categories/0abf437f-9ab9-4826-9fcd-c40dafde9c8a.svg",
+          "parent_uuid": null,
+          "header_photo": "https://cdn.totalbet.pl/categories/72e9000b-1a8c-431e-a6e7-d2d17aa7c267.jpg",
+          "three_d_icon": "https://cdn.totalbet.pl/categories/870b3543-eea3-4f3d-8690-3a0ae2659fcf.svg"
+        },
+        "component_lists": [],
+        "next_matchdays": []
+      },
+      {
+        "name": "Zimbabwe (K) - Malawi (K)",
+        "status": "active",
+        "type": "prematch",
+        "path": [
+          {
+            "name": "Piłka nożna",
+            "uuid": "ff57b93d-f74c-4015-a23b-e89f68b8d2c9"
+          },
+          {
+            "name": "Międzynarodowe",
+            "uuid": "5be64fa1-46a4-43a6-a386-880f32a75336"
+          },
+          {
+            "name": "CAF Olimpijskie kwal. (K)",
+            "uuid": "d51e2acc-dcf4-4e83-95df-eec945552a99"
+          }
+        ],
+        "result": null,
+        "components": [],
+        "category": {
+          "name": "Międzynarodowe",
+          "type": "sport",
+          "level": "category",
+          "image": null,
+          "uuid": "5be64fa1-46a4-43a6-a386-880f32a75336",
+          "icon": "https://cdn.totalbet.pl/categories/f5709684-2618-448c-b7a2-023bd58d6288.svg",
+          "parent_uuid": "ff57b93d-f74c-4015-a23b-e89f68b8d2c9",
+          "header_photo": null,
+          "three_d_icon": null
+        },
+        "uuid": "fddf26b0-2dc3-4730-b7ff-955e915e4b2b",
+        "betbuilder_available": true,
+        "event_layout": "horizontal",
+        "iframe": null,
+        "category_uuid": "5be64fa1-46a4-43a6-a386-880f32a75336",
+        "tournament": {
+          "name": "CAF Olimpijskie kwal. (K)",
+          "type": "sport",
+          "level": "tournament",
+          "image": null,
+          "uuid": "d51e2acc-dcf4-4e83-95df-eec945552a99",
+          "icon": null,
+          "parent_uuid": "5be64fa1-46a4-43a6-a386-880f32a75336",
+          "header_photo": null,
+          "three_d_icon": null
+        },
+        "discipline_uuid": "ff57b93d-f74c-4015-a23b-e89f68b8d2c9",
+        "tournament_uuid": "d51e2acc-dcf4-4e83-95df-eec945552a99",
+        "start_at": "2026-10-13T13:00:00Z",
+        "markets": [
+          {
+            "id": "1",
+            "name": "Wynik meczu",
+            "status": "active",
+            "uuid": "1d9bf027-e454-4126-8821-9c31481115c5",
+            "outcomes": [
+              {
+                "id": "1",
+                "name": "Zimbabwe (K)",
+                "status": "active",
+                "sort": 1,
+                "uuid": "d976ff08-49bd-4e82-b758-70a47abbe9ad",
+                "participant_uuid": "44b1ea67-3971-4abb-9058-29f1a0723875",
+                "market_uuid": "1d9bf027-e454-4126-8821-9c31481115c5",
+                "odds": "2.92"
+              },
+              {
+                "id": "2",
+                "name": "remis",
+                "status": "active",
+                "sort": 2,
+                "uuid": "3e353207-2b89-47ff-92af-ac7285cc624a",
+                "participant_uuid": null,
+                "market_uuid": "1d9bf027-e454-4126-8821-9c31481115c5",
+                "odds": "3.27"
+              },
+              {
+                "id": "3",
+                "name": "Malawi (K)",
+                "status": "active",
+                "sort": 3,
+                "uuid": "4fba2b52-d780-4139-abbe-8c3582e5ac61",
+                "participant_uuid": "6b13914a-a73d-4975-88c0-0533e278bd8e",
+                "market_uuid": "1d9bf027-e454-4126-8821-9c31481115c5",
+                "odds": "2.07"
+              }
+            ],
+            "game_type": "threeway",
+            "game_groups": [
+              {
+                "name": "Główne",
+                "sort_order": 1,
+                "uuid": "dcde9df8-f44f-4073-8444-0969fd472f82"
+              }
+            ],
+            "market_type": "prematch",
+            "product_active": true,
+            "component_slug": null,
+            "game_type_tooltip": "Należy wytypować jakim rozstrzygnięciem zakończy się spotkanie (zakład nie uwzględnia dogrywki, podobnie jak w przypadku pozostałych zakładów, chyba, że ich opis lub specyfika - np. Awans - stanowią inaczej)"
+          }
+        ],
+        "market_count": 6,
+        "participants": [
+          {
+            "name": "Zimbabwe (K)",
+            "uuid": "44b1ea67-3971-4abb-9058-29f1a0723875",
+            "image_source": null
+          },
+          {
+            "name": "Malawi (K)",
+            "uuid": "6b13914a-a73d-4975-88c0-0533e278bd8e",
+            "image_source": null
+          }
+        ],
+        "matchday": null,
+        "additional_info": null,
+        "jackpot_available": false,
+        "live_data": {
+          "away_score": null,
+          "category_id": "sr:sport:1",
+          "clock": null,
+          "home_score": null,
+          "match_status": {
+            "id": "0",
+            "name": "Przed startem",
+            "uuid": "dfb45fd3-3264-4605-89a0-317e439735c0"
+          },
+          "model_name": "soccer",
+          "period_scores": null,
+          "statistics": null
+        },
+        "type_participants": "pair",
+        "discipline": {
+          "name": "Piłka nożna",
+          "type": "sport",
+          "level": "sport",
+          "image": "https://cdn.totalbet.pl/categories/5e27e539-7ee3-47b2-b3cd-e3655300ab06.svg",
+          "uuid": "ff57b93d-f74c-4015-a23b-e89f68b8d2c9",
+          "icon": "https://cdn.totalbet.pl/categories/0abf437f-9ab9-4826-9fcd-c40dafde9c8a.svg",
+          "parent_uuid": null,
+          "header_photo": "https://cdn.totalbet.pl/categories/72e9000b-1a8c-431e-a6e7-d2d17aa7c267.jpg",
+          "three_d_icon": "https://cdn.totalbet.pl/categories/870b3543-eea3-4f3d-8690-3a0ae2659fcf.svg"
+        },
+        "component_lists": [],
+        "next_matchdays": []
+      },
+      {
+        "name": "Gwinea Równikowa (K) - Burkina Faso (K)",
+        "status": "active",
+        "type": "prematch",
+        "path": [
+          {
+            "name": "Piłka nożna",
+            "uuid": "ff57b93d-f74c-4015-a23b-e89f68b8d2c9"
+          },
+          {
+            "name": "Międzynarodowe",
+            "uuid": "5be64fa1-46a4-43a6-a386-880f32a75336"
+          },
+          {
+            "name": "CAF Olimpijskie kwal. (K)",
+            "uuid": "d51e2acc-dcf4-4e83-95df-eec945552a99"
+          }
+        ],
+        "result": ":",
+        "components": [],
+        "category": {
+          "name": "Międzynarodowe",
+          "type": "sport",
+          "level": "category",
+          "image": null,
+          "uuid": "5be64fa1-46a4-43a6-a386-880f32a75336",
+          "icon": "https://cdn.totalbet.pl/categories/f5709684-2618-448c-b7a2-023bd58d6288.svg",
+          "parent_uuid": "ff57b93d-f74c-4015-a23b-e89f68b8d2c9",
+          "header_photo": null,
+          "three_d_icon": null
+        },
+        "uuid": "b924db81-0e2b-46c9-b94f-299a2a35a792",
+        "betbuilder_available": true,
+        "event_layout": "horizontal",
+        "iframe": null,
+        "category_uuid": "5be64fa1-46a4-43a6-a386-880f32a75336",
+        "tournament": {
+          "name": "CAF Olimpijskie kwal. (K)",
+          "type": "sport",
+          "level": "tournament",
+          "image": null,
+          "uuid": "d51e2acc-dcf4-4e83-95df-eec945552a99",
+          "icon": null,
+          "parent_uuid": "5be64fa1-46a4-43a6-a386-880f32a75336",
+          "header_photo": null,
+          "three_d_icon": null
+        },
+        "discipline_uuid": "ff57b93d-f74c-4015-a23b-e89f68b8d2c9",
+        "tournament_uuid": "d51e2acc-dcf4-4e83-95df-eec945552a99",
+        "start_at": "2026-10-13T14:00:00Z",
+        "markets": [
+          {
+            "id": "1",
+            "name": "Wynik meczu",
+            "status": "active",
+            "uuid": "90281d94-9afc-4972-b23f-0ea103af9af9",
+            "outcomes": [
+              {
+                "id": "1",
+                "name": "Gwinea Równikowa (K)",
+                "status": "active",
+                "sort": 1,
+                "uuid": "0d3f69bf-84ed-4238-885e-19866a54990a",
+                "participant_uuid": "8b6c1bd8-5763-4ea8-9456-a5a4d9db6739",
+                "market_uuid": "90281d94-9afc-4972-b23f-0ea103af9af9",
+                "odds": "2.65"
+              },
+              {
+                "id": "2",
+                "name": "remis",
+                "status": "active",
+                "sort": 2,
+                "uuid": "fb2c5dd8-34d4-4abc-9a1b-981ad578d1d7",
+                "participant_uuid": null,
+                "market_uuid": "90281d94-9afc-4972-b23f-0ea103af9af9",
+                "odds": "3.12"
+              },
+              {
+                "id": "3",
+                "name": "Burkina Faso (K)",
+                "status": "active",
+                "sort": 3,
+                "uuid": "a6cbc084-09a1-4bac-9a9b-0341b9b2ba75",
+                "participant_uuid": "a4014c41-8cc6-436f-b34f-493b69c80e0b",
+                "market_uuid": "90281d94-9afc-4972-b23f-0ea103af9af9",
+                "odds": "2.32"
+              }
+            ],
+            "game_type": "threeway",
+            "game_groups": [
+              {
+                "name": "Główne",
+                "sort_order": 1,
+                "uuid": "dcde9df8-f44f-4073-8444-0969fd472f82"
+              }
+            ],
+            "market_type": "prematch",
+            "product_active": true,
+            "component_slug": null,
+            "game_type_tooltip": "Należy wytypować jakim rozstrzygnięciem zakończy się spotkanie (zakład nie uwzględnia dogrywki, podobnie jak w przypadku pozostałych zakładów, chyba, że ich opis lub specyfika - np. Awans - stanowią inaczej)"
+          }
+        ],
+        "market_count": 6,
+        "participants": [
+          {
+            "name": "Gwinea Równikowa (K)",
+            "uuid": "8b6c1bd8-5763-4ea8-9456-a5a4d9db6739",
+            "image_source": null
+          },
+          {
+            "name": "Burkina Faso (K)",
+            "uuid": "a4014c41-8cc6-436f-b34f-493b69c80e0b",
+            "image_source": null
+          }
+        ],
+        "matchday": null,
+        "additional_info": null,
+        "jackpot_available": false,
+        "live_data": {
+          "away_score": null,
+          "category_id": "sr:sport:1",
+          "clock": null,
+          "home_score": null,
+          "match_status": {
+            "id": "0",
+            "name": "Przed startem",
+            "uuid": "dfb45fd3-3264-4605-89a0-317e439735c0"
+          },
+          "model_name": "soccer",
+          "period_scores": null,
+          "statistics": null
+        },
+        "type_participants": "pair",
+        "discipline": {
+          "name": "Piłka nożna",
+          "type": "sport",
+          "level": "sport",
+          "image": "https://cdn.totalbet.pl/categories/5e27e539-7ee3-47b2-b3cd-e3655300ab06.svg",
+          "uuid": "ff57b93d-f74c-4015-a23b-e89f68b8d2c9",
+          "icon": "https://cdn.totalbet.pl/categories/0abf437f-9ab9-4826-9fcd-c40dafde9c8a.svg",
+          "parent_uuid": null,
+          "header_photo": "https://cdn.totalbet.pl/categories/72e9000b-1a8c-431e-a6e7-d2d17aa7c267.jpg",
+          "three_d_icon": "https://cdn.totalbet.pl/categories/870b3543-eea3-4f3d-8690-3a0ae2659fcf.svg"
+        },
+        "component_lists": [],
+        "next_matchdays": []
+      },
+      {
+        "name": "Nigeria (K) - Komory (K)",
+        "status": "active",
+        "type": "prematch",
+        "path": [
+          {
+            "name": "Piłka nożna",
+            "uuid": "ff57b93d-f74c-4015-a23b-e89f68b8d2c9"
+          },
+          {
+            "name": "Międzynarodowe",
+            "uuid": "5be64fa1-46a4-43a6-a386-880f32a75336"
+          },
+          {
+            "name": "CAF Olimpijskie kwal. (K)",
+            "uuid": "d51e2acc-dcf4-4e83-95df-eec945552a99"
+          }
+        ],
+        "result": ":",
+        "components": [],
+        "category": {
+          "name": "Międzynarodowe",
+          "type": "sport",
+          "level": "category",
+          "image": null,
+          "uuid": "5be64fa1-46a4-43a6-a386-880f32a75336",
+          "icon": "https://cdn.totalbet.pl/categories/f5709684-2618-448c-b7a2-023bd58d6288.svg",
+          "parent_uuid": "ff57b93d-f74c-4015-a23b-e89f68b8d2c9",
+          "header_photo": null,
+          "three_d_icon": null
+        },
+        "uuid": "61ef27ae-688c-46c7-b41f-53bb2963e644",
+        "betbuilder_available": true,
+        "event_layout": "horizontal",
+        "iframe": null,
+        "category_uuid": "5be64fa1-46a4-43a6-a386-880f32a75336",
+        "tournament": {
+          "name": "CAF Olimpijskie kwal. (K)",
+          "type": "sport",
+          "level": "tournament",
+          "image": null,
+          "uuid": "d51e2acc-dcf4-4e83-95df-eec945552a99",
+          "icon": null,
+          "parent_uuid": "5be64fa1-46a4-43a6-a386-880f32a75336",
+          "header_photo": null,
+          "three_d_icon": null
+        },
+        "discipline_uuid": "ff57b93d-f74c-4015-a23b-e89f68b8d2c9",
+        "tournament_uuid": "d51e2acc-dcf4-4e83-95df-eec945552a99",
+        "start_at": "2026-10-13T15:00:00Z",
+        "markets": [
+          {
+            "id": "1",
+            "name": "Wynik meczu",
+            "status": "active",
+            "uuid": "e072ef32-f820-4efa-a19b-da118ff5ff91",
+            "outcomes": [
+              {
+                "id": "1",
+                "name": "Nigeria (K)",
+                "status": "active",
+                "sort": 1,
+                "uuid": "ac2a636a-4e67-4eae-98ec-2887f91e1bbc",
+                "participant_uuid": "c8bedf14-33e8-4b08-87a8-e2ff8bcfb151",
+                "market_uuid": "e072ef32-f820-4efa-a19b-da118ff5ff91",
+                "odds": "1.05"
+              },
+              {
+                "id": "2",
+                "name": "remis",
+                "status": "active",
+                "sort": 2,
+                "uuid": "55ef98f7-25ec-49dc-92a5-f85b4aee6045",
+                "participant_uuid": null,
+                "market_uuid": "e072ef32-f820-4efa-a19b-da118ff5ff91",
+                "odds": "8.00"
+              },
+              {
+                "id": "3",
+                "name": "Komory (K)",
+                "status": "active",
+                "sort": 3,
+                "uuid": "32ac92b5-8d1b-4b4e-83d2-a10617ca96ff",
+                "participant_uuid": "9adc40c3-0145-4fc2-a759-49322ba29469",
+                "market_uuid": "e072ef32-f820-4efa-a19b-da118ff5ff91",
+                "odds": "20.00"
+              }
+            ],
+            "game_type": "threeway",
+            "game_groups": [
+              {
+                "name": "Główne",
+                "sort_order": 1,
+                "uuid": "dcde9df8-f44f-4073-8444-0969fd472f82"
+              }
+            ],
+            "market_type": "prematch",
+            "product_active": true,
+            "component_slug": null,
+            "game_type_tooltip": "Należy wytypować jakim rozstrzygnięciem zakończy się spotkanie (zakład nie uwzględnia dogrywki, podobnie jak w przypadku pozostałych zakładów, chyba, że ich opis lub specyfika - np. Awans - stanowią inaczej)"
+          }
+        ],
+        "market_count": 6,
+        "participants": [
+          {
+            "name": "Nigeria (K)",
+            "uuid": "c8bedf14-33e8-4b08-87a8-e2ff8bcfb151",
+            "image_source": null
+          },
+          {
+            "name": "Komory (K)",
+            "uuid": "9adc40c3-0145-4fc2-a759-49322ba29469",
+            "image_source": null
+          }
+        ],
+        "matchday": null,
+        "additional_info": null,
+        "jackpot_available": false,
+        "live_data": {
+          "away_score": null,
+          "category_id": "sr:sport:1",
+          "clock": null,
+          "home_score": null,
+          "match_status": {
+            "id": "0",
+            "name": "Przed startem",
+            "uuid": "dfb45fd3-3264-4605-89a0-317e439735c0"
+          },
+          "model_name": "soccer",
+          "period_scores": null,
+          "statistics": null
+        },
+        "type_participants": "pair",
+        "discipline": {
+          "name": "Piłka nożna",
+          "type": "sport",
+          "level": "sport",
+          "image": "https://cdn.totalbet.pl/categories/5e27e539-7ee3-47b2-b3cd-e3655300ab06.svg",
+          "uuid": "ff57b93d-f74c-4015-a23b-e89f68b8d2c9",
+          "icon": "https://cdn.totalbet.pl/categories/0abf437f-9ab9-4826-9fcd-c40dafde9c8a.svg",
+          "parent_uuid": null,
+          "header_photo": "https://cdn.totalbet.pl/categories/72e9000b-1a8c-431e-a6e7-d2d17aa7c267.jpg",
+          "three_d_icon": "https://cdn.totalbet.pl/categories/870b3543-eea3-4f3d-8690-3a0ae2659fcf.svg"
+        },
+        "component_lists": [],
+        "next_matchdays": []
+      },
+      {
+        "name": "Ghana (K) - Mauritius (K)",
+        "status": "active",
+        "type": "prematch",
+        "path": [
+          {
+            "name": "Piłka nożna",
+            "uuid": "ff57b93d-f74c-4015-a23b-e89f68b8d2c9"
+          },
+          {
+            "name": "Międzynarodowe",
+            "uuid": "5be64fa1-46a4-43a6-a386-880f32a75336"
+          },
+          {
+            "name": "CAF Olimpijskie kwal. (K)",
+            "uuid": "d51e2acc-dcf4-4e83-95df-eec945552a99"
+          }
+        ],
+        "result": null,
+        "components": [],
+        "category": {
+          "name": "Międzynarodowe",
+          "type": "sport",
+          "level": "category",
+          "image": null,
+          "uuid": "5be64fa1-46a4-43a6-a386-880f32a75336",
+          "icon": "https://cdn.totalbet.pl/categories/f5709684-2618-448c-b7a2-023bd58d6288.svg",
+          "parent_uuid": "ff57b93d-f74c-4015-a23b-e89f68b8d2c9",
+          "header_photo": null,
+          "three_d_icon": null
+        },
+        "uuid": "ec9a847a-47db-49fd-ba91-0f18edb06010",
+        "betbuilder_available": true,
+        "event_layout": "horizontal",
+        "iframe": null,
+        "category_uuid": "5be64fa1-46a4-43a6-a386-880f32a75336",
+        "tournament": {
+          "name": "CAF Olimpijskie kwal. (K)",
+          "type": "sport",
+          "level": "tournament",
+          "image": null,
+          "uuid": "d51e2acc-dcf4-4e83-95df-eec945552a99",
+          "icon": null,
+          "parent_uuid": "5be64fa1-46a4-43a6-a386-880f32a75336",
+          "header_photo": null,
+          "three_d_icon": null
+        },
+        "discipline_uuid": "ff57b93d-f74c-4015-a23b-e89f68b8d2c9",
+        "tournament_uuid": "d51e2acc-dcf4-4e83-95df-eec945552a99",
+        "start_at": "2026-10-13T16:00:00Z",
+        "markets": [
+          {
+            "id": "1",
+            "name": "Wynik meczu",
+            "status": "active",
+            "uuid": "b93a1950-c42a-4a48-b294-3a1893ad2357",
+            "outcomes": [
+              {
+                "id": "1",
+                "name": "Ghana (K)",
+                "status": "active",
+                "sort": 1,
+                "uuid": "98b7a36e-ae38-4cfd-a16b-e67c4e2e1b3a",
+                "participant_uuid": "fcbb83e9-ccdd-4be4-84ee-266674279b6a",
+                "market_uuid": "b93a1950-c42a-4a48-b294-3a1893ad2357",
+                "odds": "1.04"
+              },
+              {
+                "id": "2",
+                "name": "remis",
+                "status": "active",
+                "sort": 2,
+                "uuid": "05ca909e-9c7e-4a9d-86c7-74b7370bccb4",
+                "participant_uuid": null,
+                "market_uuid": "b93a1950-c42a-4a48-b294-3a1893ad2357",
+                "odds": "8.25"
+              },
+              {
+                "id": "3",
+                "name": "Mauritius (K)",
+                "status": "active",
+                "sort": 3,
+                "uuid": "52300423-acf7-4325-a5bc-a2d1fed6a211",
+                "participant_uuid": "031b1953-2545-4522-b4ac-6dc81852460c",
+                "market_uuid": "b93a1950-c42a-4a48-b294-3a1893ad2357",
+                "odds": "20.00"
+              }
+            ],
+            "game_type": "threeway",
+            "game_groups": [
+              {
+                "name": "Główne",
+                "sort_order": 1,
+                "uuid": "dcde9df8-f44f-4073-8444-0969fd472f82"
+              }
+            ],
+            "market_type": "prematch",
+            "product_active": true,
+            "component_slug": null,
+            "game_type_tooltip": "Należy wytypować jakim rozstrzygnięciem zakończy się spotkanie (zakład nie uwzględnia dogrywki, podobnie jak w przypadku pozostałych zakładów, chyba, że ich opis lub specyfika - np. Awans - stanowią inaczej)"
+          }
+        ],
+        "market_count": 3,
+        "participants": [
+          {
+            "name": "Ghana (K)",
+            "uuid": "fcbb83e9-ccdd-4be4-84ee-266674279b6a",
+            "image_source": null
+          },
+          {
+            "name": "Mauritius (K)",
+            "uuid": "031b1953-2545-4522-b4ac-6dc81852460c",
+            "image_source": null
+          }
+        ],
+        "matchday": null,
+        "additional_info": null,
+        "jackpot_available": false,
+        "live_data": {
+          "away_score": null,
+          "category_id": "sr:sport:1",
+          "clock": null,
+          "home_score": null,
+          "match_status": {
+            "id": "0",
+            "name": "Przed startem",
+            "uuid": "dfb45fd3-3264-4605-89a0-317e439735c0"
+          },
+          "model_name": "soccer",
+          "period_scores": null,
+          "statistics": null
+        },
+        "type_participants": "pair",
+        "discipline": {
+          "name": "Piłka nożna",
+          "type": "sport",
+          "level": "sport",
+          "image": "https://cdn.totalbet.pl/categories/5e27e539-7ee3-47b2-b3cd-e3655300ab06.svg",
+          "uuid": "ff57b93d-f74c-4015-a23b-e89f68b8d2c9",
+          "icon": "https://cdn.totalbet.pl/categories/0abf437f-9ab9-4826-9fcd-c40dafde9c8a.svg",
+          "parent_uuid": null,
+          "header_photo": "https://cdn.totalbet.pl/categories/72e9000b-1a8c-431e-a6e7-d2d17aa7c267.jpg",
+          "three_d_icon": "https://cdn.totalbet.pl/categories/870b3543-eea3-4f3d-8690-3a0ae2659fcf.svg"
+        },
+        "component_lists": [],
+        "next_matchdays": []
+      },
+      {
+        "name": "Mali (K) - Benin",
+        "status": "active",
+        "type": "prematch",
+        "path": [
+          {
+            "name": "Piłka nożna",
+            "uuid": "ff57b93d-f74c-4015-a23b-e89f68b8d2c9"
+          },
+          {
+            "name": "Międzynarodowe",
+            "uuid": "5be64fa1-46a4-43a6-a386-880f32a75336"
+          },
+          {
+            "name": "CAF Olimpijskie kwal. (K)",
+            "uuid": "d51e2acc-dcf4-4e83-95df-eec945552a99"
+          }
+        ],
+        "result": ":",
+        "components": [],
+        "category": {
+          "name": "Międzynarodowe",
+          "type": "sport",
+          "level": "category",
+          "image": null,
+          "uuid": "5be64fa1-46a4-43a6-a386-880f32a75336",
+          "icon": "https://cdn.totalbet.pl/categories/f5709684-2618-448c-b7a2-023bd58d6288.svg",
+          "parent_uuid": "ff57b93d-f74c-4015-a23b-e89f68b8d2c9",
+          "header_photo": null,
+          "three_d_icon": null
+        },
+        "uuid": "c431a106-0eaa-49d7-a232-eb159388d94e",
+        "betbuilder_available": true,
+        "event_layout": "horizontal",
+        "iframe": null,
+        "category_uuid": "5be64fa1-46a4-43a6-a386-880f32a75336",
+        "tournament": {
+          "name": "CAF Olimpijskie kwal. (K)",
+          "type": "sport",
+          "level": "tournament",
+          "image": null,
+          "uuid": "d51e2acc-dcf4-4e83-95df-eec945552a99",
+          "icon": null,
+          "parent_uuid": "5be64fa1-46a4-43a6-a386-880f32a75336",
+          "header_photo": null,
+          "three_d_icon": null
+        },
+        "discipline_uuid": "ff57b93d-f74c-4015-a23b-e89f68b8d2c9",
+        "tournament_uuid": "d51e2acc-dcf4-4e83-95df-eec945552a99",
+        "start_at": "2026-10-13T17:00:00Z",
+        "markets": [
+          {
+            "id": "1",
+            "name": "Wynik meczu",
+            "status": "active",
+            "uuid": "ce439989-19f5-4ee8-93b7-291affec4d35",
+            "outcomes": [
+              {
+                "id": "1",
+                "name": "Mali (K)",
+                "status": "active",
+                "sort": 1,
+                "uuid": "da7ce4ec-777d-409e-806f-81be97db6a64",
+                "participant_uuid": "ad4f9b4d-e6c2-4bb4-bce6-6bb4cbbafa4f",
+                "market_uuid": "ce439989-19f5-4ee8-93b7-291affec4d35",
+                "odds": "1.45"
+              },
+              {
+                "id": "2",
+                "name": "remis",
+                "status": "active",
+                "sort": 2,
+                "uuid": "a334b841-52d8-4995-8506-d89aa2f8af25",
+                "participant_uuid": null,
+                "market_uuid": "ce439989-19f5-4ee8-93b7-291affec4d35",
+                "odds": "3.80"
+              },
+              {
+                "id": "3",
+                "name": "Benin",
+                "status": "active",
+                "sort": 3,
+                "uuid": "241afbf6-5112-4b4d-b4a6-835dc8bba7f8",
+                "participant_uuid": "6e29d3e7-dc55-48e3-a206-d1d9ea625ce2",
+                "market_uuid": "ce439989-19f5-4ee8-93b7-291affec4d35",
+                "odds": "5.60"
+              }
+            ],
+            "game_type": "threeway",
+            "game_groups": [
+              {
+                "name": "Główne",
+                "sort_order": 1,
+                "uuid": "dcde9df8-f44f-4073-8444-0969fd472f82"
+              }
+            ],
+            "market_type": "prematch",
+            "product_active": true,
+            "component_slug": null,
+            "game_type_tooltip": "Należy wytypować jakim rozstrzygnięciem zakończy się spotkanie (zakład nie uwzględnia dogrywki, podobnie jak w przypadku pozostałych zakładów, chyba, że ich opis lub specyfika - np. Awans - stanowią inaczej)"
+          }
+        ],
+        "market_count": 6,
+        "participants": [
+          {
+            "name": "Mali (K)",
+            "uuid": "ad4f9b4d-e6c2-4bb4-bce6-6bb4cbbafa4f",
+            "image_source": null
+          },
+          {
+            "name": "Benin",
+            "uuid": "6e29d3e7-dc55-48e3-a206-d1d9ea625ce2",
+            "image_source": null
+          }
+        ],
+        "matchday": null,
+        "additional_info": null,
+        "jackpot_available": false,
+        "live_data": {
+          "away_score": null,
+          "category_id": "sr:sport:1",
+          "clock": null,
+          "home_score": null,
+          "match_status": {
+            "id": "0",
+            "name": "Przed startem",
+            "uuid": "dfb45fd3-3264-4605-89a0-317e439735c0"
+          },
+          "model_name": "soccer",
+          "period_scores": null,
+          "statistics": null
+        },
+        "type_participants": "pair",
+        "discipline": {
+          "name": "Piłka nożna",
+          "type": "sport",
+          "level": "sport",
+          "image": "https://cdn.totalbet.pl/categories/5e27e539-7ee3-47b2-b3cd-e3655300ab06.svg",
+          "uuid": "ff57b93d-f74c-4015-a23b-e89f68b8d2c9",
+          "icon": "https://cdn.totalbet.pl/categories/0abf437f-9ab9-4826-9fcd-c40dafde9c8a.svg",
+          "parent_uuid": null,
+          "header_photo": "https://cdn.totalbet.pl/categories/72e9000b-1a8c-431e-a6e7-d2d17aa7c267.jpg",
+          "three_d_icon": "https://cdn.totalbet.pl/categories/870b3543-eea3-4f3d-8690-3a0ae2659fcf.svg"
+        },
+        "component_lists": [],
+        "next_matchdays": []
+      },
+      {
+        "name": "Senegal (K) - Tunezja (K)",
+        "status": "active",
+        "type": "prematch",
+        "path": [
+          {
+            "name": "Piłka nożna",
+            "uuid": "ff57b93d-f74c-4015-a23b-e89f68b8d2c9"
+          },
+          {
+            "name": "Międzynarodowe",
+            "uuid": "5be64fa1-46a4-43a6-a386-880f32a75336"
+          },
+          {
+            "name": "CAF Olimpijskie kwal. (K)",
+            "uuid": "d51e2acc-dcf4-4e83-95df-eec945552a99"
+          }
+        ],
+        "result": null,
+        "components": [],
+        "category": {
+          "name": "Międzynarodowe",
+          "type": "sport",
+          "level": "category",
+          "image": null,
+          "uuid": "5be64fa1-46a4-43a6-a386-880f32a75336",
+          "icon": "https://cdn.totalbet.pl/categories/f5709684-2618-448c-b7a2-023bd58d6288.svg",
+          "parent_uuid": "ff57b93d-f74c-4015-a23b-e89f68b8d2c9",
+          "header_photo": null,
+          "three_d_icon": null
+        },
+        "uuid": "02940b46-f88a-4a6c-968c-9c9b4cd9a44c",
+        "betbuilder_available": true,
+        "event_layout": "horizontal",
+        "iframe": null,
+        "category_uuid": "5be64fa1-46a4-43a6-a386-880f32a75336",
+        "tournament": {
+          "name": "CAF Olimpijskie kwal. (K)",
+          "type": "sport",
+          "level": "tournament",
+          "image": null,
+          "uuid": "d51e2acc-dcf4-4e83-95df-eec945552a99",
+          "icon": null,
+          "parent_uuid": "5be64fa1-46a4-43a6-a386-880f32a75336",
+          "header_photo": null,
+          "three_d_icon": null
+        },
+        "discipline_uuid": "ff57b93d-f74c-4015-a23b-e89f68b8d2c9",
+        "tournament_uuid": "d51e2acc-dcf4-4e83-95df-eec945552a99",
+        "start_at": "2026-10-13T17:00:00Z",
+        "markets": [
+          {
+            "id": "1",
+            "name": "Wynik meczu",
+            "status": "active",
+            "uuid": "690785a6-16a2-45c6-8f45-77a9578c83fc",
+            "outcomes": [
+              {
+                "id": "1",
+                "name": "Senegal (K)",
+                "status": "active",
+                "sort": 1,
+                "uuid": "299cbbc8-b4b2-474c-b147-47585486da51",
+                "participant_uuid": "0a87eb49-5fee-4e69-b521-d07aa93a5fb3",
+                "market_uuid": "690785a6-16a2-45c6-8f45-77a9578c83fc",
+                "odds": "1.79"
+              },
+              {
+                "id": "2",
+                "name": "remis",
+                "status": "active",
+                "sort": 2,
+                "uuid": "7f0ded42-50f6-4cab-9d0f-a20a817bea4f",
+                "participant_uuid": null,
+                "market_uuid": "690785a6-16a2-45c6-8f45-77a9578c83fc",
+                "odds": "3.32"
+              },
+              {
+                "id": "3",
+                "name": "Tunezja (K)",
+                "status": "active",
+                "sort": 3,
+                "uuid": "59519b54-079f-4d3d-9c77-059315d1ebe4",
+                "participant_uuid": "78c021d0-4a10-4371-bb0f-524af6b7c733",
+                "market_uuid": "690785a6-16a2-45c6-8f45-77a9578c83fc",
+                "odds": "3.70"
+              }
+            ],
+            "game_type": "threeway",
+            "game_groups": [
+              {
+                "name": "Główne",
+                "sort_order": 1,
+                "uuid": "dcde9df8-f44f-4073-8444-0969fd472f82"
+              }
+            ],
+            "market_type": "prematch",
+            "product_active": true,
+            "component_slug": null,
+            "game_type_tooltip": "Należy wytypować jakim rozstrzygnięciem zakończy się spotkanie (zakład nie uwzględnia dogrywki, podobnie jak w przypadku pozostałych zakładów, chyba, że ich opis lub specyfika - np. Awans - stanowią inaczej)"
+          }
+        ],
+        "market_count": 6,
+        "participants": [
+          {
+            "name": "Senegal (K)",
+            "uuid": "0a87eb49-5fee-4e69-b521-d07aa93a5fb3",
+            "image_source": null
+          },
+          {
+            "name": "Tunezja (K)",
+            "uuid": "78c021d0-4a10-4371-bb0f-524af6b7c733",
+            "image_source": null
+          }
+        ],
+        "matchday": null,
+        "additional_info": null,
+        "jackpot_available": false,
+        "live_data": {
+          "away_score": null,
+          "category_id": "sr:sport:1",
+          "clock": null,
+          "home_score": null,
+          "match_status": {
+            "id": "0",
+            "name": "Przed startem",
+            "uuid": "dfb45fd3-3264-4605-89a0-317e439735c0"
+          },
+          "model_name": "soccer",
+          "period_scores": null,
+          "statistics": null
+        },
+        "type_participants": "pair",
+        "discipline": {
+          "name": "Piłka nożna",
+          "type": "sport",
+          "level": "sport",
+          "image": "https://cdn.totalbet.pl/categories/5e27e539-7ee3-47b2-b3cd-e3655300ab06.svg",
+          "uuid": "ff57b93d-f74c-4015-a23b-e89f68b8d2c9",
+          "icon": "https://cdn.totalbet.pl/categories/0abf437f-9ab9-4826-9fcd-c40dafde9c8a.svg",
+          "parent_uuid": null,
+          "header_photo": "https://cdn.totalbet.pl/categories/72e9000b-1a8c-431e-a6e7-d2d17aa7c267.jpg",
+          "three_d_icon": "https://cdn.totalbet.pl/categories/870b3543-eea3-4f3d-8690-3a0ae2659fcf.svg"
+        },
+        "component_lists": [],
+        "next_matchdays": []
+      },
+      {
+        "name": "Zambia (K) - Uganda (K)",
+        "status": "active",
+        "type": "prematch",
+        "path": [
+          {
+            "name": "Piłka nożna",
+            "uuid": "ff57b93d-f74c-4015-a23b-e89f68b8d2c9"
+          },
+          {
+            "name": "Międzynarodowe",
+            "uuid": "5be64fa1-46a4-43a6-a386-880f32a75336"
+          },
+          {
+            "name": "CAF Olimpijskie kwal. (K)",
+            "uuid": "d51e2acc-dcf4-4e83-95df-eec945552a99"
+          }
+        ],
+        "result": null,
+        "components": [],
+        "category": {
+          "name": "Międzynarodowe",
+          "type": "sport",
+          "level": "category",
+          "image": null,
+          "uuid": "5be64fa1-46a4-43a6-a386-880f32a75336",
+          "icon": "https://cdn.totalbet.pl/categories/f5709684-2618-448c-b7a2-023bd58d6288.svg",
+          "parent_uuid": "ff57b93d-f74c-4015-a23b-e89f68b8d2c9",
+          "header_photo": null,
+          "three_d_icon": null
+        },
+        "uuid": "e34479e4-a165-4e20-826c-83a12a124530",
+        "betbuilder_available": true,
+        "event_layout": "horizontal",
+        "iframe": null,
+        "category_uuid": "5be64fa1-46a4-43a6-a386-880f32a75336",
+        "tournament": {
+          "name": "CAF Olimpijskie kwal. (K)",
+          "type": "sport",
+          "level": "tournament",
+          "image": null,
+          "uuid": "d51e2acc-dcf4-4e83-95df-eec945552a99",
+          "icon": null,
+          "parent_uuid": "5be64fa1-46a4-43a6-a386-880f32a75336",
+          "header_photo": null,
+          "three_d_icon": null
+        },
+        "discipline_uuid": "ff57b93d-f74c-4015-a23b-e89f68b8d2c9",
+        "tournament_uuid": "d51e2acc-dcf4-4e83-95df-eec945552a99",
+        "start_at": "2026-10-13T18:00:00Z",
+        "markets": [
+          {
+            "id": "1",
+            "name": "Wynik meczu",
+            "status": "active",
+            "uuid": "2af4dc5d-9b8f-4095-ae63-b45cc7b6721e",
+            "outcomes": [
+              {
+                "id": "1",
+                "name": "Zambia (K)",
+                "status": "active",
+                "sort": 1,
+                "uuid": "3387eb03-be4f-454d-942d-5a4bbf1d3b3f",
+                "participant_uuid": "efcb5e77-8872-4522-85bb-c4ef8fa7bd95",
+                "market_uuid": "2af4dc5d-9b8f-4095-ae63-b45cc7b6721e",
+                "odds": "1.59"
+              },
+              {
+                "id": "2",
+                "name": "remis",
+                "status": "active",
+                "sort": 2,
+                "uuid": "c674feae-b305-4fc6-8e9b-43e6b3da07b1",
+                "participant_uuid": null,
+                "market_uuid": "2af4dc5d-9b8f-4095-ae63-b45cc7b6721e",
+                "odds": "3.75"
+              },
+              {
+                "id": "3",
+                "name": "Uganda (K)",
+                "status": "active",
+                "sort": 3,
+                "uuid": "0cb7ab1f-8f16-4792-a5a6-40a03796d64f",
+                "participant_uuid": "b50e07d2-60b7-45f5-9dbd-5285d11a95dd",
+                "market_uuid": "2af4dc5d-9b8f-4095-ae63-b45cc7b6721e",
+                "odds": "4.30"
+              }
+            ],
+            "game_type": "threeway",
+            "game_groups": [
+              {
+                "name": "Główne",
+                "sort_order": 1,
+                "uuid": "dcde9df8-f44f-4073-8444-0969fd472f82"
+              }
+            ],
+            "market_type": "prematch",
+            "product_active": true,
+            "component_slug": null,
+            "game_type_tooltip": "Należy wytypować jakim rozstrzygnięciem zakończy się spotkanie (zakład nie uwzględnia dogrywki, podobnie jak w przypadku pozostałych zakładów, chyba, że ich opis lub specyfika - np. Awans - stanowią inaczej)"
+          }
+        ],
+        "market_count": 6,
+        "participants": [
+          {
+            "name": "Zambia (K)",
+            "uuid": "efcb5e77-8872-4522-85bb-c4ef8fa7bd95",
+            "image_source": null
+          },
+          {
+            "name": "Uganda (K)",
+            "uuid": "b50e07d2-60b7-45f5-9dbd-5285d11a95dd",
+            "image_source": null
+          }
+        ],
+        "matchday": null,
+        "additional_info": null,
+        "jackpot_available": false,
+        "live_data": {
+          "away_score": null,
+          "category_id": "sr:sport:1",
+          "clock": null,
+          "home_score": null,
+          "match_status": {
+            "id": "0",
+            "name": "Przed startem",
+            "uuid": "dfb45fd3-3264-4605-89a0-317e439735c0"
+          },
+          "model_name": "soccer",
+          "period_scores": null,
+          "statistics": null
+        },
+        "type_participants": "pair",
+        "discipline": {
+          "name": "Piłka nożna",
+          "type": "sport",
+          "level": "sport",
+          "image": "https://cdn.totalbet.pl/categories/5e27e539-7ee3-47b2-b3cd-e3655300ab06.svg",
+          "uuid": "ff57b93d-f74c-4015-a23b-e89f68b8d2c9",
+          "icon": "https://cdn.totalbet.pl/categories/0abf437f-9ab9-4826-9fcd-c40dafde9c8a.svg",
+          "parent_uuid": null,
+          "header_photo": "https://cdn.totalbet.pl/categories/72e9000b-1a8c-431e-a6e7-d2d17aa7c267.jpg",
+          "three_d_icon": "https://cdn.totalbet.pl/categories/870b3543-eea3-4f3d-8690-3a0ae2659fcf.svg"
+        },
+        "component_lists": [],
+        "next_matchdays": []
+      },
+      {
+        "name": "Wybrzeże Kości Słoniowej (K) - Demokratyczna Republika Konga (K)",
+        "status": "active",
+        "type": "prematch",
+        "path": [
+          {
+            "name": "Piłka nożna",
+            "uuid": "ff57b93d-f74c-4015-a23b-e89f68b8d2c9"
+          },
+          {
+            "name": "Międzynarodowe",
+            "uuid": "5be64fa1-46a4-43a6-a386-880f32a75336"
+          },
+          {
+            "name": "CAF Olimpijskie kwal. (K)",
+            "uuid": "d51e2acc-dcf4-4e83-95df-eec945552a99"
+          }
+        ],
+        "result": null,
+        "components": [],
+        "category": {
+          "name": "Międzynarodowe",
+          "type": "sport",
+          "level": "category",
+          "image": null,
+          "uuid": "5be64fa1-46a4-43a6-a386-880f32a75336",
+          "icon": "https://cdn.totalbet.pl/categories/f5709684-2618-448c-b7a2-023bd58d6288.svg",
+          "parent_uuid": "ff57b93d-f74c-4015-a23b-e89f68b8d2c9",
+          "header_photo": null,
+          "three_d_icon": null
+        },
+        "uuid": "f01516ac-117a-49fe-895a-60465051570d",
+        "betbuilder_available": true,
+        "event_layout": "horizontal",
+        "iframe": null,
+        "category_uuid": "5be64fa1-46a4-43a6-a386-880f32a75336",
+        "tournament": {
+          "name": "CAF Olimpijskie kwal. (K)",
+          "type": "sport",
+          "level": "tournament",
+          "image": null,
+          "uuid": "d51e2acc-dcf4-4e83-95df-eec945552a99",
+          "icon": null,
+          "parent_uuid": "5be64fa1-46a4-43a6-a386-880f32a75336",
+          "header_photo": null,
+          "three_d_icon": null
+        },
+        "discipline_uuid": "ff57b93d-f74c-4015-a23b-e89f68b8d2c9",
+        "tournament_uuid": "d51e2acc-dcf4-4e83-95df-eec945552a99",
+        "start_at": "2026-10-13T19:00:00Z",
+        "markets": [
+          {
+            "id": "1",
+            "name": "Wynik meczu",
+            "status": "active",
+            "uuid": "f02a6726-e8a6-4458-83dd-ef1c7d09cca5",
+            "outcomes": [
+              {
+                "id": "1",
+                "name": "Wybrzeże Kości Słoniowej (K)",
+                "status": "active",
+                "sort": 1,
+                "uuid": "88987702-71a3-410d-be7b-1f3727025745",
+                "participant_uuid": "51c0ce19-7320-4692-9c3b-f1887d3dcbf5",
+                "market_uuid": "f02a6726-e8a6-4458-83dd-ef1c7d09cca5",
+                "odds": "1.48"
+              },
+              {
+                "id": "2",
+                "name": "remis",
+                "status": "active",
+                "sort": 2,
+                "uuid": "d44699c0-b590-41f7-9067-79c3f52824f8",
+                "participant_uuid": null,
+                "market_uuid": "f02a6726-e8a6-4458-83dd-ef1c7d09cca5",
+                "odds": "3.85"
+              },
+              {
+                "id": "3",
+                "name": "Demokratyczna Republika Konga (K)",
+                "status": "active",
+                "sort": 3,
+                "uuid": "16462534-50a8-481d-b62c-cd495c8a9685",
+                "participant_uuid": "4c3b1042-6d60-405e-9231-9bb5ed6a4320",
+                "market_uuid": "f02a6726-e8a6-4458-83dd-ef1c7d09cca5",
+                "odds": "5.20"
+              }
+            ],
+            "game_type": "threeway",
+            "game_groups": [
+              {
+                "name": "Główne",
+                "sort_order": 1,
+                "uuid": "dcde9df8-f44f-4073-8444-0969fd472f82"
+              }
+            ],
+            "market_type": "prematch",
+            "product_active": true,
+            "component_slug": null,
+            "game_type_tooltip": "Należy wytypować jakim rozstrzygnięciem zakończy się spotkanie (zakład nie uwzględnia dogrywki, podobnie jak w przypadku pozostałych zakładów, chyba, że ich opis lub specyfika - np. Awans - stanowią inaczej)"
+          }
+        ],
+        "market_count": 6,
+        "participants": [
+          {
+            "name": "Wybrzeże Kości Słoniowej (K)",
+            "uuid": "51c0ce19-7320-4692-9c3b-f1887d3dcbf5",
+            "image_source": null
+          },
+          {
+            "name": "Demokratyczna Republika Konga (K)",
+            "uuid": "4c3b1042-6d60-405e-9231-9bb5ed6a4320",
+            "image_source": null
+          }
+        ],
+        "matchday": null,
+        "additional_info": null,
+        "jackpot_available": false,
+        "live_data": {
+          "away_score": null,
+          "category_id": "sr:sport:1",
+          "clock": null,
+          "home_score": null,
+          "match_status": {
+            "id": "0",
+            "name": "Przed startem",
+            "uuid": "dfb45fd3-3264-4605-89a0-317e439735c0"
+          },
+          "model_name": "soccer",
+          "period_scores": null,
+          "statistics": null
+        },
+        "type_participants": "pair",
+        "discipline": {
+          "name": "Piłka nożna",
+          "type": "sport",
+          "level": "sport",
+          "image": "https://cdn.totalbet.pl/categories/5e27e539-7ee3-47b2-b3cd-e3655300ab06.svg",
+          "uuid": "ff57b93d-f74c-4015-a23b-e89f68b8d2c9",
+          "icon": "https://cdn.totalbet.pl/categories/0abf437f-9ab9-4826-9fcd-c40dafde9c8a.svg",
+          "parent_uuid": null,
+          "header_photo": "https://cdn.totalbet.pl/categories/72e9000b-1a8c-431e-a6e7-d2d17aa7c267.jpg",
+          "three_d_icon": "https://cdn.totalbet.pl/categories/870b3543-eea3-4f3d-8690-3a0ae2659fcf.svg"
+        },
+        "component_lists": [],
+        "next_matchdays": []
+      },
+      {
+        "name": "Serbia (K) - Finlandia (K)",
+        "status": "active",
+        "type": "prematch",
+        "path": [
+          {
+            "name": "Piłka nożna",
+            "uuid": "ff57b93d-f74c-4015-a23b-e89f68b8d2c9"
+          },
+          {
+            "name": "Międzynarodowe",
+            "uuid": "5be64fa1-46a4-43a6-a386-880f32a75336"
+          },
+          {
+            "name": "Kwalifikacje MŚ - Europa (K)",
+            "uuid": "83830aae-bcf3-4aca-aff7-8d3d81964fbd"
+          }
+        ],
+        "result": null,
+        "components": [],
+        "category": {
+          "name": "Międzynarodowe",
+          "type": "sport",
+          "level": "category",
+          "image": null,
+          "uuid": "5be64fa1-46a4-43a6-a386-880f32a75336",
+          "icon": "https://cdn.totalbet.pl/categories/f5709684-2618-448c-b7a2-023bd58d6288.svg",
+          "parent_uuid": "ff57b93d-f74c-4015-a23b-e89f68b8d2c9",
+          "header_photo": null,
+          "three_d_icon": null
+        },
+        "uuid": "1eac28dc-3fd7-40c3-be0c-ca3d39df32ec",
+        "betbuilder_available": true,
+        "event_layout": "horizontal",
+        "iframe": null,
+        "category_uuid": "5be64fa1-46a4-43a6-a386-880f32a75336",
+        "tournament": {
+          "name": "Kwalifikacje MŚ - Europa (K)",
+          "type": "sport",
+          "level": "tournament",
+          "image": null,
+          "uuid": "83830aae-bcf3-4aca-aff7-8d3d81964fbd",
+          "icon": null,
+          "parent_uuid": "5be64fa1-46a4-43a6-a386-880f32a75336",
+          "header_photo": null,
+          "three_d_icon": null
+        },
+        "discipline_uuid": "ff57b93d-f74c-4015-a23b-e89f68b8d2c9",
+        "tournament_uuid": "83830aae-bcf3-4aca-aff7-8d3d81964fbd",
+        "start_at": "2026-10-13T15:00:00Z",
+        "markets": [
+          {
+            "id": "1",
+            "name": "Wynik meczu",
+            "status": "active",
+            "uuid": "3fa2cf55-786a-41fe-99b5-8757dff60f60",
+            "outcomes": [
+              {
+                "id": "1",
+                "name": "Serbia (K)",
+                "status": "active",
+                "sort": 1,
+                "uuid": "86a085d2-88eb-408d-b054-7a37d2e3d176",
+                "participant_uuid": "bd0cea49-7f77-42bf-8572-5d24f80b06e2",
+                "market_uuid": "3fa2cf55-786a-41fe-99b5-8757dff60f60",
+                "odds": "4.80"
+              },
+              {
+                "id": "2",
+                "name": "remis",
+                "status": "active",
+                "sort": 2,
+                "uuid": "a7d4aa9f-d8c6-439b-a00a-d2ec46da8f92",
+                "participant_uuid": null,
+                "market_uuid": "3fa2cf55-786a-41fe-99b5-8757dff60f60",
+                "odds": "3.65"
+              },
+              {
+                "id": "3",
+                "name": "Finlandia (K)",
+                "status": "active",
+                "sort": 3,
+                "uuid": "30a695c1-37a3-4a9e-8229-c688bc41be9d",
+                "participant_uuid": "9ac81f9e-bfb1-4d3f-a155-72e97eb418b9",
+                "market_uuid": "3fa2cf55-786a-41fe-99b5-8757dff60f60",
+                "odds": "1.57"
+              }
+            ],
+            "game_type": "threeway",
+            "game_groups": [
+              {
+                "name": "Główne",
+                "sort_order": 1,
+                "uuid": "dcde9df8-f44f-4073-8444-0969fd472f82"
+              }
+            ],
+            "market_type": "prematch",
+            "product_active": true,
+            "component_slug": null,
+            "game_type_tooltip": "Należy wytypować jakim rozstrzygnięciem zakończy się spotkanie (zakład nie uwzględnia dogrywki, podobnie jak w przypadku pozostałych zakładów, chyba, że ich opis lub specyfika - np. Awans - stanowią inaczej)"
+          }
+        ],
+        "market_count": 153,
+        "participants": [
+          {
+            "name": "Serbia (K)",
+            "uuid": "bd0cea49-7f77-42bf-8572-5d24f80b06e2",
+            "image_source": null
+          },
+          {
+            "name": "Finlandia (K)",
+            "uuid": "9ac81f9e-bfb1-4d3f-a155-72e97eb418b9",
+            "image_source": null
+          }
+        ],
+        "matchday": null,
+        "additional_info": null,
+        "jackpot_available": false,
+        "live_data": {
+          "away_score": null,
+          "category_id": "sr:sport:1",
+          "clock": null,
+          "home_score": null,
+          "match_status": {
+            "id": "0",
+            "name": "Przed startem",
+            "uuid": "dfb45fd3-3264-4605-89a0-317e439735c0"
+          },
+          "model_name": "soccer",
+          "period_scores": null,
+          "statistics": null
+        },
+        "type_participants": "pair",
+        "discipline": {
+          "name": "Piłka nożna",
+          "type": "sport",
+          "level": "sport",
+          "image": "https://cdn.totalbet.pl/categories/5e27e539-7ee3-47b2-b3cd-e3655300ab06.svg",
+          "uuid": "ff57b93d-f74c-4015-a23b-e89f68b8d2c9",
+          "icon": "https://cdn.totalbet.pl/categories/0abf437f-9ab9-4826-9fcd-c40dafde9c8a.svg",
+          "parent_uuid": null,
+          "header_photo": "https://cdn.totalbet.pl/categories/72e9000b-1a8c-431e-a6e7-d2d17aa7c267.jpg",
+          "three_d_icon": "https://cdn.totalbet.pl/categories/870b3543-eea3-4f3d-8690-3a0ae2659fcf.svg"
+        },
+        "component_lists": [],
+        "next_matchdays": []
+      },
+      {
+        "name": "Słowenia (K) - Turcja (K)",
+        "status": "active",
+        "type": "prematch",
+        "path": [
+          {
+            "name": "Piłka nożna",
+            "uuid": "ff57b93d-f74c-4015-a23b-e89f68b8d2c9"
+          },
+          {
+            "name": "Międzynarodowe",
+            "uuid": "5be64fa1-46a4-43a6-a386-880f32a75336"
+          },
+          {
+            "name": "Kwalifikacje MŚ - Europa (K)",
+            "uuid": "83830aae-bcf3-4aca-aff7-8d3d81964fbd"
+          }
+        ],
+        "result": ":",
+        "components": [],
+        "category": {
+          "name": "Międzynarodowe",
+          "type": "sport",
+          "level": "category",
+          "image": null,
+          "uuid": "5be64fa1-46a4-43a6-a386-880f32a75336",
+          "icon": "https://cdn.totalbet.pl/categories/f5709684-2618-448c-b7a2-023bd58d6288.svg",
+          "parent_uuid": "ff57b93d-f74c-4015-a23b-e89f68b8d2c9",
+          "header_photo": null,
+          "three_d_icon": null
+        },
+        "uuid": "61504d20-1bad-49e7-aa72-1a394f0c91bf",
+        "betbuilder_available": true,
+        "event_layout": "horizontal",
+        "iframe": null,
+        "category_uuid": "5be64fa1-46a4-43a6-a386-880f32a75336",
+        "tournament": {
+          "name": "Kwalifikacje MŚ - Europa (K)",
+          "type": "sport",
+          "level": "tournament",
+          "image": null,
+          "uuid": "83830aae-bcf3-4aca-aff7-8d3d81964fbd",
+          "icon": null,
+          "parent_uuid": "5be64fa1-46a4-43a6-a386-880f32a75336",
+          "header_photo": null,
+          "three_d_icon": null
+        },
+        "discipline_uuid": "ff57b93d-f74c-4015-a23b-e89f68b8d2c9",
+        "tournament_uuid": "83830aae-bcf3-4aca-aff7-8d3d81964fbd",
+        "start_at": "2026-10-13T15:00:00Z",
+        "markets": [
+          {
+            "id": "1",
+            "name": "Wynik meczu",
+            "status": "active",
+            "uuid": "e8bebbb7-e993-4067-9952-aa1acd6c39ed",
+            "outcomes": [
+              {
+                "id": "1",
+                "name": "Słowenia (K)",
+                "status": "active",
+                "sort": 1,
+                "uuid": "3c5846c3-92ae-4384-ba2a-22d7c6e7fd98",
+                "participant_uuid": "2b57b8c2-e182-4ffa-bbfa-c5a5719d8ee6",
+                "market_uuid": "e8bebbb7-e993-4067-9952-aa1acd6c39ed",
+                "odds": "1.64"
+              },
+              {
+                "id": "2",
+                "name": "remis",
+                "status": "active",
+                "sort": 2,
+                "uuid": "2dfe6908-83ee-46d6-b429-abb90e434496",
+                "participant_uuid": null,
+                "market_uuid": "e8bebbb7-e993-4067-9952-aa1acd6c39ed",
+                "odds": "3.60"
+              },
+              {
+                "id": "3",
+                "name": "Turcja (K)",
+                "status": "active",
+                "sort": 3,
+                "uuid": "b2af951b-a36c-42d1-bd2a-d76b6369a532",
+                "participant_uuid": "6b9bffaa-6b48-4f14-a6dc-0eb5b0ec35ef",
+                "market_uuid": "e8bebbb7-e993-4067-9952-aa1acd6c39ed",
+                "odds": "4.30"
+              }
+            ],
+            "game_type": "threeway",
+            "game_groups": [
+              {
+                "name": "Główne",
+                "sort_order": 1,
+                "uuid": "dcde9df8-f44f-4073-8444-0969fd472f82"
+              }
+            ],
+            "market_type": "prematch",
+            "product_active": true,
+            "component_slug": null,
+            "game_type_tooltip": "Należy wytypować jakim rozstrzygnięciem zakończy się spotkanie (zakład nie uwzględnia dogrywki, podobnie jak w przypadku pozostałych zakładów, chyba, że ich opis lub specyfika - np. Awans - stanowią inaczej)"
+          }
+        ],
+        "market_count": 154,
+        "participants": [
+          {
+            "name": "Słowenia (K)",
+            "uuid": "2b57b8c2-e182-4ffa-bbfa-c5a5719d8ee6",
+            "image_source": null
+          },
+          {
+            "name": "Turcja (K)",
+            "uuid": "6b9bffaa-6b48-4f14-a6dc-0eb5b0ec35ef",
+            "image_source": null
+          }
+        ],
+        "matchday": null,
+        "additional_info": null,
+        "jackpot_available": false,
+        "live_data": {
+          "away_score": null,
+          "category_id": "sr:sport:1",
+          "clock": null,
+          "home_score": null,
+          "match_status": {
+            "id": "0",
+            "name": "Przed startem",
+            "uuid": "dfb45fd3-3264-4605-89a0-317e439735c0"
+          },
+          "model_name": "soccer",
+          "period_scores": null,
+          "statistics": null
+        },
+        "type_participants": "pair",
+        "discipline": {
+          "name": "Piłka nożna",
+          "type": "sport",
+          "level": "sport",
+          "image": "https://cdn.totalbet.pl/categories/5e27e539-7ee3-47b2-b3cd-e3655300ab06.svg",
+          "uuid": "ff57b93d-f74c-4015-a23b-e89f68b8d2c9",
+          "icon": "https://cdn.totalbet.pl/categories/0abf437f-9ab9-4826-9fcd-c40dafde9c8a.svg",
+          "parent_uuid": null,
+          "header_photo": "https://cdn.totalbet.pl/categories/72e9000b-1a8c-431e-a6e7-d2d17aa7c267.jpg",
+          "three_d_icon": "https://cdn.totalbet.pl/categories/870b3543-eea3-4f3d-8690-3a0ae2659fcf.svg"
+        },
+        "component_lists": [],
+        "next_matchdays": []
+      },
+      {
+        "name": "Ukraina (K) - Słowacja (K)",
+        "status": "active",
+        "type": "prematch",
+        "path": [
+          {
+            "name": "Piłka nożna",
+            "uuid": "ff57b93d-f74c-4015-a23b-e89f68b8d2c9"
+          },
+          {
+            "name": "Międzynarodowe",
+            "uuid": "5be64fa1-46a4-43a6-a386-880f32a75336"
+          },
+          {
+            "name": "Kwalifikacje MŚ - Europa (K)",
+            "uuid": "83830aae-bcf3-4aca-aff7-8d3d81964fbd"
+          }
+        ],
+        "result": null,
+        "components": [],
+        "category": {
+          "name": "Międzynarodowe",
+          "type": "sport",
+          "level": "category",
+          "image": null,
+          "uuid": "5be64fa1-46a4-43a6-a386-880f32a75336",
+          "icon": "https://cdn.totalbet.pl/categories/f5709684-2618-448c-b7a2-023bd58d6288.svg",
+          "parent_uuid": "ff57b93d-f74c-4015-a23b-e89f68b8d2c9",
+          "header_photo": null,
+          "three_d_icon": null
+        },
+        "uuid": "83c2d741-e29a-41f3-8ce5-50225eda7eb8",
+        "betbuilder_available": false,
+        "event_layout": "horizontal",
+        "iframe": null,
+        "category_uuid": "5be64fa1-46a4-43a6-a386-880f32a75336",
+        "tournament": {
+          "name": "Kwalifikacje MŚ - Europa (K)",
+          "type": "sport",
+          "level": "tournament",
+          "image": null,
+          "uuid": "83830aae-bcf3-4aca-aff7-8d3d81964fbd",
+          "icon": null,
+          "parent_uuid": "5be64fa1-46a4-43a6-a386-880f32a75336",
+          "header_photo": null,
+          "three_d_icon": null
+        },
+        "discipline_uuid": "ff57b93d-f74c-4015-a23b-e89f68b8d2c9",
+        "tournament_uuid": "83830aae-bcf3-4aca-aff7-8d3d81964fbd",
+        "start_at": "2026-10-13T15:00:00Z",
+        "markets": [
+          {
+            "id": "1",
+            "name": "Wynik meczu",
+            "status": "active",
+            "uuid": "40623690-111a-4390-83bc-8bf5f64a5cbd",
+            "outcomes": [
+              {
+                "id": "1",
+                "name": "Ukraina (K)",
+                "status": "active",
+                "sort": 1,
+                "uuid": "365af245-69d7-48ae-9d5b-ef9255eb29ff",
+                "participant_uuid": "9d96f83f-2a79-4420-8f24-870d46ec4977",
+                "market_uuid": "40623690-111a-4390-83bc-8bf5f64a5cbd",
+                "odds": "1.62"
+              },
+              {
+                "id": "2",
+                "name": "remis",
+                "status": "active",
+                "sort": 2,
+                "uuid": "af19f348-08fe-465a-ab46-4441ec7b1c5c",
+                "participant_uuid": null,
+                "market_uuid": "40623690-111a-4390-83bc-8bf5f64a5cbd",
+                "odds": "3.65"
+              },
+              {
+                "id": "3",
+                "name": "Słowacja (K)",
+                "status": "active",
+                "sort": 3,
+                "uuid": "35f6ee28-534e-49ce-8b2a-1295947eff91",
+                "participant_uuid": "d2caaf6d-0559-428d-9e61-2e27087fbc1c",
+                "market_uuid": "40623690-111a-4390-83bc-8bf5f64a5cbd",
+                "odds": "4.40"
+              }
+            ],
+            "game_type": "threeway",
+            "game_groups": [
+              {
+                "name": "Główne",
+                "sort_order": 1,
+                "uuid": "dcde9df8-f44f-4073-8444-0969fd472f82"
+              }
+            ],
+            "market_type": "prematch",
+            "product_active": true,
+            "component_slug": null,
+            "game_type_tooltip": "Należy wytypować jakim rozstrzygnięciem zakończy się spotkanie (zakład nie uwzględnia dogrywki, podobnie jak w przypadku pozostałych zakładów, chyba, że ich opis lub specyfika - np. Awans - stanowią inaczej)"
+          }
+        ],
+        "market_count": 1,
+        "participants": [
+          {
+            "name": "Ukraina (K)",
+            "uuid": "9d96f83f-2a79-4420-8f24-870d46ec4977",
+            "image_source": null
+          },
+          {
+            "name": "Słowacja (K)",
+            "uuid": "d2caaf6d-0559-428d-9e61-2e27087fbc1c",
+            "image_source": null
+          }
+        ],
+        "matchday": null,
+        "additional_info": null,
+        "jackpot_available": false,
+        "live_data": {
+          "away_score": null,
+          "category_id": "sr:sport:1",
+          "clock": null,
+          "home_score": null,
+          "match_status": {
+            "id": "0",
+            "name": "Przed startem",
+            "uuid": "dfb45fd3-3264-4605-89a0-317e439735c0"
+          },
+          "model_name": "soccer",
+          "period_scores": null,
+          "statistics": null
+        },
+        "type_participants": "pair",
+        "discipline": {
+          "name": "Piłka nożna",
+          "type": "sport",
+          "level": "sport",
+          "image": "https://cdn.totalbet.pl/categories/5e27e539-7ee3-47b2-b3cd-e3655300ab06.svg",
+          "uuid": "ff57b93d-f74c-4015-a23b-e89f68b8d2c9",
+          "icon": "https://cdn.totalbet.pl/categories/0abf437f-9ab9-4826-9fcd-c40dafde9c8a.svg",
+          "parent_uuid": null,
+          "header_photo": "https://cdn.totalbet.pl/categories/72e9000b-1a8c-431e-a6e7-d2d17aa7c267.jpg",
+          "three_d_icon": "https://cdn.totalbet.pl/categories/870b3543-eea3-4f3d-8690-3a0ae2659fcf.svg"
+        },
+        "component_lists": [],
+        "next_matchdays": []
+      },
+      {
+        "name": "Austria (K) - Kosowo (K)",
+        "status": "active",
+        "type": "prematch",
+        "path": [
+          {
+            "name": "Piłka nożna",
+            "uuid": "ff57b93d-f74c-4015-a23b-e89f68b8d2c9"
+          },
+          {
+            "name": "Międzynarodowe",
+            "uuid": "5be64fa1-46a4-43a6-a386-880f32a75336"
+          },
+          {
+            "name": "Kwalifikacje MŚ - Europa (K)",
+            "uuid": "83830aae-bcf3-4aca-aff7-8d3d81964fbd"
+          }
+        ],
+        "result": null,
+        "components": [],
+        "category": {
+          "name": "Międzynarodowe",
+          "type": "sport",
+          "level": "category",
+          "image": null,
+          "uuid": "5be64fa1-46a4-43a6-a386-880f32a75336",
+          "icon": "https://cdn.totalbet.pl/categories/f5709684-2618-448c-b7a2-023bd58d6288.svg",
+          "parent_uuid": "ff57b93d-f74c-4015-a23b-e89f68b8d2c9",
+          "header_photo": null,
+          "three_d_icon": null
+        },
+        "uuid": "143fe491-6804-4e0c-a0b9-ea0e1d8df001",
+        "betbuilder_available": true,
+        "event_layout": "horizontal",
+        "iframe": null,
+        "category_uuid": "5be64fa1-46a4-43a6-a386-880f32a75336",
+        "tournament": {
+          "name": "Kwalifikacje MŚ - Europa (K)",
+          "type": "sport",
+          "level": "tournament",
+          "image": null,
+          "uuid": "83830aae-bcf3-4aca-aff7-8d3d81964fbd",
+          "icon": null,
+          "parent_uuid": "5be64fa1-46a4-43a6-a386-880f32a75336",
+          "header_photo": null,
+          "three_d_icon": null
+        },
+        "discipline_uuid": "ff57b93d-f74c-4015-a23b-e89f68b8d2c9",
+        "tournament_uuid": "83830aae-bcf3-4aca-aff7-8d3d81964fbd",
+        "start_at": "2026-10-13T16:00:00Z",
+        "markets": [
+          {
+            "id": "1",
+            "name": "Wynik meczu",
+            "status": "active",
+            "uuid": "e9fdbcb3-a1a2-444f-a119-0f3d604ea7cc",
+            "outcomes": [
+              {
+                "id": "1",
+                "name": "Austria (K)",
+                "status": "active",
+                "sort": 1,
+                "uuid": "3876042c-628a-46e8-9f62-df16986bab11",
+                "participant_uuid": "a006b88c-37db-48e4-b1da-8f95d6ac4613",
+                "market_uuid": "e9fdbcb3-a1a2-444f-a119-0f3d604ea7cc",
+                "odds": "1.04"
+              },
+              {
+                "id": "2",
+                "name": "remis",
+                "status": "active",
+                "sort": 2,
+                "uuid": "48c63626-3633-4a45-9db5-929b61937439",
+                "participant_uuid": null,
+                "market_uuid": "e9fdbcb3-a1a2-444f-a119-0f3d604ea7cc",
+                "odds": "8.25"
+              },
+              {
+                "id": "3",
+                "name": "Kosowo (K)",
+                "status": "active",
+                "sort": 3,
+                "uuid": "a6c8b622-7d70-4c08-bb71-a308146a9b46",
+                "participant_uuid": "4f42efa8-9a46-46c6-897c-da8d36ac577f",
+                "market_uuid": "e9fdbcb3-a1a2-444f-a119-0f3d604ea7cc",
+                "odds": "25.00"
+              }
+            ],
+            "game_type": "threeway",
+            "game_groups": [
+              {
+                "name": "Główne",
+                "sort_order": 1,
+                "uuid": "dcde9df8-f44f-4073-8444-0969fd472f82"
+              }
+            ],
+            "market_type": "prematch",
+            "product_active": true,
+            "component_slug": null,
+            "game_type_tooltip": "Należy wytypować jakim rozstrzygnięciem zakończy się spotkanie (zakład nie uwzględnia dogrywki, podobnie jak w przypadku pozostałych zakładów, chyba, że ich opis lub specyfika - np. Awans - stanowią inaczej)"
+          }
+        ],
+        "market_count": 147,
+        "participants": [
+          {
+            "name": "Austria (K)",
+            "uuid": "a006b88c-37db-48e4-b1da-8f95d6ac4613",
+            "image_source": null
+          },
+          {
+            "name": "Kosowo (K)",
+            "uuid": "4f42efa8-9a46-46c6-897c-da8d36ac577f",
+            "image_source": null
+          }
+        ],
+        "matchday": null,
+        "additional_info": null,
+        "jackpot_available": false,
+        "live_data": {
+          "away_score": null,
+          "category_id": "sr:sport:1",
+          "clock": null,
+          "home_score": null,
+          "match_status": {
+            "id": "0",
+            "name": "Przed startem",
+            "uuid": "dfb45fd3-3264-4605-89a0-317e439735c0"
+          },
+          "model_name": "soccer",
+          "period_scores": null,
+          "statistics": null
+        },
+        "type_participants": "pair",
+        "discipline": {
+          "name": "Piłka nożna",
+          "type": "sport",
+          "level": "sport",
+          "image": "https://cdn.totalbet.pl/categories/5e27e539-7ee3-47b2-b3cd-e3655300ab06.svg",
+          "uuid": "ff57b93d-f74c-4015-a23b-e89f68b8d2c9",
+          "icon": "https://cdn.totalbet.pl/categories/0abf437f-9ab9-4826-9fcd-c40dafde9c8a.svg",
+          "parent_uuid": null,
+          "header_photo": "https://cdn.totalbet.pl/categories/72e9000b-1a8c-431e-a6e7-d2d17aa7c267.jpg",
+          "three_d_icon": "https://cdn.totalbet.pl/categories/870b3543-eea3-4f3d-8690-3a0ae2659fcf.svg"
+        },
+        "component_lists": [],
+        "next_matchdays": []
+      },
+      {
+        "name": "Norwegia (K) - Rumunia (K)",
+        "status": "active",
+        "type": "prematch",
+        "path": [
+          {
+            "name": "Piłka nożna",
+            "uuid": "ff57b93d-f74c-4015-a23b-e89f68b8d2c9"
+          },
+          {
+            "name": "Międzynarodowe",
+            "uuid": "5be64fa1-46a4-43a6-a386-880f32a75336"
+          },
+          {
+            "name": "Kwalifikacje MŚ - Europa (K)",
+            "uuid": "83830aae-bcf3-4aca-aff7-8d3d81964fbd"
+          }
+        ],
+        "result": ":",
+        "components": [],
+        "category": {
+          "name": "Międzynarodowe",
+          "type": "sport",
+          "level": "category",
+          "image": null,
+          "uuid": "5be64fa1-46a4-43a6-a386-880f32a75336",
+          "icon": "https://cdn.totalbet.pl/categories/f5709684-2618-448c-b7a2-023bd58d6288.svg",
+          "parent_uuid": "ff57b93d-f74c-4015-a23b-e89f68b8d2c9",
+          "header_photo": null,
+          "three_d_icon": null
+        },
+        "uuid": "488eee1c-ccca-474e-916a-5a5a4d003dd4",
+        "betbuilder_available": true,
+        "event_layout": "horizontal",
+        "iframe": null,
+        "category_uuid": "5be64fa1-46a4-43a6-a386-880f32a75336",
+        "tournament": {
+          "name": "Kwalifikacje MŚ - Europa (K)",
+          "type": "sport",
+          "level": "tournament",
+          "image": null,
+          "uuid": "83830aae-bcf3-4aca-aff7-8d3d81964fbd",
+          "icon": null,
+          "parent_uuid": "5be64fa1-46a4-43a6-a386-880f32a75336",
+          "header_photo": null,
+          "three_d_icon": null
+        },
+        "discipline_uuid": "ff57b93d-f74c-4015-a23b-e89f68b8d2c9",
+        "tournament_uuid": "83830aae-bcf3-4aca-aff7-8d3d81964fbd",
+        "start_at": "2026-10-13T16:00:00Z",
+        "markets": [
+          {
+            "id": "1",
+            "name": "Wynik meczu",
+            "status": "active",
+            "uuid": "a2589d12-2e4a-440a-a552-c0bf2285db09",
+            "outcomes": [
+              {
+                "id": "1",
+                "name": "Norwegia (K)",
+                "status": "active",
+                "sort": 1,
+                "uuid": "f1a09521-d6c2-4023-b4ab-7efc75256d43",
+                "participant_uuid": "f168baf9-b140-43ee-9d60-9c932cd40498",
+                "market_uuid": "a2589d12-2e4a-440a-a552-c0bf2285db09",
+                "odds": "1.01"
+              },
+              {
+                "id": "2",
+                "name": "remis",
+                "status": "active",
+                "sort": 2,
+                "uuid": "364eaf00-39ae-480c-a032-39304753025e",
+                "participant_uuid": null,
+                "market_uuid": "a2589d12-2e4a-440a-a552-c0bf2285db09",
+                "odds": "9.25"
+              },
+              {
+                "id": "3",
+                "name": "Rumunia (K)",
+                "status": "active",
+                "sort": 3,
+                "uuid": "e3ef215f-5111-4ed5-a5a7-6b9a23f100d8",
+                "participant_uuid": "fdeafa36-86a0-4547-81e9-84e33c6ac1c9",
+                "market_uuid": "a2589d12-2e4a-440a-a552-c0bf2285db09",
+                "odds": "50.00"
+              }
+            ],
+            "game_type": "threeway",
+            "game_groups": [
+              {
+                "name": "Główne",
+                "sort_order": 1,
+                "uuid": "dcde9df8-f44f-4073-8444-0969fd472f82"
+              }
+            ],
+            "market_type": "prematch",
+            "product_active": true,
+            "component_slug": null,
+            "game_type_tooltip": "Należy wytypować jakim rozstrzygnięciem zakończy się spotkanie (zakład nie uwzględnia dogrywki, podobnie jak w przypadku pozostałych zakładów, chyba, że ich opis lub specyfika - np. Awans - stanowią inaczej)"
+          }
+        ],
+        "market_count": 84,
+        "participants": [
+          {
+            "name": "Norwegia (K)",
+            "uuid": "f168baf9-b140-43ee-9d60-9c932cd40498",
+            "image_source": null
+          },
+          {
+            "name": "Rumunia (K)",
+            "uuid": "fdeafa36-86a0-4547-81e9-84e33c6ac1c9",
+            "image_source": null
+          }
+        ],
+        "matchday": null,
+        "additional_info": null,
+        "jackpot_available": false,
+        "live_data": {
+          "away_score": null,
+          "category_id": "sr:sport:1",
+          "clock": null,
+          "home_score": null,
+          "match_status": {
+            "id": "0",
+            "name": "Przed startem",
+            "uuid": "dfb45fd3-3264-4605-89a0-317e439735c0"
+          },
+          "model_name": "soccer",
+          "period_scores": null,
+          "statistics": null
+        },
+        "type_participants": "pair",
+        "discipline": {
+          "name": "Piłka nożna",
+          "type": "sport",
+          "level": "sport",
+          "image": "https://cdn.totalbet.pl/categories/5e27e539-7ee3-47b2-b3cd-e3655300ab06.svg",
+          "uuid": "ff57b93d-f74c-4015-a23b-e89f68b8d2c9",
+          "icon": "https://cdn.totalbet.pl/categories/0abf437f-9ab9-4826-9fcd-c40dafde9c8a.svg",
+          "parent_uuid": null,
+          "header_photo": "https://cdn.totalbet.pl/categories/72e9000b-1a8c-431e-a6e7-d2d17aa7c267.jpg",
+          "three_d_icon": "https://cdn.totalbet.pl/categories/870b3543-eea3-4f3d-8690-3a0ae2659fcf.svg"
+        },
+        "component_lists": [],
+        "next_matchdays": []
+      },
+      {
+        "name": "Polska (K) - Belgia (K)",
+        "status": "active",
+        "type": "prematch",
+        "path": [
+          {
+            "name": "Piłka nożna",
+            "uuid": "ff57b93d-f74c-4015-a23b-e89f68b8d2c9"
+          },
+          {
+            "name": "Międzynarodowe",
+            "uuid": "5be64fa1-46a4-43a6-a386-880f32a75336"
+          },
+          {
+            "name": "Kwalifikacje MŚ - Europa (K)",
+            "uuid": "83830aae-bcf3-4aca-aff7-8d3d81964fbd"
+          }
+        ],
+        "result": ":",
+        "components": [],
+        "category": {
+          "name": "Międzynarodowe",
+          "type": "sport",
+          "level": "category",
+          "image": null,
+          "uuid": "5be64fa1-46a4-43a6-a386-880f32a75336",
+          "icon": "https://cdn.totalbet.pl/categories/f5709684-2618-448c-b7a2-023bd58d6288.svg",
+          "parent_uuid": "ff57b93d-f74c-4015-a23b-e89f68b8d2c9",
+          "header_photo": null,
+          "three_d_icon": null
+        },
+        "uuid": "2fae940d-e663-4e59-bd3e-18b1e75612c5",
+        "betbuilder_available": true,
+        "event_layout": "horizontal",
+        "iframe": null,
+        "category_uuid": "5be64fa1-46a4-43a6-a386-880f32a75336",
+        "tournament": {
+          "name": "Kwalifikacje MŚ - Europa (K)",
+          "type": "sport",
+          "level": "tournament",
+          "image": null,
+          "uuid": "83830aae-bcf3-4aca-aff7-8d3d81964fbd",
+          "icon": null,
+          "parent_uuid": "5be64fa1-46a4-43a6-a386-880f32a75336",
+          "header_photo": null,
+          "three_d_icon": null
+        },
+        "discipline_uuid": "ff57b93d-f74c-4015-a23b-e89f68b8d2c9",
+        "tournament_uuid": "83830aae-bcf3-4aca-aff7-8d3d81964fbd",
+        "start_at": "2026-10-13T16:00:00Z",
+        "markets": [
+          {
+            "id": "1",
+            "name": "Wynik meczu",
+            "status": "active",
+            "uuid": "6d76cb4e-1a8c-4658-957d-ed9898ab8970",
+            "outcomes": [
+              {
+                "id": "1",
+                "name": "Polska (K)",
+                "status": "active",
+                "sort": 1,
+                "uuid": "ea0be020-8c7d-42c9-8315-f13f1b2cb803",
+                "participant_uuid": "e7ae353a-2dc8-4aef-8567-dd333fe75f25",
+                "market_uuid": "6d76cb4e-1a8c-4658-957d-ed9898ab8970",
+                "odds": "2.58"
+              },
+              {
+                "id": "2",
+                "name": "remis",
+                "status": "active",
+                "sort": 2,
+                "uuid": "9002a6f1-2675-4aa4-a343-53c25c951cbf",
+                "participant_uuid": null,
+                "market_uuid": "6d76cb4e-1a8c-4658-957d-ed9898ab8970",
+                "odds": "3.12"
+              },
+              {
+                "id": "3",
+                "name": "Belgia (K)",
+                "status": "active",
+                "sort": 3,
+                "uuid": "e2c1a130-6249-453c-9162-76152963ffd2",
+                "participant_uuid": "891a8864-5f62-4d7c-8bc1-3dadc24bb698",
+                "market_uuid": "6d76cb4e-1a8c-4658-957d-ed9898ab8970",
+                "odds": "2.43"
+              }
+            ],
+            "game_type": "threeway",
+            "game_groups": [
+              {
+                "name": "Główne",
+                "sort_order": 1,
+                "uuid": "dcde9df8-f44f-4073-8444-0969fd472f82"
+              }
+            ],
+            "market_type": "prematch",
+            "product_active": true,
+            "component_slug": null,
+            "game_type_tooltip": "Należy wytypować jakim rozstrzygnięciem zakończy się spotkanie (zakład nie uwzględnia dogrywki, podobnie jak w przypadku pozostałych zakładów, chyba, że ich opis lub specyfika - np. Awans - stanowią inaczej)"
+          }
+        ],
+        "market_count": 153,
+        "participants": [
+          {
+            "name": "Polska (K)",
+            "uuid": "e7ae353a-2dc8-4aef-8567-dd333fe75f25",
+            "image_source": null
+          },
+          {
+            "name": "Belgia (K)",
+            "uuid": "891a8864-5f62-4d7c-8bc1-3dadc24bb698",
+            "image_source": null
+          }
+        ],
+        "matchday": null,
+        "additional_info": null,
+        "jackpot_available": false,
+        "live_data": {
+          "away_score": null,
+          "category_id": "sr:sport:1",
+          "clock": null,
+          "home_score": null,
+          "match_status": {
+            "id": "0",
+            "name": "Przed startem",
+            "uuid": "dfb45fd3-3264-4605-89a0-317e439735c0"
+          },
+          "model_name": "soccer",
+          "period_scores": null,
+          "statistics": null
+        },
+        "type_participants": "pair",
+        "discipline": {
+          "name": "Piłka nożna",
+          "type": "sport",
+          "level": "sport",
+          "image": "https://cdn.totalbet.pl/categories/5e27e539-7ee3-47b2-b3cd-e3655300ab06.svg",
+          "uuid": "ff57b93d-f74c-4015-a23b-e89f68b8d2c9",
+          "icon": "https://cdn.totalbet.pl/categories/0abf437f-9ab9-4826-9fcd-c40dafde9c8a.svg",
+          "parent_uuid": null,
+          "header_photo": "https://cdn.totalbet.pl/categories/72e9000b-1a8c-431e-a6e7-d2d17aa7c267.jpg",
+          "three_d_icon": "https://cdn.totalbet.pl/categories/870b3543-eea3-4f3d-8690-3a0ae2659fcf.svg"
+        },
+        "component_lists": [],
+        "next_matchdays": []
+      }
+    ]
+  },
+  "state": "success",
+  "_meta": {
+    "pagination": {
+      "total_pages": 121,
+      "current_page": 1,
+      "items_count": 2419,
+      "per_page": 20
+    },
+    "event_types": [
+      {
+        "count": 50,
+        "type": "live"
+      },
+      {
+        "count": 387,
+        "type": "virtual"
+      },
+      {
+        "count": 2419,
+        "type": "prematch"
+      },
+      {
+        "count": 431,
+        "type": "outright"
+      }
+    ],
+    "sports": [
+      {
+        "count": 1259,
+        "name": "Piłka nożna",
+        "uuid": "ff57b93d-f74c-4015-a23b-e89f68b8d2c9",
+        "three_d_icon": "https://cdn.totalbet.pl/categories/870b3543-eea3-4f3d-8690-3a0ae2659fcf.svg"
+      },
+      {
+        "count": 19,
+        "name": "ePiłka nożna",
+        "uuid": "87060ea5-c212-4932-8ef7-a503c148f64b",
+        "three_d_icon": "https://cdn.totalbet.pl/categories/45f4baba-4d35-4259-9594-1da2a9c7957c.svg"
+      },
+      {
+        "count": 198,
+        "name": "Tenis ziemny",
+        "uuid": "e893a222-bcd8-4508-844f-467626a8cb03",
+        "three_d_icon": "https://cdn.totalbet.pl/categories/05a65770-74db-42ca-babb-ca6af9e5ac68.svg"
+      },
+      {
+        "count": 146,
+        "name": "Koszykówka",
+        "uuid": "9dd9579a-b12b-4e8a-bb8c-133c3688db7b",
+        "three_d_icon": "https://cdn.totalbet.pl/categories/cb64d84c-d55d-4f6b-b8d9-3f33f0c4a4ee.svg"
+      },
+      {
+        "count": 8,
+        "name": "eKoszykówka",
+        "uuid": "c32a2b3d-123a-4a99-a464-e3e7986e4b9c",
+        "three_d_icon": "https://cdn.totalbet.pl/categories/814bd155-d458-4a52-ad92-e46ab7cad7ff.svg"
+      },
+      {
+        "count": 16,
+        "name": "Siatkówka",
+        "uuid": "e334e398-1e28-432d-99aa-45fb9e12057e",
+        "three_d_icon": "https://cdn.totalbet.pl/categories/9966b142-db7c-4021-8fef-b0eb0edfe6c5.svg"
+      },
+      {
+        "count": 152,
+        "name": "Hokej na lodzie",
+        "uuid": "d899e081-e037-4442-8c68-5947d30f8c98",
+        "three_d_icon": "https://cdn.totalbet.pl/categories/bc1093e5-ec27-4eb8-b4b0-07f6f0472a50.svg"
+      },
+      {
+        "count": 66,
+        "name": "Piłka ręczna",
+        "uuid": "d94ba79d-cfc6-4348-9d99-a10d094650fc",
+        "three_d_icon": "https://cdn.totalbet.pl/categories/a6128394-5298-45a6-9959-ab50ce201afb.svg"
+      },
+      {
+        "count": 30,
+        "name": "MMA",
+        "uuid": "986709b6-100d-4fda-a295-c2de87146923",
+        "three_d_icon": "https://cdn.totalbet.pl/categories/49dbddf7-fec8-4a3a-8a60-39cd51336c4a.svg"
+      },
+      {
+        "count": 10,
+        "name": "Darts",
+        "uuid": "16d3a01e-eec3-4691-91dc-eaf7280ed86a",
+        "three_d_icon": "https://cdn.totalbet.pl/categories/02857719-081f-469f-9fb6-a50a4e29394d.svg"
+      },
+      {
+        "count": 183,
+        "name": "Tenis stołowy",
+        "uuid": "66d08e4b-d9d3-4c20-bc24-f7ef65f0f7ed",
+        "three_d_icon": "https://cdn.totalbet.pl/categories/8c3069a2-2458-417a-9dcb-8bdd249e16e0.svg"
+      },
+      {
+        "count": 1,
+        "name": "Baseball",
+        "uuid": "7356cf0f-f582-43b9-be22-088dd349d1ae",
+        "three_d_icon": "https://cdn.totalbet.pl/categories/7f82c30d-08b5-4469-84a2-8571c3317ebf.svg"
+      },
+      {
+        "count": 12,
+        "name": "Counter-Strike",
+        "uuid": "c97d3771-6787-4cff-a393-80e023442176",
+        "three_d_icon": "https://cdn.totalbet.pl/categories/deaaf10a-6f50-4331-b746-825f16f56de6.svg"
+      },
+      {
+        "count": 5,
+        "name": "League of Legends",
+        "uuid": "4cfea755-14d1-4df7-8e12-96ffb24febbe",
+        "three_d_icon": "https://cdn.totalbet.pl/categories/3530b41b-a6ad-41d0-b221-0786aef34147.svg"
+      },
+      {
+        "count": 122,
+        "name": "Badminton",
+        "uuid": "5c113f84-abd5-40a4-bc01-54fb3436e0c1",
+        "three_d_icon": "https://cdn.totalbet.pl/categories/e9e50a3c-a441-4289-b0eb-5de3c90db29e.svg"
+      },
+      {
+        "count": 74,
+        "name": "Futbol amerykański",
+        "uuid": "78112951-6483-4bb8-9213-4e258b5aaff7",
+        "three_d_icon": "https://cdn.totalbet.pl/categories/85246c81-e819-40b7-9713-1ef727f351b1.svg"
+      },
+      {
+        "count": 9,
+        "name": "Futbol australijski",
+        "uuid": "b11a406e-12ff-4260-a55d-de38637bb277",
+        "three_d_icon": "https://cdn.totalbet.pl/categories/080cbed0-0811-409c-89a8-62241ad8d5ca.svg"
+      },
+      {
+        "count": 34,
+        "name": "Rugby",
+        "uuid": "7d6b6f1e-289c-4fc4-a8fe-3a7b6d3d1d76",
+        "three_d_icon": "https://cdn.totalbet.pl/categories/88938420-e14b-4890-be3f-3b88ca897e9d.svg"
+      },
+      {
+        "count": 7,
+        "name": "Boks",
+        "uuid": "747438bd-ca41-4640-9e9c-a457d2a970ae",
+        "three_d_icon": "https://cdn.totalbet.pl/categories/54628fe5-dd60-4ff4-975b-6de2e2cdbc5e.svg"
+      },
+      {
+        "count": 22,
+        "name": "Kolarstwo",
+        "uuid": "b1b2318a-8964-4611-ab85-4b17caf34783",
+        "three_d_icon": "https://cdn.totalbet.pl/categories/36278e04-4548-4e67-86a8-6ec2179e7759.svg"
+      },
+      {
+        "count": 23,
+        "name": "Krykiet",
+        "uuid": "8e19d178-98c5-4a30-9f96-a710c5054bf4",
+        "three_d_icon": "https://cdn.totalbet.pl/categories/84233a28-48b3-4a93-ae36-a5777761ff55.svg"
+      },
+      {
+        "count": 1,
+        "name": "Unihokej",
+        "uuid": "1f24e0a4-fe3f-46b2-931c-f0101e3d69d8",
+        "three_d_icon": "https://cdn.totalbet.pl/categories/e057c0bb-f649-4ee2-b378-d1692dfadb93.svg"
+      },
+      {
+        "count": 6,
+        "name": "Rainbow Six",
+        "uuid": "ec1bb15e-4677-403f-b41f-f36604313b13",
+        "three_d_icon": "https://cdn.totalbet.pl/categories/db68bf1f-ac10-4ebb-b57a-a3c0f133c1c9.svg"
+      },
+      {
+        "count": 9,
+        "name": "King of Glory",
+        "uuid": "ef2b4af8-8e44-479e-8f23-e09792c6d65e",
+        "three_d_icon": "https://cdn.totalbet.pl/categories/4902ad00-1054-4337-ba79-598f5dcf0675.svg"
+      },
+      {
+        "count": 7,
+        "name": "Polityka",
+        "uuid": "234ef17a-318c-4cc8-85e5-30d87dee7730",
+        "three_d_icon": "https://cdn.totalbet.pl/categories/e1f2c1d5-097d-4f9d-bc19-7879cbfa756e.svg"
+      }
+    ]
+  }
+}

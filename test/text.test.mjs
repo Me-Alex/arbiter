@@ -85,8 +85,8 @@ test('eventIdentityKey tolerates club-name variation between providers', () => {
   // suffixes but is otherwise exact: it guards against false pairing rather
   // than fuzzily matching, so genuinely different names must not be forced
   // together.
-  assert.equal(eventIdentityKey(a), 'football|2026-09-26|dinamo|rapid bucuresti');
-  assert.equal(eventIdentityKey(b), 'football|2026-09-26|dinamo bucuresti|rapid');
+  assert.equal(eventIdentityKey(a), 'football|2026-09-26T16:00:00.000Z|dinamo|rapid bucuresti');
+  assert.equal(eventIdentityKey(b), 'football|2026-09-26T16:00:00.000Z|dinamo bucuresti|rapid');
   assert.notEqual(eventIdentityKey(a), eventIdentityKey(b));
 
   // A legal-suffix-only difference on the home side does collapse.

@@ -112,7 +112,7 @@ test('the identity key is the single definition written by the scrapers', () => 
   const at = new Date('2030-01-01T12:00:00Z').toISOString();
   const written = { sport: 'Football', league: 'Nations League', kickoff: at, homeTeam: 'Home', awayTeam: 'Away' };
   assert.equal(
-    eventIdentityKey(written), 'football|2030-01-01|home|away',
+    eventIdentityKey(written), 'football|2030-01-01T12:00:00.000Z|home|away',
     'the canonical key omits the league, which books name differently',
   );
 });

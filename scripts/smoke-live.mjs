@@ -47,17 +47,24 @@ const CONFIG_PATH = join(ROOT, 'config', 'scrapers.json');
 const args = process.argv.slice(2);
 let minEvents = 1;
 let timeoutMs = 60_000;
+let sport = '';
 const requested = [];
 for (let i = 0; i < args.length; i += 1) {
+  if (args[i] === '--') continue;
   if (args[i] === '--min-events') minEvents = Number(args[++i]);
   else if (args[i] === '--timeout') timeoutMs = Number(args[++i]);
+  else if (args[i] === '--sport') sport = String(args[++i] || '').trim();
   else requested.push(args[i]);
 }
 
 const { jobs } = JSON.parse(await fs.readFile(CONFIG_PATH, 'utf8'));
+const unknown = requested.filter((id) => !jobs.some((j) => j.id === id));
+if (unknown.length) {
+  console.error('unknown bookmaker(s): ' + unknown.join(', '));
+  process.exit(1);
+}
 const targets = jobs
-  .filter((j) => j.enabled !== false)
-  .filter((j) => requested.length === 0 || requested.includes(j.id));
+  .filter((j) => requested.length ? requested.includes(j.id) : j.enabled !== false);
 
 if (targets.length === 0) {
   console.error('no enabled job matches ' + (requested.join(', ') || '(any)'));
@@ -72,10 +79,17 @@ for (const job of targets) {
   let scraper;
   try {
     scraper = instantiate(job.id, {
-      jobConfig: job,
+      // Explicitly named candidates can be tested BEFORE registry promotion.
+      // This in-memory copy never changes config or the orchestrator's gate.
+      jobConfig: { ...job, enabled: true },
       dataDir,
       // A small cap keeps the gate quick; it is a liveness check, not a harvest.
       maxEvents: 100,
+      // The scan always runs against one sport, and adapters are allowed to
+      // treat that as a scope (unibet crawls only the requested sport). Passing
+      // it here measures the path the scan actually takes, instead of timing a
+      // multi-sport crawl whose other sports the scan would discard anyway.
+      ...(sport ? { sport } : {}),
     });
     // The gate's deadline is a ceiling, not a value to push into every
     // adapter. Several adapters reject a timeout above their own limit, and a

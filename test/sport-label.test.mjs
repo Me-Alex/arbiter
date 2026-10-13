@@ -6,9 +6,9 @@
 // sport to the literal 'Football':
 //
 //   public/js/pages/scanner.js:148   the alerts row
-//   public/js/pages/scanner.js:614   the arbitrage row
-//   public/js/pages/scanner.js:632   the middle row
-//   public/js/pages/dashboard.js:538 -> :605  the retained card renderer
+//   public/js/pages/scanner.js:646   the arbitrage row
+//   public/js/pages/scanner.js:664   the middle row
+//   public/js/pages/dashboard.js:538 -> :545  the retained card renderer
 //
 // None of them is reachable on today's data, which is exactly why this guard
 // exists: reachability was observed, not enforced. The numbers behind the
@@ -40,7 +40,7 @@ import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { codeOnly } from './helpers/code-only.mjs';
-import { page, settle } from './helpers/scanner-page.mjs';
+import { page, settle, ALERT_PREFERENCES } from './helpers/scanner-page.mjs';
 
 const LABEL_SCAN = {
   dataHealth: { status: 'fresh', actionableSourceCount: 3 },
@@ -66,11 +66,10 @@ const LABEL_ALERTS = {
   schemaVersion: 1,
   published: true,
   scan: { scrapedAt: '2026-10-04T14:02:26.168Z', eventCount: 4 },
-  preferences: {
-    minRoiPercent: 1, minMiddleRoiPercent: 1, cooldownSeconds: 300, includeLive: false,
-    channels: { desktop: false, sound: false },
-    quietHours: { enabled: false, from: '23:00', to: '07:00' },
-  },
+  // The preferences are the harness's own, shared rather than restated: this
+  // test is about the labels on the alert rows, and a copy here would be a
+  // second answer to "what does /api/alerts publish" that nothing keeps true.
+  preferences: ALERT_PREFERENCES,
   alerts: {
     arbitrages: [
       { key: 'arb::k1::arb', type: 'arb', eventKey: 'k1', marketKey: 'MATCH_ODDS', sport: 'TENNIS', league: 'ATP', kickoff: '2026-10-05T10:00:00.000Z', homeTeam: 'Alcaraz', awayTeam: 'Sinner', live: false, roiPercent: 4.2, totalStake: 1000, guaranteedProfit: 42, riskPercent: null, sourceIds: ['bravo'], verified: null },

@@ -1,7 +1,8 @@
 import ScraperBase from './base.mjs';
 import { normalizeTeamName } from '../shared/text.mjs';
 import { ValidationError, UpstreamError } from '../shared/errors.mjs';
-import { liveCoverageFor } from './live-status.mjs';
+import { liveCoverageFor, markMarketsLive } from './live-status.mjs';
+import { extractPeriodFromName, isTradablePeriod } from '../scanner/market-contracts.mjs';
 
 /**
  * The football sportId, per tenant.
@@ -22,6 +23,37 @@ const TENANT_FOOTBALL_SPORT = Object.freeze({
   stanleybet: 4,
   maxbet: 2,
   betmen: 18,
+  seven: 4,
+  gameworld: 4,
+  redsevens: 4,
+});
+
+export const TENANT_SPORTS = Object.freeze({
+  admiral: Object.freeze({ football: 4, basketball: 13, tennis: 16 }),
+  stanleybet: Object.freeze({ football: 4, basketball: 13, tennis: 16 }),
+  maxbet: Object.freeze({ football: 2, basketball: 17, tennis: 3 }),
+  betmen: Object.freeze({ football: 18, basketball: 36, tennis: 19 }),
+  seven: Object.freeze({ football: 4, basketball: 13, tennis: 16 }),
+  gameworld: Object.freeze({ football: 4, basketball: 13, tennis: 16 }),
+  redsevens: Object.freeze({ football: 4, basketball: 13, tennis: 16 }),
+});
+
+export const NSOFT_SPORT_ID_MAP = Object.freeze({
+  4: 'Football',
+  13: 'Basketball',
+  16: 'Tennis',
+  2: 'Football',
+  17: 'Basketball',
+  3: 'Tennis',
+  18: 'Football',
+  36: 'Basketball',
+  19: 'Tennis',
+});
+
+export const NSOFT_SPORT_NAME_TO_ID = Object.freeze({
+  football: 4,
+  basketball: 13,
+  tennis: 16,
 });
 
 /**
@@ -51,6 +83,9 @@ const TENANT_RESULT_MARKET = Object.freeze({
   stanleybet: Object.freeze({ marketId: 1, name: 'Rezultat Final', outcomes: Object.freeze([[1, '1'], [4, 'X'], [7, '2']]) }),
   maxbet: Object.freeze({ marketId: 2, name: 'Final', outcomes: Object.freeze([[2, '1'], [5, 'X'], [8, '2']]) }),
   betmen: Object.freeze({ marketId: 6, name: 'Final', outcomes: Object.freeze([[6, '1'], [9, 'X'], [12, '2']]) }),
+  seven: Object.freeze({ marketId: 1, name: 'Rezultat Final', outcomes: Object.freeze([[1, '1'], [4, 'X'], [7, '2']]) }),
+  gameworld: Object.freeze({ marketId: 1, name: 'Rezultat Final', outcomes: Object.freeze([[1, '1'], [4, 'X'], [7, '2']]) }),
+  redsevens: Object.freeze({ marketId: 1, name: 'Rezultat Final', outcomes: Object.freeze([[1, '1'], [4, 'X'], [7, '2']]) }),
 });
 
 /**
@@ -158,6 +193,9 @@ const TENANT_EXTRAS = Object.freeze({
   // the guard expects. This is a 100% clean add of a whole family the tenant
   // was contributing none of.
   betmen: Object.freeze({ btts: Object.freeze({ marketId: 4607, name: 'Ambele Marcheaza' }) }),
+  seven: Object.freeze({ totals: Object.freeze({ marketId: 886, name: 'Total goluri S/P' }), btts: Object.freeze({ marketId: 2056, name: 'Ambele Inscriu' }), ah: Object.freeze({ marketId: 262, name: 'Handicap' }) }),
+  gameworld: Object.freeze({ totals: Object.freeze({ marketId: 886, name: 'Total goluri S/P' }), btts: Object.freeze({ marketId: 2056, name: 'Ambele Inscriu' }), ah: Object.freeze({ marketId: 262, name: 'Handicap' }) }),
+  redsevens: Object.freeze({ totals: Object.freeze({ marketId: 886, name: 'Total goluri S/P' }), btts: Object.freeze({ marketId: 2056, name: 'Ambele Inscriu' }), ah: Object.freeze({ marketId: 262, name: 'Handicap' }) }),
 });
 
 /**
@@ -191,6 +229,17 @@ const BTTS_NO = /^(?:ngg|ng|nu|no|n)$/i;
  * @returns {string}
  */
 function nsoftSportLabel(id, tenantId) {
+  const num = Number(id);
+  const tenant = TENANT_SPORTS[tenantId];
+  if (tenant) {
+    for (const [sportName, sportId] of Object.entries(tenant)) {
+      if (sportId === num) {
+        return sportName.charAt(0).toUpperCase() + sportName.slice(1);
+      }
+    }
+  }
+  const mapped = NSOFT_SPORT_ID_MAP[num] || NSOFT_SPORT_ID_MAP[id];
+  if (mapped) return mapped;
   const key = String(id);
   if (String(TENANT_FOOTBALL_SPORT[tenantId]) === key) return 'Football';
   return `Sport ${key}`;
@@ -205,6 +254,9 @@ const TENANTS = {
   stanleybet: ['682e6a38-b5ad-4c58-a743-3b06c79e55cd', 'nsoft-public-json', 'nsoft-public-sports-json', 'stanleybet.mjs'],
   maxbet: ['2191e3d6-b0e1-4f06-8b6a-4683203fb2fe', 'nsoft', 'nsoft-public-sports-json', 'maxbet.mjs'],
   betmen: ['7afdd6f5-f954-43d6-b696-2e0dc0ae4ee2', 'nsoft-public-json', 'nsoft-public-sports-json', 'nsoft.mjs'],
+  seven: ['682e6a38-b5ad-4c58-a743-3b06c79e55cd', 'nsoft-public-json', 'nsoft-public-sports-json', 'nsoft.mjs'],
+  gameworld: ['682e6a38-b5ad-4c58-a743-3b06c79e55cd', 'nsoft-public-json', 'nsoft-public-sports-json', 'nsoft.mjs'],
+  redsevens: ['682e6a38-b5ad-4c58-a743-3b06c79e55cd', 'nsoft-public-json', 'nsoft-public-sports-json', 'nsoft.mjs'],
 };
 export function matchesNSoftConfig(id, cfg) {
   const t = TENANTS[id];
@@ -232,19 +284,23 @@ export default class NSoftScraper extends ScraperBase {
     this.runId ||= new Date().toISOString();
     this.fetchImpl = opts.fetchImpl || globalThis.fetch;
     this.timeoutMs = opts.timeoutMs ?? 15000;
-    this.maxEvents = opts.maxEvents === 'all' ? 5000 : Number(opts.maxEvents ?? 100);
+    this.maxEvents = opts.maxEvents === 'all' ? Infinity : Number(opts.maxEvents ?? Infinity);
     this.sport = opts.sport || 'football';
+    this.sports = Array.isArray(opts.sports) ? opts.sports.map((s) => s.toLowerCase()) : null;
+    this.includeLive = Boolean(opts.includeLive);
     this.windowHours = Number(opts.windowHours ?? 504);
-    if (!Number.isInteger(this.maxEvents) || this.maxEvents < 0 || this.maxEvents > 5000
+    if ((!Number.isInteger(this.maxEvents) && this.maxEvents !== Infinity) || this.maxEvents < 0
         || !Number.isFinite(this.windowHours) || this.windowHours <= 0 || this.windowHours > 720) {
       throw new ValidationError('NSoft: invalid cap/window (maximum 5000 events/720 hours)');
     }
-    if (opts.includeLive) this.logger('warn', 'NSoft: only future prematch football is supported');
   }
 
   async fetchRaw({ signal } = {}) {
     signal?.throwIfAborted();
-    if (this.sport !== 'football') throw new ValidationError('NSoft: only football full-time 1X2 is verified');
+    const validSports = [...Object.keys(NSOFT_SPORT_NAME_TO_ID), 'all'];
+    if (!validSports.includes(this.sport.toLowerCase())) {
+      throw new ValidationError(`NSoft: sport ${this.sport} is not supported (supported: ${validSports.join(', ')})`);
+    }
     this.from = Date.now();
     this.to = this.from + this.windowHours * 3600000;
     const url = new URL('https://sportsbook-sm-distribution-api.nsoft.com/api/v1/events');
@@ -335,18 +391,26 @@ export default class NSoftScraper extends ScraperBase {
     const seen = new Set();
     for (const e of events) {
       if (out.length >= this.maxEvents) break;
-      // Unmeasured on this feed: no categorical field separated started from
-      // future events in the 2026-09-29/30 window, so nothing is claimed here.
-      // This is the single line to change if one is ever measured — and the
-      // `!live` below has to change with it. See live-status.mjs.
-      const live = false;
+      const live = Boolean(this.includeLive && (e.live || e.isLive || e.status === 1 || e.active === 2));
       const time = Date.parse(e.startsAt);
-      if (e.active !== 1 || !e.id || seen.has(e.id)
+      if (e.active !== 1 && (!live || e.active !== 2)) continue;
+      if (!e.id || seen.has(e.id)
           || !Number.isFinite(time) || (!live && time <= (this.from ?? Date.now()))
           || time > (this.to ?? Date.now() + this.windowHours * 3600000)) continue;
       const home = e.competitors.filter((c) => c.type === 1);
       const away = e.competitors.filter((c) => c.type === 2);
       if (home.length !== 1 || away.length !== 1 || !home[0].name || !away[0].name) continue;
+
+      const sportName = nsoftSportLabel(e.sportId, this.id);
+      const sportLower = sportName.toLowerCase();
+      if (this.sport !== 'all') {
+        if (this.sports) {
+          if (!this.sports.includes(sportLower)) continue;
+        } else if (this.sport.toLowerCase() !== sportLower) {
+          continue;
+        }
+      }
+
       // Only publish contracts established by tenant-specific response fixtures.
       // The sport id, the result market id, its display name and its outcome ids
       // all differ per tenant, so they are read from the same measured tables
@@ -355,7 +419,7 @@ export default class NSoftScraper extends ScraperBase {
       const footballSportId = TENANT_FOOTBALL_SPORT[this.id];
       const contract = TENANT_RESULT_MARKET[this.id];
       const isFootball = e.sportId === footballSportId;
-      let markets;
+      let markets = [];
       if (isFootball && contract) {
         const candidates = e.markets.filter((m) => m.marketId === contract.marketId);
         if (candidates.length !== 1) continue;
@@ -372,7 +436,7 @@ export default class NSoftScraper extends ScraperBase {
           selections.push({ id: String(o.id), providerOutcomeId: o.outcomeId, name, odds: o.odd, handicap: null });
         }
         if (selections.length !== 3 || new Set(selections.map((s) => s.id)).size !== 3) continue;
-        markets = [{ key: '1x2', providerMarketId: m.marketId, name: m.name, period: 'fulltime', selections }];
+        markets = [{ key: '1x2', providerMarketId: m.marketId, name: m.name, period: extractPeriodFromName(m.name) || 'fulltime', selections }];
         // The totals and BTTS this tenant also serves are additive: the 1X2 above
         // is the contract that makes the event trustworthy and it is validated
         // first and unconditionally. Each extra is either published whole or
@@ -380,30 +444,27 @@ export default class NSoftScraper extends ScraperBase {
         // the event its result market.
         markets.push(...this._extraMarkets(e, TENANT_EXTRAS[this.id]));
       } else {
-        // Non-football events are not published. Every configured job declares
-        // `supportedSports: ["football"]` and the verified contract is the
-        // tenant's football 1X2 only; the generic branch used to emit basketball
-        // and the rest stamped `period: 'fulltime'` on whatever three-outcome
-        // market it found, which is a settlement claim nobody verified. They
-        // also consumed the event cap that football needs.
-        continue;
+        const isTwoWaySport = sportLower === 'basketball' || sportLower === 'tennis';
+        if (isTwoWaySport) {
+          const twoWay = this._twoWayMatchWinner(e);
+          if (twoWay) markets.push(twoWay);
+          markets.push(...this._multiSportExtras(e, sportLower, twoWay ? new Set([twoWay.providerMarketId]) : new Set()));
+        } else {
+          continue;
+        }
       }
       if (markets.length === 0) continue;
+      markMarketsLive(markets, () => live);
       const kickoff = new Date(time).toISOString();
       const league = e.tournamentName;
       if (!league) continue;
       const teams = [home[0].name, away[0].name];
       seen.add(e.id);
-      const sportName = nsoftSportLabel(e.sportId, this.id);
       const sportKey = sportName.toLowerCase().replace(/\s+/g, '-');
       out.push({ id: String(e.id), sourceId: this.id, sourceUrl: this.sourceUrl,
         transport: this.transport, runId: this.runId, observedAt: this.observedAt,
         sport: sportName, league, kickoff, homeTeam: teams[0], awayTeam: teams[1],
-        // A true statement about the emitted set, not about the feed: only
-        // future fixtures are emitted, and no measured field distinguishes a
-        // running one. The `isLive` field that used to sit here was read by
-        // nobody.
-        live,
+        live, isLive: live,
         eventKey: [sportKey, normalizeTeamName(league), kickoff, ...teams.map(normalizeTeamName)].join('|'),
         markets });
     }
@@ -427,6 +488,167 @@ export default class NSoftScraper extends ScraperBase {
     if (extras.btts) {
       const btts = this._bttsMarket(e, extras.btts);
       if (btts) out.push(btts);
+    }
+    return out;
+  }
+
+  _twoWayMatchWinner(e) {
+    let fallback = null;
+    for (const m of e.markets || []) {
+      if (m.active !== 1) continue;
+      if (Array.isArray(m.specialValues) && m.specialValues.length > 0) continue;
+      if (!Array.isArray(m.outcomes) || m.outcomes.length !== 2) continue;
+      const pair = pricedPair(m.outcomes);
+      if (!pair) continue;
+      const isOverUnder = pair.some((o) => /^(?:peste|sub|over|under)\b/i.test(String(o.name).trim()));
+      const isHandicap = pair.some((o) => /^h[12]\b/i.test(String(o.name).trim()));
+      if (isOverUnder || isHandicap) continue;
+      const home = pair.find((o) => String(o.name).trim() === '1' || o.shortcut === '1' || o.outcomeId === 1);
+      const away = pair.find((o) => String(o.name).trim() === '2' || o.shortcut === '2' || o.outcomeId === 2);
+      const homeSel = home || pair[0];
+      const awaySel = away || pair[1];
+      if (!homeSel || !awaySel || homeSel === awaySel) continue;
+      const period = extractPeriodFromName(m.name) || 'fulltime';
+      const winnerMarket = {
+        key: 'MATCH_ODDS',
+        providerMarketId: m.marketId,
+        name: m.name || 'Castigator Meci',
+        period,
+        selections: [
+          { id: String(homeSel.id), providerOutcomeId: homeSel.outcomeId, name: '1', odds: homeSel.odd, handicap: null },
+          { id: String(awaySel.id), providerOutcomeId: awaySel.outcomeId, name: '2', odds: awaySel.odd, handicap: null },
+        ],
+      };
+      if (period === 'fulltime') return winnerMarket;
+      if (!fallback) fallback = winnerMarket;
+    }
+    return fallback;
+  }
+
+  _multiSportExtras(e, sportLower, excludeMarketIds = new Set()) {
+    const out = [];
+    const seenKeys = new Set();
+    for (const m of e.markets || []) {
+      if (m.active !== 1) continue;
+      if (excludeMarketIds.has(m.marketId)) continue;
+      if (/incl(?:\.|\s*)prel/i.test(String(m.name))) continue;
+      const period = extractPeriodFromName(m.name) || 'fulltime';
+      if (period !== 'fulltime' && !isTradablePeriod(period)) continue;
+      const line = totalsLine(m.specialValues);
+      if (line === null) {
+        if (period !== 'fulltime' && (!m.specialValues || (Array.isArray(m.specialValues) && m.specialValues.length === 0))) {
+          // 3-way period outcome (e.g. quarter 1X2 or half 1X2)
+          const trio = pricedTrio(m.outcomes);
+          if (trio) {
+            const home = trio.find((o) => /^(?:(?:pr\s*)?1|home|gazde)$/i.test(String(o.name).trim()) || o.shortcut === '1' || o.outcomeId === 1);
+            const draw = trio.find((o) => /^(?:(?:pr\s*)?[xX]|0|draw|egal)$/i.test(String(o.name).trim()) || /^[xX0]$/.test(String(o.shortcut || '')) || /^(?:draw|egal)$/i.test(String(o.name).trim()));
+            const away = trio.find((o) => /^(?:(?:pr\s*)?2|away|oaspeti)$/i.test(String(o.name).trim()) || o.shortcut === '2' || o.outcomeId === 2);
+            if (home && draw && away && home !== draw && home !== away && draw !== away) {
+              const dedupeKey = `1X2:${period}`;
+              if (!seenKeys.has(dedupeKey)) {
+                seenKeys.add(dedupeKey);
+                out.push({
+                  key: '1X2',
+                  providerMarketId: m.marketId,
+                  name: m.name,
+                  period,
+                  selections: [
+                    { id: String(home.id), providerOutcomeId: home.outcomeId, name: '1', odds: home.odd, handicap: null },
+                    { id: String(draw.id), providerOutcomeId: draw.outcomeId, name: 'X', odds: draw.odd, handicap: null },
+                    { id: String(away.id), providerOutcomeId: away.outcomeId, name: '2', odds: away.odd, handicap: null },
+                  ],
+                });
+              }
+              continue;
+            }
+          }
+
+          // 2-way period winner (e.g. set winner or quarter winner)
+          const pair = pricedPair(m.outcomes);
+          if (pair) {
+            const isOverUnder = pair.some((o) => /^(?:peste|sub|over|under)\b/i.test(String(o.name).trim()));
+            const isHandicap = pair.some((o) => /^h[12]\b/i.test(String(o.name).trim()));
+            if (!isOverUnder && !isHandicap) {
+              const home = pair.find((o) => String(o.name).trim() === '1' || o.shortcut === '1' || o.outcomeId === 1);
+              const away = pair.find((o) => String(o.name).trim() === '2' || o.shortcut === '2' || o.outcomeId === 2);
+              const homeSel = home || pair[0];
+              const awaySel = away || pair[1];
+              if (homeSel && awaySel && homeSel !== awaySel) {
+                const dedupeKey = `MATCH_ODDS:${period}`;
+                if (!seenKeys.has(dedupeKey)) {
+                  seenKeys.add(dedupeKey);
+                  out.push({
+                    key: 'MATCH_ODDS',
+                    providerMarketId: m.marketId,
+                    name: m.name,
+                    period,
+                    selections: [
+                      { id: String(homeSel.id), providerOutcomeId: homeSel.outcomeId, name: '1', odds: homeSel.odd, handicap: null },
+                      { id: String(awaySel.id), providerOutcomeId: awaySel.outcomeId, name: '2', odds: awaySel.odd, handicap: null },
+                    ],
+                  });
+                }
+              }
+            }
+          }
+        }
+        continue;
+      }
+      const pair = pricedPair(m.outcomes);
+      if (!pair) continue;
+      const over = pair.find((o) => /^peste\b|^over\b/i.test(String(o.name).trim()));
+      const under = pair.find((o) => /^sub\b|^under\b/i.test(String(o.name).trim()));
+      if (over && under && over !== under && sameLine(over.name, line) && sameLine(under.name, line)) {
+        const isBasketball = sportLower === 'basketball';
+        const isTennis = sportLower === 'tennis';
+        const subject = isBasketball ? 'points' : (isTennis ? 'games' : 'goals');
+        const key = isBasketball ? 'POINTS_OVER_UNDER' : (isTennis ? 'TOTAL_GAMES' : 'TOTAL_GOALS');
+        const dedupeKey = `${key}:${period}:${line}`;
+        if (!seenKeys.has(dedupeKey)) {
+          seenKeys.add(dedupeKey);
+          out.push({
+            key,
+            providerMarketId: m.marketId,
+            name: m.name,
+            period,
+            line,
+            subject,
+            selections: [over, under].map((o) => ({
+              id: String(o.id), providerOutcomeId: o.outcomeId, name: o.name, odds: o.odd, handicap: null,
+            })),
+          });
+        }
+        continue;
+      }
+      if (isHalfLine(line)) {
+        const home = pair.find((o) => /^h1\b/i.test(String(o.name).trim()));
+        const away = pair.find((o) => /^h2\b/i.test(String(o.name).trim()));
+        if (home && away && home !== away && oppositeHandicapLegs(home.name, away.name, line)) {
+          const key = sportLower === 'basketball' ? 'POINT_SPREAD' : 'ASIAN_HANDICAP';
+          const dedupeKey = `${key}:${period}:${line}`;
+          if (!seenKeys.has(dedupeKey)) {
+            seenKeys.add(dedupeKey);
+            out.push({
+              key,
+              providerMarketId: m.marketId,
+              name: m.name,
+              period,
+              line,
+              selections: [home, away].map((o, i) => {
+                const legLine = nameLine(o.name);
+                return {
+                  id: String(o.id),
+                  providerOutcomeId: o.outcomeId,
+                  providerName: o.name,
+                  name: `${i === 0 ? '1' : '2'} (${legLine})`,
+                  odds: o.odd,
+                  handicap: legLine,
+                };
+              }),
+            });
+          }
+        }
+      }
     }
     return out;
   }
@@ -476,7 +698,7 @@ export default class NSoftScraper extends ScraperBase {
         key: 'ASIAN_HANDICAP',
         providerMarketId: m.marketId,
         name: m.name,
-        period: 'fulltime',
+        period: extractPeriodFromName(m.name) || 'fulltime',
         line,
         // "1 (-0.5)" / "2 (0.5)", not the feed's "H1 -0.5" / "H2 0.5". Both
         // resolve the same contract, but only the numbered form ROUTES:
@@ -549,7 +771,7 @@ export default class NSoftScraper extends ScraperBase {
         key: 'TOTAL_GOALS',
         providerMarketId: m.marketId,
         name: m.name,
-        period: 'fulltime',
+        period: extractPeriodFromName(m.name) || 'fulltime',
         line,
         selections: [over, under].map((o) => ({
           id: String(o.id), providerOutcomeId: o.outcomeId, name: o.name, odds: o.odd, handicap: null,
@@ -581,7 +803,7 @@ export default class NSoftScraper extends ScraperBase {
         key: 'BTTS',
         providerMarketId: m.marketId,
         name: m.name,
-        period: 'fulltime',
+        period: extractPeriodFromName(m.name) || 'fulltime',
         selections: [yes, no].map((o, i) => ({
           id: String(o.id), providerOutcomeId: o.outcomeId, name: i === 0 ? 'Da' : 'Nu', odds: o.odd, handicap: null,
         })),
@@ -706,6 +928,24 @@ function isHalfLine(line) {
  */
 function pricedPair(outcomes) {
   if (!Array.isArray(outcomes) || outcomes.length !== 2) return null;
+  const ids = new Set();
+  for (const o of outcomes) {
+    if (!o || o.active !== 1 || !o.id || !Number.isFinite(o.odd) || o.odd <= 1) return null;
+    const id = String(o.id);
+    if (ids.has(id)) return null;
+    ids.add(id);
+  }
+  return outcomes;
+}
+
+/**
+ * A market's outcomes as a complete, live, priced three-way set, or null on any defect.
+ *
+ * @param {Array<{id?:unknown, active?:number, odd?:number}>} outcomes
+ * @returns {Array<object>|null}
+ */
+function pricedTrio(outcomes) {
+  if (!Array.isArray(outcomes) || outcomes.length !== 3) return null;
   const ids = new Set();
   for (const o of outcomes) {
     if (!o || o.active !== 1 || !o.id || !Number.isFinite(o.odd) || o.odd <= 1) return null;

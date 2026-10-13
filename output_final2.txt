@@ -1,0 +1,46 @@
+--- 1. RENDER & ERRORS ---
+Visible content starts with:
+Sari la conținut
+ArbEdge
+TRADING
+Arbitraj
+Arbitraj live
+Case
+SPAȚIU DE LUCRU
+Tablă
+Răzuire
+Scanner
+Analiză
+Scan Insights
+SISTEM
+Setări
+RECONECTARE…
+STARE SISTEM
+RO
+EN
+Temă
+Luminoasă
+Întunecată
+Sistem
+
+
+Error text (if any): No explicit error element found.
+
+--- 2. KPIs ---
+Label: ARBITRAGES | Value: —
+Label: GUARANTEED PROFIT | Value: —
+Label: MIDDLES | Value: —
+Label: POSITIVE EV | Value: —
+Label: CAPITAL COMMITTED | Value: —
+
+--- 3. FIRST ARBITRAGE CARD ---
+None
+
+--- 4. BANKROLL ---
+Skipped - No first arbitrage card found.
+
+--- 5. BAD TEXTS ---
+[]
+
+--- 6. MASTHEAD SUBTITLE ---
+Cross-book arbitrage, middles and mispricing across every quoted book.

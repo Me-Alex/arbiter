@@ -1,0 +1,5041 @@
+{
+  "bttsVariants": [
+    {
+      "workspace": "data-market-run/workspace",
+      "book": "favbet",
+      "event": {
+        "id": "43391282",
+        "sourceId": "favbet",
+        "sourceUrl": "https://www.favbet.ro/service/lineout/frontend_api2/",
+        "observedAt": "2026-09-05T08:26:17.034Z",
+        "sport": "Football",
+        "league": "Romania 2",
+        "kickoff": "2026-09-05T09:30:00.000Z",
+        "homeTeam": "SC Popesti Leordeni",
+        "awayTeam": "FC Bihor",
+        "eventKey": "football|romania 2|2026-09-05T09:30:00.000Z|sc popesti leordeni|fc bihor",
+        "markets": [
+          {
+            "key": "BOTH_TEAMS_SCORE",
+            "name": "Ambele echipe marchează mai mult de 1.5 goluri",
+            "selections": [
+              {
+                "id": "3926027156",
+                "name": "Yes",
+                "odds": 6.25,
+                "group": "Main"
+              },
+              {
+                "id": "3926027160",
+                "name": "No",
+                "odds": 1.07,
+                "group": "Main"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "workspace": "data-market-run/workspace",
+      "book": "favbet",
+      "event": {
+        "id": "43391282",
+        "sourceId": "favbet",
+        "sourceUrl": "https://www.favbet.ro/service/lineout/frontend_api2/",
+        "observedAt": "2026-09-05T08:26:17.034Z",
+        "sport": "Football",
+        "league": "Romania 2",
+        "kickoff": "2026-09-05T09:30:00.000Z",
+        "homeTeam": "SC Popesti Leordeni",
+        "awayTeam": "FC Bihor",
+        "eventKey": "football|romania 2|2026-09-05T09:30:00.000Z|sc popesti leordeni|fc bihor",
+        "markets": [
+          {
+            "key": "BOTH_TEAMS_SCORE",
+            "name": "Ambele echipe marchează mai puțin de 1.5 goluri",
+            "selections": [
+              {
+                "id": "3926027165",
+                "name": "Yes",
+                "odds": 2.15,
+                "group": "Main"
+              },
+              {
+                "id": "3926027166",
+                "name": "No",
+                "odds": 1.59,
+                "group": "Main"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "workspace": "data-market-run/workspace",
+      "book": "favbet",
+      "event": {
+        "id": "43389081",
+        "sourceId": "favbet",
+        "sourceUrl": "https://www.favbet.ro/service/lineout/frontend_api2/",
+        "observedAt": "2026-09-05T08:26:17.034Z",
+        "sport": "Football",
+        "league": "La Liga",
+        "kickoff": "2026-09-05T19:00:00.000Z",
+        "homeTeam": "Villarreal CF",
+        "awayTeam": "RC Deportivo La Coruna",
+        "eventKey": "football|la liga|2026-09-05T19:00:00.000Z|villarreal cf|rc deportivo la coruna",
+        "markets": [
+          {
+            "key": "BOTH_TEAMS_SCORE",
+            "name": "Ambele echipe să înscrie în ambele reprize",
+            "selections": [
+              {
+                "id": "3925958604",
+                "name": "Yes",
+                "odds": 10.5,
+                "group": "Main"
+              },
+              {
+                "id": "3925958605",
+                "name": "No",
+                "odds": 1.01,
+                "group": "Main"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "identities": [
+    {
+      "label": "Kabuscorp SCP / Kabuscorp",
+      "captures": [
+        {
+          "workspace": "data-market-run/workspace",
+          "book": "fortuna",
+          "event": {
+            "id": "ufo:mtch:1vy-0ay",
+            "sourceId": "fortuna",
+            "sourceUrl": "https://api.efortuna.ro/offer/structure/api/v1_0/sport/ufo:sprt:00/tournaments?categories=true&timeFilter=all",
+            "observedAt": "2026-09-05T08:21:27.985Z",
+            "sport": "Football",
+            "league": "Unknown",
+            "kickoff": "2026-09-05T16:00:00.000Z",
+            "homeTeam": "Unam FC Windhoek",
+            "awayTeam": "Kabuscorp",
+            "eventKey": "football|unknown|2026-09-05T16:00:00.000Z|unam fc windhoek|kabuscorp",
+            "markets": [
+              {
+                "key": "MATCH_ODDS",
+                "name": "Meci",
+                "selections": [
+                  {
+                    "id": "ufo:opt:1vy-0ay-00b-01",
+                    "name": "1",
+                    "odds": 1.14,
+                    "group": "Main"
+                  },
+                  {
+                    "id": "ufo:opt:1vy-0ay-00b-00",
+                    "name": "X",
+                    "odds": 5.7,
+                    "group": "Main"
+                  },
+                  {
+                    "id": "ufo:opt:1vy-0ay-00b-02",
+                    "name": "2",
+                    "odds": 15.5,
+                    "group": "Main"
+                  }
+                ]
+              },
+              {
+                "key": "DOUBLE_CHANCE",
+                "name": "Meci - sansa dubla",
+                "selections": [
+                  {
+                    "id": "ufo:opt:1vy-0ay-00d-00",
+                    "name": "1X",
+                    "odds": 1.02,
+                    "group": "Main"
+                  },
+                  {
+                    "id": "ufo:opt:1vy-0ay-00d-01",
+                    "name": "X2",
+                    "odds": 3,
+                    "group": "Main"
+                  },
+                  {
+                    "id": "ufo:opt:1vy-0ay-00d-02",
+                    "name": "12",
+                    "odds": 1.08,
+                    "group": "Main"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "workspace": "data-market-run/workspace",
+          "book": "don",
+          "event": {
+            "id": "17573199",
+            "sourceId": "don",
+            "sport": "Football",
+            "league": "Cupa Conf. CAF",
+            "kickoff": "2026-09-05T16:00:00.000Z",
+            "homeTeam": "Unam FC Windhoek",
+            "awayTeam": "Kabuscorp SCP",
+            "eventKey": "football|cupa conf caf|2026-09-05T16:00:00.000Z|unam fc windhoek|kabuscorp scp",
+            "markets": [
+              {
+                "key": "MATCH_ODDS",
+                "name": "1x2",
+                "selections": [
+                  {
+                    "id": "4445682260",
+                    "name": "1",
+                    "odds": 17,
+                    "handicap": null,
+                    "group": "Main"
+                  },
+                  {
+                    "id": "4445682261",
+                    "name": "X",
+                    "odds": 5,
+                    "handicap": null,
+                    "group": "Main"
+                  },
+                  {
+                    "id": "4445682262",
+                    "name": "2",
+                    "odds": 1.177,
+                    "handicap": null,
+                    "group": "Main"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "label": "Rosenborg U19 v Lillestrom U19 / Rosenborg U19 v Lillestrøm U19",
+      "contract": "::OVER_UNDER::fulltime::4.5::over+under::goals::match",
+      "captures": [
+        {
+          "workspace": "data/workspace",
+          "book": "winbet",
+          "event": {
+            "id": "17894740",
+            "sourceId": "winbet",
+            "sourceUrl": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetUpcoming?culture=ro-RO&timezoneOffset=-180&deviceType=1&numFormat=en-GB&countryCode=RO&sportId=66&eventCount=100&page=1&integration=winbet",
+            "transport": "altenar-sb2-widget-json",
+            "runId": "2026-10-08T06:42:41.285Z",
+            "observedAt": "2026-10-08T06:43:44.054Z",
+            "providerEventId": "17894740",
+            "attributionStatus": "public-integration-unverified-brand",
+            "sport": "Football",
+            "league": "U19 Nasjonal",
+            "kickoff": "2026-10-08T13:00:00.000Z",
+            "homeTeam": "Rosenborg U19",
+            "awayTeam": "Lillestrom U19",
+            "live": false,
+            "eventKey": "football|2026-10-08|rosenborg u19|lillestrom u19",
+            "markets": [
+              {
+                "key": "TOTAL_GOALS",
+                "providerMarketId": "1767289358",
+                "name": "Total",
+                "period": "fulltime",
+                "line": "4.5",
+                "selections": [
+                  {
+                    "id": "4609647845",
+                    "providerOutcomeId": 12,
+                    "name": "Peste 4.5",
+                    "odds": 1.9,
+                    "handicap": null
+                  },
+                  {
+                    "id": "4609647846",
+                    "providerOutcomeId": 13,
+                    "name": "Sub 4.5",
+                    "odds": 1.75,
+                    "handicap": null
+                  }
+                ]
+              }
+            ],
+            "providerEventKey": "football|u19 nasjonal|2026-10-08T13:00:00.000Z|rosenborg u19|lillestrom u19"
+          }
+        },
+        {
+          "workspace": "data/workspace",
+          "book": "admiral",
+          "event": {
+            "id": "27890535",
+            "sourceId": "admiral",
+            "sourceUrl": "https://sportsbook-sm-distribution-api.nsoft.com/api/v1/events?companyUuid=682e6a38-b5ad-4c58-a743-3b06c79e55cd&filter%5Bfrom%5D=2026-10-08T06%3A42%3A41&filter%5Bto%5D=2026-10-29T06%3A42%3A41&timezone=Europe%2FBucharest&language=%7B%22default%22%3A%22ro%22%2C%22tournament%22%3A%22ro%22%2C%22category%22%3A%22ro%22%2C%22sport%22%3A%22ro%22%7D&shortProps=1&offerTemplate=WEB_OVERVIEW&dataFormat=%7B%22default%22%3A%22array%22%2C%22events%22%3A%22object%22%2C%22outcomes%22%3A%22array%22%7D",
+            "transport": "bookmaker-public-json",
+            "runId": "2026-10-08T06:42:41.285Z",
+            "observedAt": "2026-10-08T06:42:46.373Z",
+            "sport": "Football",
+            "league": "U19 Nasjonal",
+            "kickoff": "2026-10-08T13:00:00.000Z",
+            "homeTeam": "Rosenborg U19",
+            "awayTeam": "Lillestrøm U19",
+            "live": false,
+            "eventKey": "football|2026-10-08|rosenborg u19|lillestr m u19",
+            "markets": [
+              {
+                "key": "TOTAL_GOALS",
+                "providerMarketId": 886,
+                "name": "Total goluri S/P",
+                "period": "fulltime",
+                "line": "4.5",
+                "selections": [
+                  {
+                    "id": "1466498130",
+                    "providerOutcomeId": 3236,
+                    "name": "Peste 4.5",
+                    "odds": 1.93,
+                    "handicap": null
+                  },
+                  {
+                    "id": "1466498125",
+                    "providerOutcomeId": 3231,
+                    "name": "Sub 4.5",
+                    "odds": 1.75,
+                    "handicap": null
+                  }
+                ]
+              }
+            ],
+            "providerEventKey": "football|u19 nasjonal|2026-10-08T13:00:00.000Z|rosenborg u19|lillestr m u19"
+          }
+        }
+      ]
+    },
+    {
+      "label": "Miercurea Ciuc v Univ. Craiova / Csikszereda M. Ciuc v Univ. Craiova",
+      "contract": "::ASIAN_HANDICAP::fulltime::2.5/-2.5::home+away::_::_",
+      "captures": [
+        {
+          "workspace": "data/workspace",
+          "book": "winboss",
+          "event": {
+            "id": "72388018",
+            "sourceId": "winboss",
+            "sourceUrl": "https://exalogic.winboss.ro/XSportDatastore/getPalinsestoDelGiorno?systemCode=WINBOSS&lingua=RO&data=YYYYMMDD&idSport=1&idAggregata=1&idAggregata=8&idAggregata=9",
+            "transport": "exalogic-xsport-public-json",
+            "observedAt": "2026-10-08T06:43:39.311Z",
+            "sport": "football",
+            "league": "26420",
+            "kickoff": "2026-10-11T15:00:00.000Z",
+            "homeTeam": "Miercurea Ciuc",
+            "awayTeam": "Univ. Craiova",
+            "live": false,
+            "eventKey": "football|2026-10-11|miercurea ciuc|univ craiova",
+            "markets": [
+              {
+                "key": "ASIAN_HANDICAP",
+                "providerMarketId": "60016:250",
+                "name": "ASIAN HANDICAP",
+                "period": "fulltime",
+                "line": 2.5,
+                "selections": [
+                  {
+                    "id": "72388018:60016:250:1",
+                    "name": "1 (+2.5)",
+                    "odds": 1.29,
+                    "handicap": null
+                  },
+                  {
+                    "id": "72388018:60016:250:2",
+                    "name": "2 (-2.5)",
+                    "odds": 3.25,
+                    "handicap": null
+                  }
+                ]
+              }
+            ],
+            "providerEventKey": "football|26420|2026-10-11T15:00:00.000Z|miercurea ciuc|univ craiova"
+          }
+        },
+        {
+          "workspace": "data/workspace",
+          "book": "contibet",
+          "event": {
+            "id": "314595649151201280",
+            "sourceId": "contibet",
+            "sourceUrl": "https://conticazino.ro/sport#/event/314595649151201280",
+            "observedAt": "2026-10-08T06:43:29.897Z",
+            "sport": "Football",
+            "league": "Liga I 2026/2027",
+            "kickoff": "2026-10-11T15:00:00.000Z",
+            "homeTeam": "Csikszereda M. Ciuc",
+            "awayTeam": "Univ. Craiova",
+            "eventKey": "football|2026-10-11|csikszereda m ciuc|univ craiova",
+            "markets": [
+              {
+                "key": "ASIAN_HANDICAP",
+                "name": "Handicap asiatic 2.5, Timp regulamentar",
+                "period": "fulltime",
+                "selections": [
+                  {
+                    "id": "314595649266361856",
+                    "name": "1 (2.5)",
+                    "odds": 1.3,
+                    "handicap": 2.5,
+                    "group": "Main"
+                  },
+                  {
+                    "id": "314595649287641856",
+                    "name": "2 (-2.5)",
+                    "odds": 3.15,
+                    "handicap": -2.5,
+                    "group": "Main"
+                  }
+                ]
+              }
+            ],
+            "providerEventKey": "football|liga i 2026 2027|2026-10-11T15:00:00.000Z|csikszereda m ciuc|univ craiova"
+          }
+        }
+      ]
+    },
+    {
+      "label": "Viking v FC Bayern Munchen / Viking v Bayern M",
+      "contract": "::ASIAN_HANDICAP::fulltime::3.5/-3.5::home+away::_::_",
+      "captures": [
+        {
+          "workspace": "data/workspace",
+          "book": "favbet",
+          "event": {
+            "id": "43411553",
+            "sourceId": "favbet",
+            "sourceUrl": "https://www.favbet.ro/ro/sports/event/17409/43411553/",
+            "observedAt": "2026-10-08T06:45:35.140Z",
+            "sport": "Football",
+            "league": "Champions League",
+            "kickoff": "2026-10-13T19:00:00.000Z",
+            "homeTeam": "Viking",
+            "awayTeam": "FC Bayern Munchen",
+            "eventKey": "football|2026-10-13|viking|bayern munchen",
+            "markets": [
+              {
+                "key": "ASIAN_HANDICAP",
+                "providerMarketId": "190:3.5",
+                "name": "Handicap",
+                "period": "fulltime",
+                "line": 3.5,
+                "selections": [
+                  {
+                    "id": "3928039191",
+                    "name": "1 (+3.5)",
+                    "odds": 1.54,
+                    "group": "Main"
+                  },
+                  {
+                    "id": "3928039192",
+                    "name": "2 (-3.5)",
+                    "odds": 2.54,
+                    "group": "Main"
+                  }
+                ]
+              }
+            ],
+            "providerEventKey": "football|champions league|2026-10-13T19:00:00.000Z|viking|fc bayern munchen"
+          }
+        },
+        {
+          "workspace": "data/workspace",
+          "book": "admiral",
+          "event": {
+            "id": "27367195",
+            "sourceId": "admiral",
+            "sourceUrl": "https://sportsbook-sm-distribution-api.nsoft.com/api/v1/events?companyUuid=682e6a38-b5ad-4c58-a743-3b06c79e55cd&filter%5Bfrom%5D=2026-10-08T06%3A42%3A41&filter%5Bto%5D=2026-10-29T06%3A42%3A41&timezone=Europe%2FBucharest&language=%7B%22default%22%3A%22ro%22%2C%22tournament%22%3A%22ro%22%2C%22category%22%3A%22ro%22%2C%22sport%22%3A%22ro%22%7D&shortProps=1&offerTemplate=WEB_OVERVIEW&dataFormat=%7B%22default%22%3A%22array%22%2C%22events%22%3A%22object%22%2C%22outcomes%22%3A%22array%22%7D",
+            "transport": "bookmaker-public-json",
+            "runId": "2026-10-08T06:42:41.285Z",
+            "observedAt": "2026-10-08T06:42:46.373Z",
+            "sport": "Football",
+            "league": "UEFA Liga Campionilor",
+            "kickoff": "2026-10-13T19:00:00.000Z",
+            "homeTeam": "Viking",
+            "awayTeam": "Bayern M",
+            "live": false,
+            "eventKey": "football|2026-10-13|viking|bayern m",
+            "markets": [
+              {
+                "key": "ASIAN_HANDICAP",
+                "providerMarketId": 262,
+                "name": "Handicap",
+                "period": "fulltime",
+                "line": "3.5",
+                "selections": [
+                  {
+                    "id": "1463933640",
+                    "providerOutcomeId": 643,
+                    "providerName": "H1 3.5",
+                    "name": "1 (3.5)",
+                    "odds": 1.5,
+                    "handicap": 3.5
+                  },
+                  {
+                    "id": "1463933645",
+                    "providerOutcomeId": 646,
+                    "providerName": "H2 -3.5",
+                    "name": "2 (-3.5)",
+                    "odds": 2.48,
+                    "handicap": -3.5
+                  }
+                ]
+              }
+            ],
+            "providerEventKey": "football|uefa liga campionilor|2026-10-13T19:00:00.000Z|viking|bayern m"
+          }
+        }
+      ]
+    },
+    {
+      "label": "Augsburg v Bayern Munich / Augsburg v Bayern M",
+      "contract": "::ASIAN_HANDICAP::fulltime::3.5/-3.5::home+away::_::_",
+      "captures": [
+        {
+          "workspace": "data/workspace",
+          "book": "unibet",
+          "event": {
+            "id": "88668720a368bfedf8d51f3842b720fc",
+            "sourceId": "unibet",
+            "sourceUrl": "https://sportsbff-ams.kindredext.net/sports-api/api/v2/views/az-menu",
+            "transport": "kindred-sports-bff-v2",
+            "observedAt": "2026-10-07T23:26:33.094Z",
+            "status": "PreGame",
+            "sport": "Football",
+            "league": "Bundesliga",
+            "kickoff": "2026-10-10T13:30:00.000Z",
+            "homeTeam": "Augsburg",
+            "awayTeam": "Bayern Munich",
+            "eventKey": "football|2026-10-10|augsburg|bayern munich",
+            "live": false,
+            "markets": [
+              {
+                "id": "2_way_handicap:3.5",
+                "key": "HANDICAP",
+                "name": "Handicap asiatic",
+                "period": "fulltime",
+                "line": "+3.5",
+                "selections": [
+                  {
+                    "id": "88668720a368bfedf8d51f3842b720fc:base:2_way_handicap:4qrgticwb0hxs30omgrzmcatb:3.5:offering",
+                    "name": "1 +3.5",
+                    "odds": 1.35,
+                    "handicap": "+3.5",
+                    "group": "Main"
+                  },
+                  {
+                    "id": "88668720a368bfedf8d51f3842b720fc:base:2_way_handicap:1gan0w41p2fn33qgn80kjxudh:3.5:offering",
+                    "name": "2 -3.5",
+                    "odds": 3.1,
+                    "handicap": "-3.5",
+                    "group": "Main"
+                  }
+                ],
+                "live": false
+              }
+            ],
+            "providerEventKey": "football|bundesliga|2026-10-10T13:30:00.000Z|augsburg|bayern munich"
+          }
+        },
+        {
+          "workspace": "data/workspace",
+          "book": "admiral",
+          "event": {
+            "id": "27415500",
+            "sourceId": "admiral",
+            "sourceUrl": "https://sportsbook-sm-distribution-api.nsoft.com/api/v1/events?companyUuid=682e6a38-b5ad-4c58-a743-3b06c79e55cd&filter%5Bfrom%5D=2026-10-08T06%3A42%3A41&filter%5Bto%5D=2026-10-29T06%3A42%3A41&timezone=Europe%2FBucharest&language=%7B%22default%22%3A%22ro%22%2C%22tournament%22%3A%22ro%22%2C%22category%22%3A%22ro%22%2C%22sport%22%3A%22ro%22%7D&shortProps=1&offerTemplate=WEB_OVERVIEW&dataFormat=%7B%22default%22%3A%22array%22%2C%22events%22%3A%22object%22%2C%22outcomes%22%3A%22array%22%7D",
+            "transport": "bookmaker-public-json",
+            "runId": "2026-10-08T06:42:41.285Z",
+            "observedAt": "2026-10-08T06:42:46.373Z",
+            "sport": "Football",
+            "league": "Bundesliga",
+            "kickoff": "2026-10-10T13:30:00.000Z",
+            "homeTeam": "Augsburg",
+            "awayTeam": "Bayern M",
+            "live": false,
+            "eventKey": "football|2026-10-10|augsburg|bayern m",
+            "markets": [
+              {
+                "key": "ASIAN_HANDICAP",
+                "providerMarketId": 262,
+                "name": "Handicap",
+                "period": "fulltime",
+                "line": "3.5",
+                "selections": [
+                  {
+                    "id": "1459054680",
+                    "providerOutcomeId": 643,
+                    "providerName": "H1 3.5",
+                    "name": "1 (3.5)",
+                    "odds": 1.34,
+                    "handicap": 3.5
+                  },
+                  {
+                    "id": "1459054685",
+                    "providerOutcomeId": 646,
+                    "providerName": "H2 -3.5",
+                    "name": "2 (-3.5)",
+                    "odds": 3.1,
+                    "handicap": -3.5
+                  }
+                ]
+              }
+            ],
+            "providerEventKey": "football|bundesliga|2026-10-10T13:30:00.000Z|augsburg|bayern m"
+          }
+        }
+      ]
+    },
+    {
+      "label": "Viking v Bayern Munich / Viking v Bayern M",
+      "contract": "::ASIAN_HANDICAP::fulltime::3.5/-3.5::home+away::_::_",
+      "captures": [
+        {
+          "workspace": "data/workspace",
+          "book": "unibet",
+          "event": {
+            "id": "e0783c874de0534068b4501d1cf93248",
+            "sourceId": "unibet",
+            "sourceUrl": "https://sportsbff-ams.kindredext.net/sports-api/api/v2/views/az-menu",
+            "transport": "kindred-sports-bff-v2",
+            "observedAt": "2026-10-07T23:26:33.094Z",
+            "status": "PreGame",
+            "sport": "Football",
+            "league": "UEFA Champions League",
+            "kickoff": "2026-10-13T19:00:00.000Z",
+            "homeTeam": "Viking",
+            "awayTeam": "Bayern Munich",
+            "eventKey": "football|2026-10-13|viking|bayern munich",
+            "live": false,
+            "markets": [
+              {
+                "id": "2_way_handicap:3.5",
+                "key": "HANDICAP",
+                "name": "Handicap asiatic",
+                "period": "fulltime",
+                "line": "+3.5",
+                "selections": [
+                  {
+                    "id": "e0783c874de0534068b4501d1cf93248:base:2_way_handicap:3yvxovf3xl4k8d88b4w1dycc6:3.5:offering",
+                    "name": "1 +3.5",
+                    "odds": 1.52,
+                    "handicap": "+3.5",
+                    "group": "Main"
+                  },
+                  {
+                    "id": "e0783c874de0534068b4501d1cf93248:base:2_way_handicap:1gan0w41p2fn33qgn80kjxudh:3.5:offering",
+                    "name": "2 -3.5",
+                    "odds": 2.4,
+                    "handicap": "-3.5",
+                    "group": "Main"
+                  }
+                ],
+                "live": false
+              }
+            ],
+            "providerEventKey": "football|uefa champions league|2026-10-13T19:00:00.000Z|viking|bayern munich"
+          }
+        },
+        {
+          "workspace": "data/workspace",
+          "book": "admiral",
+          "event": {
+            "id": "27367195",
+            "sourceId": "admiral",
+            "sourceUrl": "https://sportsbook-sm-distribution-api.nsoft.com/api/v1/events?companyUuid=682e6a38-b5ad-4c58-a743-3b06c79e55cd&filter%5Bfrom%5D=2026-10-08T06%3A42%3A41&filter%5Bto%5D=2026-10-29T06%3A42%3A41&timezone=Europe%2FBucharest&language=%7B%22default%22%3A%22ro%22%2C%22tournament%22%3A%22ro%22%2C%22category%22%3A%22ro%22%2C%22sport%22%3A%22ro%22%7D&shortProps=1&offerTemplate=WEB_OVERVIEW&dataFormat=%7B%22default%22%3A%22array%22%2C%22events%22%3A%22object%22%2C%22outcomes%22%3A%22array%22%7D",
+            "transport": "bookmaker-public-json",
+            "runId": "2026-10-08T06:42:41.285Z",
+            "observedAt": "2026-10-08T06:42:46.373Z",
+            "sport": "Football",
+            "league": "UEFA Liga Campionilor",
+            "kickoff": "2026-10-13T19:00:00.000Z",
+            "homeTeam": "Viking",
+            "awayTeam": "Bayern M",
+            "live": false,
+            "eventKey": "football|2026-10-13|viking|bayern m",
+            "markets": [
+              {
+                "key": "ASIAN_HANDICAP",
+                "providerMarketId": 262,
+                "name": "Handicap",
+                "period": "fulltime",
+                "line": "3.5",
+                "selections": [
+                  {
+                    "id": "1463933640",
+                    "providerOutcomeId": 643,
+                    "providerName": "H1 3.5",
+                    "name": "1 (3.5)",
+                    "odds": 1.5,
+                    "handicap": 3.5
+                  },
+                  {
+                    "id": "1463933645",
+                    "providerOutcomeId": 646,
+                    "providerName": "H2 -3.5",
+                    "name": "2 (-3.5)",
+                    "odds": 2.48,
+                    "handicap": -3.5
+                  }
+                ]
+              }
+            ],
+            "providerEventKey": "football|uefa liga campionilor|2026-10-13T19:00:00.000Z|viking|bayern m"
+          }
+        }
+      ]
+    },
+    {
+      "label": "FK Csikszereda Miercurea Ciuc v Universitatea Craiova / Csikszereda M. Ciuc v Univ. Craiova",
+      "contract": "::ASIAN_HANDICAP::fulltime::3.5/-3.5::home+away::_::_",
+      "captures": [
+        {
+          "workspace": "data/workspace",
+          "book": "favbet",
+          "event": {
+            "id": "43438024",
+            "sourceId": "favbet",
+            "sourceUrl": "https://www.favbet.ro/ro/sports/event/17541/43438024/",
+            "observedAt": "2026-10-08T06:45:35.140Z",
+            "sport": "Football",
+            "league": "Romania 1",
+            "kickoff": "2026-10-11T15:00:00.000Z",
+            "homeTeam": "FK Csikszereda Miercurea Ciuc",
+            "awayTeam": "Universitatea Craiova",
+            "eventKey": "football|2026-10-11|csikszereda miercurea ciuc|universitatea craiova",
+            "markets": [
+              {
+                "key": "ASIAN_HANDICAP",
+                "providerMarketId": "190:3.5",
+                "name": "Handicap",
+                "period": "fulltime",
+                "line": 3.5,
+                "selections": [
+                  {
+                    "id": "3936011842",
+                    "name": "1 (+3.5)",
+                    "odds": 1.1,
+                    "group": "Main"
+                  },
+                  {
+                    "id": "3936011843",
+                    "name": "2 (-3.5)",
+                    "odds": 6.05,
+                    "group": "Main"
+                  }
+                ]
+              }
+            ],
+            "providerEventKey": "football|romania 1|2026-10-11T15:00:00.000Z|fk csikszereda miercurea ciuc|universitatea craiova"
+          }
+        },
+        {
+          "workspace": "data/workspace",
+          "book": "contibet",
+          "event": {
+            "id": "314595649151201280",
+            "sourceId": "contibet",
+            "sourceUrl": "https://conticazino.ro/sport#/event/314595649151201280",
+            "observedAt": "2026-10-08T06:43:29.897Z",
+            "sport": "Football",
+            "league": "Liga I 2026/2027",
+            "kickoff": "2026-10-11T15:00:00.000Z",
+            "homeTeam": "Csikszereda M. Ciuc",
+            "awayTeam": "Univ. Craiova",
+            "eventKey": "football|2026-10-11|csikszereda m ciuc|univ craiova",
+            "markets": [
+              {
+                "key": "ASIAN_HANDICAP",
+                "name": "Handicap asiatic 3.5, Timp regulamentar",
+                "period": "fulltime",
+                "selections": [
+                  {
+                    "id": "314595649262166784",
+                    "name": "1 (3.5)",
+                    "odds": 1.07,
+                    "handicap": 3.5,
+                    "group": "Main"
+                  },
+                  {
+                    "id": "314595649285545216",
+                    "name": "2 (-3.5)",
+                    "odds": 6,
+                    "handicap": -3.5,
+                    "group": "Main"
+                  }
+                ]
+              }
+            ],
+            "providerEventKey": "football|liga i 2026 2027|2026-10-11T15:00:00.000Z|csikszereda m ciuc|univ craiova"
+          }
+        }
+      ]
+    },
+    {
+      "label": "U19/Rosenborg BK v U19/Lillestrom SK / Rosenborg U19 v Lillestrom U19",
+      "contract": "::OVER_UNDER::fulltime::4.5::over+under::goals::match",
+      "captures": [
+        {
+          "workspace": "data/workspace",
+          "book": "maxbet",
+          "event": {
+            "id": "11085341",
+            "sourceId": "maxbet",
+            "sourceUrl": "https://sportsbook-sm-distribution-api.nsoft.com/api/v1/events?companyUuid=2191e3d6-b0e1-4f06-8b6a-4683203fb2fe&filter%5Bfrom%5D=2026-10-08T06%3A43%3A26&filter%5Bto%5D=2026-10-29T06%3A43%3A26&timezone=Europe%2FBucharest&language=%7B%22default%22%3A%22ro%22%2C%22tournament%22%3A%22ro%22%2C%22category%22%3A%22ro%22%2C%22sport%22%3A%22ro%22%7D&shortProps=1&offerTemplate=WEB_OVERVIEW&dataFormat=%7B%22default%22%3A%22array%22%2C%22events%22%3A%22object%22%2C%22outcomes%22%3A%22array%22%7D",
+            "transport": "nsoft-public-sports-json",
+            "runId": "2026-10-08T06:42:41.285Z",
+            "observedAt": "2026-10-08T06:43:31.963Z",
+            "sport": "Football",
+            "league": "U19 Nasjonal",
+            "kickoff": "2026-10-08T13:00:00.000Z",
+            "homeTeam": "U19/Rosenborg BK",
+            "awayTeam": "U19/Lillestrom SK",
+            "live": false,
+            "eventKey": "football|2026-10-08|u19 rosenborg|u19 lillestrom sk",
+            "markets": [
+              {
+                "key": "TOTAL_GOALS",
+                "providerMarketId": 1547,
+                "name": "Total goluri",
+                "period": "fulltime",
+                "line": "4.5",
+                "selections": [
+                  {
+                    "id": "615975950",
+                    "providerOutcomeId": 5312,
+                    "name": "Peste 4.5",
+                    "odds": 1.95,
+                    "handicap": null
+                  },
+                  {
+                    "id": "615975953",
+                    "providerOutcomeId": 5315,
+                    "name": "Sub 4.5",
+                    "odds": 1.77,
+                    "handicap": null
+                  }
+                ]
+              }
+            ],
+            "providerEventKey": "football|u19 nasjonal|2026-10-08T13:00:00.000Z|u19 rosenborg bk|u19 lillestrom sk"
+          }
+        },
+        {
+          "workspace": "data/workspace",
+          "book": "baumbet",
+          "event": {
+            "id": "17894740",
+            "sourceId": "baumbet",
+            "sourceUrl": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetUpcoming?culture=ro-RO&timezoneOffset=-180&deviceType=1&numFormat=en-GB&countryCode=RO&sportId=66&eventCount=100&page=1&integration=baumbet",
+            "transport": "altenar-sb2-widget-json",
+            "runId": "2026-10-08T06:42:41.285Z",
+            "observedAt": "2026-10-08T06:42:47.626Z",
+            "providerEventId": "17894740",
+            "attributionStatus": "public-integration-unverified-brand",
+            "sport": "Football",
+            "league": "U19 Nasjonal",
+            "kickoff": "2026-10-08T13:00:00.000Z",
+            "homeTeam": "Rosenborg U19",
+            "awayTeam": "Lillestrom U19",
+            "live": false,
+            "eventKey": "football|2026-10-08|rosenborg u19|lillestrom u19",
+            "markets": [
+              {
+                "key": "TOTAL_GOALS",
+                "providerMarketId": "1767289358",
+                "name": "Total",
+                "period": "fulltime",
+                "line": "4.5",
+                "selections": [
+                  {
+                    "id": "4609647845",
+                    "providerOutcomeId": 12,
+                    "name": "Peste 4.5",
+                    "odds": 1.9,
+                    "handicap": null
+                  },
+                  {
+                    "id": "4609647846",
+                    "providerOutcomeId": 13,
+                    "name": "Sub 4.5",
+                    "odds": 1.75,
+                    "handicap": null
+                  }
+                ]
+              }
+            ],
+            "providerEventKey": "football|u19 nasjonal|2026-10-08T13:00:00.000Z|rosenborg u19|lillestrom u19"
+          }
+        }
+      ]
+    },
+    {
+      "label": "Royale Union SG v Leuven / Royale Union SG v OH Leuven",
+      "contract": "::ASIAN_HANDICAP::fulltime::-3.5/3.5::home+away::_::_",
+      "captures": [
+        {
+          "workspace": "data/workspace",
+          "book": "superbet",
+          "event": {
+            "id": "14011417",
+            "sourceId": "superbet",
+            "sport": "Football",
+            "league": "Belgia - Pro League",
+            "kickoff": "2026-10-11T14:00:00.000Z",
+            "homeTeam": "Royale Union SG",
+            "awayTeam": "Leuven",
+            "live": false,
+            "isLive": false,
+            "eventKey": "football|2026-10-11|royale union|leuven",
+            "sourceUrl": null,
+            "markets": [
+              {
+                "key": "sb:200736:Handicap",
+                "name": "Handicap",
+                "period": "fulltime",
+                "family": "ASIAN_HANDICAP",
+                "selections": [
+                  {
+                    "id": "e413cf37-1d8b-5ba3-8edc-f1120094a82d",
+                    "name": "1 (-3.5)",
+                    "odds": 4.9,
+                    "handicap": null
+                  },
+                  {
+                    "id": "c5ed78fa-cb6b-553c-93bb-5df86d87251b",
+                    "name": "2 (3.5)",
+                    "odds": 1.17,
+                    "handicap": null
+                  }
+                ],
+                "live": false
+              }
+            ],
+            "providerEventKey": "football|belgia pro league|2026-10-11T14:00:00.000Z|royale union sg|leuven"
+          }
+        },
+        {
+          "workspace": "data/workspace",
+          "book": "admiral",
+          "event": {
+            "id": "27759925",
+            "sourceId": "admiral",
+            "sourceUrl": "https://sportsbook-sm-distribution-api.nsoft.com/api/v1/events?companyUuid=682e6a38-b5ad-4c58-a743-3b06c79e55cd&filter%5Bfrom%5D=2026-10-08T06%3A42%3A41&filter%5Bto%5D=2026-10-29T06%3A42%3A41&timezone=Europe%2FBucharest&language=%7B%22default%22%3A%22ro%22%2C%22tournament%22%3A%22ro%22%2C%22category%22%3A%22ro%22%2C%22sport%22%3A%22ro%22%7D&shortProps=1&offerTemplate=WEB_OVERVIEW&dataFormat=%7B%22default%22%3A%22array%22%2C%22events%22%3A%22object%22%2C%22outcomes%22%3A%22array%22%7D",
+            "transport": "bookmaker-public-json",
+            "runId": "2026-10-08T06:42:41.285Z",
+            "observedAt": "2026-10-08T06:42:46.373Z",
+            "sport": "Football",
+            "league": "Pro League",
+            "kickoff": "2026-10-11T14:00:00.000Z",
+            "homeTeam": "Royale Union SG",
+            "awayTeam": "OH Leuven",
+            "live": false,
+            "eventKey": "football|2026-10-11|royale union|oh leuven",
+            "markets": [
+              {
+                "key": "ASIAN_HANDICAP",
+                "providerMarketId": 262,
+                "name": "Handicap",
+                "period": "fulltime",
+                "line": "-3.5",
+                "selections": [
+                  {
+                    "id": "1464843055",
+                    "providerOutcomeId": 643,
+                    "providerName": "H1 -3.5",
+                    "name": "1 (-3.5)",
+                    "odds": 4.8,
+                    "handicap": -3.5
+                  },
+                  {
+                    "id": "1464843060",
+                    "providerOutcomeId": 646,
+                    "providerName": "H2 3.5",
+                    "name": "2 (3.5)",
+                    "odds": 1.16,
+                    "handicap": 3.5
+                  }
+                ]
+              }
+            ],
+            "providerEventKey": "football|pro league|2026-10-11T14:00:00.000Z|royale union sg|oh leuven"
+          }
+        }
+      ]
+    },
+    {
+      "label": "Al Ain v Al Ittihad Kalba / Al Ain v Ittihad Kalba",
+      "contract": "::OVER_UNDER::fulltime::3.5::over+under::goals::match",
+      "captures": [
+        {
+          "workspace": "data/workspace",
+          "book": "favbet",
+          "event": {
+            "id": "43458736",
+            "sourceId": "favbet",
+            "sourceUrl": "https://www.favbet.ro/ro/sports/event/175966/43458736/",
+            "observedAt": "2026-10-08T06:45:35.140Z",
+            "sport": "Football",
+            "league": "League Cup",
+            "kickoff": "2026-10-08T13:10:00.000Z",
+            "homeTeam": "Al Ain",
+            "awayTeam": "Al Ittihad Kalba",
+            "eventKey": "football|2026-10-08|al ain|al ittihad kalba",
+            "markets": [
+              {
+                "key": "TOTAL_GOALS",
+                "providerMarketId": "50:3.5",
+                "name": "Peste / Sub",
+                "period": "fulltime",
+                "line": 3.5,
+                "selections": [
+                  {
+                    "id": "3936803393",
+                    "name": "Over 3.5",
+                    "odds": 1.95,
+                    "group": "Main"
+                  },
+                  {
+                    "id": "3936803395",
+                    "name": "Under 3.5",
+                    "odds": 1.77,
+                    "group": "Main"
+                  }
+                ]
+              }
+            ],
+            "providerEventKey": "football|league cup|2026-10-08T13:10:00.000Z|al ain|al ittihad kalba"
+          }
+        },
+        {
+          "workspace": "data/workspace",
+          "book": "baumbet",
+          "event": {
+            "id": "17893790",
+            "sourceId": "baumbet",
+            "sourceUrl": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetUpcoming?culture=ro-RO&timezoneOffset=-180&deviceType=1&numFormat=en-GB&countryCode=RO&sportId=66&eventCount=100&page=1&integration=baumbet",
+            "transport": "altenar-sb2-widget-json",
+            "runId": "2026-10-08T06:42:41.285Z",
+            "observedAt": "2026-10-08T06:42:47.626Z",
+            "providerEventId": "17893790",
+            "attributionStatus": "public-integration-unverified-brand",
+            "sport": "Football",
+            "league": "League Cup",
+            "kickoff": "2026-10-08T13:10:00.000Z",
+            "homeTeam": "Al Ain",
+            "awayTeam": "Ittihad Kalba",
+            "live": false,
+            "eventKey": "football|2026-10-08|al ain|ittihad kalba",
+            "markets": [
+              {
+                "key": "TOTAL_GOALS",
+                "providerMarketId": "1767287411",
+                "name": "Total",
+                "period": "fulltime",
+                "line": "3.5",
+                "selections": [
+                  {
+                    "id": "4609643166",
+                    "providerOutcomeId": 12,
+                    "name": "Peste 3.5",
+                    "odds": 1.95,
+                    "handicap": null
+                  },
+                  {
+                    "id": "4609643167",
+                    "providerOutcomeId": 13,
+                    "name": "Sub 3.5",
+                    "odds": 1.75,
+                    "handicap": null
+                  }
+                ]
+              }
+            ],
+            "providerEventKey": "football|league cup|2026-10-08T13:10:00.000Z|al ain|ittihad kalba"
+          }
+        }
+      ]
+    },
+    {
+      "label": "Bodø/Glimt v Kristiansund / Bodo/Glimt v Kristiansund BK",
+      "contract": "::ASIAN_HANDICAP::fulltime::-4.5/4.5::home+away::_::_",
+      "captures": [
+        {
+          "workspace": "data/workspace",
+          "book": "unibet",
+          "event": {
+            "id": "6ddc4a916d9699af63bca14429ed9084",
+            "sourceId": "unibet",
+            "sourceUrl": "https://sportsbff-ams.kindredext.net/sports-api/api/v2/views/az-menu",
+            "transport": "kindred-sports-bff-v2",
+            "observedAt": "2026-10-07T23:26:33.094Z",
+            "status": "PreGame",
+            "sport": "Football",
+            "league": "Eliteserien",
+            "kickoff": "2026-10-10T14:00:00.000Z",
+            "homeTeam": "Bodø/Glimt",
+            "awayTeam": "Kristiansund",
+            "eventKey": "football|2026-10-10|bod glimt|kristiansund",
+            "live": false,
+            "markets": [
+              {
+                "id": "2_way_handicap:-4.5",
+                "key": "HANDICAP",
+                "name": "Handicap asiatic",
+                "period": "fulltime",
+                "line": "-4.5",
+                "selections": [
+                  {
+                    "id": "6ddc4a916d9699af63bca14429ed9084:base:2_way_handicap:7rm3ehjdqgn831fc59sujref:-4.5:offering",
+                    "name": "1 -4.5",
+                    "odds": 3.5,
+                    "handicap": "-4.5",
+                    "group": "Main"
+                  },
+                  {
+                    "id": "6ddc4a916d9699af63bca14429ed9084:base:2_way_handicap:2wn1l5dau9e2mk4ji647xwi5o:-4.5:offering",
+                    "name": "2 +4.5",
+                    "odds": 1.27,
+                    "handicap": "+4.5",
+                    "group": "Main"
+                  }
+                ],
+                "live": false
+              }
+            ],
+            "providerEventKey": "football|eliteserien|2026-10-10T14:00:00.000Z|bod glimt|kristiansund"
+          }
+        },
+        {
+          "workspace": "data/workspace",
+          "book": "excelbet",
+          "event": {
+            "id": "67015402",
+            "sourceId": "excelbet",
+            "sourceUrl": "https://exalogic.excelbet.ro/XSportDatastore/getPalinsestoDelGiorno?systemCode=EXCELBET&lingua=RO&data=YYYYMMDD&idSport=1&idAggregata=1&idAggregata=8&idAggregata=9",
+            "transport": "exalogic-xsport-public-json",
+            "observedAt": "2026-10-08T06:42:55.150Z",
+            "sport": "football",
+            "league": "26410",
+            "kickoff": "2026-10-10T14:00:00.000Z",
+            "homeTeam": "Bodo/Glimt",
+            "awayTeam": "Kristiansund BK",
+            "live": false,
+            "eventKey": "football|2026-10-10|bodo glimt|kristiansund",
+            "markets": [
+              {
+                "key": "ASIAN_HANDICAP",
+                "providerMarketId": "60016:-450",
+                "name": "ASIAN HANDICAP",
+                "period": "fulltime",
+                "line": -4.5,
+                "selections": [
+                  {
+                    "id": "67015402:60016:-450:1",
+                    "name": "1 (-4.5)",
+                    "odds": 3.6,
+                    "handicap": null
+                  },
+                  {
+                    "id": "67015402:60016:-450:2",
+                    "name": "2 (+4.5)",
+                    "odds": 1.26,
+                    "handicap": null
+                  }
+                ]
+              }
+            ],
+            "providerEventKey": "football|26410|2026-10-10T14:00:00.000Z|bodo glimt|kristiansund bk"
+          }
+        }
+      ]
+    },
+    {
+      "label": "Benfica v Vitoria Guimaraes / Benfica v Guimaraes",
+      "contract": "::ASIAN_HANDICAP::fulltime::-3.5/3.5::home+away::_::_",
+      "captures": [
+        {
+          "workspace": "data/workspace",
+          "book": "superbet",
+          "event": {
+            "id": "14025525",
+            "sourceId": "superbet",
+            "sport": "Football",
+            "league": "Portugalia - Primeira Liga",
+            "kickoff": "2026-10-11T17:00:00.000Z",
+            "homeTeam": "Benfica",
+            "awayTeam": "Vitoria Guimaraes",
+            "live": false,
+            "isLive": false,
+            "eventKey": "football|2026-10-11|benfica|vitoria guimaraes",
+            "sourceUrl": null,
+            "markets": [
+              {
+                "key": "sb:200736:Handicap",
+                "name": "Handicap",
+                "period": "fulltime",
+                "family": "ASIAN_HANDICAP",
+                "selections": [
+                  {
+                    "id": "4c687153-fa04-5bf0-b9ae-ae4eaf71a7d3",
+                    "name": "1 (-3.5)",
+                    "odds": 4.4,
+                    "handicap": null
+                  },
+                  {
+                    "id": "80f3fadb-7fc7-5182-89ef-0c9eafcbbeba",
+                    "name": "2 (3.5)",
+                    "odds": 1.17,
+                    "handicap": null
+                  }
+                ],
+                "live": false
+              }
+            ],
+            "providerEventKey": "football|portugalia primeira liga|2026-10-11T17:00:00.000Z|benfica|vitoria guimaraes"
+          }
+        },
+        {
+          "workspace": "data/workspace",
+          "book": "excelbet",
+          "event": {
+            "id": "72530962",
+            "sourceId": "excelbet",
+            "sourceUrl": "https://exalogic.excelbet.ro/XSportDatastore/getPalinsestoDelGiorno?systemCode=EXCELBET&lingua=RO&data=YYYYMMDD&idSport=1&idAggregata=1&idAggregata=8&idAggregata=9",
+            "transport": "exalogic-xsport-public-json",
+            "observedAt": "2026-10-08T06:42:55.150Z",
+            "sport": "football",
+            "league": "26420",
+            "kickoff": "2026-10-11T17:00:00.000Z",
+            "homeTeam": "Benfica",
+            "awayTeam": "Guimaraes",
+            "live": false,
+            "eventKey": "football|2026-10-11|benfica|guimaraes",
+            "markets": [
+              {
+                "key": "ASIAN_HANDICAP",
+                "providerMarketId": "60016:-350",
+                "name": "ASIAN HANDICAP",
+                "period": "fulltime",
+                "line": -3.5,
+                "selections": [
+                  {
+                    "id": "72530962:60016:-350:1",
+                    "name": "1 (-3.5)",
+                    "odds": 4.3,
+                    "handicap": null
+                  },
+                  {
+                    "id": "72530962:60016:-350:2",
+                    "name": "2 (+3.5)",
+                    "odds": 1.18,
+                    "handicap": null
+                  }
+                ]
+              }
+            ],
+            "providerEventKey": "football|26420|2026-10-11T17:00:00.000Z|benfica|guimaraes"
+          }
+        }
+      ]
+    },
+    {
+      "label": "Inter Milano v Parma / Inter M. v Parma",
+      "contract": "::ASIAN_HANDICAP::fulltime::-3.5/3.5::home+away::_::_",
+      "captures": [
+        {
+          "workspace": "data/workspace",
+          "book": "superbet",
+          "event": {
+            "id": "14025532",
+            "sourceId": "superbet",
+            "sport": "Football",
+            "league": "Italia - Serie A",
+            "kickoff": "2026-10-10T16:00:00.000Z",
+            "homeTeam": "Inter Milano",
+            "awayTeam": "Parma",
+            "live": false,
+            "isLive": false,
+            "eventKey": "football|2026-10-10|inter milano|parma",
+            "sourceUrl": null,
+            "markets": [
+              {
+                "key": "sb:200736:Handicap",
+                "name": "Handicap",
+                "period": "fulltime",
+                "family": "ASIAN_HANDICAP",
+                "selections": [
+                  {
+                    "id": "9ff89296-6daf-5d25-8934-7e6ab72c6c4b",
+                    "name": "1 (-3.5)",
+                    "odds": 3.45,
+                    "handicap": null
+                  },
+                  {
+                    "id": "17b39149-8333-5d05-b1e7-5d521443205d",
+                    "name": "2 (3.5)",
+                    "odds": 1.3,
+                    "handicap": null
+                  }
+                ],
+                "live": false
+              }
+            ],
+            "providerEventKey": "football|italia serie a|2026-10-10T16:00:00.000Z|inter milano|parma"
+          }
+        },
+        {
+          "workspace": "data/workspace",
+          "book": "excelbet",
+          "event": {
+            "id": "71945294",
+            "sourceId": "excelbet",
+            "sourceUrl": "https://exalogic.excelbet.ro/XSportDatastore/getPalinsestoDelGiorno?systemCode=EXCELBET&lingua=RO&data=YYYYMMDD&idSport=1&idAggregata=1&idAggregata=8&idAggregata=9",
+            "transport": "exalogic-xsport-public-json",
+            "observedAt": "2026-10-08T06:42:55.150Z",
+            "sport": "football",
+            "league": "26410",
+            "kickoff": "2026-10-10T16:00:00.000Z",
+            "homeTeam": "Inter M.",
+            "awayTeam": "Parma",
+            "live": false,
+            "eventKey": "football|2026-10-10|inter m|parma",
+            "markets": [
+              {
+                "key": "ASIAN_HANDICAP",
+                "providerMarketId": "60016:-350",
+                "name": "ASIAN HANDICAP",
+                "period": "fulltime",
+                "line": -3.5,
+                "selections": [
+                  {
+                    "id": "71945294:60016:-350:1",
+                    "name": "1 (-3.5)",
+                    "odds": 3.35,
+                    "handicap": null
+                  },
+                  {
+                    "id": "71945294:60016:-350:2",
+                    "name": "2 (+3.5)",
+                    "odds": 1.28,
+                    "handicap": null
+                  }
+                ]
+              }
+            ],
+            "providerEventKey": "football|26410|2026-10-10T16:00:00.000Z|inter m|parma"
+          }
+        }
+      ]
+    },
+    {
+      "label": "Politehnica Timisoara v CSA Steaua Bucuresti / Poli Timisoara v Steaua Buc.",
+      "contract": "::BTTS::fulltime::_::yes+no::_::_",
+      "captures": [
+        {
+          "workspace": "data/workspace",
+          "book": "favbet",
+          "event": {
+            "id": "43455047",
+            "sourceId": "favbet",
+            "sourceUrl": "https://www.favbet.ro/ro/sports/event/17248/43455047/",
+            "observedAt": "2026-10-08T06:45:35.140Z",
+            "sport": "Football",
+            "league": "Romania 2",
+            "kickoff": "2026-10-08T15:00:00.000Z",
+            "homeTeam": "Politehnica Timisoara",
+            "awayTeam": "CSA Steaua Bucuresti",
+            "eventKey": "football|2026-10-08|politehnica timisoara|csa steaua bucuresti",
+            "markets": [
+              {
+                "key": "BOTH_TEAMS_SCORE",
+                "name": "Ambele Marcheaza",
+                "period": "fulltime",
+                "selections": [
+                  {
+                    "id": "3936179845",
+                    "name": "Yes",
+                    "odds": 1.66,
+                    "group": "Main"
+                  },
+                  {
+                    "id": "3936179846",
+                    "name": "No",
+                    "odds": 2.09,
+                    "group": "Main"
+                  }
+                ]
+              }
+            ],
+            "providerEventKey": "football|romania 2|2026-10-08T15:00:00.000Z|politehnica timisoara|csa steaua bucuresti"
+          }
+        },
+        {
+          "workspace": "data/workspace",
+          "book": "casa-pariurilor",
+          "event": {
+            "id": "ufo:mtch:1wo-02n",
+            "sourceId": "casa-pariurilor",
+            "sourceUrl": "https://api.casapariurilor.ro/offer/structure/api/v1_0/sport/tournaments",
+            "transport": "casa-catalogue-v1",
+            "observedAt": "2026-10-08T06:45:07.892Z",
+            "sport": "Football",
+            "league": "romania-2",
+            "kickoff": "2026-10-08T15:00:00.000Z",
+            "homeTeam": "Poli Timisoara",
+            "awayTeam": "Steaua Buc.",
+            "eventKey": "football|2026-10-08|poli timisoara|steaua buc",
+            "live": false,
+            "markets": [
+              {
+                "id": "ufo:mkt:1wo-02n-003",
+                "key": "ufo:mtyp:00-1c",
+                "name": "Ambele marcheaza",
+                "period": "unknown",
+                "line": null,
+                "selections": [
+                  {
+                    "id": "ufo:opt:1wo-02n-003-01",
+                    "name": "Da",
+                    "odds": 1.69,
+                    "handicap": null
+                  },
+                  {
+                    "id": "ufo:opt:1wo-02n-003-00",
+                    "name": "Nu",
+                    "odds": 2.09,
+                    "handicap": null
+                  }
+                ],
+                "live": false
+              }
+            ],
+            "providerEventKey": "football|romania 2|2026-10-08T15:00:00.000Z|poli timisoara|steaua buc"
+          }
+        }
+      ]
+    },
+    {
+      "label": "Brighton and Hove Albion v Kauno Zalgiris / Brighton v Kauno Zalgiris",
+      "contract": "::OVER_UNDER::fulltime::4.5::over+under::goals::match",
+      "captures": [
+        {
+          "workspace": "data/workspace",
+          "book": "favbet",
+          "event": {
+            "id": "43392709",
+            "sourceId": "favbet",
+            "sourceUrl": "https://www.favbet.ro/ro/sports/event/72946/43392709/",
+            "observedAt": "2026-10-08T06:45:35.140Z",
+            "sport": "Football",
+            "league": "Europa Conference League",
+            "kickoff": "2026-10-15T19:00:00.000Z",
+            "homeTeam": "Brighton and Hove Albion",
+            "awayTeam": "Kauno Zalgiris",
+            "eventKey": "football|2026-10-15|brighton and hove albion|kauno zalgiris",
+            "markets": [
+              {
+                "key": "TOTAL_GOALS",
+                "providerMarketId": "50:4.5",
+                "name": "Peste / Sub",
+                "period": "fulltime",
+                "line": 4.5,
+                "selections": [
+                  {
+                    "id": "3924716632",
+                    "name": "Over 4.5",
+                    "odds": 2.2,
+                    "group": "Main"
+                  },
+                  {
+                    "id": "3924716633",
+                    "name": "Under 4.5",
+                    "odds": 1.67,
+                    "group": "Main"
+                  }
+                ]
+              }
+            ],
+            "providerEventKey": "football|europa conference league|2026-10-15T19:00:00.000Z|brighton and hove albion|kauno zalgiris"
+          }
+        },
+        {
+          "workspace": "data/workspace",
+          "book": "casa-pariurilor",
+          "event": {
+            "id": "ufo:mtch:1wv-01a",
+            "sourceId": "casa-pariurilor",
+            "sourceUrl": "https://api.casapariurilor.ro/offer/structure/api/v1_0/sport/tournaments",
+            "transport": "casa-catalogue-v1",
+            "observedAt": "2026-10-08T06:45:07.892Z",
+            "sport": "Football",
+            "league": "conference-league",
+            "kickoff": "2026-10-15T19:00:00.000Z",
+            "homeTeam": "Brighton",
+            "awayTeam": "Kauno Zalgiris",
+            "eventKey": "football|2026-10-15|brighton|kauno zalgiris",
+            "live": false,
+            "markets": [
+              {
+                "id": "ufo:mkt:1wv-01a-02i",
+                "key": "ufo:mtyp:00-0u",
+                "name": "Total goluri 4.5",
+                "period": "unknown",
+                "line": null,
+                "selections": [
+                  {
+                    "id": "ufo:opt:1wv-01a-02i-01",
+                    "name": "peste 4.5",
+                    "odds": 2.1,
+                    "handicap": null
+                  },
+                  {
+                    "id": "ufo:opt:1wv-01a-02i-00",
+                    "name": "sub 4.5",
+                    "odds": 1.64,
+                    "handicap": null
+                  }
+                ],
+                "live": false
+              }
+            ],
+            "providerEventKey": "football|conference league|2026-10-15T19:00:00.000Z|brighton|kauno zalgiris"
+          }
+        }
+      ]
+    },
+    {
+      "label": "Denizli İdmanyur v Serik Belediyespor / Denizli Idman Yurdu v Serik Belediyespor",
+      "contract": "::ASIAN_HANDICAP::fulltime::1.5/-1.5::home+away::_::_",
+      "captures": [
+        {
+          "workspace": "data/workspace",
+          "book": "topbet",
+          "event": {
+            "id": "17911689",
+            "sourceId": "topbet",
+            "sourceUrl": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetUpcoming?culture=ro-RO&timezoneOffset=-180&deviceType=1&numFormat=en-GB&countryCode=RO&sportId=66&eventCount=100&page=1&integration=topbet",
+            "transport": "altenar-sb2-widget-json",
+            "runId": "2026-10-08T06:42:41.285Z",
+            "observedAt": "2026-10-08T06:43:39.250Z",
+            "providerEventId": "17911689",
+            "attributionStatus": "public-integration-unverified-brand",
+            "sport": "Football",
+            "league": "Cupa Turciei",
+            "kickoff": "2026-10-08T14:00:00.000Z",
+            "homeTeam": "Denizli İdmanyur",
+            "awayTeam": "Serik Belediyespor",
+            "live": false,
+            "eventKey": "football|2026-10-08|denizli idmanyur|serik belediyespor",
+            "markets": [
+              {
+                "key": "ASIAN_HANDICAP",
+                "providerMarketId": "1767372201",
+                "name": "Handicap Goluri",
+                "period": "fulltime",
+                "line": "+1.5",
+                "selections": [
+                  {
+                    "id": "4609847615",
+                    "providerOutcomeId": 1714,
+                    "name": "1 (+1.5)",
+                    "odds": 1.8,
+                    "handicap": null
+                  },
+                  {
+                    "id": "4609847616",
+                    "providerOutcomeId": 1715,
+                    "name": "2 (-1.5)",
+                    "odds": 1.85,
+                    "handicap": null
+                  }
+                ]
+              }
+            ],
+            "providerEventKey": "football|cupa turciei|2026-10-08T14:00:00.000Z|denizli idmanyur|serik belediyespor"
+          }
+        },
+        {
+          "workspace": "data/workspace",
+          "book": "admiral",
+          "event": {
+            "id": "27872570",
+            "sourceId": "admiral",
+            "sourceUrl": "https://sportsbook-sm-distribution-api.nsoft.com/api/v1/events?companyUuid=682e6a38-b5ad-4c58-a743-3b06c79e55cd&filter%5Bfrom%5D=2026-10-08T06%3A42%3A41&filter%5Bto%5D=2026-10-29T06%3A42%3A41&timezone=Europe%2FBucharest&language=%7B%22default%22%3A%22ro%22%2C%22tournament%22%3A%22ro%22%2C%22category%22%3A%22ro%22%2C%22sport%22%3A%22ro%22%7D&shortProps=1&offerTemplate=WEB_OVERVIEW&dataFormat=%7B%22default%22%3A%22array%22%2C%22events%22%3A%22object%22%2C%22outcomes%22%3A%22array%22%7D",
+            "transport": "bookmaker-public-json",
+            "runId": "2026-10-08T06:42:41.285Z",
+            "observedAt": "2026-10-08T06:42:46.373Z",
+            "sport": "Football",
+            "league": "Cupa",
+            "kickoff": "2026-10-08T14:00:00.000Z",
+            "homeTeam": "Denizli Idman Yurdu",
+            "awayTeam": "Serik Belediyespor",
+            "live": false,
+            "eventKey": "football|2026-10-08|denizli idman yurdu|serik belediyespor",
+            "markets": [
+              {
+                "key": "ASIAN_HANDICAP",
+                "providerMarketId": 262,
+                "name": "Handicap",
+                "period": "fulltime",
+                "line": "1.5",
+                "selections": [
+                  {
+                    "id": "1465639165",
+                    "providerOutcomeId": 643,
+                    "providerName": "H1 1.5",
+                    "name": "1 (1.5)",
+                    "odds": 1.82,
+                    "handicap": 1.5
+                  },
+                  {
+                    "id": "1465639170",
+                    "providerOutcomeId": 646,
+                    "providerName": "H2 -1.5",
+                    "name": "2 (-1.5)",
+                    "odds": 1.88,
+                    "handicap": -1.5
+                  }
+                ]
+              }
+            ],
+            "providerEventKey": "football|cupa|2026-10-08T14:00:00.000Z|denizli idman yurdu|serik belediyespor"
+          }
+        }
+      ]
+    },
+    {
+      "label": "Enskede IK (F) v IF Brommapojkarna (F) / Enskede (F) v Brommapojkarna (F)",
+      "contract": "::OVER_UNDER::fulltime::3.5::over+under::goals::match",
+      "captures": [
+        {
+          "workspace": "data/workspace",
+          "book": "don",
+          "event": {
+            "id": "17913725",
+            "sourceId": "don",
+            "sourceUrl": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetUpcoming?culture=ro-RO&timezoneOffset=-180&deviceType=1&numFormat=en-GB&countryCode=RO&sportId=66&eventCount=100&page=1&integration=don",
+            "transport": "altenar-sb2-widget-json",
+            "runId": "2026-10-08T06:42:41.285Z",
+            "observedAt": "2026-10-08T06:42:55.085Z",
+            "providerEventId": "17913725",
+            "attributionStatus": "public-integration-unverified-brand",
+            "sport": "Football",
+            "league": "Cupa Suediei, Feminin",
+            "kickoff": "2026-10-08T17:00:00.000Z",
+            "homeTeam": "Enskede IK (F)",
+            "awayTeam": "IF Brommapojkarna (F)",
+            "live": false,
+            "eventKey": "football|2026-10-08|enskede ik f|if brommapojkarna f",
+            "markets": [
+              {
+                "key": "TOTAL_GOALS",
+                "providerMarketId": "1767279469",
+                "name": "Total goluri",
+                "period": "fulltime",
+                "line": "3.5",
+                "selections": [
+                  {
+                    "id": "4609623851",
+                    "providerOutcomeId": 12,
+                    "name": "Peste 3.5",
+                    "odds": 1.6667,
+                    "handicap": null
+                  },
+                  {
+                    "id": "4609623852",
+                    "providerOutcomeId": 13,
+                    "name": "Sub 3.5",
+                    "odds": 2,
+                    "handicap": null
+                  }
+                ]
+              }
+            ],
+            "providerEventKey": "football|cupa suediei feminin|2026-10-08T17:00:00.000Z|enskede ik f|if brommapojkarna f"
+          }
+        },
+        {
+          "workspace": "data/workspace",
+          "book": "admiral",
+          "event": {
+            "id": "27870370",
+            "sourceId": "admiral",
+            "sourceUrl": "https://sportsbook-sm-distribution-api.nsoft.com/api/v1/events?companyUuid=682e6a38-b5ad-4c58-a743-3b06c79e55cd&filter%5Bfrom%5D=2026-10-08T06%3A42%3A41&filter%5Bto%5D=2026-10-29T06%3A42%3A41&timezone=Europe%2FBucharest&language=%7B%22default%22%3A%22ro%22%2C%22tournament%22%3A%22ro%22%2C%22category%22%3A%22ro%22%2C%22sport%22%3A%22ro%22%7D&shortProps=1&offerTemplate=WEB_OVERVIEW&dataFormat=%7B%22default%22%3A%22array%22%2C%22events%22%3A%22object%22%2C%22outcomes%22%3A%22array%22%7D",
+            "transport": "bookmaker-public-json",
+            "runId": "2026-10-08T06:42:41.285Z",
+            "observedAt": "2026-10-08T06:42:46.373Z",
+            "sport": "Football",
+            "league": "Svenska Cup (F)",
+            "kickoff": "2026-10-08T17:00:00.000Z",
+            "homeTeam": "Enskede (F)",
+            "awayTeam": "Brommapojkarna (F)",
+            "live": false,
+            "eventKey": "football|2026-10-08|enskede f|brommapojkarna f",
+            "markets": [
+              {
+                "key": "TOTAL_GOALS",
+                "providerMarketId": 886,
+                "name": "Total goluri S/P",
+                "period": "fulltime",
+                "line": "3.5",
+                "selections": [
+                  {
+                    "id": "1465449020",
+                    "providerOutcomeId": 3236,
+                    "name": "Peste 3.5",
+                    "odds": 1.71,
+                    "handicap": null
+                  },
+                  {
+                    "id": "1465449015",
+                    "providerOutcomeId": 3231,
+                    "name": "Sub 3.5",
+                    "odds": 1.98,
+                    "handicap": null
+                  }
+                ]
+              }
+            ],
+            "providerEventKey": "football|svenska cup f|2026-10-08T17:00:00.000Z|enskede f|brommapojkarna f"
+          }
+        }
+      ]
+    },
+    {
+      "label": "PSV Eindhoven v SC Heerenveen / PSV v Heerenveen",
+      "contract": "::OVER_UNDER::fulltime::4.5::over+under::goals::match",
+      "captures": [
+        {
+          "workspace": "data/workspace",
+          "book": "favbet",
+          "event": {
+            "id": "43423451",
+            "sourceId": "favbet",
+            "sourceUrl": "https://www.favbet.ro/ro/sports/event/17345/43423451/",
+            "observedAt": "2026-10-08T06:45:35.140Z",
+            "sport": "Football",
+            "league": "Eredivisie",
+            "kickoff": "2026-10-09T18:00:00.000Z",
+            "homeTeam": "PSV Eindhoven",
+            "awayTeam": "SC Heerenveen",
+            "eventKey": "football|2026-10-09|psv eindhoven|heerenveen",
+            "markets": [
+              {
+                "key": "TOTAL_GOALS",
+                "providerMarketId": "50:4.5",
+                "name": "Peste / Sub",
+                "period": "fulltime",
+                "line": 4.5,
+                "selections": [
+                  {
+                    "id": "3930248056",
+                    "name": "Over 4.5",
+                    "odds": 1.89,
+                    "group": "Main"
+                  },
+                  {
+                    "id": "3930248057",
+                    "name": "Under 4.5",
+                    "odds": 1.89,
+                    "group": "Main"
+                  }
+                ]
+              }
+            ],
+            "providerEventKey": "football|eredivisie|2026-10-09T18:00:00.000Z|psv eindhoven|sc heerenveen"
+          }
+        },
+        {
+          "workspace": "data/workspace",
+          "book": "casa-pariurilor",
+          "event": {
+            "id": "ufo:mtch:1wq-027",
+            "sourceId": "casa-pariurilor",
+            "sourceUrl": "https://api.casapariurilor.ro/offer/structure/api/v1_0/sport/tournaments",
+            "transport": "casa-catalogue-v1",
+            "observedAt": "2026-10-08T06:45:07.892Z",
+            "sport": "Football",
+            "league": "olanda-1",
+            "kickoff": "2026-10-09T18:00:00.000Z",
+            "homeTeam": "PSV",
+            "awayTeam": "Heerenveen",
+            "eventKey": "football|2026-10-09|psv|heerenveen",
+            "live": false,
+            "markets": [
+              {
+                "id": "ufo:mkt:1wq-027-00f",
+                "key": "ufo:mtyp:00-0u",
+                "name": "Total goluri 4.5",
+                "period": "unknown",
+                "line": null,
+                "selections": [
+                  {
+                    "id": "ufo:opt:1wq-027-00f-00",
+                    "name": "peste 4.5",
+                    "odds": 1.88,
+                    "handicap": null
+                  },
+                  {
+                    "id": "ufo:opt:1wq-027-00f-01",
+                    "name": "sub 4.5",
+                    "odds": 1.83,
+                    "handicap": null
+                  }
+                ],
+                "live": false
+              }
+            ],
+            "providerEventKey": "football|olanda 1|2026-10-09T18:00:00.000Z|psv|heerenveen"
+          }
+        }
+      ]
+    },
+    {
+      "label": "FC Augsburg v FC Bayern Munchen / Augsburg v Bayern M",
+      "contract": "::ASIAN_HANDICAP::fulltime::3.5/-3.5::home+away::_::_",
+      "captures": [
+        {
+          "workspace": "data/workspace",
+          "book": "favbet",
+          "event": {
+            "id": "43421832",
+            "sourceId": "favbet",
+            "sourceUrl": "https://www.favbet.ro/ro/sports/event/17329/43421832/",
+            "observedAt": "2026-10-08T06:45:35.140Z",
+            "sport": "Football",
+            "league": "Bundesliga",
+            "kickoff": "2026-10-10T13:30:00.000Z",
+            "homeTeam": "FC Augsburg",
+            "awayTeam": "FC Bayern Munchen",
+            "eventKey": "football|2026-10-10|augsburg|bayern munchen",
+            "markets": [
+              {
+                "key": "ASIAN_HANDICAP",
+                "providerMarketId": "190:3.5",
+                "name": "Handicap",
+                "period": "fulltime",
+                "line": 3.5,
+                "selections": [
+                  {
+                    "id": "3929927332",
+                    "name": "1 (+3.5)",
+                    "odds": 1.36,
+                    "group": "Main"
+                  },
+                  {
+                    "id": "3929927333",
+                    "name": "2 (-3.5)",
+                    "odds": 3.24,
+                    "group": "Main"
+                  }
+                ]
+              }
+            ],
+            "providerEventKey": "football|bundesliga|2026-10-10T13:30:00.000Z|fc augsburg|fc bayern munchen"
+          }
+        },
+        {
+          "workspace": "data/workspace",
+          "book": "admiral",
+          "event": {
+            "id": "27415500",
+            "sourceId": "admiral",
+            "sourceUrl": "https://sportsbook-sm-distribution-api.nsoft.com/api/v1/events?companyUuid=682e6a38-b5ad-4c58-a743-3b06c79e55cd&filter%5Bfrom%5D=2026-10-08T06%3A42%3A41&filter%5Bto%5D=2026-10-29T06%3A42%3A41&timezone=Europe%2FBucharest&language=%7B%22default%22%3A%22ro%22%2C%22tournament%22%3A%22ro%22%2C%22category%22%3A%22ro%22%2C%22sport%22%3A%22ro%22%7D&shortProps=1&offerTemplate=WEB_OVERVIEW&dataFormat=%7B%22default%22%3A%22array%22%2C%22events%22%3A%22object%22%2C%22outcomes%22%3A%22array%22%7D",
+            "transport": "bookmaker-public-json",
+            "runId": "2026-10-08T06:42:41.285Z",
+            "observedAt": "2026-10-08T06:42:46.373Z",
+            "sport": "Football",
+            "league": "Bundesliga",
+            "kickoff": "2026-10-10T13:30:00.000Z",
+            "homeTeam": "Augsburg",
+            "awayTeam": "Bayern M",
+            "live": false,
+            "eventKey": "football|2026-10-10|augsburg|bayern m",
+            "markets": [
+              {
+                "key": "ASIAN_HANDICAP",
+                "providerMarketId": 262,
+                "name": "Handicap",
+                "period": "fulltime",
+                "line": "3.5",
+                "selections": [
+                  {
+                    "id": "1459054680",
+                    "providerOutcomeId": 643,
+                    "providerName": "H1 3.5",
+                    "name": "1 (3.5)",
+                    "odds": 1.34,
+                    "handicap": 3.5
+                  },
+                  {
+                    "id": "1459054685",
+                    "providerOutcomeId": 646,
+                    "providerName": "H2 -3.5",
+                    "name": "2 (-3.5)",
+                    "odds": 3.1,
+                    "handicap": -3.5
+                  }
+                ]
+              }
+            ],
+            "providerEventKey": "football|bundesliga|2026-10-10T13:30:00.000Z|augsburg|bayern m"
+          }
+        }
+      ]
+    },
+    {
+      "label": "Csiks. M.Ciuc v Univ.Craiova / Csikszereda M. Ciuc v Univ. Craiova",
+      "contract": "::ASIAN_HANDICAP::fulltime::3.5/-3.5::home+away::_::_",
+      "captures": [
+        {
+          "workspace": "data/workspace",
+          "book": "maxbet",
+          "event": {
+            "id": "10893181",
+            "sourceId": "maxbet",
+            "sourceUrl": "https://sportsbook-sm-distribution-api.nsoft.com/api/v1/events?companyUuid=2191e3d6-b0e1-4f06-8b6a-4683203fb2fe&filter%5Bfrom%5D=2026-10-08T06%3A43%3A26&filter%5Bto%5D=2026-10-29T06%3A43%3A26&timezone=Europe%2FBucharest&language=%7B%22default%22%3A%22ro%22%2C%22tournament%22%3A%22ro%22%2C%22category%22%3A%22ro%22%2C%22sport%22%3A%22ro%22%7D&shortProps=1&offerTemplate=WEB_OVERVIEW&dataFormat=%7B%22default%22%3A%22array%22%2C%22events%22%3A%22object%22%2C%22outcomes%22%3A%22array%22%7D",
+            "transport": "nsoft-public-sports-json",
+            "runId": "2026-10-08T06:42:41.285Z",
+            "observedAt": "2026-10-08T06:43:31.963Z",
+            "sport": "Football",
+            "league": "Liga 1",
+            "kickoff": "2026-10-11T15:00:00.000Z",
+            "homeTeam": "Csiks. M.Ciuc",
+            "awayTeam": "Univ.Craiova",
+            "live": false,
+            "eventKey": "football|2026-10-11|csiks m ciuc|univ craiova",
+            "markets": [
+              {
+                "key": "ASIAN_HANDICAP",
+                "providerMarketId": 8,
+                "name": "Handicap Asiatic",
+                "period": "fulltime",
+                "line": "3.5",
+                "selections": [
+                  {
+                    "id": "614309591",
+                    "providerOutcomeId": 26,
+                    "providerName": "H1 3.5",
+                    "name": "1 (3.5)",
+                    "odds": 1.11,
+                    "handicap": 3.5
+                  },
+                  {
+                    "id": "614309594",
+                    "providerOutcomeId": 29,
+                    "providerName": "H2 -3.5",
+                    "name": "2 (-3.5)",
+                    "odds": 6.8,
+                    "handicap": -3.5
+                  }
+                ]
+              }
+            ],
+            "providerEventKey": "football|liga 1|2026-10-11T15:00:00.000Z|csiks m ciuc|univ craiova"
+          }
+        },
+        {
+          "workspace": "data/workspace",
+          "book": "contibet",
+          "event": {
+            "id": "314595649151201280",
+            "sourceId": "contibet",
+            "sourceUrl": "https://conticazino.ro/sport#/event/314595649151201280",
+            "observedAt": "2026-10-08T06:43:29.897Z",
+            "sport": "Football",
+            "league": "Liga I 2026/2027",
+            "kickoff": "2026-10-11T15:00:00.000Z",
+            "homeTeam": "Csikszereda M. Ciuc",
+            "awayTeam": "Univ. Craiova",
+            "eventKey": "football|2026-10-11|csikszereda m ciuc|univ craiova",
+            "markets": [
+              {
+                "key": "ASIAN_HANDICAP",
+                "name": "Handicap asiatic 3.5, Timp regulamentar",
+                "period": "fulltime",
+                "selections": [
+                  {
+                    "id": "314595649262166784",
+                    "name": "1 (3.5)",
+                    "odds": 1.07,
+                    "handicap": 3.5,
+                    "group": "Main"
+                  },
+                  {
+                    "id": "314595649285545216",
+                    "name": "2 (-3.5)",
+                    "odds": 6,
+                    "handicap": -3.5,
+                    "group": "Main"
+                  }
+                ]
+              }
+            ],
+            "providerEventKey": "football|liga i 2026 2027|2026-10-11T15:00:00.000Z|csikszereda m ciuc|univ craiova"
+          }
+        }
+      ]
+    },
+    {
+      "label": "FC Nassaji Mazandaran v Zob Ahan Isfahan / Nassaji Mazandaran v Zob Ahan",
+      "contract": "::OVER_UNDER::fulltime::0.5::over+under::goals::match",
+      "captures": [
+        {
+          "workspace": "data/workspace",
+          "book": "topbet",
+          "event": {
+            "id": "17893746",
+            "sourceId": "topbet",
+            "sourceUrl": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetUpcoming?culture=ro-RO&timezoneOffset=-180&deviceType=1&numFormat=en-GB&countryCode=RO&sportId=66&eventCount=100&page=1&integration=topbet",
+            "transport": "altenar-sb2-widget-json",
+            "runId": "2026-10-08T06:42:41.285Z",
+            "observedAt": "2026-10-08T06:43:39.250Z",
+            "providerEventId": "17893746",
+            "attributionStatus": "public-integration-unverified-brand",
+            "sport": "Football",
+            "league": "Liga Pro",
+            "kickoff": "2026-10-08T12:30:00.000Z",
+            "homeTeam": "FC Nassaji Mazandaran",
+            "awayTeam": "Zob Ahan Isfahan",
+            "live": false,
+            "eventKey": "football|2026-10-08|nassaji mazandaran|zob ahan isfahan",
+            "markets": [
+              {
+                "key": "TOTAL_GOALS",
+                "providerMarketId": "1767306348",
+                "name": "Total goluri",
+                "period": "fulltime",
+                "line": "0.5",
+                "selections": [
+                  {
+                    "id": "4609686749",
+                    "providerOutcomeId": 12,
+                    "name": "Peste 0.5",
+                    "odds": 1.1,
+                    "handicap": null
+                  },
+                  {
+                    "id": "4609686750",
+                    "providerOutcomeId": 13,
+                    "name": "Sub 0.5",
+                    "odds": 5.5,
+                    "handicap": null
+                  }
+                ]
+              }
+            ],
+            "providerEventKey": "football|liga pro|2026-10-08T12:30:00.000Z|fc nassaji mazandaran|zob ahan isfahan"
+          }
+        },
+        {
+          "workspace": "data/workspace",
+          "book": "admiral",
+          "event": {
+            "id": "27871510",
+            "sourceId": "admiral",
+            "sourceUrl": "https://sportsbook-sm-distribution-api.nsoft.com/api/v1/events?companyUuid=682e6a38-b5ad-4c58-a743-3b06c79e55cd&filter%5Bfrom%5D=2026-10-08T06%3A42%3A41&filter%5Bto%5D=2026-10-29T06%3A42%3A41&timezone=Europe%2FBucharest&language=%7B%22default%22%3A%22ro%22%2C%22tournament%22%3A%22ro%22%2C%22category%22%3A%22ro%22%2C%22sport%22%3A%22ro%22%7D&shortProps=1&offerTemplate=WEB_OVERVIEW&dataFormat=%7B%22default%22%3A%22array%22%2C%22events%22%3A%22object%22%2C%22outcomes%22%3A%22array%22%7D",
+            "transport": "bookmaker-public-json",
+            "runId": "2026-10-08T06:42:41.285Z",
+            "observedAt": "2026-10-08T06:42:46.373Z",
+            "sport": "Football",
+            "league": "Pro League",
+            "kickoff": "2026-10-08T12:30:00.000Z",
+            "homeTeam": "Nassaji Mazandaran",
+            "awayTeam": "Zob Ahan",
+            "live": false,
+            "eventKey": "football|2026-10-08|nassaji mazandaran|zob ahan",
+            "markets": [
+              {
+                "key": "TOTAL_GOALS",
+                "providerMarketId": 886,
+                "name": "Total goluri S/P",
+                "period": "fulltime",
+                "line": "0.5",
+                "selections": [
+                  {
+                    "id": "1465487790",
+                    "providerOutcomeId": 3236,
+                    "name": "Peste 0.5",
+                    "odds": 1.11,
+                    "handicap": null
+                  },
+                  {
+                    "id": "1465487785",
+                    "providerOutcomeId": 3231,
+                    "name": "Sub 0.5",
+                    "odds": 5.2,
+                    "handicap": null
+                  }
+                ]
+              }
+            ],
+            "providerEventKey": "football|pro league|2026-10-08T12:30:00.000Z|nassaji mazandaran|zob ahan"
+          }
+        }
+      ]
+    },
+    {
+      "label": "Al-Khaleej Khor Fakkan v Al-Wasl FC / Khor Fakkan v AL Wasl",
+      "contract": "::ASIAN_HANDICAP::fulltime::1.5/-1.5::home+away::_::_",
+      "captures": [
+        {
+          "workspace": "data/workspace",
+          "book": "topbet",
+          "event": {
+            "id": "17893745",
+            "sourceId": "topbet",
+            "sourceUrl": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetUpcoming?culture=ro-RO&timezoneOffset=-180&deviceType=1&numFormat=en-GB&countryCode=RO&sportId=66&eventCount=100&page=1&integration=topbet",
+            "transport": "altenar-sb2-widget-json",
+            "runId": "2026-10-08T06:42:41.285Z",
+            "observedAt": "2026-10-08T06:43:39.250Z",
+            "providerEventId": "17893745",
+            "attributionStatus": "public-integration-unverified-brand",
+            "sport": "Football",
+            "league": "Pro League Cup",
+            "kickoff": "2026-10-08T15:45:00.000Z",
+            "homeTeam": "Al-Khaleej Khor Fakkan",
+            "awayTeam": "Al-Wasl FC",
+            "live": false,
+            "eventKey": "football|2026-10-08|al khaleej khor fakkan|al wasl",
+            "markets": [
+              {
+                "key": "ASIAN_HANDICAP",
+                "providerMarketId": "1767283383",
+                "name": "Handicap Goluri",
+                "period": "fulltime",
+                "line": "+1.5",
+                "selections": [
+                  {
+                    "id": "4609633601",
+                    "providerOutcomeId": 1714,
+                    "name": "1 (+1.5)",
+                    "odds": 1.6667,
+                    "handicap": null
+                  },
+                  {
+                    "id": "4609633602",
+                    "providerOutcomeId": 1715,
+                    "name": "2 (-1.5)",
+                    "odds": 2,
+                    "handicap": null
+                  }
+                ]
+              }
+            ],
+            "providerEventKey": "football|pro league cup|2026-10-08T15:45:00.000Z|al khaleej khor fakkan|al wasl fc"
+          }
+        },
+        {
+          "workspace": "data/workspace",
+          "book": "admiral",
+          "event": {
+            "id": "27871120",
+            "sourceId": "admiral",
+            "sourceUrl": "https://sportsbook-sm-distribution-api.nsoft.com/api/v1/events?companyUuid=682e6a38-b5ad-4c58-a743-3b06c79e55cd&filter%5Bfrom%5D=2026-10-08T06%3A42%3A41&filter%5Bto%5D=2026-10-29T06%3A42%3A41&timezone=Europe%2FBucharest&language=%7B%22default%22%3A%22ro%22%2C%22tournament%22%3A%22ro%22%2C%22category%22%3A%22ro%22%2C%22sport%22%3A%22ro%22%7D&shortProps=1&offerTemplate=WEB_OVERVIEW&dataFormat=%7B%22default%22%3A%22array%22%2C%22events%22%3A%22object%22%2C%22outcomes%22%3A%22array%22%7D",
+            "transport": "bookmaker-public-json",
+            "runId": "2026-10-08T06:42:41.285Z",
+            "observedAt": "2026-10-08T06:42:46.373Z",
+            "sport": "Football",
+            "league": "League Cup",
+            "kickoff": "2026-10-08T15:45:00.000Z",
+            "homeTeam": "Khor Fakkan",
+            "awayTeam": "AL Wasl",
+            "live": false,
+            "eventKey": "football|2026-10-08|khor fakkan|al wasl",
+            "markets": [
+              {
+                "key": "ASIAN_HANDICAP",
+                "providerMarketId": 262,
+                "name": "Handicap",
+                "period": "fulltime",
+                "line": "1.5",
+                "selections": [
+                  {
+                    "id": "1465513370",
+                    "providerOutcomeId": 643,
+                    "providerName": "H1 1.5",
+                    "name": "1 (1.5)",
+                    "odds": 1.72,
+                    "handicap": 1.5
+                  },
+                  {
+                    "id": "1465513375",
+                    "providerOutcomeId": 646,
+                    "providerName": "H2 -1.5",
+                    "name": "2 (-1.5)",
+                    "odds": 2.01,
+                    "handicap": -1.5
+                  }
+                ]
+              }
+            ],
+            "providerEventKey": "football|league cup|2026-10-08T15:45:00.000Z|khor fakkan|al wasl"
+          }
+        }
+      ]
+    },
+    {
+      "label": "Poli Timisoara v Steaua Bucuresti / Poli Timisoara v Steaua Buc.",
+      "contract": "::BTTS::fulltime::_::yes+no::_::_",
+      "captures": [
+        {
+          "workspace": "data/workspace",
+          "book": "unibet",
+          "event": {
+            "id": "149dad384fa934d28bd762fb79ea5640",
+            "sourceId": "unibet",
+            "sourceUrl": "https://sportsbff-ams.kindredext.net/sports-api/api/v2/views/az-menu",
+            "transport": "kindred-sports-bff-v2",
+            "observedAt": "2026-10-07T23:26:33.094Z",
+            "status": "PreGame",
+            "sport": "Football",
+            "league": "Liga II",
+            "kickoff": "2026-10-08T15:00:00.000Z",
+            "homeTeam": "Poli Timisoara",
+            "awayTeam": "Steaua Bucuresti",
+            "eventKey": "football|2026-10-08|poli timisoara|steaua bucuresti",
+            "live": false,
+            "markets": [
+              {
+                "id": "both_teams_to_score:plain",
+                "key": "BOTH_TEAMS_SCORE",
+                "name": "Ambele echipe să marcheze",
+                "period": "fulltime",
+                "line": null,
+                "selections": [
+                  {
+                    "id": "149dad384fa934d28bd762fb79ea5640:base:both_teams_to_score:yes:plain:offering",
+                    "name": "Da",
+                    "odds": 1.65,
+                    "handicap": null,
+                    "group": "Main"
+                  },
+                  {
+                    "id": "149dad384fa934d28bd762fb79ea5640:base:both_teams_to_score:no:plain:offering",
+                    "name": "Nu",
+                    "odds": 2.15,
+                    "handicap": null,
+                    "group": "Main"
+                  }
+                ],
+                "live": false
+              }
+            ],
+            "providerEventKey": "football|liga ii|2026-10-08T15:00:00.000Z|poli timisoara|steaua bucuresti"
+          }
+        },
+        {
+          "workspace": "data/workspace",
+          "book": "casa-pariurilor",
+          "event": {
+            "id": "ufo:mtch:1wo-02n",
+            "sourceId": "casa-pariurilor",
+            "sourceUrl": "https://api.casapariurilor.ro/offer/structure/api/v1_0/sport/tournaments",
+            "transport": "casa-catalogue-v1",
+            "observedAt": "2026-10-08T06:45:07.892Z",
+            "sport": "Football",
+            "league": "romania-2",
+            "kickoff": "2026-10-08T15:00:00.000Z",
+            "homeTeam": "Poli Timisoara",
+            "awayTeam": "Steaua Buc.",
+            "eventKey": "football|2026-10-08|poli timisoara|steaua buc",
+            "live": false,
+            "markets": [
+              {
+                "id": "ufo:mkt:1wo-02n-003",
+                "key": "ufo:mtyp:00-1c",
+                "name": "Ambele marcheaza",
+                "period": "unknown",
+                "line": null,
+                "selections": [
+                  {
+                    "id": "ufo:opt:1wo-02n-003-01",
+                    "name": "Da",
+                    "odds": 1.69,
+                    "handicap": null
+                  },
+                  {
+                    "id": "ufo:opt:1wo-02n-003-00",
+                    "name": "Nu",
+                    "odds": 2.09,
+                    "handicap": null
+                  }
+                ],
+                "live": false
+              }
+            ],
+            "providerEventKey": "football|romania 2|2026-10-08T15:00:00.000Z|poli timisoara|steaua buc"
+          }
+        }
+      ]
+    },
+    {
+      "label": "Fluminense v Coritiba PR / Fluminense v Coritiba",
+      "contract": "::ASIAN_HANDICAP::fulltime::-1.5/1.5::home+away::_::_",
+      "captures": [
+        {
+          "workspace": "data/workspace",
+          "book": "unibet",
+          "event": {
+            "id": "bc4d54de705bf7e18a3febf1924481de",
+            "sourceId": "unibet",
+            "sourceUrl": "https://sportsbff-ams.kindredext.net/sports-api/api/v2/views/az-menu",
+            "transport": "kindred-sports-bff-v2",
+            "observedAt": "2026-10-07T23:26:33.094Z",
+            "status": "PreGame",
+            "sport": "Football",
+            "league": "Serie A",
+            "kickoff": "2026-10-09T00:30:00.000Z",
+            "homeTeam": "Fluminense",
+            "awayTeam": "Coritiba PR",
+            "eventKey": "football|2026-10-09|fluminense|coritiba pr",
+            "live": false,
+            "markets": [
+              {
+                "id": "2_way_handicap:-1.5",
+                "key": "HANDICAP",
+                "name": "Handicap asiatic",
+                "period": "fulltime",
+                "line": "-1.5",
+                "selections": [
+                  {
+                    "id": "bc4d54de705bf7e18a3febf1924481de:base:2_way_handicap:3wvxtkwv22xtonphhnflhqmi8:-1.5:offering",
+                    "name": "1 -1.5",
+                    "odds": 2.35,
+                    "handicap": "-1.5",
+                    "group": "Main"
+                  },
+                  {
+                    "id": "bc4d54de705bf7e18a3febf1924481de:base:2_way_handicap:2n4gn92r704n74u9jqsjbythw:-1.5:offering",
+                    "name": "2 +1.5",
+                    "odds": 1.55,
+                    "handicap": "+1.5",
+                    "group": "Main"
+                  }
+                ],
+                "live": false
+              }
+            ],
+            "providerEventKey": "football|serie a|2026-10-09T00:30:00.000Z|fluminense|coritiba pr"
+          }
+        },
+        {
+          "workspace": "data/workspace",
+          "book": "don",
+          "event": {
+            "id": "17709250",
+            "sourceId": "don",
+            "sourceUrl": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetUpcoming?culture=ro-RO&timezoneOffset=-180&deviceType=1&numFormat=en-GB&countryCode=RO&sportId=66&eventCount=100&page=1&integration=don",
+            "transport": "altenar-sb2-widget-json",
+            "runId": "2026-10-08T06:42:41.285Z",
+            "observedAt": "2026-10-08T06:42:55.085Z",
+            "providerEventId": "17709250",
+            "attributionStatus": "public-integration-unverified-brand",
+            "sport": "Football",
+            "league": "Brasileiro Serie A",
+            "kickoff": "2026-10-09T00:30:00.000Z",
+            "homeTeam": "Fluminense",
+            "awayTeam": "Coritiba",
+            "live": false,
+            "eventKey": "football|2026-10-09|fluminense|coritiba",
+            "markets": [
+              {
+                "key": "ASIAN_HANDICAP",
+                "providerMarketId": "1732427199",
+                "name": "Handicap Goluri",
+                "period": "fulltime",
+                "line": "-1.5",
+                "selections": [
+                  {
+                    "id": "4500108209",
+                    "providerOutcomeId": 1714,
+                    "name": "1 (-1.5)",
+                    "odds": 2.3334,
+                    "handicap": null
+                  },
+                  {
+                    "id": "4500108210",
+                    "providerOutcomeId": 1715,
+                    "name": "2 (+1.5)",
+                    "odds": 1.6154,
+                    "handicap": null
+                  }
+                ]
+              }
+            ],
+            "providerEventKey": "football|brasileiro serie a|2026-10-09T00:30:00.000Z|fluminense|coritiba"
+          }
+        }
+      ]
+    },
+    {
+      "label": "Atletico Nacional v Deportes Tolima / Atl.Nacional v CD Tolima",
+      "contract": "::BTTS::fulltime::_::yes+no::_::_",
+      "captures": [
+        {
+          "workspace": "data/workspace",
+          "book": "favbet",
+          "event": {
+            "id": "43455329",
+            "sourceId": "favbet",
+            "sourceUrl": "https://www.favbet.ro/ro/sports/event/17649/43455329/",
+            "observedAt": "2026-10-08T06:45:35.140Z",
+            "sport": "Football",
+            "league": "Primera A",
+            "kickoff": "2026-10-08T23:05:00.000Z",
+            "homeTeam": "Atletico Nacional",
+            "awayTeam": "Deportes Tolima",
+            "eventKey": "football|2026-10-08|atletico nacional|deportes tolima",
+            "markets": [
+              {
+                "key": "BOTH_TEAMS_SCORE",
+                "name": "Ambele Marcheaza",
+                "period": "fulltime",
+                "selections": [
+                  {
+                    "id": "3936259875",
+                    "name": "Yes",
+                    "odds": 1.82,
+                    "group": "Main"
+                  },
+                  {
+                    "id": "3936259876",
+                    "name": "No",
+                    "odds": 1.95,
+                    "group": "Main"
+                  }
+                ]
+              }
+            ],
+            "providerEventKey": "football|primera a|2026-10-08T23:05:00.000Z|atletico nacional|deportes tolima"
+          }
+        },
+        {
+          "workspace": "data/workspace",
+          "book": "casa-pariurilor",
+          "event": {
+            "id": "ufo:mtch:1wo-010",
+            "sourceId": "casa-pariurilor",
+            "sourceUrl": "https://api.casapariurilor.ro/offer/structure/api/v1_0/sport/tournaments",
+            "transport": "casa-catalogue-v1",
+            "observedAt": "2026-10-08T06:45:07.892Z",
+            "sport": "Football",
+            "league": "columbia-1",
+            "kickoff": "2026-10-08T23:05:00.000Z",
+            "homeTeam": "Atl.Nacional",
+            "awayTeam": "CD Tolima",
+            "eventKey": "football|2026-10-08|atl nacional|tolima",
+            "live": false,
+            "markets": [
+              {
+                "id": "ufo:mkt:1wo-010-146",
+                "key": "ufo:mtyp:00-1c",
+                "name": "Ambele marcheaza",
+                "period": "unknown",
+                "line": null,
+                "selections": [
+                  {
+                    "id": "ufo:opt:1wo-010-146-00",
+                    "name": "Da",
+                    "odds": 1.75,
+                    "handicap": null
+                  },
+                  {
+                    "id": "ufo:opt:1wo-010-146-01",
+                    "name": "Nu",
+                    "odds": 1.82,
+                    "handicap": null
+                  }
+                ],
+                "live": false
+              }
+            ],
+            "providerEventKey": "football|columbia 1|2026-10-08T23:05:00.000Z|atl nacional|cd tolima"
+          }
+        }
+      ]
+    },
+    {
+      "label": "Al Ittihad Alexandria Club v Wadi Degla FC / Al Ittihad Al Sakandary v Wadi Degla",
+      "contract": "::BTTS::fulltime::_::yes+no::_::_",
+      "captures": [
+        {
+          "workspace": "data/workspace",
+          "book": "favbet",
+          "event": {
+            "id": "43458635",
+            "sourceId": "favbet",
+            "sourceUrl": "https://www.favbet.ro/ro/sports/event/3273321/43458635/",
+            "observedAt": "2026-10-08T06:45:35.140Z",
+            "sport": "Football",
+            "league": "League Cup",
+            "kickoff": "2026-10-08T14:00:00.000Z",
+            "homeTeam": "Al Ittihad Alexandria Club",
+            "awayTeam": "Wadi Degla FC",
+            "eventKey": "football|2026-10-08|al ittihad alexandria|wadi degla",
+            "markets": [
+              {
+                "key": "BOTH_TEAMS_SCORE",
+                "name": "Ambele Marcheaza",
+                "period": "fulltime",
+                "selections": [
+                  {
+                    "id": "3936779277",
+                    "name": "Yes",
+                    "odds": 1.93,
+                    "group": "Main"
+                  },
+                  {
+                    "id": "3936779278",
+                    "name": "No",
+                    "odds": 1.8,
+                    "group": "Main"
+                  }
+                ]
+              }
+            ],
+            "providerEventKey": "football|league cup|2026-10-08T14:00:00.000Z|al ittihad alexandria club|wadi degla fc"
+          }
+        },
+        {
+          "workspace": "data/workspace",
+          "book": "casa-pariurilor",
+          "event": {
+            "id": "ufo:mtch:1wo-0br",
+            "sourceId": "casa-pariurilor",
+            "sourceUrl": "https://api.casapariurilor.ro/offer/structure/api/v1_0/sport/tournaments",
+            "transport": "casa-catalogue-v1",
+            "observedAt": "2026-10-08T06:45:07.892Z",
+            "sport": "Football",
+            "league": "egipt-cupa-ligii",
+            "kickoff": "2026-10-08T14:00:00.000Z",
+            "homeTeam": "Al Ittihad Al Sakandary",
+            "awayTeam": "Wadi Degla",
+            "eventKey": "football|2026-10-08|al ittihad al sakandary|wadi degla",
+            "live": false,
+            "markets": [
+              {
+                "id": "ufo:mkt:1wo-0br-000",
+                "key": "ufo:mtyp:00-1c",
+                "name": "Ambele marcheaza",
+                "period": "unknown",
+                "line": null,
+                "selections": [
+                  {
+                    "id": "ufo:opt:1wo-0br-000-01",
+                    "name": "Da",
+                    "odds": 1.84,
+                    "handicap": null
+                  },
+                  {
+                    "id": "ufo:opt:1wo-0br-000-00",
+                    "name": "Nu",
+                    "odds": 1.72,
+                    "handicap": null
+                  }
+                ],
+                "live": false
+              }
+            ],
+            "providerEventKey": "football|egipt cupa ligii|2026-10-08T14:00:00.000Z|al ittihad al sakandary|wadi degla"
+          }
+        }
+      ]
+    },
+    {
+      "label": "Ghazl El Mahalla v Abu Qair Semad / Ghazl El Mahallah v Abo Qair Semads",
+      "contract": "::OVER_UNDER::fulltime::1.5::over+under::goals::match",
+      "captures": [
+        {
+          "workspace": "data/workspace",
+          "book": "favbet",
+          "event": {
+            "id": "43458601",
+            "sourceId": "favbet",
+            "sourceUrl": "https://www.favbet.ro/ro/sports/event/3273321/43458601/",
+            "observedAt": "2026-10-08T06:45:35.140Z",
+            "sport": "Football",
+            "league": "League Cup",
+            "kickoff": "2026-10-08T17:00:00.000Z",
+            "homeTeam": "Ghazl El Mahalla",
+            "awayTeam": "Abu Qair Semad",
+            "eventKey": "football|2026-10-08|ghazl el mahalla|abu qair semad",
+            "markets": [
+              {
+                "key": "TOTAL_GOALS",
+                "providerMarketId": "50:1.5",
+                "name": "Peste / Sub",
+                "period": "fulltime",
+                "line": 1.5,
+                "selections": [
+                  {
+                    "id": "3936762572",
+                    "name": "Over 1.5",
+                    "odds": 1.47,
+                    "group": "Main"
+                  },
+                  {
+                    "id": "3936762573",
+                    "name": "Under 1.5",
+                    "odds": 2.51,
+                    "group": "Main"
+                  }
+                ]
+              }
+            ],
+            "providerEventKey": "football|league cup|2026-10-08T17:00:00.000Z|ghazl el mahalla|abu qair semad"
+          }
+        },
+        {
+          "workspace": "data/workspace",
+          "book": "don",
+          "event": {
+            "id": "17913726",
+            "sourceId": "don",
+            "sourceUrl": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetUpcoming?culture=ro-RO&timezoneOffset=-180&deviceType=1&numFormat=en-GB&countryCode=RO&sportId=66&eventCount=100&page=1&integration=don",
+            "transport": "altenar-sb2-widget-json",
+            "runId": "2026-10-08T06:42:41.285Z",
+            "observedAt": "2026-10-08T06:42:55.085Z",
+            "providerEventId": "17913726",
+            "attributionStatus": "public-integration-unverified-brand",
+            "sport": "Football",
+            "league": "League Cup",
+            "kickoff": "2026-10-08T17:00:00.000Z",
+            "homeTeam": "Ghazl El Mahallah",
+            "awayTeam": "Abo Qair Semads",
+            "live": false,
+            "eventKey": "football|2026-10-08|ghazl el mahallah|abo qair semads",
+            "markets": [
+              {
+                "key": "TOTAL_GOALS",
+                "providerMarketId": "1766625409",
+                "name": "Total goluri",
+                "period": "fulltime",
+                "line": "1.5",
+                "selections": [
+                  {
+                    "id": "4607349971",
+                    "providerOutcomeId": 12,
+                    "name": "Peste 1.5",
+                    "odds": 1.4546,
+                    "handicap": null
+                  },
+                  {
+                    "id": "4607349972",
+                    "providerOutcomeId": 13,
+                    "name": "Sub 1.5",
+                    "odds": 2.4,
+                    "handicap": null
+                  }
+                ]
+              }
+            ],
+            "providerEventKey": "football|league cup|2026-10-08T17:00:00.000Z|ghazl el mahallah|abo qair semads"
+          }
+        }
+      ]
+    },
+    {
+      "label": "Inter Milano v Parma / Inter Milan v Parma",
+      "contract": "::ASIAN_HANDICAP::fulltime::-4.5/4.5::home+away::_::_",
+      "captures": [
+        {
+          "workspace": "data/workspace",
+          "book": "superbet",
+          "event": {
+            "id": "14025532",
+            "sourceId": "superbet",
+            "sport": "Football",
+            "league": "Italia - Serie A",
+            "kickoff": "2026-10-10T16:00:00.000Z",
+            "homeTeam": "Inter Milano",
+            "awayTeam": "Parma",
+            "live": false,
+            "isLive": false,
+            "eventKey": "football|2026-10-10|inter milano|parma",
+            "sourceUrl": null,
+            "markets": [
+              {
+                "key": "sb:200736:Handicap",
+                "name": "Handicap",
+                "period": "fulltime",
+                "family": "ASIAN_HANDICAP",
+                "selections": [
+                  {
+                    "id": "db470f60-6456-522a-b58a-f2fc966e9af7",
+                    "name": "1 (-4.5)",
+                    "odds": 6.2,
+                    "handicap": null
+                  },
+                  {
+                    "id": "8ccad114-c51f-576a-8855-f10015c3fb2b",
+                    "name": "2 (4.5)",
+                    "odds": 1.11,
+                    "handicap": null
+                  }
+                ],
+                "live": false
+              }
+            ],
+            "providerEventKey": "football|italia serie a|2026-10-10T16:00:00.000Z|inter milano|parma"
+          }
+        },
+        {
+          "workspace": "data/workspace",
+          "book": "favbet",
+          "event": {
+            "id": "43421921",
+            "sourceId": "favbet",
+            "sourceUrl": "https://www.favbet.ro/ro/sports/event/17337/43421921/",
+            "observedAt": "2026-10-08T06:45:35.140Z",
+            "sport": "Football",
+            "league": "Seria A",
+            "kickoff": "2026-10-10T16:00:00.000Z",
+            "homeTeam": "Inter Milan",
+            "awayTeam": "Parma",
+            "eventKey": "football|2026-10-10|inter milan|parma",
+            "markets": [
+              {
+                "key": "ASIAN_HANDICAP",
+                "providerMarketId": "190:-4.5",
+                "name": "Handicap",
+                "period": "fulltime",
+                "line": -4.5,
+                "selections": [
+                  {
+                    "id": "3929953760",
+                    "name": "1 (-4.5)",
+                    "odds": 6.15,
+                    "group": "Main"
+                  },
+                  {
+                    "id": "3929953761",
+                    "name": "2 (+4.5)",
+                    "odds": 1.11,
+                    "group": "Main"
+                  }
+                ]
+              }
+            ],
+            "providerEventKey": "football|seria a|2026-10-10T16:00:00.000Z|inter milan|parma"
+          }
+        }
+      ]
+    },
+    {
+      "label": "Al-Khaleej Khor Fakkan v Al-Wasl FC / Khorfakkan v Al Wasl",
+      "contract": "::ASIAN_HANDICAP::fulltime::1.5/-1.5::home+away::_::_",
+      "captures": [
+        {
+          "workspace": "data/workspace",
+          "book": "topbet",
+          "event": {
+            "id": "17893745",
+            "sourceId": "topbet",
+            "sourceUrl": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetUpcoming?culture=ro-RO&timezoneOffset=-180&deviceType=1&numFormat=en-GB&countryCode=RO&sportId=66&eventCount=100&page=1&integration=topbet",
+            "transport": "altenar-sb2-widget-json",
+            "runId": "2026-10-08T06:42:41.285Z",
+            "observedAt": "2026-10-08T06:43:39.250Z",
+            "providerEventId": "17893745",
+            "attributionStatus": "public-integration-unverified-brand",
+            "sport": "Football",
+            "league": "Pro League Cup",
+            "kickoff": "2026-10-08T15:45:00.000Z",
+            "homeTeam": "Al-Khaleej Khor Fakkan",
+            "awayTeam": "Al-Wasl FC",
+            "live": false,
+            "eventKey": "football|2026-10-08|al khaleej khor fakkan|al wasl",
+            "markets": [
+              {
+                "key": "ASIAN_HANDICAP",
+                "providerMarketId": "1767283383",
+                "name": "Handicap Goluri",
+                "period": "fulltime",
+                "line": "+1.5",
+                "selections": [
+                  {
+                    "id": "4609633601",
+                    "providerOutcomeId": 1714,
+                    "name": "1 (+1.5)",
+                    "odds": 1.6667,
+                    "handicap": null
+                  },
+                  {
+                    "id": "4609633602",
+                    "providerOutcomeId": 1715,
+                    "name": "2 (-1.5)",
+                    "odds": 2,
+                    "handicap": null
+                  }
+                ]
+              }
+            ],
+            "providerEventKey": "football|pro league cup|2026-10-08T15:45:00.000Z|al khaleej khor fakkan|al wasl fc"
+          }
+        },
+        {
+          "workspace": "data/workspace",
+          "book": "maxbet",
+          "event": {
+            "id": "11082017",
+            "sourceId": "maxbet",
+            "sourceUrl": "https://sportsbook-sm-distribution-api.nsoft.com/api/v1/events?companyUuid=2191e3d6-b0e1-4f06-8b6a-4683203fb2fe&filter%5Bfrom%5D=2026-10-08T06%3A43%3A26&filter%5Bto%5D=2026-10-29T06%3A43%3A26&timezone=Europe%2FBucharest&language=%7B%22default%22%3A%22ro%22%2C%22tournament%22%3A%22ro%22%2C%22category%22%3A%22ro%22%2C%22sport%22%3A%22ro%22%7D&shortProps=1&offerTemplate=WEB_OVERVIEW&dataFormat=%7B%22default%22%3A%22array%22%2C%22events%22%3A%22object%22%2C%22outcomes%22%3A%22array%22%7D",
+            "transport": "nsoft-public-sports-json",
+            "runId": "2026-10-08T06:42:41.285Z",
+            "observedAt": "2026-10-08T06:43:31.963Z",
+            "sport": "Football",
+            "league": "League Cup",
+            "kickoff": "2026-10-08T15:45:00.000Z",
+            "homeTeam": "Khorfakkan",
+            "awayTeam": "Al Wasl",
+            "live": false,
+            "eventKey": "football|2026-10-08|khorfakkan|al wasl",
+            "markets": [
+              {
+                "key": "ASIAN_HANDICAP",
+                "providerMarketId": 8,
+                "name": "Handicap Asiatic",
+                "period": "fulltime",
+                "line": "1.5",
+                "selections": [
+                  {
+                    "id": "615641678",
+                    "providerOutcomeId": 26,
+                    "providerName": "H1 1.5",
+                    "name": "1 (1.5)",
+                    "odds": 1.69,
+                    "handicap": 1.5
+                  },
+                  {
+                    "id": "615641681",
+                    "providerOutcomeId": 29,
+                    "providerName": "H2 -1.5",
+                    "name": "2 (-1.5)",
+                    "odds": 1.97,
+                    "handicap": -1.5
+                  }
+                ]
+              }
+            ],
+            "providerEventKey": "football|league cup|2026-10-08T15:45:00.000Z|khorfakkan|al wasl"
+          }
+        }
+      ]
+    },
+    {
+      "label": "Botafogo v Vasco Da Gama / Botafogo RJ v Vasco da Gama",
+      "contract": "::OVER_UNDER::half1::1.5::over+under::goals::match",
+      "captures": [
+        {
+          "workspace": "data/workspace",
+          "book": "unibet",
+          "event": {
+            "id": "df1810478145f8f1b9179483bfb0f8f5",
+            "sourceId": "unibet",
+            "sourceUrl": "https://sportsbff-ams.kindredext.net/sports-api/api/v2/views/az-menu",
+            "transport": "kindred-sports-bff-v2",
+            "observedAt": "2026-10-07T23:26:33.094Z",
+            "status": "PreGame",
+            "sport": "Football",
+            "league": "Serie A",
+            "kickoff": "2026-10-07T23:30:00.000Z",
+            "homeTeam": "Botafogo",
+            "awayTeam": "Vasco Da Gama",
+            "eventKey": "football|2026-10-07|botafogo|vasco da gama",
+            "live": false,
+            "markets": [
+              {
+                "id": "1st_half_total:1.5",
+                "key": "TOTAL",
+                "name": "Total Goluri - Repriză a 1-a",
+                "period": "half1",
+                "line": "1.5",
+                "selections": [
+                  {
+                    "id": "df1810478145f8f1b9179483bfb0f8f5:base:1st_half_total:total_over:1.5:offering",
+                    "name": "Peste 1.5",
+                    "odds": 2.2,
+                    "handicap": "1.5",
+                    "group": "Main"
+                  },
+                  {
+                    "id": "df1810478145f8f1b9179483bfb0f8f5:base:1st_half_total:total_under:1.5:offering",
+                    "name": "Sub 1.5",
+                    "odds": 1.62,
+                    "handicap": "1.5",
+                    "group": "Main"
+                  }
+                ],
+                "live": false
+              }
+            ],
+            "providerEventKey": "football|serie a|2026-10-07T23:30:00.000Z|botafogo|vasco da gama"
+          }
+        },
+        {
+          "workspace": "data/workspace",
+          "book": "betano",
+          "event": {
+            "id": "92533669",
+            "sourceId": "betano",
+            "sourceUrl": "https://ro.betano.com/cote/botafogo-rj-vasco-da-gama/92533669/",
+            "sport": "Football",
+            "league": "Brasileirao - Serie A",
+            "kickoff": "2026-10-07T23:30:00.000Z",
+            "homeTeam": "Botafogo RJ",
+            "awayTeam": "Vasco da Gama",
+            "eventKey": "football|2026-10-07|botafogo rj|vasco da gama",
+            "markets": [
+              {
+                "key": "OUH1",
+                "name": "Goluri prima repriză Peste/Sub",
+                "period": "fulltime",
+                "selections": [
+                  {
+                    "id": "10419396490",
+                    "name": "Peste 1.5",
+                    "odds": 2.47,
+                    "handicap": 1.5,
+                    "group": "Main"
+                  },
+                  {
+                    "id": "10419396491",
+                    "name": "Sub 1.5",
+                    "odds": 1.52,
+                    "handicap": 1.5,
+                    "group": "Main"
+                  }
+                ]
+              }
+            ],
+            "providerEventKey": "football|brasileirao serie a|2026-10-07T23:30:00.000Z|botafogo rj|vasco da gama"
+          }
+        }
+      ]
+    },
+    {
+      "label": "Augsburg v Bayern Munich / FC Augsburg v FC Bayern Munchen",
+      "contract": "::ASIAN_HANDICAP::fulltime::3.5/-3.5::home+away::_::_",
+      "captures": [
+        {
+          "workspace": "data/workspace",
+          "book": "unibet",
+          "event": {
+            "id": "88668720a368bfedf8d51f3842b720fc",
+            "sourceId": "unibet",
+            "sourceUrl": "https://sportsbff-ams.kindredext.net/sports-api/api/v2/views/az-menu",
+            "transport": "kindred-sports-bff-v2",
+            "observedAt": "2026-10-07T23:26:33.094Z",
+            "status": "PreGame",
+            "sport": "Football",
+            "league": "Bundesliga",
+            "kickoff": "2026-10-10T13:30:00.000Z",
+            "homeTeam": "Augsburg",
+            "awayTeam": "Bayern Munich",
+            "eventKey": "football|2026-10-10|augsburg|bayern munich",
+            "live": false,
+            "markets": [
+              {
+                "id": "2_way_handicap:3.5",
+                "key": "HANDICAP",
+                "name": "Handicap asiatic",
+                "period": "fulltime",
+                "line": "+3.5",
+                "selections": [
+                  {
+                    "id": "88668720a368bfedf8d51f3842b720fc:base:2_way_handicap:4qrgticwb0hxs30omgrzmcatb:3.5:offering",
+                    "name": "1 +3.5",
+                    "odds": 1.35,
+                    "handicap": "+3.5",
+                    "group": "Main"
+                  },
+                  {
+                    "id": "88668720a368bfedf8d51f3842b720fc:base:2_way_handicap:1gan0w41p2fn33qgn80kjxudh:3.5:offering",
+                    "name": "2 -3.5",
+                    "odds": 3.1,
+                    "handicap": "-3.5",
+                    "group": "Main"
+                  }
+                ],
+                "live": false
+              }
+            ],
+            "providerEventKey": "football|bundesliga|2026-10-10T13:30:00.000Z|augsburg|bayern munich"
+          }
+        },
+        {
+          "workspace": "data/workspace",
+          "book": "favbet",
+          "event": {
+            "id": "43421832",
+            "sourceId": "favbet",
+            "sourceUrl": "https://www.favbet.ro/ro/sports/event/17329/43421832/",
+            "observedAt": "2026-10-08T06:45:35.140Z",
+            "sport": "Football",
+            "league": "Bundesliga",
+            "kickoff": "2026-10-10T13:30:00.000Z",
+            "homeTeam": "FC Augsburg",
+            "awayTeam": "FC Bayern Munchen",
+            "eventKey": "football|2026-10-10|augsburg|bayern munchen",
+            "markets": [
+              {
+                "key": "ASIAN_HANDICAP",
+                "providerMarketId": "190:3.5",
+                "name": "Handicap",
+                "period": "fulltime",
+                "line": 3.5,
+                "selections": [
+                  {
+                    "id": "3929927332",
+                    "name": "1 (+3.5)",
+                    "odds": 1.36,
+                    "group": "Main"
+                  },
+                  {
+                    "id": "3929927333",
+                    "name": "2 (-3.5)",
+                    "odds": 3.24,
+                    "group": "Main"
+                  }
+                ]
+              }
+            ],
+            "providerEventKey": "football|bundesliga|2026-10-10T13:30:00.000Z|fc augsburg|fc bayern munchen"
+          }
+        }
+      ]
+    },
+    {
+      "label": "Bentin Tacna Heroica v Mannucci / Bentin Tacna Heroica v Carlos Mannucci",
+      "contract": "::BTTS::fulltime::_::yes+no::_::_",
+      "captures": [
+        {
+          "workspace": "data/workspace",
+          "book": "unibet",
+          "event": {
+            "id": "a552040ff8331155f8b2bf5f09319301",
+            "sourceId": "unibet",
+            "sourceUrl": "https://sportsbff-ams.kindredext.net/sports-api/api/v2/views/az-menu",
+            "transport": "kindred-sports-bff-v2",
+            "observedAt": "2026-10-07T23:26:33.094Z",
+            "status": "PreGame",
+            "sport": "Football",
+            "league": "Liga 2",
+            "kickoff": "2026-10-08T20:00:00.000Z",
+            "homeTeam": "Bentin Tacna Heroica",
+            "awayTeam": "Mannucci",
+            "eventKey": "football|2026-10-08|bentin tacna heroica|mannucci",
+            "live": false,
+            "markets": [
+              {
+                "id": "both_teams_to_score:plain",
+                "key": "BOTH_TEAMS_SCORE",
+                "name": "Ambele echipe să marcheze",
+                "period": "fulltime",
+                "line": null,
+                "selections": [
+                  {
+                    "id": "a552040ff8331155f8b2bf5f09319301:base:both_teams_to_score:yes:plain:offering",
+                    "name": "Da",
+                    "odds": 1.88,
+                    "handicap": null,
+                    "group": "Main"
+                  },
+                  {
+                    "id": "a552040ff8331155f8b2bf5f09319301:base:both_teams_to_score:no:plain:offering",
+                    "name": "Nu",
+                    "odds": 1.78,
+                    "handicap": null,
+                    "group": "Main"
+                  }
+                ],
+                "live": false
+              }
+            ],
+            "providerEventKey": "football|liga 2|2026-10-08T20:00:00.000Z|bentin tacna heroica|mannucci"
+          }
+        },
+        {
+          "workspace": "data/workspace",
+          "book": "casa-pariurilor",
+          "event": {
+            "id": "ufo:mtch:1wo-256",
+            "sourceId": "casa-pariurilor",
+            "sourceUrl": "https://api.casapariurilor.ro/offer/structure/api/v1_0/sport/tournaments",
+            "transport": "casa-catalogue-v1",
+            "observedAt": "2026-10-08T06:45:07.892Z",
+            "sport": "Football",
+            "league": "peru-2",
+            "kickoff": "2026-10-08T20:00:00.000Z",
+            "homeTeam": "Bentin Tacna Heroica",
+            "awayTeam": "Carlos Mannucci",
+            "eventKey": "football|2026-10-08|bentin tacna heroica|carlos mannucci",
+            "live": false,
+            "markets": [
+              {
+                "id": "ufo:mkt:1wo-256-002",
+                "key": "ufo:mtyp:00-1c",
+                "name": "Ambele marcheaza",
+                "period": "unknown",
+                "line": null,
+                "selections": [
+                  {
+                    "id": "ufo:opt:1wo-256-002-00",
+                    "name": "Da",
+                    "odds": 1.83,
+                    "handicap": null
+                  },
+                  {
+                    "id": "ufo:opt:1wo-256-002-01",
+                    "name": "Nu",
+                    "odds": 1.74,
+                    "handicap": null
+                  }
+                ],
+                "live": false
+              }
+            ],
+            "providerEventKey": "football|peru 2|2026-10-08T20:00:00.000Z|bentin tacna heroica|carlos mannucci"
+          }
+        }
+      ]
+    },
+    {
+      "label": "Atletico Nacional Medellín v Deportes Tolima / Atl.Nacional v CD Tolima",
+      "contract": "::BTTS::fulltime::_::yes+no::_::_",
+      "captures": [
+        {
+          "workspace": "data/workspace",
+          "book": "unibet",
+          "event": {
+            "id": "264ecad80753a0ce809c0fdaebbc07f2",
+            "sourceId": "unibet",
+            "sourceUrl": "https://sportsbff-ams.kindredext.net/sports-api/api/v2/views/az-menu",
+            "transport": "kindred-sports-bff-v2",
+            "observedAt": "2026-10-07T23:26:33.094Z",
+            "status": "PreGame",
+            "sport": "Football",
+            "league": "Primera A",
+            "kickoff": "2026-10-08T23:05:00.000Z",
+            "homeTeam": "Atletico Nacional Medellín",
+            "awayTeam": "Deportes Tolima",
+            "eventKey": "football|2026-10-08|atletico nacional medellin|deportes tolima",
+            "live": false,
+            "markets": [
+              {
+                "id": "both_teams_to_score:plain",
+                "key": "BOTH_TEAMS_SCORE",
+                "name": "Ambele echipe să marcheze",
+                "period": "fulltime",
+                "line": null,
+                "selections": [
+                  {
+                    "id": "264ecad80753a0ce809c0fdaebbc07f2:base:both_teams_to_score:yes:plain:offering",
+                    "name": "Da",
+                    "odds": 1.73,
+                    "handicap": null,
+                    "group": "Main"
+                  },
+                  {
+                    "id": "264ecad80753a0ce809c0fdaebbc07f2:base:both_teams_to_score:no:plain:offering",
+                    "name": "Nu",
+                    "odds": 2,
+                    "handicap": null,
+                    "group": "Main"
+                  }
+                ],
+                "live": false
+              }
+            ],
+            "providerEventKey": "football|primera a|2026-10-08T23:05:00.000Z|atletico nacional medellin|deportes tolima"
+          }
+        },
+        {
+          "workspace": "data/workspace",
+          "book": "casa-pariurilor",
+          "event": {
+            "id": "ufo:mtch:1wo-010",
+            "sourceId": "casa-pariurilor",
+            "sourceUrl": "https://api.casapariurilor.ro/offer/structure/api/v1_0/sport/tournaments",
+            "transport": "casa-catalogue-v1",
+            "observedAt": "2026-10-08T06:45:07.892Z",
+            "sport": "Football",
+            "league": "columbia-1",
+            "kickoff": "2026-10-08T23:05:00.000Z",
+            "homeTeam": "Atl.Nacional",
+            "awayTeam": "CD Tolima",
+            "eventKey": "football|2026-10-08|atl nacional|tolima",
+            "live": false,
+            "markets": [
+              {
+                "id": "ufo:mkt:1wo-010-146",
+                "key": "ufo:mtyp:00-1c",
+                "name": "Ambele marcheaza",
+                "period": "unknown",
+                "line": null,
+                "selections": [
+                  {
+                    "id": "ufo:opt:1wo-010-146-00",
+                    "name": "Da",
+                    "odds": 1.75,
+                    "handicap": null
+                  },
+                  {
+                    "id": "ufo:opt:1wo-010-146-01",
+                    "name": "Nu",
+                    "odds": 1.82,
+                    "handicap": null
+                  }
+                ],
+                "live": false
+              }
+            ],
+            "providerEventKey": "football|columbia 1|2026-10-08T23:05:00.000Z|atl nacional|cd tolima"
+          }
+        }
+      ]
+    },
+    {
+      "label": "Viking v Bayern Munich / Viking v FC Bayern Munchen",
+      "contract": "::ASIAN_HANDICAP::fulltime::3.5/-3.5::home+away::_::_",
+      "captures": [
+        {
+          "workspace": "data/workspace",
+          "book": "unibet",
+          "event": {
+            "id": "e0783c874de0534068b4501d1cf93248",
+            "sourceId": "unibet",
+            "sourceUrl": "https://sportsbff-ams.kindredext.net/sports-api/api/v2/views/az-menu",
+            "transport": "kindred-sports-bff-v2",
+            "observedAt": "2026-10-07T23:26:33.094Z",
+            "status": "PreGame",
+            "sport": "Football",
+            "league": "UEFA Champions League",
+            "kickoff": "2026-10-13T19:00:00.000Z",
+            "homeTeam": "Viking",
+            "awayTeam": "Bayern Munich",
+            "eventKey": "football|2026-10-13|viking|bayern munich",
+            "live": false,
+            "markets": [
+              {
+                "id": "2_way_handicap:3.5",
+                "key": "HANDICAP",
+                "name": "Handicap asiatic",
+                "period": "fulltime",
+                "line": "+3.5",
+                "selections": [
+                  {
+                    "id": "e0783c874de0534068b4501d1cf93248:base:2_way_handicap:3yvxovf3xl4k8d88b4w1dycc6:3.5:offering",
+                    "name": "1 +3.5",
+                    "odds": 1.52,
+                    "handicap": "+3.5",
+                    "group": "Main"
+                  },
+                  {
+                    "id": "e0783c874de0534068b4501d1cf93248:base:2_way_handicap:1gan0w41p2fn33qgn80kjxudh:3.5:offering",
+                    "name": "2 -3.5",
+                    "odds": 2.4,
+                    "handicap": "-3.5",
+                    "group": "Main"
+                  }
+                ],
+                "live": false
+              }
+            ],
+            "providerEventKey": "football|uefa champions league|2026-10-13T19:00:00.000Z|viking|bayern munich"
+          }
+        },
+        {
+          "workspace": "data/workspace",
+          "book": "favbet",
+          "event": {
+            "id": "43411553",
+            "sourceId": "favbet",
+            "sourceUrl": "https://www.favbet.ro/ro/sports/event/17409/43411553/",
+            "observedAt": "2026-10-08T06:45:35.140Z",
+            "sport": "Football",
+            "league": "Champions League",
+            "kickoff": "2026-10-13T19:00:00.000Z",
+            "homeTeam": "Viking",
+            "awayTeam": "FC Bayern Munchen",
+            "eventKey": "football|2026-10-13|viking|bayern munchen",
+            "markets": [
+              {
+                "key": "ASIAN_HANDICAP",
+                "providerMarketId": "190:3.5",
+                "name": "Handicap",
+                "period": "fulltime",
+                "line": 3.5,
+                "selections": [
+                  {
+                    "id": "3928039191",
+                    "name": "1 (+3.5)",
+                    "odds": 1.54,
+                    "group": "Main"
+                  },
+                  {
+                    "id": "3928039192",
+                    "name": "2 (-3.5)",
+                    "odds": 2.54,
+                    "group": "Main"
+                  }
+                ]
+              }
+            ],
+            "providerEventKey": "football|champions league|2026-10-13T19:00:00.000Z|viking|fc bayern munchen"
+          }
+        }
+      ]
+    },
+    {
+      "label": "CS Din. București v CSM Olimpia Satu Mare / CS Dinamo v CSM Satu Mare",
+      "contract": "::OVER_UNDER::fulltime::3.5::over+under::goals::match",
+      "captures": [
+        {
+          "workspace": "data/workspace",
+          "book": "contibet",
+          "event": {
+            "id": "315535599868735488",
+            "sourceId": "contibet",
+            "sourceUrl": "https://conticazino.ro/sport#/event/315535599868735488",
+            "observedAt": "2026-10-08T06:43:29.897Z",
+            "sport": "Football",
+            "league": "Liga II 2026/2027",
+            "kickoff": "2026-10-10T08:00:00.000Z",
+            "homeTeam": "CS Din. București",
+            "awayTeam": "CSM Olimpia Satu Mare",
+            "eventKey": "football|2026-10-10|cs din bucuresti|csm olimpia satu mare",
+            "markets": [
+              {
+                "key": "TOTAL_GOALS",
+                "name": "Goluri Peste / Sub 3.5, Timp regulamentar",
+                "period": "fulltime",
+                "selections": [
+                  {
+                    "id": "315535599980817664",
+                    "name": "Peste 3.5",
+                    "odds": 1.98,
+                    "handicap": 3.5,
+                    "group": "Main"
+                  },
+                  {
+                    "id": "315535599980816128",
+                    "name": "Sub 3.5",
+                    "odds": 1.71,
+                    "handicap": 3.5,
+                    "group": "Main"
+                  }
+                ]
+              }
+            ],
+            "providerEventKey": "football|liga ii 2026 2027|2026-10-10T08:00:00.000Z|cs din bucuresti|csm olimpia satu mare"
+          }
+        },
+        {
+          "workspace": "data/workspace",
+          "book": "casa-pariurilor",
+          "event": {
+            "id": "ufo:mtch:1wq-0es",
+            "sourceId": "casa-pariurilor",
+            "sourceUrl": "https://api.casapariurilor.ro/offer/structure/api/v1_0/sport/tournaments",
+            "transport": "casa-catalogue-v1",
+            "observedAt": "2026-10-08T06:45:07.892Z",
+            "sport": "Football",
+            "league": "romania-2",
+            "kickoff": "2026-10-10T08:00:00.000Z",
+            "homeTeam": "CS Dinamo",
+            "awayTeam": "CSM Satu Mare",
+            "eventKey": "football|2026-10-10|cs dinamo|csm satu mare",
+            "live": false,
+            "markets": [
+              {
+                "id": "ufo:mkt:1wq-0es-002",
+                "key": "ufo:mtyp:00-0u",
+                "name": "Total goluri 3.5",
+                "period": "unknown",
+                "line": null,
+                "selections": [
+                  {
+                    "id": "ufo:opt:1wq-0es-002-01",
+                    "name": "peste 3.5",
+                    "odds": 2.28,
+                    "handicap": null
+                  },
+                  {
+                    "id": "ufo:opt:1wq-0es-002-00",
+                    "name": "sub 3.5",
+                    "odds": 1.57,
+                    "handicap": null
+                  }
+                ],
+                "live": false
+              }
+            ],
+            "providerEventKey": "football|romania 2|2026-10-10T08:00:00.000Z|cs dinamo|csm satu mare"
+          }
+        }
+      ]
+    },
+    {
+      "label": "1599 Şelimbăr v Unirea 2004 / Selimbar v Slobozia",
+      "contract": "::BTTS::fulltime::_::yes+no::_::_",
+      "captures": [
+        {
+          "workspace": "data/workspace",
+          "book": "unibet",
+          "event": {
+            "id": "3d3edce4847790fff94b26d57db38813",
+            "sourceId": "unibet",
+            "sourceUrl": "https://sportsbff-ams.kindredext.net/sports-api/api/v2/views/az-menu",
+            "transport": "kindred-sports-bff-v2",
+            "observedAt": "2026-10-07T23:26:33.094Z",
+            "status": "PreGame",
+            "sport": "Football",
+            "league": "Liga II",
+            "kickoff": "2026-10-10T08:00:00.000Z",
+            "homeTeam": "1599 Şelimbăr",
+            "awayTeam": "Unirea 2004",
+            "eventKey": "football|2026-10-10|1599 selimbar|unirea 2004",
+            "live": false,
+            "markets": [
+              {
+                "id": "both_teams_to_score:plain",
+                "key": "BOTH_TEAMS_SCORE",
+                "name": "Ambele echipe să marcheze",
+                "period": "fulltime",
+                "line": null,
+                "selections": [
+                  {
+                    "id": "3d3edce4847790fff94b26d57db38813:base:both_teams_to_score:yes:plain:offering",
+                    "name": "Da",
+                    "odds": 1.75,
+                    "handicap": null,
+                    "group": "Main"
+                  },
+                  {
+                    "id": "3d3edce4847790fff94b26d57db38813:base:both_teams_to_score:no:plain:offering",
+                    "name": "Nu",
+                    "odds": 1.95,
+                    "handicap": null,
+                    "group": "Main"
+                  }
+                ],
+                "live": false
+              }
+            ],
+            "providerEventKey": "football|liga ii|2026-10-10T08:00:00.000Z|1599 selimbar|unirea 2004"
+          }
+        },
+        {
+          "workspace": "data/workspace",
+          "book": "casa-pariurilor",
+          "event": {
+            "id": "ufo:mtch:1wq-0ex",
+            "sourceId": "casa-pariurilor",
+            "sourceUrl": "https://api.casapariurilor.ro/offer/structure/api/v1_0/sport/tournaments",
+            "transport": "casa-catalogue-v1",
+            "observedAt": "2026-10-08T06:45:07.892Z",
+            "sport": "Football",
+            "league": "romania-2",
+            "kickoff": "2026-10-10T08:00:00.000Z",
+            "homeTeam": "Selimbar",
+            "awayTeam": "Slobozia",
+            "eventKey": "football|2026-10-10|selimbar|slobozia",
+            "live": false,
+            "markets": [
+              {
+                "id": "ufo:mkt:1wq-0ex-003",
+                "key": "ufo:mtyp:00-1c",
+                "name": "Ambele marcheaza",
+                "period": "unknown",
+                "line": null,
+                "selections": [
+                  {
+                    "id": "ufo:opt:1wq-0ex-003-00",
+                    "name": "Nu",
+                    "odds": 2.02,
+                    "handicap": null
+                  },
+                  {
+                    "id": "ufo:opt:1wq-0ex-003-01",
+                    "name": "Da",
+                    "odds": 1.74,
+                    "handicap": null
+                  }
+                ],
+                "live": false
+              }
+            ],
+            "providerEventKey": "football|romania 2|2026-10-10T08:00:00.000Z|selimbar|slobozia"
+          }
+        }
+      ]
+    },
+    {
+      "label": "CS Dinamo București v Satu Mare / CS Dinamo v CSM Satu Mare",
+      "contract": "::BTTS::fulltime::_::yes+no::_::_",
+      "captures": [
+        {
+          "workspace": "data/workspace",
+          "book": "unibet",
+          "event": {
+            "id": "e7dbc7cbe0a8a8f3fd1960b5e6f119d3",
+            "sourceId": "unibet",
+            "sourceUrl": "https://sportsbff-ams.kindredext.net/sports-api/api/v2/views/az-menu",
+            "transport": "kindred-sports-bff-v2",
+            "observedAt": "2026-10-07T23:26:33.094Z",
+            "status": "PreGame",
+            "sport": "Football",
+            "league": "Liga II",
+            "kickoff": "2026-10-10T08:00:00.000Z",
+            "homeTeam": "CS Dinamo București",
+            "awayTeam": "Satu Mare",
+            "eventKey": "football|2026-10-10|cs dinamo bucuresti|satu mare",
+            "live": false,
+            "markets": [
+              {
+                "id": "both_teams_to_score:plain",
+                "key": "BOTH_TEAMS_SCORE",
+                "name": "Ambele echipe să marcheze",
+                "period": "fulltime",
+                "line": null,
+                "selections": [
+                  {
+                    "id": "e7dbc7cbe0a8a8f3fd1960b5e6f119d3:base:both_teams_to_score:yes:plain:offering",
+                    "name": "Da",
+                    "odds": 1.54,
+                    "handicap": null,
+                    "group": "Main"
+                  },
+                  {
+                    "id": "e7dbc7cbe0a8a8f3fd1960b5e6f119d3:base:both_teams_to_score:no:plain:offering",
+                    "name": "Nu",
+                    "odds": 2.35,
+                    "handicap": null,
+                    "group": "Main"
+                  }
+                ],
+                "live": false
+              }
+            ],
+            "providerEventKey": "football|liga ii|2026-10-10T08:00:00.000Z|cs dinamo bucuresti|satu mare"
+          }
+        },
+        {
+          "workspace": "data/workspace",
+          "book": "casa-pariurilor",
+          "event": {
+            "id": "ufo:mtch:1wq-0es",
+            "sourceId": "casa-pariurilor",
+            "sourceUrl": "https://api.casapariurilor.ro/offer/structure/api/v1_0/sport/tournaments",
+            "transport": "casa-catalogue-v1",
+            "observedAt": "2026-10-08T06:45:07.892Z",
+            "sport": "Football",
+            "league": "romania-2",
+            "kickoff": "2026-10-10T08:00:00.000Z",
+            "homeTeam": "CS Dinamo",
+            "awayTeam": "CSM Satu Mare",
+            "eventKey": "football|2026-10-10|cs dinamo|csm satu mare",
+            "live": false,
+            "markets": [
+              {
+                "id": "ufo:mkt:1wq-0es-003",
+                "key": "ufo:mtyp:00-1c",
+                "name": "Ambele marcheaza",
+                "period": "unknown",
+                "line": null,
+                "selections": [
+                  {
+                    "id": "ufo:opt:1wq-0es-003-00",
+                    "name": "Da",
+                    "odds": 1.61,
+                    "handicap": null
+                  },
+                  {
+                    "id": "ufo:opt:1wq-0es-003-01",
+                    "name": "Nu",
+                    "odds": 2.22,
+                    "handicap": null
+                  }
+                ],
+                "live": false
+              }
+            ],
+            "providerEventKey": "football|romania 2|2026-10-10T08:00:00.000Z|cs dinamo|csm satu mare"
+          }
+        }
+      ]
+    },
+    {
+      "label": "Chindia Targoviste v Concordia Chiajna / Chindia v Concordia",
+      "contract": "::BTTS::fulltime::_::yes+no::_::_",
+      "captures": [
+        {
+          "workspace": "data/workspace",
+          "book": "unibet",
+          "event": {
+            "id": "39e039c5ebf133a4d5602bc911d6ff8d",
+            "sourceId": "unibet",
+            "sourceUrl": "https://sportsbff-ams.kindredext.net/sports-api/api/v2/views/az-menu",
+            "transport": "kindred-sports-bff-v2",
+            "observedAt": "2026-10-07T23:26:33.094Z",
+            "status": "PreGame",
+            "sport": "Football",
+            "league": "Liga II",
+            "kickoff": "2026-10-10T08:00:00.000Z",
+            "homeTeam": "Chindia Targoviste",
+            "awayTeam": "Concordia Chiajna",
+            "eventKey": "football|2026-10-10|chindia targoviste|concordia chiajna",
+            "live": false,
+            "markets": [
+              {
+                "id": "both_teams_to_score:plain",
+                "key": "BOTH_TEAMS_SCORE",
+                "name": "Ambele echipe să marcheze",
+                "period": "fulltime",
+                "line": null,
+                "selections": [
+                  {
+                    "id": "39e039c5ebf133a4d5602bc911d6ff8d:base:both_teams_to_score:yes:plain:offering",
+                    "name": "Da",
+                    "odds": 1.58,
+                    "handicap": null,
+                    "group": "Main"
+                  },
+                  {
+                    "id": "39e039c5ebf133a4d5602bc911d6ff8d:base:both_teams_to_score:no:plain:offering",
+                    "name": "Nu",
+                    "odds": 2.25,
+                    "handicap": null,
+                    "group": "Main"
+                  }
+                ],
+                "live": false
+              }
+            ],
+            "providerEventKey": "football|liga ii|2026-10-10T08:00:00.000Z|chindia targoviste|concordia chiajna"
+          }
+        },
+        {
+          "workspace": "data/workspace",
+          "book": "casa-pariurilor",
+          "event": {
+            "id": "ufo:mtch:1wq-0eq",
+            "sourceId": "casa-pariurilor",
+            "sourceUrl": "https://api.casapariurilor.ro/offer/structure/api/v1_0/sport/tournaments",
+            "transport": "casa-catalogue-v1",
+            "observedAt": "2026-10-08T06:45:07.892Z",
+            "sport": "Football",
+            "league": "romania-2",
+            "kickoff": "2026-10-10T08:00:00.000Z",
+            "homeTeam": "Chindia",
+            "awayTeam": "Concordia",
+            "eventKey": "football|2026-10-10|chindia|concordia",
+            "live": false,
+            "markets": [
+              {
+                "id": "ufo:mkt:1wq-0eq-003",
+                "key": "ufo:mtyp:00-1c",
+                "name": "Ambele marcheaza",
+                "period": "unknown",
+                "line": null,
+                "selections": [
+                  {
+                    "id": "ufo:opt:1wq-0eq-003-01",
+                    "name": "Da",
+                    "odds": 1.62,
+                    "handicap": null
+                  },
+                  {
+                    "id": "ufo:opt:1wq-0eq-003-00",
+                    "name": "Nu",
+                    "odds": 2.21,
+                    "handicap": null
+                  }
+                ],
+                "live": false
+              }
+            ],
+            "providerEventKey": "football|romania 2|2026-10-10T08:00:00.000Z|chindia|concordia"
+          }
+        }
+      ]
+    },
+    {
+      "label": "FC Cetate Suceava v Dumbrăviţa / Cetatea Suceava v Dumbravita",
+      "contract": "::BTTS::fulltime::_::yes+no::_::_",
+      "captures": [
+        {
+          "workspace": "data/workspace",
+          "book": "unibet",
+          "event": {
+            "id": "af1dafebf11d3d270c7e019574a61ab5",
+            "sourceId": "unibet",
+            "sourceUrl": "https://sportsbff-ams.kindredext.net/sports-api/api/v2/views/az-menu",
+            "transport": "kindred-sports-bff-v2",
+            "observedAt": "2026-10-07T23:26:33.094Z",
+            "status": "PreGame",
+            "sport": "Football",
+            "league": "Liga II",
+            "kickoff": "2026-10-10T08:00:00.000Z",
+            "homeTeam": "FC Cetate Suceava",
+            "awayTeam": "Dumbrăviţa",
+            "eventKey": "football|2026-10-10|cetate suceava|dumbravita",
+            "live": false,
+            "markets": [
+              {
+                "id": "both_teams_to_score:plain",
+                "key": "BOTH_TEAMS_SCORE",
+                "name": "Ambele echipe să marcheze",
+                "period": "fulltime",
+                "line": null,
+                "selections": [
+                  {
+                    "id": "af1dafebf11d3d270c7e019574a61ab5:base:both_teams_to_score:yes:plain:offering",
+                    "name": "Da",
+                    "odds": 1.7,
+                    "handicap": null,
+                    "group": "Main"
+                  },
+                  {
+                    "id": "af1dafebf11d3d270c7e019574a61ab5:base:both_teams_to_score:no:plain:offering",
+                    "name": "Nu",
+                    "odds": 2.05,
+                    "handicap": null,
+                    "group": "Main"
+                  }
+                ],
+                "live": false
+              }
+            ],
+            "providerEventKey": "football|liga ii|2026-10-10T08:00:00.000Z|fc cetate suceava|dumbravita"
+          }
+        },
+        {
+          "workspace": "data/workspace",
+          "book": "casa-pariurilor",
+          "event": {
+            "id": "ufo:mtch:1wq-0er",
+            "sourceId": "casa-pariurilor",
+            "sourceUrl": "https://api.casapariurilor.ro/offer/structure/api/v1_0/sport/tournaments",
+            "transport": "casa-catalogue-v1",
+            "observedAt": "2026-10-08T06:45:07.892Z",
+            "sport": "Football",
+            "league": "romania-2",
+            "kickoff": "2026-10-10T08:00:00.000Z",
+            "homeTeam": "Cetatea Suceava",
+            "awayTeam": "Dumbravita",
+            "eventKey": "football|2026-10-10|cetatea suceava|dumbravita",
+            "live": false,
+            "markets": [
+              {
+                "id": "ufo:mkt:1wq-0er-003",
+                "key": "ufo:mtyp:00-1c",
+                "name": "Ambele marcheaza",
+                "period": "unknown",
+                "line": null,
+                "selections": [
+                  {
+                    "id": "ufo:opt:1wq-0er-003-01",
+                    "name": "Da",
+                    "odds": 1.76,
+                    "handicap": null
+                  },
+                  {
+                    "id": "ufo:opt:1wq-0er-003-00",
+                    "name": "Nu",
+                    "odds": 2,
+                    "handicap": null
+                  }
+                ],
+                "live": false
+              }
+            ],
+            "providerEventKey": "football|romania 2|2026-10-10T08:00:00.000Z|cetatea suceava|dumbravita"
+          }
+        }
+      ]
+    },
+    {
+      "label": "Gloria Bistrița-Năsăud v Râmnicu Vâlcea / Bistrița v SCM Rm.Valcea",
+      "contract": "::BTTS::fulltime::_::yes+no::_::_",
+      "captures": [
+        {
+          "workspace": "data/workspace",
+          "book": "unibet",
+          "event": {
+            "id": "215e362882851f18edbf6112bc7160e4",
+            "sourceId": "unibet",
+            "sourceUrl": "https://sportsbff-ams.kindredext.net/sports-api/api/v2/views/az-menu",
+            "transport": "kindred-sports-bff-v2",
+            "observedAt": "2026-10-07T23:26:33.094Z",
+            "status": "PreGame",
+            "sport": "Football",
+            "league": "Liga II",
+            "kickoff": "2026-10-10T08:00:00.000Z",
+            "homeTeam": "Gloria Bistrița-Năsăud",
+            "awayTeam": "Râmnicu Vâlcea",
+            "eventKey": "football|2026-10-10|gloria bistrita nasaud|ramnicu valcea",
+            "live": false,
+            "markets": [
+              {
+                "id": "both_teams_to_score:plain",
+                "key": "BOTH_TEAMS_SCORE",
+                "name": "Ambele echipe să marcheze",
+                "period": "fulltime",
+                "line": null,
+                "selections": [
+                  {
+                    "id": "215e362882851f18edbf6112bc7160e4:base:both_teams_to_score:yes:plain:offering",
+                    "name": "Da",
+                    "odds": 1.7,
+                    "handicap": null,
+                    "group": "Main"
+                  },
+                  {
+                    "id": "215e362882851f18edbf6112bc7160e4:base:both_teams_to_score:no:plain:offering",
+                    "name": "Nu",
+                    "odds": 2.05,
+                    "handicap": null,
+                    "group": "Main"
+                  }
+                ],
+                "live": false
+              }
+            ],
+            "providerEventKey": "football|liga ii|2026-10-10T08:00:00.000Z|gloria bistrita nasaud|ramnicu valcea"
+          }
+        },
+        {
+          "workspace": "data/workspace",
+          "book": "casa-pariurilor",
+          "event": {
+            "id": "ufo:mtch:1wq-0ev",
+            "sourceId": "casa-pariurilor",
+            "sourceUrl": "https://api.casapariurilor.ro/offer/structure/api/v1_0/sport/tournaments",
+            "transport": "casa-catalogue-v1",
+            "observedAt": "2026-10-08T06:45:07.892Z",
+            "sport": "Football",
+            "league": "romania-2",
+            "kickoff": "2026-10-10T08:00:00.000Z",
+            "homeTeam": "Bistrița",
+            "awayTeam": "SCM Rm.Valcea",
+            "eventKey": "football|2026-10-10|bistrita|scm rm valcea",
+            "live": false,
+            "markets": [
+              {
+                "id": "ufo:mkt:1wq-0ev-003",
+                "key": "ufo:mtyp:00-1c",
+                "name": "Ambele marcheaza",
+                "period": "unknown",
+                "line": null,
+                "selections": [
+                  {
+                    "id": "ufo:opt:1wq-0ev-003-01",
+                    "name": "Da",
+                    "odds": 1.76,
+                    "handicap": null
+                  },
+                  {
+                    "id": "ufo:opt:1wq-0ev-003-00",
+                    "name": "Nu",
+                    "odds": 1.99,
+                    "handicap": null
+                  }
+                ],
+                "live": false
+              }
+            ],
+            "providerEventKey": "football|romania 2|2026-10-10T08:00:00.000Z|bistrita|scm rm valcea"
+          }
+        }
+      ]
+    },
+    {
+      "label": "Metaloglobus v Popești-Leordeni / Metaloglobus v Popesti L.",
+      "contract": "::BTTS::fulltime::_::yes+no::_::_",
+      "captures": [
+        {
+          "workspace": "data/workspace",
+          "book": "unibet",
+          "event": {
+            "id": "fd68eab80f74e88f52f8251978e74b72",
+            "sourceId": "unibet",
+            "sourceUrl": "https://sportsbff-ams.kindredext.net/sports-api/api/v2/views/az-menu",
+            "transport": "kindred-sports-bff-v2",
+            "observedAt": "2026-10-07T23:26:33.094Z",
+            "status": "PreGame",
+            "sport": "Football",
+            "league": "Liga II",
+            "kickoff": "2026-10-10T08:00:00.000Z",
+            "homeTeam": "Metaloglobus",
+            "awayTeam": "Popești-Leordeni",
+            "eventKey": "football|2026-10-10|metaloglobus|popesti leordeni",
+            "live": false,
+            "markets": [
+              {
+                "id": "both_teams_to_score:plain",
+                "key": "BOTH_TEAMS_SCORE",
+                "name": "Ambele echipe să marcheze",
+                "period": "fulltime",
+                "line": null,
+                "selections": [
+                  {
+                    "id": "fd68eab80f74e88f52f8251978e74b72:base:both_teams_to_score:yes:plain:offering",
+                    "name": "Da",
+                    "odds": 1.65,
+                    "handicap": null,
+                    "group": "Main"
+                  },
+                  {
+                    "id": "fd68eab80f74e88f52f8251978e74b72:base:both_teams_to_score:no:plain:offering",
+                    "name": "Nu",
+                    "odds": 2.1,
+                    "handicap": null,
+                    "group": "Main"
+                  }
+                ],
+                "live": false
+              }
+            ],
+            "providerEventKey": "football|liga ii|2026-10-10T08:00:00.000Z|metaloglobus|popesti leordeni"
+          }
+        },
+        {
+          "workspace": "data/workspace",
+          "book": "casa-pariurilor",
+          "event": {
+            "id": "ufo:mtch:1wq-0eu",
+            "sourceId": "casa-pariurilor",
+            "sourceUrl": "https://api.casapariurilor.ro/offer/structure/api/v1_0/sport/tournaments",
+            "transport": "casa-catalogue-v1",
+            "observedAt": "2026-10-08T06:45:07.892Z",
+            "sport": "Football",
+            "league": "romania-2",
+            "kickoff": "2026-10-10T08:00:00.000Z",
+            "homeTeam": "Metaloglobus",
+            "awayTeam": "Popesti L.",
+            "eventKey": "football|2026-10-10|metaloglobus|popesti l",
+            "live": false,
+            "markets": [
+              {
+                "id": "ufo:mkt:1wq-0eu-003",
+                "key": "ufo:mtyp:00-1c",
+                "name": "Ambele marcheaza",
+                "period": "unknown",
+                "line": null,
+                "selections": [
+                  {
+                    "id": "ufo:opt:1wq-0eu-003-00",
+                    "name": "Nu",
+                    "odds": 2.09,
+                    "handicap": null
+                  },
+                  {
+                    "id": "ufo:opt:1wq-0eu-003-01",
+                    "name": "Da",
+                    "odds": 1.69,
+                    "handicap": null
+                  }
+                ],
+                "live": false
+              }
+            ],
+            "providerEventKey": "football|romania 2|2026-10-10T08:00:00.000Z|metaloglobus|popesti l"
+          }
+        }
+      ]
+    },
+    {
+      "label": "Metalul Buzău v Târgu Mureş / Metalul Buzau v ASA Tg.Mures",
+      "contract": "::BTTS::fulltime::_::yes+no::_::_",
+      "captures": [
+        {
+          "workspace": "data/workspace",
+          "book": "unibet",
+          "event": {
+            "id": "5d840af38cfb8d4dff8073894841fe8e",
+            "sourceId": "unibet",
+            "sourceUrl": "https://sportsbff-ams.kindredext.net/sports-api/api/v2/views/az-menu",
+            "transport": "kindred-sports-bff-v2",
+            "observedAt": "2026-10-07T23:26:33.094Z",
+            "status": "PreGame",
+            "sport": "Football",
+            "league": "Liga II",
+            "kickoff": "2026-10-10T08:00:00.000Z",
+            "homeTeam": "Metalul Buzău",
+            "awayTeam": "Târgu Mureş",
+            "eventKey": "football|2026-10-10|metalul buzau|targu mures",
+            "live": false,
+            "markets": [
+              {
+                "id": "both_teams_to_score:plain",
+                "key": "BOTH_TEAMS_SCORE",
+                "name": "Ambele echipe să marcheze",
+                "period": "fulltime",
+                "line": null,
+                "selections": [
+                  {
+                    "id": "5d840af38cfb8d4dff8073894841fe8e:base:both_teams_to_score:yes:plain:offering",
+                    "name": "Da",
+                    "odds": 1.55,
+                    "handicap": null,
+                    "group": "Main"
+                  },
+                  {
+                    "id": "5d840af38cfb8d4dff8073894841fe8e:base:both_teams_to_score:no:plain:offering",
+                    "name": "Nu",
+                    "odds": 2.25,
+                    "handicap": null,
+                    "group": "Main"
+                  }
+                ],
+                "live": false
+              }
+            ],
+            "providerEventKey": "football|liga ii|2026-10-10T08:00:00.000Z|metalul buzau|targu mures"
+          }
+        },
+        {
+          "workspace": "data/workspace",
+          "book": "casa-pariurilor",
+          "event": {
+            "id": "ufo:mtch:1wq-0ew",
+            "sourceId": "casa-pariurilor",
+            "sourceUrl": "https://api.casapariurilor.ro/offer/structure/api/v1_0/sport/tournaments",
+            "transport": "casa-catalogue-v1",
+            "observedAt": "2026-10-08T06:45:07.892Z",
+            "sport": "Football",
+            "league": "romania-2",
+            "kickoff": "2026-10-10T08:00:00.000Z",
+            "homeTeam": "Metalul Buzau",
+            "awayTeam": "ASA Tg.Mures",
+            "eventKey": "football|2026-10-10|metalul buzau|asa tg mures",
+            "live": false,
+            "markets": [
+              {
+                "id": "ufo:mkt:1wq-0ew-003",
+                "key": "ufo:mtyp:00-1c",
+                "name": "Ambele marcheaza",
+                "period": "unknown",
+                "line": null,
+                "selections": [
+                  {
+                    "id": "ufo:opt:1wq-0ew-003-01",
+                    "name": "Nu",
+                    "odds": 2.2,
+                    "handicap": null
+                  },
+                  {
+                    "id": "ufo:opt:1wq-0ew-003-00",
+                    "name": "Da",
+                    "odds": 1.62,
+                    "handicap": null
+                  }
+                ],
+                "live": false
+              }
+            ],
+            "providerEventKey": "football|romania 2|2026-10-10T08:00:00.000Z|metalul buzau|asa tg mures"
+          }
+        }
+      ]
+    },
+    {
+      "label": "Reşiţa v Slatina / CSM Resita v CSM Slatina",
+      "contract": "::BTTS::fulltime::_::yes+no::_::_",
+      "captures": [
+        {
+          "workspace": "data/workspace",
+          "book": "unibet",
+          "event": {
+            "id": "1b37b964e22b594ac58e7c77cd4c2380",
+            "sourceId": "unibet",
+            "sourceUrl": "https://sportsbff-ams.kindredext.net/sports-api/api/v2/views/az-menu",
+            "transport": "kindred-sports-bff-v2",
+            "observedAt": "2026-10-07T23:26:33.094Z",
+            "status": "PreGame",
+            "sport": "Football",
+            "league": "Liga II",
+            "kickoff": "2026-10-10T10:00:00.000Z",
+            "homeTeam": "Reşiţa",
+            "awayTeam": "Slatina",
+            "eventKey": "football|2026-10-10|resita|slatina",
+            "live": false,
+            "markets": [
+              {
+                "id": "both_teams_to_score:plain",
+                "key": "BOTH_TEAMS_SCORE",
+                "name": "Ambele echipe să marcheze",
+                "period": "fulltime",
+                "line": null,
+                "selections": [
+                  {
+                    "id": "1b37b964e22b594ac58e7c77cd4c2380:base:both_teams_to_score:yes:plain:offering",
+                    "name": "Da",
+                    "odds": 1.73,
+                    "handicap": null,
+                    "group": "Main"
+                  },
+                  {
+                    "id": "1b37b964e22b594ac58e7c77cd4c2380:base:both_teams_to_score:no:plain:offering",
+                    "name": "Nu",
+                    "odds": 2,
+                    "handicap": null,
+                    "group": "Main"
+                  }
+                ],
+                "live": false
+              }
+            ],
+            "providerEventKey": "football|liga ii|2026-10-10T10:00:00.000Z|resita|slatina"
+          }
+        },
+        {
+          "workspace": "data/workspace",
+          "book": "casa-pariurilor",
+          "event": {
+            "id": "ufo:mtch:1wq-0ey",
+            "sourceId": "casa-pariurilor",
+            "sourceUrl": "https://api.casapariurilor.ro/offer/structure/api/v1_0/sport/tournaments",
+            "transport": "casa-catalogue-v1",
+            "observedAt": "2026-10-08T06:45:07.892Z",
+            "sport": "Football",
+            "league": "romania-2",
+            "kickoff": "2026-10-10T10:00:00.000Z",
+            "homeTeam": "CSM Resita",
+            "awayTeam": "CSM Slatina",
+            "eventKey": "football|2026-10-10|csm resita|csm slatina",
+            "live": false,
+            "markets": [
+              {
+                "id": "ufo:mkt:1wq-0ey-003",
+                "key": "ufo:mtyp:00-1c",
+                "name": "Ambele marcheaza",
+                "period": "unknown",
+                "line": null,
+                "selections": [
+                  {
+                    "id": "ufo:opt:1wq-0ey-003-00",
+                    "name": "Nu",
+                    "odds": 1.99,
+                    "handicap": null
+                  },
+                  {
+                    "id": "ufo:opt:1wq-0ey-003-01",
+                    "name": "Da",
+                    "odds": 1.76,
+                    "handicap": null
+                  }
+                ],
+                "live": false
+              }
+            ],
+            "providerEventKey": "football|romania 2|2026-10-10T10:00:00.000Z|csm resita|csm slatina"
+          }
+        }
+      ]
+    },
+    {
+      "label": "Afumaţi v Ştefăneşti De Jos / CS Afumati v CSL Stefanesti",
+      "contract": "::BTTS::fulltime::_::yes+no::_::_",
+      "captures": [
+        {
+          "workspace": "data/workspace",
+          "book": "unibet",
+          "event": {
+            "id": "dbca09db5bb168665bda1f9aa42b28de",
+            "sourceId": "unibet",
+            "sourceUrl": "https://sportsbff-ams.kindredext.net/sports-api/api/v2/views/az-menu",
+            "transport": "kindred-sports-bff-v2",
+            "observedAt": "2026-10-07T23:26:33.094Z",
+            "status": "PreGame",
+            "sport": "Football",
+            "league": "Liga II",
+            "kickoff": "2026-10-11T08:00:00.000Z",
+            "homeTeam": "Afumaţi",
+            "awayTeam": "Ştefăneşti De Jos",
+            "eventKey": "football|2026-10-11|afumati|stefanesti de jos",
+            "live": false,
+            "markets": [
+              {
+                "id": "both_teams_to_score:plain",
+                "key": "BOTH_TEAMS_SCORE",
+                "name": "Ambele echipe să marcheze",
+                "period": "fulltime",
+                "line": null,
+                "selections": [
+                  {
+                    "id": "dbca09db5bb168665bda1f9aa42b28de:base:both_teams_to_score:yes:plain:offering",
+                    "name": "Da",
+                    "odds": 1.8,
+                    "handicap": null,
+                    "group": "Main"
+                  },
+                  {
+                    "id": "dbca09db5bb168665bda1f9aa42b28de:base:both_teams_to_score:no:plain:offering",
+                    "name": "Nu",
+                    "odds": 1.88,
+                    "handicap": null,
+                    "group": "Main"
+                  }
+                ],
+                "live": false
+              }
+            ],
+            "providerEventKey": "football|liga ii|2026-10-11T08:00:00.000Z|afumati|stefanesti de jos"
+          }
+        },
+        {
+          "workspace": "data/workspace",
+          "book": "casa-pariurilor",
+          "event": {
+            "id": "ufo:mtch:1wq-0et",
+            "sourceId": "casa-pariurilor",
+            "sourceUrl": "https://api.casapariurilor.ro/offer/structure/api/v1_0/sport/tournaments",
+            "transport": "casa-catalogue-v1",
+            "observedAt": "2026-10-08T06:45:07.892Z",
+            "sport": "Football",
+            "league": "romania-2",
+            "kickoff": "2026-10-11T08:00:00.000Z",
+            "homeTeam": "CS Afumati",
+            "awayTeam": "CSL Stefanesti",
+            "eventKey": "football|2026-10-11|cs afumati|csl stefanesti",
+            "live": false,
+            "markets": [
+              {
+                "id": "ufo:mkt:1wq-0et-003",
+                "key": "ufo:mtyp:00-1c",
+                "name": "Ambele marcheaza",
+                "period": "unknown",
+                "line": null,
+                "selections": [
+                  {
+                    "id": "ufo:opt:1wq-0et-003-01",
+                    "name": "Da",
+                    "odds": 1.88,
+                    "handicap": null
+                  },
+                  {
+                    "id": "ufo:opt:1wq-0et-003-00",
+                    "name": "Nu",
+                    "odds": 1.86,
+                    "handicap": null
+                  }
+                ],
+                "live": false
+              }
+            ],
+            "providerEventKey": "football|romania 2|2026-10-11T08:00:00.000Z|cs afumati|csl stefanesti"
+          }
+        }
+      ]
+    },
+    {
+      "label": "Bihor Oradea v Bacău 2023 / Bihor Oradea v FC Bacau",
+      "contract": "::BTTS::fulltime::_::yes+no::_::_",
+      "captures": [
+        {
+          "workspace": "data/workspace",
+          "book": "unibet",
+          "event": {
+            "id": "dc3bcf8db7d1e9d5ad79d9490fdfe7e7",
+            "sourceId": "unibet",
+            "sourceUrl": "https://sportsbff-ams.kindredext.net/sports-api/api/v2/views/az-menu",
+            "transport": "kindred-sports-bff-v2",
+            "observedAt": "2026-10-07T23:26:33.094Z",
+            "status": "PreGame",
+            "sport": "Football",
+            "league": "Liga II",
+            "kickoff": "2026-10-11T12:45:00.000Z",
+            "homeTeam": "Bihor Oradea",
+            "awayTeam": "Bacău 2023",
+            "eventKey": "football|2026-10-11|bihor oradea|bacau 2023",
+            "live": false,
+            "markets": [
+              {
+                "id": "both_teams_to_score:plain",
+                "key": "BOTH_TEAMS_SCORE",
+                "name": "Ambele echipe să marcheze",
+                "period": "fulltime",
+                "line": null,
+                "selections": [
+                  {
+                    "id": "dc3bcf8db7d1e9d5ad79d9490fdfe7e7:base:both_teams_to_score:yes:plain:offering",
+                    "name": "Da",
+                    "odds": 1.55,
+                    "handicap": null,
+                    "group": "Main"
+                  },
+                  {
+                    "id": "dc3bcf8db7d1e9d5ad79d9490fdfe7e7:base:both_teams_to_score:no:plain:offering",
+                    "name": "Nu",
+                    "odds": 2.25,
+                    "handicap": null,
+                    "group": "Main"
+                  }
+                ],
+                "live": false
+              }
+            ],
+            "providerEventKey": "football|liga ii|2026-10-11T12:45:00.000Z|bihor oradea|bacau 2023"
+          }
+        },
+        {
+          "workspace": "data/workspace",
+          "book": "casa-pariurilor",
+          "event": {
+            "id": "ufo:mtch:1wr-0bj",
+            "sourceId": "casa-pariurilor",
+            "sourceUrl": "https://api.casapariurilor.ro/offer/structure/api/v1_0/sport/tournaments",
+            "transport": "casa-catalogue-v1",
+            "observedAt": "2026-10-08T06:45:07.892Z",
+            "sport": "Football",
+            "league": "romania-2",
+            "kickoff": "2026-10-11T12:45:00.000Z",
+            "homeTeam": "Bihor Oradea",
+            "awayTeam": "FC Bacau",
+            "eventKey": "football|2026-10-11|bihor oradea|bacau",
+            "live": false,
+            "markets": [
+              {
+                "id": "ufo:mkt:1wr-0bj-00d",
+                "key": "ufo:mtyp:00-1c",
+                "name": "Ambele marcheaza",
+                "period": "unknown",
+                "line": null,
+                "selections": [
+                  {
+                    "id": "ufo:opt:1wr-0bj-00d-00",
+                    "name": "Da",
+                    "odds": 1.63,
+                    "handicap": null
+                  },
+                  {
+                    "id": "ufo:opt:1wr-0bj-00d-01",
+                    "name": "Nu",
+                    "odds": 2.19,
+                    "handicap": null
+                  }
+                ],
+                "live": false
+              }
+            ],
+            "providerEventKey": "football|romania 2|2026-10-11T12:45:00.000Z|bihor oradea|fc bacau"
+          }
+        }
+      ]
+    },
+    {
+      "label": "Inter v Parma / Inter Milano v Parma",
+      "contract": "::ASIAN_HANDICAP::fulltime::-3.5/3.5::home+away::_::_",
+      "captures": [
+        {
+          "workspace": "data/workspace",
+          "book": "unibet",
+          "event": {
+            "id": "f9aeb54452d662c1de6ea48a077765df",
+            "sourceId": "unibet",
+            "sourceUrl": "https://sportsbff-ams.kindredext.net/sports-api/api/v2/views/az-menu",
+            "transport": "kindred-sports-bff-v2",
+            "observedAt": "2026-10-07T23:26:33.094Z",
+            "status": "PreGame",
+            "sport": "Football",
+            "league": "Serie A",
+            "kickoff": "2026-10-10T16:00:00.000Z",
+            "homeTeam": "Inter",
+            "awayTeam": "Parma",
+            "eventKey": "football|2026-10-10|inter|parma",
+            "live": false,
+            "markets": [
+              {
+                "id": "2_way_handicap:-3.5",
+                "key": "HANDICAP",
+                "name": "Handicap asiatic",
+                "period": "fulltime",
+                "line": "-3.5",
+                "selections": [
+                  {
+                    "id": "f9aeb54452d662c1de6ea48a077765df:base:2_way_handicap:1c4kz0x7p12tmeluwmu4gfh22:-3.5:offering",
+                    "name": "1 -3.5",
+                    "odds": 3.4,
+                    "handicap": "-3.5",
+                    "group": "Main"
+                  },
+                  {
+                    "id": "f9aeb54452d662c1de6ea48a077765df:base:2_way_handicap:99fs2351al8h576kx5sp5hie:-3.5:offering",
+                    "name": "2 +3.5",
+                    "odds": 1.3,
+                    "handicap": "+3.5",
+                    "group": "Main"
+                  }
+                ],
+                "live": false
+              }
+            ],
+            "providerEventKey": "football|serie a|2026-10-10T16:00:00.000Z|inter|parma"
+          }
+        },
+        {
+          "workspace": "data/workspace",
+          "book": "superbet",
+          "event": {
+            "id": "14025532",
+            "sourceId": "superbet",
+            "sport": "Football",
+            "league": "Italia - Serie A",
+            "kickoff": "2026-10-10T16:00:00.000Z",
+            "homeTeam": "Inter Milano",
+            "awayTeam": "Parma",
+            "live": false,
+            "isLive": false,
+            "eventKey": "football|2026-10-10|inter milano|parma",
+            "sourceUrl": null,
+            "markets": [
+              {
+                "key": "sb:200736:Handicap",
+                "name": "Handicap",
+                "period": "fulltime",
+                "family": "ASIAN_HANDICAP",
+                "selections": [
+                  {
+                    "id": "9ff89296-6daf-5d25-8934-7e6ab72c6c4b",
+                    "name": "1 (-3.5)",
+                    "odds": 3.45,
+                    "handicap": null
+                  },
+                  {
+                    "id": "17b39149-8333-5d05-b1e7-5d521443205d",
+                    "name": "2 (3.5)",
+                    "odds": 1.3,
+                    "handicap": null
+                  }
+                ],
+                "live": false
+              }
+            ],
+            "providerEventKey": "football|italia serie a|2026-10-10T16:00:00.000Z|inter milano|parma"
+          }
+        }
+      ]
+    },
+    {
+      "label": "UNAM FC / Unam FC Windhoek",
+      "captures": [
+        {
+          "workspace": "data-market-run/workspace",
+          "book": "fortuna",
+          "event": {
+            "id": "ufo:mtch:1vy-0ay",
+            "sourceId": "fortuna",
+            "sourceUrl": "https://api.efortuna.ro/offer/structure/api/v1_0/sport/ufo:sprt:00/tournaments?categories=true&timeFilter=all",
+            "observedAt": "2026-09-05T08:21:27.985Z",
+            "sport": "Football",
+            "league": "Unknown",
+            "kickoff": "2026-09-05T16:00:00.000Z",
+            "homeTeam": "Unam FC Windhoek",
+            "awayTeam": "Kabuscorp",
+            "eventKey": "football|unknown|2026-09-05T16:00:00.000Z|unam fc windhoek|kabuscorp",
+            "markets": [
+              {
+                "key": "MATCH_ODDS",
+                "name": "Meci",
+                "selections": [
+                  {
+                    "id": "ufo:opt:1vy-0ay-00b-01",
+                    "name": "1",
+                    "odds": 1.14,
+                    "group": "Main"
+                  },
+                  {
+                    "id": "ufo:opt:1vy-0ay-00b-00",
+                    "name": "X",
+                    "odds": 5.7,
+                    "group": "Main"
+                  },
+                  {
+                    "id": "ufo:opt:1vy-0ay-00b-02",
+                    "name": "2",
+                    "odds": 15.5,
+                    "group": "Main"
+                  }
+                ]
+              },
+              {
+                "key": "DOUBLE_CHANCE",
+                "name": "Meci - sansa dubla",
+                "selections": [
+                  {
+                    "id": "ufo:opt:1vy-0ay-00d-00",
+                    "name": "1X",
+                    "odds": 1.02,
+                    "group": "Main"
+                  },
+                  {
+                    "id": "ufo:opt:1vy-0ay-00d-01",
+                    "name": "X2",
+                    "odds": 3,
+                    "group": "Main"
+                  },
+                  {
+                    "id": "ufo:opt:1vy-0ay-00d-02",
+                    "name": "12",
+                    "odds": 1.08,
+                    "group": "Main"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "workspace": "data-market-run/workspace",
+          "book": "favbet",
+          "event": {
+            "id": "43398477",
+            "sourceId": "favbet",
+            "sourceUrl": "https://www.favbet.ro/service/lineout/frontend_api2/",
+            "observedAt": "2026-09-05T08:26:17.034Z",
+            "sport": "Football",
+            "league": "CAF Cupa Confederațiilor",
+            "kickoff": "2026-09-05T16:00:00.000Z",
+            "homeTeam": "UNAM FC",
+            "awayTeam": "Kabuscorp",
+            "eventKey": "football|caf cupa confederatiilor|2026-09-05T16:00:00.000Z|unam fc|kabuscorp",
+            "markets": [
+              {
+                "key": "MATCH_ODDS",
+                "name": "1 X 2",
+                "selections": [
+                  {
+                    "id": "3925709840",
+                    "name": "1",
+                    "odds": 30,
+                    "group": "Main"
+                  },
+                  {
+                    "id": "3925709841",
+                    "name": "X",
+                    "odds": 7.25,
+                    "group": "Main"
+                  },
+                  {
+                    "id": "3925709842",
+                    "name": "2",
+                    "odds": 1.11,
+                    "group": "Main"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "unsupported": [
+    {
+      "workspace": "data/workspace",
+      "book": "betano",
+      "event": {
+        "id": "93437734",
+        "sourceId": "betano",
+        "sourceUrl": "https://ro.betano.com/cote/bk-46-eif/93437734/",
+        "sport": "HAND",
+        "league": "SM-liiga",
+        "kickoff": "2026-10-07T15:30:00.000Z",
+        "homeTeam": "BK-46",
+        "awayTeam": "EIF",
+        "eventKey": "hand|2026-10-07|46|eif",
+        "markets": [
+          {
+            "key": "FAHC",
+            "name": "Handicap",
+            "period": "fulltime",
+            "selections": [
+              {
+                "id": "10571073489",
+                "name": "BK-46 -10.5",
+                "odds": 1.8,
+                "handicap": -10.5,
+                "group": "Main"
+              },
+              {
+                "id": "10571073490",
+                "name": "EIF +10.5",
+                "odds": 1.87,
+                "handicap": 10.5,
+                "group": "Main"
+              }
+            ]
+          }
+        ],
+        "providerEventKey": "hand|sm liiga|2026-10-07T15:30:00.000Z|bk 46|eif"
+      }
+    },
+    {
+      "workspace": "data/workspace",
+      "book": "casa-pariurilor",
+      "event": {
+        "id": "ufo:mtch:1wl-2m7",
+        "sourceId": "casa-pariurilor",
+        "sourceUrl": "https://api.casapariurilor.ro/offer/structure/api/v1_0/sport/tournaments",
+        "transport": "casa-catalogue-v1",
+        "observedAt": "2026-10-08T06:45:07.892Z",
+        "sport": "Football",
+        "league": "norvegia-cupa-f",
+        "kickoff": "2026-10-08T14:30:00.000Z",
+        "homeTeam": "Grei Kvinner Elite",
+        "awayTeam": "Roa",
+        "eventKey": "football|2026-10-08|grei kvinner elite|roa",
+        "live": false,
+        "markets": [
+          {
+            "id": "ufo:mkt:1wl-2m7-008",
+            "key": "ufo:mtyp:00-12",
+            "name": "Se califica",
+            "period": "unknown",
+            "line": null,
+            "selections": [
+              {
+                "id": "ufo:opt:1wl-2m7-008-00",
+                "name": "1",
+                "odds": 4.6,
+                "handicap": null
+              },
+              {
+                "id": "ufo:opt:1wl-2m7-008-01",
+                "name": "2",
+                "odds": 1.13,
+                "handicap": null
+              }
+            ],
+            "live": false
+          }
+        ],
+        "providerEventKey": "football|norvegia cupa f|2026-10-08T14:30:00.000Z|grei kvinner elite|roa"
+      }
+    },
+    {
+      "workspace": "data/workspace",
+      "book": "casa-pariurilor",
+      "event": {
+        "id": "ufo:mtch:1ww-06q",
+        "sourceId": "casa-pariurilor",
+        "sourceUrl": "https://api.casapariurilor.ro/offer/structure/api/v1_0/sport/tournaments",
+        "transport": "casa-catalogue-v1",
+        "observedAt": "2026-10-08T06:45:07.892Z",
+        "sport": "Rugby",
+        "league": "rl-cm-f-meciuri",
+        "kickoff": "2026-10-16T09:05:00.000Z",
+        "homeTeam": "Australia",
+        "awayTeam": "Samoa",
+        "eventKey": "rugby|2026-10-16|australia|samoa",
+        "live": false,
+        "markets": [
+          {
+            "id": "ufo:mkt:1ww-06q-000",
+            "key": "ufo:mtyp:07-00",
+            "name": "Meci",
+            "period": "unknown",
+            "line": null,
+            "selections": [
+              {
+                "id": "ufo:opt:1ww-06q-000-02",
+                "name": "X",
+                "odds": 35,
+                "handicap": null
+              },
+              {
+                "id": "ufo:opt:1ww-06q-000-00",
+                "name": "2",
+                "odds": 16,
+                "handicap": null
+              }
+            ],
+            "live": false
+          }
+        ],
+        "providerEventKey": "rugby|rl cm f meciuri|2026-10-16T09:05:00.000Z|australia|samoa"
+      }
+    },
+    {
+      "workspace": "data/workspace",
+      "book": "don",
+      "event": {
+        "id": "17893753",
+        "sourceId": "don",
+        "sourceUrl": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetUpcoming?culture=ro-RO&timezoneOffset=-180&deviceType=1&numFormat=en-GB&countryCode=RO&sportId=66&eventCount=100&page=1&integration=don",
+        "transport": "altenar-sb2-widget-json",
+        "runId": "2026-10-08T06:42:41.285Z",
+        "observedAt": "2026-10-08T06:42:55.085Z",
+        "providerEventId": "17893753",
+        "attributionStatus": "public-integration-unverified-brand",
+        "sport": "Football",
+        "league": "Pro League Cup",
+        "kickoff": "2026-10-08T13:10:00.000Z",
+        "homeTeam": "Shabab Al-Ahli Dubai FC",
+        "awayTeam": "United",
+        "live": false,
+        "eventKey": "football|2026-10-08|shabab al ahli dubai|united",
+        "markets": [
+          {
+            "key": "TOTAL_GOALS",
+            "providerMarketId": "1767286073",
+            "name": "Total goluri",
+            "period": "fulltime",
+            "line": "3.25",
+            "selections": [
+              {
+                "id": "4609639870",
+                "providerOutcomeId": 12,
+                "name": "Peste 3.25",
+                "odds": 1.6471,
+                "handicap": null
+              },
+              {
+                "id": "4609639871",
+                "providerOutcomeId": 13,
+                "name": "Sub 3.25",
+                "odds": 2.1667,
+                "handicap": null
+              }
+            ]
+          }
+        ],
+        "providerEventKey": "football|pro league cup|2026-10-08T13:10:00.000Z|shabab al ahli dubai fc|united"
+      }
+    },
+    {
+      "workspace": "data/workspace",
+      "book": "don",
+      "event": {
+        "id": "17911689",
+        "sourceId": "don",
+        "sourceUrl": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetUpcoming?culture=ro-RO&timezoneOffset=-180&deviceType=1&numFormat=en-GB&countryCode=RO&sportId=66&eventCount=100&page=1&integration=don",
+        "transport": "altenar-sb2-widget-json",
+        "runId": "2026-10-08T06:42:41.285Z",
+        "observedAt": "2026-10-08T06:42:55.085Z",
+        "providerEventId": "17911689",
+        "attributionStatus": "public-integration-unverified-brand",
+        "sport": "Football",
+        "league": "Cupa Turciei",
+        "kickoff": "2026-10-08T14:00:00.000Z",
+        "homeTeam": "Denizli İdmanyur",
+        "awayTeam": "Serik Belediyespor",
+        "live": false,
+        "eventKey": "football|2026-10-08|denizli idmanyur|serik belediyespor",
+        "markets": [
+          {
+            "key": "TOTAL_GOALS",
+            "providerMarketId": "1766865055",
+            "name": "Total goluri",
+            "period": "fulltime",
+            "line": "2.25",
+            "selections": [
+              {
+                "id": "4608141128",
+                "providerOutcomeId": 12,
+                "name": "Peste 2.25",
+                "odds": 1.4167,
+                "handicap": null
+              },
+              {
+                "id": "4608141129",
+                "providerOutcomeId": 13,
+                "name": "Sub 2.25",
+                "odds": 2.75,
+                "handicap": null
+              }
+            ]
+          }
+        ],
+        "providerEventKey": "football|cupa turciei|2026-10-08T14:00:00.000Z|denizli idmanyur|serik belediyespor"
+      }
+    },
+    {
+      "workspace": "data/workspace",
+      "book": "don",
+      "event": {
+        "id": "17911917",
+        "sourceId": "don",
+        "sourceUrl": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetUpcoming?culture=ro-RO&timezoneOffset=-180&deviceType=1&numFormat=en-GB&countryCode=RO&sportId=66&eventCount=100&page=1&integration=don",
+        "transport": "altenar-sb2-widget-json",
+        "runId": "2026-10-08T06:42:41.285Z",
+        "observedAt": "2026-10-08T06:42:55.085Z",
+        "providerEventId": "17911917",
+        "attributionStatus": "public-integration-unverified-brand",
+        "sport": "Football",
+        "league": "Liga Stars",
+        "kickoff": "2026-10-08T14:45:00.000Z",
+        "homeTeam": "Al-Shamal",
+        "awayTeam": "Al Duhail",
+        "live": false,
+        "eventKey": "football|2026-10-08|al shamal|al duhail",
+        "markets": [
+          {
+            "key": "TOTAL_GOALS",
+            "providerMarketId": "1766564541",
+            "name": "Total goluri",
+            "period": "fulltime",
+            "line": "1.25",
+            "selections": [
+              {
+                "id": "4607178412",
+                "providerOutcomeId": 12,
+                "name": "Peste 1.25",
+                "odds": 1.1,
+                "handicap": null
+              },
+              {
+                "id": "4607178413",
+                "providerOutcomeId": 13,
+                "name": "Sub 1.25",
+                "odds": 5.5,
+                "handicap": null
+              }
+            ]
+          }
+        ],
+        "providerEventKey": "football|liga stars|2026-10-08T14:45:00.000Z|al shamal|al duhail"
+      }
+    }
+  ],
+  "ambiguousIdentities": [
+    {
+      "label": "Sporting FC v Moravia / Sporting FC (F) v Moravia Women",
+      "captures": [
+        {
+          "workspace": "data/workspace",
+          "book": "betmen",
+          "event": {
+            "id": "10375979",
+            "sourceId": "betmen",
+            "sourceUrl": "https://sportsbook-sm-distribution-api.nsoft.com/api/v1/events?companyUuid=7afdd6f5-f954-43d6-b696-2e0dc0ae4ee2&filter%5Bfrom%5D=2026-10-08T06%3A42%3A41&filter%5Bto%5D=2026-10-29T06%3A42%3A41&timezone=Europe%2FBucharest&language=%7B%22default%22%3A%22ro%22%2C%22tournament%22%3A%22ro%22%2C%22category%22%3A%22ro%22%2C%22sport%22%3A%22ro%22%7D&shortProps=1&offerTemplate=WEB_OVERVIEW&dataFormat=%7B%22default%22%3A%22array%22%2C%22events%22%3A%22object%22%2C%22outcomes%22%3A%22array%22%7D",
+            "transport": "nsoft-public-sports-json",
+            "runId": "2026-10-08T06:42:41.285Z",
+            "observedAt": "2026-10-08T06:42:50.005Z",
+            "sport": "Football",
+            "league": "Costa Rica - Primera Division (F)",
+            "kickoff": "2026-10-09T02:30:00.000Z",
+            "homeTeam": "Sporting FC",
+            "awayTeam": "Moravia",
+            "live": false,
+            "eventKey": "football|2026-10-09|sporting|moravia",
+            "markets": [
+              {
+                "key": "1x2",
+                "providerMarketId": 6,
+                "name": "Final",
+                "period": "fulltime",
+                "selections": [
+                  {
+                    "id": "1814153885",
+                    "providerOutcomeId": 6,
+                    "name": "1",
+                    "odds": 1.12,
+                    "handicap": null
+                  },
+                  {
+                    "id": "1814153888",
+                    "providerOutcomeId": 9,
+                    "name": "X",
+                    "odds": 7.2,
+                    "handicap": null
+                  },
+                  {
+                    "id": "1814153891",
+                    "providerOutcomeId": 12,
+                    "name": "2",
+                    "odds": 12,
+                    "handicap": null
+                  }
+                ]
+              }
+            ],
+            "providerEventKey": "football|costa rica primera division f|2026-10-09T02:30:00.000Z|sporting fc|moravia"
+          }
+        },
+        {
+          "workspace": "data/workspace",
+          "book": "baumbet",
+          "event": {
+            "id": "17962599",
+            "sourceId": "baumbet",
+            "sourceUrl": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetUpcoming?culture=ro-RO&timezoneOffset=-180&deviceType=1&numFormat=en-GB&countryCode=RO&sportId=66&eventCount=100&page=1&integration=baumbet",
+            "transport": "altenar-sb2-widget-json",
+            "runId": "2026-10-08T06:42:41.285Z",
+            "observedAt": "2026-10-08T06:42:47.626Z",
+            "providerEventId": "17962599",
+            "attributionStatus": "public-integration-unverified-brand",
+            "sport": "Football",
+            "league": "Primera Division, Women",
+            "kickoff": "2026-10-09T02:30:00.000Z",
+            "homeTeam": "Sporting FC (F)",
+            "awayTeam": "Moravia Women",
+            "live": false,
+            "eventKey": "football|2026-10-09|sporting f|moravia women",
+            "markets": [
+              {
+                "key": "1x2",
+                "providerMarketId": "1768361280",
+                "name": "1x2",
+                "period": "fulltime",
+                "selections": [
+                  {
+                    "id": "4613016799",
+                    "providerOutcomeId": 1,
+                    "name": "1",
+                    "odds": 1.1539,
+                    "handicap": null
+                  },
+                  {
+                    "id": "4613016800",
+                    "providerOutcomeId": 2,
+                    "name": "X",
+                    "odds": 7.5,
+                    "handicap": null
+                  },
+                  {
+                    "id": "4613016801",
+                    "providerOutcomeId": 3,
+                    "name": "2",
+                    "odds": 11,
+                    "handicap": null
+                  }
+                ]
+              }
+            ],
+            "providerEventKey": "football|primera division women|2026-10-09T02:30:00.000Z|sporting fc f|moravia women"
+          }
+        }
+      ]
+    },
+    {
+      "label": "Rosenborg BK v Lillestrom SK / Rosenborg U19 v Lillestrom U19",
+      "captures": [
+        {
+          "workspace": "data/workspace",
+          "book": "betmen",
+          "event": {
+            "id": "10376117",
+            "sourceId": "betmen",
+            "sourceUrl": "https://sportsbook-sm-distribution-api.nsoft.com/api/v1/events?companyUuid=7afdd6f5-f954-43d6-b696-2e0dc0ae4ee2&filter%5Bfrom%5D=2026-10-08T06%3A42%3A41&filter%5Bto%5D=2026-10-29T06%3A42%3A41&timezone=Europe%2FBucharest&language=%7B%22default%22%3A%22ro%22%2C%22tournament%22%3A%22ro%22%2C%22category%22%3A%22ro%22%2C%22sport%22%3A%22ro%22%7D&shortProps=1&offerTemplate=WEB_OVERVIEW&dataFormat=%7B%22default%22%3A%22array%22%2C%22events%22%3A%22object%22%2C%22outcomes%22%3A%22array%22%7D",
+            "transport": "nsoft-public-sports-json",
+            "runId": "2026-10-08T06:42:41.285Z",
+            "observedAt": "2026-10-08T06:42:50.005Z",
+            "sport": "Football",
+            "league": "Norvegia - U19",
+            "kickoff": "2026-10-08T13:00:00.000Z",
+            "homeTeam": "Rosenborg BK",
+            "awayTeam": "Lillestrom SK",
+            "live": false,
+            "eventKey": "football|2026-10-08|rosenborg|lillestrom sk",
+            "markets": [
+              {
+                "key": "1x2",
+                "providerMarketId": 6,
+                "name": "Final",
+                "period": "fulltime",
+                "selections": [
+                  {
+                    "id": "1814168813",
+                    "providerOutcomeId": 6,
+                    "name": "1",
+                    "odds": 1.92,
+                    "handicap": null
+                  },
+                  {
+                    "id": "1814168816",
+                    "providerOutcomeId": 9,
+                    "name": "X",
+                    "odds": 4.2,
+                    "handicap": null
+                  },
+                  {
+                    "id": "1814168819",
+                    "providerOutcomeId": 12,
+                    "name": "2",
+                    "odds": 2.85,
+                    "handicap": null
+                  }
+                ]
+              }
+            ],
+            "providerEventKey": "football|norvegia u19|2026-10-08T13:00:00.000Z|rosenborg bk|lillestrom sk"
+          }
+        },
+        {
+          "workspace": "data/workspace",
+          "book": "baumbet",
+          "event": {
+            "id": "17894740",
+            "sourceId": "baumbet",
+            "sourceUrl": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetUpcoming?culture=ro-RO&timezoneOffset=-180&deviceType=1&numFormat=en-GB&countryCode=RO&sportId=66&eventCount=100&page=1&integration=baumbet",
+            "transport": "altenar-sb2-widget-json",
+            "runId": "2026-10-08T06:42:41.285Z",
+            "observedAt": "2026-10-08T06:42:47.626Z",
+            "providerEventId": "17894740",
+            "attributionStatus": "public-integration-unverified-brand",
+            "sport": "Football",
+            "league": "U19 Nasjonal",
+            "kickoff": "2026-10-08T13:00:00.000Z",
+            "homeTeam": "Rosenborg U19",
+            "awayTeam": "Lillestrom U19",
+            "live": false,
+            "eventKey": "football|2026-10-08|rosenborg u19|lillestrom u19",
+            "markets": [
+              {
+                "key": "1x2",
+                "providerMarketId": "1767289326",
+                "name": "1x2",
+                "period": "fulltime",
+                "selections": [
+                  {
+                    "id": "4609647771",
+                    "providerOutcomeId": 1,
+                    "name": "1",
+                    "odds": 1.9334,
+                    "handicap": null
+                  },
+                  {
+                    "id": "4609647772",
+                    "providerOutcomeId": 2,
+                    "name": "X",
+                    "odds": 4.25,
+                    "handicap": null
+                  },
+                  {
+                    "id": "4609647773",
+                    "providerOutcomeId": 3,
+                    "name": "2",
+                    "odds": 2.8,
+                    "handicap": null
+                  }
+                ]
+              }
+            ],
+            "providerEventKey": "football|u19 nasjonal|2026-10-08T13:00:00.000Z|rosenborg u19|lillestrom u19"
+          }
+        }
+      ]
+    }
+  ]
+}

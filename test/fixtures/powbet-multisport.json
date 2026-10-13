@@ -1,0 +1,2543 @@
+{
+  "events": [
+    {
+      "marketIds": [
+        1777785047,
+        1777785046
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "code": 184,
+      "hasStream": false,
+      "extId": "fp16_bg:match:14564070",
+      "sc": 4,
+      "mc": 2,
+      "rc": false,
+      "pId": 16,
+      "et": 0,
+      "hasStats": false,
+      "competitorIds": [
+        3761770,
+        3761769
+      ],
+      "sportId": 68,
+      "catId": 592,
+      "champId": 58370,
+      "status": 0,
+      "startDate": "2026-10-13T13:15:00Z",
+      "id": 18022893,
+      "name": "Bothma, John/Gatoto, Allan vs. Skvortcov, Pavel/Tremblay, Dorian"
+    },
+    {
+      "marketIds": [
+        1777031421,
+        1777331947,
+        1777331948,
+        1776944258
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "code": 5723,
+      "hasStream": false,
+      "extId": "fp32_ar:match:694386",
+      "sc": 10,
+      "mc": 4,
+      "rc": false,
+      "pId": 32,
+      "et": 0,
+      "hasStats": false,
+      "competitorIds": [
+        2804933,
+        69499
+      ],
+      "sportId": 68,
+      "catId": 607,
+      "champId": 57451,
+      "status": 0,
+      "startDate": "2026-10-13T13:19:00Z",
+      "id": 18014174,
+      "name": "Lara Savic vs. Esther Adeshina"
+    },
+    {
+      "marketIds": [
+        1777031394,
+        1777342857,
+        1777342858,
+        1776948577
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "code": 9733,
+      "hasStream": false,
+      "extId": "fp32_ar:match:694399",
+      "sc": 10,
+      "mc": 4,
+      "rc": false,
+      "pId": 32,
+      "et": 0,
+      "hasStats": false,
+      "competitorIds": [
+        398678,
+        281335
+      ],
+      "sportId": 68,
+      "catId": 607,
+      "champId": 57451,
+      "status": 0,
+      "startDate": "2026-10-13T13:19:00Z",
+      "id": 18014175,
+      "name": "Sophie Bekker vs. Mika Stojsavljevic"
+    },
+    {
+      "marketIds": [
+        1776908578,
+        1777376286,
+        1777376287,
+        1776908579
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "code": 475,
+      "hasStream": false,
+      "extId": "fp32_ar:match:694290",
+      "sc": 24,
+      "mc": 7,
+      "rc": false,
+      "pId": 32,
+      "et": 0,
+      "hasStats": false,
+      "competitorIds": [
+        57173,
+        192855
+      ],
+      "sportId": 68,
+      "catId": 592,
+      "champId": 52614,
+      "status": 0,
+      "startDate": "2026-10-13T13:20:00Z",
+      "id": 18013550,
+      "name": "Petros Tsitsipas vs. Rodrigo Alujas"
+    },
+    {
+      "marketIds": [
+        1776908962,
+        1777373354,
+        1777373355,
+        1776908963
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "code": 2314,
+      "hasStream": false,
+      "extId": "fp32_ar:match:694288",
+      "sc": 22,
+      "mc": 6,
+      "rc": false,
+      "pId": 32,
+      "et": 0,
+      "hasStats": false,
+      "competitorIds": [
+        1336327,
+        173237
+      ],
+      "sportId": 68,
+      "catId": 592,
+      "champId": 52614,
+      "status": 0,
+      "startDate": "2026-10-13T13:20:00Z",
+      "id": 18013704,
+      "name": "Odysseas Geladaris vs. Finn Murgett"
+    },
+    {
+      "marketIds": [
+        1777865240,
+        1777865241
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "code": 8620,
+      "hasStream": false,
+      "extId": "fp32_ar:match:694508",
+      "sc": 16,
+      "mc": 6,
+      "rc": false,
+      "pId": 32,
+      "et": 0,
+      "hasStats": false,
+      "competitorIds": [
+        3761061,
+        3761060
+      ],
+      "sportId": 68,
+      "catId": 607,
+      "champId": 57632,
+      "status": 0,
+      "startDate": "2026-10-13T13:22:00Z",
+      "id": 18020785,
+      "name": "Tichackova, Eliska/Virc, Lana vs. Nemcsek, Greta/Sagmar, Ilinca"
+    },
+    {
+      "marketIds": [
+        1777860434,
+        1777860435
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "code": 2467,
+      "hasStream": false,
+      "extId": "fp32_ar:match:694476",
+      "sc": 8,
+      "mc": 3,
+      "rc": false,
+      "pId": 32,
+      "et": 0,
+      "hasStats": false,
+      "competitorIds": [
+        3761083,
+        3761082
+      ],
+      "sportId": 68,
+      "catId": 607,
+      "champId": 52957,
+      "status": 0,
+      "startDate": "2026-10-13T13:22:00Z",
+      "id": 18020833,
+      "name": "Senic, Natalija/Vladson, Laima vs. Bedini, Viola/Sveva Fumagalli, Sveva"
+    },
+    {
+      "marketIds": [
+        1777842483
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "code": 6413,
+      "hasStream": false,
+      "extId": "fp32_ar:match:694461",
+      "sc": 2,
+      "mc": 1,
+      "rc": false,
+      "pId": 32,
+      "et": 0,
+      "hasStats": false,
+      "competitorIds": [
+        3760059,
+        3760058
+      ],
+      "sportId": 68,
+      "catId": 607,
+      "champId": 55075,
+      "status": 0,
+      "startDate": "2026-10-13T13:24:00Z",
+      "id": 18018228,
+      "name": "Gniewkowska, Oriana/Villet, Marie vs. Pascual Montalvo, Isabel/Sarganella Verdu, Nuria"
+    },
+    {
+      "marketIds": [
+        1777785262,
+        1777785263
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "code": 7699,
+      "hasStream": false,
+      "extId": "fp32_ar:match:694472",
+      "sc": 10,
+      "mc": 3,
+      "rc": false,
+      "pId": 32,
+      "et": 0,
+      "hasStats": false,
+      "competitorIds": [
+        3735849,
+        3734900
+      ],
+      "sportId": 68,
+      "catId": 607,
+      "champId": 52957,
+      "status": 0,
+      "startDate": "2026-10-13T13:25:00Z",
+      "id": 18015898,
+      "name": "Chastang Cooper, Antoinette/Toma, Maria vs. Molaro, Nicole Andrea/Pieragostini, Marzia Paola Marina"
+    },
+    {
+      "marketIds": [
+        1777326585,
+        1777432990
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "code": 681,
+      "hasStream": false,
+      "extId": "fp16_bg:match:14564556",
+      "sc": 4,
+      "mc": 2,
+      "rc": false,
+      "pId": 16,
+      "et": 0,
+      "hasStats": false,
+      "competitorIds": [
+        2334363,
+        310531
+      ],
+      "sportId": 68,
+      "catId": 607,
+      "champId": 55030,
+      "status": 0,
+      "startDate": "2026-10-13T13:15:00Z",
+      "id": 18015939,
+      "name": "Teodora Miron vs. Adelina Lachinova"
+    },
+    {
+      "marketIds": [
+        1777595026,
+        1777595027,
+        1777595039
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "variant": 2,
+      "code": 566,
+      "hasStream": true,
+      "extId": "fp61_bt:match:01a12edc-0c5d-7278-a3af-ae468a931e98",
+      "sc": 52,
+      "mc": 18,
+      "rc": false,
+      "pId": 61,
+      "et": 0,
+      "hasStats": false,
+      "competitorIds": [
+        2619184,
+        2622396
+      ],
+      "sportId": 67,
+      "catId": 1729,
+      "champId": 41972,
+      "status": 0,
+      "startDate": "2026-10-13T13:20:00Z",
+      "id": 18010253,
+      "name": "Philadelphia 76ers (McLovin) vs. Los Angeles Clippers (Master)"
+    },
+    {
+      "marketIds": [
+        1778088536
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "variant": 2,
+      "hasStream": false,
+      "extId": "fp37_od:match:3306319",
+      "sc": 12,
+      "mc": 4,
+      "rc": false,
+      "pId": 37,
+      "et": 0,
+      "hasStats": false,
+      "competitorIds": [
+        2552979,
+        1111246
+      ],
+      "sportId": 67,
+      "catId": 2130,
+      "champId": 64089,
+      "status": 0,
+      "startDate": "2026-10-13T13:25:00Z",
+      "id": 18023837,
+      "name": "New Orleans Pelicans (Mick) vs. Indiana Pacers (Clyde)"
+    },
+    {
+      "marketIds": [
+        1778087285
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "variant": 2,
+      "hasStream": false,
+      "extId": "fp37_od:match:3306320",
+      "sc": 12,
+      "mc": 4,
+      "rc": false,
+      "pId": 37,
+      "et": 0,
+      "hasStats": false,
+      "competitorIds": [
+        2559609,
+        1106163
+      ],
+      "sportId": 67,
+      "catId": 2130,
+      "champId": 64089,
+      "status": 0,
+      "startDate": "2026-10-13T13:25:00Z",
+      "id": 18023838,
+      "name": "Denver Nuggets (Tatum) vs. Dallas Mavericks (Barry)"
+    },
+    {
+      "marketIds": [
+        1777969664,
+        1777969665,
+        1778050907
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "variant": 2,
+      "code": 4248,
+      "hasStream": true,
+      "extId": "fp61_bt:match:01a12fe7-bbc9-749f-aa4d-e918d1c2b5c5",
+      "sc": 52,
+      "mc": 18,
+      "rc": false,
+      "pId": 61,
+      "et": 0,
+      "hasStats": false,
+      "competitorIds": [
+        3657347,
+        3657346
+      ],
+      "sportId": 67,
+      "catId": 1729,
+      "champId": 57091,
+      "status": 0,
+      "startDate": "2026-10-13T13:30:00Z",
+      "id": 18012739,
+      "name": "Panathinaikos (MP12JM) vs. Olympiacos (LeviDunk)"
+    },
+    {
+      "marketIds": [
+        1777673064,
+        1777673079,
+        1777673074
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "variant": 2,
+      "code": 6540,
+      "hasStream": true,
+      "extId": "fp61_bt:match:01a12fe4-f848-7495-8d68-480993c11d14",
+      "sc": 52,
+      "mc": 18,
+      "rc": false,
+      "pId": 61,
+      "et": 0,
+      "hasStats": false,
+      "competitorIds": [
+        3288337,
+        3033156
+      ],
+      "sportId": 67,
+      "catId": 1729,
+      "champId": 41972,
+      "status": 0,
+      "startDate": "2026-10-13T13:45:00Z",
+      "id": 18012708,
+      "name": "Philadelphia 76ers (Pakapaka) vs. Sacramento Kings (Lucashin)"
+    },
+    {
+      "marketIds": [
+        1777683627,
+        1777683645,
+        1777683654
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "variant": 2,
+      "code": 5598,
+      "hasStream": true,
+      "extId": "fp61_bt:match:01a12fe5-064a-7bbd-a0f6-33b1c79b6567",
+      "sc": 52,
+      "mc": 18,
+      "rc": false,
+      "pId": 61,
+      "et": 0,
+      "hasStats": false,
+      "competitorIds": [
+        2622399,
+        2277010
+      ],
+      "sportId": 67,
+      "catId": 1729,
+      "champId": 41972,
+      "status": 0,
+      "startDate": "2026-10-13T13:45:00Z",
+      "id": 18012718,
+      "name": "Miami Heat (veljouni) vs. Minnesota Timberwolves (Bazuka)"
+    },
+    {
+      "marketIds": [
+        1778089951
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "variant": 2,
+      "hasStream": false,
+      "extId": "fp37_od:match:3306322",
+      "sc": 12,
+      "mc": 4,
+      "rc": false,
+      "pId": 37,
+      "et": 0,
+      "hasStats": false,
+      "competitorIds": [
+        2559609,
+        1954065
+      ],
+      "sportId": 67,
+      "catId": 2130,
+      "champId": 64089,
+      "status": 0,
+      "startDate": "2026-10-13T13:52:00Z",
+      "id": 18023830,
+      "name": "Denver Nuggets (Tatum) vs. Dallas Mavericks (Tyler)"
+    },
+    {
+      "marketIds": [
+        1778041323,
+        1778041342,
+        1778041351
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "variant": 2,
+      "code": 4237,
+      "hasStream": true,
+      "extId": "fp61_bt:match:01a12edc-1286-7bc2-875f-3c76b65c81ba",
+      "sc": 52,
+      "mc": 18,
+      "rc": false,
+      "pId": 61,
+      "et": 0,
+      "hasStats": false,
+      "competitorIds": [
+        2619184,
+        2996656
+      ],
+      "sportId": 67,
+      "catId": 1729,
+      "champId": 41972,
+      "status": 0,
+      "startDate": "2026-10-13T13:55:00Z",
+      "id": 18010257,
+      "name": "Philadelphia 76ers (McLovin) vs. Utah Jazz (HunkY)"
+    },
+    {
+      "marketIds": [
+        1776479836,
+        1777582787,
+        1776479833
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "variant": 2,
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "code": 6186,
+      "hasStream": false,
+      "extId": "fp62_ls:match:20482367",
+      "sc": 37,
+      "mc": 15,
+      "rc": false,
+      "pId": 62,
+      "et": 0,
+      "hasStats": false,
+      "competitorIds": [
+        2550087,
+        495197
+      ],
+      "sportId": 67,
+      "catId": 813,
+      "champId": 44353,
+      "status": 0,
+      "startDate": "2026-10-13T14:00:00Z",
+      "id": 17998915,
+      "name": "Brooklyn U22 vs. Tbilisi Basket U22"
+    },
+    {
+      "marketIds": [
+        1777739188,
+        1777739187,
+        1777739197
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "variant": 2,
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "code": 180,
+      "hasStream": false,
+      "extId": "fp62_ls:match:20507769",
+      "sc": 133,
+      "mc": 29,
+      "rc": false,
+      "pId": 62,
+      "et": 0,
+      "hasStats": true,
+      "competitorIds": [
+        116145,
+        2505393
+      ],
+      "sportId": 67,
+      "catId": 1063,
+      "champId": 7113,
+      "status": 0,
+      "startDate": "2026-10-13T16:00:00Z",
+      "id": 18010426,
+      "name": "Hoops vs. Homs AL Fida"
+    }
+  ],
+  "markets": [
+    {
+      "oddIds": [
+        4641216230,
+        4641216231
+      ],
+      "typeId": 186,
+      "sportMarketId": 70755,
+      "id": 1777785047,
+      "name": "Câștigător"
+    },
+    {
+      "oddIds": [
+        4641216228,
+        4641216229
+      ],
+      "typeId": 202,
+      "sportMarketId": 70773,
+      "sv": "1",
+      "sn": "Primul Set",
+      "id": 1777785046,
+      "name": "Setul 1 - câștigător"
+    },
+    {
+      "oddIds": [
+        4638848666,
+        4638848667
+      ],
+      "typeId": 186,
+      "sportMarketId": 70755,
+      "id": 1777031421,
+      "name": "Câștigător"
+    },
+    {
+      "oddIds": [
+        4639703479,
+        4639703480
+      ],
+      "typeId": 187,
+      "sportMarketId": 70760,
+      "sv": "+7.5",
+      "sn": "+7.5",
+      "id": 1777331947,
+      "name": "Handicap game-uri"
+    },
+    {
+      "oddIds": [
+        4639703481,
+        4639703482
+      ],
+      "typeId": 189,
+      "sportMarketId": 70762,
+      "sv": "16.5",
+      "sn": "16.5",
+      "id": 1777331948,
+      "name": "Total game-uri"
+    },
+    {
+      "oddIds": [
+        4638645870,
+        4638645871
+      ],
+      "typeId": 202,
+      "sportMarketId": 70773,
+      "sv": "1",
+      "sn": "Primul Set",
+      "id": 1776944258,
+      "name": "Setul 1 - câștigător"
+    },
+    {
+      "oddIds": [
+        4638848588,
+        4638848589
+      ],
+      "typeId": 186,
+      "sportMarketId": 70755,
+      "id": 1777031394,
+      "name": "Câștigător"
+    },
+    {
+      "oddIds": [
+        4639779443,
+        4639779444
+      ],
+      "typeId": 187,
+      "sportMarketId": 70760,
+      "sv": "+7.5",
+      "sn": "+7.5",
+      "id": 1777342857,
+      "name": "Handicap game-uri"
+    },
+    {
+      "oddIds": [
+        4639779445,
+        4639779446
+      ],
+      "typeId": 189,
+      "sportMarketId": 70762,
+      "sv": "17.5",
+      "sn": "17.5",
+      "id": 1777342858,
+      "name": "Total game-uri"
+    },
+    {
+      "oddIds": [
+        4638656339,
+        4638656340
+      ],
+      "typeId": 202,
+      "sportMarketId": 70773,
+      "sv": "1",
+      "sn": "Primul Set",
+      "id": 1776948577,
+      "name": "Setul 1 - câștigător"
+    },
+    {
+      "oddIds": [
+        4638552361,
+        4638552362
+      ],
+      "typeId": 186,
+      "sportMarketId": 70755,
+      "id": 1776908578,
+      "name": "Câștigător"
+    },
+    {
+      "oddIds": [
+        4639886405,
+        4639886406
+      ],
+      "typeId": 187,
+      "sportMarketId": 70760,
+      "sv": "-2.5",
+      "sn": "-2.5",
+      "id": 1777376286,
+      "name": "Handicap game-uri"
+    },
+    {
+      "oddIds": [
+        4639886407,
+        4639886408
+      ],
+      "typeId": 189,
+      "sportMarketId": 70762,
+      "sv": "20.5",
+      "sn": "20.5",
+      "id": 1777376287,
+      "name": "Total game-uri"
+    },
+    {
+      "oddIds": [
+        4638552363,
+        4638552364
+      ],
+      "typeId": 202,
+      "sportMarketId": 70773,
+      "sv": "1",
+      "sn": "Primul Set",
+      "id": 1776908579,
+      "name": "Setul 1 - câștigător"
+    },
+    {
+      "oddIds": [
+        4638553302,
+        4638553303
+      ],
+      "typeId": 186,
+      "sportMarketId": 70755,
+      "id": 1776908962,
+      "name": "Câștigător"
+    },
+    {
+      "oddIds": [
+        4639869641,
+        4639869642
+      ],
+      "typeId": 187,
+      "sportMarketId": 70760,
+      "sv": "+5.5",
+      "sn": "+5.5",
+      "id": 1777373354,
+      "name": "Handicap game-uri"
+    },
+    {
+      "oddIds": [
+        4639869643,
+        4639869644
+      ],
+      "typeId": 189,
+      "sportMarketId": 70762,
+      "sv": "18.5",
+      "sn": "18.5",
+      "id": 1777373355,
+      "name": "Total game-uri"
+    },
+    {
+      "oddIds": [
+        4638553304,
+        4638553305
+      ],
+      "typeId": 202,
+      "sportMarketId": 70773,
+      "sv": "1",
+      "sn": "Primul Set",
+      "id": 1776908963,
+      "name": "Setul 1 - câștigător"
+    },
+    {
+      "oddIds": [
+        4641555366,
+        4641555367
+      ],
+      "typeId": 186,
+      "sportMarketId": 70755,
+      "id": 1777865240,
+      "name": "Câștigător"
+    },
+    {
+      "oddIds": [
+        4641555368,
+        4641555369
+      ],
+      "typeId": 202,
+      "sportMarketId": 70773,
+      "sv": "1",
+      "sn": "Primul Set",
+      "id": 1777865241,
+      "name": "Setul 1 - câștigător"
+    },
+    {
+      "oddIds": [
+        4641540541,
+        4641540542
+      ],
+      "typeId": 186,
+      "sportMarketId": 70755,
+      "id": 1777860434,
+      "name": "Câștigător"
+    },
+    {
+      "oddIds": [
+        4641540543,
+        4641540544
+      ],
+      "typeId": 202,
+      "sportMarketId": 70773,
+      "sv": "1",
+      "sn": "Primul Set",
+      "id": 1777860435,
+      "name": "Setul 1 - câștigător"
+    },
+    {
+      "oddIds": [
+        4641495530,
+        4641495531
+      ],
+      "typeId": 186,
+      "sportMarketId": 70755,
+      "id": 1777842483,
+      "name": "Câștigător"
+    },
+    {
+      "oddIds": [
+        4641216726,
+        4641216727
+      ],
+      "typeId": 186,
+      "sportMarketId": 70755,
+      "id": 1777785262,
+      "name": "Câștigător"
+    },
+    {
+      "oddIds": [
+        4641216728,
+        4641216729
+      ],
+      "typeId": 202,
+      "sportMarketId": 70773,
+      "sv": "1",
+      "sn": "Primul Set",
+      "id": 1777785263,
+      "name": "Setul 1 - câștigător"
+    },
+    {
+      "oddIds": [
+        4639690922,
+        4639690923
+      ],
+      "typeId": 186,
+      "sportMarketId": 70755,
+      "id": 1777326585,
+      "name": "Câștigător"
+    },
+    {
+      "oddIds": [
+        4640027665,
+        4640027666
+      ],
+      "typeId": 202,
+      "sportMarketId": 70773,
+      "sv": "1",
+      "sn": "Primul Set",
+      "id": 1777432990,
+      "name": "Setul 1 - câștigător"
+    },
+    {
+      "oddIds": [
+        4640531599,
+        4640531600
+      ],
+      "typeId": 219,
+      "sportMarketId": 72852,
+      "id": 1777595026,
+      "name": "Câștigător (incl. prelungiri)"
+    },
+    {
+      "oddIds": [
+        4640531601,
+        4640531602
+      ],
+      "typeId": 223,
+      "sportMarketId": 72925,
+      "sv": "+1.5",
+      "sn": "+1.5",
+      "id": 1777595027,
+      "name": "Handicap (incl. prelungiri)"
+    },
+    {
+      "oddIds": [
+        4640531629,
+        4640531630
+      ],
+      "typeId": 225,
+      "sportMarketId": 72924,
+      "sv": "144.5",
+      "sn": "144.5",
+      "id": 1777595039,
+      "name": "Total (incl. prelungiri)"
+    },
+    {
+      "oddIds": [
+        4642181031,
+        4642181032
+      ],
+      "typeId": 219,
+      "sportMarketId": 72852,
+      "sv": "way:two|two",
+      "id": 1778088536,
+      "name": "Câștigător (incl. prelungiri)"
+    },
+    {
+      "oddIds": [
+        4642177929,
+        4642177930
+      ],
+      "typeId": 219,
+      "sportMarketId": 72852,
+      "sv": "way:two|two",
+      "id": 1778087285,
+      "name": "Câștigător (incl. prelungiri)"
+    },
+    {
+      "oddIds": [
+        4641866402,
+        4641866403
+      ],
+      "typeId": 219,
+      "sportMarketId": 72852,
+      "id": 1777969664,
+      "name": "Câștigător (incl. prelungiri)"
+    },
+    {
+      "oddIds": [
+        4641866404,
+        4641866405
+      ],
+      "typeId": 223,
+      "sportMarketId": 72925,
+      "sv": "+1.5",
+      "sn": "+1.5",
+      "id": 1777969665,
+      "name": "Handicap (incl. prelungiri)"
+    },
+    {
+      "oddIds": [
+        4642087602,
+        4642087603
+      ],
+      "typeId": 225,
+      "sportMarketId": 72924,
+      "sv": "128.5",
+      "sn": "128.5",
+      "id": 1778050907,
+      "name": "Total (incl. prelungiri)"
+    },
+    {
+      "oddIds": [
+        4640826271,
+        4640826272
+      ],
+      "typeId": 219,
+      "sportMarketId": 72852,
+      "id": 1777673064,
+      "name": "Câștigător (incl. prelungiri)"
+    },
+    {
+      "oddIds": [
+        4640826305,
+        4640826306
+      ],
+      "typeId": 223,
+      "sportMarketId": 72925,
+      "sv": "+7.5",
+      "sn": "+7.5",
+      "id": 1777673079,
+      "name": "Handicap (incl. prelungiri)"
+    },
+    {
+      "oddIds": [
+        4640826295,
+        4640826296
+      ],
+      "typeId": 225,
+      "sportMarketId": 72924,
+      "sv": "138.5",
+      "sn": "138.5",
+      "id": 1777673074,
+      "name": "Total (incl. prelungiri)"
+    },
+    {
+      "oddIds": [
+        4640867808,
+        4640867809
+      ],
+      "typeId": 219,
+      "sportMarketId": 72852,
+      "id": 1777683627,
+      "name": "Câștigător (incl. prelungiri)"
+    },
+    {
+      "oddIds": [
+        4640867848,
+        4640867849
+      ],
+      "typeId": 223,
+      "sportMarketId": 72925,
+      "sv": "-9.5",
+      "sn": "-9.5",
+      "id": 1777683645,
+      "name": "Handicap (incl. prelungiri)"
+    },
+    {
+      "oddIds": [
+        4640867866,
+        4640867867
+      ],
+      "typeId": 225,
+      "sportMarketId": 72924,
+      "sv": "129.5",
+      "sn": "129.5",
+      "id": 1777683654,
+      "name": "Total (incl. prelungiri)"
+    },
+    {
+      "oddIds": [
+        4642184493,
+        4642184494
+      ],
+      "typeId": 219,
+      "sportMarketId": 72852,
+      "sv": "way:two|two",
+      "id": 1778089951,
+      "name": "Câștigător (incl. prelungiri)"
+    },
+    {
+      "oddIds": [
+        4642063601,
+        4642063602
+      ],
+      "typeId": 219,
+      "sportMarketId": 72852,
+      "id": 1778041323,
+      "name": "Câștigător (incl. prelungiri)"
+    },
+    {
+      "oddIds": [
+        4642063643,
+        4642063644
+      ],
+      "typeId": 223,
+      "sportMarketId": 72925,
+      "sv": "+3.5",
+      "sn": "+3.5",
+      "id": 1778041342,
+      "name": "Handicap (incl. prelungiri)"
+    },
+    {
+      "oddIds": [
+        4642063661,
+        4642063662
+      ],
+      "typeId": 225,
+      "sportMarketId": 72924,
+      "sv": "138.5",
+      "sn": "138.5",
+      "id": 1778041351,
+      "name": "Total (incl. prelungiri)"
+    },
+    {
+      "oddIds": [
+        4637436598,
+        4637436599
+      ],
+      "typeId": 219,
+      "sportMarketId": 70792,
+      "id": 1776479836,
+      "name": "Câștigător (incl. prelungiri)"
+    },
+    {
+      "oddIds": [
+        4640500954,
+        4640500955
+      ],
+      "typeId": 223,
+      "sportMarketId": 70798,
+      "sv": "+14.5",
+      "sn": "+14.5",
+      "id": 1777582787,
+      "name": "Handicap (incl. prelungiri)"
+    },
+    {
+      "oddIds": [
+        4637436593,
+        4637436592
+      ],
+      "typeId": 225,
+      "sportMarketId": 70802,
+      "sv": "168.5",
+      "sn": "168.5",
+      "id": 1776479833,
+      "name": "Total Puncte (incl. prelungiri)"
+    },
+    {
+      "oddIds": [
+        4641040766,
+        4641040765
+      ],
+      "typeId": 219,
+      "sportMarketId": 70792,
+      "id": 1777739188,
+      "name": "Câștigător (incl. prelungiri)"
+    },
+    {
+      "oddIds": [
+        4641040764,
+        4641040763
+      ],
+      "typeId": 223,
+      "sportMarketId": 70798,
+      "sv": "-2.5",
+      "sn": "-2.5",
+      "id": 1777739187,
+      "name": "Handicap (incl. prelungiri)"
+    },
+    {
+      "oddIds": [
+        4641040787,
+        4641040788
+      ],
+      "typeId": 225,
+      "sportMarketId": 70802,
+      "sv": "164.5",
+      "sn": "164.5",
+      "id": 1777739197,
+      "name": "Total Puncte (incl. prelungiri)"
+    }
+  ],
+  "odds": [
+    {
+      "typeId": 1,
+      "price": 1.2858,
+      "isMB": false,
+      "oddStatus": 7,
+      "competitorId": 3761770,
+      "id": 4641216230,
+      "name": "Bothma, John/Gatoto, Allan"
+    },
+    {
+      "typeId": 3,
+      "price": 3.2,
+      "isMB": false,
+      "oddStatus": 7,
+      "competitorId": 3761769,
+      "id": 4641216231,
+      "name": "Skvortcov, Pavel/Tremblay, Dorian"
+    },
+    {
+      "typeId": 1,
+      "price": 1.35,
+      "isMB": false,
+      "oddStatus": 7,
+      "competitorId": 3761770,
+      "id": 4641216228,
+      "name": "Bothma, John/Gatoto, Allan"
+    },
+    {
+      "typeId": 3,
+      "price": 2.8572,
+      "isMB": false,
+      "oddStatus": 7,
+      "competitorId": 3761769,
+      "id": 4641216229,
+      "name": "Skvortcov, Pavel/Tremblay, Dorian"
+    },
+    {
+      "typeId": 1,
+      "price": 10,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 2804933,
+      "id": 4638848666,
+      "name": "Lara Savic"
+    },
+    {
+      "typeId": 3,
+      "price": 1.01,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 69499,
+      "id": 4638848667,
+      "name": "Esther Adeshina"
+    },
+    {
+      "typeId": 1714,
+      "price": 1.95,
+      "isMB": true,
+      "oddStatus": 0,
+      "competitorId": 2804933,
+      "id": 4639703479,
+      "name": "Lara Savic (+7.5)"
+    },
+    {
+      "typeId": 1715,
+      "price": 1.7,
+      "isMB": true,
+      "oddStatus": 0,
+      "competitorId": 69499,
+      "id": 4639703480,
+      "name": "Esther Adeshina (-7.5)"
+    },
+    {
+      "typeId": 12,
+      "price": 1.85,
+      "isMB": true,
+      "oddStatus": 0,
+      "id": 4639703481,
+      "name": "Peste 16.5"
+    },
+    {
+      "typeId": 13,
+      "price": 1.8,
+      "isMB": true,
+      "oddStatus": 0,
+      "id": 4639703482,
+      "name": "Sub 16.5"
+    },
+    {
+      "typeId": 1,
+      "price": 7.5,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 2804933,
+      "id": 4638645870,
+      "name": "Lara Savic"
+    },
+    {
+      "typeId": 3,
+      "price": 1.05,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 69499,
+      "id": 4638645871,
+      "name": "Esther Adeshina"
+    },
+    {
+      "typeId": 1,
+      "price": 9,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 398678,
+      "id": 4638848588,
+      "name": "Sophie Bekker"
+    },
+    {
+      "typeId": 3,
+      "price": 1.02,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 281335,
+      "id": 4638848589,
+      "name": "Mika Stojsavljevic"
+    },
+    {
+      "typeId": 1714,
+      "price": 1.6667,
+      "isMB": true,
+      "oddStatus": 7,
+      "competitorId": 398678,
+      "id": 4639779443,
+      "name": "Sophie Bekker (+7.5)"
+    },
+    {
+      "typeId": 1715,
+      "price": 2,
+      "isMB": true,
+      "oddStatus": 7,
+      "competitorId": 281335,
+      "id": 4639779444,
+      "name": "Mika Stojsavljevic (-7.5)"
+    },
+    {
+      "typeId": 12,
+      "price": 1.95,
+      "isMB": true,
+      "oddStatus": 7,
+      "id": 4639779445,
+      "name": "Peste 17.5"
+    },
+    {
+      "typeId": 13,
+      "price": 1.7,
+      "isMB": true,
+      "oddStatus": 7,
+      "id": 4639779446,
+      "name": "Sub 17.5"
+    },
+    {
+      "typeId": 1,
+      "price": 6.5,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 398678,
+      "id": 4638656339,
+      "name": "Sophie Bekker"
+    },
+    {
+      "typeId": 3,
+      "price": 1.0667,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 281335,
+      "id": 4638656340,
+      "name": "Mika Stojsavljevic"
+    },
+    {
+      "typeId": 1,
+      "price": 1.5715,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 57173,
+      "id": 4638552361,
+      "name": "Petros Tsitsipas"
+    },
+    {
+      "typeId": 3,
+      "price": 2.2,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 192855,
+      "id": 4638552362,
+      "name": "Rodrigo Alujas"
+    },
+    {
+      "typeId": 1714,
+      "price": 1.8334,
+      "isMB": true,
+      "oddStatus": 7,
+      "competitorId": 57173,
+      "id": 4639886405,
+      "name": "Petros Tsitsipas (-2.5)"
+    },
+    {
+      "typeId": 1715,
+      "price": 1.8334,
+      "isMB": true,
+      "oddStatus": 7,
+      "competitorId": 192855,
+      "id": 4639886406,
+      "name": "Rodrigo Alujas (+2.5)"
+    },
+    {
+      "typeId": 12,
+      "price": 1.75,
+      "isMB": true,
+      "oddStatus": 7,
+      "id": 4639886407,
+      "name": "Peste 20.5"
+    },
+    {
+      "typeId": 13,
+      "price": 1.9,
+      "isMB": true,
+      "oddStatus": 7,
+      "id": 4639886408,
+      "name": "Sub 20.5"
+    },
+    {
+      "typeId": 1,
+      "price": 1.625,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 57173,
+      "id": 4638552363,
+      "name": "Petros Tsitsipas"
+    },
+    {
+      "typeId": 3,
+      "price": 2.1,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 192855,
+      "id": 4638552364,
+      "name": "Rodrigo Alujas"
+    },
+    {
+      "typeId": 1,
+      "price": 4.5,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 1336327,
+      "id": 4638553302,
+      "name": "Odysseas Geladaris"
+    },
+    {
+      "typeId": 3,
+      "price": 1.1539,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 173237,
+      "id": 4638553303,
+      "name": "Finn Murgett"
+    },
+    {
+      "typeId": 1714,
+      "price": 2,
+      "isMB": true,
+      "oddStatus": 7,
+      "competitorId": 1336327,
+      "id": 4639869641,
+      "name": "Odysseas Geladaris (+5.5)"
+    },
+    {
+      "typeId": 1715,
+      "price": 1.6667,
+      "isMB": true,
+      "oddStatus": 7,
+      "competitorId": 173237,
+      "id": 4639869642,
+      "name": "Finn Murgett (-5.5)"
+    },
+    {
+      "typeId": 12,
+      "price": 1.8,
+      "isMB": true,
+      "oddStatus": 7,
+      "id": 4639869643,
+      "name": "Peste 18.5"
+    },
+    {
+      "typeId": 13,
+      "price": 1.85,
+      "isMB": true,
+      "oddStatus": 7,
+      "id": 4639869644,
+      "name": "Sub 18.5"
+    },
+    {
+      "typeId": 1,
+      "price": 3.6,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 1336327,
+      "id": 4638553304,
+      "name": "Odysseas Geladaris"
+    },
+    {
+      "typeId": 3,
+      "price": 1.2308,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 173237,
+      "id": 4638553305,
+      "name": "Finn Murgett"
+    },
+    {
+      "typeId": 1,
+      "price": 1.1112,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 3761061,
+      "id": 4641555366,
+      "name": "Tichackova, Eliska/Virc, Lana"
+    },
+    {
+      "typeId": 3,
+      "price": 5.3334,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 3761060,
+      "id": 4641555367,
+      "name": "Nemcsek, Greta/Sagmar, Ilinca"
+    },
+    {
+      "typeId": 1,
+      "price": 1.1539,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 3761061,
+      "id": 4641555368,
+      "name": "Tichackova, Eliska/Virc, Lana"
+    },
+    {
+      "typeId": 3,
+      "price": 4.5,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 3761060,
+      "id": 4641555369,
+      "name": "Nemcsek, Greta/Sagmar, Ilinca"
+    },
+    {
+      "typeId": 1,
+      "price": 1.0667,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 3761083,
+      "id": 4641540541,
+      "name": "Senic, Natalija/Vladson, Laima"
+    },
+    {
+      "typeId": 3,
+      "price": 6.5,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 3761082,
+      "id": 4641540542,
+      "name": "Bedini, Viola/Sveva Fumagalli, Sveva"
+    },
+    {
+      "typeId": 1,
+      "price": 1.1,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 3761083,
+      "id": 4641540543,
+      "name": "Senic, Natalija/Vladson, Laima"
+    },
+    {
+      "typeId": 3,
+      "price": 5.5,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 3761082,
+      "id": 4641540544,
+      "name": "Bedini, Viola/Sveva Fumagalli, Sveva"
+    },
+    {
+      "typeId": 1,
+      "price": 1.2858,
+      "isMB": false,
+      "oddStatus": 7,
+      "competitorId": 3760059,
+      "id": 4641495530,
+      "name": "Gniewkowska, Oriana/Villet, Marie"
+    },
+    {
+      "typeId": 3,
+      "price": 3.2,
+      "isMB": false,
+      "oddStatus": 7,
+      "competitorId": 3760058,
+      "id": 4641495531,
+      "name": "Pascual Montalvo, Isabel/Sarganella Verdu, Nuria"
+    },
+    {
+      "typeId": 1,
+      "price": 2.8,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 3735849,
+      "id": 4641216726,
+      "name": "Chastang Cooper, Antoinette/Toma, Maria"
+    },
+    {
+      "typeId": 3,
+      "price": 1.3637,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 3734900,
+      "id": 4641216727,
+      "name": "Molaro, Nicole Andrea/Pieragostini, Marzia Paola Marina"
+    },
+    {
+      "typeId": 1,
+      "price": 2.6,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 3735849,
+      "id": 4641216728,
+      "name": "Chastang Cooper, Antoinette/Toma, Maria"
+    },
+    {
+      "typeId": 3,
+      "price": 1.4167,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 3734900,
+      "id": 4641216729,
+      "name": "Molaro, Nicole Andrea/Pieragostini, Marzia Paola Marina"
+    },
+    {
+      "typeId": 1,
+      "price": 3.2,
+      "isMB": false,
+      "oddStatus": 7,
+      "competitorId": 2334363,
+      "id": 4639690922,
+      "name": "Teodora Miron"
+    },
+    {
+      "typeId": 3,
+      "price": 1.2858,
+      "isMB": false,
+      "oddStatus": 7,
+      "competitorId": 310531,
+      "id": 4639690923,
+      "name": "Adelina Lachinova"
+    },
+    {
+      "typeId": 1,
+      "price": 2.7143,
+      "isMB": false,
+      "oddStatus": 7,
+      "competitorId": 2334363,
+      "id": 4640027665,
+      "name": "Teodora Miron"
+    },
+    {
+      "typeId": 3,
+      "price": 1.3847,
+      "isMB": false,
+      "oddStatus": 7,
+      "competitorId": 310531,
+      "id": 4640027666,
+      "name": "Adelina Lachinova"
+    },
+    {
+      "typeId": 1,
+      "price": 2,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 2619184,
+      "id": 4640531599,
+      "name": "Philadelphia 76ers (McLovin)"
+    },
+    {
+      "typeId": 3,
+      "price": 1.6897,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 2622396,
+      "id": 4640531600,
+      "name": "Los Angeles Clippers (Master)"
+    },
+    {
+      "typeId": 1714,
+      "price": 1.8696,
+      "isMB": true,
+      "oddStatus": 0,
+      "competitorId": 2619184,
+      "id": 4640531601,
+      "name": "Philadelphia 76ers (McLovin) (+1.5)"
+    },
+    {
+      "typeId": 1715,
+      "price": 1.8,
+      "isMB": true,
+      "oddStatus": 0,
+      "competitorId": 2622396,
+      "id": 4640531602,
+      "name": "Los Angeles Clippers (Master) (-1.5)"
+    },
+    {
+      "typeId": 12,
+      "price": 1.8334,
+      "isMB": true,
+      "oddStatus": 0,
+      "id": 4640531629,
+      "name": "Peste 144.5"
+    },
+    {
+      "typeId": 13,
+      "price": 1.8334,
+      "isMB": true,
+      "oddStatus": 0,
+      "id": 4640531630,
+      "name": "Sub 144.5"
+    },
+    {
+      "typeId": 1,
+      "price": 0,
+      "isMB": false,
+      "oddStatus": 7,
+      "competitorId": 2552979,
+      "id": 4642181031,
+      "name": "New Orleans Pelicans (Mick)"
+    },
+    {
+      "typeId": 3,
+      "price": 0,
+      "isMB": false,
+      "oddStatus": 7,
+      "competitorId": 1111246,
+      "id": 4642181032,
+      "name": "Indiana Pacers (Clyde)"
+    },
+    {
+      "typeId": 1,
+      "price": 0,
+      "isMB": false,
+      "oddStatus": 7,
+      "competitorId": 2559609,
+      "id": 4642177929,
+      "name": "Denver Nuggets (Tatum)"
+    },
+    {
+      "typeId": 3,
+      "price": 0,
+      "isMB": false,
+      "oddStatus": 7,
+      "competitorId": 1106163,
+      "id": 4642177930,
+      "name": "Dallas Mavericks (Barry)"
+    },
+    {
+      "typeId": 1,
+      "price": 2,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 3657347,
+      "id": 4641866402,
+      "name": "Panathinaikos (MP12JM)"
+    },
+    {
+      "typeId": 3,
+      "price": 1.6897,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 3657346,
+      "id": 4641866403,
+      "name": "Olympiacos (LeviDunk)"
+    },
+    {
+      "typeId": 1714,
+      "price": 1.8696,
+      "isMB": true,
+      "oddStatus": 0,
+      "competitorId": 3657347,
+      "id": 4641866404,
+      "name": "Panathinaikos (MP12JM) (+1.5)"
+    },
+    {
+      "typeId": 1715,
+      "price": 1.8,
+      "isMB": true,
+      "oddStatus": 0,
+      "competitorId": 3657346,
+      "id": 4641866405,
+      "name": "Olympiacos (LeviDunk) (-1.5)"
+    },
+    {
+      "typeId": 12,
+      "price": 1.8,
+      "isMB": true,
+      "oddStatus": 0,
+      "id": 4642087602,
+      "name": "Peste 128.5"
+    },
+    {
+      "typeId": 13,
+      "price": 1.8696,
+      "isMB": true,
+      "oddStatus": 0,
+      "id": 4642087603,
+      "name": "Sub 128.5"
+    },
+    {
+      "typeId": 1,
+      "price": 3.4,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 3288337,
+      "id": 4640826271,
+      "name": "Philadelphia 76ers (Pakapaka)"
+    },
+    {
+      "typeId": 3,
+      "price": 1.25,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 3033156,
+      "id": 4640826272,
+      "name": "Sacramento Kings (Lucashin)"
+    },
+    {
+      "typeId": 1714,
+      "price": 1.8334,
+      "isMB": true,
+      "oddStatus": 0,
+      "competitorId": 3288337,
+      "id": 4640826305,
+      "name": "Philadelphia 76ers (Pakapaka) (+7.5)"
+    },
+    {
+      "typeId": 1715,
+      "price": 1.8334,
+      "isMB": true,
+      "oddStatus": 0,
+      "competitorId": 3033156,
+      "id": 4640826306,
+      "name": "Sacramento Kings (Lucashin) (-7.5)"
+    },
+    {
+      "typeId": 12,
+      "price": 1.8334,
+      "isMB": true,
+      "oddStatus": 0,
+      "id": 4640826295,
+      "name": "Peste 138.5"
+    },
+    {
+      "typeId": 13,
+      "price": 1.8334,
+      "isMB": true,
+      "oddStatus": 0,
+      "id": 4640826296,
+      "name": "Sub 138.5"
+    },
+    {
+      "typeId": 1,
+      "price": 1.1539,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 2622399,
+      "id": 4640867808,
+      "name": "Miami Heat (veljouni)"
+    },
+    {
+      "typeId": 3,
+      "price": 4.5,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 2277010,
+      "id": 4640867809,
+      "name": "Minnesota Timberwolves (Bazuka)"
+    },
+    {
+      "typeId": 1714,
+      "price": 1.8334,
+      "isMB": true,
+      "oddStatus": 0,
+      "competitorId": 2622399,
+      "id": 4640867848,
+      "name": "Miami Heat (veljouni) (-9.5)"
+    },
+    {
+      "typeId": 1715,
+      "price": 1.8334,
+      "isMB": true,
+      "oddStatus": 0,
+      "competitorId": 2277010,
+      "id": 4640867849,
+      "name": "Minnesota Timberwolves (Bazuka) (+9.5)"
+    },
+    {
+      "typeId": 12,
+      "price": 1.8696,
+      "isMB": true,
+      "oddStatus": 0,
+      "id": 4640867866,
+      "name": "Peste 129.5"
+    },
+    {
+      "typeId": 13,
+      "price": 1.8,
+      "isMB": true,
+      "oddStatus": 0,
+      "id": 4640867867,
+      "name": "Sub 129.5"
+    },
+    {
+      "typeId": 1,
+      "price": 0,
+      "isMB": false,
+      "oddStatus": 7,
+      "competitorId": 2559609,
+      "id": 4642184493,
+      "name": "Denver Nuggets (Tatum)"
+    },
+    {
+      "typeId": 3,
+      "price": 0,
+      "isMB": false,
+      "oddStatus": 7,
+      "competitorId": 1954065,
+      "id": 4642184494,
+      "name": "Dallas Mavericks (Tyler)"
+    },
+    {
+      "typeId": 1,
+      "price": 2.2,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 2619184,
+      "id": 4642063601,
+      "name": "Philadelphia 76ers (McLovin)"
+    },
+    {
+      "typeId": 3,
+      "price": 1.5715,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 2996656,
+      "id": 4642063602,
+      "name": "Utah Jazz (HunkY)"
+    },
+    {
+      "typeId": 1714,
+      "price": 1.8,
+      "isMB": true,
+      "oddStatus": 0,
+      "competitorId": 2619184,
+      "id": 4642063643,
+      "name": "Philadelphia 76ers (McLovin) (+3.5)"
+    },
+    {
+      "typeId": 1715,
+      "price": 1.8696,
+      "isMB": true,
+      "oddStatus": 0,
+      "competitorId": 2996656,
+      "id": 4642063644,
+      "name": "Utah Jazz (HunkY) (-3.5)"
+    },
+    {
+      "typeId": 12,
+      "price": 1.8,
+      "isMB": true,
+      "oddStatus": 0,
+      "id": 4642063661,
+      "name": "Peste 138.5"
+    },
+    {
+      "typeId": 13,
+      "price": 1.8696,
+      "isMB": true,
+      "oddStatus": 0,
+      "id": 4642063662,
+      "name": "Sub 138.5"
+    },
+    {
+      "typeId": 1,
+      "price": 5.75,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 2550087,
+      "id": 4637436598,
+      "name": "Brooklyn U22"
+    },
+    {
+      "typeId": 3,
+      "price": 1.091,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 495197,
+      "id": 4637436599,
+      "name": "Tbilisi Basket U22"
+    },
+    {
+      "typeId": 1714,
+      "price": 1.8334,
+      "isMB": true,
+      "oddStatus": 0,
+      "competitorId": 2550087,
+      "id": 4640500954,
+      "name": "Brooklyn U22 (+14.5)"
+    },
+    {
+      "typeId": 1715,
+      "price": 1.8334,
+      "isMB": true,
+      "oddStatus": 0,
+      "competitorId": 495197,
+      "id": 4640500955,
+      "name": "Tbilisi Basket U22 (-14.5)"
+    },
+    {
+      "typeId": 12,
+      "price": 1.8334,
+      "isMB": true,
+      "oddStatus": 0,
+      "id": 4637436593,
+      "name": "Peste 168.5"
+    },
+    {
+      "typeId": 13,
+      "price": 1.8334,
+      "isMB": true,
+      "oddStatus": 0,
+      "id": 4637436592,
+      "name": "Sub 168.5"
+    },
+    {
+      "typeId": 1,
+      "price": 1.6897,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 116145,
+      "id": 4641040766,
+      "name": "Hoops"
+    },
+    {
+      "typeId": 3,
+      "price": 2.05,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 2505393,
+      "id": 4641040765,
+      "name": "Homs AL Fida"
+    },
+    {
+      "typeId": 1714,
+      "price": 1.8334,
+      "isMB": true,
+      "oddStatus": 0,
+      "competitorId": 116145,
+      "id": 4641040764,
+      "name": "Hoops (-2.5)"
+    },
+    {
+      "typeId": 1715,
+      "price": 1.8334,
+      "isMB": true,
+      "oddStatus": 0,
+      "competitorId": 2505393,
+      "id": 4641040763,
+      "name": "Homs AL Fida (+2.5)"
+    },
+    {
+      "typeId": 12,
+      "price": 1.8696,
+      "isMB": true,
+      "oddStatus": 0,
+      "id": 4641040787,
+      "name": "Peste 164.5"
+    },
+    {
+      "typeId": 13,
+      "price": 1.8,
+      "isMB": true,
+      "oddStatus": 0,
+      "id": 4641040788,
+      "name": "Sub 164.5"
+    }
+  ],
+  "competitors": [
+    {
+      "id": 3761770,
+      "name": "Bothma, John/Gatoto, Allan"
+    },
+    {
+      "id": 3761769,
+      "name": "Skvortcov, Pavel/Tremblay, Dorian"
+    },
+    {
+      "id": 2804933,
+      "name": "Lara Savic"
+    },
+    {
+      "hasConfigJersey": true,
+      "abbreviation": "ADE",
+      "id": 69499,
+      "name": "Esther Adeshina"
+    },
+    {
+      "abbreviation": "BEK",
+      "id": 398678,
+      "name": "Sophie Bekker"
+    },
+    {
+      "hasConfigJersey": true,
+      "abbreviation": "STO",
+      "id": 281335,
+      "name": "Mika Stojsavljevic"
+    },
+    {
+      "hasConfigJersey": true,
+      "abbreviation": "TSI",
+      "id": 57173,
+      "name": "Petros Tsitsipas"
+    },
+    {
+      "abbreviation": "ALU",
+      "id": 192855,
+      "name": "Rodrigo Alujas"
+    },
+    {
+      "abbreviation": "GEL",
+      "id": 1336327,
+      "name": "Odysseas Geladaris"
+    },
+    {
+      "abbreviation": "MUR",
+      "id": 173237,
+      "name": "Finn Murgett"
+    },
+    {
+      "id": 3761061,
+      "name": "Tichackova, Eliska/Virc, Lana"
+    },
+    {
+      "id": 3761060,
+      "name": "Nemcsek, Greta/Sagmar, Ilinca"
+    },
+    {
+      "id": 3761083,
+      "name": "Senic, Natalija/Vladson, Laima"
+    },
+    {
+      "id": 3761082,
+      "name": "Bedini, Viola/Sveva Fumagalli, Sveva"
+    },
+    {
+      "id": 3760059,
+      "name": "Gniewkowska, Oriana/Villet, Marie"
+    },
+    {
+      "id": 3760058,
+      "name": "Pascual Montalvo, Isabel/Sarganella Verdu, Nuria"
+    },
+    {
+      "id": 3735849,
+      "name": "Chastang Cooper, Antoinette/Toma, Maria"
+    },
+    {
+      "id": 3734900,
+      "name": "Molaro, Nicole Andrea/Pieragostini, Marzia Paola Marina"
+    },
+    {
+      "id": 2334363,
+      "name": "Teodora Miron"
+    },
+    {
+      "abbreviation": "LAC",
+      "id": 310531,
+      "name": "Adelina Lachinova"
+    },
+    {
+      "id": 3650850,
+      "name": "Kuzmova, Katarina/Milovanovic, Elena"
+    },
+    {
+      "id": 3760057,
+      "name": "Kubareva, Anna/Tupitsyna, Ekaterina"
+    },
+    {
+      "id": 3761086,
+      "name": "Alfano, Filippo/Amarandei, Daniel Aleksandar"
+    },
+    {
+      "abbreviation": "SPA",
+      "id": 846580,
+      "name": "Spadola A / Vavassori M"
+    },
+    {
+      "id": 3761089,
+      "name": "Corbinais, Sven/Herrmann, Theo"
+    },
+    {
+      "id": 3757024,
+      "name": "Agwi, Michael/Vega, Leornardo"
+    },
+    {
+      "abbreviation": "KUZ",
+      "id": 46170,
+      "name": "Dimitar Kuzmanov"
+    },
+    {
+      "id": 2918609,
+      "name": "Massellani, Simone"
+    },
+    {
+      "id": 3761080,
+      "name": "Charl, Maria/Vlajic, Teodora"
+    },
+    {
+      "id": 3761079,
+      "name": "Mozgaleva, Anastasia/Terentyeva, Alisa"
+    },
+    {
+      "id": 2619184,
+      "name": "Philadelphia 76ers (McLovin)"
+    },
+    {
+      "id": 2622396,
+      "name": "Los Angeles Clippers (Master)"
+    },
+    {
+      "abbreviation": "NO (Mick)",
+      "id": 2552979,
+      "name": "New Orleans Pelicans (Mick)"
+    },
+    {
+      "abbreviation": "IND (Clyde)",
+      "id": 1111246,
+      "name": "Indiana Pacers (Clyde)"
+    },
+    {
+      "abbreviation": "DEN (Tatum)",
+      "id": 2559609,
+      "name": "Denver Nuggets (Tatum)"
+    },
+    {
+      "abbreviation": "DAL (Barry)",
+      "id": 1106163,
+      "name": "Dallas Mavericks (Barry)"
+    },
+    {
+      "id": 3657347,
+      "name": "Panathinaikos (MP12JM)"
+    },
+    {
+      "id": 3657346,
+      "name": "Olympiacos (LeviDunk)"
+    },
+    {
+      "id": 3288337,
+      "name": "Philadelphia 76ers (Pakapaka)"
+    },
+    {
+      "id": 3033156,
+      "name": "Sacramento Kings (Lucashin)"
+    },
+    {
+      "id": 2622399,
+      "name": "Miami Heat (veljouni)"
+    },
+    {
+      "id": 2277010,
+      "name": "Minnesota Timberwolves (Bazuka)"
+    },
+    {
+      "abbreviation": "DAL (Tyler)",
+      "id": 1954065,
+      "name": "Dallas Mavericks (Tyler)"
+    },
+    {
+      "id": 2996656,
+      "name": "Utah Jazz (HunkY)"
+    },
+    {
+      "id": 2550087,
+      "name": "Brooklyn U22"
+    },
+    {
+      "id": 495197,
+      "name": "Tbilisi Basket U22"
+    },
+    {
+      "abbreviation": "HOO",
+      "id": 116145,
+      "name": "Hoops"
+    },
+    {
+      "abbreviation": "HOM",
+      "id": 2505393,
+      "name": "Homs AL Fida"
+    },
+    {
+      "id": 3650557,
+      "name": "Paris (iksvel)"
+    },
+    {
+      "id": 3634565,
+      "name": "Utah Jazz (Jovke)"
+    },
+    {
+      "id": 3650554,
+      "name": "Crvena Zvezda (MrMike)"
+    },
+    {
+      "abbreviation": "DEN (Barry)",
+      "id": 1675402,
+      "name": "Denver Nuggets (Barry)"
+    }
+  ],
+  "topSports": [
+    {
+      "id": 66,
+      "name": "Soccer",
+      "iconName": "soccer",
+      "hasStream": false,
+      "count": 1269
+    },
+    {
+      "id": 68,
+      "name": "Tennis",
+      "iconName": "tennis",
+      "hasStream": false,
+      "count": 439
+    },
+    {
+      "id": 67,
+      "name": "Basketball",
+      "iconName": "basketball",
+      "hasStream": false,
+      "count": 199
+    },
+    {
+      "id": 70,
+      "name": "Ice Hockey",
+      "iconName": "ice-hockey",
+      "hasStream": false,
+      "count": 175
+    },
+    {
+      "id": 77,
+      "name": "Table Tennis",
+      "iconName": "table-tennis",
+      "hasStream": false,
+      "count": 410
+    },
+    {
+      "id": 69,
+      "name": "Volleyball",
+      "iconName": "volleyball",
+      "hasStream": false,
+      "count": 54
+    },
+    {
+      "id": 75,
+      "name": "American Football",
+      "iconName": "american-football",
+      "hasStream": false,
+      "count": 73
+    },
+    {
+      "id": 76,
+      "name": "Baseball",
+      "iconName": "baseball",
+      "hasStream": false,
+      "count": 18
+    },
+    {
+      "id": 101,
+      "name": "Rugby League",
+      "iconName": "rugby-league",
+      "hasStream": false,
+      "count": 9
+    },
+    {
+      "id": 106,
+      "name": "Aussie Rules",
+      "iconName": "aussie-rules",
+      "hasStream": false,
+      "count": 9
+    },
+    {
+      "id": -1,
+      "name": "Other",
+      "iconName": "Other",
+      "hasStream": false,
+      "count": 439
+    }
+  ],
+  "champs": [
+    {
+      "hasLiveEvents": false,
+      "id": 58370,
+      "name": "M25 Luanda Doubles"
+    },
+    {
+      "hasLiveEvents": false,
+      "id": 57451,
+      "name": "W35 Birmingham Singles"
+    },
+    {
+      "hasLiveEvents": false,
+      "id": 52614,
+      "name": "M15 Heraklion Singles"
+    },
+    {
+      "hasLiveEvents": false,
+      "id": 57632,
+      "name": "W15 Bol Doubles"
+    },
+    {
+      "hasLiveEvents": false,
+      "id": 52957,
+      "name": "W35 Santa Margherita di Pula Doubles"
+    },
+    {
+      "hasLiveEvents": false,
+      "id": 55075,
+      "name": "W35 Monastir Doubles"
+    },
+    {
+      "hasLiveEvents": false,
+      "id": 55030,
+      "name": "W35 Monastir Qualification"
+    },
+    {
+      "hasLiveEvents": false,
+      "id": 52948,
+      "name": "M25 Santa Margherita di Pula Doubles"
+    },
+    {
+      "hasLiveEvents": false,
+      "id": 57424,
+      "name": "M15 Offenbach Doubles"
+    },
+    {
+      "hasLiveEvents": false,
+      "id": 43840,
+      "name": "ATP Challenger Olbia, Italy Men Singles"
+    },
+    {
+      "hasLiveEvents": false,
+      "id": 51641,
+      "name": "W15 Sharm ElSheikh Doubles"
+    },
+    {
+      "hasLiveEvents": false,
+      "id": 41972,
+      "name": "ESportsBattle (4x5 mins, OT-3 mins)"
+    },
+    {
+      "hasLiveEvents": false,
+      "id": 64089,
+      "name": "Valhalla League 2026 Week #42 (4x5 mins, OT-3 mins)"
+    },
+    {
+      "hasLiveEvents": false,
+      "id": 57091,
+      "name": "European Conference (4x5 mins, OT-3 mins)"
+    },
+    {
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "hasLiveEvents": false,
+      "id": 44353,
+      "name": "Georgia League U22"
+    },
+    {
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "hasLiveEvents": false,
+      "id": 7113,
+      "name": "Arab Club Championship"
+    }
+  ],
+  "categories": [
+    {
+      "champIds": [
+        58370,
+        52614,
+        52948,
+        57424
+      ],
+      "iso": "",
+      "hasLiveEvents": false,
+      "id": 592,
+      "name": "World Tennis Tour (M)"
+    },
+    {
+      "champIds": [
+        57451,
+        57632,
+        52957,
+        55075,
+        55030,
+        51641
+      ],
+      "iso": "",
+      "hasLiveEvents": false,
+      "id": 607,
+      "name": "World Tennis Tour (W)"
+    },
+    {
+      "champIds": [
+        43840
+      ],
+      "iso": "",
+      "hasLiveEvents": false,
+      "id": 742,
+      "name": "Challenger"
+    },
+    {
+      "champIds": [
+        41972,
+        57091
+      ],
+      "iso": "",
+      "hasLiveEvents": false,
+      "id": 1729,
+      "name": "E-battles"
+    },
+    {
+      "champIds": [
+        64089
+      ],
+      "iso": "",
+      "hasLiveEvents": false,
+      "id": 2130,
+      "name": "Rush Basketball"
+    },
+    {
+      "champIds": [
+        44353
+      ],
+      "iso": "GEO",
+      "hasLiveEvents": false,
+      "id": 813,
+      "name": "Georgia"
+    },
+    {
+      "champIds": [
+        7113
+      ],
+      "hasLiveEvents": false,
+      "id": 1063,
+      "name": "Asia"
+    }
+  ],
+  "headers": []
+}

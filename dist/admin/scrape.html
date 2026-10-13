@@ -1,0 +1,401 @@
+<!doctype html>
+<html lang="ro">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <title>Arbiter — Scrape Control</title>
+  <script src="/js/theme.js"></script>
+  <link rel="stylesheet" href="/css/theme.css">
+  <link rel="stylesheet" href="/css/arbedge.css">
+  <link rel="stylesheet" href="/css/scrape.css">
+</head>
+<body class="sl">
+  <main class="sl-main">
+    <!-- ══ Header ═══════════════════════════════════════════════════════
+         The state of the run is the first thing you check, so it sits in the
+         title bar rather than in a card further down. -->
+    <header class="sl-head">
+      <div class="sl-head-text">
+        <h1 class="sl-title" data-i18n="scrapeControl">Răzuire</h1>
+        <p class="sl-sub" data-i18n="scrapeSubtitle">Rulează fluxuri publice validate și urmărește sursele în timp real</p>
+      </div>
+      <div class="sl-head-state">
+        <span class="sl-live" id="sse-status" data-connected-text="Live" data-disconnected-text="Reconectare">
+          <i class="sl-dot"></i><span data-i18n="live">Live</span>
+        </span>
+        <span class="sl-state" id="head-state">
+          <i class="sl-dot" id="head-dot"></i><span id="head-status">idle</span>
+        </span>
+        <button class="sl-ghost sl-lang" data-lang-toggle aria-label="Schimbă limba">RO</button>
+      </div>
+    </header>
+
+    <!-- Announced when the run changes phase, not on every row update: a live
+         table read out in full would be unusable. -->
+    <div id="live-summary" role="status" aria-live="polite" class="visually-hidden"></div>
+
+    <!-- ══ Run bar ══════════════════════════════════════════════════════
+         Everything needed to start a run on one row. Nine stacked fields made
+         the settings look like a form to fill in before you could read what
+         the last run actually did. -->
+    <section class="sl-runbar" data-i18n-aria-label="configuration">
+      <div class="sl-runbar-fields">
+        <label class="sl-field">
+          <span data-i18n="profile">Profil</span>
+          <select id="profile"></select>
+        </label>
+        <label class="sl-field">
+          <span data-i18n="sport">Sport</span>
+          <select id="sport-filter">
+            <option value="" data-i18n="allSports">Toate sporturile</option>
+          </select>
+        </label>
+        <label class="sl-field">
+          <span data-i18n="eventCollection">Evenimente</span>
+          <select id="max-events" data-i18n-title="eventCollectionHint" title="Toate = fiecare eveniment calificat disponibil din feed-ul public al fiecărei case.">
+            <option value="all" selected data-i18n="allEvents">Toate</option>
+            <option value="40">40</option>
+            <option value="100">100</option>
+            <option value="500">500</option>
+            <option value="1000">1.000</option>
+          </select>
+        </label>
+        <label class="sl-field sl-field-narrow">
+          <span data-i18n="bankroll">Bankroll</span>
+          <input type="number" id="bankroll" value="1000" min="10" step="10">
+        </label>
+        <label class="sl-field sl-field-narrow">
+          <span data-i18n="minMargin">Marjă min %</span>
+          <input type="number" id="min-roi" value="0" step="0.1">
+        </label>
+        <label class="sl-field sl-field-narrow">
+          <span data-i18n="minEv">+EV min %</span>
+          <input type="number" id="min-ev" value="2" step="0.1">
+        </label>
+        <label class="sl-field sl-field-narrow">
+          <span data-i18n="maxMiddleRisk">Risc midd. max %</span>
+          <input type="number" id="mid-risk" value="15" step="0.5">
+        </label>
+        <label class="sl-field sl-field-narrow">
+          <span data-i18n="minMiddleRoi">ROI midd. min %</span>
+          <input type="number" id="mid-roi" value="20" step="0.5">
+        </label>
+        <label class="sl-check" title="Include meciurile aflate în desfășurare">
+          <input type="checkbox" id="inc-live"><span data-i18n="includeLive">live</span>
+        </label>
+        <label class="sl-check" title="Include meciurile deja începute">
+          <input type="checkbox" id="inc-past"><span data-i18n="includePast">trecut</span>
+        </label>
+      </div>
+      <div class="sl-runbar-actions">
+        <button class="sl-primary" id="run-btn" data-i18n="runScrape" disabled>Pornește</button>
+        <button class="sl-ghost" id="cancel-btn" disabled data-i18n="cancel">Anulează</button>
+        <button class="sl-ghost sl-quiet" id="save-btn" data-i18n="profileHelp">Profil</button>
+      </div>
+    </section>
+    <p class="sl-hint" data-i18n="eventCollectionHint">Toate = fiecare eveniment calificat disponibil din feed-ul public al fiecărei case.</p>
+
+    <!-- ══ Sources ══════════════════════════════════════════════════════
+         26 chips is a wall. Rows with a state read as a list of sources with
+         a state, which is what it is. -->
+    <section class="sl-panel" aria-label="Case de pariuri">
+      <header class="sl-panel-head">
+        <h2 class="sl-panel-title" data-i18n="bookmakers">Case de pariuri</h2>
+        <div class="sl-panel-tools">
+          <span class="sl-count"><b id="bm-selected">0</b><span class="sl-count-sep">/</span><span id="bm-total">0</span></span>
+          <div class="sl-search">
+            <input type="search" id="bm-filter" placeholder="Filtrează…" data-i18n-placeholder="filterSources" aria-label="Filtrează casele">
+          </div>
+          <button type="button" class="sl-ghost sl-quiet" id="btn-select-all" data-i18n="selectAll">Toate</button>
+          <button type="button" class="sl-ghost sl-quiet" id="btn-select-validated" data-i18n="selectValidated">Validate</button>
+          <button type="button" class="sl-ghost sl-quiet" id="btn-select-none" data-i18n="selectNone">Niciuna</button>
+        </div>
+      </header>
+      <div id="bookmaker-list" class="sl-sources"></div>
+    </section>
+
+    <!-- ══ Readouts ════════════════════════════════════════════════════
+         Four numbers, one band. Each takes colour only when it has something
+         to say, so a healthy run stays quiet. -->
+    <section class="sl-stats" aria-label="Starea rulării">
+      <div class="sl-stat">
+        <span class="sl-stat-label" data-i18n="status">Stare</span>
+        <span class="sl-stat-value" id="m-status"><span class="status idle">idle</span></span>
+        <span class="sl-stat-foot" id="m-started" data-i18n="awaitingTrigger">în așteptare</span>
+      </div>
+      <div class="sl-stat">
+        <span class="sl-stat-label" data-i18n="completedJobs">Finalizate</span>
+        <span class="sl-stat-value" id="m-completed">—</span>
+        <span class="sl-stat-foot" id="m-finished">—</span>
+      </div>
+      <div class="sl-stat">
+        <span class="sl-stat-label" data-i18n="failedJobs">Eșuate</span>
+        <span class="sl-stat-value" id="m-failed">—</span>
+        <span class="sl-stat-foot" id="m-failed-detail">—</span>
+      </div>
+      <div class="sl-stat">
+        <span class="sl-stat-label" data-i18n="events">Evenimente</span>
+        <span class="sl-stat-value" id="m-events">—</span>
+        <span class="sl-stat-foot" id="m-arb-summary"></span>
+      </div>
+      <!-- The verification pass re-quotes every leg by scraping the books the
+           legs came from, and answers with four counts. The server has computed
+           and broadcast that verdict since the pass was written; nothing on this
+           page drew it, so the numbers existed only on the wire. The band is a
+           grid of auto-fit cells, so a fifth card reflows rather than needing a
+           column-count change. -->
+      <div class="sl-stat">
+        <span class="sl-stat-label" data-i18n="verificationTotals">Verificare</span>
+        <span class="sl-stat-value" id="m-verified">—</span>
+        <span class="sl-stat-foot" id="m-verified-detail"></span>
+      </div>
+    </section>
+
+    <div id="error-box" class="sl-alert hidden" role="alert" aria-live="assertive"></div>
+
+    <!-- ══ Progress ═══════════════════════════════════════════════════
+         Rendered only while a run is in flight. The stage track lives in the
+         pipeline panel below, so this is just the measure and the activity. -->
+    <section class="sl-panel sl-progress hidden" id="progress-card" data-i18n-aria-label="progress">
+      <div class="sl-progress-top">
+        <span class="sl-progress-pct" id="progress-pct">0%</span>
+        <div class="sl-progress-mid">
+          <div class="sl-progress-track" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" data-i18n-aria-label="scrapeProgressTrack">
+            <div class="sl-progress-fill" id="progress-bar"></div>
+          </div>
+          <div class="sl-progress-meta">
+            <span id="progress-activity">—</span>
+            <span id="progress-eta" data-i18n="etaLabel">—</span>
+          </div>
+        </div>
+        <!-- Kept in the DOM and kept accurate, though no longer the thing you
+             look at: the value is announced, and dropping it would change what
+             a screen reader says mid-run. -->
+        <div class="sl-ring" id="progress-ring" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" data-i18n-aria-label="scrapeProgressTrack" aria-hidden="true">
+          <span id="progress-ring-pct">0%</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ Pipeline ════════════════════════════════════════════════════
+         Five stages on one line with the live activity directly beneath —
+         the two belong together, and separating them put the current work a
+         scroll away from the stage it belongs to. -->
+    <section class="sl-panel" aria-label="Flux">
+      <header class="sl-panel-head">
+        <h2 class="sl-panel-title" data-i18n="pipeline">Flux</h2>
+        <span class="sl-panel-note" data-i18n="pipelineMeta">5 etape · răzuire → scanare → verificare → catalogare → complet</span>
+      </header>
+
+      <ol class="sl-stages" aria-label="Etapele fluxului">
+        <li class="sl-stage" data-step="0"><i>1</i><span data-i18n="scraping">Răzuire</span></li>
+        <li class="sl-stage" data-step="1"><i>2</i><span data-i18n="scanning">Scanare</span></li>
+        <li class="sl-stage" data-step="2"><i>3</i><span data-i18n="verifying">Verificare</span></li>
+        <li class="sl-stage" data-step="3"><i>4</i><span data-i18n="cataloging">Catalogare</span></li>
+        <li class="sl-stage" data-step="4"><i>5</i><span id="step-complete">Complet</span></li>
+      </ol>
+
+      <dl class="sl-live-grid">
+        <div><dt data-i18n="activity">Activitate</dt><dd id="act-line">idle</dd></div>
+        <div><dt data-i18n="activeBookmaker">Casă activă</dt><dd id="act-book">—</dd></div>
+        <div><dt data-i18n="queueFinished">Finalizate / total</dt><dd id="act-qf">0 / 0</dd></div>
+        <div><dt data-i18n="events">Evenimente</dt><dd id="act-events">0</dd></div>
+        <div><dt data-i18n="jobResult">Rezultat job</dt><dd id="act-result">—</dd></div>
+        <div><dt data-i18n="profile">Profil</dt><dd id="act-profile">—</dd></div>
+      </dl>
+      <div class="sl-runfoot">
+        <span class="sl-mono" id="act-runid">—</span>
+        <span id="act-duration"></span>
+      </div>
+    </section>
+
+    <!-- ══ Jobs ════════════════════════════════════════════════════════
+         The live queue. 26 rows, so: a numeric column that lines up, and a
+         state that never relies on colour alone. -->
+    <section class="sl-panel" data-i18n-aria-label="jobs">
+      <header class="sl-panel-head">
+        <h2 class="sl-panel-title" data-i18n="jobs">Joburi</h2>
+        <span class="sl-panel-note" id="act-duration-note"></span>
+      </header>
+      <div class="sl-table-wrap">
+        <table class="sl-table" id="jobs-table">
+          <thead>
+            <tr>
+              <th scope="col" data-i18n="bookmaker">Casă</th>
+              <th scope="col" class="sl-num" data-i18n="events">Evenimente</th>
+              <th scope="col" class="sl-num">Timp</th>
+              <th scope="col" data-i18n="status">Stare</th>
+            </tr>
+          </thead>
+          <tbody id="job-rows" role="list" tabindex="-1" aria-label="Rezultate joburi"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ══ Log ═════════════════════════════════════════════════════════
+         Collapsed by default. It auto-opens on a warning or an error and stays
+         shut otherwise, so a healthy run does not push everything else down
+         the page. -->
+    <details class="sl-panel sl-log" id="log-card">
+      <summary>
+        <span class="sl-log-title"><i class="sl-dot sl-dot-live"></i><span data-i18n="liveLog">Jurnal live</span></span>
+        <span class="sl-panel-note" data-i18n="streamingFrom">Flux din orchestrator</span>
+      </summary>
+      <div class="sl-log-body log" id="log-panel" role="log" aria-live="polite" aria-label="Jurnal răzuire"></div>
+    </details>
+
+    <!-- ══ History + scheduler ═════════════════════════════════════════ -->
+    <div class="sl-cols">
+      <section class="sl-panel">
+        <header class="sl-panel-head">
+          <h2 class="sl-panel-title" data-i18n="lastScrapeRun">Ultima rulare</h2>
+          <!-- Three notes, stacked: how that run went, which run this is, and
+               what it was told to collect. A flex head would otherwise push the
+               heading off the panel as soon as the options line grew past the
+               title. -->
+          <span class="sl-panel-note sl-panel-notes">
+            <!-- The run's own verdict, and above the note that names the run,
+                 because it is the answer to "how did it go" and the run id and
+                 the two timestamps do not give it. A pill and not a fourth note
+                 item: every book's status in the table below is a pill, and
+                 this is the same fact one level up. -->
+            <span id="last-run-verdict"></span>
+            <span id="last-run-when"></span>
+            <span id="last-run-options"></span>
+          </span>
+        </header>
+        <div class="sl-table-wrap">
+          <table class="sl-table">
+            <caption class="visually-hidden">Rezultate ultimei rulări</caption>
+            <thead>
+              <tr>
+                <!-- `bookmaker`, not `runId`: this column has always held one
+                     book per row, and the run's own id is in the note above. -->
+                <th scope="col" data-i18n="bookmaker">Casă</th>
+                <th scope="col" class="sl-num" data-i18n="events">Evenimente</th>
+                <th scope="col" class="sl-num">Ms</th>
+                <th scope="col" data-i18n="status">Stare</th>
+              </tr>
+            </thead>
+            <tbody id="last-run-table"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="sl-panel">
+        <header class="sl-panel-head">
+          <h2 class="sl-panel-title" data-i18n="scheduler">Programator</h2>
+        </header>
+        <div class="sl-sched">
+          <label class="sl-check">
+            <input type="checkbox" id="sched-enabled"><span data-i18n="enabled">activ</span>
+          </label>
+          <label class="sl-field sl-field-narrow">
+            <span data-i18n="interval">Interval (min)</span>
+            <input type="number" id="sched-interval" value="15" min="1" max="1440">
+          </label>
+          <button class="sl-ghost" id="sched-save" data-i18n="save">Salvează</button>
+        </div>
+        <p class="sl-hint" id="sched-books">—</p>
+        <p class="sl-hint sl-warn" id="sched-scan"></p>
+        <p class="sl-hint" id="sched-last">—</p>
+      </section>
+    </div>
+
+    <!-- ══ Live poll ═══════════════════════════════════════════════════════
+         A separate driver from the scheduler above, because they have
+         different clocks. The scheduler runs whole captures on a human
+         cadence; a live price expires in 90s, so this one polls on that
+         window and reports its own measured latency rather than the
+         configured interval. -->
+    <div class="sl-cols">
+      <section class="sl-panel">
+        <header class="sl-panel-head">
+          <h2 class="sl-panel-title" data-i18n="livePoll">Rulare live</h2>
+          <span class="sl-panel-note" id="live-last">—</span>
+        </header>
+        <div class="sl-sched">
+          <label class="sl-check">
+            <input type="checkbox" id="live-enabled"><span data-i18n="enabled">activ</span>
+          </label>
+          <label class="sl-field sl-field-narrow">
+            <span data-i18n="livePollInterval">Interval (s)</span>
+            <input type="number" id="live-interval" value="60" min="30" max="600">
+          </label>
+          <button class="sl-ghost" id="live-save" data-i18n="save">Salvează</button>
+        </div>
+        <p class="sl-hint" id="live-books">—</p>
+        <p class="sl-hint" id="live-measured">—</p>
+        <p class="sl-hint sl-warn" id="live-scan"></p>
+      </section>
+    </div>
+
+    <!-- ══ Book price board ═══════════════════════════════════════════════
+         GET /api/odds/:book answered "what is this book quoting right now",
+         filterable by event and market, and nothing under public/ called it.
+         It is the only per-book price feed the app has: the scanner compares
+         books against each other, the event view shows one event across books,
+         and nothing showed one board.
+
+         Measured over data-market-run/workspace before this markup existed:
+         22 of the 26 registered jobs have a capture, 24.829 events, 31.927
+         markets, 93.600 selections, 12 distinct market keys of which
+         MATCH_ODDS is on all 22 and the other 11 on one to four books each.
+         Two of the four without a capture (unibet, betmen) are enabled and
+         validated, so the selector offers every job the backend registers and
+         a book with no capture is a sentence on screen, not a failed panel. -->
+    <section class="sl-panel" data-i18n-aria-label="bookPrices">
+      <header class="sl-panel-head">
+        <h2 class="sl-panel-title" data-i18n="bookPrices">Prețuri pe casă</h2>
+        <div class="sl-panel-tools">
+          <label class="sl-field">
+            <span data-i18n="bookmaker">Casă</span>
+            <select id="odds-book"></select>
+          </label>
+          <label class="sl-field">
+            <span data-i18n="market">Piață</span>
+            <input type="text" id="odds-market" list="odds-market-keys" data-i18n-placeholder="marketFilterHint" placeholder="toate piețele">
+          </label>
+          <datalist id="odds-market-keys"></datalist>
+          <label class="sl-field">
+            <span data-i18n="event">Eveniment</span>
+            <input type="text" id="odds-event" list="odds-event-keys" data-i18n-placeholder="eventFilterHint" placeholder="toate evenimentele">
+          </label>
+          <datalist id="odds-event-keys"></datalist>
+          <label class="sl-field sl-field-narrow">
+            <span data-i18n="limit">Limită</span>
+            <select id="odds-limit">
+              <option value="25">25</option>
+              <option value="50" selected>50</option>
+              <option value="100">100</option>
+            </select>
+          </label>
+        </div>
+      </header>
+      <div class="sl-table-wrap">
+        <table class="sl-table" id="odds-table">
+          <thead>
+            <tr>
+              <th scope="col" data-i18n="event">Eveniment</th>
+              <th scope="col" data-i18n="market">Piață</th>
+              <th scope="col" data-i18n="odds">Cote</th>
+            </tr>
+          </thead>
+          <tbody id="odds-rows" role="list" aria-live="polite"></tbody>
+        </table>
+      </div>
+      <p class="sl-hint" id="odds-note"></p>
+    </section>
+  </main>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/i18n.js"></script>
+  <script src="/js/format.js"></script>
+  <script src="/js/sse.js"></script>
+  <script src="/js/app.js"></script>
+  <script src="/js/pages/common.js"></script>
+  <script src="/js/connection-status.js"></script>
+  <script src="/js/pages/scrape.js"></script>
+</body>
+</html>

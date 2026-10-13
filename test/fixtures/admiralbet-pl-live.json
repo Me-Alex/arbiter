@@ -1,0 +1,3106 @@
+{
+  "type": "r-events",
+  "subId": "26f000d9-523b-4919-be4d-976041bd641d",
+  "offset": 0,
+  "size": 10,
+  "total": 10,
+  "items": [
+    {
+      "id": "BRUF#sr:match:75004118",
+      "event": {
+        "mn": 46,
+        "mnp": null,
+        "mnl": null,
+        "hasMarginZeroMarket": false,
+        "id": "BRUF#sr:match:75004118",
+        "version": 539,
+        "mappings": {
+          "BRUF": "sr:match:75004118"
+        },
+        "bettableVotes": [],
+        "fixture": {
+          "path": {
+            "sportId": "1",
+            "categoryId": "49",
+            "competitionId": "BRUF#sr:tournament:27665",
+            "groupId": "Primera Division",
+            "seasonId": "137800",
+            "competitionOrder": "2",
+            "competitionGroupOrder": "38",
+            "competitionName": "Primera Division",
+            "competitionIcon": "Chile",
+            "competitionIconType": "NPSCountryFlags",
+            "roundName": "UNAVAILABLE",
+            "sportNodeId": "pilka_nozna",
+            "competitionPath": "pilka_nozna/chile/1_liga-2"
+          },
+          "sportNodeId": "pilka_nozna",
+          "categoryNodeId": "chile",
+          "competitionNodeId": "1_liga-2",
+          "startTime": "2026-10-12T20:00:00Z",
+          "eventName": {
+            "name": "Universidad de Chile vs. Nublense",
+            "localizedName": {}
+          },
+          "isVirtual": false,
+          "competitors": [
+            {
+              "id": "sr:competitor:3161",
+              "mappings": {
+                "BRUF": "sr:competitor:3161"
+              },
+              "name": {
+                "name": "Universidad de Chile",
+                "localizedName": {}
+              },
+              "homeAway": "HOME",
+              "abbreviations": {
+                "name": "UCH",
+                "localizedName": {
+                  "pl": "UNI"
+                }
+              }
+            },
+            {
+              "id": "sr:competitor:7029",
+              "mappings": {
+                "BRUF": "sr:competitor:7029"
+              },
+              "name": {
+                "name": "Nublense",
+                "localizedName": {}
+              },
+              "homeAway": "AWAY",
+              "abbreviations": {
+                "name": "NUB",
+                "localizedName": {}
+              }
+            }
+          ],
+          "players": [],
+          "exProperties": {
+            "BR_HAS_HOSTED_STATISTICS": "true"
+          },
+          "expectedResultingTime": "2026-10-12T20:00:00Z",
+          "tvChannels": [],
+          "extraInfo": null,
+          "isLive": true,
+          "isOutright": false,
+          "isFantasy": false,
+          "isLiveFeed": true
+        },
+        "markets": [
+          {
+            "id": "BRUF#sr:match:75004118#1",
+            "oddsSource": {
+              "providerId": "BRUF",
+              "subProviderId": "1"
+            },
+            "attributes": {
+              "BRUF": {
+                "TYPE_ID": "1"
+              }
+            },
+            "marketType": "10",
+            "state": "OPEN",
+            "isLiveFeed": true,
+            "name": {
+              "name": "1X2",
+              "localizedName": {
+                "en": "1X2",
+                "pl": "1X2"
+              }
+            },
+            "isNamed": false,
+            "isFreeText": false,
+            "groups": [
+              "all",
+              "score",
+              "regular_play"
+            ],
+            "selections": [
+              {
+                "id": "1",
+                "typeId": "1",
+                "mappings": {},
+                "isPlayer": false,
+                "name": {
+                  "name": "Universidad de Chile",
+                  "localizedName": {
+                    "en": "Universidad de Chile",
+                    "pl": "Universidad de Chile"
+                  }
+                },
+                "segments": {
+                  "DEFAULT": {
+                    "price": "1.01"
+                  }
+                },
+                "probability": "0.9999996627",
+                "results": [],
+                "ordinal": 0,
+                "isNamed": false,
+                "isActive": false
+              },
+              {
+                "id": "2",
+                "typeId": "2",
+                "mappings": {},
+                "isPlayer": false,
+                "name": {
+                  "name": "Draw",
+                  "localizedName": {
+                    "en": "Draw",
+                    "pl": "Remis"
+                  }
+                },
+                "segments": {
+                  "DEFAULT": {
+                    "price": "21.0"
+                  }
+                },
+                "probability": "0.0000003289",
+                "results": [],
+                "ordinal": 1,
+                "isNamed": false,
+                "isActive": true
+              },
+              {
+                "id": "3",
+                "typeId": "3",
+                "mappings": {},
+                "isPlayer": false,
+                "name": {
+                  "name": "Nublense",
+                  "localizedName": {
+                    "en": "Nublense",
+                    "pl": "Nublense"
+                  }
+                },
+                "segments": {
+                  "DEFAULT": {
+                    "price": "500.0"
+                  }
+                },
+                "probability": "0.0000000084",
+                "results": [],
+                "ordinal": 2,
+                "isNamed": false,
+                "isActive": true
+              }
+            ],
+            "specifierValues": {},
+            "isBettable": true,
+            "bettableVotes": [],
+            "isDerived": false,
+            "orderNumber": 1,
+            "marginZeroMarket": null
+          },
+          {
+            "id": "BRUF#sr:match:75004118#29",
+            "oddsSource": {
+              "providerId": "BRUF",
+              "subProviderId": "1"
+            },
+            "attributes": {
+              "BRUF": {
+                "TYPE_ID": "29"
+              }
+            },
+            "marketType": "43",
+            "state": "OPEN",
+            "isLiveFeed": true,
+            "name": {
+              "name": "Both Teams to Score",
+              "localizedName": {
+                "en": "Both Teams to Score",
+                "pl": "Obie drużyny strzelą gola"
+              }
+            },
+            "isNamed": false,
+            "isFreeText": false,
+            "groups": [
+              "all",
+              "score",
+              "regular_play"
+            ],
+            "selections": [
+              {
+                "id": "74",
+                "typeId": "74",
+                "mappings": {},
+                "isPlayer": false,
+                "name": {
+                  "name": "Yes",
+                  "localizedName": {
+                    "en": "Yes",
+                    "pl": "Tak"
+                  }
+                },
+                "segments": {
+                  "DEFAULT": {
+                    "price": "5.8"
+                  }
+                },
+                "probability": "0.1389331655",
+                "results": [],
+                "ordinal": 0,
+                "isNamed": false,
+                "isActive": true
+              },
+              {
+                "id": "76",
+                "typeId": "76",
+                "mappings": {},
+                "isPlayer": false,
+                "name": {
+                  "name": "No",
+                  "localizedName": {
+                    "en": "No",
+                    "pl": "Nie"
+                  }
+                },
+                "segments": {
+                  "DEFAULT": {
+                    "price": "1.12"
+                  }
+                },
+                "probability": "0.8610668345",
+                "results": [],
+                "ordinal": 1,
+                "isNamed": false,
+                "isActive": true
+              }
+            ],
+            "specifierValues": {},
+            "isBettable": true,
+            "bettableVotes": [],
+            "isDerived": false,
+            "orderNumber": 15,
+            "marginZeroMarket": null
+          }
+        ],
+        "outrightMarkets": [],
+        "matchInfo": {
+          "eventStatus": "LIVE",
+          "matchScore": {
+            "awayScore": "0",
+            "homeScore": "5",
+            "matchScoreDetails": null,
+            "periodScores": [
+              {
+                "awayScore": 0,
+                "homeScore": 2,
+                "periodNumber": 1,
+                "periodType": "REGULARPERIOD"
+              },
+              {
+                "awayScore": 0,
+                "homeScore": 3,
+                "periodNumber": 2,
+                "periodType": "REGULARPERIOD"
+              }
+            ]
+          },
+          "matchTime": {
+            "time": "78:42",
+            "matchTimeDetails": {}
+          },
+          "matchInfoDetails": {
+            "corners": {
+              "home": 7,
+              "away": 3
+            },
+            "redCards": {
+              "home": 0,
+              "away": 1
+            },
+            "yellowCards": {
+              "home": 1,
+              "away": 0
+            },
+            "yellowRedCards": {
+              "home": 0,
+              "away": 0
+            }
+          },
+          "matchStatus": 7,
+          "matchStatusDescription": {
+            "pl": "2. połowa"
+          },
+          "lastUpdate": "2026-10-12T21:44:07.338Z"
+        },
+        "isBettable": true
+      }
+    },
+    {
+      "id": "BRUF#sr:match:67118014",
+      "event": {
+        "mn": 14,
+        "mnp": null,
+        "mnl": null,
+        "hasMarginZeroMarket": false,
+        "id": "BRUF#sr:match:67118014",
+        "version": 238,
+        "mappings": {
+          "BRUF": "sr:match:67118014"
+        },
+        "bettableVotes": [],
+        "fixture": {
+          "path": {
+            "sportId": "1",
+            "categoryId": "48",
+            "competitionId": "BRUF#sr:tournament:703",
+            "groupId": "Primera B Nacional",
+            "seasonId": "138218",
+            "competitionOrder": "1",
+            "competitionGroupOrder": "17",
+            "competitionName": "Primera B Nacional",
+            "competitionIcon": "Argentina",
+            "competitionIconType": "NPSCountryFlags",
+            "roundName": "UNAVAILABLE",
+            "sportNodeId": "pilka_nozna",
+            "competitionPath": "pilka_nozna/argentyna/2_liga"
+          },
+          "sportNodeId": "pilka_nozna",
+          "categoryNodeId": "argentyna",
+          "competitionNodeId": "2_liga",
+          "startTime": "2026-10-12T20:00:00Z",
+          "eventName": {
+            "name": "CA Racing de Cordoba vs. Club Atletico Los Andes",
+            "localizedName": {}
+          },
+          "isVirtual": false,
+          "competitors": [
+            {
+              "id": "sr:competitor:399415",
+              "mappings": {
+                "BRUF": "sr:competitor:399415"
+              },
+              "name": {
+                "name": "CA Racing de Cordoba",
+                "localizedName": {}
+              },
+              "homeAway": "HOME",
+              "abbreviations": {
+                "name": "CAR",
+                "localizedName": {}
+              }
+            },
+            {
+              "id": "sr:competitor:112497",
+              "mappings": {
+                "BRUF": "sr:competitor:112497"
+              },
+              "name": {
+                "name": "Club Atletico Los Andes",
+                "localizedName": {}
+              },
+              "homeAway": "AWAY",
+              "abbreviations": {
+                "name": "ALA",
+                "localizedName": {}
+              }
+            }
+          ],
+          "players": [],
+          "exProperties": {
+            "BR_HAS_HOSTED_STATISTICS": "true"
+          },
+          "expectedResultingTime": "2026-10-12T20:00:00Z",
+          "tvChannels": [],
+          "extraInfo": null,
+          "isLive": true,
+          "isOutright": false,
+          "isFantasy": false,
+          "isLiveFeed": true
+        },
+        "markets": [
+          {
+            "id": "BRUF#sr:match:67118014#1",
+            "oddsSource": {
+              "providerId": "BRUF",
+              "subProviderId": "1"
+            },
+            "attributes": {
+              "BRUF": {
+                "TYPE_ID": "1"
+              }
+            },
+            "marketType": "10",
+            "state": "OPEN",
+            "isLiveFeed": true,
+            "name": {
+              "name": "1X2",
+              "localizedName": {
+                "en": "1X2",
+                "pl": "1X2"
+              }
+            },
+            "isNamed": false,
+            "isFreeText": false,
+            "groups": [
+              "all",
+              "score",
+              "regular_play"
+            ],
+            "selections": [
+              {
+                "id": "1",
+                "typeId": "1",
+                "mappings": {},
+                "isPlayer": false,
+                "name": {
+                  "name": "CA Racing de Cordoba",
+                  "localizedName": {
+                    "en": "CA Racing de Cordoba",
+                    "pl": "CA Racing de Cordoba"
+                  }
+                },
+                "segments": {
+                  "DEFAULT": {
+                    "price": "1.12"
+                  }
+                },
+                "probability": "0.8654825083",
+                "results": [],
+                "ordinal": 0,
+                "isNamed": false,
+                "isActive": true
+              },
+              {
+                "id": "2",
+                "typeId": "2",
+                "mappings": {},
+                "isPlayer": false,
+                "name": {
+                  "name": "Draw",
+                  "localizedName": {
+                    "en": "Draw",
+                    "pl": "Remis"
+                  }
+                },
+                "segments": {
+                  "DEFAULT": {
+                    "price": "6.0"
+                  }
+                },
+                "probability": "0.1241926495",
+                "results": [],
+                "ordinal": 1,
+                "isNamed": false,
+                "isActive": true
+              },
+              {
+                "id": "3",
+                "typeId": "3",
+                "mappings": {},
+                "isPlayer": false,
+                "name": {
+                  "name": "Club Atletico Los Andes",
+                  "localizedName": {
+                    "en": "Club Atletico Los Andes",
+                    "pl": "Club Atletico Los Andes"
+                  }
+                },
+                "segments": {
+                  "DEFAULT": {
+                    "price": "70.0"
+                  }
+                },
+                "probability": "0.0103248422",
+                "results": [],
+                "ordinal": 2,
+                "isNamed": false,
+                "isActive": true
+              }
+            ],
+            "specifierValues": {},
+            "isBettable": true,
+            "bettableVotes": [],
+            "isDerived": false,
+            "orderNumber": 1,
+            "marginZeroMarket": null
+          },
+          {
+            "id": "BRUF#sr:match:67118014#29",
+            "oddsSource": {
+              "providerId": "BRUF",
+              "subProviderId": "1"
+            },
+            "attributes": {
+              "BRUF": {
+                "TYPE_ID": "29"
+              }
+            },
+            "marketType": "43",
+            "state": "OPEN",
+            "isLiveFeed": true,
+            "name": {
+              "name": "Both Teams to Score",
+              "localizedName": {
+                "en": "Both Teams to Score",
+                "pl": "Obie drużyny strzelą gola"
+              }
+            },
+            "isNamed": false,
+            "isFreeText": false,
+            "groups": [
+              "all",
+              "score",
+              "regular_play"
+            ],
+            "selections": [
+              {
+                "id": "74",
+                "typeId": "74",
+                "mappings": {},
+                "isPlayer": false,
+                "name": {
+                  "name": "Yes",
+                  "localizedName": {
+                    "en": "Yes",
+                    "pl": "Tak"
+                  }
+                },
+                "segments": {
+                  "DEFAULT": {
+                    "price": "4.9"
+                  }
+                },
+                "probability": "0.1605281679",
+                "results": [],
+                "ordinal": 0,
+                "isNamed": false,
+                "isActive": true
+              },
+              {
+                "id": "76",
+                "typeId": "76",
+                "mappings": {},
+                "isPlayer": false,
+                "name": {
+                  "name": "No",
+                  "localizedName": {
+                    "en": "No",
+                    "pl": "Nie"
+                  }
+                },
+                "segments": {
+                  "DEFAULT": {
+                    "price": "1.14"
+                  }
+                },
+                "probability": "0.8394718321",
+                "results": [],
+                "ordinal": 1,
+                "isNamed": false,
+                "isActive": true
+              }
+            ],
+            "specifierValues": {},
+            "isBettable": true,
+            "bettableVotes": [],
+            "isDerived": false,
+            "orderNumber": 15,
+            "marginZeroMarket": null
+          }
+        ],
+        "outrightMarkets": [],
+        "matchInfo": {
+          "eventStatus": "LIVE",
+          "matchScore": {
+            "awayScore": "0",
+            "homeScore": "1",
+            "matchScoreDetails": null,
+            "periodScores": [
+              {
+                "awayScore": 0,
+                "homeScore": 0,
+                "periodNumber": 1,
+                "periodType": "REGULARPERIOD"
+              },
+              {
+                "awayScore": 0,
+                "homeScore": 1,
+                "periodNumber": 2,
+                "periodType": "REGULARPERIOD"
+              }
+            ]
+          },
+          "matchTime": {
+            "time": "79:50",
+            "matchTimeDetails": {}
+          },
+          "matchInfoDetails": {
+            "corners": {
+              "home": 1,
+              "away": 4
+            },
+            "redCards": {
+              "home": 0,
+              "away": 0
+            },
+            "yellowCards": {
+              "home": 1,
+              "away": 1
+            },
+            "yellowRedCards": {
+              "home": 0,
+              "away": 0
+            }
+          },
+          "matchStatus": 7,
+          "matchStatusDescription": {
+            "pl": "2. połowa"
+          },
+          "lastUpdate": "2026-10-12T21:43:58.804Z"
+        },
+        "isBettable": true
+      }
+    },
+    {
+      "id": "BRUF#sr:match:68686148",
+      "event": {
+        "mn": 14,
+        "mnp": null,
+        "mnl": null,
+        "hasMarginZeroMarket": false,
+        "id": "BRUF#sr:match:68686148",
+        "version": 265,
+        "mappings": {
+          "BRUF": "sr:match:68686148"
+        },
+        "bettableVotes": [],
+        "fixture": {
+          "path": {
+            "sportId": "1",
+            "categoryId": "388",
+            "competitionId": "BRUF#sr:tournament:28432",
+            "groupId": "Canadian Premier League",
+            "seasonId": "139482",
+            "competitionOrder": "2",
+            "competitionGroupOrder": "71",
+            "competitionName": "Canadian Premier League",
+            "competitionIcon": "Canada",
+            "competitionIconType": "NPSCountryFlags",
+            "roundName": "UNAVAILABLE",
+            "sportNodeId": "pilka_nozna",
+            "competitionPath": "pilka_nozna/kanada/1_liga"
+          },
+          "sportNodeId": "pilka_nozna",
+          "categoryNodeId": "kanada",
+          "competitionNodeId": "1_liga",
+          "startTime": "2026-10-12T20:00:00Z",
+          "eventName": {
+            "name": "HFX Wanderers FC vs. Cavalry FC",
+            "localizedName": {}
+          },
+          "isVirtual": false,
+          "competitors": [
+            {
+              "id": "sr:competitor:543881",
+              "mappings": {
+                "BRUF": "sr:competitor:543881"
+              },
+              "name": {
+                "name": "HFX Wanderers FC",
+                "localizedName": {}
+              },
+              "homeAway": "HOME",
+              "abbreviations": {
+                "name": "HFX",
+                "localizedName": {}
+              }
+            },
+            {
+              "id": "sr:competitor:543877",
+              "mappings": {
+                "BRUF": "sr:competitor:543877"
+              },
+              "name": {
+                "name": "Cavalry FC",
+                "localizedName": {}
+              },
+              "homeAway": "AWAY",
+              "abbreviations": {
+                "name": "CAV",
+                "localizedName": {}
+              }
+            }
+          ],
+          "players": [],
+          "exProperties": {
+            "BR_HAS_HOSTED_STATISTICS": "true"
+          },
+          "expectedResultingTime": "2026-10-12T20:00:00Z",
+          "tvChannels": [
+            {
+              "name": "Fox Sports 2",
+              "url": null
+            },
+            {
+              "name": "Fox Soccer Plus",
+              "url": null
+            },
+            {
+              "name": "Fubo TV",
+              "url": null
+            }
+          ],
+          "extraInfo": null,
+          "isLive": true,
+          "isOutright": false,
+          "isFantasy": false,
+          "isLiveFeed": true
+        },
+        "markets": [
+          {
+            "id": "BRUF#sr:match:68686148#1",
+            "oddsSource": {
+              "providerId": "BRUF",
+              "subProviderId": "1"
+            },
+            "attributes": {
+              "BRUF": {
+                "TYPE_ID": "1"
+              }
+            },
+            "marketType": "10",
+            "state": "OPEN",
+            "isLiveFeed": true,
+            "name": {
+              "name": "1X2",
+              "localizedName": {
+                "en": "1X2",
+                "pl": "1X2"
+              }
+            },
+            "isNamed": false,
+            "isFreeText": false,
+            "groups": [
+              "all",
+              "score",
+              "regular_play"
+            ],
+            "selections": [
+              {
+                "id": "1",
+                "typeId": "1",
+                "mappings": {},
+                "isPlayer": false,
+                "name": {
+                  "name": "HFX Wanderers FC",
+                  "localizedName": {
+                    "en": "HFX Wanderers FC",
+                    "pl": "HFX Wanderers FC"
+                  }
+                },
+                "segments": {
+                  "DEFAULT": {
+                    "price": "21.0"
+                  }
+                },
+                "probability": "0.039164694",
+                "results": [],
+                "ordinal": 0,
+                "isNamed": false,
+                "isActive": true
+              },
+              {
+                "id": "2",
+                "typeId": "2",
+                "mappings": {},
+                "isPlayer": false,
+                "name": {
+                  "name": "Draw",
+                  "localizedName": {
+                    "en": "Draw",
+                    "pl": "Remis"
+                  }
+                },
+                "segments": {
+                  "DEFAULT": {
+                    "price": "4.85"
+                  }
+                },
+                "probability": "0.1709328111",
+                "results": [],
+                "ordinal": 1,
+                "isNamed": false,
+                "isActive": true
+              },
+              {
+                "id": "3",
+                "typeId": "3",
+                "mappings": {},
+                "isPlayer": false,
+                "name": {
+                  "name": "Cavalry FC",
+                  "localizedName": {
+                    "en": "Cavalry FC",
+                    "pl": "Cavalry FC"
+                  }
+                },
+                "segments": {
+                  "DEFAULT": {
+                    "price": "1.22"
+                  }
+                },
+                "probability": "0.7899024949",
+                "results": [],
+                "ordinal": 2,
+                "isNamed": false,
+                "isActive": true
+              }
+            ],
+            "specifierValues": {},
+            "isBettable": true,
+            "bettableVotes": [],
+            "isDerived": false,
+            "orderNumber": 1,
+            "marginZeroMarket": null
+          }
+        ],
+        "outrightMarkets": [],
+        "matchInfo": {
+          "eventStatus": "LIVE",
+          "matchScore": {
+            "awayScore": "2",
+            "homeScore": "1",
+            "matchScoreDetails": null,
+            "periodScores": [
+              {
+                "awayScore": 1,
+                "homeScore": 1,
+                "periodNumber": 1,
+                "periodType": "REGULARPERIOD"
+              },
+              {
+                "awayScore": 1,
+                "homeScore": 0,
+                "periodNumber": 2,
+                "periodType": "REGULARPERIOD"
+              }
+            ]
+          },
+          "matchTime": {
+            "time": "72:05",
+            "matchTimeDetails": {}
+          },
+          "matchInfoDetails": {
+            "corners": {
+              "home": 0,
+              "away": 0
+            },
+            "redCards": {
+              "home": 0,
+              "away": 0
+            },
+            "yellowCards": {
+              "home": 0,
+              "away": 0
+            },
+            "yellowRedCards": {
+              "home": 0,
+              "away": 0
+            }
+          },
+          "matchStatus": 7,
+          "matchStatusDescription": {
+            "pl": "2. połowa"
+          },
+          "lastUpdate": "2026-10-12T21:44:06.664Z"
+        },
+        "isBettable": true
+      }
+    },
+    {
+      "id": "BRUF#sr:match:73038596",
+      "event": {
+        "mn": 25,
+        "mnp": null,
+        "mnl": null,
+        "hasMarginZeroMarket": false,
+        "id": "BRUF#sr:match:73038596",
+        "version": 436,
+        "mappings": {
+          "BRUF": "sr:match:73038596"
+        },
+        "bettableVotes": [],
+        "fixture": {
+          "path": {
+            "sportId": "1",
+            "categoryId": "280",
+            "competitionId": "BRUF#sr:tournament:27098",
+            "groupId": "Division de Honor, Clausura",
+            "seasonId": "137594",
+            "competitionOrder": "3",
+            "competitionGroupOrder": "111",
+            "competitionName": "Division de Honor, Apertura",
+            "competitionIcon": "Paraguay",
+            "competitionIconType": "NPSCountryFlags",
+            "roundName": "UNAVAILABLE",
+            "sportNodeId": "pilka_nozna",
+            "competitionPath": "pilka_nozna/paragwaj/1_liga-2"
+          },
+          "sportNodeId": "pilka_nozna",
+          "categoryNodeId": "paragwaj",
+          "competitionNodeId": "1_liga-2",
+          "startTime": "2026-10-12T20:00:00Z",
+          "eventName": {
+            "name": "CS 2 de Mayo vs. Sportivo Ameliano",
+            "localizedName": {}
+          },
+          "isVirtual": false,
+          "competitors": [
+            {
+              "id": "sr:competitor:5992",
+              "mappings": {
+                "BRUF": "sr:competitor:5992"
+              },
+              "name": {
+                "name": "CS 2 de Mayo",
+                "localizedName": {}
+              },
+              "homeAway": "HOME",
+              "abbreviations": {
+                "name": "MAY",
+                "localizedName": {}
+              }
+            },
+            {
+              "id": "sr:competitor:607728",
+              "mappings": {
+                "BRUF": "sr:competitor:607728"
+              },
+              "name": {
+                "name": "Sportivo Ameliano",
+                "localizedName": {}
+              },
+              "homeAway": "AWAY",
+              "abbreviations": {
+                "name": "SPO",
+                "localizedName": {}
+              }
+            }
+          ],
+          "players": [],
+          "exProperties": {
+            "BR_HAS_HOSTED_STATISTICS": "true"
+          },
+          "expectedResultingTime": "2026-10-12T20:00:00Z",
+          "tvChannels": [],
+          "extraInfo": null,
+          "isLive": true,
+          "isOutright": false,
+          "isFantasy": false,
+          "isLiveFeed": true
+        },
+        "markets": [
+          {
+            "id": "BRUF#sr:match:73038596#1",
+            "oddsSource": {
+              "providerId": "BRUF",
+              "subProviderId": "1"
+            },
+            "attributes": {
+              "BRUF": {
+                "TYPE_ID": "1"
+              }
+            },
+            "marketType": "10",
+            "state": "OPEN",
+            "isLiveFeed": true,
+            "name": {
+              "name": "1X2",
+              "localizedName": {
+                "en": "1X2",
+                "pl": "1X2"
+              }
+            },
+            "isNamed": false,
+            "isFreeText": false,
+            "groups": [
+              "all",
+              "score",
+              "regular_play"
+            ],
+            "selections": [
+              {
+                "id": "1",
+                "typeId": "1",
+                "mappings": {},
+                "isPlayer": false,
+                "name": {
+                  "name": "CS 2 de Mayo",
+                  "localizedName": {
+                    "en": "CS 2 de Mayo",
+                    "pl": "CS 2 de Mayo"
+                  }
+                },
+                "segments": {
+                  "DEFAULT": {
+                    "price": "1.16"
+                  }
+                },
+                "probability": "0.8421897415",
+                "results": [],
+                "ordinal": 0,
+                "isNamed": false,
+                "isActive": true
+              },
+              {
+                "id": "2",
+                "typeId": "2",
+                "mappings": {},
+                "isPlayer": false,
+                "name": {
+                  "name": "Draw",
+                  "localizedName": {
+                    "en": "Draw",
+                    "pl": "Remis"
+                  }
+                },
+                "segments": {
+                  "DEFAULT": {
+                    "price": "5.9"
+                  }
+                },
+                "probability": "0.1440505291",
+                "results": [],
+                "ordinal": 1,
+                "isNamed": false,
+                "isActive": true
+              },
+              {
+                "id": "3",
+                "typeId": "3",
+                "mappings": {},
+                "isPlayer": false,
+                "name": {
+                  "name": "Sportivo Ameliano",
+                  "localizedName": {
+                    "en": "Sportivo Ameliano",
+                    "pl": "Sportivo Ameliano"
+                  }
+                },
+                "segments": {
+                  "DEFAULT": {
+                    "price": "60.0"
+                  }
+                },
+                "probability": "0.0137597294",
+                "results": [],
+                "ordinal": 2,
+                "isNamed": false,
+                "isActive": true
+              }
+            ],
+            "specifierValues": {},
+            "isBettable": true,
+            "bettableVotes": [],
+            "isDerived": false,
+            "orderNumber": 1,
+            "marginZeroMarket": null
+          },
+          {
+            "id": "BRUF#sr:match:73038596#29",
+            "oddsSource": {
+              "providerId": "BRUF",
+              "subProviderId": "1"
+            },
+            "attributes": {
+              "BRUF": {
+                "TYPE_ID": "29"
+              }
+            },
+            "marketType": "43",
+            "state": "OPEN",
+            "isLiveFeed": true,
+            "name": {
+              "name": "Both Teams to Score",
+              "localizedName": {
+                "en": "Both Teams to Score",
+                "pl": "Obie drużyny strzelą gola"
+              }
+            },
+            "isNamed": false,
+            "isFreeText": false,
+            "groups": [
+              "all",
+              "score",
+              "regular_play"
+            ],
+            "selections": [
+              {
+                "id": "74",
+                "typeId": "74",
+                "mappings": {},
+                "isPlayer": false,
+                "name": {
+                  "name": "Yes",
+                  "localizedName": {
+                    "en": "Yes",
+                    "pl": "Tak"
+                  }
+                },
+                "segments": {
+                  "DEFAULT": {
+                    "price": "4.65"
+                  }
+                },
+                "probability": "0.1833384809",
+                "results": [],
+                "ordinal": 0,
+                "isNamed": false,
+                "isActive": true
+              },
+              {
+                "id": "76",
+                "typeId": "76",
+                "mappings": {},
+                "isPlayer": false,
+                "name": {
+                  "name": "No",
+                  "localizedName": {
+                    "en": "No",
+                    "pl": "Nie"
+                  }
+                },
+                "segments": {
+                  "DEFAULT": {
+                    "price": "1.18"
+                  }
+                },
+                "probability": "0.8166615191",
+                "results": [],
+                "ordinal": 1,
+                "isNamed": false,
+                "isActive": true
+              }
+            ],
+            "specifierValues": {},
+            "isBettable": true,
+            "bettableVotes": [],
+            "isDerived": false,
+            "orderNumber": 15,
+            "marginZeroMarket": null
+          }
+        ],
+        "outrightMarkets": [],
+        "matchInfo": {
+          "eventStatus": "LIVE",
+          "matchScore": {
+            "awayScore": "0",
+            "homeScore": "1",
+            "matchScoreDetails": null,
+            "periodScores": [
+              {
+                "awayScore": 0,
+                "homeScore": 0,
+                "periodNumber": 1,
+                "periodType": "REGULARPERIOD"
+              },
+              {
+                "awayScore": 0,
+                "homeScore": 1,
+                "periodNumber": 2,
+                "periodType": "REGULARPERIOD"
+              }
+            ]
+          },
+          "matchTime": {
+            "time": "82:36",
+            "matchTimeDetails": {}
+          },
+          "matchInfoDetails": {
+            "corners": {
+              "home": 5,
+              "away": 5
+            },
+            "redCards": {
+              "home": 0,
+              "away": 0
+            },
+            "yellowCards": {
+              "home": 2,
+              "away": 0
+            },
+            "yellowRedCards": {
+              "home": 0,
+              "away": 0
+            }
+          },
+          "matchStatus": 7,
+          "matchStatusDescription": {
+            "pl": "2. połowa"
+          },
+          "lastUpdate": "2026-10-12T21:43:45.364Z"
+        },
+        "isBettable": true
+      }
+    },
+    {
+      "id": "BRUF#sr:match:75311858",
+      "event": {
+        "mn": 14,
+        "mnp": null,
+        "mnl": null,
+        "hasMarginZeroMarket": false,
+        "id": "BRUF#sr:match:75311858",
+        "version": 265,
+        "mappings": {
+          "BRUF": "sr:match:75311858"
+        },
+        "bettableVotes": [],
+        "fixture": {
+          "path": {
+            "sportId": "1",
+            "categoryId": "303",
+            "competitionId": "BRUF#sr:tournament:937",
+            "groupId": "Botola Pro D1",
+            "seasonId": "145978",
+            "competitionOrder": "0",
+            "competitionGroupOrder": "100",
+            "competitionName": "Botola",
+            "competitionIcon": "Morocco",
+            "competitionIconType": "NPSCountryFlags",
+            "roundName": "UNAVAILABLE",
+            "sportNodeId": "pilka_nozna",
+            "competitionPath": "pilka_nozna/maroko/1_liga"
+          },
+          "sportNodeId": "pilka_nozna",
+          "categoryNodeId": "maroko",
+          "competitionNodeId": "1_liga",
+          "startTime": "2026-10-12T20:00:00Z",
+          "eventName": {
+            "name": "Hassania Union Sport Agadir vs. AS Far Rabat",
+            "localizedName": {}
+          },
+          "isVirtual": false,
+          "competitors": [
+            {
+              "id": "sr:competitor:55039",
+              "mappings": {
+                "BRUF": "sr:competitor:55039"
+              },
+              "name": {
+                "name": "Hassania Union Sport Agadir",
+                "localizedName": {}
+              },
+              "homeAway": "HOME",
+              "abbreviations": {
+                "name": "HAS",
+                "localizedName": {}
+              }
+            },
+            {
+              "id": "sr:competitor:24394",
+              "mappings": {
+                "BRUF": "sr:competitor:24394"
+              },
+              "name": {
+                "name": "AS Far Rabat",
+                "localizedName": {}
+              },
+              "homeAway": "AWAY",
+              "abbreviations": {
+                "name": "FAR",
+                "localizedName": {}
+              }
+            }
+          ],
+          "players": [],
+          "exProperties": {
+            "BR_HAS_HOSTED_STATISTICS": "true"
+          },
+          "expectedResultingTime": "2026-10-12T20:00:00Z",
+          "tvChannels": [],
+          "extraInfo": null,
+          "isLive": true,
+          "isOutright": false,
+          "isFantasy": false,
+          "isLiveFeed": true
+        },
+        "markets": [
+          {
+            "id": "BRUF#sr:match:75311858#1",
+            "oddsSource": {
+              "providerId": "BRUF",
+              "subProviderId": "1"
+            },
+            "attributes": {
+              "BRUF": {
+                "TYPE_ID": "1"
+              }
+            },
+            "marketType": "10",
+            "state": "OPEN",
+            "isLiveFeed": true,
+            "name": {
+              "name": "1X2",
+              "localizedName": {
+                "en": "1X2",
+                "pl": "1X2"
+              }
+            },
+            "isNamed": false,
+            "isFreeText": false,
+            "groups": [
+              "all",
+              "score",
+              "regular_play"
+            ],
+            "selections": [
+              {
+                "id": "1",
+                "typeId": "1",
+                "mappings": {},
+                "isPlayer": false,
+                "name": {
+                  "name": "Hassania Union Sport Agadir",
+                  "localizedName": {
+                    "en": "Hassania Union Sport Agadir",
+                    "pl": "Hassania Union Sport Agadir"
+                  }
+                },
+                "segments": {
+                  "DEFAULT": {
+                    "price": "1.25"
+                  }
+                },
+                "probability": "0.7714747345",
+                "results": [],
+                "ordinal": 0,
+                "isNamed": false,
+                "isActive": true
+              },
+              {
+                "id": "2",
+                "typeId": "2",
+                "mappings": {},
+                "isPlayer": false,
+                "name": {
+                  "name": "Draw",
+                  "localizedName": {
+                    "en": "Draw",
+                    "pl": "Remis"
+                  }
+                },
+                "segments": {
+                  "DEFAULT": {
+                    "price": "4.5"
+                  }
+                },
+                "probability": "0.2003999743",
+                "results": [],
+                "ordinal": 1,
+                "isNamed": false,
+                "isActive": true
+              },
+              {
+                "id": "3",
+                "typeId": "3",
+                "mappings": {},
+                "isPlayer": false,
+                "name": {
+                  "name": "AS Far Rabat",
+                  "localizedName": {
+                    "en": "AS Far Rabat",
+                    "pl": "AS Far Rabat"
+                  }
+                },
+                "segments": {
+                  "DEFAULT": {
+                    "price": "31.0"
+                  }
+                },
+                "probability": "0.0281252912",
+                "results": [],
+                "ordinal": 2,
+                "isNamed": false,
+                "isActive": true
+              }
+            ],
+            "specifierValues": {},
+            "isBettable": true,
+            "bettableVotes": [],
+            "isDerived": false,
+            "orderNumber": 1,
+            "marginZeroMarket": null
+          }
+        ],
+        "outrightMarkets": [],
+        "matchInfo": {
+          "eventStatus": "LIVE",
+          "matchScore": {
+            "awayScore": "1",
+            "homeScore": "2",
+            "matchScoreDetails": null,
+            "periodScores": [
+              {
+                "awayScore": 1,
+                "homeScore": 1,
+                "periodNumber": 1,
+                "periodType": "REGULARPERIOD"
+              },
+              {
+                "awayScore": 0,
+                "homeScore": 1,
+                "periodNumber": 2,
+                "periodType": "REGULARPERIOD"
+              }
+            ]
+          },
+          "matchTime": {
+            "time": "83:48",
+            "matchTimeDetails": {}
+          },
+          "matchInfoDetails": {
+            "corners": {
+              "home": 3,
+              "away": 4
+            },
+            "redCards": {
+              "home": 0,
+              "away": 0
+            },
+            "yellowCards": {
+              "home": 0,
+              "away": 1
+            },
+            "yellowRedCards": {
+              "home": 0,
+              "away": 0
+            }
+          },
+          "matchStatus": 7,
+          "matchStatusDescription": {
+            "pl": "2. połowa"
+          },
+          "lastUpdate": "2026-10-12T21:44:07.825Z"
+        },
+        "isBettable": true
+      }
+    },
+    {
+      "id": "BRUF#sr:match:74753364",
+      "event": {
+        "mn": 16,
+        "mnp": null,
+        "mnl": null,
+        "hasMarginZeroMarket": false,
+        "id": "BRUF#sr:match:74753364",
+        "version": 186,
+        "mappings": {
+          "BRUF": "sr:match:74753364"
+        },
+        "bettableVotes": [],
+        "fixture": {
+          "path": {
+            "sportId": "1",
+            "categoryId": "20",
+            "competitionId": "BRUF#sr:tournament:15235",
+            "groupId": "Liga 2, Main Round, Group 1",
+            "seasonId": "140608",
+            "competitionOrder": "1",
+            "competitionGroupOrder": "112",
+            "competitionName": "Segunda Division",
+            "competitionIcon": "Peru",
+            "competitionIconType": "NPSCountryFlags",
+            "roundName": "UNAVAILABLE",
+            "sportNodeId": "pilka_nozna",
+            "competitionPath": "pilka_nozna/peru/2_liga"
+          },
+          "sportNodeId": "pilka_nozna",
+          "categoryNodeId": "peru",
+          "competitionNodeId": "2_liga",
+          "startTime": "2026-10-12T20:30:00Z",
+          "eventName": {
+            "name": "Union Comercio vs. Ayacucho FC",
+            "localizedName": {}
+          },
+          "isVirtual": false,
+          "competitors": [
+            {
+              "id": "sr:competitor:48431",
+              "mappings": {
+                "BRUF": "sr:competitor:48431"
+              },
+              "name": {
+                "name": "Union Comercio",
+                "localizedName": {}
+              },
+              "homeAway": "HOME",
+              "abbreviations": {
+                "name": "UNI",
+                "localizedName": {}
+              }
+            },
+            {
+              "id": "sr:competitor:33894",
+              "mappings": {
+                "BRUF": "sr:competitor:33894"
+              },
+              "name": {
+                "name": "Ayacucho FC",
+                "localizedName": {}
+              },
+              "homeAway": "AWAY",
+              "abbreviations": {
+                "name": "AYA",
+                "localizedName": {}
+              }
+            }
+          ],
+          "players": [],
+          "exProperties": {
+            "BR_HAS_HOSTED_STATISTICS": "true"
+          },
+          "expectedResultingTime": "2026-10-12T20:30:00Z",
+          "tvChannels": [],
+          "extraInfo": null,
+          "isLive": true,
+          "isOutright": false,
+          "isFantasy": false,
+          "isLiveFeed": true
+        },
+        "markets": [
+          {
+            "id": "BRUF#sr:match:74753364#1",
+            "oddsSource": {
+              "providerId": "BRUF",
+              "subProviderId": "1"
+            },
+            "attributes": {
+              "BRUF": {
+                "TYPE_ID": "1"
+              }
+            },
+            "marketType": "10",
+            "state": "SUSPENDED",
+            "isLiveFeed": true,
+            "name": {
+              "name": "1X2",
+              "localizedName": {
+                "en": "1X2",
+                "pl": "1X2"
+              }
+            },
+            "isNamed": false,
+            "isFreeText": false,
+            "groups": [
+              "all",
+              "score",
+              "regular_play"
+            ],
+            "selections": [
+              {
+                "id": "1",
+                "typeId": "1",
+                "mappings": {},
+                "isPlayer": false,
+                "name": {
+                  "name": "Union Comercio",
+                  "localizedName": {
+                    "en": "Union Comercio",
+                    "pl": "Union Comercio"
+                  }
+                },
+                "segments": {
+                  "DEFAULT": {
+                    "price": "1.01"
+                  }
+                },
+                "probability": "0.9978895721",
+                "results": [],
+                "ordinal": 0,
+                "isNamed": false,
+                "isActive": false
+              },
+              {
+                "id": "2",
+                "typeId": "2",
+                "mappings": {},
+                "isPlayer": false,
+                "name": {
+                  "name": "Draw",
+                  "localizedName": {
+                    "en": "Draw",
+                    "pl": "Remis"
+                  }
+                },
+                "segments": {
+                  "DEFAULT": {
+                    "price": "14.0"
+                  }
+                },
+                "probability": "0.00190951",
+                "results": [],
+                "ordinal": 1,
+                "isNamed": false,
+                "isActive": true
+              },
+              {
+                "id": "3",
+                "typeId": "3",
+                "mappings": {},
+                "isPlayer": false,
+                "name": {
+                  "name": "Ayacucho FC",
+                  "localizedName": {
+                    "en": "Ayacucho FC",
+                    "pl": "Ayacucho FC"
+                  }
+                },
+                "segments": {
+                  "DEFAULT": {
+                    "price": "100.0"
+                  }
+                },
+                "probability": "0.0002009176",
+                "results": [],
+                "ordinal": 2,
+                "isNamed": false,
+                "isActive": true
+              }
+            ],
+            "specifierValues": {},
+            "isBettable": true,
+            "bettableVotes": [],
+            "isDerived": false,
+            "orderNumber": 1,
+            "marginZeroMarket": null
+          },
+          {
+            "id": "BRUF#sr:match:74753364#29",
+            "oddsSource": {
+              "providerId": "BRUF",
+              "subProviderId": "1"
+            },
+            "attributes": {
+              "BRUF": {
+                "TYPE_ID": "29"
+              }
+            },
+            "marketType": "43",
+            "state": "SUSPENDED",
+            "isLiveFeed": true,
+            "name": {
+              "name": "Both Teams to Score",
+              "localizedName": {
+                "en": "Both Teams to Score",
+                "pl": "Obie drużyny strzelą gola"
+              }
+            },
+            "isNamed": false,
+            "isFreeText": false,
+            "groups": [
+              "all",
+              "score",
+              "regular_play"
+            ],
+            "selections": [
+              {
+                "id": "74",
+                "typeId": "74",
+                "mappings": {},
+                "isPlayer": false,
+                "name": {
+                  "name": "Yes",
+                  "localizedName": {
+                    "en": "Yes",
+                    "pl": "Tak"
+                  }
+                },
+                "segments": {
+                  "DEFAULT": {
+                    "price": "2.75"
+                  }
+                },
+                "probability": "0.3236630949",
+                "results": [],
+                "ordinal": 0,
+                "isNamed": false,
+                "isActive": true
+              },
+              {
+                "id": "76",
+                "typeId": "76",
+                "mappings": {},
+                "isPlayer": false,
+                "name": {
+                  "name": "No",
+                  "localizedName": {
+                    "en": "No",
+                    "pl": "Nie"
+                  }
+                },
+                "segments": {
+                  "DEFAULT": {
+                    "price": "1.4"
+                  }
+                },
+                "probability": "0.6763369048",
+                "results": [],
+                "ordinal": 1,
+                "isNamed": false,
+                "isActive": true
+              }
+            ],
+            "specifierValues": {},
+            "isBettable": true,
+            "bettableVotes": [],
+            "isDerived": false,
+            "orderNumber": 15,
+            "marginZeroMarket": null
+          }
+        ],
+        "outrightMarkets": [],
+        "matchInfo": {
+          "eventStatus": "LIVE",
+          "matchScore": {
+            "awayScore": "0",
+            "homeScore": "3",
+            "matchScoreDetails": null,
+            "periodScores": [
+              {
+                "awayScore": 0,
+                "homeScore": 2,
+                "periodNumber": 1,
+                "periodType": "REGULARPERIOD"
+              },
+              {
+                "awayScore": 0,
+                "homeScore": 1,
+                "periodNumber": 2,
+                "periodType": "REGULARPERIOD"
+              }
+            ]
+          },
+          "matchTime": {
+            "time": "53:28",
+            "matchTimeDetails": {}
+          },
+          "matchInfoDetails": {
+            "corners": {
+              "home": 0,
+              "away": 0
+            },
+            "redCards": {
+              "home": 0,
+              "away": 0
+            },
+            "yellowCards": {
+              "home": 0,
+              "away": 0
+            },
+            "yellowRedCards": {
+              "home": 0,
+              "away": 0
+            }
+          },
+          "matchStatus": 7,
+          "matchStatusDescription": {
+            "pl": "2. połowa"
+          },
+          "lastUpdate": "2026-10-12T21:43:39.500Z"
+        },
+        "isBettable": true
+      }
+    },
+    {
+      "id": "BRUF#sr:match:68098142",
+      "event": {
+        "mn": 25,
+        "mnp": null,
+        "mnl": null,
+        "hasMarginZeroMarket": false,
+        "id": "BRUF#sr:match:68098142",
+        "version": 184,
+        "mappings": {
+          "BRUF": "sr:match:68098142"
+        },
+        "bettableVotes": [],
+        "fixture": {
+          "path": {
+            "sportId": "1",
+            "categoryId": "49",
+            "competitionId": "BRUF#sr:tournament:1240",
+            "groupId": "Liga de Ascenso",
+            "seasonId": "139054",
+            "competitionOrder": "3",
+            "competitionGroupOrder": "38",
+            "competitionName": "Primera B",
+            "competitionIcon": "Chile",
+            "competitionIconType": "NPSCountryFlags",
+            "roundName": "UNAVAILABLE",
+            "sportNodeId": "pilka_nozna",
+            "competitionPath": "pilka_nozna/chile/2_liga"
+          },
+          "sportNodeId": "pilka_nozna",
+          "categoryNodeId": "chile",
+          "competitionNodeId": "2_liga",
+          "startTime": "2026-10-12T20:30:00Z",
+          "eventName": {
+            "name": "Deportes Iquique vs. Union Espanola",
+            "localizedName": {}
+          },
+          "isVirtual": false,
+          "competitors": [
+            {
+              "id": "sr:competitor:33596",
+              "mappings": {
+                "BRUF": "sr:competitor:33596"
+              },
+              "name": {
+                "name": "Deportes Iquique",
+                "localizedName": {}
+              },
+              "homeAway": "HOME",
+              "abbreviations": {
+                "name": "IQU",
+                "localizedName": {}
+              }
+            },
+            {
+              "id": "sr:competitor:3153",
+              "mappings": {
+                "BRUF": "sr:competitor:3153"
+              },
+              "name": {
+                "name": "Union Espanola",
+                "localizedName": {}
+              },
+              "homeAway": "AWAY",
+              "abbreviations": {
+                "name": "ESP",
+                "localizedName": {}
+              }
+            }
+          ],
+          "players": [],
+          "exProperties": {
+            "BR_HAS_HOSTED_STATISTICS": "true"
+          },
+          "expectedResultingTime": "2026-10-12T20:30:00Z",
+          "tvChannels": [],
+          "extraInfo": null,
+          "isLive": true,
+          "isOutright": false,
+          "isFantasy": false,
+          "isLiveFeed": true
+        },
+        "markets": [
+          {
+            "id": "BRUF#sr:match:68098142#1",
+            "oddsSource": {
+              "providerId": "BRUF",
+              "subProviderId": "1"
+            },
+            "attributes": {
+              "BRUF": {
+                "TYPE_ID": "1"
+              }
+            },
+            "marketType": "10",
+            "state": "OPEN",
+            "isLiveFeed": true,
+            "name": {
+              "name": "1X2",
+              "localizedName": {
+                "en": "1X2",
+                "pl": "1X2"
+              }
+            },
+            "isNamed": false,
+            "isFreeText": false,
+            "groups": [
+              "all",
+              "score",
+              "regular_play"
+            ],
+            "selections": [
+              {
+                "id": "1",
+                "typeId": "1",
+                "mappings": {},
+                "isPlayer": false,
+                "name": {
+                  "name": "Deportes Iquique",
+                  "localizedName": {
+                    "en": "Deportes Iquique",
+                    "pl": "Deportes Iquique"
+                  }
+                },
+                "segments": {
+                  "DEFAULT": {
+                    "price": "1.3"
+                  }
+                },
+                "probability": "0.7435344743",
+                "results": [],
+                "ordinal": 0,
+                "isNamed": false,
+                "isActive": true
+              },
+              {
+                "id": "2",
+                "typeId": "2",
+                "mappings": {},
+                "isPlayer": false,
+                "name": {
+                  "name": "Draw",
+                  "localizedName": {
+                    "en": "Draw",
+                    "pl": "Remis"
+                  }
+                },
+                "segments": {
+                  "DEFAULT": {
+                    "price": "4.65"
+                  }
+                },
+                "probability": "0.1957148623",
+                "results": [],
+                "ordinal": 1,
+                "isNamed": false,
+                "isActive": true
+              },
+              {
+                "id": "3",
+                "typeId": "3",
+                "mappings": {},
+                "isPlayer": false,
+                "name": {
+                  "name": "Union Espanola",
+                  "localizedName": {
+                    "en": "Union Espanola",
+                    "pl": "Union Espanola"
+                  }
+                },
+                "segments": {
+                  "DEFAULT": {
+                    "price": "14.5"
+                  }
+                },
+                "probability": "0.0607506634",
+                "results": [],
+                "ordinal": 2,
+                "isNamed": false,
+                "isActive": true
+              }
+            ],
+            "specifierValues": {},
+            "isBettable": true,
+            "bettableVotes": [],
+            "isDerived": false,
+            "orderNumber": 1,
+            "marginZeroMarket": null
+          },
+          {
+            "id": "BRUF#sr:match:68098142#29",
+            "oddsSource": {
+              "providerId": "BRUF",
+              "subProviderId": "1"
+            },
+            "attributes": {
+              "BRUF": {
+                "TYPE_ID": "29"
+              }
+            },
+            "marketType": "43",
+            "state": "OPEN",
+            "isLiveFeed": true,
+            "name": {
+              "name": "Both Teams to Score",
+              "localizedName": {
+                "en": "Both Teams to Score",
+                "pl": "Obie drużyny strzelą gola"
+              }
+            },
+            "isNamed": false,
+            "isFreeText": false,
+            "groups": [
+              "all",
+              "score",
+              "regular_play"
+            ],
+            "selections": [
+              {
+                "id": "74",
+                "typeId": "74",
+                "mappings": {},
+                "isPlayer": false,
+                "name": {
+                  "name": "Yes",
+                  "localizedName": {
+                    "en": "Yes",
+                    "pl": "Tak"
+                  }
+                },
+                "segments": {
+                  "DEFAULT": {
+                    "price": "2.1"
+                  }
+                },
+                "probability": "0.4423956707",
+                "results": [],
+                "ordinal": 0,
+                "isNamed": false,
+                "isActive": true
+              },
+              {
+                "id": "76",
+                "typeId": "76",
+                "mappings": {},
+                "isPlayer": false,
+                "name": {
+                  "name": "No",
+                  "localizedName": {
+                    "en": "No",
+                    "pl": "Nie"
+                  }
+                },
+                "segments": {
+                  "DEFAULT": {
+                    "price": "1.7"
+                  }
+                },
+                "probability": "0.5576043293",
+                "results": [],
+                "ordinal": 1,
+                "isNamed": false,
+                "isActive": true
+              }
+            ],
+            "specifierValues": {},
+            "isBettable": true,
+            "bettableVotes": [],
+            "isDerived": false,
+            "orderNumber": 15,
+            "marginZeroMarket": null
+          }
+        ],
+        "outrightMarkets": [],
+        "matchInfo": {
+          "eventStatus": "LIVE",
+          "matchScore": {
+            "awayScore": "0",
+            "homeScore": "1",
+            "matchScoreDetails": null,
+            "periodScores": [
+              {
+                "awayScore": 0,
+                "homeScore": 1,
+                "periodNumber": 1,
+                "periodType": "REGULARPERIOD"
+              },
+              {
+                "awayScore": 0,
+                "homeScore": 0,
+                "periodNumber": 2,
+                "periodType": "REGULARPERIOD"
+              }
+            ]
+          },
+          "matchTime": {
+            "time": "53:17",
+            "matchTimeDetails": {}
+          },
+          "matchInfoDetails": {
+            "corners": {
+              "home": 3,
+              "away": 2
+            },
+            "redCards": {
+              "home": 0,
+              "away": 0
+            },
+            "yellowCards": {
+              "home": 2,
+              "away": 1
+            },
+            "yellowRedCards": {
+              "home": 0,
+              "away": 0
+            }
+          },
+          "matchStatus": 7,
+          "matchStatusDescription": {
+            "pl": "2. połowa"
+          },
+          "lastUpdate": "2026-10-12T21:44:02.577Z"
+        },
+        "isBettable": true
+      }
+    },
+    {
+      "id": "BRUF#sr:match:73174686",
+      "event": {
+        "mn": 9,
+        "mnp": null,
+        "mnl": null,
+        "hasMarginZeroMarket": false,
+        "id": "BRUF#sr:match:73174686",
+        "version": 119,
+        "mappings": {
+          "BRUF": "sr:match:73174686"
+        },
+        "bettableVotes": [],
+        "fixture": {
+          "path": {
+            "sportId": "1",
+            "categoryId": "13",
+            "competitionId": "BRUF#sr:tournament:47097",
+            "seasonId": "140748",
+            "competitionOrder": "12",
+            "competitionGroupOrder": "28",
+            "competitionName": "Copa do Brasil, Women",
+            "competitionIcon": "Brazil",
+            "competitionIconType": "NPSCountryFlags",
+            "roundName": "UNAVAILABLE",
+            "sportNodeId": "pilka_nozna",
+            "competitionPath": "pilka_nozna/brazylia/puchar_k"
+          },
+          "sportNodeId": "pilka_nozna",
+          "categoryNodeId": "brazylia",
+          "competitionNodeId": "puchar_k",
+          "startTime": "2026-10-12T21:00:00Z",
+          "eventName": {
+            "name": "Ferroviaria SP (W) vs. Red Bull Bragantino SP (W)",
+            "localizedName": {
+              "pl": "Ferroviaria SP (K) vs. Red Bull Bragantino SP (K)"
+            }
+          },
+          "isVirtual": false,
+          "competitors": [
+            {
+              "id": "sr:competitor:263071",
+              "mappings": {
+                "BRUF": "sr:competitor:263071"
+              },
+              "name": {
+                "name": "Ferroviaria SP (W)",
+                "localizedName": {
+                  "pl": "Ferroviaria SP (K)"
+                }
+              },
+              "homeAway": "HOME",
+              "abbreviations": {
+                "name": "FRR",
+                "localizedName": {}
+              }
+            },
+            {
+              "id": "sr:competitor:749357",
+              "mappings": {
+                "BRUF": "sr:competitor:749357"
+              },
+              "name": {
+                "name": "Red Bull Bragantino SP (W)",
+                "localizedName": {
+                  "pl": "Red Bull Bragantino SP (K)"
+                }
+              },
+              "homeAway": "AWAY",
+              "abbreviations": {
+                "name": "RED",
+                "localizedName": {}
+              }
+            }
+          ],
+          "players": [],
+          "exProperties": {
+            "BR_HAS_HOSTED_STATISTICS": "true"
+          },
+          "expectedResultingTime": "2026-10-12T21:00:00Z",
+          "tvChannels": [],
+          "extraInfo": null,
+          "isLive": true,
+          "isOutright": false,
+          "isFantasy": false,
+          "isLiveFeed": true
+        },
+        "markets": [
+          {
+            "id": "BRUF#sr:match:73174686#1",
+            "oddsSource": {
+              "providerId": "BRUF",
+              "subProviderId": "1"
+            },
+            "attributes": {
+              "BRUF": {
+                "TYPE_ID": "1"
+              }
+            },
+            "marketType": "10",
+            "state": "CLOSED",
+            "isLiveFeed": true,
+            "name": {
+              "name": "1X2",
+              "localizedName": {
+                "en": "1X2",
+                "pl": "1X2"
+              }
+            },
+            "isNamed": false,
+            "isFreeText": false,
+            "groups": [
+              "all",
+              "score",
+              "regular_play"
+            ],
+            "selections": [
+              {
+                "id": "1",
+                "typeId": "1",
+                "mappings": {},
+                "isPlayer": false,
+                "name": {
+                  "name": "Ferroviaria SP (W)",
+                  "localizedName": {
+                    "en": "Ferroviaria SP (W)",
+                    "pl": "Ferroviaria SP (K)"
+                  }
+                },
+                "segments": {
+                  "DEFAULT": {
+                    "price": "1.14"
+                  }
+                },
+                "probability": "0.8417264522",
+                "results": [],
+                "ordinal": 0,
+                "isNamed": false,
+                "isActive": true
+              },
+              {
+                "id": "2",
+                "typeId": "2",
+                "mappings": {},
+                "isPlayer": false,
+                "name": {
+                  "name": "Draw",
+                  "localizedName": {
+                    "en": "Draw",
+                    "pl": "Remis"
+                  }
+                },
+                "segments": {
+                  "DEFAULT": {
+                    "price": "6.25"
+                  }
+                },
+                "probability": "0.1246671266",
+                "results": [],
+                "ordinal": 1,
+                "isNamed": false,
+                "isActive": true
+              },
+              {
+                "id": "3",
+                "typeId": "3",
+                "mappings": {},
+                "isPlayer": false,
+                "name": {
+                  "name": "Red Bull Bragantino SP (W)",
+                  "localizedName": {
+                    "en": "Red Bull Bragantino SP (W)",
+                    "pl": "Red Bull Bragantino SP (K)"
+                  }
+                },
+                "segments": {
+                  "DEFAULT": {
+                    "price": "23.0"
+                  }
+                },
+                "probability": "0.0336064211",
+                "results": [],
+                "ordinal": 2,
+                "isNamed": false,
+                "isActive": true
+              }
+            ],
+            "specifierValues": {},
+            "isBettable": true,
+            "bettableVotes": [],
+            "isDerived": false,
+            "orderNumber": 1,
+            "marginZeroMarket": null
+          },
+          {
+            "id": "BRUF#sr:match:73174686#29",
+            "oddsSource": {
+              "providerId": "BRUF",
+              "subProviderId": "1"
+            },
+            "attributes": {
+              "BRUF": {
+                "TYPE_ID": "29"
+              }
+            },
+            "marketType": "43",
+            "state": "CLOSED",
+            "isLiveFeed": true,
+            "name": {
+              "name": "Both Teams to Score",
+              "localizedName": {
+                "en": "Both Teams to Score",
+                "pl": "Obie drużyny strzelą gola"
+              }
+            },
+            "isNamed": false,
+            "isFreeText": false,
+            "groups": [
+              "all",
+              "score",
+              "regular_play"
+            ],
+            "selections": [
+              {
+                "id": "74",
+                "typeId": "74",
+                "mappings": {},
+                "isPlayer": false,
+                "name": {
+                  "name": "Yes",
+                  "localizedName": {
+                    "en": "Yes",
+                    "pl": "Tak"
+                  }
+                },
+                "segments": {
+                  "DEFAULT": {
+                    "price": "2.3"
+                  }
+                },
+                "probability": "0.3913351884",
+                "results": [],
+                "ordinal": 0,
+                "isNamed": false,
+                "isActive": true
+              },
+              {
+                "id": "76",
+                "typeId": "76",
+                "mappings": {},
+                "isPlayer": false,
+                "name": {
+                  "name": "No",
+                  "localizedName": {
+                    "en": "No",
+                    "pl": "Nie"
+                  }
+                },
+                "segments": {
+                  "DEFAULT": {
+                    "price": "1.55"
+                  }
+                },
+                "probability": "0.6086648115",
+                "results": [],
+                "ordinal": 1,
+                "isNamed": false,
+                "isActive": true
+              }
+            ],
+            "specifierValues": {},
+            "isBettable": true,
+            "bettableVotes": [],
+            "isDerived": false,
+            "orderNumber": 15,
+            "marginZeroMarket": null
+          }
+        ],
+        "outrightMarkets": [],
+        "matchInfo": {
+          "eventStatus": "LIVE",
+          "matchScore": {
+            "awayScore": "0",
+            "homeScore": "1",
+            "matchScoreDetails": null,
+            "periodScores": [
+              {
+                "awayScore": 0,
+                "homeScore": 1,
+                "periodNumber": 1,
+                "periodType": "REGULARPERIOD"
+              }
+            ]
+          },
+          "matchTime": {
+            "time": "40:49",
+            "matchTimeDetails": {}
+          },
+          "matchInfoDetails": {
+            "corners": {
+              "home": 4,
+              "away": 3
+            },
+            "redCards": {
+              "home": 0,
+              "away": 0
+            },
+            "yellowCards": {
+              "home": 0,
+              "away": 0
+            },
+            "yellowRedCards": {
+              "home": 0,
+              "away": 0
+            }
+          },
+          "matchStatus": 6,
+          "matchStatusDescription": {
+            "pl": "1. połowa"
+          },
+          "lastUpdate": "2026-10-12T21:44:07.280Z"
+        },
+        "isBettable": true
+      }
+    },
+    {
+      "id": "BRUF#sr:match:75298376",
+      "event": {
+        "mn": 72,
+        "mnp": null,
+        "mnl": null,
+        "hasMarginZeroMarket": false,
+        "id": "BRUF#sr:match:75298376",
+        "version": 218,
+        "mappings": {
+          "BRUF": "sr:match:75298376"
+        },
+        "bettableVotes": [],
+        "fixture": {
+          "path": {
+            "sportId": "1",
+            "categoryId": "379",
+            "competitionId": "BRUF#sr:tournament:33980",
+            "groupId": "Division Profesional",
+            "seasonId": "140872",
+            "competitionOrder": "0",
+            "competitionGroupOrder": "31",
+            "competitionName": "Division Profesional",
+            "competitionIcon": "Bolivia",
+            "competitionIconType": "NPSCountryFlags",
+            "roundName": "UNAVAILABLE",
+            "sportNodeId": "pilka_nozna",
+            "competitionPath": "pilka_nozna/boliwia/1_liga"
+          },
+          "sportNodeId": "pilka_nozna",
+          "categoryNodeId": "boliwia",
+          "competitionNodeId": "1_liga",
+          "startTime": "2026-10-12T21:15:00Z",
+          "eventName": {
+            "name": "Always Ready vs. Independiente Petrolero",
+            "localizedName": {}
+          },
+          "isVirtual": false,
+          "competitors": [
+            {
+              "id": "sr:competitor:378096",
+              "mappings": {
+                "BRUF": "sr:competitor:378096"
+              },
+              "name": {
+                "name": "Always Ready",
+                "localizedName": {}
+              },
+              "homeAway": "HOME",
+              "abbreviations": {
+                "name": "ARE",
+                "localizedName": {}
+              }
+            },
+            {
+              "id": "sr:competitor:498412",
+              "mappings": {
+                "BRUF": "sr:competitor:498412"
+              },
+              "name": {
+                "name": "Independiente Petrolero",
+                "localizedName": {}
+              },
+              "homeAway": "AWAY",
+              "abbreviations": {
+                "name": "IND",
+                "localizedName": {}
+              }
+            }
+          ],
+          "players": [],
+          "exProperties": {
+            "BR_HAS_HOSTED_STATISTICS": "true"
+          },
+          "expectedResultingTime": "2026-10-12T21:15:00Z",
+          "tvChannels": [],
+          "extraInfo": null,
+          "isLive": true,
+          "isOutright": false,
+          "isFantasy": false,
+          "isLiveFeed": true
+        },
+        "markets": [
+          {
+            "id": "BRUF#sr:match:75298376#1",
+            "oddsSource": {
+              "providerId": "BRUF",
+              "subProviderId": "1"
+            },
+            "attributes": {
+              "BRUF": {
+                "TYPE_ID": "1"
+              }
+            },
+            "marketType": "10",
+            "state": "OPEN",
+            "isLiveFeed": true,
+            "name": {
+              "name": "1X2",
+              "localizedName": {
+                "en": "1X2",
+                "pl": "1X2"
+              }
+            },
+            "isNamed": false,
+            "isFreeText": false,
+            "groups": [
+              "all",
+              "score",
+              "regular_play"
+            ],
+            "selections": [
+              {
+                "id": "1",
+                "typeId": "1",
+                "mappings": {},
+                "isPlayer": false,
+                "name": {
+                  "name": "Always Ready",
+                  "localizedName": {
+                    "en": "Always Ready",
+                    "pl": "Always Ready"
+                  }
+                },
+                "segments": {
+                  "DEFAULT": {
+                    "price": "1.02"
+                  }
+                },
+                "probability": "0.9505391315",
+                "results": [],
+                "ordinal": 0,
+                "isNamed": false,
+                "isActive": true
+              },
+              {
+                "id": "2",
+                "typeId": "2",
+                "mappings": {},
+                "isPlayer": false,
+                "name": {
+                  "name": "Draw",
+                  "localizedName": {
+                    "en": "Draw",
+                    "pl": "Remis"
+                  }
+                },
+                "segments": {
+                  "DEFAULT": {
+                    "price": "12.5"
+                  }
+                },
+                "probability": "0.0389551425",
+                "results": [],
+                "ordinal": 1,
+                "isNamed": false,
+                "isActive": true
+              },
+              {
+                "id": "3",
+                "typeId": "3",
+                "mappings": {},
+                "isPlayer": false,
+                "name": {
+                  "name": "Independiente Petrolero",
+                  "localizedName": {
+                    "en": "Independiente Petrolero",
+                    "pl": "Independiente Petrolero"
+                  }
+                },
+                "segments": {
+                  "DEFAULT": {
+                    "price": "45.0"
+                  }
+                },
+                "probability": "0.0105049485",
+                "results": [],
+                "ordinal": 2,
+                "isNamed": false,
+                "isActive": true
+              }
+            ],
+            "specifierValues": {},
+            "isBettable": true,
+            "bettableVotes": [],
+            "isDerived": false,
+            "orderNumber": 1,
+            "marginZeroMarket": null
+          },
+          {
+            "id": "BRUF#sr:match:75298376#29",
+            "oddsSource": {
+              "providerId": "BRUF",
+              "subProviderId": "1"
+            },
+            "attributes": {
+              "BRUF": {
+                "TYPE_ID": "29"
+              }
+            },
+            "marketType": "43",
+            "state": "OPEN",
+            "isLiveFeed": true,
+            "name": {
+              "name": "Both Teams to Score",
+              "localizedName": {
+                "en": "Both Teams to Score",
+                "pl": "Obie drużyny strzelą gola"
+              }
+            },
+            "isNamed": false,
+            "isFreeText": false,
+            "groups": [
+              "all",
+              "score",
+              "regular_play"
+            ],
+            "selections": [
+              {
+                "id": "74",
+                "typeId": "74",
+                "mappings": {},
+                "isPlayer": false,
+                "name": {
+                  "name": "Yes",
+                  "localizedName": {
+                    "en": "Yes",
+                    "pl": "Tak"
+                  }
+                },
+                "segments": {
+                  "DEFAULT": {
+                    "price": "2.25"
+                  }
+                },
+                "probability": "0.4020495682",
+                "results": [],
+                "ordinal": 0,
+                "isNamed": false,
+                "isActive": true
+              },
+              {
+                "id": "76",
+                "typeId": "76",
+                "mappings": {},
+                "isPlayer": false,
+                "name": {
+                  "name": "No",
+                  "localizedName": {
+                    "en": "No",
+                    "pl": "Nie"
+                  }
+                },
+                "segments": {
+                  "DEFAULT": {
+                    "price": "1.57"
+                  }
+                },
+                "probability": "0.5979496543",
+                "results": [],
+                "ordinal": 1,
+                "isNamed": false,
+                "isActive": true
+              }
+            ],
+            "specifierValues": {},
+            "isBettable": true,
+            "bettableVotes": [],
+            "isDerived": false,
+            "orderNumber": 15,
+            "marginZeroMarket": null
+          }
+        ],
+        "outrightMarkets": [],
+        "matchInfo": {
+          "eventStatus": "LIVE",
+          "matchScore": {
+            "awayScore": "0",
+            "homeScore": "1",
+            "matchScoreDetails": null,
+            "periodScores": [
+              {
+                "awayScore": 0,
+                "homeScore": 1,
+                "periodNumber": 1,
+                "periodType": "REGULARPERIOD"
+              }
+            ]
+          },
+          "matchTime": {
+            "time": "28:49",
+            "matchTimeDetails": {}
+          },
+          "matchInfoDetails": {
+            "corners": {
+              "home": 3,
+              "away": 1
+            },
+            "redCards": {
+              "home": 0,
+              "away": 0
+            },
+            "yellowCards": {
+              "home": 0,
+              "away": 0
+            },
+            "yellowRedCards": {
+              "home": 0,
+              "away": 0
+            }
+          },
+          "matchStatus": 6,
+          "matchStatusDescription": {
+            "pl": "1. połowa"
+          },
+          "lastUpdate": "2026-10-12T21:43:55.419Z"
+        },
+        "isBettable": true
+      }
+    },
+    {
+      "id": "BRUF#sr:match:73265380",
+      "event": {
+        "mn": 159,
+        "mnp": null,
+        "mnl": null,
+        "hasMarginZeroMarket": false,
+        "id": "BRUF#sr:match:73265380",
+        "version": 110,
+        "mappings": {
+          "BRUF": "sr:match:73265380"
+        },
+        "bettableVotes": [],
+        "fixture": {
+          "path": {
+            "sportId": "1",
+            "categoryId": "48",
+            "competitionId": "BRUF#sr:tournament:155",
+            "seasonId": "137974",
+            "competitionOrder": "0",
+            "competitionGroupOrder": "17",
+            "competitionName": "Primera Division",
+            "competitionIcon": "Argentina",
+            "competitionIconType": "NPSCountryFlags",
+            "roundName": "UNAVAILABLE",
+            "sportNodeId": "pilka_nozna",
+            "competitionPath": "pilka_nozna/argentyna/1_liga"
+          },
+          "sportNodeId": "pilka_nozna",
+          "categoryNodeId": "argentyna",
+          "competitionNodeId": "1_liga",
+          "startTime": "2026-10-12T21:30:00Z",
+          "eventName": {
+            "name": "Gimnasia y Esgrima Mendoza vs. Newell's Old Boys",
+            "localizedName": {
+              "pl": "Gimnasia y Esgrima Mendoza vs. Newell´s Old Boys"
+            }
+          },
+          "isVirtual": false,
+          "competitors": [
+            {
+              "id": "sr:competitor:189099",
+              "mappings": {
+                "BRUF": "sr:competitor:189099"
+              },
+              "name": {
+                "name": "Gimnasia y Esgrima Mendoza",
+                "localizedName": {}
+              },
+              "homeAway": "HOME",
+              "abbreviations": {
+                "name": "GEM",
+                "localizedName": {}
+              }
+            },
+            {
+              "id": "sr:competitor:3212",
+              "mappings": {
+                "BRUF": "sr:competitor:3212"
+              },
+              "name": {
+                "name": "Newell's Old Boys",
+                "localizedName": {
+                  "pl": "Newell´s Old Boys"
+                }
+              },
+              "homeAway": "AWAY",
+              "abbreviations": {
+                "name": "NOB",
+                "localizedName": {}
+              }
+            }
+          ],
+          "players": [],
+          "exProperties": {},
+          "expectedResultingTime": "2026-10-12T21:30:00Z",
+          "tvChannels": [],
+          "extraInfo": null,
+          "isLive": true,
+          "isOutright": false,
+          "isFantasy": false,
+          "isLiveFeed": true
+        },
+        "markets": [
+          {
+            "id": "BRUF#sr:match:73265380#1",
+            "oddsSource": {
+              "providerId": "BRUF",
+              "subProviderId": "1"
+            },
+            "attributes": {
+              "BRUF": {
+                "TYPE_ID": "1"
+              }
+            },
+            "marketType": "10",
+            "state": "OPEN",
+            "isLiveFeed": true,
+            "name": {
+              "name": "1X2",
+              "localizedName": {
+                "en": "1X2",
+                "pl": "1X2"
+              }
+            },
+            "isNamed": false,
+            "isFreeText": false,
+            "groups": [
+              "all",
+              "score",
+              "regular_play"
+            ],
+            "selections": [
+              {
+                "id": "1",
+                "typeId": "1",
+                "mappings": {},
+                "isPlayer": false,
+                "name": {
+                  "name": "Gimnasia y Esgrima Mendoza",
+                  "localizedName": {
+                    "en": "Gimnasia y Esgrima Mendoza",
+                    "pl": "Gimnasia y Esgrima Mendoza"
+                  }
+                },
+                "segments": {
+                  "DEFAULT": {
+                    "price": "2.65"
+                  }
+                },
+                "probability": "0.3597694284",
+                "results": [],
+                "ordinal": 0,
+                "isNamed": false,
+                "isActive": true
+              },
+              {
+                "id": "2",
+                "typeId": "2",
+                "mappings": {},
+                "isPlayer": false,
+                "name": {
+                  "name": "Draw",
+                  "localizedName": {
+                    "en": "Draw",
+                    "pl": "Remis"
+                  }
+                },
+                "segments": {
+                  "DEFAULT": {
+                    "price": "2.8"
+                  }
+                },
+                "probability": "0.3401542671",
+                "results": [],
+                "ordinal": 1,
+                "isNamed": false,
+                "isActive": true
+              },
+              {
+                "id": "3",
+                "typeId": "3",
+                "mappings": {},
+                "isPlayer": false,
+                "name": {
+                  "name": "Newell's Old Boys",
+                  "localizedName": {
+                    "en": "Newell's Old Boys",
+                    "pl": "Newell´s Old Boys"
+                  }
+                },
+                "segments": {
+                  "DEFAULT": {
+                    "price": "3.15"
+                  }
+                },
+                "probability": "0.3000763045",
+                "results": [],
+                "ordinal": 2,
+                "isNamed": false,
+                "isActive": true
+              }
+            ],
+            "specifierValues": {},
+            "isBettable": true,
+            "bettableVotes": [],
+            "isDerived": false,
+            "orderNumber": 1,
+            "marginZeroMarket": null
+          },
+          {
+            "id": "BRUF#sr:match:73265380#29",
+            "oddsSource": {
+              "providerId": "BRUF",
+              "subProviderId": "1"
+            },
+            "attributes": {
+              "BRUF": {
+                "TYPE_ID": "29"
+              }
+            },
+            "marketType": "43",
+            "state": "OPEN",
+            "isLiveFeed": true,
+            "name": {
+              "name": "Both Teams to Score",
+              "localizedName": {
+                "en": "Both Teams to Score",
+                "pl": "Obie drużyny strzelą gola"
+              }
+            },
+            "isNamed": false,
+            "isFreeText": false,
+            "groups": [
+              "all",
+              "score",
+              "regular_play"
+            ],
+            "selections": [
+              {
+                "id": "74",
+                "typeId": "74",
+                "mappings": {},
+                "isPlayer": false,
+                "name": {
+                  "name": "Yes",
+                  "localizedName": {
+                    "en": "Yes",
+                    "pl": "Tak"
+                  }
+                },
+                "segments": {
+                  "DEFAULT": {
+                    "price": "2.45"
+                  }
+                },
+                "probability": "0.3748164032",
+                "results": [],
+                "ordinal": 0,
+                "isNamed": false,
+                "isActive": true
+              },
+              {
+                "id": "76",
+                "typeId": "76",
+                "mappings": {},
+                "isPlayer": false,
+                "name": {
+                  "name": "No",
+                  "localizedName": {
+                    "en": "No",
+                    "pl": "Nie"
+                  }
+                },
+                "segments": {
+                  "DEFAULT": {
+                    "price": "1.52"
+                  }
+                },
+                "probability": "0.6251835968",
+                "results": [],
+                "ordinal": 1,
+                "isNamed": false,
+                "isActive": true
+              }
+            ],
+            "specifierValues": {},
+            "isBettable": true,
+            "bettableVotes": [],
+            "isDerived": false,
+            "orderNumber": 15,
+            "marginZeroMarket": null
+          }
+        ],
+        "outrightMarkets": [],
+        "matchInfo": {
+          "eventStatus": "LIVE",
+          "matchScore": {
+            "awayScore": "0",
+            "homeScore": "0",
+            "matchScoreDetails": null,
+            "periodScores": [
+              {
+                "awayScore": 0,
+                "homeScore": 0,
+                "periodNumber": 1,
+                "periodType": "REGULARPERIOD"
+              }
+            ]
+          },
+          "matchTime": {
+            "time": "14:07",
+            "matchTimeDetails": {}
+          },
+          "matchInfoDetails": {
+            "corners": {
+              "home": 0,
+              "away": 0
+            },
+            "redCards": {
+              "home": 0,
+              "away": 0
+            },
+            "yellowCards": {
+              "home": 0,
+              "away": 0
+            },
+            "yellowRedCards": {
+              "home": 0,
+              "away": 0
+            }
+          },
+          "matchStatus": 6,
+          "matchStatusDescription": {
+            "pl": "1. połowa"
+          },
+          "lastUpdate": "2026-10-12T21:44:02.171Z"
+        },
+        "isBettable": true
+      }
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+Updated only six test files with runtime-derived censuses and nonempty guards. Snapshot checks now handle compact objects and returned aliases. Frozen witnesses retain verbatim checks; refreshed captures use field-coverage checks.
+
+Final validation:
+
+- Touched files: **49 passed, 0 failed** without process isolation.
+- Required `node --test test/*.test.mjs`: **0 passed, 127 failed** at startup with sandbox `spawn EPERM`.
+- Separate-process fallback: **1,512 passed, 29 failed** (all `EPERM`), **3 cancelled**.
+- ESLint: **clean** for all touched files.
+
+All six named tests and the snapshot tests pass in the fallback runs.

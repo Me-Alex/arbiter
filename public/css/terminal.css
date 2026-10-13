@@ -1,0 +1,849 @@
+/* terminal.css — the ArbEdge trading-terminal layer.
+ *
+ * Sits on top of the existing --edge-* tokens rather than replacing them, so
+ * every page that already reads them keeps working. What this adds is the part
+ * an arbitrage desk actually lives in: monospaced, tabular numerics that can be
+ * compared column-wise; a signal stripe that encodes how much money is at risk
+ * at a glance; and a colour language where green always means guaranteed,
+ * amber always means conditional, and nothing else is allowed to use them.
+ *
+ * The rules this file enforces:
+ *   green   -> arbitrage. The payout does not depend on the result.
+ *   amber   -> middle.    The payout depends on where the match lands.
+ *   cyan    -> +EV.       A price is mispriced; the outcome is not hedged.
+ *   slate   -> low hold.  Cheap to trade, not an opportunity.
+ *
+ * Any two of those side by side in a row should be readable without reading a
+ * single word, which is the point: the console is scanned, not read.
+ */
+
+/* ---------------------------------------------------------------- tokens */
+
+:root {
+  /* Surfaces: cooler and darker than the base theme, so numbers carry the eye
+     instead of the chrome around them. */
+  --t-bg: #07090d;
+  --t-panel: #0c1017;
+  --t-panel-2: #111721;
+  --t-raise: #161d29;
+
+  /* Hairlines. Two weights: structural, and the divider inside a dense row. */
+  --t-line: rgba(148, 173, 214, 0.11);
+  --t-line-2: rgba(148, 173, 214, 0.055);
+  --t-line-hot: rgba(148, 173, 214, 0.24);
+
+  /* Signal language. Saturated enough to read at 11px, muted enough that a
+     screen full of them does not vibrate. */
+  --t-guaranteed: #34e2a0;
+  --t-guaranteed-dim: rgba(52, 226, 160, 0.13);
+  --t-guaranteed-line: rgba(52, 226, 160, 0.34);
+
+  --t-conditional: #f5b544;
+  --t-conditional-dim: rgba(245, 181, 68, 0.13);
+  --t-conditional-line: rgba(245, 181, 68, 0.34);
+
+  --t-value: #5ac8fa;
+  --t-value-dim: rgba(90, 200, 250, 0.12);
+  --t-value-line: rgba(90, 200, 250, 0.3);
+
+  --t-muted-signal: #8a97ab;
+  --t-muted-dim: rgba(138, 151, 171, 0.12);
+
+  --t-text: #dbe4f0;
+  --t-text-bright: #f4f8fd;
+  --t-text-dim: #7d8a9e;
+
+  --t-radius: 12px;
+  --t-radius-sm: 8px;
+
+  --t-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, 'SF Mono', Menlo,
+    Consolas, 'Liberation Mono', monospace;
+  --t-sans: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    'Helvetica Neue', Arial, sans-serif;
+}
+
+/* Light mode keeps the same language; only the surfaces invert. The signal
+   colours darken slightly so they stay legible on white without glowing. */
+[data-theme='light'] {
+  --t-bg: #eef1f6;
+  --t-panel: #ffffff;
+  --t-panel-2: #f6f8fb;
+  --t-raise: #ffffff;
+
+  --t-line: rgba(19, 33, 56, 0.13);
+  --t-line-2: rgba(19, 33, 56, 0.07);
+  --t-line-hot: rgba(19, 33, 56, 0.26);
+
+  --t-guaranteed: #05966b;
+  --t-guaranteed-dim: rgba(5, 150, 107, 0.1);
+  --t-guaranteed-line: rgba(5, 150, 107, 0.32);
+
+  --t-conditional: #b4740a;
+  --t-conditional-dim: rgba(180, 116, 10, 0.1);
+  --t-conditional-line: rgba(180, 116, 10, 0.32);
+
+  --t-value: #0a7ea4;
+  --t-value-dim: rgba(10, 126, 164, 0.1);
+  --t-value-line: rgba(10, 126, 164, 0.3);
+
+  --t-muted-signal: #5d6a7e;
+  --t-muted-dim: rgba(93, 106, 126, 0.1);
+
+  --t-text: #16202f;
+  --t-text-bright: #05090f;
+  --t-text-dim: #66738a;
+}
+
+/* ------------------------------------------------------------------ base */
+
+.edge {
+  background:
+    radial-gradient(1200px 700px at 78% -12%, rgba(52, 226, 160, 0.06), transparent 62%),
+    radial-gradient(900px 620px at 8% 4%, rgba(90, 200, 250, 0.055), transparent 58%),
+    var(--t-bg);
+  background-attachment: fixed;
+  color: var(--t-text);
+  font-family: var(--t-sans);
+  font-feature-settings: 'cv02', 'cv03', 'cv04', 'ss01';
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Numerals are the product here. Everything that can be compared against
+   something else in a column is monospaced and tabular, so digits sit in
+   columns and a 9 never render narrower than a 4. */
+.edge .num,
+.edge .font-mono,
+.edge [class*='font-mono'] {
+  font-family: var(--t-mono);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum' 1, 'zero' 1;
+}
+
+/* ---------------------------------------------------------------- panels */
+
+.edge .card {
+  background: linear-gradient(180deg, var(--t-panel-2), var(--t-panel));
+  border: 1px solid var(--t-line);
+  border-radius: var(--t-radius);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.03) inset,
+    0 18px 40px -28px rgba(0, 0, 0, 0.9);
+  transition: border-color 180ms ease, transform 180ms ease, box-shadow 180ms ease;
+}
+
+.edge .card:hover {
+  border-color: var(--t-line-hot);
+}
+
+/* ------------------------------------------------------- the signal card */
+
+/* An opportunity is a card with a confidence stripe down its leading edge.
+   The stripe is the fastest read on the page: scan the column, sort yourself. */
+.edge .signal {
+  position: relative;
+  background: linear-gradient(180deg, var(--t-panel-2), var(--t-panel));
+  border: 1px solid var(--t-line);
+  border-radius: var(--t-radius);
+  overflow: hidden;
+  isolation: isolate;
+  transition: transform 200ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 200ms ease, box-shadow 200ms ease;
+}
+
+.edge .signal::before {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 3px;
+  background: var(--t-muted-signal);
+  opacity: 0.85;
+  transition: opacity 200ms ease, box-shadow 200ms ease;
+}
+
+.edge .signal--arb::before {
+  background: var(--t-guaranteed);
+  box-shadow: 0 0 18px var(--t-guaranteed-line);
+}
+
+.edge .signal--middle::before {
+  background: var(--t-conditional);
+  box-shadow: 0 0 18px var(--t-conditional-line);
+}
+
+.edge .signal--ev::before {
+  background: var(--t-value);
+  box-shadow: 0 0 18px var(--t-value-line);
+}
+
+.edge .signal--lowhold::before {
+  background: var(--t-muted-signal);
+}
+
+.edge .signal:hover {
+  transform: translateY(-2px);
+  border-color: var(--t-line-hot);
+  box-shadow: 0 24px 48px -32px rgba(0, 0, 0, 0.95);
+}
+
+.edge .signal:hover::before {
+  opacity: 1;
+}
+
+.edge .signal__body {
+  padding: 14px 16px 16px 18px;
+}
+
+/* ---------------------------------------------------------------- chips */
+
+.edge .chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 7px;
+  border-radius: 6px;
+  font-family: var(--t-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  border: 1px solid var(--t-line);
+  background: var(--t-muted-dim);
+  color: var(--t-text-dim);
+}
+
+.edge .chip--arb {
+  background: var(--t-guaranteed-dim);
+  border-color: var(--t-guaranteed-line);
+  color: var(--t-guaranteed);
+}
+
+.edge .chip--middle {
+  background: var(--t-conditional-dim);
+  border-color: var(--t-conditional-line);
+  color: var(--t-conditional);
+}
+
+.edge .chip--ev {
+  background: var(--t-value-dim);
+  border-color: var(--t-value-line);
+  color: var(--t-value);
+}
+
+.edge .chip--live {
+  background: var(--t-conditional-dim);
+  border-color: var(--t-conditional-line);
+  color: var(--t-conditional);
+  animation: t-pulse 2.4s ease-in-out infinite;
+}
+
+/* Low hold is the weakest signal on the page and should read that way: it
+   is a small hold, not a small win. */
+.edge .chip--lowhold {
+  background: var(--t-muted-dim);
+  border-color: color-mix(in srgb, var(--t-muted-signal) 34%, transparent);
+  color: var(--t-muted-signal);
+}
+
+@keyframes t-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}
+
+/* ------------------------------------------------------------- stat rail */
+
+/* The header rail. Four numbers, each one a thing an operator checks before
+   committing capital, laid out so a change in any of them is visible at a
+   glance without reading the labels. */
+.edge .rail {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1px;
+  background: var(--t-line-2);
+  border: 1px solid var(--t-line);
+  border-radius: var(--t-radius);
+  overflow: hidden;
+}
+
+@media (min-width: 1200px) {
+  .edge .rail {
+    grid-template-columns: repeat(5, 1fr);
+  }
+}
+
+@media (max-width: 639px) {
+  .edge .rail {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .edge .rail__cell:last-child {
+    grid-column: 1 / -1;
+  }
+}
+
+.edge .rail__cell {
+  position: relative;
+  padding: 14px 16px;
+  background: linear-gradient(180deg, var(--t-panel-2), var(--t-panel));
+}
+
+.edge .rail__label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--t-text-dim);
+  margin-bottom: 6px;
+}
+
+.edge .rail__value {
+  font-family: var(--t-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 1.05;
+  color: var(--t-text-bright);
+  letter-spacing: -0.02em;
+}
+
+.edge .rail__sub {
+  margin-top: 5px;
+  font-size: 11px;
+  color: var(--t-text-dim);
+}
+
+.edge .rail__value--arb { color: var(--t-guaranteed); }
+.edge .rail__value--middle { color: var(--t-conditional); }
+.edge .rail__value--ev { color: var(--t-value); }.edge .rail__value--lowhold { color: var(--t-muted-signal); }
+
+/* A value that just changed should announce itself once, then settle. */
+.edge .rail__value.bump {
+  animation: t-bump 620ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes t-bump {
+  0% { transform: translateY(0); }
+  28% { transform: translateY(-3px); }
+  100% { transform: translateY(0); }
+}
+
+/* ---------------------------------------------------------------- meters */
+
+/* ROI and risk are both percentages of the same bankroll, so they are shown as
+   two bars that share a scale. Comparing them is how you decide whether a
+   middle is worth taking, and two numbers in a row do not support that. */
+.edge .meter {
+  position: relative;
+  height: 4px;
+  border-radius: 999px;
+  background: var(--t-line-2);
+  overflow: hidden;
+}
+
+.edge .meter__fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  border-radius: 999px;
+  transform-origin: left center;
+  animation: t-grow 700ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.edge .statbar { margin-top: 6px; }
+
+.edge .meter__fill--arb { background: var(--t-guaranteed); }
+.edge .meter__fill--middle { background: var(--t-conditional); }
+.edge .meter__fill--ev { background: var(--t-value); }.edge .meter__fill--lowhold { background: var(--t-muted-signal); }
+
+@keyframes t-grow {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+/* ------------------------------------------------------------------ legs */
+
+/* A leg is one instruction to one book. It is the unit an operator actually
+   acts on, so it is drawn as a row with the book, the selection and the price
+   each on its own column. */
+.edge .leg {
+  display: grid;
+  grid-template-columns: minmax(84px, auto) 1fr auto;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: var(--t-radius-sm);
+  background: var(--t-raise);
+  border: 1px solid var(--t-line-2);
+  transition: border-color 160ms ease, background 160ms ease;
+}
+
+.edge .leg:hover {
+  border-color: var(--t-line-hot);
+  background: var(--t-panel-2);
+}
+
+.edge .leg__book {
+  font-family: var(--t-mono);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--t-text-bright);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.edge .leg__pick {
+  font-size: 12px;
+  color: var(--t-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.edge .leg__odds {
+  font-family: var(--t-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--t-text-bright);
+}
+
+.edge .leg__stake {
+  font-family: var(--t-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 11px;
+  color: var(--t-guaranteed);
+}
+
+/* ------------------------------------------------------------- table rows */
+
+.edge table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: var(--t-panel-2);
+  font-family: var(--t-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--t-text-dim);
+  border-bottom: 1px solid var(--t-line);
+  white-space: nowrap;
+}
+
+.edge table tbody tr {
+  border-bottom: 1px solid var(--t-line-2);
+  transition: background 140ms ease;
+}
+
+.edge table tbody tr:hover {
+  background: var(--t-panel-2);
+}
+
+.edge table tbody td {
+  font-size: 13px;
+  color: var(--t-text);
+}
+
+/* ------------------------------------------------------------- controls */
+
+.edge select,
+.edge input[type='text'],
+.edge input[type='number'] {
+  background: var(--t-panel);
+  border: 1px solid var(--t-line);
+  border-radius: var(--t-radius-sm);
+  color: var(--t-text-bright);
+  font-family: var(--t-sans);
+  font-size: 13px;
+  padding: 8px 11px;
+  transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.edge select:focus,
+.edge input:focus {
+  outline: none;
+  border-color: var(--t-value-line);
+  box-shadow: 0 0 0 3px var(--t-value-dim);
+}
+
+.edge .btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: var(--t-radius-sm);
+  border: 1px solid var(--t-line);
+  background: var(--t-raise);
+  color: var(--t-text);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 160ms ease, border-color 160ms ease, transform 120ms ease;
+}
+
+.edge .btn:hover {
+  background: var(--t-panel-2);
+  border-color: var(--t-line-hot);
+}
+
+.edge .btn:active {
+  transform: translateY(1px);
+}
+
+.edge .btn--primary {
+  background: linear-gradient(180deg, var(--t-guaranteed), color-mix(in srgb, var(--t-guaranteed) 78%, black));
+  border-color: var(--t-guaranteed-line);
+  color: #04160f;
+}
+
+.edge .btn:focus-visible,
+.edge select:focus-visible,
+.edge input:focus-visible {
+  outline: 2px solid var(--t-value);
+  outline-offset: 2px;
+}
+
+/* Segmented control for the signal-class filter. */
+.edge .segmented {
+  display: inline-flex;
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding: 3px;
+  gap: 2px;
+  background: var(--t-panel);
+  border: 1px solid var(--t-line);
+  border-radius: 10px;
+}
+
+.edge .segmented::-webkit-scrollbar {
+  display: none;
+}
+
+.edge .segmented button {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--t-text-dim);
+  font-family: var(--t-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+  transition: background 160ms ease, color 160ms ease;
+}
+
+.edge .segmented button:hover {
+  color: var(--t-text-bright);
+}
+
+.edge .segmented button[aria-pressed='true'] {
+  background: var(--t-raise);
+  color: var(--t-text-bright);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.04) inset;
+}
+
+.edge .segmented button[aria-pressed='true'][data-signal='arb'] { color: var(--t-guaranteed); }
+.edge .segmented button[aria-pressed='true'][data-signal='middle'] { color: var(--t-conditional); }
+.edge .segmented button[aria-pressed='true'][data-signal='ev'] { color: var(--t-value); }
+
+.edge .tab-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 17px;
+  height: 17px;
+  padding: 0 5px;
+  border-radius: 999px;
+  font-family: var(--t-mono);
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+  background: var(--t-line);
+  color: var(--t-text-dim);
+  transition: background 160ms ease, color 160ms ease;
+}
+
+.edge .segmented button[aria-pressed='true'] .tab-badge {
+  background: var(--t-text-dim);
+  color: var(--t-bg);
+}
+
+.edge .segmented button[aria-pressed='true'][data-signal='arb'] .tab-badge {
+  background: var(--t-guaranteed);
+  color: #04160f;
+}
+
+.edge .segmented button[aria-pressed='true'][data-signal='middle'] .tab-badge {
+  background: var(--t-conditional);
+  color: #1a0f02;
+}
+
+.edge .segmented button[aria-pressed='true'][data-signal='ev'] .tab-badge {
+  background: var(--t-value);
+  color: #031522;
+}
+
+.edge .segmented button[aria-pressed='true'][data-signal='lowhold'] .tab-badge {
+  background: var(--t-muted-signal);
+  color: #0b0f14;
+}
+
+.edge .tab-pane {
+  display: block;
+}
+
+.edge .tab-pane[hidden] {
+  display: none !important;
+}
+
+.edge .tab-badge--arb {
+  background: var(--t-guaranteed-dim);
+  color: var(--t-guaranteed);
+}
+
+.edge .tab-badge--middle {
+  background: var(--t-conditional-dim);
+  color: var(--t-conditional);
+}
+
+.edge .tab-badge--ev {
+  background: var(--t-value-dim);
+  color: var(--t-value);
+}
+
+.edge .tab-badge--lowhold {
+  background: var(--t-muted-dim);
+  color: var(--t-muted-signal);
+}
+
+/* Middles Over/Under window visual meter */
+.edge .window-box {
+  background: var(--t-panel-2);
+  border: 1px solid var(--t-line);
+  border-radius: var(--t-radius-sm);
+  padding: 8px 10px;
+  margin-bottom: 12px;
+}
+
+.edge .window-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 11px;
+  margin-bottom: 6px;
+}
+
+.edge .window-track {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--t-mono);
+  font-size: 11px;
+}
+
+.edge .window-pill {
+  padding: 2px 7px;
+  border-radius: 5px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.edge .window-pill--low {
+  background: rgba(90, 200, 250, 0.12);
+  border: 1px solid rgba(90, 200, 250, 0.3);
+  color: var(--t-value);
+}
+
+.edge .window-pill--gap {
+  flex: 1;
+  text-align: center;
+  background: var(--t-conditional-dim);
+  border: 1px dashed var(--t-conditional-line);
+  color: var(--t-conditional);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.edge .window-pill--high {
+  background: rgba(245, 181, 68, 0.12);
+  border: 1px solid rgba(245, 181, 68, 0.3);
+  color: var(--t-conditional);
+}
+
+.edge .rail__cell.cursor-pointer {
+  cursor: pointer;
+  transition: background 160ms ease, transform 160ms ease;
+}
+
+.edge .rail__cell.cursor-pointer:hover {
+  background: var(--t-raise);
+  transform: translateY(-1px);
+}
+
+/* ---------------------------------------------------------------- header */
+
+.edge .masthead {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--t-line);
+}
+
+@media (max-width: 600px) {
+  .edge .masthead {
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .edge .masthead__title {
+    font-size: 18px;
+  }
+}
+
+.edge .masthead__title {
+  font-size: 22px;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+  color: var(--t-text-bright);
+  margin: 0;
+}
+
+.edge .masthead__sub {
+  margin: 5px 0 0;
+  font-size: 12.5px;
+  color: var(--t-text-dim);
+}
+
+/* The books currently quoted. Small, monospaced, and deliberately quiet -
+   this is provenance, not a headline. */
+.edge .feedline {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 11px;
+}
+
+.edge .feedline span {
+  font-family: var(--t-mono);
+  font-size: 10px;
+  color: var(--t-text-dim);
+  padding: 2px 6px;
+  border-radius: 5px;
+  background: var(--t-muted-dim);
+  border: 1px solid var(--t-line-2);
+}
+
+/* ------------------------------------------------------------ utilities */
+
+.edge .empty {
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--t-text-dim);
+  font-size: 13px;
+  border: 1px dashed var(--t-line);
+  border-radius: var(--t-radius);
+}
+
+.edge .hairline {
+  height: 1px;
+  background: var(--t-line-2);
+  border: 0;
+  margin: 14px 0;
+}
+
+.edge .kicker {
+  font-family: var(--t-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--t-text-dim);
+}
+
+.edge .value-arb { color: var(--t-guaranteed); }
+.edge .value-middle { color: var(--t-conditional); }
+.edge .value-ev { color: var(--t-value); }
+.edge .value-dim { color: var(--t-text-dim); }
+
+.edge .stack-1 > * + * { margin-top: 6px; }
+.edge .stack-2 > * + * { margin-top: 10px; }
+.edge .stack-3 > * + * { margin-top: 16px; }
+
+.edge .grid-2 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 12px;
+}
+
+/* -------------------------------------------------------------- motion */
+
+@media (prefers-reduced-motion: reduce) {
+  .edge *,
+  .edge *::before,
+  .edge *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+  .edge .signal:hover {
+    transform: none;
+  }
+}
+
+/* ------------------------------------------- responsive & layout safety */
+
+body.edge main {
+  max-width: none;
+  width: 100%;
+}
+
+body.edge.has-sidebar main {
+  margin-left: var(--sidebar-w);
+  width: calc(100% - var(--sidebar-w));
+  max-width: none;
+}
+
+@media (max-width: 980px) {
+  body.edge main,
+  body.edge.has-sidebar main {
+    margin-left: 0;
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
+.edge .card,
+.edge .signal {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.edge .signal__body,
+.edge .leg {
+  min-width: 0;
+}
+
+.edge .overflow-x-auto {
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+@media (min-width: 1536px) {
+  .edge #arb-grid,
+  .edge #middle-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}

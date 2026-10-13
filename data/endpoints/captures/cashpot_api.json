@@ -1,0 +1,25 @@
+{
+  "book": "cashpot",
+  "timestamp": "2026-10-12T14:09:23.663Z",
+  "pagesVisited": 50,
+  "minPagesRequired": 50,
+  "pagesTargetReached": true,
+  "endpoints": [
+    {
+      "method": "GET",
+      "url": "https://exalogic.cashpot.ro/XSportDatastore/getMenuPrematch?systemCode=CASHPOT&lingua=RO&hash=",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://cashpot.ro/sport",
+      "capturedAt": "2026-10-12T14:09:23.663Z"
+    },
+    {
+      "method": "GET",
+      "url": "https://exalogic.cashpot.ro/XSportDatastore/getPalinsestoDelGiorno?systemCode=CASHPOT&lingua=RO&hash=&data=20261012&idSport=1&idAggregata=1&timezone=3",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "pageUrl": "https://cashpot.ro/sport",
+      "capturedAt": "2026-10-12T14:09:23.663Z"
+    }
+  ]
+}

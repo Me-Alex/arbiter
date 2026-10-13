@@ -1,0 +1,1152 @@
+{
+  "dates": [
+    {
+      "dateTime": "2026-09-21T20:00:00Z",
+      "eventIds": [
+        17999837,
+        18021717,
+        17954418,
+        17954413
+      ]
+    }
+  ],
+  "topSports": [
+    {
+      "id": 66,
+      "name": "Football",
+      "iconName": "soccer",
+      "hasStream": false,
+      "count": 1240
+    },
+    {
+      "id": 67,
+      "name": "Basketball",
+      "iconName": "basketball",
+      "hasStream": false,
+      "count": 172
+    },
+    {
+      "id": 69,
+      "name": "Volleyball",
+      "iconName": "volleyball",
+      "hasStream": false,
+      "count": 75
+    },
+    {
+      "id": 68,
+      "name": "Tennis",
+      "iconName": "tennis",
+      "hasStream": false,
+      "count": 472
+    },
+    {
+      "id": 145,
+      "name": "E-sports +",
+      "iconName": "e-sports-+",
+      "hasStream": false,
+      "count": 164
+    },
+    {
+      "id": 75,
+      "name": "American Football",
+      "iconName": "american-football",
+      "hasStream": false,
+      "count": 77
+    },
+    {
+      "id": -1,
+      "name": "Other",
+      "iconName": "Other",
+      "hasStream": false,
+      "count": 1021
+    }
+  ],
+  "headers": [
+    {
+      "typeId": 1,
+      "name": "1x2",
+      "mst": 0,
+      "odds": [
+        {
+          "id": 1,
+          "name": "Home"
+        },
+        {
+          "id": 2,
+          "name": "X"
+        },
+        {
+          "id": 3,
+          "name": "Away"
+        }
+      ]
+    },
+    {
+      "typeId": 18,
+      "name": "Total",
+      "mst": 0,
+      "odds": [
+        {
+          "id": 12,
+          "name": "Over"
+        },
+        {
+          "id": 13,
+          "name": "Under"
+        }
+      ],
+      "specialOdd": {
+        "typeId": 1,
+        "name": "Goals"
+      }
+    },
+    {
+      "typeId": 29,
+      "name": "Both Teams To Score",
+      "mst": 0,
+      "odds": [
+        {
+          "id": 74,
+          "name": "Yes"
+        },
+        {
+          "id": 76,
+          "name": "No"
+        }
+      ]
+    },
+    {
+      "typeId": 10,
+      "name": "Double chance",
+      "mst": 0,
+      "odds": [
+        {
+          "id": 9,
+          "name": "1X"
+        },
+        {
+          "id": 10,
+          "name": "12"
+        },
+        {
+          "id": 11,
+          "name": "X2"
+        }
+      ]
+    },
+    {
+      "typeId": 11,
+      "name": "Draw no bet",
+      "mst": 0,
+      "odds": [
+        {
+          "id": 1,
+          "name": "Home"
+        },
+        {
+          "id": 3,
+          "name": "Away"
+        }
+      ]
+    }
+  ],
+  "pageCount": 1,
+  "page": 1,
+  "sports": [
+    {
+      "catIds": [
+        574,
+        561,
+        515,
+        1133,
+        585,
+        495,
+        1131,
+        497,
+        548,
+        1173,
+        593,
+        716,
+        512,
+        511,
+        510,
+        1132,
+        499,
+        1134,
+        560,
+        595,
+        826,
+        797,
+        1178,
+        727,
+        567,
+        1155,
+        896,
+        812,
+        738,
+        767,
+        899,
+        579,
+        591,
+        516,
+        507,
+        568,
+        876,
+        517,
+        502,
+        810,
+        1159,
+        597,
+        884,
+        509,
+        590,
+        601,
+        555,
+        588,
+        554,
+        566,
+        891,
+        605,
+        506,
+        691,
+        501,
+        890,
+        563,
+        582,
+        847,
+        729,
+        2217,
+        795,
+        882,
+        808,
+        550,
+        496,
+        898,
+        503,
+        902,
+        604,
+        606,
+        603,
+        565,
+        544,
+        602,
+        814,
+        569,
+        703,
+        518,
+        852,
+        916,
+        854,
+        820,
+        908,
+        707,
+        557,
+        816
+      ],
+      "typeId": 1,
+      "iconName": "soccer",
+      "hasLiveEvents": false,
+      "id": 66,
+      "name": "Football"
+    }
+  ],
+  "categories": [
+    {
+      "champIds": [
+        7421,
+        4972,
+        3978,
+        4619,
+        3075,
+        4257
+      ],
+      "iso": "ARG",
+      "hasLiveEvents": false,
+      "id": 574,
+      "name": "Argentina"
+    },
+    {
+      "champIds": [
+        17255,
+        4707,
+        9948,
+        5040,
+        4569,
+        3054
+      ],
+      "iso": "POL",
+      "hasLiveEvents": false,
+      "id": 561,
+      "name": "Poland"
+    },
+    {
+      "champIds": [
+        2967
+      ],
+      "iso": "ZAF",
+      "hasLiveEvents": false,
+      "id": 515,
+      "name": "South Africa"
+    }
+  ],
+  "champs": [
+    {
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "hasLiveEvents": false,
+      "id": 7421,
+      "name": "Campeonato De Reserva De Primera Division C"
+    },
+    {
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "hasLiveEvents": false,
+      "id": 17255,
+      "name": "IV Liga"
+    },
+    {
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "hasLiveEvents": false,
+      "id": 2967,
+      "name": "Premiership"
+    }
+  ],
+  "events": [
+    {
+      "marketIds": [
+        1776777557,
+        1776898885,
+        1776898886
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "code": 676,
+      "hasStream": false,
+      "extId": "fp32_ar:match:689378",
+      "sc": 457,
+      "mc": 19,
+      "rc": false,
+      "pId": 32,
+      "et": 0,
+      "hasStats": false,
+      "competitorIds": [
+        46955,
+        782797
+      ],
+      "sportId": 66,
+      "catId": 574,
+      "champId": 7421,
+      "status": 0,
+      "startDate": "2026-09-21T20:00:00Z",
+      "id": 17999837,
+      "name": "Canuelas FC (Res.) vs. Defensores de Cambaceres Reserves"
+    },
+    {
+      "marketIds": [
+        1777946468,
+        1777946420,
+        1777946455
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "code": 6841,
+      "hasStream": false,
+      "extId": "fp32_ar:match:690813",
+      "sc": 768,
+      "mc": 71,
+      "rc": false,
+      "pId": 32,
+      "et": 0,
+      "hasStats": false,
+      "competitorIds": [
+        1116459,
+        911208
+      ],
+      "sportId": 66,
+      "catId": 561,
+      "champId": 17255,
+      "status": 0,
+      "startDate": "2026-09-21T20:00:00Z",
+      "id": 18021717,
+      "name": "Polonia Laziska Górne vs. LKS Przemsza Siewierz"
+    },
+    {
+      "marketIds": [
+        1776133381,
+        1776133113,
+        1776133406,
+        1776133349,
+        1776133357,
+        1776133341
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "code": 3885,
+      "hasStream": false,
+      "extId": "fp32_ar:match:688248",
+      "sc": 1585,
+      "mc": 187,
+      "rc": false,
+      "pId": 32,
+      "et": 0,
+      "hasStats": true,
+      "competitorIds": [
+        47933,
+        47279
+      ],
+      "sportId": 66,
+      "catId": 515,
+      "champId": 2967,
+      "status": 0,
+      "startDate": "2026-09-21T20:00:00Z",
+      "id": 17954418,
+      "name": "Durban City FC vs. AmaZulu Durban"
+    },
+    {
+      "marketIds": [
+        1776137405,
+        1776137331,
+        1776137430,
+        1776137370,
+        1776137378,
+        1776137362
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "code": 3711,
+      "hasStream": false,
+      "extId": "fp32_ar:match:688250",
+      "sc": 1571,
+      "mc": 184,
+      "rc": false,
+      "pId": 32,
+      "et": 0,
+      "hasStats": true,
+      "competitorIds": [
+        52665,
+        47931
+      ],
+      "sportId": 66,
+      "catId": 515,
+      "champId": 2967,
+      "status": 0,
+      "startDate": "2026-09-21T20:00:00Z",
+      "id": 17954413,
+      "name": "Richards Bay FC vs. Mamelodi Sundowns"
+    }
+  ],
+  "competitors": [
+    {
+      "abbreviation": "CAN",
+      "id": 46955,
+      "name": "Canuelas FC (Res.)"
+    },
+    {
+      "abbreviation": "DEF",
+      "id": 782797,
+      "name": "Defensores de Cambaceres Reserves"
+    },
+    {
+      "id": 1116459,
+      "name": "Polonia Laziska Górne"
+    },
+    {
+      "id": 911208,
+      "name": "LKS Przemsza Siewierz"
+    },
+    {
+      "abbreviation": "DUR",
+      "id": 47933,
+      "name": "Durban City FC"
+    },
+    {
+      "abbreviation": "AMA",
+      "id": 47279,
+      "name": "AmaZulu Durban"
+    },
+    {
+      "abbreviation": "RIC",
+      "id": 52665,
+      "name": "Richards Bay FC"
+    },
+    {
+      "abbreviation": "MAM",
+      "id": 47931,
+      "name": "Mamelodi Sundowns"
+    }
+  ],
+  "markets": [
+    {
+      "oddIds": [
+        4638267372,
+        4638267373,
+        4638267374
+      ],
+      "typeId": 1,
+      "sportMarketId": 70472,
+      "id": 1776777557,
+      "name": "1x2"
+    },
+    {
+      "oddIds": [
+        4638530262,
+        4638530260,
+        4638530261
+      ],
+      "typeId": 10,
+      "sportMarketId": 70495,
+      "id": 1776898886,
+      "name": "Double chance"
+    },
+    {
+      "oddIds": [
+        4638530258,
+        4638530259
+      ],
+      "typeId": 18,
+      "sportMarketId": 70520,
+      "sv": "2.5",
+      "sn": "2.5",
+      "id": 1776898885,
+      "name": "Total"
+    },
+    {
+      "oddIds": [
+        4641808058,
+        4641808059,
+        4641808060
+      ],
+      "typeId": 1,
+      "sportMarketId": 70472,
+      "id": 1777946468,
+      "name": "1x2"
+    },
+    {
+      "oddIds": [
+        4641808012,
+        4641808010,
+        4641808011
+      ],
+      "typeId": 10,
+      "sportMarketId": 70495,
+      "id": 1777946455,
+      "name": "Double chance"
+    },
+    {
+      "oddIds": [
+        4641807916,
+        4641807917
+      ],
+      "typeId": 18,
+      "sportMarketId": 70520,
+      "sv": "3.5",
+      "sn": "3.5",
+      "id": 1777946420,
+      "name": "Total"
+    },
+    {
+      "oddIds": [
+        4636431224,
+        4636431225,
+        4636431226
+      ],
+      "typeId": 1,
+      "sportMarketId": 70472,
+      "id": 1776133381,
+      "name": "1x2"
+    },
+    {
+      "oddIds": [
+        4636431294,
+        4636431296,
+        4636431295
+      ],
+      "variant": 9,
+      "lines": [],
+      "typeId": 8,
+      "sportMarketId": 70491,
+      "sv": "1",
+      "sn": "First Goal",
+      "id": 1776133406,
+      "name": "First goal"
+    },
+    {
+      "oddIds": [
+        4636431092,
+        4636431090,
+        4636431091
+      ],
+      "typeId": 10,
+      "sportMarketId": 70495,
+      "id": 1776133349,
+      "name": "Double chance"
+    },
+    {
+      "oddIds": [
+        4636431129,
+        4636431130
+      ],
+      "typeId": 11,
+      "sportMarketId": 70500,
+      "id": 1776133357,
+      "name": "Draw no bet"
+    },
+    {
+      "oddIds": [
+        4636430277,
+        4636430278
+      ],
+      "typeId": 18,
+      "sportMarketId": 70520,
+      "sv": "2.5",
+      "sn": "2.5",
+      "id": 1776133113,
+      "name": "Total"
+    },
+    {
+      "oddIds": [
+        4636431028,
+        4636431029
+      ],
+      "typeId": 29,
+      "sportMarketId": 70545,
+      "id": 1776133341,
+      "name": "Both Teams To Score"
+    },
+    {
+      "oddIds": [
+        4636440938,
+        4636440939,
+        4636440940
+      ],
+      "typeId": 1,
+      "sportMarketId": 70472,
+      "id": 1776137405,
+      "name": "1x2"
+    },
+    {
+      "oddIds": [
+        4636441008,
+        4636441010,
+        4636441009
+      ],
+      "variant": 9,
+      "lines": [],
+      "typeId": 8,
+      "sportMarketId": 70491,
+      "sv": "1",
+      "sn": "First Goal",
+      "id": 1776137430,
+      "name": "First goal"
+    },
+    {
+      "oddIds": [
+        4636440788,
+        4636440786,
+        4636440787
+      ],
+      "typeId": 10,
+      "sportMarketId": 70495,
+      "id": 1776137370,
+      "name": "Double chance"
+    },
+    {
+      "oddIds": [
+        4636440825,
+        4636440826
+      ],
+      "typeId": 11,
+      "sportMarketId": 70500,
+      "id": 1776137378,
+      "name": "Draw no bet"
+    },
+    {
+      "oddIds": [
+        4636440662,
+        4636440663
+      ],
+      "typeId": 18,
+      "sportMarketId": 70520,
+      "sv": "2.5",
+      "sn": "2.5",
+      "id": 1776137331,
+      "name": "Total"
+    },
+    {
+      "oddIds": [
+        4636440724,
+        4636440725
+      ],
+      "typeId": 29,
+      "sportMarketId": 70545,
+      "id": 1776137362,
+      "name": "Both Teams To Score"
+    }
+  ],
+  "odds": [
+    {
+      "typeId": 1,
+      "price": 2.5455,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 46955,
+      "isDBB": true,
+      "id": 4638267372,
+      "name": "1"
+    },
+    {
+      "typeId": 2,
+      "price": 3.3334,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4638267373,
+      "name": "X"
+    },
+    {
+      "typeId": 3,
+      "price": 2.4,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 782797,
+      "isDBB": true,
+      "id": 4638267374,
+      "name": "2"
+    },
+    {
+      "typeId": 9,
+      "price": 1.4286,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 46955,
+      "isDBB": true,
+      "id": 4638530262,
+      "name": "1 or draw"
+    },
+    {
+      "typeId": 10,
+      "price": 1.2728,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4638530260,
+      "name": "1 or 2"
+    },
+    {
+      "typeId": 11,
+      "price": 1.4,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 782797,
+      "isDBB": true,
+      "id": 4638530261,
+      "name": "Draw or 2"
+    },
+    {
+      "typeId": 12,
+      "price": 1.95,
+      "isMB": true,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4638530258,
+      "name": "Over 2.5"
+    },
+    {
+      "typeId": 13,
+      "price": 1.7,
+      "isMB": true,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4638530259,
+      "name": "Under 2.5"
+    },
+    {
+      "typeId": 1,
+      "price": 2.1429,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 1116459,
+      "isDBB": true,
+      "id": 4641808058,
+      "name": "1"
+    },
+    {
+      "typeId": 2,
+      "price": 4,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4641808059,
+      "name": "X"
+    },
+    {
+      "typeId": 3,
+      "price": 2.4286,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 911208,
+      "isDBB": true,
+      "id": 4641808060,
+      "name": "2"
+    },
+    {
+      "typeId": 9,
+      "price": 1.4,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 1116459,
+      "isDBB": true,
+      "id": 4641808012,
+      "name": "1 or draw"
+    },
+    {
+      "typeId": 10,
+      "price": 1.2223,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4641808010,
+      "name": "1 or 2"
+    },
+    {
+      "typeId": 11,
+      "price": 1.5,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 911208,
+      "isDBB": true,
+      "id": 4641808011,
+      "name": "Draw or 2"
+    },
+    {
+      "typeId": 12,
+      "price": 1.95,
+      "isMB": true,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4641807916,
+      "name": "Over 3.5"
+    },
+    {
+      "typeId": 13,
+      "price": 1.7,
+      "isMB": true,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4641807917,
+      "name": "Under 3.5"
+    },
+    {
+      "typeId": 1,
+      "price": 2.5,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 47933,
+      "isDBB": true,
+      "id": 4636431224,
+      "name": "1"
+    },
+    {
+      "typeId": 2,
+      "price": 2.9,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4636431225,
+      "name": "X"
+    },
+    {
+      "typeId": 3,
+      "price": 2.9,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 47279,
+      "isDBB": true,
+      "id": 4636431226,
+      "name": "2"
+    },
+    {
+      "typeId": 1,
+      "price": 1.9,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 47933,
+      "isDBB": true,
+      "id": 4636431294,
+      "name": "1"
+    },
+    {
+      "typeId": 7,
+      "price": 7.5,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4636431296,
+      "name": "None"
+    },
+    {
+      "typeId": 3,
+      "price": 2.0834,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 47279,
+      "isDBB": true,
+      "id": 4636431295,
+      "name": "2"
+    },
+    {
+      "typeId": 9,
+      "price": 1.35,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 47933,
+      "isDBB": true,
+      "id": 4636431092,
+      "name": "1 or draw"
+    },
+    {
+      "typeId": 10,
+      "price": 1.35,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4636431090,
+      "name": "1 or 2"
+    },
+    {
+      "typeId": 11,
+      "price": 1.4286,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 47279,
+      "isDBB": true,
+      "id": 4636431091,
+      "name": "Draw or 2"
+    },
+    {
+      "typeId": 1,
+      "price": 1.7,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 47933,
+      "id": 4636431129,
+      "name": "1"
+    },
+    {
+      "typeId": 3,
+      "price": 2.05,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 47279,
+      "id": 4636431130,
+      "name": "2"
+    },
+    {
+      "typeId": 12,
+      "price": 2.2,
+      "isMB": true,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4636430277,
+      "name": "Over 2.5"
+    },
+    {
+      "typeId": 13,
+      "price": 1.6,
+      "isMB": true,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4636430278,
+      "name": "Under 2.5"
+    },
+    {
+      "typeId": 74,
+      "price": 1.9,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4636431028,
+      "name": "Yes"
+    },
+    {
+      "typeId": 76,
+      "price": 1.8,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4636431029,
+      "name": "No"
+    },
+    {
+      "typeId": 1,
+      "price": 11,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 52665,
+      "isDBB": true,
+      "id": 4636440938,
+      "name": "1"
+    },
+    {
+      "typeId": 2,
+      "price": 5,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4636440939,
+      "name": "X"
+    },
+    {
+      "typeId": 3,
+      "price": 1.25,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 47931,
+      "isDBB": true,
+      "id": 4636440940,
+      "name": "2"
+    },
+    {
+      "typeId": 1,
+      "price": 4.2,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 52665,
+      "isDBB": true,
+      "id": 4636441008,
+      "name": "1"
+    },
+    {
+      "typeId": 7,
+      "price": 12,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4636441010,
+      "name": "None"
+    },
+    {
+      "typeId": 3,
+      "price": 1.2223,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 47931,
+      "isDBB": true,
+      "id": 4636441009,
+      "name": "2"
+    },
+    {
+      "typeId": 9,
+      "price": 3,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 52665,
+      "isDBB": true,
+      "id": 4636440788,
+      "name": "1 or draw"
+    },
+    {
+      "typeId": 10,
+      "price": 1.125,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4636440786,
+      "name": "1 or 2"
+    },
+    {
+      "typeId": 11,
+      "price": 1.04,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 47931,
+      "isDBB": true,
+      "id": 4636440787,
+      "name": "Draw or 2"
+    },
+    {
+      "typeId": 1,
+      "price": 8,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 52665,
+      "id": 4636440825,
+      "name": "1"
+    },
+    {
+      "typeId": 3,
+      "price": 1.04,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 47931,
+      "id": 4636440826,
+      "name": "2"
+    },
+    {
+      "typeId": 12,
+      "price": 1.75,
+      "isMB": true,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4636440662,
+      "name": "Over 2.5"
+    },
+    {
+      "typeId": 13,
+      "price": 1.95,
+      "isMB": true,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4636440663,
+      "name": "Under 2.5"
+    },
+    {
+      "typeId": 74,
+      "price": 2.4,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4636440724,
+      "name": "Yes"
+    },
+    {
+      "typeId": 76,
+      "price": 1.5,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4636440725,
+      "name": "No"
+    }
+  ]
+}

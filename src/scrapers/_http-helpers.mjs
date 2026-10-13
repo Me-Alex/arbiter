@@ -1,3 +1,5 @@
+import { extractPeriodFromName } from '../scanner/market-contracts.mjs';
+
 // ProviderContract kept for JSDoc only — no runtime import needed
 
 /**
@@ -38,14 +40,20 @@ export function flattenMarkets(groups, { defaultGroupName = 'Main', normalizeOdd
         if (!Number.isFinite(odds) || odds <= 1) continue;
         selections.push({
           id: String(s.id ?? s.selectionId ?? s.SelectionId ?? ''),
-          name: String(s.name || s.label || s.outcomeName || s.SelectionName || '').trim(),
+          name: String((typeof s.name === 'object' && s.name !== null && s.name.name) || s.name || s.label || s.outcomeName || s.SelectionName || '').trim(),
           odds,
           handicap: s.handicap ?? s.point ?? s.HCP ?? null,
           group: groupName,
         });
       }
       if (selections.length === 0) continue;
-      markets.push({ key, name: String(m.name || m.label || key), selections });
+      const period = m.period || extractPeriodFromName(m.name || m.label || key) || undefined;
+      markets.push({
+        key,
+        name: String(m.name || m.label || key),
+        ...(period ? { period } : {}),
+        selections,
+      });
     }
   }
   return markets;

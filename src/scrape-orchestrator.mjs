@@ -208,7 +208,7 @@ export class ScrapeOrchestrator {
     if (!this.scrapeState || this.scrapeState.runId !== runId) return;
     this.scrapeState.status = 'cancelled';
     this.scrapeState.finishedAt = new Date().toISOString();
-    this.scrapeState.currentActivity = 'scrape cancelled';
+    this.scrapeState.currentActivity = 'cancelled';
     await this.persistState();
     this._broadcast('scrape-update', this.scrapeState);
   }
@@ -218,7 +218,7 @@ export class ScrapeOrchestrator {
       return { cancelled: false, state: this.scrapeState || null };
     }
     this.scrapeState.status = 'cancelling';
-    this.scrapeState.currentActivity = 'cancelling active scrape';
+    this.scrapeState.currentActivity = 'cancelling';
     await this.persistState();
     this._broadcast('scrape-update', this.scrapeState);
     this._abortController.abort();
@@ -261,7 +261,7 @@ export class ScrapeOrchestrator {
       }
     };
     const finishCancelled = async () => this._finishCancelled(runId);
-    this._setStep('Scraping', 0);
+    this._setStep('scraping', 0);
 
     const onEvent = (e) => this._handleScrapeEvent(e);
     let batch;
@@ -309,7 +309,7 @@ export class ScrapeOrchestrator {
     };
 
     throwIfAborted();
-    this._setStep('Scanning', 1);
+    this._setStep('scanning', 1);
     let scan;
     let scanFailed = false;
     try {
@@ -353,7 +353,7 @@ export class ScrapeOrchestrator {
     throwIfAborted();
     let verifyFailed = false;
     if (verify && scan && scan.opportunities.length) {
-      this._setStep('Verifying', 2);
+      this._setStep('verifying', 2);
       try {
         await runVerificationPass(
           scan.opportunities,
@@ -380,7 +380,7 @@ export class ScrapeOrchestrator {
     // Publish only after the scan and any verification pass have completed.
     await writeJsonAtomic(join(this.dataDir, 'latest-scan.json'), scan || emptyScan({ scrapeRunId: runId }));
 
-    this._setStep('Cataloging', 3);
+    this._setStep('cataloging', 3);
     if (catalog && scan) {
       try {
         throwIfAborted();
@@ -391,7 +391,7 @@ export class ScrapeOrchestrator {
     }
 
     throwIfAborted();
-    this._setStep('Complete', 4);
+    this._setStep('complete', 4);
     this.scrapeState.status = resolveTerminalStatus({ scanFailed, verifyFailed, jobs: this.scrapeState.jobs });
     this.scrapeState.finishedAt = new Date().toISOString();
     await this.persistState();
@@ -399,6 +399,19 @@ export class ScrapeOrchestrator {
 
   }
 
+  /**
+   * Move the run to a step, by dictionary key.
+   *
+   * `label` is the key and not a word, and that is the whole point of the
+   * parameter: this used to carry `Scraping`, `Scanning`, `Verifying`,
+   * `Cataloging` and `Complete`, which the scrape page wrote into
+   * `#progress-activity` and `#act-line` verbatim — so a Romanian operator read
+   * them in English, in the one line that says what the run is doing right now.
+   * The backend does not know which language the page is in, so it sends the
+   * name the page asks the dictionary with. All five keys already existed in
+   * both dictionaries (`scraping`, `scanning`, `verifying`, `cataloging`,
+   * `complete`), which is why nothing here is new wording.
+   */
   _setStep(label, index) {
     if (!this.scrapeState) return;
     this.scrapeState.currentStep = { label, index };
@@ -414,7 +427,11 @@ export class ScrapeOrchestrator {
     }
     const state = this.scrapeState;
     if (event.type === 'job-start') {
-      state.currentActivity = `scraping ${event.jobId}`;
+      // The key, not `scraping <book>`. The book name is on the job the page
+      // already finds for its own book readout, and the page puts it back
+      // beside the translated word — which is what this line used to hand it
+      // in English.
+      state.currentActivity = 'scraping';
       const j = state.jobs.find((x) => x.id === event.jobId);
       if (j) j.status = 'running';
       this._broadcast('scrape-update', state);

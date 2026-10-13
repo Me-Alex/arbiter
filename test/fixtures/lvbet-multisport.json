@@ -1,0 +1,3433 @@
+{
+  "basketball": {
+    "sportId": 3,
+    "matches": [
+      {
+        "match_id": "bc:31197497",
+        "teams_reversed": false,
+        "date": "2026-10-14T01:15:00+00:00",
+        "info": "",
+        "event_restriction": "not_with_same_event",
+        "integrations": {
+          "abios_enabled": null,
+          "betbuilder_id": null,
+          "bg_betbuilder": false,
+          "score_tracker": null,
+          "scoreframe_id": null,
+          "livescorepro_id": null,
+          "smart_stream_id": null
+        },
+        "streams": [],
+        "sports_groups_ids": [
+          3,
+          33324,
+          34152
+        ],
+        "state": {
+          "is_pre": true,
+          "status": "open",
+          "is_live": false,
+          "markets_count": 13
+        },
+        "home": [
+          "BC Cojute"
+        ],
+        "away": [
+          "Salvadorenos BC"
+        ],
+        "home_labels": [
+          "BC Cojute"
+        ],
+        "away_labels": [
+          "Salvadorenos BC"
+        ],
+        "pinned": null
+      },
+      {
+        "match_id": "bc:31197513",
+        "teams_reversed": false,
+        "date": "2026-10-13T17:00:00+00:00",
+        "info": "",
+        "event_restriction": "not_with_same_event",
+        "integrations": {
+          "abios_enabled": null,
+          "betbuilder_id": null,
+          "bg_betbuilder": false,
+          "score_tracker": null,
+          "scoreframe_id": null,
+          "livescorepro_id": null,
+          "smart_stream_id": null
+        },
+        "streams": [],
+        "sports_groups_ids": [
+          3,
+          33394,
+          34479
+        ],
+        "state": {
+          "is_pre": true,
+          "status": "open",
+          "is_live": false,
+          "markets_count": 4
+        },
+        "primary_markets": null,
+        "home": [
+          "BK Kekava/ISG"
+        ],
+        "away": [
+          "BK Jelgava"
+        ],
+        "home_labels": [
+          "BK Kekava/ISG"
+        ],
+        "away_labels": [
+          "BK Jelgava"
+        ],
+        "pinned": null
+      },
+      {
+        "match_id": "bc:31154830",
+        "teams_reversed": false,
+        "date": "2026-10-13T19:15:00+00:00",
+        "info": "",
+        "event_restriction": "not_with_same_event",
+        "integrations": {
+          "abios_enabled": false,
+          "betbuilder_id": null,
+          "bg_betbuilder": false,
+          "score_tracker": true,
+          "scoreframe_id": 6559422,
+          "livescorepro_id": 6559422,
+          "smart_stream_id": null
+        },
+        "streams": [],
+        "sports_groups_ids": [
+          3,
+          33844,
+          61319
+        ],
+        "state": {
+          "is_pre": true,
+          "status": "open",
+          "is_live": false,
+          "markets_count": 31
+        },
+        "home": [
+          "Armann Reykjavik (Wom)"
+        ],
+        "away": [
+          "Valur (Wom)"
+        ],
+        "home_labels": [
+          "Armann Reykjavik (Wom)"
+        ],
+        "away_labels": [
+          "Valur (Wom)"
+        ],
+        "pinned": null
+      },
+      {
+        "match_id": "bc:31154832",
+        "teams_reversed": false,
+        "date": "2026-10-17T08:00:00+00:00",
+        "info": "",
+        "event_restriction": "not_with_same_event",
+        "integrations": {
+          "abios_enabled": null,
+          "betbuilder_id": null,
+          "bg_betbuilder": false,
+          "score_tracker": null,
+          "scoreframe_id": null,
+          "livescorepro_id": null,
+          "smart_stream_id": null
+        },
+        "streams": [],
+        "sports_groups_ids": [
+          3,
+          33085,
+          34582
+        ],
+        "state": {
+          "is_pre": true,
+          "status": "open",
+          "is_live": false,
+          "markets_count": 10
+        },
+        "home": [
+          "Perth Lynx (Wom)"
+        ],
+        "away": [
+          "Townsville Fire (Wom)"
+        ],
+        "home_labels": [
+          "Perth Lynx (Wom)"
+        ],
+        "away_labels": [
+          "Townsville Fire (Wom)"
+        ],
+        "pinned": null
+      },
+      {
+        "match_id": "bc:31111806",
+        "teams_reversed": false,
+        "date": "2026-10-18T14:00:00+00:00",
+        "info": "",
+        "event_restriction": "not_with_same_event",
+        "integrations": {
+          "abios_enabled": null,
+          "betbuilder_id": null,
+          "bg_betbuilder": false,
+          "score_tracker": null,
+          "scoreframe_id": null,
+          "livescorepro_id": null,
+          "smart_stream_id": null
+        },
+        "streams": [],
+        "sports_groups_ids": [
+          3,
+          33184,
+          34489
+        ],
+        "state": {
+          "is_pre": true,
+          "status": "open",
+          "is_live": false,
+          "markets_count": 32
+        },
+        "home": [
+          "Aquila Basket Trento"
+        ],
+        "away": [
+          "Pallacanestro Varese"
+        ],
+        "home_labels": [
+          "Aquila Basket Trento"
+        ],
+        "away_labels": [
+          "Pallacanestro Varese"
+        ],
+        "pinned": null
+      }
+    ],
+    "primary_column_markets": [
+      {
+        "market_id": "bc:2486707888",
+        "match_id": "bc:31197497",
+        "line": 0,
+        "selections_reversible": false,
+        "sort_selections_by_odds_asc": false,
+        "is_primary": true,
+        "position": 1,
+        "markets_class_id": 7151,
+        "name": "Match Winner",
+        "label": "Match Winner",
+        "primary_column": 20,
+        "state": {
+          "status": "open"
+        },
+        "markets_group": {
+          "name": "Primary",
+          "position": 1,
+          "sports_group_id": 3,
+          "markets_group_id": 534
+        },
+        "selections": [
+          {
+            "name": "BC Cojute",
+            "label": "BC Cojute",
+            "rate": {
+              "decimal": 1.33,
+              "american": -303,
+              "fractional": "1/3"
+            },
+            "order": 0,
+            "status": "open",
+            "market_id": "bc:2486707888",
+            "selection_id": "bc:7327064056"
+          },
+          {
+            "name": "Salvadorenos BC",
+            "label": "Salvadorenos BC",
+            "rate": {
+              "decimal": 3,
+              "american": 200,
+              "fractional": "2"
+            },
+            "order": 1,
+            "status": "open",
+            "market_id": "bc:2486707888",
+            "selection_id": "bc:7327064057"
+          }
+        ],
+        "expanded": null,
+        "group_key": null,
+        "description": null
+      },
+      {
+        "market_id": "bc:2485878219",
+        "match_id": "bc:31197497",
+        "line": 143.5,
+        "selections_reversible": false,
+        "sort_selections_by_odds_asc": false,
+        "is_primary": true,
+        "position": 4,
+        "markets_class_id": 4699,
+        "name": "Total Points",
+        "label": "Total Points",
+        "primary_column": 21,
+        "state": {
+          "status": "open"
+        },
+        "markets_group": {
+          "name": "Primary",
+          "position": 1,
+          "sports_group_id": 3,
+          "markets_group_id": 534
+        },
+        "selections": [
+          {
+            "name": "Over (143.5)",
+            "label": "Over (143.5)",
+            "rate": {
+              "decimal": 1.85,
+              "american": -118,
+              "fractional": "6/7"
+            },
+            "order": 0,
+            "status": "open",
+            "market_id": "bc:2485878219",
+            "selection_id": "bc:7324953403"
+          },
+          {
+            "name": "Under (143.5)",
+            "label": "Under (143.5)",
+            "rate": {
+              "decimal": 1.85,
+              "american": -118,
+              "fractional": "6/7"
+            },
+            "order": 1,
+            "status": "open",
+            "market_id": "bc:2485878219",
+            "selection_id": "bc:7324953406"
+          }
+        ],
+        "expanded": null,
+        "group_key": null,
+        "description": null
+      },
+      {
+        "market_id": "bc:2485770512",
+        "match_id": "bc:31197497",
+        "line": -5.5,
+        "selections_reversible": false,
+        "sort_selections_by_odds_asc": false,
+        "is_primary": false,
+        "position": 5,
+        "markets_class_id": 7158,
+        "name": "Point Spread",
+        "label": "Point Spread",
+        "primary_column": 22,
+        "state": {
+          "status": "open"
+        },
+        "markets_group": {
+          "name": "Primary",
+          "position": 1,
+          "sports_group_id": 3,
+          "markets_group_id": 534
+        },
+        "selections": [
+          {
+            "name": "BC Cojute (-5.5)",
+            "label": "BC Cojute (-5.5)",
+            "rate": {
+              "decimal": 1.88,
+              "american": -114,
+              "fractional": "7/8"
+            },
+            "order": 0,
+            "status": "open",
+            "market_id": "bc:2485770512",
+            "selection_id": "bc:7324673538"
+          },
+          {
+            "name": "Salvadorenos BC (5.5)",
+            "label": "Salvadorenos BC (5.5)",
+            "rate": {
+              "decimal": 1.85,
+              "american": -118,
+              "fractional": "6/7"
+            },
+            "order": 1,
+            "status": "open",
+            "market_id": "bc:2485770512",
+            "selection_id": "bc:7324673539"
+          }
+        ],
+        "expanded": null,
+        "group_key": null,
+        "description": null
+      },
+      {
+        "market_id": "bc:2486890951",
+        "match_id": "bc:31154830",
+        "line": 0,
+        "selections_reversible": false,
+        "sort_selections_by_odds_asc": false,
+        "is_primary": true,
+        "position": 1,
+        "markets_class_id": 7151,
+        "name": "Match Winner",
+        "label": "Match Winner",
+        "primary_column": 20,
+        "state": {
+          "status": "open"
+        },
+        "markets_group": {
+          "name": "Primary",
+          "position": 1,
+          "sports_group_id": 3,
+          "markets_group_id": 534
+        },
+        "selections": [
+          {
+            "name": "Armann Reykjavik (Wom)",
+            "label": "Armann Reykjavik (Wom)",
+            "rate": {
+              "decimal": 5.35,
+              "american": 435,
+              "fractional": "87/20"
+            },
+            "order": 0,
+            "status": "open",
+            "market_id": "bc:2486890951",
+            "selection_id": "bc:7327752788"
+          },
+          {
+            "name": "Valur (Wom)",
+            "label": "Valur (Wom)",
+            "rate": {
+              "decimal": 1.12,
+              "american": -833,
+              "fractional": "1/8"
+            },
+            "order": 1,
+            "status": "open",
+            "market_id": "bc:2486890951",
+            "selection_id": "bc:7327752789"
+          }
+        ],
+        "expanded": null,
+        "group_key": null,
+        "description": null
+      },
+      {
+        "market_id": "bc:2484184014",
+        "match_id": "bc:31154830",
+        "line": 156.5,
+        "selections_reversible": false,
+        "sort_selections_by_odds_asc": false,
+        "is_primary": true,
+        "position": 4,
+        "markets_class_id": 4699,
+        "name": "Total Points",
+        "label": "Total Points",
+        "primary_column": 21,
+        "state": {
+          "status": "open"
+        },
+        "markets_group": {
+          "name": "Primary",
+          "position": 1,
+          "sports_group_id": 3,
+          "markets_group_id": 534
+        },
+        "selections": [
+          {
+            "name": "Over (156.5)",
+            "label": "Over (156.5)",
+            "rate": {
+              "decimal": 1.9,
+              "american": -111,
+              "fractional": "9/10"
+            },
+            "order": 0,
+            "status": "open",
+            "market_id": "bc:2484184014",
+            "selection_id": "bc:7320759930"
+          },
+          {
+            "name": "Under (156.5)",
+            "label": "Under (156.5)",
+            "rate": {
+              "decimal": 1.8,
+              "american": -125,
+              "fractional": "4/5"
+            },
+            "order": 1,
+            "status": "open",
+            "market_id": "bc:2484184014",
+            "selection_id": "bc:7320759931"
+          }
+        ],
+        "expanded": null,
+        "group_key": null,
+        "description": null
+      },
+      {
+        "market_id": "bc:2484060481",
+        "match_id": "bc:31154830",
+        "line": 157,
+        "selections_reversible": false,
+        "sort_selections_by_odds_asc": false,
+        "is_primary": true,
+        "position": 4,
+        "markets_class_id": 4699,
+        "name": "Total Points",
+        "label": "Total Points",
+        "primary_column": 21,
+        "state": {
+          "status": "open"
+        },
+        "markets_group": {
+          "name": "Primary",
+          "position": 1,
+          "sports_group_id": 3,
+          "markets_group_id": 534
+        },
+        "selections": [
+          {
+            "name": "Over (157.0)",
+            "label": "Over (157.0)",
+            "rate": {
+              "decimal": 1.95,
+              "american": -105,
+              "fractional": "19/20"
+            },
+            "order": 0,
+            "status": "open",
+            "market_id": "bc:2484060481",
+            "selection_id": "bc:7320429812"
+          },
+          {
+            "name": "Under (157.0)",
+            "label": "Under (157.0)",
+            "rate": {
+              "decimal": 1.75,
+              "american": -133,
+              "fractional": "3/4"
+            },
+            "order": 1,
+            "status": "open",
+            "market_id": "bc:2484060481",
+            "selection_id": "bc:7320429813"
+          }
+        ],
+        "expanded": null,
+        "group_key": null,
+        "description": null
+      },
+      {
+        "market_id": "bc:2485206840",
+        "match_id": "bc:31154830",
+        "line": 155,
+        "selections_reversible": false,
+        "sort_selections_by_odds_asc": false,
+        "is_primary": true,
+        "position": 4,
+        "markets_class_id": 4699,
+        "name": "Total Points",
+        "label": "Total Points",
+        "primary_column": 21,
+        "state": {
+          "status": "open"
+        },
+        "markets_group": {
+          "name": "Primary",
+          "position": 1,
+          "sports_group_id": 3,
+          "markets_group_id": 534
+        },
+        "selections": [
+          {
+            "name": "Over (155.0)",
+            "label": "Over (155.0)",
+            "rate": {
+              "decimal": 1.75,
+              "american": -133,
+              "fractional": "3/4"
+            },
+            "order": 0,
+            "status": "open",
+            "market_id": "bc:2485206840",
+            "selection_id": "bc:7323242999"
+          },
+          {
+            "name": "Under (155.0)",
+            "label": "Under (155.0)",
+            "rate": {
+              "decimal": 1.95,
+              "american": -105,
+              "fractional": "19/20"
+            },
+            "order": 1,
+            "status": "open",
+            "market_id": "bc:2485206840",
+            "selection_id": "bc:7323243000"
+          }
+        ],
+        "expanded": null,
+        "group_key": null,
+        "description": null
+      },
+      {
+        "market_id": "bc:2484184016",
+        "match_id": "bc:31154830",
+        "line": 155.5,
+        "selections_reversible": false,
+        "sort_selections_by_odds_asc": false,
+        "is_primary": true,
+        "position": 4,
+        "markets_class_id": 4699,
+        "name": "Total Points",
+        "label": "Total Points",
+        "primary_column": 21,
+        "state": {
+          "status": "open"
+        },
+        "markets_group": {
+          "name": "Primary",
+          "position": 1,
+          "sports_group_id": 3,
+          "markets_group_id": 534
+        },
+        "selections": [
+          {
+            "name": "Over (155.5)",
+            "label": "Over (155.5)",
+            "rate": {
+              "decimal": 1.8,
+              "american": -125,
+              "fractional": "4/5"
+            },
+            "order": 0,
+            "status": "open",
+            "market_id": "bc:2484184016",
+            "selection_id": "bc:7320759934"
+          },
+          {
+            "name": "Under (155.5)",
+            "label": "Under (155.5)",
+            "rate": {
+              "decimal": 1.9,
+              "american": -111,
+              "fractional": "9/10"
+            },
+            "order": 1,
+            "status": "open",
+            "market_id": "bc:2484184016",
+            "selection_id": "bc:7320759935"
+          }
+        ],
+        "expanded": null,
+        "group_key": null,
+        "description": null
+      },
+      {
+        "market_id": "bc:2484184015",
+        "match_id": "bc:31154830",
+        "line": 156,
+        "selections_reversible": false,
+        "sort_selections_by_odds_asc": false,
+        "is_primary": true,
+        "position": 4,
+        "markets_class_id": 4699,
+        "name": "Total Points",
+        "label": "Total Points",
+        "primary_column": 21,
+        "state": {
+          "status": "open"
+        },
+        "markets_group": {
+          "name": "Primary",
+          "position": 1,
+          "sports_group_id": 3,
+          "markets_group_id": 534
+        },
+        "selections": [
+          {
+            "name": "Over (156.0)",
+            "label": "Over (156.0)",
+            "rate": {
+              "decimal": 1.85,
+              "american": -118,
+              "fractional": "6/7"
+            },
+            "order": 0,
+            "status": "open",
+            "market_id": "bc:2484184015",
+            "selection_id": "bc:7320759932"
+          },
+          {
+            "name": "Under (156.0)",
+            "label": "Under (156.0)",
+            "rate": {
+              "decimal": 1.85,
+              "american": -118,
+              "fractional": "6/7"
+            },
+            "order": 1,
+            "status": "open",
+            "market_id": "bc:2484184015",
+            "selection_id": "bc:7320759933"
+          }
+        ],
+        "expanded": null,
+        "group_key": null,
+        "description": null
+      },
+      {
+        "market_id": "bc:2484060492",
+        "match_id": "bc:31154830",
+        "line": 12.5,
+        "selections_reversible": false,
+        "sort_selections_by_odds_asc": false,
+        "is_primary": false,
+        "position": 5,
+        "markets_class_id": 7158,
+        "name": "Point Spread",
+        "label": "Point Spread",
+        "primary_column": 22,
+        "state": {
+          "status": "open"
+        },
+        "markets_group": {
+          "name": "Primary",
+          "position": 1,
+          "sports_group_id": 3,
+          "markets_group_id": 534
+        },
+        "selections": [
+          {
+            "name": "Armann Reykjavik (Wom) (12.5)",
+            "label": "Armann Reykjavik (Wom) (12.5)",
+            "rate": {
+              "decimal": 1.82,
+              "american": -122,
+              "fractional": "9/11"
+            },
+            "order": 0,
+            "status": "open",
+            "market_id": "bc:2484060492",
+            "selection_id": "bc:7320429834"
+          },
+          {
+            "name": "Valur (Wom) (-12.5)",
+            "label": "Valur (Wom) (-12.5)",
+            "rate": {
+              "decimal": 1.88,
+              "american": -114,
+              "fractional": "7/8"
+            },
+            "order": 1,
+            "status": "open",
+            "market_id": "bc:2484060492",
+            "selection_id": "bc:7320429835"
+          }
+        ],
+        "expanded": null,
+        "group_key": null,
+        "description": null
+      },
+      {
+        "market_id": "bc:2484060494",
+        "match_id": "bc:31154830",
+        "line": 12,
+        "selections_reversible": false,
+        "sort_selections_by_odds_asc": false,
+        "is_primary": false,
+        "position": 5,
+        "markets_class_id": 7158,
+        "name": "Point Spread",
+        "label": "Point Spread",
+        "primary_column": 22,
+        "state": {
+          "status": "open"
+        },
+        "markets_group": {
+          "name": "Primary",
+          "position": 1,
+          "sports_group_id": 3,
+          "markets_group_id": 534
+        },
+        "selections": [
+          {
+            "name": "Armann Reykjavik (Wom) (12.0)",
+            "label": "Armann Reykjavik (Wom) (12.0)",
+            "rate": {
+              "decimal": 1.9,
+              "american": -111,
+              "fractional": "9/10"
+            },
+            "order": 0,
+            "status": "open",
+            "market_id": "bc:2484060494",
+            "selection_id": "bc:7320429838"
+          },
+          {
+            "name": "Valur (Wom) (-12.0)",
+            "label": "Valur (Wom) (-12.0)",
+            "rate": {
+              "decimal": 1.8,
+              "american": -125,
+              "fractional": "4/5"
+            },
+            "order": 1,
+            "status": "open",
+            "market_id": "bc:2484060494",
+            "selection_id": "bc:7320429839"
+          }
+        ],
+        "expanded": null,
+        "group_key": null,
+        "description": null
+      },
+      {
+        "market_id": "bc:2484931950",
+        "match_id": "bc:31154832",
+        "line": 0,
+        "selections_reversible": false,
+        "sort_selections_by_odds_asc": false,
+        "is_primary": true,
+        "position": 1,
+        "markets_class_id": 7151,
+        "name": "Match Winner",
+        "label": "Match Winner",
+        "primary_column": 20,
+        "state": {
+          "status": "open"
+        },
+        "markets_group": {
+          "name": "Primary",
+          "position": 1,
+          "sports_group_id": 3,
+          "markets_group_id": 534
+        },
+        "selections": [
+          {
+            "name": "Perth Lynx (Wom)",
+            "label": "Perth Lynx (Wom)",
+            "rate": {
+              "decimal": 3.05,
+              "american": 205,
+              "fractional": "41/20"
+            },
+            "order": 0,
+            "status": "open",
+            "market_id": "bc:2484931950",
+            "selection_id": "bc:7322575215"
+          },
+          {
+            "name": "Townsville Fire (Wom)",
+            "label": "Townsville Fire (Wom)",
+            "rate": {
+              "decimal": 1.33,
+              "american": -303,
+              "fractional": "1/3"
+            },
+            "order": 1,
+            "status": "open",
+            "market_id": "bc:2484931950",
+            "selection_id": "bc:7322575216"
+          }
+        ],
+        "expanded": null,
+        "group_key": null,
+        "description": null
+      },
+      {
+        "market_id": "bc:2484931952",
+        "match_id": "bc:31154832",
+        "line": 0,
+        "selections_reversible": false,
+        "sort_selections_by_odds_asc": false,
+        "is_primary": true,
+        "position": 3,
+        "markets_class_id": 4732,
+        "name": "Match Result",
+        "label": "Match Result",
+        "primary_column": 79,
+        "state": {
+          "status": "open"
+        },
+        "markets_group": {
+          "name": "Primary",
+          "position": 1,
+          "sports_group_id": 3,
+          "markets_group_id": 534
+        },
+        "selections": [
+          {
+            "name": "Perth Lynx (Wom)",
+            "label": "Perth Lynx (Wom)",
+            "rate": {
+              "decimal": 3.1,
+              "american": 210,
+              "fractional": "21/10"
+            },
+            "order": 0,
+            "status": "open",
+            "market_id": "bc:2484931952",
+            "selection_id": "bc:7322575220"
+          },
+          {
+            "name": "Draw",
+            "label": "Draw",
+            "rate": {
+              "decimal": 13,
+              "american": 1200,
+              "fractional": "12"
+            },
+            "order": 1,
+            "status": "open",
+            "market_id": "bc:2484931952",
+            "selection_id": "bc:7322575221"
+          },
+          {
+            "name": "Townsville Fire (Wom)",
+            "label": "Townsville Fire (Wom)",
+            "rate": {
+              "decimal": 1.4,
+              "american": -250,
+              "fractional": "2/5"
+            },
+            "order": 2,
+            "status": "open",
+            "market_id": "bc:2484931952",
+            "selection_id": "bc:7322575222"
+          }
+        ],
+        "expanded": null,
+        "group_key": null,
+        "description": null
+      },
+      {
+        "market_id": "bc:2485897515",
+        "match_id": "bc:31111806",
+        "line": 0,
+        "selections_reversible": false,
+        "sort_selections_by_odds_asc": false,
+        "is_primary": true,
+        "position": 1,
+        "markets_class_id": 7151,
+        "name": "Match Winner",
+        "label": "Match Winner",
+        "primary_column": 20,
+        "state": {
+          "status": "open"
+        },
+        "markets_group": {
+          "name": "Primary",
+          "position": 1,
+          "sports_group_id": 3,
+          "markets_group_id": 534
+        },
+        "selections": [
+          {
+            "name": "Aquila Basket Trento",
+            "label": "Aquila Basket Trento",
+            "rate": {
+              "decimal": 1.55,
+              "american": -182,
+              "fractional": "5/9"
+            },
+            "order": 0,
+            "status": "open",
+            "market_id": "bc:2485897515",
+            "selection_id": "bc:7325000072"
+          },
+          {
+            "name": "Pallacanestro Varese",
+            "label": "Pallacanestro Varese",
+            "rate": {
+              "decimal": 2.32,
+              "american": 132,
+              "fractional": "33/25"
+            },
+            "order": 1,
+            "status": "open",
+            "market_id": "bc:2485897515",
+            "selection_id": "bc:7325000073"
+          }
+        ],
+        "expanded": null,
+        "group_key": null,
+        "description": null
+      },
+      {
+        "market_id": "bc:2485897524",
+        "match_id": "bc:31111806",
+        "line": 0,
+        "selections_reversible": false,
+        "sort_selections_by_odds_asc": false,
+        "is_primary": true,
+        "position": 3,
+        "markets_class_id": 4732,
+        "name": "Match Result",
+        "label": "Match Result",
+        "primary_column": 79,
+        "state": {
+          "status": "open"
+        },
+        "markets_group": {
+          "name": "Primary",
+          "position": 1,
+          "sports_group_id": 3,
+          "markets_group_id": 534
+        },
+        "selections": [
+          {
+            "name": "Aquila Basket Trento",
+            "label": "Aquila Basket Trento",
+            "rate": {
+              "decimal": 1.7,
+              "american": -143,
+              "fractional": "7/10"
+            },
+            "order": 0,
+            "status": "open",
+            "market_id": "bc:2485897524",
+            "selection_id": "bc:7325000091"
+          },
+          {
+            "name": "Draw",
+            "label": "Draw",
+            "rate": {
+              "decimal": 12,
+              "american": 1100,
+              "fractional": "11"
+            },
+            "order": 1,
+            "status": "open",
+            "market_id": "bc:2485897524",
+            "selection_id": "bc:7325000092"
+          },
+          {
+            "name": "Pallacanestro Varese",
+            "label": "Pallacanestro Varese",
+            "rate": {
+              "decimal": 2.4,
+              "american": 140,
+              "fractional": "7/5"
+            },
+            "order": 2,
+            "status": "open",
+            "market_id": "bc:2485897524",
+            "selection_id": "bc:7325000093"
+          }
+        ],
+        "expanded": null,
+        "group_key": null,
+        "description": null
+      }
+    ]
+  },
+  "tennis": {
+    "sportId": 4,
+    "matches": [
+      {
+        "match_id": "bc:31198201",
+        "teams_reversed": false,
+        "date": "2026-10-13T13:30:00+00:00",
+        "info": "",
+        "event_restriction": "not_with_same_event",
+        "integrations": {
+          "abios_enabled": false,
+          "betbuilder_id": null,
+          "bg_betbuilder": false,
+          "score_tracker": false,
+          "scoreframe_id": 6819590,
+          "livescorepro_id": 6819590,
+          "smart_stream_id": null
+        },
+        "streams": [],
+        "sports_groups_ids": [
+          4,
+          28613,
+          130246
+        ],
+        "state": {
+          "is_pre": true,
+          "status": "open",
+          "is_live": false,
+          "markets_count": 5
+        },
+        "home": [
+          "Madalena Matias"
+        ],
+        "away": [
+          "Polona Hercog"
+        ],
+        "home_labels": [
+          "Madalena Matias"
+        ],
+        "away_labels": [
+          "Polona Hercog"
+        ],
+        "pinned": null
+      },
+      {
+        "match_id": "bc:29989399",
+        "teams_reversed": false,
+        "date": "2027-05-23T09:00:00+00:00",
+        "info": "",
+        "event_restriction": "do_not_combine",
+        "integrations": {
+          "abios_enabled": null,
+          "betbuilder_id": null,
+          "bg_betbuilder": false,
+          "score_tracker": null,
+          "scoreframe_id": null,
+          "livescorepro_id": null,
+          "smart_stream_id": null
+        },
+        "streams": [],
+        "sports_groups_ids": [
+          4,
+          28582,
+          46313
+        ],
+        "state": {
+          "is_pre": true,
+          "status": "open",
+          "is_live": false,
+          "markets_count": 1
+        },
+        "primary_markets": null,
+        "home": [
+          "French Open - Women 2027"
+        ],
+        "away": null,
+        "home_labels": [
+          "French Open - Women 2027"
+        ],
+        "away_labels": null,
+        "pinned": null
+      },
+      {
+        "match_id": "bc:29989401",
+        "teams_reversed": false,
+        "date": "2027-05-23T09:00:00+00:00",
+        "info": "",
+        "event_restriction": "do_not_combine",
+        "integrations": {
+          "abios_enabled": null,
+          "betbuilder_id": null,
+          "bg_betbuilder": false,
+          "score_tracker": null,
+          "scoreframe_id": null,
+          "livescorepro_id": null,
+          "smart_stream_id": null
+        },
+        "streams": [],
+        "sports_groups_ids": [
+          4,
+          28582,
+          46314
+        ],
+        "state": {
+          "is_pre": true,
+          "status": "open",
+          "is_live": false,
+          "markets_count": 1
+        },
+        "primary_markets": null,
+        "home": [
+          "French Open - Men 2027"
+        ],
+        "away": null,
+        "home_labels": [
+          "French Open - Men 2027"
+        ],
+        "away_labels": null,
+        "pinned": null
+      },
+      {
+        "match_id": "bc:31198549",
+        "teams_reversed": false,
+        "date": "2026-10-14T03:00:00+00:00",
+        "info": "",
+        "event_restriction": "not_with_same_event",
+        "integrations": {
+          "abios_enabled": false,
+          "betbuilder_id": null,
+          "bg_betbuilder": false,
+          "score_tracker": false,
+          "scoreframe_id": 6821340,
+          "livescorepro_id": null,
+          "smart_stream_id": null
+        },
+        "streams": [],
+        "sports_groups_ids": [
+          4,
+          28633,
+          31066
+        ],
+        "state": {
+          "is_pre": true,
+          "status": "open",
+          "is_live": false,
+          "markets_count": 43
+        },
+        "home": [
+          "Sonay Kartal"
+        ],
+        "away": [
+          "Belinda Bencic"
+        ],
+        "home_labels": [
+          "Sonay Kartal"
+        ],
+        "away_labels": [
+          "Belinda Bencic"
+        ],
+        "pinned": null
+      },
+      {
+        "match_id": "bc:31189685",
+        "teams_reversed": false,
+        "date": "2026-10-13T12:30:00+00:00",
+        "info": "",
+        "event_restriction": "not_with_same_event",
+        "integrations": {
+          "abios_enabled": false,
+          "betbuilder_id": null,
+          "bg_betbuilder": false,
+          "score_tracker": true,
+          "scoreframe_id": 6819059,
+          "livescorepro_id": 6819059,
+          "smart_stream_id": null
+        },
+        "streams": [
+          {
+            "enabled": true,
+            "countries": [
+              "PL"
+            ],
+            "stream_provider": "br"
+          }
+        ],
+        "sports_groups_ids": [
+          4,
+          28549,
+          130322
+        ],
+        "state": {
+          "is_pre": true,
+          "status": "open",
+          "is_live": false,
+          "markets_count": 37
+        },
+        "home": [
+          "Max Wiskandt"
+        ],
+        "away": [
+          "Miguel Damas"
+        ],
+        "home_labels": [
+          "Max Wiskandt"
+        ],
+        "away_labels": [
+          "Miguel Damas"
+        ],
+        "pinned": null
+      }
+    ],
+    "primary_column_markets": [
+      {
+        "market_id": "bc:2484611915",
+        "match_id": "bc:31198201",
+        "line": 0,
+        "selections_reversible": false,
+        "sort_selections_by_odds_asc": false,
+        "is_primary": true,
+        "position": 1,
+        "markets_class_id": 4162,
+        "name": "Match Winner",
+        "label": "Match Winner",
+        "primary_column": 27,
+        "state": {
+          "status": "open"
+        },
+        "markets_group": {
+          "name": "Primary",
+          "position": 1,
+          "sports_group_id": 4,
+          "markets_group_id": 171
+        },
+        "selections": [
+          {
+            "name": "Madalena Matias",
+            "label": "Madalena Matias",
+            "rate": {
+              "decimal": 11.5,
+              "american": 1050,
+              "fractional": "21/2"
+            },
+            "order": 0,
+            "status": "open",
+            "market_id": "bc:2484611915",
+            "selection_id": "bc:7321803156"
+          },
+          {
+            "name": "Polona Hercog",
+            "label": "Polona Hercog",
+            "rate": {
+              "decimal": 1,
+              "american": 1,
+              "fractional": "0"
+            },
+            "order": 1,
+            "status": "suspended",
+            "market_id": "bc:2484611915",
+            "selection_id": "bc:7321803158"
+          }
+        ],
+        "expanded": null,
+        "group_key": null,
+        "description": null
+      },
+      {
+        "market_id": "bc:2484881770",
+        "match_id": "bc:31198549",
+        "line": 0,
+        "selections_reversible": false,
+        "sort_selections_by_odds_asc": false,
+        "is_primary": true,
+        "position": 1,
+        "markets_class_id": 4162,
+        "name": "Match Winner",
+        "label": "Match Winner",
+        "primary_column": 27,
+        "state": {
+          "status": "open"
+        },
+        "markets_group": {
+          "name": "Primary",
+          "position": 1,
+          "sports_group_id": 4,
+          "markets_group_id": 171
+        },
+        "selections": [
+          {
+            "name": "Sonay Kartal",
+            "label": "Sonay Kartal",
+            "rate": {
+              "decimal": 2.9,
+              "american": 190,
+              "fractional": "19/10"
+            },
+            "order": 0,
+            "status": "open",
+            "market_id": "bc:2484881770",
+            "selection_id": "bc:7322444107"
+          },
+          {
+            "name": "Belinda Bencic",
+            "label": "Belinda Bencic",
+            "rate": {
+              "decimal": 1.42,
+              "american": -238,
+              "fractional": "5/12"
+            },
+            "order": 1,
+            "status": "open",
+            "market_id": "bc:2484881770",
+            "selection_id": "bc:7322444108"
+          }
+        ],
+        "expanded": null,
+        "group_key": null,
+        "description": null
+      },
+      {
+        "market_id": "bc:2485778820",
+        "match_id": "bc:31198549",
+        "line": 0,
+        "selections_reversible": false,
+        "sort_selections_by_odds_asc": false,
+        "is_primary": true,
+        "position": 3,
+        "markets_class_id": 3669,
+        "name": "1 Set - Winner",
+        "label": "1 Set - Winner",
+        "primary_column": 28,
+        "state": {
+          "status": "open"
+        },
+        "markets_group": {
+          "name": "Primary",
+          "position": 1,
+          "sports_group_id": 4,
+          "markets_group_id": 171
+        },
+        "selections": [
+          {
+            "name": "Sonay Kartal",
+            "label": "Sonay Kartal",
+            "rate": {
+              "decimal": 2.6,
+              "american": 160,
+              "fractional": "8/5"
+            },
+            "order": 0,
+            "status": "open",
+            "market_id": "bc:2485778820",
+            "selection_id": "bc:7324694399"
+          },
+          {
+            "name": "Belinda Bencic",
+            "label": "Belinda Bencic",
+            "rate": {
+              "decimal": 1.5,
+              "american": -200,
+              "fractional": "1/2"
+            },
+            "order": 1,
+            "status": "open",
+            "market_id": "bc:2485778820",
+            "selection_id": "bc:7324694400"
+          }
+        ],
+        "expanded": null,
+        "group_key": null,
+        "description": null
+      },
+      {
+        "market_id": "bc:2485778822",
+        "match_id": "bc:31198549",
+        "line": 8.5,
+        "selections_reversible": false,
+        "sort_selections_by_odds_asc": false,
+        "is_primary": true,
+        "position": 4,
+        "markets_class_id": 3500,
+        "name": "1 Set Total Games",
+        "label": "1 Set Total Games",
+        "primary_column": 30,
+        "state": {
+          "status": "open"
+        },
+        "markets_group": {
+          "name": "Totals",
+          "position": 4,
+          "sports_group_id": 4,
+          "markets_group_id": 177
+        },
+        "selections": [
+          {
+            "name": "Over (8.5)",
+            "label": "Over (8.5)",
+            "rate": {
+              "decimal": 1.4,
+              "american": -250,
+              "fractional": "2/5"
+            },
+            "order": 0,
+            "status": "open",
+            "market_id": "bc:2485778822",
+            "selection_id": "bc:7324694403"
+          },
+          {
+            "name": "Under (8.5)",
+            "label": "Under (8.5)",
+            "rate": {
+              "decimal": 2.9,
+              "american": 190,
+              "fractional": "19/10"
+            },
+            "order": 1,
+            "status": "open",
+            "market_id": "bc:2485778822",
+            "selection_id": "bc:7324694404"
+          }
+        ],
+        "expanded": null,
+        "group_key": null,
+        "description": null
+      },
+      {
+        "market_id": "bc:2483606501",
+        "match_id": "bc:31189685",
+        "line": 0,
+        "selections_reversible": false,
+        "sort_selections_by_odds_asc": false,
+        "is_primary": true,
+        "position": 1,
+        "markets_class_id": 4162,
+        "name": "Match Winner",
+        "label": "Match Winner",
+        "primary_column": 27,
+        "state": {
+          "status": "open"
+        },
+        "markets_group": {
+          "name": "Primary",
+          "position": 1,
+          "sports_group_id": 4,
+          "markets_group_id": 171
+        },
+        "selections": [
+          {
+            "name": "Max Wiskandt",
+            "label": "Max Wiskandt",
+            "rate": {
+              "decimal": 2.25,
+              "american": 125,
+              "fractional": "5/4"
+            },
+            "order": 0,
+            "status": "open",
+            "market_id": "bc:2483606501",
+            "selection_id": "bc:7319037606"
+          },
+          {
+            "name": "Miguel Damas",
+            "label": "Miguel Damas",
+            "rate": {
+              "decimal": 1.57,
+              "american": -175,
+              "fractional": "4/7"
+            },
+            "order": 1,
+            "status": "open",
+            "market_id": "bc:2483606501",
+            "selection_id": "bc:7319037607"
+          }
+        ],
+        "expanded": null,
+        "group_key": null,
+        "description": null
+      },
+      {
+        "market_id": "bc:2486059010",
+        "match_id": "bc:31189685",
+        "line": 0,
+        "selections_reversible": false,
+        "sort_selections_by_odds_asc": false,
+        "is_primary": true,
+        "position": 3,
+        "markets_class_id": 3669,
+        "name": "1 Set - Winner",
+        "label": "1 Set - Winner",
+        "primary_column": 28,
+        "state": {
+          "status": "open"
+        },
+        "markets_group": {
+          "name": "Primary",
+          "position": 1,
+          "sports_group_id": 4,
+          "markets_group_id": 171
+        },
+        "selections": [
+          {
+            "name": "Max Wiskandt",
+            "label": "Max Wiskandt",
+            "rate": {
+              "decimal": 2.1,
+              "american": 110,
+              "fractional": "11/10"
+            },
+            "order": 0,
+            "status": "open",
+            "market_id": "bc:2486059010",
+            "selection_id": "bc:7325413463"
+          },
+          {
+            "name": "Miguel Damas",
+            "label": "Miguel Damas",
+            "rate": {
+              "decimal": 1.65,
+              "american": -154,
+              "fractional": "13/20"
+            },
+            "order": 1,
+            "status": "open",
+            "market_id": "bc:2486059010",
+            "selection_id": "bc:7325413464"
+          }
+        ],
+        "expanded": null,
+        "group_key": null,
+        "description": null
+      },
+      {
+        "market_id": "bc:2486059012",
+        "match_id": "bc:31189685",
+        "line": 8.5,
+        "selections_reversible": false,
+        "sort_selections_by_odds_asc": false,
+        "is_primary": true,
+        "position": 4,
+        "markets_class_id": 3500,
+        "name": "1 Set Total Games",
+        "label": "1 Set Total Games",
+        "primary_column": 30,
+        "state": {
+          "status": "open"
+        },
+        "markets_group": {
+          "name": "Totals",
+          "position": 4,
+          "sports_group_id": 4,
+          "markets_group_id": 177
+        },
+        "selections": [
+          {
+            "name": "Over (8.5)",
+            "label": "Over (8.5)",
+            "rate": {
+              "decimal": 1.38,
+              "american": -263,
+              "fractional": "3/8"
+            },
+            "order": 0,
+            "status": "open",
+            "market_id": "bc:2486059012",
+            "selection_id": "bc:7325413468"
+          },
+          {
+            "name": "Under (8.5)",
+            "label": "Under (8.5)",
+            "rate": {
+              "decimal": 2.85,
+              "american": 185,
+              "fractional": "13/7"
+            },
+            "order": 1,
+            "status": "open",
+            "market_id": "bc:2486059012",
+            "selection_id": "bc:7325413470"
+          }
+        ],
+        "expanded": null,
+        "group_key": null,
+        "description": null
+      }
+    ]
+  },
+  "ice-hockey": {
+    "sportId": 2,
+    "matches": [
+      {
+        "match_id": "bc:31091037",
+        "teams_reversed": false,
+        "date": "2026-10-16T17:45:00+00:00",
+        "info": "",
+        "event_restriction": "not_with_same_event",
+        "integrations": {
+          "abios_enabled": null,
+          "betbuilder_id": null,
+          "bg_betbuilder": false,
+          "score_tracker": null,
+          "scoreframe_id": null,
+          "livescorepro_id": null,
+          "smart_stream_id": null
+        },
+        "streams": [],
+        "sports_groups_ids": [
+          2,
+          34842,
+          35096
+        ],
+        "state": {
+          "is_pre": true,
+          "status": "open",
+          "is_live": false,
+          "markets_count": 46
+        },
+        "home": [
+          "EHC Kloten"
+        ],
+        "away": [
+          "HC Ambri-Piotta"
+        ],
+        "home_labels": [
+          "EHC Kloten"
+        ],
+        "away_labels": [
+          "HC Ambri-Piotta"
+        ],
+        "pinned": null
+      },
+      {
+        "match_id": "bc:31091039",
+        "teams_reversed": false,
+        "date": "2026-10-16T17:45:00+00:00",
+        "info": "",
+        "event_restriction": "not_with_same_event",
+        "integrations": {
+          "abios_enabled": null,
+          "betbuilder_id": null,
+          "bg_betbuilder": false,
+          "score_tracker": null,
+          "scoreframe_id": null,
+          "livescorepro_id": null,
+          "smart_stream_id": null
+        },
+        "streams": [],
+        "sports_groups_ids": [
+          2,
+          34842,
+          35096
+        ],
+        "state": {
+          "is_pre": true,
+          "status": "open",
+          "is_live": false,
+          "markets_count": 44
+        },
+        "home": [
+          "SC Bern"
+        ],
+        "away": [
+          "Lausanne HC"
+        ],
+        "home_labels": [
+          "SC Bern"
+        ],
+        "away_labels": [
+          "Lausanne HC"
+        ],
+        "pinned": null
+      },
+      {
+        "match_id": "bc:31196482",
+        "teams_reversed": false,
+        "date": "2026-10-14T23:05:00+00:00",
+        "info": null,
+        "event_restriction": "not_with_same_event",
+        "integrations": {
+          "abios_enabled": false,
+          "betbuilder_id": null,
+          "bg_betbuilder": false,
+          "score_tracker": false,
+          "scoreframe_id": 6576674,
+          "livescorepro_id": 6576674,
+          "smart_stream_id": null
+        },
+        "streams": [],
+        "sports_groups_ids": [
+          2,
+          34608,
+          35136
+        ],
+        "state": {
+          "is_pre": true,
+          "status": "open",
+          "is_live": false,
+          "markets_count": 91
+        },
+        "home": [
+          "Sarnia Sting"
+        ],
+        "away": [
+          "Guelph Storm"
+        ],
+        "home_labels": [
+          "Sarnia Sting"
+        ],
+        "away_labels": [
+          "Guelph Storm"
+        ],
+        "pinned": null
+      },
+      {
+        "match_id": "bc:31189359",
+        "teams_reversed": false,
+        "date": "2026-10-14T02:05:00+00:00",
+        "info": null,
+        "event_restriction": "not_with_same_event",
+        "integrations": {
+          "abios_enabled": false,
+          "betbuilder_id": null,
+          "bg_betbuilder": false,
+          "score_tracker": false,
+          "scoreframe_id": 6642394,
+          "livescorepro_id": 6642394,
+          "smart_stream_id": null
+        },
+        "streams": [],
+        "sports_groups_ids": [
+          2,
+          34608,
+          35107
+        ],
+        "state": {
+          "is_pre": true,
+          "status": "open",
+          "is_live": false,
+          "markets_count": 95
+        },
+        "home": [
+          "Spokane Chiefs"
+        ],
+        "away": [
+          "Everett Silvertips"
+        ],
+        "home_labels": [
+          "Spokane Chiefs"
+        ],
+        "away_labels": [
+          "Everett Silvertips"
+        ],
+        "pinned": null
+      },
+      {
+        "match_id": "bc:31196656",
+        "teams_reversed": false,
+        "date": "2026-10-13T14:00:00+00:00",
+        "info": "",
+        "event_restriction": "not_with_same_event",
+        "integrations": {
+          "abios_enabled": false,
+          "betbuilder_id": null,
+          "bg_betbuilder": false,
+          "score_tracker": false,
+          "scoreframe_id": 6728473,
+          "livescorepro_id": 6728473,
+          "smart_stream_id": null
+        },
+        "streams": [],
+        "sports_groups_ids": [
+          2,
+          34675,
+          35110
+        ],
+        "state": {
+          "is_pre": true,
+          "status": "open",
+          "is_live": false,
+          "markets_count": 37
+        },
+        "home": [
+          "HC Aktobe"
+        ],
+        "away": [
+          "Beibarys Atyrau"
+        ],
+        "home_labels": [
+          "HC Aktobe"
+        ],
+        "away_labels": [
+          "Beibarys Atyrau"
+        ],
+        "pinned": null
+      }
+    ],
+    "primary_column_markets": [
+      {
+        "market_id": "bc:2485015721",
+        "match_id": "bc:31091037",
+        "line": 0,
+        "selections_reversible": false,
+        "sort_selections_by_odds_asc": false,
+        "is_primary": true,
+        "position": 3,
+        "markets_class_id": 7113,
+        "name": "Money Line",
+        "label": "Money Line",
+        "primary_column": 136,
+        "state": {
+          "status": "open"
+        },
+        "markets_group": {
+          "name": "Primary Markets",
+          "position": 1,
+          "sports_group_id": 2,
+          "markets_group_id": 372
+        },
+        "selections": [
+          {
+            "name": "EHC Kloten",
+            "label": "EHC Kloten",
+            "rate": {
+              "decimal": 1.8,
+              "american": -125,
+              "fractional": "4/5"
+            },
+            "order": 0,
+            "status": "open",
+            "market_id": "bc:2485015721",
+            "selection_id": "bc:7322779587"
+          },
+          {
+            "name": "HC Ambri-Piotta",
+            "label": "HC Ambri-Piotta",
+            "rate": {
+              "decimal": 1.88,
+              "american": -114,
+              "fractional": "7/8"
+            },
+            "order": 1,
+            "status": "open",
+            "market_id": "bc:2485015721",
+            "selection_id": "bc:7322779590"
+          }
+        ],
+        "expanded": null,
+        "group_key": null,
+        "description": null
+      },
+      {
+        "market_id": "bc:2485015710",
+        "match_id": "bc:31091037",
+        "line": 5.5,
+        "selections_reversible": false,
+        "sort_selections_by_odds_asc": false,
+        "is_primary": true,
+        "position": 4,
+        "markets_class_id": 5858,
+        "name": "Total Goals (Regular Time)",
+        "label": "Total Goals (Regular Time)",
+        "primary_column": 137,
+        "state": {
+          "status": "open"
+        },
+        "markets_group": {
+          "name": "Match Totals",
+          "position": 4,
+          "sports_group_id": 2,
+          "markets_group_id": 486
+        },
+        "selections": [
+          {
+            "name": "Over (5.5)",
+            "label": "Over (5.5)",
+            "rate": {
+              "decimal": 1.8,
+              "american": -125,
+              "fractional": "4/5"
+            },
+            "order": 0,
+            "status": "open",
+            "market_id": "bc:2485015710",
+            "selection_id": "bc:7322779565"
+          },
+          {
+            "name": "Under (5.5)",
+            "label": "Under (5.5)",
+            "rate": {
+              "decimal": 1.88,
+              "american": -114,
+              "fractional": "7/8"
+            },
+            "order": 1,
+            "status": "open",
+            "market_id": "bc:2485015710",
+            "selection_id": "bc:7322779566"
+          }
+        ],
+        "expanded": null,
+        "group_key": null,
+        "description": null
+      },
+      {
+        "market_id": "bc:2485015476",
+        "match_id": "bc:31091039",
+        "line": 0,
+        "selections_reversible": false,
+        "sort_selections_by_odds_asc": false,
+        "is_primary": true,
+        "position": 3,
+        "markets_class_id": 7113,
+        "name": "Money Line",
+        "label": "Money Line",
+        "primary_column": 136,
+        "state": {
+          "status": "open"
+        },
+        "markets_group": {
+          "name": "Primary Markets",
+          "position": 1,
+          "sports_group_id": 2,
+          "markets_group_id": 372
+        },
+        "selections": [
+          {
+            "name": "SC Bern",
+            "label": "SC Bern",
+            "rate": {
+              "decimal": 1.67,
+              "american": -149,
+              "fractional": "2/3"
+            },
+            "order": 0,
+            "status": "open",
+            "market_id": "bc:2485015476",
+            "selection_id": "bc:7322779041"
+          },
+          {
+            "name": "Lausanne HC",
+            "label": "Lausanne HC",
+            "rate": {
+              "decimal": 2.07,
+              "american": 107,
+              "fractional": "16/15"
+            },
+            "order": 1,
+            "status": "open",
+            "market_id": "bc:2485015476",
+            "selection_id": "bc:7322779042"
+          }
+        ],
+        "expanded": null,
+        "group_key": null,
+        "description": null
+      },
+      {
+        "market_id": "bc:2484620884",
+        "match_id": "bc:31196482",
+        "line": 0,
+        "selections_reversible": false,
+        "sort_selections_by_odds_asc": false,
+        "is_primary": true,
+        "position": 1,
+        "markets_class_id": 3597,
+        "name": "Match Result (Regular Time)",
+        "label": "Match Result (Regular Time)",
+        "primary_column": 135,
+        "state": {
+          "status": "open"
+        },
+        "markets_group": {
+          "name": "Primary Markets",
+          "position": 1,
+          "sports_group_id": 2,
+          "markets_group_id": 372
+        },
+        "selections": [
+          {
+            "name": "Sarnia Sting",
+            "label": "Sarnia Sting",
+            "rate": {
+              "decimal": 2.4,
+              "american": 140,
+              "fractional": "7/5"
+            },
+            "order": 0,
+            "status": "open",
+            "market_id": "bc:2484620884",
+            "selection_id": "bc:7321823426"
+          },
+          {
+            "name": "Draw",
+            "label": "Draw",
+            "rate": {
+              "decimal": 4.2,
+              "american": 320,
+              "fractional": "16/5"
+            },
+            "order": 1,
+            "status": "open",
+            "market_id": "bc:2484620884",
+            "selection_id": "bc:7321823425"
+          },
+          {
+            "name": "Guelph Storm",
+            "label": "Guelph Storm",
+            "rate": {
+              "decimal": 2.2,
+              "american": 120,
+              "fractional": "6/5"
+            },
+            "order": 2,
+            "status": "open",
+            "market_id": "bc:2484620884",
+            "selection_id": "bc:7321823424"
+          }
+        ],
+        "expanded": null,
+        "group_key": null,
+        "description": null
+      },
+      {
+        "market_id": "bc:2484620922",
+        "match_id": "bc:31196482",
+        "line": 0,
+        "selections_reversible": false,
+        "sort_selections_by_odds_asc": false,
+        "is_primary": true,
+        "position": 3,
+        "markets_class_id": 7113,
+        "name": "Money Line",
+        "label": "Money Line",
+        "primary_column": 136,
+        "state": {
+          "status": "open"
+        },
+        "markets_group": {
+          "name": "Primary Markets",
+          "position": 1,
+          "sports_group_id": 2,
+          "markets_group_id": 372
+        },
+        "selections": [
+          {
+            "name": "Sarnia Sting",
+            "label": "Sarnia Sting",
+            "rate": {
+              "decimal": 1.88,
+              "american": -114,
+              "fractional": "7/8"
+            },
+            "order": 0,
+            "status": "open",
+            "market_id": "bc:2484620922",
+            "selection_id": "bc:7321823495"
+          },
+          {
+            "name": "Guelph Storm",
+            "label": "Guelph Storm",
+            "rate": {
+              "decimal": 1.77,
+              "american": -130,
+              "fractional": "7/9"
+            },
+            "order": 1,
+            "status": "open",
+            "market_id": "bc:2484620922",
+            "selection_id": "bc:7321823494"
+          }
+        ],
+        "expanded": null,
+        "group_key": null,
+        "description": null
+      },
+      {
+        "market_id": "bc:2484620911",
+        "match_id": "bc:31196482",
+        "line": 7,
+        "selections_reversible": false,
+        "sort_selections_by_odds_asc": false,
+        "is_primary": true,
+        "position": 4,
+        "markets_class_id": 5858,
+        "name": "Total Goals (Regular Time)",
+        "label": "Total Goals (Regular Time)",
+        "primary_column": 137,
+        "state": {
+          "status": "open"
+        },
+        "markets_group": {
+          "name": "Match Totals",
+          "position": 4,
+          "sports_group_id": 2,
+          "markets_group_id": 486
+        },
+        "selections": [
+          {
+            "name": "Over (7.0)",
+            "label": "Over (7.0)",
+            "rate": {
+              "decimal": 1.77,
+              "american": -130,
+              "fractional": "7/9"
+            },
+            "order": 0,
+            "status": "open",
+            "market_id": "bc:2484620911",
+            "selection_id": "bc:7321823486"
+          },
+          {
+            "name": "Under (7.0)",
+            "label": "Under (7.0)",
+            "rate": {
+              "decimal": 1.88,
+              "american": -114,
+              "fractional": "7/8"
+            },
+            "order": 1,
+            "status": "open",
+            "market_id": "bc:2484620911",
+            "selection_id": "bc:7321823487"
+          }
+        ],
+        "expanded": null,
+        "group_key": null,
+        "description": null
+      },
+      {
+        "market_id": "bc:2484620870",
+        "match_id": "bc:31196482",
+        "line": 0,
+        "selections_reversible": false,
+        "sort_selections_by_odds_asc": false,
+        "is_primary": true,
+        "position": 5,
+        "markets_class_id": 6066,
+        "name": "Handicap (Regular Time)",
+        "label": "Handicap (Regular Time)",
+        "primary_column": 138,
+        "state": {
+          "status": "open"
+        },
+        "markets_group": {
+          "name": "Handicaps",
+          "position": 5,
+          "sports_group_id": 2,
+          "markets_group_id": 487
+        },
+        "selections": [
+          {
+            "name": "Sarnia Sting (0.0)",
+            "label": "Sarnia Sting (0.0)",
+            "rate": {
+              "decimal": 1.92,
+              "american": -109,
+              "fractional": "11/12"
+            },
+            "order": 0,
+            "status": "open",
+            "market_id": "bc:2484620870",
+            "selection_id": "bc:7321823401"
+          },
+          {
+            "name": "Guelph Storm (0.0)",
+            "label": "Guelph Storm (0.0)",
+            "rate": {
+              "decimal": 1.75,
+              "american": -133,
+              "fractional": "3/4"
+            },
+            "order": 1,
+            "status": "open",
+            "market_id": "bc:2484620870",
+            "selection_id": "bc:7321823400"
+          }
+        ],
+        "expanded": null,
+        "group_key": null,
+        "description": null
+      },
+      {
+        "market_id": "bc:2484620878",
+        "match_id": "bc:31196482",
+        "line": 0,
+        "selections_reversible": false,
+        "sort_selections_by_odds_asc": false,
+        "is_primary": false,
+        "position": 10,
+        "markets_class_id": 3105,
+        "name": "1 Period - Result",
+        "label": "1 Period - Result",
+        "primary_column": 193,
+        "state": {
+          "status": "open"
+        },
+        "markets_group": {
+          "name": "Periods",
+          "position": 6,
+          "sports_group_id": 2,
+          "markets_group_id": 489
+        },
+        "selections": [
+          {
+            "name": "Sarnia Sting",
+            "label": "Sarnia Sting",
+            "rate": {
+              "decimal": 2.7,
+              "american": 170,
+              "fractional": "17/10"
+            },
+            "order": 0,
+            "status": "open",
+            "market_id": "bc:2484620878",
+            "selection_id": "bc:7321823418"
+          },
+          {
+            "name": "Draw",
+            "label": "Draw",
+            "rate": {
+              "decimal": 3.1,
+              "american": 210,
+              "fractional": "21/10"
+            },
+            "order": 1,
+            "status": "open",
+            "market_id": "bc:2484620878",
+            "selection_id": "bc:7321823417"
+          },
+          {
+            "name": "Guelph Storm",
+            "label": "Guelph Storm",
+            "rate": {
+              "decimal": 2.55,
+              "american": 155,
+              "fractional": "14/9"
+            },
+            "order": 2,
+            "status": "open",
+            "market_id": "bc:2484620878",
+            "selection_id": "bc:7321823416"
+          }
+        ],
+        "expanded": null,
+        "group_key": null,
+        "description": null
+      },
+      {
+        "market_id": "bc:2484620825",
+        "match_id": "bc:31196482",
+        "line": 0,
+        "selections_reversible": false,
+        "sort_selections_by_odds_asc": false,
+        "is_primary": false,
+        "position": 10,
+        "markets_class_id": 3105,
+        "name": "2 Period - Result",
+        "label": "2 Period - Result",
+        "primary_column": 193,
+        "state": {
+          "status": "open"
+        },
+        "markets_group": {
+          "name": "Periods",
+          "position": 6,
+          "sports_group_id": 2,
+          "markets_group_id": 489
+        },
+        "selections": [
+          {
+            "name": "Sarnia Sting",
+            "label": "Sarnia Sting",
+            "rate": {
+              "decimal": 2.6,
+              "american": 160,
+              "fractional": "8/5"
+            },
+            "order": 0,
+            "status": "open",
+            "market_id": "bc:2484620825",
+            "selection_id": "bc:7321823262"
+          },
+          {
+            "name": "Draw",
+            "label": "Draw",
+            "rate": {
+              "decimal": 3.4,
+              "american": 240,
+              "fractional": "12/5"
+            },
+            "order": 1,
+            "status": "open",
+            "market_id": "bc:2484620825",
+            "selection_id": "bc:7321823261"
+          },
+          {
+            "name": "Guelph Storm",
+            "label": "Guelph Storm",
+            "rate": {
+              "decimal": 2.42,
+              "american": 142,
+              "fractional": "17/12"
+            },
+            "order": 2,
+            "status": "open",
+            "market_id": "bc:2484620825",
+            "selection_id": "bc:7321823260"
+          }
+        ],
+        "expanded": null,
+        "group_key": null,
+        "description": null
+      },
+      {
+        "market_id": "bc:2484620821",
+        "match_id": "bc:31196482",
+        "line": 0,
+        "selections_reversible": false,
+        "sort_selections_by_odds_asc": false,
+        "is_primary": false,
+        "position": 10,
+        "markets_class_id": 3105,
+        "name": "3 Period - Result",
+        "label": "3 Period - Result",
+        "primary_column": 193,
+        "state": {
+          "status": "open"
+        },
+        "markets_group": {
+          "name": "Periods",
+          "position": 6,
+          "sports_group_id": 2,
+          "markets_group_id": 489
+        },
+        "selections": [
+          {
+            "name": "Sarnia Sting",
+            "label": "Sarnia Sting",
+            "rate": {
+              "decimal": 2.6,
+              "american": 160,
+              "fractional": "8/5"
+            },
+            "order": 0,
+            "status": "open",
+            "market_id": "bc:2484620821",
+            "selection_id": "bc:7321823252"
+          },
+          {
+            "name": "Draw",
+            "label": "Draw",
+            "rate": {
+              "decimal": 3.4,
+              "american": 240,
+              "fractional": "12/5"
+            },
+            "order": 1,
+            "status": "open",
+            "market_id": "bc:2484620821",
+            "selection_id": "bc:7321823251"
+          },
+          {
+            "name": "Guelph Storm",
+            "label": "Guelph Storm",
+            "rate": {
+              "decimal": 2.45,
+              "american": 145,
+              "fractional": "13/9"
+            },
+            "order": 2,
+            "status": "open",
+            "market_id": "bc:2484620821",
+            "selection_id": "bc:7321823250"
+          }
+        ],
+        "expanded": null,
+        "group_key": null,
+        "description": null
+      },
+      {
+        "market_id": "bc:2484620885",
+        "match_id": "bc:31196482",
+        "line": 0,
+        "selections_reversible": false,
+        "sort_selections_by_odds_asc": false,
+        "is_primary": false,
+        "position": 400,
+        "markets_class_id": 3685,
+        "name": "Double Chance",
+        "label": "Double Chance",
+        "primary_column": 194,
+        "state": {
+          "status": "open"
+        },
+        "markets_group": {
+          "name": "Primary Markets",
+          "position": 1,
+          "sports_group_id": 2,
+          "markets_group_id": 372
+        },
+        "selections": [
+          {
+            "name": "Sarnia Sting or Draw",
+            "label": "Sarnia Sting or Draw",
+            "rate": {
+              "decimal": 1.57,
+              "american": -175,
+              "fractional": "4/7"
+            },
+            "order": 0,
+            "status": "open",
+            "market_id": "bc:2484620885",
+            "selection_id": "bc:7321823435"
+          },
+          {
+            "name": "Guelph Storm or Sarnia Sting",
+            "label": "Guelph Storm or Sarnia Sting",
+            "rate": {
+              "decimal": 1.2,
+              "american": -500,
+              "fractional": "1/5"
+            },
+            "order": 1,
+            "status": "open",
+            "market_id": "bc:2484620885",
+            "selection_id": "bc:7321823434"
+          },
+          {
+            "name": "Guelph Storm or Draw",
+            "label": "Guelph Storm or Draw",
+            "rate": {
+              "decimal": 1.5,
+              "american": -200,
+              "fractional": "1/2"
+            },
+            "order": 2,
+            "status": "open",
+            "market_id": "bc:2484620885",
+            "selection_id": "bc:7321823433"
+          }
+        ],
+        "expanded": null,
+        "group_key": null,
+        "description": null
+      },
+      {
+        "market_id": "bc:2482832684",
+        "match_id": "bc:31189359",
+        "line": 0,
+        "selections_reversible": false,
+        "sort_selections_by_odds_asc": false,
+        "is_primary": true,
+        "position": 1,
+        "markets_class_id": 3597,
+        "name": "Match Result (Regular Time)",
+        "label": "Match Result (Regular Time)",
+        "primary_column": 135,
+        "state": {
+          "status": "open"
+        },
+        "markets_group": {
+          "name": "Primary Markets",
+          "position": 1,
+          "sports_group_id": 2,
+          "markets_group_id": 372
+        },
+        "selections": [
+          {
+            "name": "Spokane Chiefs",
+            "label": "Spokane Chiefs",
+            "rate": {
+              "decimal": 1.88,
+              "american": -114,
+              "fractional": "7/8"
+            },
+            "order": 0,
+            "status": "open",
+            "market_id": "bc:2482832684",
+            "selection_id": "bc:7316922393"
+          },
+          {
+            "name": "Draw",
+            "label": "Draw",
+            "rate": {
+              "decimal": 4.3,
+              "american": 330,
+              "fractional": "33/10"
+            },
+            "order": 1,
+            "status": "open",
+            "market_id": "bc:2482832684",
+            "selection_id": "bc:7316922392"
+          },
+          {
+            "name": "Everett Silvertips",
+            "label": "Everett Silvertips",
+            "rate": {
+              "decimal": 2.9,
+              "american": 190,
+              "fractional": "19/10"
+            },
+            "order": 2,
+            "status": "open",
+            "market_id": "bc:2482832684",
+            "selection_id": "bc:7316922391"
+          }
+        ],
+        "expanded": null,
+        "group_key": null,
+        "description": null
+      },
+      {
+        "market_id": "bc:2482832695",
+        "match_id": "bc:31189359",
+        "line": 0,
+        "selections_reversible": false,
+        "sort_selections_by_odds_asc": false,
+        "is_primary": true,
+        "position": 3,
+        "markets_class_id": 7113,
+        "name": "Money Line",
+        "label": "Money Line",
+        "primary_column": 136,
+        "state": {
+          "status": "open"
+        },
+        "markets_group": {
+          "name": "Primary Markets",
+          "position": 1,
+          "sports_group_id": 2,
+          "markets_group_id": 372
+        },
+        "selections": [
+          {
+            "name": "Spokane Chiefs",
+            "label": "Spokane Chiefs",
+            "rate": {
+              "decimal": 1.55,
+              "american": -182,
+              "fractional": "5/9"
+            },
+            "order": 0,
+            "status": "open",
+            "market_id": "bc:2482832695",
+            "selection_id": "bc:7316922419"
+          },
+          {
+            "name": "Everett Silvertips",
+            "label": "Everett Silvertips",
+            "rate": {
+              "decimal": 2.25,
+              "american": 125,
+              "fractional": "5/4"
+            },
+            "order": 1,
+            "status": "open",
+            "market_id": "bc:2482832695",
+            "selection_id": "bc:7316922418"
+          }
+        ],
+        "expanded": null,
+        "group_key": null,
+        "description": null
+      },
+      {
+        "market_id": "bc:2482832693",
+        "match_id": "bc:31189359",
+        "line": 5.5,
+        "selections_reversible": false,
+        "sort_selections_by_odds_asc": false,
+        "is_primary": true,
+        "position": 4,
+        "markets_class_id": 5858,
+        "name": "Total Goals (Regular Time)",
+        "label": "Total Goals (Regular Time)",
+        "primary_column": 137,
+        "state": {
+          "status": "open"
+        },
+        "markets_group": {
+          "name": "Match Totals",
+          "position": 4,
+          "sports_group_id": 2,
+          "markets_group_id": 486
+        },
+        "selections": [
+          {
+            "name": "Over (5.5)",
+            "label": "Over (5.5)",
+            "rate": {
+              "decimal": 1.7,
+              "american": -143,
+              "fractional": "7/10"
+            },
+            "order": 0,
+            "status": "open",
+            "market_id": "bc:2482832693",
+            "selection_id": "bc:7316922414"
+          },
+          {
+            "name": "Under (5.5)",
+            "label": "Under (5.5)",
+            "rate": {
+              "decimal": 1.98,
+              "american": -102,
+              "fractional": "49/50"
+            },
+            "order": 1,
+            "status": "open",
+            "market_id": "bc:2482832693",
+            "selection_id": "bc:7316922415"
+          }
+        ],
+        "expanded": null,
+        "group_key": null,
+        "description": null
+      },
+      {
+        "market_id": "bc:2482832671",
+        "match_id": "bc:31189359",
+        "line": 5.5,
+        "selections_reversible": false,
+        "sort_selections_by_odds_asc": false,
+        "is_primary": true,
+        "position": 4,
+        "markets_class_id": 5858,
+        "name": "Total Goals (Including Overtime)",
+        "label": "Total Goals (Including Overtime)",
+        "primary_column": 137,
+        "state": {
+          "status": "open"
+        },
+        "markets_group": {
+          "name": "Match Totals",
+          "position": 4,
+          "sports_group_id": 2,
+          "markets_group_id": 486
+        },
+        "selections": [
+          {
+            "name": "Over (5.5)",
+            "label": "Over (5.5)",
+            "rate": {
+              "decimal": 1.7,
+              "american": -143,
+              "fractional": "7/10"
+            },
+            "order": 0,
+            "status": "open",
+            "market_id": "bc:2482832671",
+            "selection_id": "bc:7316922361"
+          },
+          {
+            "name": "Under (5.5)",
+            "label": "Under (5.5)",
+            "rate": {
+              "decimal": 1.98,
+              "american": -102,
+              "fractional": "49/50"
+            },
+            "order": 1,
+            "status": "open",
+            "market_id": "bc:2482832671",
+            "selection_id": "bc:7316922362"
+          }
+        ],
+        "expanded": null,
+        "group_key": null,
+        "description": null
+      },
+      {
+        "market_id": "bc:2482832689",
+        "match_id": "bc:31189359",
+        "line": 6,
+        "selections_reversible": false,
+        "sort_selections_by_odds_asc": false,
+        "is_primary": true,
+        "position": 4,
+        "markets_class_id": 5858,
+        "name": "Total Goals (Regular Time)",
+        "label": "Total Goals (Regular Time)",
+        "primary_column": 137,
+        "state": {
+          "status": "open"
+        },
+        "markets_group": {
+          "name": "Match Totals",
+          "position": 4,
+          "sports_group_id": 2,
+          "markets_group_id": 486
+        },
+        "selections": [
+          {
+            "name": "Over (6.0)",
+            "label": "Over (6.0)",
+            "rate": {
+              "decimal": 1.98,
+              "american": -102,
+              "fractional": "49/50"
+            },
+            "order": 0,
+            "status": "open",
+            "market_id": "bc:2482832689",
+            "selection_id": "bc:7316922404"
+          },
+          {
+            "name": "Under (6.0)",
+            "label": "Under (6.0)",
+            "rate": {
+              "decimal": 1.7,
+              "american": -143,
+              "fractional": "7/10"
+            },
+            "order": 1,
+            "status": "open",
+            "market_id": "bc:2482832689",
+            "selection_id": "bc:7316922405"
+          }
+        ],
+        "expanded": null,
+        "group_key": null,
+        "description": null
+      },
+      {
+        "market_id": "bc:2482832677",
+        "match_id": "bc:31189359",
+        "line": 0,
+        "selections_reversible": false,
+        "sort_selections_by_odds_asc": false,
+        "is_primary": true,
+        "position": 5,
+        "markets_class_id": 6066,
+        "name": "Handicap (Regular Time)",
+        "label": "Handicap (Regular Time)",
+        "primary_column": 138,
+        "state": {
+          "status": "open"
+        },
+        "markets_group": {
+          "name": "Handicaps",
+          "position": 5,
+          "sports_group_id": 2,
+          "markets_group_id": 487
+        },
+        "selections": [
+          {
+            "name": "Spokane Chiefs (0.0)",
+            "label": "Spokane Chiefs (0.0)",
+            "rate": {
+              "decimal": 1.5,
+              "american": -200,
+              "fractional": "1/2"
+            },
+            "order": 0,
+            "status": "open",
+            "market_id": "bc:2482832677",
+            "selection_id": "bc:7316922375"
+          },
+          {
+            "name": "Everett Silvertips (0.0)",
+            "label": "Everett Silvertips (0.0)",
+            "rate": {
+              "decimal": 2.3,
+              "american": 130,
+              "fractional": "13/10"
+            },
+            "order": 1,
+            "status": "open",
+            "market_id": "bc:2482832677",
+            "selection_id": "bc:7316922374"
+          }
+        ],
+        "expanded": null,
+        "group_key": null,
+        "description": null
+      },
+      {
+        "market_id": "bc:2482832679",
+        "match_id": "bc:31189359",
+        "line": 0,
+        "selections_reversible": false,
+        "sort_selections_by_odds_asc": false,
+        "is_primary": false,
+        "position": 10,
+        "markets_class_id": 3105,
+        "name": "1 Period - Result",
+        "label": "1 Period - Result",
+        "primary_column": 193,
+        "state": {
+          "status": "open"
+        },
+        "markets_group": {
+          "name": "Periods",
+          "position": 6,
+          "sports_group_id": 2,
+          "markets_group_id": 489
+        },
+        "selections": [
+          {
+            "name": "Spokane Chiefs",
+            "label": "Spokane Chiefs",
+            "rate": {
+              "decimal": 2.4,
+              "american": 140,
+              "fractional": "7/5"
+            },
+            "order": 0,
+            "status": "open",
+            "market_id": "bc:2482832679",
+            "selection_id": "bc:7316922380"
+          },
+          {
+            "name": "Draw",
+            "label": "Draw",
+            "rate": {
+              "decimal": 2.75,
+              "american": 175,
+              "fractional": "7/4"
+            },
+            "order": 1,
+            "status": "open",
+            "market_id": "bc:2482832679",
+            "selection_id": "bc:7316922379"
+          },
+          {
+            "name": "Everett Silvertips",
+            "label": "Everett Silvertips",
+            "rate": {
+              "decimal": 3.2,
+              "american": 220,
+              "fractional": "11/5"
+            },
+            "order": 2,
+            "status": "open",
+            "market_id": "bc:2482832679",
+            "selection_id": "bc:7316922378"
+          }
+        ],
+        "expanded": null,
+        "group_key": null,
+        "description": null
+      },
+      {
+        "market_id": "bc:2482832614",
+        "match_id": "bc:31189359",
+        "line": 0,
+        "selections_reversible": false,
+        "sort_selections_by_odds_asc": false,
+        "is_primary": false,
+        "position": 10,
+        "markets_class_id": 3105,
+        "name": "2 Period - Result",
+        "label": "2 Period - Result",
+        "primary_column": 193,
+        "state": {
+          "status": "open"
+        },
+        "markets_group": {
+          "name": "Periods",
+          "position": 6,
+          "sports_group_id": 2,
+          "markets_group_id": 489
+        },
+        "selections": [
+          {
+            "name": "Spokane Chiefs",
+            "label": "Spokane Chiefs",
+            "rate": {
+              "decimal": 2.25,
+              "american": 125,
+              "fractional": "5/4"
+            },
+            "order": 0,
+            "status": "open",
+            "market_id": "bc:2482832614",
+            "selection_id": "bc:7316922199"
+          },
+          {
+            "name": "Draw",
+            "label": "Draw",
+            "rate": {
+              "decimal": 3.05,
+              "american": 205,
+              "fractional": "41/20"
+            },
+            "order": 1,
+            "status": "open",
+            "market_id": "bc:2482832614",
+            "selection_id": "bc:7316922198"
+          },
+          {
+            "name": "Everett Silvertips",
+            "label": "Everett Silvertips",
+            "rate": {
+              "decimal": 3.05,
+              "american": 205,
+              "fractional": "41/20"
+            },
+            "order": 2,
+            "status": "open",
+            "market_id": "bc:2482832614",
+            "selection_id": "bc:7316922197"
+          }
+        ],
+        "expanded": null,
+        "group_key": null,
+        "description": null
+      },
+      {
+        "market_id": "bc:2482832608",
+        "match_id": "bc:31189359",
+        "line": 0,
+        "selections_reversible": false,
+        "sort_selections_by_odds_asc": false,
+        "is_primary": false,
+        "position": 10,
+        "markets_class_id": 3105,
+        "name": "3 Period - Result",
+        "label": "3 Period - Result",
+        "primary_column": 193,
+        "state": {
+          "status": "open"
+        },
+        "markets_group": {
+          "name": "Periods",
+          "position": 6,
+          "sports_group_id": 2,
+          "markets_group_id": 489
+        },
+        "selections": [
+          {
+            "name": "Spokane Chiefs",
+            "label": "Spokane Chiefs",
+            "rate": {
+              "decimal": 2.3,
+              "american": 130,
+              "fractional": "13/10"
+            },
+            "order": 0,
+            "status": "open",
+            "market_id": "bc:2482832608",
+            "selection_id": "bc:7316922185"
+          },
+          {
+            "name": "Draw",
+            "label": "Draw",
+            "rate": {
+              "decimal": 3.05,
+              "american": 205,
+              "fractional": "41/20"
+            },
+            "order": 1,
+            "status": "open",
+            "market_id": "bc:2482832608",
+            "selection_id": "bc:7316922184"
+          },
+          {
+            "name": "Everett Silvertips",
+            "label": "Everett Silvertips",
+            "rate": {
+              "decimal": 3.05,
+              "american": 205,
+              "fractional": "41/20"
+            },
+            "order": 2,
+            "status": "open",
+            "market_id": "bc:2482832608",
+            "selection_id": "bc:7316922183"
+          }
+        ],
+        "expanded": null,
+        "group_key": null,
+        "description": null
+      },
+      {
+        "market_id": "bc:2482832686",
+        "match_id": "bc:31189359",
+        "line": 0,
+        "selections_reversible": false,
+        "sort_selections_by_odds_asc": false,
+        "is_primary": false,
+        "position": 400,
+        "markets_class_id": 3685,
+        "name": "Double Chance",
+        "label": "Double Chance",
+        "primary_column": 194,
+        "state": {
+          "status": "open"
+        },
+        "markets_group": {
+          "name": "Primary Markets",
+          "position": 1,
+          "sports_group_id": 2,
+          "markets_group_id": 372
+        },
+        "selections": [
+          {
+            "name": "Spokane Chiefs or Draw",
+            "label": "Spokane Chiefs or Draw",
+            "rate": {
+              "decimal": 1.35,
+              "american": -286,
+              "fractional": "7/20"
+            },
+            "order": 0,
+            "status": "open",
+            "market_id": "bc:2482832686",
+            "selection_id": "bc:7316922399"
+          },
+          {
+            "name": "Everett Silvertips or Spokane Chiefs",
+            "label": "Everett Silvertips or Spokane Chiefs",
+            "rate": {
+              "decimal": 1.2,
+              "american": -500,
+              "fractional": "1/5"
+            },
+            "order": 1,
+            "status": "open",
+            "market_id": "bc:2482832686",
+            "selection_id": "bc:7316922397"
+          },
+          {
+            "name": "Everett Silvertips or Draw",
+            "label": "Everett Silvertips or Draw",
+            "rate": {
+              "decimal": 1.8,
+              "american": -125,
+              "fractional": "4/5"
+            },
+            "order": 2,
+            "status": "open",
+            "market_id": "bc:2482832686",
+            "selection_id": "bc:7316922396"
+          }
+        ],
+        "expanded": null,
+        "group_key": null,
+        "description": null
+      },
+      {
+        "market_id": "bc:2486462265",
+        "match_id": "bc:31196656",
+        "line": 0,
+        "selections_reversible": false,
+        "sort_selections_by_odds_asc": false,
+        "is_primary": true,
+        "position": 1,
+        "markets_class_id": 3597,
+        "name": "Match Result (Regular Time)",
+        "label": "Match Result (Regular Time)",
+        "primary_column": 135,
+        "state": {
+          "status": "open"
+        },
+        "markets_group": {
+          "name": "Primary Markets",
+          "position": 1,
+          "sports_group_id": 2,
+          "markets_group_id": 372
+        },
+        "selections": [
+          {
+            "name": "HC Aktobe",
+            "label": "HC Aktobe",
+            "rate": {
+              "decimal": 3.5,
+              "american": 250,
+              "fractional": "5/2"
+            },
+            "order": 0,
+            "status": "open",
+            "market_id": "bc:2486462265",
+            "selection_id": "bc:7326467932"
+          },
+          {
+            "name": "Draw",
+            "label": "Draw",
+            "rate": {
+              "decimal": 4.5,
+              "american": 350,
+              "fractional": "7/2"
+            },
+            "order": 1,
+            "status": "open",
+            "market_id": "bc:2486462265",
+            "selection_id": "bc:7326467933"
+          },
+          {
+            "name": "Beibarys Atyrau",
+            "label": "Beibarys Atyrau",
+            "rate": {
+              "decimal": 1.65,
+              "american": -154,
+              "fractional": "13/20"
+            },
+            "order": 2,
+            "status": "open",
+            "market_id": "bc:2486462265",
+            "selection_id": "bc:7326467934"
+          }
+        ],
+        "expanded": null,
+        "group_key": null,
+        "description": null
+      },
+      {
+        "market_id": "bc:2486462256",
+        "match_id": "bc:31196656",
+        "line": 0,
+        "selections_reversible": false,
+        "sort_selections_by_odds_asc": false,
+        "is_primary": true,
+        "position": 3,
+        "markets_class_id": 7113,
+        "name": "Money Line",
+        "label": "Money Line",
+        "primary_column": 136,
+        "state": {
+          "status": "open"
+        },
+        "markets_group": {
+          "name": "Primary Markets",
+          "position": 1,
+          "sports_group_id": 2,
+          "markets_group_id": 372
+        },
+        "selections": [
+          {
+            "name": "HC Aktobe",
+            "label": "HC Aktobe",
+            "rate": {
+              "decimal": 2.55,
+              "american": 155,
+              "fractional": "14/9"
+            },
+            "order": 0,
+            "status": "open",
+            "market_id": "bc:2486462256",
+            "selection_id": "bc:7326467912"
+          },
+          {
+            "name": "Beibarys Atyrau",
+            "label": "Beibarys Atyrau",
+            "rate": {
+              "decimal": 1.42,
+              "american": -238,
+              "fractional": "5/12"
+            },
+            "order": 1,
+            "status": "open",
+            "market_id": "bc:2486462256",
+            "selection_id": "bc:7326467913"
+          }
+        ],
+        "expanded": null,
+        "group_key": null,
+        "description": null
+      },
+      {
+        "market_id": "bc:2485897489",
+        "match_id": "bc:31196656",
+        "line": 6,
+        "selections_reversible": false,
+        "sort_selections_by_odds_asc": false,
+        "is_primary": true,
+        "position": 4,
+        "markets_class_id": 5858,
+        "name": "Total Goals (Regular Time)",
+        "label": "Total Goals (Regular Time)",
+        "primary_column": 137,
+        "state": {
+          "status": "open"
+        },
+        "markets_group": {
+          "name": "Match Totals",
+          "position": 4,
+          "sports_group_id": 2,
+          "markets_group_id": 486
+        },
+        "selections": [
+          {
+            "name": "Over (6.0)",
+            "label": "Over (6.0)",
+            "rate": {
+              "decimal": 1.88,
+              "american": -114,
+              "fractional": "7/8"
+            },
+            "order": 0,
+            "status": "open",
+            "market_id": "bc:2485897489",
+            "selection_id": "bc:7325000020"
+          },
+          {
+            "name": "Under (6.0)",
+            "label": "Under (6.0)",
+            "rate": {
+              "decimal": 1.77,
+              "american": -130,
+              "fractional": "7/9"
+            },
+            "order": 1,
+            "status": "open",
+            "market_id": "bc:2485897489",
+            "selection_id": "bc:7325000021"
+          }
+        ],
+        "expanded": null,
+        "group_key": null,
+        "description": null
+      },
+      {
+        "market_id": "bc:2485897475",
+        "match_id": "bc:31196656",
+        "line": 0,
+        "selections_reversible": false,
+        "sort_selections_by_odds_asc": false,
+        "is_primary": true,
+        "position": 5,
+        "markets_class_id": 6066,
+        "name": "Handicap (Regular Time)",
+        "label": "Handicap (Regular Time)",
+        "primary_column": 138,
+        "state": {
+          "status": "open"
+        },
+        "markets_group": {
+          "name": "Handicaps",
+          "position": 5,
+          "sports_group_id": 2,
+          "markets_group_id": 487
+        },
+        "selections": [
+          {
+            "name": "HC Aktobe (0.0)",
+            "label": "HC Aktobe (0.0)",
+            "rate": {
+              "decimal": 2.8,
+              "american": 180,
+              "fractional": "9/5"
+            },
+            "order": 0,
+            "status": "open",
+            "market_id": "bc:2485897475",
+            "selection_id": "bc:7324999994"
+          },
+          {
+            "name": "Beibarys Atyrau (0.0)",
+            "label": "Beibarys Atyrau (0.0)",
+            "rate": {
+              "decimal": 1.35,
+              "american": -286,
+              "fractional": "7/20"
+            },
+            "order": 1,
+            "status": "open",
+            "market_id": "bc:2485897475",
+            "selection_id": "bc:7324999995"
+          }
+        ],
+        "expanded": null,
+        "group_key": null,
+        "description": null
+      },
+      {
+        "market_id": "bc:2486462258",
+        "match_id": "bc:31196656",
+        "line": 0,
+        "selections_reversible": false,
+        "sort_selections_by_odds_asc": false,
+        "is_primary": false,
+        "position": 10,
+        "markets_class_id": 3105,
+        "name": "1 Period - Result",
+        "label": "1 Period - Result",
+        "primary_column": 193,
+        "state": {
+          "status": "open"
+        },
+        "markets_group": {
+          "name": "Periods",
+          "position": 6,
+          "sports_group_id": 2,
+          "markets_group_id": 489
+        },
+        "selections": [
+          {
+            "name": "HC Aktobe",
+            "label": "HC Aktobe",
+            "rate": {
+              "decimal": 3.55,
+              "american": 255,
+              "fractional": "23/9"
+            },
+            "order": 0,
+            "status": "open",
+            "market_id": "bc:2486462258",
+            "selection_id": "bc:7326467916"
+          },
+          {
+            "name": "Draw",
+            "label": "Draw",
+            "rate": {
+              "decimal": 2.8,
+              "american": 180,
+              "fractional": "9/5"
+            },
+            "order": 1,
+            "status": "open",
+            "market_id": "bc:2486462258",
+            "selection_id": "bc:7326467917"
+          },
+          {
+            "name": "Beibarys Atyrau",
+            "label": "Beibarys Atyrau",
+            "rate": {
+              "decimal": 2.2,
+              "american": 120,
+              "fractional": "6/5"
+            },
+            "order": 2,
+            "status": "open",
+            "market_id": "bc:2486462258",
+            "selection_id": "bc:7326467918"
+          }
+        ],
+        "expanded": null,
+        "group_key": null,
+        "description": null
+      },
+      {
+        "market_id": "bc:2486462267",
+        "match_id": "bc:31196656",
+        "line": 0,
+        "selections_reversible": false,
+        "sort_selections_by_odds_asc": false,
+        "is_primary": false,
+        "position": 400,
+        "markets_class_id": 3685,
+        "name": "Double Chance",
+        "label": "Double Chance",
+        "primary_column": 194,
+        "state": {
+          "status": "open"
+        },
+        "markets_group": {
+          "name": "Primary Markets",
+          "position": 1,
+          "sports_group_id": 2,
+          "markets_group_id": 372
+        },
+        "selections": [
+          {
+            "name": "HC Aktobe or Draw",
+            "label": "HC Aktobe or Draw",
+            "rate": {
+              "decimal": 2.05,
+              "american": 105,
+              "fractional": "21/20"
+            },
+            "order": 0,
+            "status": "open",
+            "market_id": "bc:2486462267",
+            "selection_id": "bc:7326467937"
+          },
+          {
+            "name": "HC Aktobe or Beibarys Atyrau",
+            "label": "HC Aktobe or Beibarys Atyrau",
+            "rate": {
+              "decimal": 1.18,
+              "american": -556,
+              "fractional": "2/11"
+            },
+            "order": 1,
+            "status": "open",
+            "market_id": "bc:2486462267",
+            "selection_id": "bc:7326467938"
+          },
+          {
+            "name": "Beibarys Atyrau or Draw",
+            "label": "Beibarys Atyrau or Draw",
+            "rate": {
+              "decimal": 1.25,
+              "american": -400,
+              "fractional": "1/4"
+            },
+            "order": 2,
+            "status": "open",
+            "market_id": "bc:2486462267",
+            "selection_id": "bc:7326467939"
+          }
+        ],
+        "expanded": null,
+        "group_key": null,
+        "description": null
+      }
+    ]
+  }
+}

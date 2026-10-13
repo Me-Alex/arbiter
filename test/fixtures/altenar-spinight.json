@@ -1,0 +1,999 @@
+{
+  "dates": [
+    {
+      "dateTime": "2026-09-21T20:00:00Z",
+      "eventIds": [
+        17953590,
+        17668797,
+        17945782,
+        17888154
+      ]
+    }
+  ],
+  "topSports": [
+    {
+      "id": 66,
+      "name": "Soccer",
+      "iconName": "soccer",
+      "hasStream": false,
+      "count": 1310
+    },
+    {
+      "id": 68,
+      "name": "Tennis",
+      "iconName": "tennis",
+      "hasStream": false,
+      "count": 466
+    },
+    {
+      "id": 67,
+      "name": "Basketball",
+      "iconName": "basketball",
+      "hasStream": false,
+      "count": 235
+    },
+    {
+      "id": 70,
+      "name": "Ice Hockey",
+      "iconName": "ice-hockey",
+      "hasStream": false,
+      "count": 182
+    },
+    {
+      "id": 77,
+      "name": "Table Tennis",
+      "iconName": "table-tennis",
+      "hasStream": false,
+      "count": 333
+    },
+    {
+      "id": 69,
+      "name": "Volleyball",
+      "iconName": "volleyball",
+      "hasStream": false,
+      "count": 56
+    },
+    {
+      "id": 75,
+      "name": "American Football",
+      "iconName": "american-football",
+      "hasStream": false,
+      "count": 77
+    },
+    {
+      "id": 76,
+      "name": "Baseball",
+      "iconName": "baseball",
+      "hasStream": false,
+      "count": 16
+    },
+    {
+      "id": 101,
+      "name": "Rugby League",
+      "iconName": "rugby-league",
+      "hasStream": false,
+      "count": 9
+    },
+    {
+      "id": 106,
+      "name": "Aussie Rules",
+      "iconName": "aussie-rules",
+      "hasStream": false,
+      "count": 9
+    },
+    {
+      "id": -1,
+      "name": "Other",
+      "iconName": "Other",
+      "hasStream": false,
+      "count": 462
+    }
+  ],
+  "headers": [
+    {
+      "typeId": 1,
+      "name": "1x2",
+      "mst": 0,
+      "odds": [
+        {
+          "id": 1,
+          "name": "1"
+        },
+        {
+          "id": 2,
+          "name": "X"
+        },
+        {
+          "id": 3,
+          "name": "2"
+        }
+      ]
+    },
+    {
+      "typeId": 18,
+      "name": "Total",
+      "mst": 0,
+      "odds": [
+        {
+          "id": 12,
+          "name": "peste"
+        },
+        {
+          "id": 13,
+          "name": "sub"
+        }
+      ]
+    },
+    {
+      "typeId": 29,
+      "name": "Ambele echipe să înscrie",
+      "mst": 0,
+      "odds": [
+        {
+          "id": 74,
+          "name": "da"
+        },
+        {
+          "id": 76,
+          "name": "nu"
+        }
+      ]
+    }
+  ],
+  "pageCount": 1,
+  "page": 1,
+  "markets": [
+    {
+      "oddIds": [
+        4611407874,
+        4611407875,
+        4611407876
+      ],
+      "typeId": 1,
+      "sportMarketId": 70472,
+      "id": 1767905677,
+      "name": "1x2"
+    },
+    {
+      "oddIds": [
+        4611407947,
+        4611407949,
+        4611407948
+      ],
+      "variant": 9,
+      "lines": [],
+      "typeId": 8,
+      "sportMarketId": 70491,
+      "sv": "1",
+      "sn": "Primul",
+      "id": 1767905703,
+      "name": "Golul 1"
+    },
+    {
+      "oddIds": [
+        4611407580,
+        4611407581
+      ],
+      "typeId": 18,
+      "sportMarketId": 70520,
+      "sv": "1.5",
+      "sn": "1.5",
+      "id": 1767905596,
+      "name": "Total goluri"
+    },
+    {
+      "oddIds": [
+        4611407654,
+        4611407655
+      ],
+      "typeId": 29,
+      "sportMarketId": 70545,
+      "id": 1767905633,
+      "name": "Ambele echipe să înscrie"
+    },
+    {
+      "oddIds": [
+        4605975634,
+        4605975635,
+        4605975636
+      ],
+      "typeId": 1,
+      "sportMarketId": 70472,
+      "id": 1766222323,
+      "name": "1x2"
+    },
+    {
+      "oddIds": [
+        4605975698,
+        4605975700,
+        4605975699
+      ],
+      "variant": 9,
+      "lines": [],
+      "typeId": 8,
+      "sportMarketId": 70491,
+      "sv": "1",
+      "sn": "Primul",
+      "id": 1766222346,
+      "name": "Golul 1"
+    },
+    {
+      "oddIds": [
+        4605975378,
+        4605975379
+      ],
+      "typeId": 18,
+      "sportMarketId": 70520,
+      "sv": "0.5",
+      "sn": "0.5",
+      "id": 1766222251,
+      "name": "Total goluri"
+    },
+    {
+      "oddIds": [
+        4605975444,
+        4605975445
+      ],
+      "typeId": 29,
+      "sportMarketId": 70545,
+      "id": 1766222284,
+      "name": "Ambele echipe să înscrie"
+    },
+    {
+      "oddIds": [
+        4617239775,
+        4617239776,
+        4617239777
+      ],
+      "typeId": 1,
+      "sportMarketId": 70472,
+      "id": 1769649667,
+      "name": "1x2"
+    },
+    {
+      "oddIds": [
+        4617239848,
+        4617239850,
+        4617239849
+      ],
+      "variant": 9,
+      "lines": [],
+      "typeId": 8,
+      "sportMarketId": 70491,
+      "sv": "1",
+      "sn": "Primul",
+      "id": 1769649693,
+      "name": "Golul 1"
+    },
+    {
+      "oddIds": [
+        4617239479,
+        4617239480
+      ],
+      "typeId": 18,
+      "sportMarketId": 70520,
+      "sv": "1.5",
+      "sn": "1.5",
+      "id": 1769649585,
+      "name": "Total goluri"
+    },
+    {
+      "oddIds": [
+        4617239555,
+        4617239556
+      ],
+      "typeId": 29,
+      "sportMarketId": 70545,
+      "id": 1769649623,
+      "name": "Ambele echipe să înscrie"
+    },
+    {
+      "oddIds": [
+        4616449272,
+        4616449273,
+        4616449274
+      ],
+      "typeId": 1,
+      "sportMarketId": 70472,
+      "id": 1769346883,
+      "name": "1x2"
+    },
+    {
+      "oddIds": [
+        4616449428,
+        4616449430,
+        4616449429
+      ],
+      "variant": 9,
+      "lines": [],
+      "typeId": 8,
+      "sportMarketId": 70491,
+      "sv": "1",
+      "sn": "Primul",
+      "id": 1769346925,
+      "name": "Golul 1"
+    },
+    {
+      "oddIds": [
+        4616449171,
+        4616449172
+      ],
+      "typeId": 18,
+      "sportMarketId": 70520,
+      "sv": "1.5",
+      "sn": "1.5",
+      "id": 1769346846,
+      "name": "Total goluri"
+    },
+    {
+      "oddIds": [
+        4616449337,
+        4616449338
+      ],
+      "typeId": 29,
+      "sportMarketId": 70545,
+      "id": 1769346905,
+      "name": "Ambele echipe să înscrie"
+    }
+  ],
+  "odds": [
+    {
+      "typeId": 1,
+      "price": 1.1667,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 43832,
+      "isDBB": true,
+      "id": 4611407874,
+      "name": "IFK Norrkoping FK"
+    },
+    {
+      "typeId": 2,
+      "price": 7,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4611407875,
+      "name": "X"
+    },
+    {
+      "typeId": 3,
+      "price": 13,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 48152,
+      "isDBB": true,
+      "id": 4611407876,
+      "name": "GIF Sundsvall"
+    },
+    {
+      "typeId": 1,
+      "price": 1.1819,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 43832,
+      "isDBB": true,
+      "id": 4611407947,
+      "name": "IFK Norrkoping FK"
+    },
+    {
+      "typeId": 7,
+      "price": 21,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4611407949,
+      "name": "Niciunul"
+    },
+    {
+      "typeId": 3,
+      "price": 4,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 48152,
+      "isDBB": true,
+      "id": 4611407948,
+      "name": "GIF Sundsvall"
+    },
+    {
+      "typeId": 12,
+      "price": 1.1,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4611407580,
+      "name": "Peste 1.5"
+    },
+    {
+      "typeId": 13,
+      "price": 5.5,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4611407581,
+      "name": "Sub 1.5"
+    },
+    {
+      "typeId": 74,
+      "price": 1.95,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4611407654,
+      "name": "Da"
+    },
+    {
+      "typeId": 76,
+      "price": 1.75,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4611407655,
+      "name": "Nu"
+    },
+    {
+      "typeId": 1,
+      "price": 3,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 111061,
+      "isDBB": true,
+      "id": 4605975634,
+      "name": "Petrojet"
+    },
+    {
+      "typeId": 2,
+      "price": 2.625,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4605975635,
+      "name": "X"
+    },
+    {
+      "typeId": 3,
+      "price": 2.6667,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 44233,
+      "isDBB": true,
+      "id": 4605975636,
+      "name": "Wadi Degla"
+    },
+    {
+      "typeId": 1,
+      "price": 2.1,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 111061,
+      "isDBB": true,
+      "id": 4605975698,
+      "name": "Petrojet"
+    },
+    {
+      "typeId": 7,
+      "price": 6.5,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4605975700,
+      "name": "Niciunul"
+    },
+    {
+      "typeId": 3,
+      "price": 1.96,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 44233,
+      "isDBB": true,
+      "id": 4605975699,
+      "name": "Wadi Degla"
+    },
+    {
+      "typeId": 12,
+      "price": 1.1,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4605975378,
+      "name": "Peste 0.5"
+    },
+    {
+      "typeId": 13,
+      "price": 5.5,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4605975379,
+      "name": "Sub 0.5"
+    },
+    {
+      "typeId": 74,
+      "price": 1.9,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4605975444,
+      "name": "Da"
+    },
+    {
+      "typeId": 76,
+      "price": 1.8,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4605975445,
+      "name": "Nu"
+    },
+    {
+      "typeId": 1,
+      "price": 2.9,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 72889,
+      "isDBB": true,
+      "id": 4617239775,
+      "name": "VfB Stuttgart II"
+    },
+    {
+      "typeId": 2,
+      "price": 4,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4617239776,
+      "name": "X"
+    },
+    {
+      "typeId": 3,
+      "price": 2.05,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 64167,
+      "isDBB": true,
+      "id": 4617239777,
+      "name": "TSG Hoffenheim II"
+    },
+    {
+      "typeId": 1,
+      "price": 2,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 72889,
+      "isDBB": true,
+      "id": 4617239848,
+      "name": "VfB Stuttgart II"
+    },
+    {
+      "typeId": 7,
+      "price": 26,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4617239850,
+      "name": "Niciunul"
+    },
+    {
+      "typeId": 3,
+      "price": 1.6667,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 64167,
+      "isDBB": true,
+      "id": 4617239849,
+      "name": "TSG Hoffenheim II"
+    },
+    {
+      "typeId": 12,
+      "price": 1.0834,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4617239479,
+      "name": "Peste 1.5"
+    },
+    {
+      "typeId": 13,
+      "price": 6,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4617239480,
+      "name": "Sub 1.5"
+    },
+    {
+      "typeId": 74,
+      "price": 1.3637,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4617239555,
+      "name": "Da"
+    },
+    {
+      "typeId": 76,
+      "price": 2.9,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4617239556,
+      "name": "Nu"
+    },
+    {
+      "typeId": 1,
+      "price": 1.3847,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 46349,
+      "isDBB": true,
+      "id": 4616449272,
+      "name": "Hansa Rostock"
+    },
+    {
+      "typeId": 2,
+      "price": 5,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4616449273,
+      "name": "X"
+    },
+    {
+      "typeId": 3,
+      "price": 6.3334,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 46356,
+      "isDBB": true,
+      "id": 4616449274,
+      "name": "Meppen 1912"
+    },
+    {
+      "typeId": 1,
+      "price": 1.35,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 46349,
+      "isDBB": true,
+      "id": 4616449428,
+      "name": "Hansa Rostock"
+    },
+    {
+      "typeId": 7,
+      "price": 21,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4616449430,
+      "name": "Niciunul"
+    },
+    {
+      "typeId": 3,
+      "price": 2.8334,
+      "isMB": false,
+      "oddStatus": 0,
+      "competitorId": 46356,
+      "isDBB": true,
+      "id": 4616449429,
+      "name": "Meppen 1912"
+    },
+    {
+      "typeId": 12,
+      "price": 1.1,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4616449171,
+      "name": "Peste 1.5"
+    },
+    {
+      "typeId": 13,
+      "price": 5.5,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4616449172,
+      "name": "Sub 1.5"
+    },
+    {
+      "typeId": 74,
+      "price": 1.6,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4616449337,
+      "name": "Da"
+    },
+    {
+      "typeId": 76,
+      "price": 2.2,
+      "isMB": false,
+      "oddStatus": 0,
+      "isDBB": true,
+      "id": 4616449338,
+      "name": "Nu"
+    }
+  ],
+  "events": [
+    {
+      "marketIds": [
+        1767905677,
+        1767905703,
+        1767905596,
+        1767905633
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "code": 7436,
+      "hasStream": false,
+      "extId": "fp32_ar:match:688126",
+      "sc": 2076,
+      "mc": 240,
+      "rc": false,
+      "pId": 32,
+      "et": 0,
+      "hasStats": true,
+      "competitorIds": [
+        43832,
+        48152
+      ],
+      "sportId": 66,
+      "catId": 602,
+      "champId": 4825,
+      "status": 0,
+      "startDate": "2026-09-21T20:00:00Z",
+      "id": 17953590,
+      "name": "IFK Norrkoping FK vs. GIF Sundsvall"
+    },
+    {
+      "marketIds": [
+        1766222323,
+        1766222346,
+        1766222251,
+        1766222284
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "code": 5549,
+      "hasStream": false,
+      "extId": "fp32_ar:match:686597",
+      "sc": 1496,
+      "mc": 186,
+      "rc": false,
+      "pId": 32,
+      "et": 0,
+      "hasStats": false,
+      "competitorIds": [
+        111061,
+        44233
+      ],
+      "sportId": 66,
+      "catId": 517,
+      "champId": 2974,
+      "status": 0,
+      "startDate": "2026-09-21T20:00:00Z",
+      "id": 17668797,
+      "name": "Petrojet vs. Wadi Degla"
+    },
+    {
+      "marketIds": [
+        1769649667,
+        1769649693,
+        1769649585,
+        1769649623
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "code": 3084,
+      "hasStream": false,
+      "extId": "fp32_ar:match:689360",
+      "sc": 2372,
+      "mc": 239,
+      "rc": false,
+      "pId": 32,
+      "et": 0,
+      "hasStats": true,
+      "competitorIds": [
+        72889,
+        64167
+      ],
+      "sportId": 66,
+      "catId": 506,
+      "champId": 3044,
+      "status": 0,
+      "startDate": "2026-09-21T20:00:00Z",
+      "id": 17945782,
+      "name": "VfB Stuttgart II vs. TSG Hoffenheim II"
+    },
+    {
+      "marketIds": [
+        1769346883,
+        1769346925,
+        1769346846,
+        1769346905
+      ],
+      "isBooked": true,
+      "isParlay": false,
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "code": 6246,
+      "hasStream": false,
+      "extId": "fp32_ar:match:677738",
+      "sc": 2366,
+      "mc": 240,
+      "rc": false,
+      "pId": 32,
+      "et": 0,
+      "hasStats": true,
+      "competitorIds": [
+        46349,
+        46356
+      ],
+      "sportId": 66,
+      "catId": 506,
+      "champId": 3044,
+      "status": 0,
+      "startDate": "2026-09-21T20:00:00Z",
+      "id": 17888154,
+      "name": "Hansa Rostock vs. Meppen 1912"
+    }
+  ],
+  "sports": [
+    {
+      "catIds": [
+        1728,
+        1571,
+        589,
+        1595,
+        499,
+        1133,
+        506,
+        1132,
+        602,
+        585,
+        507,
+        517,
+        1134,
+        574,
+        826,
+        783,
+        515,
+        561,
+        497,
+        1173,
+        548,
+        593,
+        716
+      ],
+      "typeId": 318,
+      "iconName": "soccer",
+      "hasLiveEvents": false,
+      "id": 66,
+      "name": "Soccer"
+    }
+  ],
+  "categories": [
+    {
+      "champIds": [
+        3044
+      ],
+      "iso": "DEU",
+      "hasLiveEvents": false,
+      "id": 506,
+      "name": "Germany"
+    },
+    {
+      "champIds": [
+        4825
+      ],
+      "iso": "SWE",
+      "hasLiveEvents": false,
+      "id": 602,
+      "name": "Sweden"
+    },
+    {
+      "champIds": [
+        2974
+      ],
+      "iso": "EGY",
+      "hasLiveEvents": false,
+      "id": 517,
+      "name": "Egypt"
+    }
+  ],
+  "champs": [
+    {
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "hasLiveEvents": false,
+      "id": 3044,
+      "name": "3rd Liga"
+    },
+    {
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "hasLiveEvents": false,
+      "id": 4825,
+      "name": "Superettan"
+    },
+    {
+      "offers": [
+        {
+          "type": 6
+        }
+      ],
+      "hasLiveEvents": false,
+      "id": 2974,
+      "name": "Premier League"
+    }
+  ],
+  "competitors": [
+    {
+      "hasConfigJersey": true,
+      "abbreviation": "NKP",
+      "id": 43832,
+      "name": "IFK Norrkoping FK"
+    },
+    {
+      "hasConfigJersey": true,
+      "abbreviation": "SUN",
+      "id": 48152,
+      "name": "GIF Sundsvall"
+    },
+    {
+      "abbreviation": "PET",
+      "id": 111061,
+      "name": "Petrojet"
+    },
+    {
+      "abbreviation": "DEG",
+      "id": 44233,
+      "name": "Wadi Degla"
+    },
+    {
+      "abbreviation": "VFB",
+      "id": 72889,
+      "name": "VfB Stuttgart II"
+    },
+    {
+      "abbreviation": "HOF",
+      "id": 64167,
+      "name": "TSG Hoffenheim II"
+    },
+    {
+      "hasConfigJersey": true,
+      "abbreviation": "HAN",
+      "id": 46349,
+      "name": "Hansa Rostock"
+    },
+    {
+      "abbreviation": "MEP",
+      "id": 46356,
+      "name": "Meppen 1912"
+    }
+  ]
+}

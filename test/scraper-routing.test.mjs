@@ -160,7 +160,7 @@ for (const maxEvents of ['all', 321]) {
       return { valid: true, status: 'ok', events: 0, outputs: [], sourceIds: ['superbet'] };
     });
     await runVerificationPass([{ legs: [{ sourceId: 'superbet' }] }], {}, { ...opts, maxEvents });
-    assert.equal(observed, maxEvents === 'all' ? 5000 : maxEvents);
+    assert.equal(observed, maxEvents === 'all' ? Infinity : maxEvents);
   });
 }
 

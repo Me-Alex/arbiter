@@ -1,0 +1,28 @@
+{
+  "book": "player",
+  "timestamp": "2026-10-11T01:58:00.000Z",
+  "pagesVisited": 1,
+  "minPagesRequired": 1,
+  "pagesTargetReached": true,
+  "endpoints": [],
+  "keyEndpoints": [
+    {
+      "method": "GET",
+      "url": "wss://api.player.ro/v2",
+      "evidence": "EveryMatrix ODDS RealtimeDealer WAMP v2 feed (realm www.player.ro, operator 2474). Reverse-engineered WAMP flow: HELLO→WELCOME→REGISTER→initialDump over /sports/2474/ro/...; match discovery via tournament-aggregator-groups-overview (groups 2794,2795) and 1X2 via match-odds/market-group/Populare (bettingTypeId 69). Confirmed via sports2.player.ro OMFE2CONFIG ucsOperatorId 2474.",
+      "verified": true
+    },
+    {
+      "method": "GET",
+      "url": "https://sports2.player.ro",
+      "evidence": "ODDS sportsbook OMFE2 frontend (static.glastcoper.com/omfe-widgets web components); renders sports catalog and feeds.",
+      "verified": true
+    },
+    {
+      "method": "POST",
+      "url": "https://sports-api.everymatrix.com",
+      "evidence": "EveryMatrix sports API base exposed in OMFE2CONFIG (ucsOperatorId: 2474). Odds served via WAMP WebSocket dealer.",
+      "verified": true
+    }
+  ]
+}

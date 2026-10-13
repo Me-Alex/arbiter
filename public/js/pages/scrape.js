@@ -147,11 +147,19 @@ function fmtDuration(ms) {
 
 /**
  * Count jobs that have reached a terminal state (used for progress %).
+ *
+ * The list is the producers' vocabulary, not a subset of it. `cancelled` and
+ * `unknown` reach a job only on an envelope — a run the operator stopped, and a
+ * book that resolved to no scraper at all — and both meant to be counted: a run
+ * on either reported 0 of N finished while its own header said the run was over.
  * @param {Array<object>} jobs
  * @returns {number}
  */
 function countDoneJobs(jobs) {
-  return jobs.filter((j) => j.status === 'ok' || j.status === 'failed' || j.status === 'skipped' || j.status === 'timeout' || j.status === 'locked').length;
+  // `locked` was here and is not a job status at all: it is the run's own status
+  // for a refused lock ('ELOCKED' lands on scrapeState.status), and no producer
+  // ever puts it on a job. Written as a name in a list, it read as one.
+  return jobs.filter((j) => ['ok', 'failed', 'skipped', 'timeout', 'cancelled', 'unknown'].includes(j.status)).length;
 }
 
 function statusDotClass(job) {
@@ -971,7 +979,7 @@ function refreshJobRows() {
 function updateKpiCard(state, t, statusLabel) {
   const summary = state.summary || {};
   const status = state.status || 'idle';
-  $('m-status').innerHTML = `<span class="status ${escapeHtml(status)}" title="${escapeHtml(status)}">${escapeHtml(statusLabel)}</span>`;
+  $('m-status').innerHTML = `<span class="status ${escapeHtml(status)}" title="${escapeHtml(statusLabel)}">${escapeHtml(statusLabel)}</span>`;
   $('head-status').textContent = statusLabel;
   const dot = $('head-dot');
   dot.className = 'dot ' + (status === 'running' ? 'live pulse' : status === 'failed' ? 'error' : status === 'completed' ? 'live' : '');
@@ -994,11 +1002,21 @@ function updateKpiCard(state, t, statusLabel) {
 }
 
 /**
- * Update the live progress card (bar, percentage, ring, ETA, activity line).
+ * Update the live progress card (bar, percentage, ring, activity line).
+ *
+ * No ETA, and the absence is the backend's, not an oversight here. The
+ * state this reads carries no such field -- scrape-orchestrator.mjs builds
+ * runId, status, startedAt, finishedAt, options, books, jobs,
+ * currentActivity and summary, and there is no `eta` key in either
+ * dictionary. `#progress-eta` is still in the markup, still translated by
+ * `data-i18n="etaLabel"`, and still never written: the word "ETA" is what
+ * that span shows, forever. An estimate is derivable here from startedAt
+ * and the completed count, and is not derived -- that is a feature
+ * decision, so it is left to one rather than assumed.
  * @param {object} state
  * @param {function} t - i18n translator
  */
-function updateProgressCard(state, _t) {
+function updateProgressCard(state, t) {
   const status = state.status || 'idle';
   const running = ['running', 'cancelling'].includes(status);
   $('progress-card').classList.toggle('hidden', !running);
@@ -1008,7 +1026,7 @@ function updateProgressCard(state, _t) {
   const pct = Math.round((done / total) * 100);
   $('progress-bar').style.right = `${100 - pct}%`;
   $('progress-pct').textContent = `${pct}%`;
-  $('progress-activity').textContent = state.currentActivity || '—';
+  $('progress-activity').textContent = activityText(state, t);
   // Update ARIA progressbar + ring
   // The announced one is the track. The ring carries role="progressbar" too, but
   // it is aria-hidden and is updated separately below, from its own id.
@@ -1023,8 +1041,10 @@ function updateProgressCard(state, _t) {
   const ring = $('progress-ring');
   if (ring) {
     ring.style.setProperty('--p', pct);
-    const fill = ring.querySelector('.ring-fill');
-    if (fill) fill.style.strokeDashoffset = String(113.1 - (113.1 * pct / 100));
+    // No `.ring-fill`: it was an SVG-era child this markup has never had, and
+    // the `if` swallowed the null on every update. The ring is `display: none`
+    // anyway -- kept for the value it announces -- so there was nothing on the
+    // other side of that lookup to move.
     const ringLabel = $('progress-ring-pct');
     if (ringLabel) ringLabel.textContent = `${pct}%`;
     ring.classList.toggle('complete', pct >= 100);
@@ -1042,14 +1062,27 @@ function updateStepper(state, t) {
   const running = ['running', 'cancelling'].includes(status);
   const idx = state.currentStep?.index;
   const terminal = !running && (status === 'completed' || status === 'completed-with-errors');
-  document.querySelectorAll('.stepper .step').forEach((el, i) => {
+  // `.stepper .step` is markup that only ever existed in the design preview.
+  // The pipeline on this page is `ol.sl-stages > li.sl-stage`, so this loop was
+  // running over nothing: no stage was ever marked active, done or error, and
+  // `aria-current` was never set on any of them. The orchestrator's
+  // `currentStep.index` had no effect on the page at all.
+  //
+  // The index comes off the element's own `data-step` rather than its position
+  // in the list. The markup declares it, so the two agree by construction
+  // instead of by the five `li` staying in the order someone typed them in.
+  document.querySelectorAll('.sl-stage').forEach((el) => {
+    const step = Number(el.dataset.step);
+    const isCurrent = step === idx;
     const wasDone = el.classList.contains('done');
     el.classList.remove('active', 'done', 'error');
-    if (running && i === idx) el.classList.add('active');
+    if (running && isCurrent) el.classList.add('active');
     // No stage history is supplied: prior stages may have been skipped or failed.
-    else if (terminal && idx === 4 && i === 4) el.classList.add(status === 'completed' ? 'done' : 'error');
-    else if (!running && state.error && i === idx) el.classList.add('error');
-    el.setAttribute('aria-current', running && i === idx ? 'step' : 'false');
+    // The run always sets `complete` as its last step before writing a terminal
+    // status, so the step it stopped on is the one to mark here.
+    else if (terminal && isCurrent) el.classList.add(status === 'completed' ? 'done' : 'error');
+    else if (!running && state.error && isCurrent) el.classList.add('error');
+    el.setAttribute('aria-current', running && isCurrent ? 'step' : 'false');
     // Step-done pop: brief scale when a step transitions to done
     if (!wasDone && el.classList.contains('done') && !reducedMotion()) {
       el.classList.remove('step-pop');
@@ -1081,11 +1114,11 @@ function updateActivityLine(state, t) {
   // Human-readable activity line instead of the raw status string.
   const isIdle = status === 'idle';
   $('act-line').textContent = running
-    ? state.currentActivity || t('scraping')
+    ? activityText(state, t)
     : isIdle ? status
       : status === 'completed-with-errors' ? `${summary.completed || 0} ${t('okShort')} · ${summary.failed || 0} ${t('failedShort')}`
         : status === 'completed' ? t('completedClean')
-          : status === 'failed' ? t('statusFailed') : state.currentActivity || status;
+          : status === 'failed' ? t('statusFailed') : activityText(state, t);
 
   const active = jobs.find((j) => j.status === 'running');
   $('act-book').textContent = active ? active.id : '—';
@@ -1125,7 +1158,11 @@ function updateErrorBox(state, t) {
   const running = ['running', 'cancelling'].includes(status);
   const errBox = $('error-box');
   if (!running && state.error) {
-    errBox.className = 'alert error-visible';
+    // The markup ships `class="sl-alert hidden"` and this page styles only
+    // `.sl-alert`; the old `alert error-visible` assignment swapped in theme
+    // classes (`.alert` exists, `error-visible` has no rule anywhere), so the
+    // same box changed family the first time a state update touched it.
+    errBox.className = 'sl-alert';
     // `state.error` is an object from the orchestrator but a string from some
     // payloads; reading `.name` off a string yields "undefined: undefined".
     const err = typeof state.error === 'string'
@@ -1134,12 +1171,12 @@ function updateErrorBox(state, t) {
     errBox.innerHTML = `${escapeHtml(err.name || 'Error')}: ${escapeHtml(err.message || '')}`;
   } else if (!running && status === 'completed-with-errors') {
     const failedCount = (state.jobs || []).filter((j) => isFailedJob(j)).length;
-    errBox.className = 'alert warn error-visible';
+    errBox.className = 'sl-alert warn';
     errBox.innerHTML =
       `${escapeHtml(`${t('scrapeErrorsPrefix')} ${failedCount} ${t('jobsFailed')}`)} `
       + `<a href="#job-rows">${escapeHtml(t('viewFailedJobs'))}</a>`;
   } else {
-    errBox.className = 'alert hidden';
+    errBox.className = 'sl-alert hidden';
   }
 }
 
@@ -1148,6 +1185,51 @@ function updateErrorBox(state, t) {
  *
  * @param {object} state — the scrapeState payload { status, summary, jobs, currentStep, currentActivity, options, runId, startedAt, finishedAt, error }
  */
+/**
+ * The word the page shows for each status a run can hold.
+ *
+ * Seven values, and the chain this replaces spoke for three of them: `locked`
+ * and `cancelled` are terminal states an operator is left to decode off a pill,
+ * and `running` is the one they watch for an hour. `cancelling` was the seventh
+ * — the state between pressing cancel and the cancel finishing, which an
+ * in-flight request can hold for a while.
+ *
+ * Closed on purpose, the way `VERDICT_WORDS` is: a status with no entry here
+ * shows the bare token rather than a wrong word, and
+ * test/scrape-page.test.mjs checks the set against the producer so a new status
+ * has to be added here on purpose.
+ */
+const RUN_STATUS_WORDS = {
+  running: 'running',
+  cancelling: 'cancelling',
+  cancelled: 'cancelled',
+  completed: 'completedClean',
+  'completed-with-errors': 'completedWithErrors',
+  failed: 'statusFailed',
+  locked: 'locked',
+};
+
+/** The reader's word for a run status, or the status itself when there is none. */
+function runStatusLabel(status, t) {
+  return Object.hasOwn(RUN_STATUS_WORDS, status) ? t(RUN_STATUS_WORDS[status]) : status;
+}
+
+/**
+ * The activity line, in the reader's language.
+ *
+ * `currentActivity` is a dictionary key now, not a sentence: the orchestrator
+ * used to write `scraping <book>` and `cancelling active scrape` into it and
+ * this line printed both verbatim, so a Romanian operator read the state of
+ * their own run in English. The book name is appended here because the
+ * orchestrator no longer sends it and the progress card has nowhere else to
+ * get it — it is on the job the page already finds for its own book readout.
+ */
+function activityText(state, t) {
+  const word = state.currentActivity ? t(state.currentActivity) : t('scraping');
+  const book = (state.jobs || []).find((j) => j.status === 'running');
+  return book ? `${word} ${book.id}` : word;
+}
+
 function renderState(state) {
   if (!state) return;
   const prevStatus = lastState?.status;
@@ -1155,10 +1237,7 @@ function renderState(state) {
   const status = state.status || 'idle';
   const t = window.arbiterI18n.t.bind(window.arbiterI18n);
 
-  const statusLabel = status === 'completed-with-errors' ? t('completedWithErrors')
-    : status === 'completed' ? t('completedClean')
-      : status === 'failed' ? t('statusFailed')
-        : status;
+  const statusLabel = runStatusLabel(status, t);
 
   // Announced status change to screen readers only (aria-live=polite)
   if (status !== prevStatus) {
@@ -1184,9 +1263,11 @@ function renderState(state) {
   // clears the line rather than throwing on it.
   renderLiveMeasured(lastLive, window.arbiterI18n.t.bind(window.arbiterI18n));
 
-  // Flash effect on KPI cards (skip first load)
+  // Flash effect on KPI cards (skip first load). The band is `section.sl-stats`
+  // and the cards are `div.sl-stat`; `scrape-kpis`/`kpi-card` named a layout
+  // this page has never had, so nothing has ever flashed on an update.
   if (!_isFirstScrapeLoad && status !== 'idle') {
-    document.querySelectorAll('.scrape-kpis .kpi-card').forEach((card, i) => {
+    document.querySelectorAll('.sl-stats .sl-stat').forEach((card, i) => {
       setTimeout(() => card.classList.add('flash'), i * 40);
       setTimeout(() => card.classList.remove('flash'), 500 + i * 40);
     });
@@ -1307,7 +1388,9 @@ async function refreshLastRun() {
     // caption under a capitalised stat label at line 514 — lowercase on
     // purpose. A second `finished` here would have been a duplicate key in the
     // dictionary object, where the later one silently wins and the first is
-    // dead. Same reason `etaLabel` exists next to `eta`.
+    // dead. The `etaLabel` case next to it is not an example of that rule --
+    // there is no `eta` key in either dictionary, and the span it labels,
+    // `#progress-eta`, is never written by anything.
     //
     // No escapeHtml here, and that is not an oversight. This is a textContent
     // write, and a Text node's data is literal — only the HTML parser decodes
