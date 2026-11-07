@@ -184,7 +184,7 @@
     return `
       <button type="button" class="card p-4 flex flex-col items-center justify-center gap-2 border-dashed border-[var(--edge-border2)] text-[var(--edge-textMuted)] hover:text-[var(--edge-text)] hover:border-[var(--edge-textMuted)] cursor-pointer min-h-[200px]" data-add>
         <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
-        <span class="text-sm font-medium">Add Bookmaker</span>
+        <span class="text-sm font-medium">${escapeHtml(t('addBookmaker'))}</span>
       </button>`;
   }
 

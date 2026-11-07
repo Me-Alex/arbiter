@@ -347,6 +347,79 @@ test('lvbet: ignores invalid rates <= 1.0', () => {
   assert.equal(events[0].markets.length, 0, 'Market with invalid decimal odds must be rejected');
 });
 
+test('lvbet: rejects synthetic aggregate boards and non-goal stat prop totals', () => {
+  const scraper = new Lvbet({
+    includePast: true,
+    includeLive: true,
+    windowHours: 720,
+  });
+
+  const syntheticGrandSalami = {
+    match_id: 'bc:synthetic:grand-salami',
+    date: '2026-10-18T15:00:00+00:00',
+    sports_groups_ids: [1],
+    home: ['Home Teams (Goals)'],
+    away: ['Away Teams (Goals)'],
+    state: { is_pre: true, is_live: false },
+    markets: [
+      {
+        markets_class_id: 3499,
+        name: 'Total Goals',
+        line: 55.5,
+        selections: [
+          { name: 'Over (55.5)', rate: { decimal: 1.85 } },
+          { name: 'Under (55.5)', rate: { decimal: 1.85 } },
+        ],
+      },
+    ],
+  };
+
+  const realMatchWithStatProps = {
+    match_id: 'bc:real:stat-props',
+    date: '2026-10-18T15:00:00+00:00',
+    sports_groups_ids: [1],
+    home: ['Legia Warszawa'],
+    away: ['Lech Poznan'],
+    state: { is_pre: true, is_live: false },
+    markets: [
+      {
+        markets_class_id: 3499,
+        name: 'Total Shots on Target',
+        line: 8.5,
+        selections: [
+          { name: 'Over (8.5)', rate: { decimal: 1.90 } },
+          { name: 'Under (8.5)', rate: { decimal: 1.82 } },
+        ],
+      },
+      {
+        markets_class_id: 3499,
+        name: 'Total Fouls',
+        line: 23.5,
+        selections: [
+          { name: 'Over (23.5)', rate: { decimal: 1.88 } },
+          { name: 'Under (23.5)', rate: { decimal: 1.84 } },
+        ],
+      },
+      {
+        markets_class_id: 3499,
+        name: 'Total Goals',
+        line: 2.5,
+        selections: [
+          { name: 'Over (2.5)', rate: { decimal: 1.92 } },
+          { name: 'Under (2.5)', rate: { decimal: 1.80 } },
+        ],
+      },
+    ],
+  };
+
+  const events = scraper.extractEvents([syntheticGrandSalami, realMatchWithStatProps]);
+  assert.equal(events.length, 1, 'Synthetic aggregate Home Teams (Goals) vs Away Teams (Goals) must be filtered out');
+  assert.equal(events[0].eventId, 'bc:real:stat-props');
+  assert.equal(events[0].markets.length, 1, 'Shots and Fouls totals must not be emitted as goals OVER_UNDER');
+  assert.equal(events[0].markets[0].key, 'OVER_UNDER');
+  assert.equal(events[0].markets[0].line, 2.5);
+});
+
 // ── Network & fetchRaw Smoke Tests ────────────────────────────────────────────
 
 test('lvbet: fetchRaw aggregates matches across configured sports', async () => {

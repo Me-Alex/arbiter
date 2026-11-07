@@ -87,7 +87,15 @@ const WORKSPACE = [
   EVENT('b1', 'bravo', 'k-arb', [mkt('MATCH_ODDS', [sel('H', 2.05), sel('D', 4.50), sel('A', 5.00)])]),
   // Middles: an over/under pair straddling a line.
   EVENT('a2', 'alpha', 'k-middle', [mkt('OVER_UNDER_25', [sel('Over', 2.00, { handicap: 2.5 }), sel('Under', 2.00, { handicap: 2.5 })])]),
-  EVENT('b2', 'bravo', 'k-middle', [mkt('OVER_UNDER_25', [sel('Over', 1.95, { handicap: 2.25 }), sel('Under', 1.95, { handicap: 2.75 })])]),
+  // Both books must quote a half line. A quarter line half-pushes and a whole
+  // line pushes outright, so the resolver refuses a market whose line can
+  // push. The earlier 2.25/2.75 straddle resolved to nothing, the middles
+  // family came back empty, and the census then reported every middles leaf as
+  // an absence rather than as unread.
+  EVENT('b2', 'bravo', 'k-middle', [
+    mkt('OVER_UNDER_25', [sel('Over', 1.95, { handicap: 1.5 }), sel('Under', 1.95, { handicap: 1.5 })]),
+    mkt('OVER_UNDER_35', [sel('Over', 1.95, { handicap: 3.5 }), sel('Under', 1.95, { handicap: 3.5 })]),
+  ]),
   // Positive EV: one selection far above the other two books' consensus.
   EVENT('a3', 'alpha', 'k-ev', [mkt('MATCH_ODDS', [sel('H', 5.20), sel('D', 3.60), sel('A', 3.40)])]),
   EVENT('b3', 'bravo', 'k-ev', [mkt('MATCH_ODDS', [sel('H', 2.10), sel('D', 3.60), sel('A', 3.50)])]),
@@ -217,14 +225,34 @@ function leaves(value, prefix, out) {
 
 const escapeHtml = (v) => String(v ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 
-const node = (overrides = {}) => ({
-  textContent: '', innerHTML: '', className: '', value: '', checked: false, hidden: false,
-  dataset: {}, style: {}, classList: { add() {}, remove() {}, toggle() {}, contains: () => false },
-  addEventListener() {}, setAttribute() {}, getAttribute() { return null; },
-  querySelector() { return node(); }, querySelectorAll() { return []; }, nextElementSibling: null,
-  remove() {}, appendChild() {}, insertAdjacentHTML() {},
-  ...overrides,
-});
+/**
+ * A DOM stand-in that remembers what was wired to it.
+ *
+ * `addEventListener` used to be a no-op, which is fine for a control a page
+ * *reads* and is not fine for a control a page *reacts to*: the search box on
+ * the ArbEdge console writes its value into page state from an `input` handler
+ * and never reads the element again, so the harness could set the box and the
+ * page would not know. That is not a rare branch either -- it is the first thing
+ * a user does with the table -- and it is where `middles[].league` and its four
+ * siblings are read, so the census reported five fields nobody reads and would
+ * have excused them forever on the strength of a listener the stub dropped.
+ * Nothing is dispatched here; `pageContext` exposes a `fire` that calls what was
+ * recorded, so a pass drives the control rather than the stub reaching into the
+ * page's own state.
+ */
+const node = (overrides = {}) => {
+  const listeners = {};
+  return {
+    textContent: '', innerHTML: '', className: '', value: '', checked: false, hidden: false,
+    dataset: {}, style: {}, classList: { add() {}, remove() {}, toggle() {}, contains: () => false },
+    addEventListener(type, fn) { (listeners[type] = listeners[type] || []).push(fn); },
+    __listeners: listeners,
+    setAttribute() {}, getAttribute() { return null; },
+    querySelector() { return node(); }, querySelectorAll() { return []; }, nextElementSibling: null,
+    remove() {}, appendChild() {}, insertAdjacentHTML() {},
+    ...overrides,
+  };
+};
 
 /**
  * The controls a pass puts the page into, keyed by element id, read by
@@ -316,8 +344,50 @@ function pageContext(api, values = {}) {
     localStorage: { getItem: (k) => (k === 'arbiter.lang' ? 'en' : null), setItem() {} },
   }));
   context.arbiterI18n = context.window.arbiterI18n;
+  /**
+   * Put a value into a control the way a user would: set it, then call what the
+   * page wired to it. Setting the value alone is not enough, because these
+   * controls are write-only from the page's side \u2014 the search boxes hand their
+   * value to page state and are never read again -- so a control the harness
+   * sets without firing reaches the page as an empty box.
+   *
+   * @param {string} id element id
+   * @param {unknown} value assigned to `value`
+   * @param {boolean} [checked] assigned to `checked`, for a toggle
+   * @returns {boolean} whether the control existed
+   */
+  context.__fire = (id, value, checked) => {
+    const el = byId.get(id);
+    if (!el) return false;
+    el.value = value;
+    if (checked !== undefined) el.checked = checked;
+    for (const type of ['input', 'change']) {
+      for (const fn of el.__listeners[type] || []) fn({ target: el });
+    }
+    return true;
+  };
   return context;
 }
+
+/**
+ * The controls every pass drives, by page.
+ *
+ * Each one is a control whose reads sit behind an event handler, so a pass that
+ * only sets values never reaches them. `f-q` is the ArbEdge console search box:
+ * it is the first thing anyone does with that table, and it is the only reader
+ * of `league` on the console, which is why the census was about to excuse five
+ * `league` leaves that two live pages read. `f-confirmed` gates a second filter
+ * on the same table. The two analytics boxes filter by category and by event,
+ * and each has a branch behind its own query.
+ *
+ * Driven in every pass rather than a pass of its own, because the value belongs
+ * to the control and not to the document: there is no fixture that makes a
+ * search box empty and one that makes it full.
+ */
+const CONTROLS = {
+  'arbitrage.js': [[{ id: 'f-q', value: 'home' }], [{ id: 'f-confirmed', value: '', checked: true }]],
+  'analytics.js': [[{ id: 'cat-search', value: 'home' }], [{ id: 'event-search', value: 'home' }]],
+};
 
 /**
  * The readers that cannot be run whole, and the functions that read the
@@ -486,6 +556,18 @@ async function measureReads(payload, values = {}) {
     // profile list; the preview path is the same function.
     if (page === 'scanner.js') context.render(record(own, '', pageHits));
     await new Promise((r) => setTimeout(r, 25));
+    // Then the controls, because a page that reads a filter off an event handler
+    // has not read it until the handler has run. Driven for real rather than
+    // assumed: a control named here that the page does not wire is a typo in this
+    // file, and a pass that quietly did nothing would excuse fields all over
+    // again.
+    for (const set of CONTROLS[page] || []) {
+      for (const control of set) {
+        assert.ok(context.__fire(control.id, control.value, control.checked),
+          `${page} no longer has a ${control.id} control, so this pass drives nothing`);
+      }
+      await new Promise((r) => setTimeout(r, 25));
+    }
     collect(page, pageHits);
   }
 
@@ -695,15 +777,17 @@ const UNREAD_BY_DESIGN = [
   },
   {
     id: 'ev-leg-restatement',
-    covers: ['consensusProbability', 'evPercent', 'eventKey', 'live', 'marketKey', 'selection', 'sport', 'type']
+    covers: ['awayTeam', 'consensusProbability', 'evPercent', 'eventKey', 'homeTeam', 'live', 'marketKey', 'selection', 'sport', 'type']
       .map((f) => `positiveEv[].legs[].${f}`),
     reason: [
-      'A restatement of the parent, measured rather than argued: 8 of the 13 fields on',
+      'A restatement of the parent, measured rather than argued: 10 of the 15 fields on',
       'positiveEv[].legs[0] are byte-identical to the signal above them, which the page does read.',
       'The spread is withBankroll copying the whole signal into its single leg so the shape matches',
       'the other families. Two left this group when the ArbEdge console landed, and both are the',
       'fields a row needs to be actionable: sourceId is the book the filter box searches, and odds',
-      'is the price the EV was computed from.',
+      'is the price the EV was computed from. homeTeam and awayTeam joined when the fixture line',
+      'stopped printing `? v ?`: the page draws the names off the parent, and the leg mirrors them',
+      'only because it is a copy of it.',
     ].join(' '),
     measuredBy: 'the positive-EV leg restates its parent on every driven record',
   },
@@ -801,6 +885,21 @@ const UNREAD_BY_DESIGN = [
     ].join(' '),
     measuredBy: 'the mirrored fields repeat what the EV column already shows',
   },
+  {
+    id: 'middle-fixture-key',
+    covers: ['middles[].eventKey'],
+    reason: [
+      'Unread after the dashboard stopped ranking surebets and middles on one column. The landing page',
+      'read it for exactly 1 reason — naming the fixture behind its "Best margin" tile — and that tile',
+      'ranked `marginPercent || roiPercent` across both families at once. Most middles publish no',
+      'marginPercent, so `||` swapped in 459 middles\' ROI and built one ranking out of two measures:',
+      'the tile printed +100.00% from a conditional middle while the scan held 0 rule-safe surebets, and',
+      'the scan\'s real 511% middle could never win because 4130 others carry a smaller marginPercent.',
+      'A margin is only comparable inside the family that publishes one, so the tile now draws on',
+      'surebets alone and no page reads this leaf any more.',
+    ].join(' '),
+    measuredBy: 'the middle fixture key is unread because the dashboard no longer ranks across families',
+  },
 ];
 
 // ---------------------------------------------------------------------------
@@ -818,11 +917,14 @@ test('every family is populated, so an empty one cannot hide a leaf behind it', 
   assert.equal(Object.keys(scan).length, 15, 'the envelope, the five families, the summary and the route flag');
 });
 
-test('the published set is 172 leaves, and the reader is not reporting zeros', async () => {
+test('the published set is 178 leaves, and the reader is not reporting zeros', async () => {
   const doc = await publishedScan();
   const published = new Set();
   leaves(doc, '', published);
-  assert.equal(published.size, 172, 'the leaf count moved: a field was added or dropped upstream');
+  // 178 is 172 plus the fixture names: homeTeam and awayTeam on positiveEv, on
+  // lowHold, and on the single leg withBankroll copies out of the EV signal. The
+  // console drew `? v ?` above the raw key until the two signals published them.
+  assert.equal(published.size, 178, 'the leaf count moved: a field was added or dropped upstream');
 
   const { perPage } = await readPaths();
   // A reader that threw records almost nothing, and a census built on its
@@ -965,7 +1067,15 @@ test('every field the scan publishes is read by a page, or is named with a reaso
   // 67 adds middles[].verification.legs[].side, which rides along inside the
   // re-quote overlay: the pass copies the input legs there and the page shows
   // the verdict, not the legs it was handed.
-  assert.equal(unread.length, 67, `the unread set moved: ${unread.length} — ${unread.join(', ')}`);
+  // 68 is 67 plus middles[].eventKey: the landing page stopped ranking surebets
+  // and middles on `marginPercent || roiPercent` and now takes the best margin
+  // from the surebets alone, so the fixture key it read only to name that tile has
+  // no reader left.
+  // 70 is 68 plus positiveEv[].legs[].homeTeam and .awayTeam: the EV row draws
+  // the fixture off the parent record, and withBankroll copies the whole signal
+  // into its single leg, so the leg carries the names without any page reading
+  // them there.
+  assert.equal(unread.length, 70, `the unread set moved: ${unread.length} — ${unread.join(', ')}`);
 });
 
 // ---------------------------------------------------------------------------
@@ -998,16 +1108,77 @@ test('the overlay is the pass output, and no page reads below its status', async
   assert.deepEqual(belowStatus, [], `a page reads inside the re-quote record: ${belowStatus.join(', ')}`);
 });
 
+test('the middle fixture key is unread because the dashboard no longer ranks across families', async () => {
+  await driveScan();
+  const { hits } = await readPaths();
+  const group = UNREAD_BY_DESIGN.find((g) => g.id === 'middle-fixture-key');
+  for (const path of group.covers) {
+    // The `stale` assertion in the census above already catches the other
+    // direction; this is here so the excuse's own measurement is checked.
+    assert.ok(!hits.has(path), `${path} is excused as unread, but a page reads it`);
+  }
+
+  // The excuse rests on the coalesce being gone, so assert the coalesce. It is
+  // the exact defect: `marginPercent || roiPercent` ranked a guaranteed margin
+  // and a conditional return in one column, and `0 || x` also made a middle that
+  // publishes marginPercent: 0 report its ROI instead.
+  //
+  // Comments are stripped first. The fix is explained in a comment that has to
+  // name the expression it removed, and a substring check over prose would fail
+  // on its own explanation — which is how a guard quietly stops guarding.
+  const code = read('public/js/pages/dashboard.js')
+    .replace(/\/\*[\s\S]*?\*\//g, '')
+    .replace(/^[ \t]*\/\/.*$/gm, '');
+  // `marginPercent || 0` on the tile is not this defect and stays: the tile draws
+  // surebets alone now, and that null guard is a missing-value fallback. The
+  // defect is one *coalesce between the two families* in either order.
+  assert.ok(!/marginPercent \|\| roiPercent|roiPercent \|\| marginPercent/.test(code),
+    'the page coalesces a margin with a ROI again');
+  assert.match(code, /const backable = opportunities\.filter\(\(o\) => !rejected\(o\)\)/,
+    'the tile no longer ranks on the surebets the backend did not reject');
+
+  // Certainty first, and each family sorted on its own figure. The three bands
+  // are ranked separately and concatenated rather than merged into one list for
+  // a comparator to divide, because the whole defect was one column over two
+  // measures -- a wrapper carrying the family would work too, but three sorts
+  // say which order they are in without a reader having to know. The rejected
+  // surebets come last rather than being dropped: the backend withdrew their
+  // margin, and a withdrawn number does not outrank a placeable middle.
+  assert.match(code, /const blocked = opportunities\.filter\(rejected\)\.slice\(\)\.sort\(byFigure\);/,
+    'the rejected surebets are still shown, only below the rows that can be placed');
+  assert.match(code, /\.\.\.opportunities\.filter\(\(o\) => !rejected\(o\)\)\.slice\(\)\.sort\(byFigure\), \.\.\.middles\.slice\(\)\.sort\(byFigure\), \.\.\.blocked/,
+    'the top-opportunities list no longer ranks placeable surebets, then middles, then the rejected');
+  assert.match(code, /o\.type === 'middle'\s*\n?\s*\? Number\(o\.roiPercent \?\? 0\)/,
+    'a middle is no longer described by a margin column');
+  assert.match(code, /Number\(o\.marginPercent \?\? 0\)/,
+    'a surebet is no longer described by a ROI column');
+
+  // The family is read off the row's own published `type`, never stamped onto
+  // it and never copied. A spread reads every own property of the row it copies
+  // and this census counts a read as a page using that field, so the copy that
+  // adds one field would have credited the page with reading all of them and
+  // quietly retired six measured excuses. `kind` is the field that was never
+  // published at all: two renderers asked the rows for it, every row answered
+  // undefined, and 4,588 middles were labelled "Arbitrage" until this.
+  assert.ok(!/\.kind\b/.test(code), 'a row is still asked for a family field nothing publishes');
+  assert.ok(!/\{ \.\.\.o/.test(code), 'a row is shallow-copied again, which reads every field it carries');
+  assert.ok(!/\bo\.kind\s*=/.test(code), 'the family marker is stamped onto the response again');
+
+  // Dropping the key must not have dropped the name: the middle list still draws
+  // its fixture from the fields beside it.
+  assert.match(code, /t\('vs'\)/, 'the tile no longer names a fixture at all');
+});
+
 test('the positive-EV leg restates its parent on every driven record', async () => {
   const scan = await driveScan();
   const stats = restatements();
-  assert.equal(stats.positiveEv.equal.length, 10, `restatements moved: ${stats.positiveEv.equal.join(', ')}`);
+  assert.equal(stats.positiveEv.equal.length, 12, `restatements moved: ${stats.positiveEv.equal.join(', ')}`);
   assert.equal(stats.positiveEv.legs, 8, 'the positive-EV sample shrank, so the count means less');
   const group = UNREAD_BY_DESIGN.find((g) => g.id === 'ev-leg-restatement');
-  // 8, not the 10 the restatement measurement finds: `sourceId` and `odds` are
+  // 10, not the 12 the restatement measurement finds: `sourceId` and `odds` are
   // still byte-identical to their parent, but a page now reads both, so they are
   // no longer unread by design and do not belong in this excuse.
-  assert.equal(group.covers.length, 8);
+  assert.equal(group.covers.length, 10);
   for (const path of group.covers) {
     const field = path.split('.').pop();
     assert.ok(stats.positiveEv.equal.includes(field), `${path} is excused as a restatement but ${field} differs from its parent`);

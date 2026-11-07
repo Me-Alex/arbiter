@@ -153,5 +153,5 @@ test('feedStatusConflicts is clean: unibet is no longer a conflict', () => {
 
 test('booksOnPlatform returns a sorted member list', () => {
   const exa = booksOnPlatform('exalogic-xsport');
-  assert.deepEqual(exa, ['cashpot', 'excelbet', 'las-vegas', 'magnumbet', 'winboss']);
+  assert.deepEqual(exa, ['cashpot', 'excelbet', 'las-vegas', 'luck', 'magnumbet', 'winboss']);
 });

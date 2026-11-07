@@ -544,6 +544,12 @@ export const TENANTS = [
   {
     id: 'betway', name: "Betway", baseUrl: "https://sb2frontend-altenar2.biahosted.com/api/widget/GetUpcoming?integration=betway", locale: 'ro-RO', timezone: 'Europe/Bucharest', currency: 'RON', path: '/api/widget/GetUpcoming',
   },
+  {
+    id: 'betking', name: "Betking", baseUrl: "https://sb2frontend-altenar2.biahosted.com/api/widget/GetUpcoming?integration=betking", locale: 'ro-RO', timezone: 'Europe/Bucharest', currency: 'RON', path: '/api/widget/GetUpcoming',
+  },
+  {
+    id: 'bet99', name: "Bet99", baseUrl: "https://sb2frontend-altenar2.biahosted.com/api/widget/GetUpcoming?integration=bet99", locale: 'ro-RO', timezone: 'Europe/Bucharest', currency: 'RON', path: '/api/widget/GetUpcoming',
+  },
 ];
 
 /**

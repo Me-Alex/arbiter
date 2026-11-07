@@ -314,3 +314,161 @@ test('Synthetic Equivalence: ignores proposition handicaps with non-goal subject
   const arbs = findArbitrage(grouped, { includeSynthetic: true });
   assert.equal(arbs.length, 0, 'Corners handicap must NOT pair with match odds 1X2 in synthetic equivalence');
 });
+
+function handballHandicap(selections) {
+  return createEvent('betano', 'CS Dinamo Bucuresti', 'Skanderborg Aarhus', [
+    {
+      id: 'm-fahc',
+      key: 'FAHC',
+      name: 'Handicap',
+      period: 'fulltime',
+      selections: selections.map((s, i) => ({ id: 's' + i, ...s })),
+    },
+  ]);
+}
+
+test('Synthetic Equivalence: a team-named away -0.5 handicap is not draw_or_away', () => {
+  // Reproduces the 2026-10-20 board exactly: betano's away -0.5 (which pays only
+  // on an away win) plus a home moneyline was published as +69.74 guaranteed.
+  // The bucket key for a team-named pair used to be sign-ordered, so this
+  // market received the HOME -0.5 key and its away leg was booked as
+  // `draw_or_away`. 1/1.93 + 1/2.40 = 0.935 "covers" all three outcomes only
+  // under that mislabelling; on a draw both legs lose.
+  const betano = handballHandicap([
+    { name: 'CS Dinamo Bucuresti +0.5', odds: 1.88, handicap: 0.5 },
+    { name: 'Skanderborg Aarhus -0.5', odds: 1.93, handicap: -0.5 },
+  ]);
+  const unibet = createEvent('unibet', 'CS Dinamo Bucuresti', 'Skanderborg Aarhus', [
+    {
+      id: 'm-ml',
+      key: 'MATCH_ODDS',
+      name: '1X2',
+      period: 'fulltime',
+      selections: [
+        { id: 's10', name: '1', odds: 2.40 },
+        { id: 's11', name: 'X', odds: 8.00 },
+        { id: 's12', name: '2', odds: 1.60 },
+      ],
+    },
+  ]);
+
+  const arbs = findArbitrage(groupByEvent([betano, unibet]), { includeSynthetic: true });
+  assert.equal(
+    arbs.filter((a) => a.syntheticType === 'X2_VS_HOME').length,
+    0,
+    'an away -0.5 leg pays only when the away side wins; it must never stand in for draw_or_away',
+  );
+});
+
+test('Synthetic Equivalence: the same handicap pairs as 1X_VS_AWAY against an away price', () => {
+  // The half this market really contains is home +0.5 = home wins or draws. It
+  // has to keep pairing, or the fix would be a deletion of coverage rather than
+  // a correction of it.
+  const betano = handballHandicap([
+    { name: 'CS Dinamo Bucuresti +0.5', odds: 1.88, handicap: 0.5 },
+    { name: 'Skanderborg Aarhus -0.5', odds: 1.93, handicap: -0.5 },
+  ]);
+  const unibet = createEvent('unibet', 'CS Dinamo Bucuresti', 'Skanderborg Aarhus', [
+    {
+      id: 'm-ml',
+      key: 'MATCH_ODDS',
+      name: '1X2',
+      period: 'fulltime',
+      selections: [
+        { id: 's10', name: '1', odds: 2.40 },
+        { id: 's11', name: 'X', odds: 8.00 },
+        { id: 's12', name: '2', odds: 2.25 },
+      ],
+    },
+  ]);
+
+  const arbs = findArbitrage(groupByEvent([betano, unibet]), { includeSynthetic: true });
+  const arb = arbs.find((a) => a.syntheticType === '1X_VS_AWAY');
+  assert.ok(arb, 'home +0.5 against an away moneyline is a real equivalence');
+  const handicapLeg = arb.legs.find((l) => l.sourceId === 'betano');
+  assert.equal(handicapLeg.selection, 'CS Dinamo Bucuresti +0.5');
+  assert.equal(handicapLeg.outcome, 'home_or_draw');
+  assert.equal(arb.legs.find((l) => l.sourceId === 'unibet').outcome, 'away');
+  assert.equal(arbs.filter((a) => a.syntheticType === 'X2_VS_HOME').length, 0);
+});
+
+test('Synthetic Equivalence: 3-way 1X2_AH05 pairs AH -0.5 Home + Draw + 1X2 Away without duplicating plain 1X2', () => {
+  // Betano prices AH -0.5 Home higher than 1X2 Home (2.35 vs 2.15), creating a
+  // cross-market 3-way surebet: 1/2.35 + 1/3.70 + 1/3.60 = 0.4255 + 0.2703 + 0.2778 = 0.9736 (2.64% margin).
+  const betano = createEvent('betano', 'FCSB', 'CFR Cluj', [
+    {
+      id: 'm-ah',
+      key: 'ASIAN_HANDICAP',
+      name: 'Handicap Asiatic',
+      period: 'fulltime',
+      selections: [
+        { id: 'ah1', name: '1 (-0.5)', odds: 2.35, handicap: -0.5 },
+        { id: 'ah2', name: '2 (+0.5)', odds: 1.62, handicap: 0.5 },
+      ],
+    },
+    {
+      id: 'm-1x2-a',
+      key: 'MATCH_ODDS',
+      name: '1X2',
+      period: 'fulltime',
+      selections: [
+        { id: 'mo1', name: '1', odds: 2.15 },
+        { id: 'mox', name: 'X', odds: 3.30 },
+        { id: 'mo2', name: '2', odds: 3.30 },
+      ],
+    },
+  ]);
+  const unibet = createEvent('unibet', 'FCSB', 'CFR Cluj', [
+    {
+      id: 'm-1x2-b',
+      key: 'MATCH_ODDS',
+      name: '1X2',
+      period: 'fulltime',
+      selections: [
+        { id: 'u1', name: '1', odds: 2.10 },
+        { id: 'ux', name: 'X', odds: 3.70 },
+        { id: 'u2', name: '2', odds: 3.60 },
+      ],
+    },
+  ]);
+
+  const arbs = findArbitrage(groupByEvent([betano, unibet]), { includeSynthetic: true });
+  const synth = arbs.find((a) => a.syntheticType === '1X2_AH05');
+  assert.ok(synth, 'Expected 1X2_AH05 3-way synthetic arbitrage');
+  assert.equal(synth.legs.length, 3);
+  assert.equal(synth.legs.find((l) => l.outcome === 'home').selection, '1 (-0.5)');
+  assert.equal(synth.legs.find((l) => l.outcome === 'draw').selection, 'X');
+  assert.equal(synth.legs.find((l) => l.outcome === 'away').selection, '2');
+  assert.ok(synth.marginPercent > 2.5);
+
+  // Pure MATCH_ODDS without any AH -0.5 leg must never emit a duplicate 1X2_AH05 synthetic.
+  const pureA = createEvent('betano', 'Rapid', 'Dinamo', [
+    {
+      id: 'p1',
+      key: 'MATCH_ODDS',
+      name: '1X2',
+      period: 'fulltime',
+      selections: [
+        { id: 'pa1', name: '1', odds: 2.40 },
+        { id: 'pax', name: 'X', odds: 3.20 },
+        { id: 'pa2', name: '2', odds: 3.10 },
+      ],
+    },
+  ]);
+  const pureB = createEvent('unibet', 'Rapid', 'Dinamo', [
+    {
+      id: 'p2',
+      key: 'MATCH_ODDS',
+      name: '1X2',
+      period: 'fulltime',
+      selections: [
+        { id: 'pb1', name: '1', odds: 2.00 },
+        { id: 'pbx', name: 'X', odds: 3.80 },
+        { id: 'pb2', name: '2', odds: 3.65 },
+      ],
+    },
+  ]);
+  const pureArbs = findArbitrage(groupByEvent([pureA, pureB]), { includeSynthetic: true });
+  assert.equal(pureArbs.filter((a) => a.syntheticType === '1X2_AH05').length, 0);
+  assert.equal(pureArbs.filter((a) => a.family === 'MATCH_ODDS').length, 1);
+});

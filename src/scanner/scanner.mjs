@@ -145,7 +145,9 @@ export async function loadWorkspace(dataDir, qualityOptions = {}) {
         }
         altenarOffers.set(fingerprint, source.sourceId);
       }
-      events.push({ ...event, sourceId: event.sourceId || blob.sourceId, observedAt: source.observedAt, runId: source.runId });
+      const resolvedSourceId = event.sourceId || blob.sourceId;
+      const resolvedLeague = event.league === undefined && resolvedSourceId === 'betfair' ? 'Unknown' : event.league;
+      events.push({ ...event, ...(resolvedLeague !== event.league ? { league: resolvedLeague } : {}), sourceId: resolvedSourceId, observedAt: source.observedAt, runId: source.runId });
     }
   }
   return { events, sources };

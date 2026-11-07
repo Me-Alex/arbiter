@@ -2,7 +2,7 @@ import ScraperBase from './base.mjs';
 import { normalizeTeamName } from '../shared/text.mjs';
 import { ValidationError, UpstreamError } from '../shared/errors.mjs';
 import { liveCoverageFor, markMarketsLive } from './live-status.mjs';
-import { extractPeriodFromName } from '../scanner/market-contracts.mjs';
+import { extractPeriodFromName, subjectFor } from '../scanner/market-contracts.mjs';
 
 const SPORTIFY_URL = 'https://api.sportify.bet/api/content/inventory-events';
 const COMPETITIONS_URL = 'https://api.sportify.bet/api/content/inventory-competitions';
@@ -418,12 +418,20 @@ export default class NetBetScraper extends ScraperBase {
             })
             .filter(Boolean);
           if (selections.length < 2) return null;
-          let subject;
-          if (key === 'total_points' || /points/i.test(key)) subject = 'points';
-          else if (key === 'total_games' || /games/i.test(key)) subject = 'games';
-          else if (key === 'total_goals' || /goals/i.test(key)) subject = 'goals';
-          else if (sportName === 'Basketball') subject = 'points';
-          else if (sportName === 'Tennis') subject = 'games';
+          // The provider's own label outranks the key. `total_games` is not a games
+          // total on every sport: netbet titles the american-football total "Total
+          // Puncte (Inclusiv Prelungiri)" — points. Reading the key alone filed 68
+          // such markets under `games`. `subjectFor` also reads the name before any
+          // key, so agreeing with it here stops this stamp from overruling the
+          // evidence the engine trusts.
+          let subject = subjectFor({ name: m.name });
+          if (!subject) {
+            if (key === 'total_points' || /points/i.test(key)) subject = 'points';
+            else if (key === 'total_games' || /games/i.test(key)) subject = 'games';
+            else if (key === 'total_goals' || /goals/i.test(key)) subject = 'goals';
+            else if (sportName === 'Basketball') subject = 'points';
+            else if (sportName === 'Tennis') subject = 'games';
+          }
           return {
             key,
             name: m.name || key,

@@ -16,7 +16,7 @@ function renderer(lang = 'en') {
   return context.renderOppGroup;
 }
 test('110 repeated findings render one compact escaped row with unique market count', () => {
-  const opp = { sport: 'Football', homeTeam: '<img src=x>', awayTeam: 'A & B', kickoff: '2026-09-20T21:00:00+03:00', marketKey: 'OVER_UNDER_3_5', roiPercent: 425 };
+  const opp = { type: 'middle', sport: 'Football', homeTeam: '<img src=x>', awayTeam: 'A & B', kickoff: '2026-09-20T21:00:00+03:00', marketKey: 'OVER_UNDER_3_5', roiPercent: 425 };
   const html = renderer()(Array(110).fill(opp));
   assert.equal((html.match(/<tr /g) || []).length, 1);
   assert.equal((html.match(/OVER_UNDER_3_5/g) || []).length, 1);
@@ -29,11 +29,39 @@ test('110 repeated findings render one compact escaped row with unique market co
   assert.equal(url.pathname, '/event.html');
   for (const [key, field] of [['sport', 'sport'], ['home', 'homeTeam'], ['away', 'awayTeam'], ['kickoff', 'kickoff']]) assert.equal(url.searchParams.get(key), opp[field]);
 });
-test('row count is unique markets; Romanian type and negative ROI remain accurate', () => {
-  const html = renderer('ro')([{ marketKey: 'A', roiPercent: -2 }, { marketKey: 'B' }, { marketKey: 'A' }]);
+test('row count is unique markets; Romanian family name and negative ROI remain accurate', () => {
+  const html = renderer('ro')([{ type: 'middle', marketKey: 'A', roiPercent: -2 }, { type: 'middle', marketKey: 'B' }, { type: 'middle', marketKey: 'A' }]);
   assert.match(html, /class="num">2<\/td>/);
-  assert.match(html, /Arbitraj/);
+  // These rows are middles, so Romanian names them "Mijloc". The assertion used
+  // to be "Arbitraj" on rows nobody had given a family to -- it passed because
+  // `kind` was undefined on every row in the scan, so a middle was called an
+  // arbitrage and the label was pinned to the defect.
+  assert.match(html, /Mijloc/);
+  assert.doesNotMatch(html, /Arbitraj/, 'a middle is not named an arbitrage in Romanian either');
   assert.match(html, /-2\.00%/);
+});
+
+/**
+ * The figure on a row comes from the family the row publishes, not from whichever
+ * number on it is larger. These are middles: they publish an ROI and their
+ * `marginPercent` is the gap between two lines, not a return. Coalescing the two
+ * with `||` is the defect this file exists beside -- it printed a 9.5% middle
+ * under a heading that said ROI -- so the control is a surebet carrying a
+ * deliberate lie in the other field: a big `roiPercent` on an `arb` must not be
+ * able to reach the page.
+ */
+test('a row is described by its own family figure, and the other field cannot reach it', () => {
+  const row = renderer();
+  assert.match(row([{ type: 'middle', marketKey: 'A', roiPercent: 425, marginPercent: 9.5 }]), /\+425\.00%/,
+    'a middle is described by its ROI');
+  assert.match(row([{ type: 'arb', marketKey: 'A', marginPercent: 3.1, roiPercent: 425 }]), /\+3\.10%/,
+    'a surebet is described by its margin, whatever ROI the row also carries');
+  assert.match(row([{ type: 'middle', marketKey: 'A', marginPercent: 0, roiPercent: 128 }]), /\+128\.00%/,
+    'a middle publishing marginPercent: 0 still reports its ROI rather than the zero');
+  assert.match(row([{ type: 'arb', marketKey: 'A', marginPercent: 0, roiPercent: 128 }]), /\+0\.00%/,
+    'a genuine zero margin stays a zero instead of falling through to the ROI');
+  assert.match(row([{ type: 'middle', marketKey: 'A', roiPercent: 128 }]), /Mijloc|Middle/,
+    'the row is labelled by its published family');
 });
 
 /**

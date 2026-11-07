@@ -40,9 +40,17 @@ import { tmpdir } from 'node:os';
 import { fileURLToPath } from 'node:url';
 
 import { instantiate } from '../src/scrapers/index.mjs';
+import { floorVerdict } from './smoke-verdict.mjs';
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url));
-const CONFIG_PATH = join(ROOT, 'config', 'scrapers.json');
+// The registry path is overridable so a test can drive the gate against a
+// scratch copy. A test that edits the real config to prove the job-floor
+// override is a writer in a suite where ~100 other files parse that same file
+// at import, and the write is not atomic: readers see a truncated document and
+// fail with "Unexpected end of JSON input" in a file that has nothing to do
+// with smoke. Pointing the gate at a copy removes the shared mutable state
+// instead of asking every reader to tolerate a half-written registry.
+const CONFIG_PATH = process.env.SMOKE_CONFIG_PATH || join(ROOT, 'config', 'scrapers.json');
 
 const args = process.argv.slice(2);
 let minEvents = 1;
@@ -127,12 +135,12 @@ for (const job of targets) {
   // A per-job floor exists for the opposite case — a source whose own coverage
   // is legitimately small, where a global floor of 1 would still pass on a
   // single stray event while real coverage had silently collapsed to nothing.
-  const floor = Number.isInteger(job.minEvents) && job.minEvents > 0 ? job.minEvents : minEvents;
-  if (report.events < floor) {
+  const verdict = floorVerdict({ job, minEvents, events: report.events });
+  if (verdict.verdict === 'FAIL') {
     rows.push({
       id: job.id,
       verdict: 'FAIL',
-      why: `collected ${report.events} event(s), expected >= ${floor}${job.minEvents ? ' (job floor)' : ''}`,
+      why: verdict.why,
       hint: 'the feed answered but nothing was accepted — a parser or filter regression, or a feed that stopped publishing',
       ms,
     });

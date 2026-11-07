@@ -285,7 +285,7 @@ export default class NSoftScraper extends ScraperBase {
     this.fetchImpl = opts.fetchImpl || globalThis.fetch;
     this.timeoutMs = opts.timeoutMs ?? 15000;
     this.maxEvents = opts.maxEvents === 'all' ? Infinity : Number(opts.maxEvents ?? Infinity);
-    this.sport = opts.sport || 'football';
+    this.sport = opts.sport || (opts.sports ? 'all' : 'football');
     this.sports = Array.isArray(opts.sports) ? opts.sports.map((s) => s.toLowerCase()) : null;
     this.includeLive = Boolean(opts.includeLive);
     this.windowHours = Number(opts.windowHours ?? 504);
@@ -403,10 +403,10 @@ export default class NSoftScraper extends ScraperBase {
 
       const sportName = nsoftSportLabel(e.sportId, this.id);
       const sportLower = sportName.toLowerCase();
-      if (this.sport !== 'all') {
-        if (this.sports) {
-          if (!this.sports.includes(sportLower)) continue;
-        } else if (this.sport.toLowerCase() !== sportLower) {
+      if (this.sports) {
+        if (!this.sports.includes(sportLower)) continue;
+      } else if (this.sport !== 'all') {
+        if (this.sport.toLowerCase() !== sportLower) {
           continue;
         }
       }

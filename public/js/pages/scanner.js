@@ -396,9 +396,10 @@
     }
 
     function setLoading() {
+      const t = arbiterI18n.t.bind(arbiterI18n);
       [['arb-table', 6], ['mid-table', 5], ['ev-table', 7], ['low-table', 5]].forEach(([id, colspan]) => {
         const body = document.querySelector(`#${id} tbody`);
-        if (body) body.innerHTML = `<tr class="loading-row"><td colspan="${colspan}"><span class="skeleton skeleton-line lg">Loading scan results</span></td></tr>`;
+        if (body) body.innerHTML = `<tr class="loading-row"><td colspan="${colspan}"><span class="skeleton skeleton-line lg">${escapeHtml(t('loadingScan'))}</span></td></tr>`;
       });
     }
 

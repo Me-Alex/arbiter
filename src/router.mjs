@@ -1,6 +1,6 @@
 import { extname, resolve, sep, join } from 'node:path';
 import { promises as fs } from 'node:fs';
-import { rotateCsrf, assertLocalApiRequest, assertCsrf } from './shared/security.mjs';
+import { rotateCsrf, assertLocalApiRequest, assertCsrf, isAdminRequestAllowed } from './shared/security.mjs';
 import { sanitizeLogLine } from './shared/sanitize.mjs';
 import { RateLimiter, rateLimitMiddleware } from './shared/rate-limit.mjs';
 import { tryReadJson, readJson, writeJsonAtomic } from './shared/atomic-write.mjs';
@@ -336,6 +336,19 @@ export function buildRouter(ctx) {
       if (parsedUrl.pathname.startsWith('/api/')) {
         assertLocalApiRequest(req);
       }
+      // The operator console is loopback-only, and it is refused *here* rather
+      // than in `serveStatic` so the answer cannot drift from the guard: every
+      // static path below this line is one the check above has already vetted.
+      //
+      // The refusal is a 404, not a 403. A 403 on `/admin/scrape.html` confirms
+      // that an operator console exists at that address, which is the one thing
+      // a scanner is looking for; a 404 says only that this server has no such
+      // path, which is also what a stranger is entitled to know.
+      if (parsedUrl.pathname.startsWith('/admin')) {
+        if (!isAdminRequestAllowed(req)) {
+          return sendJson(res, 404, { error: { name: 'NotFound', message: 'not found', code: 'ENOTFOUND' } });
+        }
+      }
       // rate limit mutations
       const limit = limitCheck(req);
       if (!limit.ok) {
@@ -506,12 +519,18 @@ async function loadEventDetailSnapshots(dataDir) {
   if (cached && now - cached.at < EVENT_CACHE_TTL_MS) return cached.snapshots;
   let dirEntries;
   try { dirEntries = await fs.readdir(join(dataDir, 'workspace')); } catch { return []; }
-  const files = dirEntries.filter((f) => f.endsWith('_events.json')).slice(0, 30);
-  const snapshots = [];
-  for (const file of files) {
-    const snapshot = await tryReadJson(join(dataDir, 'workspace', file), null);
-    if (snapshot) snapshots.push({ sourceId: file.replace('_events.json', ''), snapshot });
-  }
+  const files = dirEntries.filter((f) => f.endsWith('_events.json'));
+  const results = new Array(files.length);
+  let cursor = 0;
+  await Promise.all(Array.from({ length: Math.min(8, files.length) }, async () => {
+    while (cursor < files.length) {
+      const idx = cursor++;
+      const file = files[idx];
+      const snapshot = await tryReadJson(join(dataDir, 'workspace', file), null);
+      if (snapshot) results[idx] = { sourceId: file.replace('_events.json', ''), snapshot };
+    }
+  }));
+  const snapshots = results.filter(Boolean);
   if (eventDetailCache.size >= EVENT_CACHE_MAX) eventDetailCache.clear();
   eventDetailCache.set(dataDir, { at: now, snapshots });
   return snapshots;
@@ -581,7 +600,7 @@ function narrowSelection(selection) {
 }
 
 export async function readEventDetailRoute(res, parsedUrl, dataDir) {
-  const { normalizeClubIdentity, normalizeTeamName } = await import('./shared/text.mjs');
+  const { canonicalSport, normalizeClubIdentity } = await import('./shared/text.mjs');
 
   const params = parsedUrl.searchParams;
   const sport = params.get('sport') || '';
@@ -594,7 +613,7 @@ export async function readEventDetailRoute(res, parsedUrl, dataDir) {
   }
 
   const queryKickoff = Date.parse(kickoff);
-  const normSport = normalizeTeamName(sport);
+  const normSport = canonicalSport(sport);
   const normHome = normalizeClubIdentity(home);
   const normAway = normalizeClubIdentity(away);
 
@@ -610,7 +629,7 @@ export async function readEventDetailRoute(res, parsedUrl, dataDir) {
     const { sourceId, snapshot } = entry;
 
     for (const ev of snapshot.events) {
-      if (normalizeTeamName(ev.sport || '') !== normSport) continue;
+      if (canonicalSport(ev.sport || '') !== normSport) continue;
       if (Number.isFinite(queryKickoff)) {
         const evKickoff = Date.parse(ev.kickoff || '');
         if (Number.isFinite(evKickoff) && Math.abs(evKickoff - queryKickoff) > 5 * 60 * 1000) continue;
@@ -805,13 +824,30 @@ function parseJsonDepthLimited(raw, maxDepth = 128) {
 }
 
 async function serveStatic(_req, res, parsedUrl, { publicDir }) {
-  let p = parsedUrl.pathname;
-  if (p === '/' || p === '') p = '/index.html';
+  const p = parsedUrl.pathname;
+  // The legacy vanilla dashboard that used to be the site root is retired: the
+  // React shell is the only interface now. `/` and the page that used to be its
+  // entry both redirect, so a bookmark lands on the shell and the old markup is
+  // unreachable rather than merely unlinked. `public/index.html` is still on
+  // disk — deleting it, and the ten tests that read it, is a separate change.
+  if (p === '/' || p === '' || p === '/index.html') {
+    res.writeHead(302, { Location: '/app/', 'Cache-Control': 'no-store' });
+    res.end();
+    return null;
+  }
   const root = resolve(publicDir);
-  const safe = resolve(root, '.' + p);
+  let safe = resolve(root, '.' + p);
   if (safe !== root && !safe.startsWith(root + sep)) {
     return sendJson(res, 403, { error: { name: 'Forbidden', message: 'path traversal', code: 'EFORBIDDEN' } });
   }
+  // A directory URL serves its index file, the way every static host does. Only
+  // `/` had that rule: `/app/` — the natural link to the React shell — fell
+  // through to readFile on the directory itself, which throws EISDIR and so
+  // answered 500 to a URL a user can reach by clicking one link. The joined
+  // index stays inside root because `safe` already did, and the resolved path
+  // is re-checked below anyway on the read.
+  const info = await fs.stat(safe).catch(() => null);
+  if (info?.isDirectory()) safe = join(safe, 'index.html');
   try {
     const data = await fs.readFile(safe);
     res.statusCode = 200;
@@ -820,7 +856,7 @@ async function serveStatic(_req, res, parsedUrl, { publicDir }) {
     res.end(data);
     return null;
   } catch (err) {
-    if (err.code === 'ENOENT') {
+    if (err.code === 'ENOENT' || err.code === 'EISDIR') {
       return sendJson(res, 404, { error: { name: 'NotFound', message: 'not found', code: 'ENOTFOUND' } });
     }
     return sendJson(res, 500, { error: { name: 'Error', message: err.message, code: 'EREAD' } });

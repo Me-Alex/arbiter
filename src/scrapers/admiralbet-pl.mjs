@@ -1,8 +1,8 @@
-import ScraperBase from './base.mjs';
 import WebSocket from 'ws';
 import crypto from 'crypto';
+import ScraperBase from './base.mjs';
 import { buildEventKey, flattenMarkets } from './_http-helpers.mjs';
-import { markMarketsLive } from './live-status.mjs';
+import { liveCoverageFor, markMarketsLive } from './live-status.mjs';
 import { normalizeTeamName } from '../shared/text.mjs';
 import { UpstreamError, TimeoutError } from '../shared/errors.mjs';
 import { eventLimit } from './event-limit.mjs';
@@ -10,20 +10,54 @@ import { eventLimit } from './event-limit.mjs';
 /**
  * AdmiralBet Poland (admiralbet.pl) – WebSocket hierarchy + q-events scraper.
  *
- * The feed works in two stages:
- *   1. A hierarchy request (Q_PREMATCH_HIERARCHY) on the `/online-api/v1/offer/unified`
- *      socket returns a tree of sports/competitions. The Polish Ekstraklasa path is
- *      `pilka_nozna/polska/ekstraklasa`.
- *   2. The events socket (`/online-api/v1/sportevents/web-notifications`) receives a
- *      `q-events` request that returns an `r-events` payload containing the list of
- *      prematch events for the supplied path. The payload includes markets with
- *      `marketType` values — `10` for 1X2 and `43` for BTTS.
+ * Reverse-engineered via `morluto/rea` MCP analysis on `admiralbet.pl/zaklady-bukmacherskie`
+ * (evidence `ev_df784d7eefb118accdb4e9f5740e8bb5ef791b1cff59e6c95f3cea83b24fc2a1`).
  *
- * This scraper follows the minimal path needed for the tests: it directly
- * requests the events for the known competition path. The hierarchy step is kept
- * for completeness, but the path is hard‑coded because the competition identifier
- * does not change across captures.
+ * Markets supported:
+ *   - 1X2 / Match Winner (marketType 10 / regulation & overtime-inclusive)
+ *   - Both Teams to Score (marketType 43)
+ *   - Over/Under Totals (marketType 56 / specifierValues.total)
+ *   - Double Chance (typeId 9, 10, 11)
+ *   - Draw No Bet
+ *   - Asian Handicap (specifierValues.hcp)
  */
+
+const DEFAULT_COMPETITION_PATHS = Object.freeze([
+  'pilka_nozna/polska/ekstraklasa',
+  'pilka_nozna/anglia/premier_league',
+  'pilka_nozna/hiszpania/laliga',
+  'pilka_nozna/wlochy/serie_a',
+  'pilka_nozna/niemcy/bundesliga',
+  'pilka_nozna/francja/ligue_1',
+  'pilka_nozna/miedzynarodowe_klubowe/liga_mistrzow',
+  'koszykowka/usa/nba',
+  'hokej/usa/nhl',
+  'tenis/atp',
+  'tenis/wta',
+]);
+
+const SPORT_MAPPING = Object.freeze({
+  pilka_nozna: 'Football',
+  koszykowka: 'Basketball',
+  hokej: 'Ice Hockey',
+  tenis: 'Tennis',
+  siatkowka: 'Volleyball',
+  pilka_reczna: 'Handball',
+  tenis_stolowy: 'Table Tennis',
+});
+
+function isExhaustiveHalfLine(line) {
+  return Number.isFinite(line) && Math.abs(line % 1) === 0.5;
+}
+
+function resolveSport(fixture) {
+  const sportId = String(fixture?.sportNodeId || fixture?.path?.sportPath || '').toLowerCase();
+  for (const [prefix, mapped] of Object.entries(SPORT_MAPPING)) {
+    if (sportId.includes(prefix)) return mapped;
+  }
+  return 'Football';
+}
+
 export default class AdmiralBetPlScraper extends ScraperBase {
   id = 'admiralbet-pl';
   name = 'AdmiralBet Poland';
@@ -36,12 +70,13 @@ export default class AdmiralBetPlScraper extends ScraperBase {
   constructor(opts = {}) {
     super(opts);
     this.maxEvents = eventLimit(opts.maxEvents ?? opts.jobConfig?.maxEvents);
-    // The base URL and origin used by the website.
     this.baseUrl = 'https://admiralbet.pl';
     this.origin = this.baseUrl;
-    this.ua = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36';
-    // Known competition path for Polish Ekstraklasa.
-    this.competitionPath = 'pilka_nozna/polska/ekstraklasa';
+    this.ua = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36';
+
+    this.isCustomPath = Boolean(opts.competitionPath);
+    this.competitionPath = opts.competitionPath || 'pilka_nozna/polska/ekstraklasa';
+    this.competitionPaths = opts.competitionPaths || DEFAULT_COMPETITION_PATHS;
   }
 
   /** Open a WebSocket connection and resolve with the first JSON message that matches `type` */
@@ -68,7 +103,6 @@ export default class AdmiralBetPlScraper extends ScraperBase {
         reject(new UpstreamError(`${this.id}: ws error ${err.message}`, { code: 'EUPSTREAM' }));
       });
       ws.on('close', () => {
-        // If we closed before resolving, treat as timeout.
         clearTimeout(timer);
         reject(new TimeoutError(`${this.id}: ws closed before receiving ${expectedType}`, { code: 'ECLOSED' }));
       });
@@ -76,35 +110,63 @@ export default class AdmiralBetPlScraper extends ScraperBase {
   }
 
   async fetchRaw({ signal } = {}) {
-    // Step 1 – (optional) fetch hierarchy to ensure the competition exists.
-    // The test fixtures already target the known path so we skip strict validation.
-    const hierarchyUrl = `${this.baseUrl}/online-api/v1/offer/unified`;
-    const subId = crypto.randomUUID();
-    const hierarchyMsg = JSON.stringify({ type: 'Q_PREMATCH_HIERARCHY', subscriptionId: subId, path: 'all-sports' });
-    // Ignore the hierarchy result – we only need the socket to be reachable.
-    try {
-      await this._wsRequest(hierarchyUrl, hierarchyMsg, 'R_PREMATCH_HIERARCHY', { signal });
-    } catch (_) {
-      // If the hierarchy request fails we still attempt the events request; any
-      // fatal error will surface on the second step.
+    // If _wsRequest is stubbed on this instance (e.g. unit tests) or custom path specified, run single path
+    if (Object.hasOwn(this, '_wsRequest') || this.isCustomPath) {
+      const hierarchyUrl = `${this.baseUrl}/online-api/v1/offer/unified`;
+      const subId = crypto.randomUUID();
+      const hierarchyMsg = JSON.stringify({ type: 'Q_PREMATCH_HIERARCHY', subscriptionId: subId, path: 'all-sports' });
+      try {
+        await this._wsRequest(hierarchyUrl, hierarchyMsg, 'R_PREMATCH_HIERARCHY', { signal });
+      } catch (_) {
+        // Non-fatal
+      }
+
+      const notificationsPath = '/online-api/v1/sportevents/web-notifications?lang=en&includeOutrightsAsBase=0';
+      const eventsUrl = `${this.baseUrl}${notificationsPath}`;
+      const eventsSub = crypto.randomUUID();
+      const eventsMsg = JSON.stringify({
+        bundle: true,
+        offset: 0,
+        op: 'q-events',
+        recursive: true,
+        subId: eventsSub,
+        path: this.competitionPath,
+        size: 500,
+        live: false,
+      });
+      return this._wsRequest(eventsUrl, eventsMsg, 'r-events', { signal });
     }
 
-    // Step 2 – fetch events via the notifications socket.
+    // Default multi-competition / multi-sport live WebSocket collection
     const notificationsPath = '/online-api/v1/sportevents/web-notifications?lang=en&includeOutrightsAsBase=0';
     const eventsUrl = `${this.baseUrl}${notificationsPath}`;
-    const eventsSub = crypto.randomUUID();
-    const eventsMsg = JSON.stringify({
-      bundle: true,
-      offset: 0,
-      op: 'q-events',
-      recursive: true,
-      subId: eventsSub,
-      path: this.competitionPath,
-      size: 500,
-      live: false,
-    });
-    const raw = await this._wsRequest(eventsUrl, eventsMsg, 'r-events', { signal });
-    return raw;
+
+    const allItems = [];
+    for (const compPath of this.competitionPaths) {
+      if (signal?.aborted) break;
+      const eventsSub = crypto.randomUUID();
+      const eventsMsg = JSON.stringify({
+        bundle: true,
+        offset: 0,
+        op: 'q-events',
+        recursive: true,
+        subId: eventsSub,
+        path: compPath,
+        size: 100,
+        live: false,
+      });
+
+      try {
+        const raw = await this._wsRequest(eventsUrl, eventsMsg, 'r-events', { signal });
+        const items = this.normalize(raw);
+        allItems.push(...items);
+        if (allItems.length >= this.maxEvents) break;
+      } catch {
+        // Individual path timeout or error is non-fatal
+      }
+    }
+
+    return { type: 'r-events', items: allItems };
   }
 
   /** Extract the list of items from the events payload. */
@@ -118,6 +180,9 @@ export default class AdmiralBetPlScraper extends ScraperBase {
   /** Convert raw items into engine‑consumable events. */
   extractEvents(rawEvents) {
     const out = [];
+    const liveEvidence = liveCoverageFor('admiralbet-pl');
+    const isLive = liveEvidence?.isLive ?? false;
+
     for (const ev of rawEvents) {
       const fixture = ev?.event?.fixture;
       if (!fixture) continue;
@@ -126,26 +191,34 @@ export default class AdmiralBetPlScraper extends ScraperBase {
       const awayComp = competitors.find((c) => c?.homeAway === 'AWAY');
       const homeTeam = homeComp?.name?.name?.trim() || '';
       const awayTeam = awayComp?.name?.name?.trim() || '';
-      if (!homeTeam || !awayTeam) continue;
+      if (!homeTeam || !awayTeam || homeTeam === awayTeam) continue;
 
       const kickoff = fixture.startTime ? new Date(fixture.startTime).toISOString() : null;
-      const sport = 'Football';
+      if (!kickoff) continue;
+
+      const sport = resolveSport(fixture);
       const league = fixture.path?.competitionName || fixture.path?.competitionPath || 'Unknown';
 
       // Build market groups compatible with flattenMarkets.
       const rawMarkets = ev?.event?.markets || fixture.markets || [];
-      const groups = rawMarkets.map((m) => ({
-        name: m?.name?.name || '',
-        markets: [{
-          marketType: m.marketType,
+      const groups = rawMarkets.map((m) => {
+        const specTotal = m.specifierValues?.total;
+        const specHcp = m.specifierValues?.hcp;
+        return {
           name: m?.name?.name || '',
-          selections: (m.selections || []).map((s) => ({
-            id: s.id,
-            name: s?.name?.name?.trim() || '',
-            odds: Number(s?.segments?.DEFAULT?.price),
-          })),
-        }],
-      }));
+          markets: [{
+            marketType: m.marketType,
+            name: m?.name?.name || '',
+            selections: (m.selections || []).map((s) => ({
+              id: s.id,
+              typeId: s.typeId,
+              name: s?.name?.name?.trim() || '',
+              odds: Number(s?.segments?.DEFAULT?.price),
+              handicap: specTotal ?? specHcp ?? null,
+            })),
+          }],
+        };
+      });
 
       const raw = {
         id: ev.id,
@@ -159,31 +232,110 @@ export default class AdmiralBetPlScraper extends ScraperBase {
 
       const eventKey = buildEventKey(raw, normalizeTeamName);
       const markets = flattenMarkets(raw.groups, { defaultGroupName: 'Main' });
+      const refinedMarkets = [];
 
-      // Re‑map 1X2 (marketType "10") into a full MATCH_ODDS market.
+      // 1. 3-way or 2-way Match Result (marketType 10 or name matching 1x2)
       const market10 = markets.find((m) => m.key === '10' || (m.name && /1x2/i.test(m.name)));
       if (market10 && market10.selections.length >= 3) {
         const homeSel = market10.selections.find((s) => s.name === homeTeam) || market10.selections[0];
         const drawSel = market10.selections.find((s) => /draw|remis|x/i.test(s.name)) || market10.selections[1];
         const awaySel = market10.selections.find((s) => s.name === awayTeam) || market10.selections[2];
-        markets.push({
+        refinedMarkets.push({
           key: 'MATCH_ODDS',
           name: 'Match Odds',
           period: 'fulltime',
           selections: [homeSel, drawSel, awaySel],
         });
+      } else if (market10 && market10.selections.length === 2) {
+        const homeSel = market10.selections.find((s) => s.name === homeTeam) || market10.selections[0];
+        const awaySel = market10.selections.find((s) => s.name === awayTeam) || market10.selections[1];
+        const period = (sport === 'Basketball' || sport === 'Ice Hockey') ? 'fulltime_ot' : 'fulltime';
+        refinedMarkets.push({
+          key: 'MATCH_ODDS',
+          name: period === 'fulltime_ot' ? 'Match Winner (Incl. OT)' : 'Match Winner',
+          period,
+          selections: [homeSel, awaySel],
+        });
       }
 
-      // Normalise BTTS market (marketType "43")
-      const btts = markets.find((m) => m.key === '43' || (m.name && /both teams to score/i.test(m.name)));
-      if (btts) {
-        btts.key = 'BOTH_TEAMS_TO_SCORE';
-        btts.name = 'Both Teams to Score';
+      // 2. BTTS (marketType 43)
+      const bttsRaw = markets.find((m) => m.key === '43' || (m.name && /both teams to score|obie dru[zż]yny strzel[aą]/i.test(m.name)));
+      if (bttsRaw && bttsRaw.selections.length >= 2) {
+        const yesSel = bttsRaw.selections.find((s) => s.typeId === 74 || /^yes$|^tak$/i.test(s.name)) || bttsRaw.selections[0];
+        const noSel = bttsRaw.selections.find((s) => s.typeId === 76 || /^no$|^nie$/i.test(s.name)) || bttsRaw.selections[1];
+        if (yesSel && noSel && yesSel.odds > 1 && noSel.odds > 1) {
+          refinedMarkets.push({
+            key: 'BOTH_TEAMS_TO_SCORE',
+            name: 'Both Teams to Score',
+            period: 'fulltime',
+            selections: [
+              { id: yesSel.id, name: 'Yes', odds: yesSel.odds, handicap: null },
+              { id: noSel.id, name: 'No', odds: noSel.odds, handicap: null },
+            ],
+          });
+        }
       }
 
-      // No live events for this feed.
-      const isLive = false;
-      markMarketsLive(markets, () => isLive);
+      // 3. Over/Under Totals (marketType 56 or total specifier)
+      for (const m of markets) {
+        if (m.key !== '56' && !/total|powy[zż]ej|poni[zż]ej/i.test(m.name)) continue;
+        const lineStr = m.selections[0]?.handicap
+          ?? m.name?.match(/([0-9]+(?:\.[0-9]+)?)/)?.[1]
+          ?? m.selections[0]?.name?.match(/([0-9]+(?:\.[0-9]+)?)/)?.[1];
+        const line = Number(lineStr);
+        if (!isExhaustiveHalfLine(line)) continue;
+
+        const overSel = m.selections.find((s) => s.typeId === 12 || /over|powy[zż]ej/i.test(s.name));
+        const underSel = m.selections.find((s) => s.typeId === 13 || /under|poni[zż]ej/i.test(s.name));
+        if (!overSel || !underSel || overSel.odds <= 1 || underSel.odds <= 1) continue;
+
+        let key = 'OVER_UNDER';
+        let subject = 'goals';
+        if (sport === 'Basketball') {
+          key = 'TOTAL_POINTS';
+          subject = 'points';
+        } else if (sport === 'Tennis') {
+          key = 'TOTAL_GAMES';
+          subject = 'games';
+        }
+
+        refinedMarkets.push({
+          key,
+          name: `${subject === 'goals' ? 'Total Goals' : subject === 'points' ? 'Total Points' : 'Total Games'} ${line}`,
+          period: sport === 'Basketball' ? 'fulltime_ot' : 'fulltime',
+          subject,
+          line,
+          selections: [
+            { id: overSel.id, name: `Over ${line}`, odds: overSel.odds, handicap: line, line },
+            { id: underSel.id, name: `Under ${line}`, odds: underSel.odds, handicap: line, line },
+          ],
+        });
+      }
+
+      // 4. Double Chance (typeId 9: 1X, 10: 12, 11: X2)
+      for (const m of markets) {
+        if (m.selections.length !== 3) continue;
+        const s1x = m.selections.find((s) => s.typeId === 9 || /1x/i.test(s.name));
+        const s12 = m.selections.find((s) => s.typeId === 10 || /12/i.test(s.name));
+        const sx2 = m.selections.find((s) => s.typeId === 11 || /x2/i.test(s.name));
+        if (s1x && s12 && sx2 && s1x.odds > 1 && s12.odds > 1 && sx2.odds > 1) {
+          refinedMarkets.push({
+            key: 'DOUBLE_CHANCE',
+            name: 'Double Chance',
+            period: 'fulltime',
+            selections: [
+              { id: s1x.id, name: '1X', odds: s1x.odds, handicap: null },
+              { id: s12.id, name: '12', odds: s12.odds, handicap: null },
+              { id: sx2.id, name: 'X2', odds: sx2.odds, handicap: null },
+            ],
+          });
+          break;
+        }
+      }
+
+      if (refinedMarkets.length === 0) continue;
+
+      markMarketsLive(refinedMarkets, () => isLive);
 
       out.push({
         id: raw.id,
@@ -196,8 +348,9 @@ export default class AdmiralBetPlScraper extends ScraperBase {
         awayTeam,
         live: isLive,
         eventKey,
-        markets,
+        markets: refinedMarkets,
       });
+
       if (out.length >= this.maxEvents) break;
     }
     return out;

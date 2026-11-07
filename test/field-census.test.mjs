@@ -1319,8 +1319,11 @@ test('neither stored job document carries a key its producer cannot build', () =
     // can fail on a perfectly producible document. The count can only be about
     // the row's own keys.
     const ownKeys = stored.filter((k) => !k.includes('.'));
-    assert.ok(ownKeys.length > 0 && ownKeys.length <= produced.length,
-      `${file} carries ${ownKeys.length} of the ${produced.length} job keys the producer builds — the direction of this control moved`);
+    // `error` is counted separately above through producedRunErrorKeys(); it is
+    // an envelope subtree, not one of the producer's ordinary job fields.
+    const ordinaryKeys = ownKeys.filter((k) => k !== 'error');
+    assert.ok(ordinaryKeys.length > 0 && ordinaryKeys.length <= produced.length,
+      `${file} carries ${ordinaryKeys.length} of the ${produced.length} job keys the producer builds — the direction of this control moved`);
   }
 });
 

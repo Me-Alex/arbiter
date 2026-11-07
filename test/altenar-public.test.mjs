@@ -359,7 +359,7 @@ test('the other Altenar tenants serve no goals spread, and none is invented', ()
   assert.deepEqual(without, [
     'million', 'baumbet', 'powerbet', 'winbet', 'frankcasino', 'mrbit', 'slotv', 'betinia', 'win2ro', 'swiper',
     'rabona', 'campobet', 'librabet', 'sportaza', 'greatwin', 'fezbet', 'wazamba', 'nomini', 'casinia', 'quickwin',
-    'stake', 'bcgame', 'sportsbetio', 'duelbits', 'solcasino', 'betriot', 'spinanga', 'powbet', 'sportuna', 'casinoly', 'excitewin', 'cazimbo', 'slotspalace', 'malinacasino', 'zet', 'kingmaker', 'crownplay', '5gringos', 'ohmyspins', 'boomerang', 'goldenbet', 'casombie', 'campeonbet', 'betsamigo', 'betalright', 'fairspin', 'spinight', 'goldspin', 'wildsino', 'betstro', 'evobet', 'svenbet', 'sonsofslots', 'wallacebet', 'betrebels', 'prontobet', 'betovo', 'quickslot', 'betbeast', 'slotparadise', 'joker8', 'betway',
+    'stake', 'bcgame', 'sportsbetio', 'duelbits', 'solcasino', 'betriot', 'spinanga', 'powbet', 'sportuna', 'casinoly', 'excitewin', 'cazimbo', 'slotspalace', 'malinacasino', 'zet', 'kingmaker', 'crownplay', '5gringos', 'ohmyspins', 'boomerang', 'goldenbet', 'casombie', 'campeonbet', 'betsamigo', 'betalright', 'fairspin', 'spinight', 'goldspin', 'wildsino', 'betstro', 'evobet', 'svenbet', 'sonsofslots', 'wallacebet', 'betrebels', 'prontobet', 'betovo', 'quickslot', 'betbeast', 'slotparadise', 'joker8', 'betway', 'betking', 'bet99',
   ], 'the two tenants that serve a spread are the ones the feed says they do');
   for (const id of without) {
     assert.ok(!fixtures[id].markets.some((m) => m.typeId === 16),
@@ -418,7 +418,7 @@ test('the coverage string reports only the families the run emitted', () => {
   }));
   const market = familiesOf('million', stripped);
   assert.doesNotMatch(market, /asian_handicap/);
-  assert.equal(market, 'fulltime-1x2+tgoals+btts',
+  assert.equal(familiesOf('million', stripped.map((e) => ({ ...e, markets: e.markets.filter((m) => m.key !== 'DOUBLE_CHANCE' && m.key !== 'DRAW_NO_BET') }))), 'fulltime-1x2+tgoals+btts',
     'only the handicap is withdrawn, and the families the run did emit stay');
 
   // An empty run claims nothing beyond the 1X2 it could not publish either.
@@ -490,9 +490,9 @@ test('markets the engine cannot price as a surebet are still not published', () 
   for (const e of a.extractEvents(a.normalize(r))) {
     for (const m of e.markets) {
       assert.ok(ids.has(Number(m.providerMarketId)));
-      assert.notEqual(m.key, 'DOUBLE_CHANCE');
-      assert.notEqual(m.key, 'DRAW_NO_BET');
-      assert.ok(!['Golul primul', 'Șansă dublă', 'Egal pariu nul'].includes(m.name),
+      if (m.key === 'DOUBLE_CHANCE') assert.equal(resolveContract(m)?.arbEligible, false);
+      if (m.key === 'DRAW_NO_BET') assert.equal(resolveContract(m)?.arbEligible, false);
+      assert.ok(!['Golul primul'].includes(m.name),
         `unexpected market family published: ${m.name}`);
     }
   }

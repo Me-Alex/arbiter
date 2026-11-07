@@ -8,7 +8,7 @@ export const ALTENAR_IDS = ['don', 'topbet', 'million', 'baumbet', 'powerbet', '
   'frankcasino', 'mrbit', 'slotv', 'betinia', 'win2ro', 'swiper',
   'rabona', 'campobet', 'librabet', 'sportaza', 'greatwin', 'fezbet',
   'wazamba', 'nomini', 'casinia', 'quickwin',
-  'stake', 'bcgame', 'sportsbetio', 'duelbits', 'solcasino', 'betriot', 'spinanga', 'powbet', 'sportuna', 'casinoly', 'excitewin', 'cazimbo', 'slotspalace', 'malinacasino', 'zet', 'kingmaker', 'crownplay', '5gringos', 'ohmyspins', 'boomerang', 'goldenbet', 'casombie', 'campeonbet', 'betsamigo', 'betalright', 'fairspin', 'spinight', 'goldspin', 'wildsino', 'betstro', 'evobet', 'svenbet', 'sonsofslots', 'wallacebet', 'betrebels', 'prontobet', 'betovo', 'quickslot', 'betbeast', 'slotparadise', 'joker8', 'betway'];
+  'stake', 'bcgame', 'sportsbetio', 'duelbits', 'solcasino', 'betriot', 'spinanga', 'powbet', 'sportuna', 'casinoly', 'excitewin', 'cazimbo', 'slotspalace', 'malinacasino', 'zet', 'kingmaker', 'crownplay', '5gringos', 'ohmyspins', 'boomerang', 'goldenbet', 'casombie', 'campeonbet', 'betsamigo', 'betalright', 'fairspin', 'spinight', 'goldspin', 'wildsino', 'betstro', 'evobet', 'svenbet', 'sonsofslots', 'wallacebet', 'betrebels', 'prontobet', 'betovo', 'quickslot', 'betbeast', 'slotparadise', 'joker8', 'betway', 'betking', 'bet99'];
 const TRANSPORT = 'altenar-sb2-widget-json';
 export function matchesAltenarConfig(id, cfg) {
   return ALTENAR_IDS.includes(id) && cfg.engine === 'altenar-tenancy'
@@ -118,6 +118,8 @@ const MONEYLINE_MARKET_TYPE = 2;
 const TOTALS_MARKET_TYPE = 18;
 const BTTS_MARKET_TYPE = 29;
 const HANDICAP_MARKET_TYPE = 16;
+const DOUBLE_CHANCE_MARKET_TYPE = 10;
+const DRAW_NO_BET_MARKET_TYPE = 11;
 
 /**
  * Outcome typeId → canonical selection label, per family.
@@ -144,6 +146,11 @@ const TOTALS_LABELS = new Map([
 const BTTS_LABELS = new Map([
   [74, 'yes'],
   [76, 'no'],
+]);
+const DOUBLE_CHANCE_LABELS = new Map([
+  [9, '1X'],
+  [10, '12'],
+  [11, 'X2'],
 ]);
 
 /**
@@ -422,6 +429,14 @@ export default class AltenarPublic extends ScraperBase {
     if (btts && btts.length > 0) out.push(...btts);
     const periodWinners = this._periodWinnerMarkets(e);
     if (periodWinners) out.push(...periodWinners);
+    const doubleChance = this._doubleChanceMarkets(e);
+    if (doubleChance && doubleChance.length > 0) out.push(...doubleChance);
+    const drawNoBet = this._drawNoBetMarkets(e);
+    if (drawNoBet && drawNoBet.length > 0) out.push(...drawNoBet);
+
+
+
+
     return out;
   }
 
@@ -435,8 +450,8 @@ export default class AltenarPublic extends ScraperBase {
     const t = this.tables;
     const candidates = e.marketIds
       .map((id) => t.markets.get(id))
-      .filter((m) => m && (m.typeId === MATCH_ODDS_MARKET_TYPE || m.typeId === MONEYLINE_MARKET_TYPE)
-        && !m.sv && (m.name === '1x2' || /^(?:1\s*2|12|c[aâ][sș]?tig[aă]tor(?:\s+meci)?|winner|match winner|money\s*line|head to head|h2h)$/i.test(m.name)));
+      .filter((m) => m && (m.typeId === MATCH_ODDS_MARKET_TYPE || m.typeId === MONEYLINE_MARKET_TYPE || m.typeId === 186 || m.typeId === 219)
+        && !m.sv && (m.name === '1x2' || m.typeId === 186 || m.typeId === 219 || /^(?:1\s*2|12|c[aâ][sș]?tig[aă]tor(?:\s+(?:meci|incl\.?\s*prelungiri))?|winner|match winner|money\s*line|head to head|h2h)$/i.test(m.name)));
     for (const m of candidates) {
       const parsed = this._parseMatchOdds(e, m);
       if (parsed && parsed.key === '1x2') return parsed;
@@ -498,9 +513,9 @@ export default class AltenarPublic extends ScraperBase {
     const seenKeys = new Set();
     const candidates = (e.marketIds || [])
       .map((id) => t.markets.get(id))
-      .filter((m) => m && (m.typeId === MATCH_ODDS_MARKET_TYPE || m.typeId === MONEYLINE_MARKET_TYPE) && !m.sv);
+      .filter((m) => m && (m.typeId === MATCH_ODDS_MARKET_TYPE || m.typeId === MONEYLINE_MARKET_TYPE || m.typeId === 186 || m.typeId === 219 || m.typeId === 202) && !m.sv);
     for (const m of candidates) {
-      const period = extractPeriodFromName(m.name);
+      const period = m.typeId === 202 ? 'set1' : extractPeriodFromName(m.name);
       if (!period || period === 'fulltime') continue;
       const parsed = this._parsePeriodMatchOdds(e, m, period);
       if (parsed) {
@@ -582,7 +597,7 @@ export default class AltenarPublic extends ScraperBase {
       ? 'TOTAL_POINTS'
       : (isTennis ? 'TOTAL_GAMES' : 'TOTAL_GOALS');
     for (const m of e.marketIds.map((id) => t.markets.get(id))) {
-      if (!m || m.typeId !== TOTALS_MARKET_TYPE) continue;
+      if (!m || (m.typeId !== TOTALS_MARKET_TYPE && m.typeId !== 189 && m.typeId !== 225)) continue;
       const line = String(m.sv ?? m.sn ?? '').trim();
       // Without a line the market cannot be bucketed, and the two selections
       // would collapse into a nameless 2-way contract.
@@ -645,6 +660,55 @@ export default class AltenarPublic extends ScraperBase {
     return all.find((m) => m.period === 'fulltime') || all[0] || null;
   }
 
+  _doubleChanceMarkets(e) {
+    const t = this.tables;
+    const out = [];
+    const seenKeys = new Set();
+    for (const m of (e.marketIds || []).map((id) => t.markets.get(id))) {
+      if (!m || m.typeId !== DOUBLE_CHANCE_MARKET_TYPE) continue;
+      const byType = this._completePair(m, DOUBLE_CHANCE_LABELS);
+      if (!byType) continue;
+      const period = extractPeriodFromName(m.name) || 'fulltime';
+      if (seenKeys.has(period)) continue;
+      seenKeys.add(period);
+      const selections = [9, 10, 11].map((typeId) => ({
+        id: String(byType.get(typeId).id),
+        providerOutcomeId: typeId,
+        name: DOUBLE_CHANCE_LABELS.get(typeId),
+        odds: byType.get(typeId).price,
+        handicap: null,
+      }));
+      out.push({ key: 'DOUBLE_CHANCE', providerMarketId: String(m.id), name: m.name, period, selections });
+    }
+    return out;
+  }
+
+  _drawNoBetMarkets(e) {
+    const t = this.tables;
+    const out = [];
+    const seenKeys = new Set();
+    const [homeId, awayId] = e.competitorIds;
+    for (const m of (e.marketIds || []).map((id) => t.markets.get(id))) {
+      if (!m || m.typeId !== DRAW_NO_BET_MARKET_TYPE) continue;
+      const odds = (m.oddIds || []).map((id) => t.odds.get(id)).filter(Boolean);
+      if (odds.length !== 2) continue;
+      const homeOdd = odds.find((o) => o.competitorId === homeId);
+      const awayOdd = odds.find((o) => o.competitorId === awayId);
+      if (!homeOdd || !awayOdd || homeOdd.id === awayOdd.id) continue;
+      if (homeOdd.oddStatus !== 0 || !Number.isFinite(homeOdd.price) || homeOdd.price <= 1) continue;
+      if (awayOdd.oddStatus !== 0 || !Number.isFinite(awayOdd.price) || awayOdd.price <= 1) continue;
+      const period = extractPeriodFromName(m.name) || 'fulltime';
+      if (seenKeys.has(period)) continue;
+      seenKeys.add(period);
+      const selections = [
+        { id: String(homeOdd.id), providerOutcomeId: homeOdd.typeId, name: '1', odds: homeOdd.price, handicap: null },
+        { id: String(awayOdd.id), providerOutcomeId: awayOdd.typeId, name: '2', odds: awayOdd.price, handicap: null },
+      ];
+      out.push({ key: 'DRAW_NO_BET', providerMarketId: String(m.id), name: m.name, period, selections });
+    }
+    return out;
+  }
+
   /**
    * Every full-time goals handicap this event publishes, one market per line.
    *
@@ -685,7 +749,7 @@ export default class AltenarPublic extends ScraperBase {
     const [homeId, awayId] = e.competitorIds;
     const isBasketball = e.sportId === 67;
     for (const m of e.marketIds.map((id) => t.markets.get(id))) {
-      if (!m || m.typeId !== HANDICAP_MARKET_TYPE) continue;
+      if (!m || (m.typeId !== HANDICAP_MARKET_TYPE && m.typeId !== 187 && m.typeId !== 223)) continue;
       // The sign is part of the line, and the feed always writes it: "-0.5"
       // when the home side gives goals, "+0.5" when it receives them. A guard
       // that accepted only an optional minus would drop every market whose
@@ -771,9 +835,13 @@ export default class AltenarPublic extends ScraperBase {
       for (const m of e.markets || []) seen.add(m.key);
     }
     const families = ['fulltime-1x2'];
-    if (seen.has('TOTAL_GOALS')) families.push('tgoals');
-    if (seen.has('ASIAN_HANDICAP')) families.push('asian_handicap');
+    if (seen.has('TOTAL_GOALS') || seen.has('TOTAL_POINTS') || seen.has('TOTAL_GAMES')) families.push('tgoals');
+    if (seen.has('ASIAN_HANDICAP') || seen.has('POINT_SPREAD')) families.push('asian_handicap');
     if (seen.has('BTTS')) families.push('btts');
+    if (seen.has('DOUBLE_CHANCE')) families.push('double_chance');
+    if (seen.has('DRAW_NO_BET')) families.push('dnb');
+
+
     return { ...super._serializable(events, raw), sourceUrl: this.sourceUrl, transport: TRANSPORT,
       observedAt: this.observedAt, integration: this.id, attributionStatus: 'public-integration-unverified-brand',
       coverage: { sport: 'football', market: families.join('+'), ...liveCoverageFor(this.id), page: 1, exhaustive: false,

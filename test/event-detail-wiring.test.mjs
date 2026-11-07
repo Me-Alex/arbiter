@@ -119,7 +119,7 @@ evDialog._metaEl = evDialogMeta;
 // Extract the named listener reference from dashboard.js and eval it with the
 // real functions in scope.
 const listenerName = extractListener(dashSrc);
-const dashFnSrcs = Object.fromEntries(['dashRenderLeg', 'formatKickoff', 'dashLiveBadge'].map((n) => [n, extractFn(n, dashSrc)]));
+const dashFnSrcs = Object.fromEntries(['dashRenderLeg', 'formatKickoff', 'dashLiveBadge', 'rowFigure'].map((n) => [n, extractFn(n, dashSrc)]));
 
 const assert = (cond, msg) => { console.log((cond ? 'PASS' : 'FAIL') + ':', msg); if (!cond) process.exitCode = 1; };
 
@@ -350,6 +350,11 @@ const { renderOppV2 } = await eval(`(async () => {
   const dashRenderLeg = ${dashFnSrcs.dashRenderLeg};
   const formatKickoff = ${dashFnSrcs.formatKickoff};
   const dashLiveBadge = ${dashFnSrcs.dashLiveBadge};
+  // renderOppV2 asks each row which figure it is entitled to, and that answer
+  // comes off the row's published \`type\`. Lifting the renderer without the
+  // helper is how this harness reported a ReferenceError instead of a verdict,
+  // which is at least a loud way to be wrong about a dependency.
+  const rowFigure = ${dashFnSrcs.rowFigure};
   const ROI_BAR_SCALE = 12;
   const BADGE_FRESH_MS = 5 * 60 * 1000;
   const BADGE_RECENT_MS = 30 * 60 * 1000;

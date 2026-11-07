@@ -293,6 +293,54 @@ test('Tennis games totals: correctly tagged with subject games and resolves OVER
   assert.deepEqual(sides, ['over', 'under']);
 });
 
+test('a football cards or corners total is never stamped as a goals total', () => {
+  // The provider names these itself, in its own capture
+  // (data/endpoints/captures/betano-top-events-sample.json):
+  //   TCOU  "Total cartonașe Peste/Sub"  cards
+  //   CNOU  "Cornere Peste/Sub"          corners
+  //   HCTG  "Total goluri Peste/Sub"     goals
+  // The adapter used to stamp goals on all three, because the football branch
+  // tested `m.type.includes('OU')` and TCOU / CNOU both contain "OU".
+  // `subjectFor` reads `market.subject` before the provider name, so the stamp
+  // won and a cards line was filed as a goals line. Measured on the live feed
+  // 2026-10-17 that published 15 fabricated arbitrages, each a betano TCOU leg
+  // against a genuine goals total at the same line, quoting guaranteedProfit
+  // 437 on 1000 staked. The bucket comparisons are the assertion that matters:
+  // checking only the subject field would pass even if the bucket key forgot to
+  // carry it.
+  const ev = extract({ markets: {
+    TCOU: ['Peste 5.5', 'Sub 5.5'],
+    CNOU: ['Peste 5.5', 'Sub 5.5'],
+    HCTG: ['Peste 5.5', 'Sub 5.5'],
+  } });
+  const byKey = (k) => ev.markets.find((m) => m.key === k);
+  const cards = byKey('TCOU');
+  const corners = byKey('CNOU');
+  const goals = byKey('HCTG');
+  // The fixture names a market after its type; put the provider title back,
+  // because that title is the evidence the engine reads.
+  cards.name = 'Total cartonașe Peste/Sub';
+  corners.name = 'Cornere Peste/Sub';
+
+  assert.equal(cards.subject, undefined, 'a cards total must not be stamped goals');
+  assert.equal(corners.subject, undefined, 'a corners total must not be stamped goals');
+  assert.equal(goals.subject, 'goals', 'the match goals total keeps its stamp');
+
+  const cardsContract = resolveContract(cards);
+  const cornersContract = resolveContract(corners);
+  const goalsContract = resolveContract(goals);
+  assert.equal(cardsContract.subject, 'cards', 'the provider title says cards');
+  assert.equal(cardsContract.lineKey, '5.5');
+  assert.equal(cornersContract.subject, 'corners');
+  assert.equal(goalsContract.subject, 'goals');
+  assert.equal(goalsContract.lineKey, '5.5');
+
+  const bucket = (c) => bucketKeyForContract(ev.eventKey, c);
+  assert.notEqual(bucket(cardsContract), bucket(goalsContract), 'a cards 5.5 must never bucket with a goals 5.5');
+  assert.notEqual(bucket(cornersContract), bucket(goalsContract), 'a corners 5.5 must never bucket with a goals 5.5');
+  assert.notEqual(bucket(cardsContract), bucket(cornersContract), 'cards and corners are different contracts');
+});
+
 test('Tennis 2-way match winner H2HT resolves to MATCH_ODDS', () => {
   const ev = extract({
     sportId: 'TENN',
@@ -590,4 +638,63 @@ test('Betano sub-window derivative markets: OUH2, MRH1, MRH2, BTH1, DCH1, DNH1 i
   const ftDnbBucket = bucketKeyForContract(ev.eventKey, ftDnbContract);
   const h1DnbBucket = bucketKeyForContract(ev.eventKey, h1DnbContract);
   assert.notEqual(ftDnbBucket, h1DnbBucket);
+});
+/**
+ * A feed sport CODE is not a sport name.
+ *
+ * betano's sportId is its own four-letter code and the adapter had a display
+ * name for only 17 of the 37 in SPORT_IDS, so the rest were published verbatim:
+ * data/workspace/betano_events.json carried HAND, VOLL, TABL, ESPS and WTPL as
+ * sports beside the same five sports spelled out by every other book - 50, 42,
+ * 23, 28 and 10 events. That is two dropdown options for one sport, and
+ * filtering by either one silently hides the other's rows.
+ *
+ * The identity half is the more serious one: eventKey embeds the sport, so a
+ * code that never resolves cannot pair with any other book's event for the same
+ * fixture at all. MMAF is the case in point - 49 UFC events carried the key
+ * segment "mmaf" while every other feed wrote "mma", so none of them could ever
+ * match.
+ */
+test('a provider sport code becomes its sport, so two spellings cannot split it', () => {
+  const cases = [
+    ['HAND', 'Handball'],
+    ['VOLL', 'Volleyball'],
+    ['TABL', 'Table Tennis'],
+    ['ESPS', 'eSports'],
+    ['WTPL', 'Water Polo'],
+    ['MMAF', 'MMA'],
+  ];
+  for (const [code, name] of cases) {
+    const ev = extract({ sportId: code, markets: { MRES: ['1', 'X', '2'] } });
+    assert.equal(ev.sport, name, code + ' must be published as ' + name);
+  }
+});
+
+test('MMAF and MMA produce one sport identity, so UFC fixtures can pair across books', () => {
+  const keySport = (sportId) => extract({ sportId, markets: { MRES: ['1', 'X', '2'] } })
+    .eventKey.split('|')[0];
+  assert.equal(keySport('MMAF'), 'mma');
+  assert.equal(keySport('MMA'), 'mma');
+});
+
+test('a code no layer knows is still published rather than dropped', () => {
+  // The registry's pass-through is deliberate: a sport it has no entry for must
+  // stay visible and filterable rather than being hidden. Fixing HAND must not
+  // turn into hiding an unknown sport instead of naming it.
+  const ev = extract({ sportId: 'ZZZZ', markets: { MRES: ['1', 'X', '2'] } });
+  assert.equal(ev.sport, 'ZZZZ');
+});
+
+test('the handball label also reaches the subject stamp, and resolves the same', () => {
+  // The label is not only a label: extractEvents stamps subject "goals" on every
+  // handball market, and that branch never fired because the sport was the code
+  // HAND. It is resolution-neutral - a total with no subject already lands in
+  // the goals bucket, and MATCH_ODDS ignores subject entirely - but it is pinned
+  // here so the coupling is a decision rather than an accident.
+  const ev = extract({ sportId: 'HAND', markets: { HCTG: ['Peste (2.5)', 'Sub (2.5)'] } });
+  const market = ev.markets.find((m) => m.key === 'HCTG');
+  assert.equal(market.subject, 'goals', 'handball totals are goals');
+  const contract = resolveContract(market);
+  assert.equal(contract.family, 'OVER_UNDER');
+  assert.equal(contract.subject, 'goals');
 });

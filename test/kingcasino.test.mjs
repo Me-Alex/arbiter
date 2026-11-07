@@ -20,6 +20,26 @@ const fixture = JSON.parse(
   readFileSync(new URL('../data/endpoints/captures/kingcasino-odds-2026-10-11.json', import.meta.url), 'utf8')
 );
 
+/**
+ * The fixture's own clock, not the wall clock.
+ *
+ * `extractEvents` drops any event whose kickoff has already passed, so every
+ * assertion below about "the 5 future football matches" is really an assertion
+ * about the day the suite runs. This pins `provenance.capturedAt`, the moment the
+ * capture was taken and the only time at which the file's own reasoning — 5
+ * future, 1 live, 1 tennis, 1 incomplete, 1 already past — is true.
+ *
+ * Unpinned, the suite rots in place, and it rots quietly. On 2026-10-13 three of
+ * the five had aged out: `... complete 1X2 markets` reported 2 and went red, while
+ * `maxEvents bounds extracted events` still passed — against two surviving events
+ * instead of five, so the bound it claims to exercise was never exercised.
+ */
+const PINNED_NOW = '2026-10-11T12:00:00Z';
+function pinClock(t) {
+  t.mock.timers.enable({ apis: ['Date'], now: new Date(PINNED_NOW) });
+  t.after(() => t.mock.timers.reset());
+}
+
 test('kingcasino: the candidate was written disabled and unvalidated', (t) => {
   if (JOB.enabled && JOB.validationStatus === 'validated') {
     return t.skip('promoted — this check described the candidate state');
@@ -77,7 +97,8 @@ test('kingcasino: normalize fails closed on invalid or error payloads', () => {
   assert.throws(() => scraper.normalize({ status: 'error', error: 'Blocked by Cloudflare' }), { name: 'UpstreamError' });
 });
 
-test('kingcasino: extractEvents collects pre-match football with complete 1X2 markets', () => {
+test('kingcasino: extractEvents collects pre-match football with complete 1X2 markets', (t) => {
+  pinClock(t);
   const scraper = new Kingcasino({
     // generous window so all future test dates are admitted
     windowHours: 24 * 30,
@@ -153,7 +174,8 @@ test('kingcasino: extractEvents collects pre-match football with complete 1X2 ma
   ]);
 });
 
-test('kingcasino: extractEvents admits live events when includeLive is true', () => {
+test('kingcasino: extractEvents admits live events when includeLive is true', (t) => {
+  pinClock(t);
   const scraper = new Kingcasino({
     windowHours: 24 * 30,
     includeLive: true,
@@ -173,7 +195,8 @@ test('kingcasino: extractEvents admits live events when includeLive is true', ()
   ]);
 });
 
-test('kingcasino: extracts 2-way moneyline for Tennis and Basketball', () => {
+test('kingcasino: extracts 2-way moneyline for Tennis and Basketball', (t) => {
+  pinClock(t);
   const scraper = new Kingcasino({
     sport: 'tennis',
     windowHours: 24 * 30,
@@ -208,7 +231,8 @@ test('kingcasino: extracts 2-way moneyline for Tennis and Basketball', () => {
   ]);
 });
 
-test('kingcasino: extractEvents admits past matches when includePast is true', () => {
+test('kingcasino: extractEvents admits past matches when includePast is true', (t) => {
+  pinClock(t);
   const scraper = new Kingcasino({
     windowHours: 24 * 365,
     includePast: true,
@@ -241,7 +265,8 @@ test('kingcasino: malformed kickoff drops single row without throwing', () => {
   assert.equal(events.length, 0);
 });
 
-test('kingcasino: maxEvents bounds extracted events', () => {
+test('kingcasino: maxEvents bounds extracted events', (t) => {
+  pinClock(t);
   const scraper = new Kingcasino({
     windowHours: 24 * 30,
     maxEvents: 2,
@@ -252,7 +277,8 @@ test('kingcasino: maxEvents bounds extracted events', () => {
   assert.equal(events.length, 2);
 });
 
-test('kingcasino: also extracts standard Digitain matchBets format', () => {
+test('kingcasino: also extracts standard Digitain matchBets format', (t) => {
+  pinClock(t);
   const scraper = new Kingcasino({ windowHours: 24 * 30 });
   const digitainMbEvent = {
     idMatch: 8881235,
@@ -339,7 +365,8 @@ test('kingcasino: fetchRaw handles errors and bounds payload safely', async () =
   assert.deepEqual(res, [{ test: 1 }]);
 });
 
-test('kingcasino: extracts sub-window period markets from Digitain event.S with deterministic bucket keys', () => {
+test('kingcasino: extracts sub-window period markets from Digitain event.S with deterministic bucket keys', (t) => {
+  pinClock(t);
   const scraper = new Kingcasino({ windowHours: 24 * 30 });
   const cardStakesEvent = {
     EId: 9001234,
@@ -386,7 +413,8 @@ test('kingcasino: extracts sub-window period markets from Digitain event.S with 
   assert.notEqual(ftBucket, htBucket);
 });
 
-test('kingcasino: extracts sub-window period markets from Digitain matchBets with deterministic bucket keys', () => {
+test('kingcasino: extracts sub-window period markets from Digitain matchBets with deterministic bucket keys', (t) => {
+  pinClock(t);
   const scraper = new Kingcasino({ sport: 'tennis', windowHours: 24 * 30 });
   const tennisMbEvent = {
     idMatch: 9005678,

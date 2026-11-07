@@ -95,6 +95,28 @@ const DETAIL_MARKETS = new Map([
   ['200734|Liczba goli', 'OVER_UNDER'],
   ['200735|1.połowa - liczba goli', 'OVER_UNDER'],
   ['539|Obie drużyny strzelą', 'BTTS'],
+  ['555|Egal - Pariul se rambursează (DNB)', 'DRAW_NO_BET'],
+  ['555|Zakład bez remisu', 'DRAW_NO_BET'],
+  ['563|Prima repriză - Egal - Pariul se rambursează (DNB)', 'DRAW_NO_BET'],
+  ['563|1.połowa - zakład bez remisu', 'DRAW_NO_BET'],
+  ['572|A doua repriză - Egal - Pariul se rambursează (DNB)', 'DRAW_NO_BET'],
+  ['572|2.połowa - zakład bez remisu', 'DRAW_NO_BET'],
+  ['565|Prima repriză - Ambele echipe marchează (GG)', 'BTTS'],
+  ['565|1.połowa - obie drużyny strzelą', 'BTTS'],
+  ['549|A doua repriză - Ambele echipe marchează (GG)', 'BTTS'],
+  ['549|2.połowa - obie drużyny strzelą', 'BTTS'],
+  ['704|Total cornere', 'OVER_UNDER'],
+  ['704|Liczba rzutów rożnych', 'OVER_UNDER'],
+  ['878|Prima repriză - Total cornere', 'OVER_UNDER'],
+  ['878|1. połowa - liczba rzutów rożnych', 'OVER_UNDER'],
+  ['240082|A doua repriză - Total cornere', 'OVER_UNDER'],
+  ['240082|2. połowa - liczba rzutów rożnych', 'OVER_UNDER'],
+  ['690|Total cartonașe', 'OVER_UNDER'],
+  ['690|Liczba kartek', 'OVER_UNDER'],
+  ['1009|Prima repriză - Total cartonașe', 'OVER_UNDER'],
+  ['1009|1. połowa - liczba kartek', 'OVER_UNDER'],
+  ['240087|A doua repriză - Total cartonașe', 'OVER_UNDER'],
+  ['240087|2. połowa - liczba kartek', 'OVER_UNDER'],
 ]);
 
 /** The provider's key for one (marketId, marketName) pair, as emitted. */
@@ -191,6 +213,21 @@ function marketsFromDetail(odds, teams, sport = 'football') {
       const lower = name.toLowerCase();
       if (lower === 'tak' || lower === 'da') name = 'Da';
       else if (lower === 'nie' || lower === 'nu') name = 'Nu';
+    } else if (family === 'DRAW_NO_BET') {
+      const norm = normalizeTeamName(name);
+      if (teams && norm === teams[0]) {
+        name = '1';
+      } else if (teams && norm === teams[1]) {
+        name = '2';
+      } else {
+        continue;
+      }
+    } else if (family === 'DOUBLE_CHANCE') {
+      const norm = name.toUpperCase().replace(/[\s/]/g, '');
+      if (norm === '1X') name = '1X';
+      else if (norm === 'X2') name = 'X2';
+      else if (norm === '12') name = '12';
+      else continue;
     }
     const k = `${o.marketId}|${o.marketName}|${o.marketUuid}`;
     if (!wanted.has(k)) wanted.set(k, { family, marketId: o.marketId, marketName: o.marketName, team, selections: [] });
@@ -202,13 +239,16 @@ function marketsFromDetail(odds, teams, sport = 'football') {
     // Both sides or nothing: a half-line pair is a contract, and one surviving
     // leg of it is an orphan the engine would hold open against nothing.
     // 1X2 requires all 3 sides (1, X, 2).
-    if (m.family === '1X2') {
+    if (m.family === '1X2' || m.family === 'DOUBLE_CHANCE') {
       if (m.selections.length !== 3) continue;
     } else {
       if (m.selections.length !== 2) continue;
     }
     let subject;
-    if (s === 'basketball') subject = 'points';
+    const mid = String(m.marketId);
+    if (['704', '878', '240082'].includes(mid)) subject = 'corners';
+    else if (['690', '1009', '240087'].includes(mid)) subject = 'cards';
+    else if (s === 'basketball') subject = 'points';
     else if (s === 'tennis') subject = 'games';
     else if (m.family === 'OVER_UNDER') subject = 'goals';
 
@@ -292,7 +332,7 @@ export default class SuperbetScraper extends ScraperBase {
     const windowHours = Number(this.windowHours ?? 168);
     const url = new URL(`${this.host}/v3/${this.locale}/events`);
     url.search = new URLSearchParams({
-      index: this.includeLive ? 'active-live' : 'active-prematch',
+      index: 'active-prematch',
       startDate: start.toISOString(),
       endDate: new Date(+start + windowHours * 3600000).toISOString(),
     });
@@ -309,6 +349,22 @@ export default class SuperbetScraper extends ScraperBase {
     if (this.maxEvents === 0) return { events: [] };
     const raw = await get(url.href);
     this.normalize(raw);
+    if (this.includeLive) {
+      const liveUrl = new URL(`${this.host}/v3/${this.locale}/events`);
+      liveUrl.search = new URLSearchParams({ index: 'active-live' });
+      try {
+        const liveRaw = await get(liveUrl.href);
+        if (Array.isArray(liveRaw?.events)) {
+          const seen = new Set(raw.events.map((e) => e.event_id));
+          for (const ev of liveRaw.events) {
+            if (!seen.has(ev.event_id)) {
+              seen.add(ev.event_id);
+              raw.events.push(ev);
+            }
+          }
+        }
+      } catch { /* live is optional */ }
+    }
     // Widen the window only while the event cap still has room. The feed is
     // paginated by time, so a cap of 1 must not pay for four 168h reads.
     for (let w = 1; w < 4 && raw.events.length < this.maxEvents; w++) {

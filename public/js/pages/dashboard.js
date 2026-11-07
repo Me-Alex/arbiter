@@ -8,7 +8,7 @@ const sourceHealthList = document.getElementById('source-health');
 const oppSkeleton = `<p role="status">${arbiterI18n.lang === 'en' ? 'Loading opportunities…' : 'Se încarcă oportunitățile…'}</p>`;
 
 // Source-shaped skeleton for source health
-const sourceSkeleton = `<div class="dash-loading" aria-label="Loading sources">
+const sourceSkeleton = `<div class="dash-loading" aria-label="${arbiterI18n.t('loadingSources')}">
   ${Array(4).fill('').map((_, i) => `
     <div class="skeleton-source" style="animation-delay:${i * 60}ms">
       <div class="skel-avatar"></div>
@@ -220,24 +220,43 @@ async function refresh() {
     if (qbOpps) qbOpps.textContent = totalOpps;
     if (qbOppsSub) qbOppsSub.textContent = `${opportunities.length} arbs, ${middles.length} middles`;
 
-    // Best ROI
-    const allOpps = [...opportunities, ...middles].sort((a, b) => (b.marginPercent || b.roiPercent || 0) - (a.marginPercent || a.roiPercent || 0));
-    if (allOpps.length > 0) {
-      const best = allOpps[0];
+    // Best guaranteed margin.
+    //
+    // This ranked surebets and middles together on `marginPercent || roiPercent`.
+    // Most middles publish no marginPercent, so `||` silently swapped in a
+    // middle's ROI for 459 of them and built one ranking out of two different
+    // measures: a guaranteed margin and a conditional return. It reported
+    // "+100.00%" from a middle while the scan held no rule-safe surebet at all,
+    // and because 4,130 middles carry a smaller marginPercent than their own ROI,
+    // the scan's real 511% middle could never win. A margin is only comparable
+    // within the family that publishes one, so only surebets are ranked here, and
+    // only the ones the backend did not reject.
+    const rejected = (o) => Boolean(o.verification && o.verification.status === 'rejected');
+    const rejectedSurebets = opportunities.filter(rejected);
+    const hazardSurebets = opportunities.filter((o) => !rejected(o) && o.verification && o.verification.reason);
+    const backable = opportunities.filter((o) => !rejected(o));
+    const best = backable.slice().sort((a, b) => rowFigure(b) - rowFigure(a))[0];
+    // The exception has to be stated next to the figure, or "Best margin" reads
+    // as a claim about all 69 surebets when at most 15 are backable at all.
+    const disclosure = [
+      rejectedSurebets.length ? `${rejectedSurebets.length.toLocaleString()} ${t('blockedByVerification')}` : '',
+      hazardSurebets.length ? `${hazardSurebets.length.toLocaleString()} ${t('ruleHazards')}` : '',
+    ].filter(Boolean).join(' · ');
+    if (best) {
       if (qbBestRoi) {
-        const roiClass = window.arbiterFormat?.roiClass(best.marginPercent || best.roiPercent) || '';
-        qbBestRoi.textContent = `+${(best.marginPercent || best.roiPercent || 0).toFixed(2)}%`;
+        const roiClass = window.arbiterFormat?.roiClass(best.marginPercent) || '';
+        qbBestRoi.textContent = `+${(best.marginPercent || 0).toFixed(2)}%`;
         qbBestRoi.className = `v ${roiClass}`;
       }
       if (qbBestRoiMatch) {
         const parts = (best.eventKey || '').split('|');
         const home = parts[parts.length - 2] || best.homeTeam || '';
         const away = parts[parts.length - 1] || best.awayTeam || '';
-        qbBestRoiMatch.textContent = `${home} ${t('vs')} ${away}`;
+        qbBestRoiMatch.textContent = disclosure ? `${home} ${t('vs')} ${away} · ${disclosure}` : `${home} ${t('vs')} ${away}`;
       }
     } else {
       if (qbBestRoi) qbBestRoi.textContent = '—';
-      if (qbBestRoiMatch) qbBestRoiMatch.textContent = '—';
+      if (qbBestRoiMatch) qbBestRoiMatch.textContent = t('noRuleSafeSurebet');
     }
 
     // Total events and sources
@@ -252,17 +271,33 @@ async function refresh() {
     }
 
     // Last scrape time
+    //
+    // "Last scrape" is when the scan captured its observations, so it comes
+    // from `scrapedAt` — the field the scanner page and the React shell both
+    // read. It used to be `Math.max` over the per-source ages, and a source's
+    // `ageMs` is stamped at capture time: `snapshotQuality` measures
+    // `now - capturedAt` while the scan is running. On a scan that is hours old
+    // those ages therefore still describe the moment of the scan, so a board
+    // re-read the next day announced a last scrape of a minute ago. With no
+    // `scrapedAt` there is no honest age to report, so none is reported.
     if (qbScrapeTime) {
       const sources = scan.sources || [];
-      if (sources.length > 0) {
-        const oldestAge = Math.max(...sources.map(s => s.ageMs || 0));
-        qbScrapeTime.textContent = window.arbiterFormat?.timeAgo(oldestAge) || '—';
-        if (qbScrapeStatus) {
-          const freshRatio = sources.filter(s => s.dataStatus === 'fresh').length / sources.length;
-          if (freshRatio > 0.8) {
+      const capturedMs = scan.scrapedAt ? Date.parse(scan.scrapedAt) : NaN;
+      const scanAgeMs = Number.isFinite(capturedMs) ? Date.now() - capturedMs : null;
+      qbScrapeTime.textContent = scanAgeMs === null ? '—' : (window.arbiterFormat?.timeAgo(scanAgeMs) || '—');
+      if (qbScrapeStatus) {
+        if (sources.length === 0) {
+          qbScrapeStatus.textContent = t('noData');
+        } else {
+          const freshCount = sources.filter(s => s.dataStatus === 'fresh').length;
+          // "All fresh" claims every source, so it needs every source. It was
+          // gated at 80%, so a board of 99 fresh out of 105 printed the green
+          // all-clear over six stale books — the one line a reader uses to
+          // decide whether to trust the board at all.
+          if (freshCount === sources.length) {
             qbScrapeStatus.textContent = t('allFresh');
             qbScrapeStatus.className = 's green';
-          } else if (freshRatio > 0.5) {
+          } else if (freshCount / sources.length > 0.5) {
             qbScrapeStatus.textContent = t('someStale');
             qbScrapeStatus.className = 's yellow';
           } else {
@@ -270,9 +305,6 @@ async function refresh() {
             qbScrapeStatus.className = 's red';
           }
         }
-      } else {
-        if (qbScrapeTime) qbScrapeTime.textContent = '—';
-        if (qbScrapeStatus) qbScrapeStatus.textContent = t('noData');
       }
     }
 
@@ -336,8 +368,37 @@ async function refresh() {
           </div>
         </div>`;
     } else {
-      const all = [...opportunities, ...middles]
-        .sort((a, b) => (b.marginPercent || b.roiPercent || 0) - (a.marginPercent || a.roiPercent || 0));
+      // Ranked across families on one coalesced column, which is the same
+      // mistake the React shell made and for the same reason: most middles
+      // publish no marginPercent, so `||` swapped in a middle's ROI and put a
+      // conditional return in the same column as a guaranteed margin. `||` is
+      // also why a middle publishing marginPercent: 0 reported its ROI instead.
+      // Certainty first, then each family against its own figure.
+      //
+      // Two renderers read the family off the row, and for a long time they read
+      // it off `kind`, which no part of this system publishes. Every row read as
+      // `undefined`, so all 4,588 middles were labelled "Arbitrage" and none was
+      // styled as a middle. The scan does name the family, in `type`: `arb`,
+      // `middle`, `positive_ev` -- the field arbitrage.js has always keyed on --
+      // so the row's own contract answers it and nothing has to be stamped on.
+      //
+      // Not stamped, and not copied. `{ ...o, kind }` reads every own property of
+      // the row it copies, and the scan census counts a read as a page using that
+      // field, so the copy that adds one field would have credited this page with
+      // reading all twenty-odd it publishes and quietly retired six measured
+      // excuses.
+      //
+      // Three bands, not two. Certainty first within the surebets, then the
+      // middles, then the surebets the backend rejected -- because a rejected
+      // contract's margin is a number the verification pass already withdrew,
+      // and it does not outrank a middle that can actually be placed. Measured
+      // on the live scan: ranking surebets alone put 54 rejected contracts in
+      // the first twenty cards and pushed every one of the 4,588 middles below
+      // 365 hidden cards. Each rejected row still says so in its own status
+      // cell, so nothing is hidden -- it is last, not absent.
+      const byFigure = (a, b) => rowFigure(b) - rowFigure(a);
+      const blocked = opportunities.filter(rejected).slice().sort(byFigure);
+      const all = [...opportunities.filter((o) => !rejected(o)).slice().sort(byFigure), ...middles.slice().sort(byFigure), ...blocked];
 
       // Group by match identity: home|away|kickoff
       const groups = new Map();
@@ -352,9 +413,14 @@ async function refresh() {
       const initialCards = groupValues.slice(0, MAX_CARDS);
       const remainingCards = groupValues.slice(MAX_CARDS);
 
+      // The figure column is named for both measures because it carries both: a
+      // surebet row shows its guaranteed margin and a middle row its expected
+      // ROI. One header cannot be right for both, and "ROI" alone is wrong for
+      // every surebet on the page -- the same reason the two families are sorted
+      // separately rather than in one column against each other.
       const headings = arbiterI18n.lang === 'en'
-        ? ['Event / sport', 'Best market', 'Type / verification', 'Markets', 'ROI', 'Details']
-        : ['Eveniment / sport', 'Cea mai bună piață', 'Tip / verificare', 'Piețe', 'ROI', 'Detalii'];
+        ? ['Event / sport', 'Best market', 'Type / verification', 'Markets', `${t('margin')} / ${t('roi')}`, 'Details']
+        : ['Eveniment / sport', 'Cea mai bună piață', 'Tip / verificare', 'Piețe', `${t('margin')} / ${t('roi')}`, 'Detalii'];
       list.innerHTML = `<div class="opportunity-table-wrap" tabindex="0" role="region" aria-label="${escapeHtml(t('topOpportunities'))}"><table class="opportunity-table"><thead><tr>${headings.map(h => `<th scope="col">${escapeHtml(h)}</th>`).join('')}</tr></thead><tbody>${initialCards.map(renderOppGroup).join('')}</tbody></table></div>`;
 
       // Add "Show more" button if there are more cards
@@ -477,6 +543,22 @@ function dashLiveBadge(t, inPlay) {
 }
 
 // Render a group of opportunities for the same match as one collapsed card
+/**
+ * The figure a row is entitled to be described by.
+ *
+ * A middle's figure is its ROI. `marginPercent` on a middle is the spread
+ * between its two lines, not a return, so coalescing the two with
+ * `marginPercent || roiPercent` printed a 9.5% middle under a heading that said
+ * ROI while the row's own ROI was 128% — the same bug the React shell fixed in
+ * `normalize`, arriving here by a different route. `??` rather than `||` so a
+ * genuine zero stays a zero instead of falling through to the other field.
+ */
+function rowFigure(o) {
+  return o.type === 'middle'
+    ? Number(o.roiPercent ?? 0)
+    : Number(o.marginPercent ?? 0);
+}
+
 function renderOppGroup(opps) {
   if (!opps || !opps.length) return '';
   const best = opps[0]; // already sorted by ROI desc
@@ -485,8 +567,8 @@ function renderOppGroup(opps) {
   const href = escapeHtml(`/event.html?${params}`);
   const event = `${best.homeTeam || '—'} ${t('vs')} ${best.awayTeam || '—'}`;
   const marketCount = new Set(opps.map(o => o.marketKey || o.market || '').filter(Boolean)).size;
-  const roi = Number(best.marginPercent || best.roiPercent || 0);
-  const kind = best.kind === 'middle' ? (arbiterI18n.lang === 'en' ? 'Middle' : 'Mijloc') : (arbiterI18n.lang === 'en' ? 'Arbitrage' : 'Arbitraj');
+  const roi = rowFigure(best);
+  const kind = best.type === 'middle' ? (arbiterI18n.lang === 'en' ? 'Middle' : 'Mijloc') : (arbiterI18n.lang === 'en' ? 'Arbitrage' : 'Arbitraj');
   // A row is one match with every market found on it, so the row is live when
   // any of them is — not only when the ROI-best one happens to be. Marking only
   // the best would leave a live match unmarked whenever a cheaper pre-match
@@ -527,15 +609,15 @@ function parseDate(value) {
 // eslint-disable-next-line no-unused-vars
 function renderOppV2(o, allMarkets) {
   const t = arbiterI18n.t.bind(arbiterI18n);
-  const legs = (o.legs || []).map((l) => dashRenderLeg(l, t, o.marginPercent || o.roiPercent)).join('');
+  const legs = (o.legs || []).map((l) => dashRenderLeg(l, t, rowFigure(o))).join('');
 
   const status = o.verification
     ? `<span class="status ${o.verification.status}">${escapeHtml(o.verification.status)}</span>`
     : `<span class="muted text-xs">${escapeHtml(t('unverified'))}</span>`;
 
-  const kindClass = o.kind === 'middle' ? 'is-middle' : '';
-  const roi = Math.max(0, Math.min(100, (o.marginPercent || o.roiPercent || 0) * ROI_BAR_SCALE));
-  const hotClass = (o.marginPercent || o.roiPercent || 0) > 5 ? 'opp-hot' : '';
+  const kindClass = o.type === 'middle' ? 'is-middle' : '';
+  const roi = Math.max(0, Math.min(100, rowFigure(o) * ROI_BAR_SCALE));
+  const hotClass = rowFigure(o) > 5 ? 'opp-hot' : '';
   const rawMarket = o.marketKey || o.market || '';
   const marketLabel = fmtMarketKey(rawMarket);
   const league = o.league || '';
@@ -571,7 +653,7 @@ function renderOppV2(o, allMarkets) {
     ? `<div class="opp-market-chips">${markets.map((m, i) => {
         const mk = m.marketKey || m.market || '';
         const label = fmtMarketKey(mk);
-        const roi2 = (m.marginPercent || m.roiPercent || 0).toFixed(2);
+        const roi2 = rowFigure(m).toFixed(2);
         return `<button class="opp-market-chip${i === 0 ? ' active' : ''}" type="button" data-market-idx="${i}" title="${escapeHtml(mk)} · +${roi2}%">${escapeHtml(label)}</button>`;
       }).join('')}</div>`
     : '';
@@ -619,7 +701,7 @@ const dataAttrs = [
           </div>
         </div>
         <div class="roi-block">
-          <div class="roi">+${(o.marginPercent || o.roiPercent || 0).toFixed(2)}<span class="pct">%</span></div>
+          <div class="roi">+${rowFigure(o).toFixed(2)}<span class="pct">%</span></div>
           ${o.guaranteedProfit !== null && o.guaranteedProfit !== undefined ? `<div class="profit-badge green" title="${t('guaranteedProfit')}">+${fmtStake(o.guaranteedProfit)} RON</div>` : ''}
           <div class="roi-bar" aria-hidden="true"><div class="fill" style="width:${roi.toFixed(1)}%"></div></div>
           ${markets ? `<div class="opp-market-count">${markets.length} ${t('markets')}</div>` : ''}

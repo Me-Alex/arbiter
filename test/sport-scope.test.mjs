@@ -91,7 +91,10 @@ const WORKSPACE = [
   event('bravo', 'k-arb', 'Football', 'MATCH_ODDS', [sel('Home', 2.05), sel('Draw', 4.50), sel('Away', 5.00)]),
   // Middles: an over/under pair straddling the line.
   event('alpha', 'k-mid', 'Football', 'OVER_UNDER_25', [sel('Over', 2.00, { handicap: 2.5 }), sel('Under', 2.00, { handicap: 2.5 })]),
-  event('bravo', 'k-mid', 'Football', 'OVER_UNDER_25', [sel('Over', 1.95, { handicap: 2.25 }), sel('Under', 1.95, { handicap: 2.75 })]),
+  // A half line either side of alpha's 2.5, because the engine refuses a line
+  // that can push: the 2.25/2.75 straddle this replaced was two quarter lines,
+  // the pair resolved to nothing, and the middles family came back empty.
+  event('bravo', 'k-mid', 'Football', 'OVER_UNDER_35', [sel('Over', 1.95, { handicap: 3.5 }), sel('Under', 1.95, { handicap: 3.5 })]),
   // Positive EV: one book far above the other two on the same selection.
   event('alpha', 'k-ev', 'Tennis', 'MATCH_ODDS', [sel('Home', 5.20), sel('Draw', 3.60), sel('Away', 3.40)]),
   event('bravo', 'k-ev', 'Tennis', 'MATCH_ODDS', [sel('Home', 2.10), sel('Draw', 3.60), sel('Away', 3.50)]),

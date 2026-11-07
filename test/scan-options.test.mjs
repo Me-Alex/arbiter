@@ -115,8 +115,11 @@ test('the optional stake cap and prematch age clamp instead of guessing, and sta
 // Fixture copied from test/scan-fields-census.test.mjs: every event carries
 // the ids a real scrape supplies. groupByEvent collapses all four groups into
 // one event (they share sport, kickoff and teams), so the engine sees one
-// merged event: 1 arb, 2 middles, 8 positive-EV records, 5 low holds —
-// measured by running the workspace, not by reading the engine.
+// merged event: 1 arb, 2 middles, 8 positive-EV records, 6 low holds —
+// measured by running the workspace, not by reading the engine. The sixth is
+// the half-line total the middles fixture needs on bravo (OVER_UNDER_35 at
+// 1.95 both ways, a 2.56% hold), which replaced the push-capable 2.25/2.75
+// straddle and so was not in the count this comment first carried.
 // ---------------------------------------------------------------------------
 
 const EVENT = (id, sourceId, eventKey, markets) => ({
@@ -133,7 +136,14 @@ const WORKSPACE = [
   EVENT('b1', 'bravo', 'k-arb', [mkt('MATCH_ODDS', [sel('H', 2.05), sel('D', 4.50), sel('A', 5.00)])]),
   // Middles: an over/under pair straddling a line.
   EVENT('a2', 'alpha', 'k-middle', [mkt('OVER_UNDER_25', [sel('Over', 2.00, { handicap: 2.5 }), sel('Under', 2.00, { handicap: 2.5 })])]),
-  EVENT('b2', 'bravo', 'k-middle', [mkt('OVER_UNDER_25', [sel('Over', 1.95, { handicap: 2.25 }), sel('Under', 1.95, { handicap: 2.75 })])]),
+  // Both books must quote a half line. A quarter line half-pushes and a whole
+  // line pushes outright, so the engine refuses a pair whose line can push:
+  // the earlier 2.25/2.75 straddle resolved to nothing, the middles family
+  // came back empty, and every middle assertion then held over an empty list.
+  EVENT('b2', 'bravo', 'k-middle', [
+    mkt('OVER_UNDER_25', [sel('Over', 1.95, { handicap: 1.5 }), sel('Under', 1.95, { handicap: 1.5 })]),
+    mkt('OVER_UNDER_35', [sel('Over', 1.95, { handicap: 3.5 }), sel('Under', 1.95, { handicap: 3.5 })]),
+  ]),
   // Positive EV: one selection far above the other two books' consensus.
   EVENT('a3', 'alpha', 'k-ev', [mkt('MATCH_ODDS', [sel('H', 5.20), sel('D', 3.60), sel('A', 3.40)])]),
   EVENT('b3', 'bravo', 'k-ev', [mkt('MATCH_ODDS', [sel('H', 2.10), sel('D', 3.60), sel('A', 3.50)])]),

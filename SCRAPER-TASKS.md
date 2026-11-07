@@ -314,12 +314,16 @@ Kept for endpoint provenance. The queue table above supersedes its verdicts.
   Each carries live wire captures in `data/endpoints/captures/`, fixtures in
   `test/fixtures/`, candidate enrollment in `config/scrapers.json`, endpoint registration in
   `data/endpoints/endpoints.json`, and dedicated unit tests in `test/`.
-- Added and promoted 31 European sportsbooks on Altenar SB2: `cazimbo`,
-  `slotspalace`, `malinacasino`, `zet`, `kingmaker`, `crownplay`, `5gringos`, `ohmyspins`, `boomerang`, `goldenbet`, `casombie`, `campeonbet`, `betsamigo`, `betalright`, `fairspin`, `spinight`, `goldspin`, `wildsino`, `betstro`, `evobet`, `svenbet`, `sonsofslots`, `wallacebet`, `betrebels`, `prontobet`, `betovo`, `quickslot`, `betbeast`, `slotparadise`, `joker8`, and `betway`.
+- Added and promoted 33 European sportsbooks on Altenar SB2: `cazimbo`,
+  `slotspalace`, `malinacasino`, `zet`, `kingmaker`, `crownplay`, `5gringos`, `ohmyspins`, `boomerang`, `goldenbet`, `casombie`, `campeonbet`, `betsamigo`, `betalright`, `fairspin`, `spinight`, `goldspin`, `wildsino`, `betstro`, `evobet`, `svenbet`, `sonsofslots`, `wallacebet`, `betrebels`, `prontobet`, `betovo`, `quickslot`, `betbeast`, `slotparadise`, `joker8`, `betway`, `betking`, and `bet99`.
   Each carries live wire captures in `data/endpoints/captures/`, fixtures in
   `test/fixtures/`, candidate enrollment in `config/scrapers.json`, endpoint registration in
   `data/endpoints/endpoints.json`, cross-platform feed grouping in `src/scanner/feed-groups.mjs`,
   and dedicated unit tests in `test/`.
+- Promoted three previously scaffolded Altenar SB2 tenants on 2026-10-13:
+  `frankcasino`, `mrbit`, and `slotv`. Each returned 86 live events and now has a
+  verified capture, parser-compatible fixture coverage, dedicated tests, and
+  membership in the shared `altenar-tenancy` feed group.
 
 ## Follow-up order
 

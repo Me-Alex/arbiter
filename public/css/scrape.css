@@ -898,6 +898,13 @@
 
 .log-line { display: flex; gap: var(--s-3); padding: 1px 0; }
 .log-line-flex { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+
+/* A failure line's original wording: the sentence stays readable in the chosen
+   language, and the server's own English is one click away underneath it. */
+.log-detail { margin-top: 2px; }
+.log-detail summary { cursor: pointer; font-size: var(--sl-fs-xs); color: var(--sl-text-dim); opacity: 0.75; }
+.log-detail summary:hover { opacity: 1; }
+.log-detail > span { display: block; padding-left: var(--s-3); color: var(--sl-text-dim); overflow-wrap: anywhere; }
 .log-line.error { color: var(--sl-bad); }
 .log-line.warn { color: var(--sl-warn); }
 

@@ -6050,89 +6050,95 @@
     "frankcasino": {
       "book": "frankcasino",
       "endpointCount": 1,
-      "capturedAt": null,
+      "capturedAt": "2026-10-13T18:18:00.000Z",
       "keyEndpoints": [
         {
           "method": "GET",
           "url": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetUpcoming?integration=frankcasino",
-          "verified": false,
-          "purpose": "Recorded by `npm run new-book` on 2026-10-11. This is a claim, not a measurement: reach the endpoint, save the response under data/endpoints/captures/, and set verified: true when it answers."
+          "verified": true,
+          "purpose": "Live public Altenar SB2 GetUpcoming endpoint captured on 2026-10-13."
         }
       ],
       "platform": "altenar-sb2",
-      "feedStatus": "unverified",
-      "verifiedAt": null,
-      "scraped": false,
+      "feedStatus": "verified",
+      "verifiedAt": "2026-10-13",
+      "scraped": true,
       "job": {
         "id": "frankcasino",
         "script": "altenar-sites.mjs",
         "engine": "altenar-tenancy",
         "transport": "altenar-sb2-widget-json",
-        "enabled": false
+        "enabled": true
       },
       "oddsFeed": null,
       "crawl": null,
       "unavailableSports": [],
-      "captureFiles": [],
-      "bodyShape": "recorded-url-only"
+      "captureFiles": [
+        "captures/frankcasino-odds-2026-10-13.json"
+      ],
+      "bodyShape": "altenar-sb2-widget-json"
     },
     "mrbit": {
       "book": "mrbit",
       "endpointCount": 1,
-      "capturedAt": null,
+      "capturedAt": "2026-10-13T18:18:00.000Z",
       "keyEndpoints": [
         {
           "method": "GET",
           "url": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetUpcoming?integration=mrbit",
-          "verified": false,
-          "purpose": "Recorded by `npm run new-book` on 2026-10-11. This is a claim, not a measurement: reach the endpoint, save the response under data/endpoints/captures/, and set verified: true when it answers."
+          "verified": true,
+          "purpose": "Live public Altenar SB2 GetUpcoming endpoint captured on 2026-10-13."
         }
       ],
       "platform": "altenar-sb2",
-      "feedStatus": "unverified",
-      "verifiedAt": null,
-      "scraped": false,
+      "feedStatus": "verified",
+      "verifiedAt": "2026-10-13",
+      "scraped": true,
       "job": {
         "id": "mrbit",
         "script": "altenar-sites.mjs",
         "engine": "altenar-tenancy",
         "transport": "altenar-sb2-widget-json",
-        "enabled": false
+        "enabled": true
       },
       "oddsFeed": null,
       "crawl": null,
       "unavailableSports": [],
-      "captureFiles": [],
-      "bodyShape": "recorded-url-only"
+      "captureFiles": [
+        "captures/mrbit-odds-2026-10-13.json"
+      ],
+      "bodyShape": "altenar-sb2-widget-json"
     },
     "slotv": {
       "book": "slotv",
       "endpointCount": 1,
-      "capturedAt": null,
+      "capturedAt": "2026-10-13T18:18:00.000Z",
       "keyEndpoints": [
         {
           "method": "GET",
           "url": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetUpcoming?integration=slotv",
-          "verified": false,
-          "purpose": "Recorded by `npm run new-book` on 2026-10-11. This is a claim, not a measurement: reach the endpoint, save the response under data/endpoints/captures/, and set verified: true when it answers."
+          "verified": true,
+          "purpose": "Live public Altenar SB2 GetUpcoming endpoint captured on 2026-10-13."
         }
       ],
       "platform": "altenar-sb2",
-      "feedStatus": "unverified",
-      "verifiedAt": null,
-      "scraped": false,
+      "feedStatus": "verified",
+      "verifiedAt": "2026-10-13",
+      "scraped": true,
       "job": {
         "id": "slotv",
         "script": "altenar-sites.mjs",
         "engine": "altenar-tenancy",
         "transport": "altenar-sb2-widget-json",
-        "enabled": false
+        "enabled": true
       },
       "oddsFeed": null,
       "crawl": null,
       "unavailableSports": [],
-      "captureFiles": [],
-      "bodyShape": "recorded-url-only"
+      "captureFiles": [
+        "captures/slotv-odds-2026-10-13.json"
+      ],
+      "bodyShape": "altenar-sb2-widget-json"
     },
     "betinia": {
       "book": "betinia",
@@ -8389,6 +8395,136 @@
       "unavailableSports": [],
       "captureFiles": [
         "betway-odds-2026-10-13.json"
+      ],
+      "bodyShape": "recorded-url-only"
+    },
+    "betking": {
+      "book": "betking",
+      "endpointCount": 1,
+      "capturedAt": "2026-10-13T16:00:00.000Z",
+      "keyEndpoints": [
+        {
+          "method": "GET",
+          "url": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetUpcoming?integration=betking",
+          "verified": true,
+          "purpose": "Altenar SB2 public widget feed for Betking"
+        }
+      ],
+      "platform": "altenar-sb2",
+      "feedStatus": "verified",
+      "verifiedAt": "2026-10-13T16:00:00.000Z",
+      "scraped": true,
+      "job": {
+        "id": "betking",
+        "script": "altenar-sites.mjs",
+        "engine": "altenar-tenancy",
+        "transport": "altenar-sb2-widget-json",
+        "enabled": true
+      },
+      "oddsFeed": null,
+      "crawl": null,
+      "unavailableSports": [],
+      "captureFiles": [
+        "betking-odds-2026-10-13.json"
+      ],
+      "bodyShape": "recorded-url-only"
+    },
+    "bet99": {
+      "book": "bet99",
+      "endpointCount": 1,
+      "capturedAt": "2026-10-13T16:00:00.000Z",
+      "keyEndpoints": [
+        {
+          "method": "GET",
+          "url": "https://sb2frontend-altenar2.biahosted.com/api/widget/GetUpcoming?integration=bet99",
+          "verified": true,
+          "purpose": "Altenar SB2 public widget feed for Bet99"
+        }
+      ],
+      "platform": "altenar-sb2",
+      "feedStatus": "verified",
+      "verifiedAt": "2026-10-13T16:00:00.000Z",
+      "scraped": true,
+      "job": {
+        "id": "bet99",
+        "script": "altenar-sites.mjs",
+        "engine": "altenar-tenancy",
+        "transport": "altenar-sb2-widget-json",
+        "enabled": true
+      },
+      "oddsFeed": null,
+      "crawl": null,
+      "unavailableSports": [],
+      "captureFiles": [
+        "bet99-odds-2026-10-13.json"
+      ],
+      "bodyShape": "recorded-url-only"
+    },
+    "luck": {
+      "book": "luck",
+      "endpointCount": 2,
+      "capturedAt": "2026-11-07T18:14:00.000Z",
+      "keyEndpoints": [
+        {
+          "method": "GET",
+          "url": "https://sport.luck.com/XSportDatastore/getPalinsestoDelGiorno?systemCode=LUCKY&lingua=RO&hash=&idSport=1&idAggregata=1&timezone=3",
+          "verified": true,
+          "purpose": "Exalogic XSport prematch daily offer feed for luck.com (discovered via REA MCP ev_0a528ad60c4baec081c8dcac1d7e246229e9f2e71756ce2868e0cde7315d9244)"
+        },
+        {
+          "method": "GET",
+          "url": "https://sport.luck.com/XSportDatastore/getMenuPrematch?systemCode=LUCKY&lingua=RO&hash=",
+          "verified": true,
+          "purpose": "Exalogic XSport sports hierarchy menu"
+        }
+      ],
+      "platform": "exalogic-xsport",
+      "feedStatus": "verified",
+      "verifiedAt": "2026-11-07",
+      "scraped": true,
+      "job": {
+        "id": "luck",
+        "script": "luck.mjs",
+        "engine": "exalogic-xsport",
+        "transport": "exalogic-xsport-public-json",
+        "enabled": true
+      },
+      "oddsFeed": null,
+      "crawl": null,
+      "unavailableSports": [],
+      "captureFiles": [
+        "luck-odds-2026-11-07.json"
+      ],
+      "bodyShape": "recorded-url-only"
+    },
+    "victorybet": {
+      "book": "victorybet",
+      "endpointCount": 1,
+      "capturedAt": "2026-11-07T18:15:00.000Z",
+      "keyEndpoints": [
+        {
+          "method": "WSS",
+          "url": "wss://eu-swarm-reverse.victorybet.ro/",
+          "verified": true,
+          "purpose": "BetConstruct Swarm WebSocket reverse proxy for victorybet.ro (site_id: 18754351, discovered via REA MCP ev_d4c6483857a1861e4eb43b9fc34db512838fa6d3967ce915e4af42e7fff51a3c)"
+        }
+      ],
+      "platform": "betconstruct-swarm",
+      "feedStatus": "verified",
+      "verifiedAt": "2026-11-07",
+      "scraped": true,
+      "job": {
+        "id": "victorybet",
+        "script": "victorybet.mjs",
+        "engine": "betconstruct-swarm",
+        "transport": "betconstruct-swarm-ws",
+        "enabled": true
+      },
+      "oddsFeed": null,
+      "crawl": null,
+      "unavailableSports": [],
+      "captureFiles": [
+        "victorybet-odds-2026-11-07.json"
       ],
       "bodyShape": "recorded-url-only"
     }

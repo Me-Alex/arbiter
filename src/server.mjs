@@ -142,6 +142,7 @@ const server = http.createServer(async (req, res) => {
 server.listen(PORT, HOST, () => {
   // With the .html suffix: serveStatic maps only "/" to /index.html and reads
   // every other path verbatim, so the extensionless form 404s.
+  logger('info', `Arbiter app shell:   http://${HOST}:${PORT}/app/`);
   logger('info', `Arbitrage dashboard: http://${HOST}:${PORT}/admin/arbitrage.html`);
   logger('info', `Scrape control:      http://${HOST}:${PORT}/admin/scrape.html`);
   logger('info', `Health probe:        http://${HOST}:${PORT}/api/health`);

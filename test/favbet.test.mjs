@@ -1715,6 +1715,70 @@ test('favbet: multi-sport sub-window derivative markets (quarters, sets, halves)
   assert.notEqual(bKeyTs2Win, bKeyTs2Tot);
 });
 
+test('the line is the provider\'s own field, not a number out of the club name', (t) => {
+  atPinnedNow(t);
+  // Measured on the 2026-10-17 live board. Favbet writes a per-team total's
+  // threshold into the leg text and then names the team in the same string, so
+  // "Peste (4.5) NK Istra 1961" is the 4.5 line — and the LAST number in it is
+  // 1961, which is the reading the fallback used to take. The board published
+  // that as `OVER_UNDER_1961` (6 events) and `OVER_UNDER_29` (11 events), and it
+  // reached the card as "Total Goals 1961".
+  //
+  // Template 801 is used rather than 914 so that this measures the LINE reading
+  // alone: 914 is refused outright by the test below, and one market cannot
+  // demonstrate two guards.
+  const s = new Favbet({ windowHours: 72 });
+  const total = {
+    market_id: 9001, market_name: 'Total goluri', market_suspend: false, market_template_id: 801,
+    result_type_name: 'Timp Regulamentar', result_type_short_name: 'Tr',
+    outcomes: [
+      { ...leg(90011, 'over', 'Peste (4.5) NK Istra 1961', 1.97), outcome_param: '4.5' },
+      { ...leg(90012, 'under', 'Sub (4.5) NK Istra 1961', 1.97), outcome_param: '4.5' },
+    ],
+  };
+  const env = envelopeWith([total], { home: 'Locomotiva NK Zagreb', away: 'NK Istra 1961' });
+  const out = s.extractEvents(s.normalize(env));
+  const keys = (out.find((e) => String(e.id) === '5')?.markets || []).map((m) => m.key);
+
+  assert.ok(keys.includes('OVER_UNDER_4_5'), `the line is the provider's 4.5, got ${keys.join(', ')}`);
+  assert.ok(!keys.some((k) => /1961/.test(k)), `no key may carry digits out of the club name, got ${keys.join(', ')}`);
+});
+
+test('a per-team corners total is never published as a match total', (t) => {
+  atPinnedNow(t);
+  // Template 914, "Peste / Sub cornere / Echipă" — the live name. It is ONE
+  // team's corners. `cornersTotalMarket` refuses template 914 by name, so this
+  // market fell through to the best-effort mapper and was keyed as a match total
+  // (the two live keys above), which is the collision `cornersTotalMarket` exists
+  // to avoid.
+  //
+  // Reading the line correctly makes this WORSE, not better, which is why the
+  // refusal is not a tidy-up: the engine's `team` dimension names a side only
+  // when the market text names one ("Total goluri echipa Gazde"), and this market
+  // names neither, so at a correct 4.5 it resolves as team="match" — measured,
+  // it then shares a bucket key with another book's match corners 4.5
+  // (...OVER_UNDER::fulltime::4.5::over+under::corners::match).
+  const s = new Favbet({ windowHours: 72 });
+  const teamCorners = {
+    market_id: 9002, market_name: 'Peste / Sub cornere / Echipă', market_suspend: false,
+    market_template_id: 914,
+    result_type_name: 'Timp Regulamentar', result_type_short_name: 'Tr',
+    outcomes: [
+      { ...leg(90021, 'over', 'Peste (4.5) NK Istra 1961', 1.77), outcome_param: '4.5' },
+      { ...leg(90022, 'under', 'Sub (4.5) NK Istra 1961', 1.87), outcome_param: '4.5' },
+    ],
+  };
+  const env = envelopeWith([teamCorners], { home: 'Locomotiva NK Zagreb', away: 'NK Istra 1961' });
+  const out = s.extractEvents(s.normalize(env));
+  const keys = (out.find((e) => String(e.id) === '5')?.markets || []).map((m) => m.key);
+
+  assert.ok(!keys.some((k) => /^OVER_UNDER/.test(k)), `a team total must not be keyed as a match total, got ${keys.join(', ')}`);
+  assert.ok(!keys.includes('CNOU'), 'and it must not claim the match-corners key either');
+  // The control: the event itself still publishes, so the assertions above are
+  // about this market and not about the adapter dropping everything.
+  assert.deepEqual(keys, ['MATCH_ODDS'], `only the match result survives, got ${keys.join(', ')}`);
+});
+
 /* --- synthetic row builders, shaped like the capture ---------------------- */
 
 function leg(outcomeId, tag, name, coef) {

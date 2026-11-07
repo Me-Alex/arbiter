@@ -291,6 +291,55 @@ test('per-team totals: resolve with correct team side and isolate from match tot
   );
 });
 
+test('betano HCTG is the MATCH goals total, never a home-team total', () => {
+  // The measured provider names for HCTG, read off the live snapshots:
+  //   "Total goluri", "Total goluri Peste/Sub", "Total goluri (Timp regulamentar)"
+  // Not one of them names a side, and src/scrapers/betano.mjs calls HCTG "the
+  // match total". The key rule used to test /^H(?:TGOT|CTG)$/, whose CTG branch
+  // caught HCTG and forced it to `home`, so every betano match total bucketed
+  // with genuine per-team totals: 91 markets per snapshot, and on the
+  // accumulated capture 11 middles carried guaranteedProfit up to +538.70 on a
+  // 1000 stake. This pins the resolved SIDE, not just the family: the family
+  // assertions passed for the whole life of the defect.
+  // The side is matched against the EVENT's own team names, which is how the
+  // live favbet market resolves: its key is TOTAL_GOALS and its name is
+  // "Total individual Sabah", so only the event context says which side it is.
+  const CTX = { homeTeam: 'Sabah', awayTeam: 'Borussia Dortmund' };
+  const homeTotal = resolveContract({
+    key: 'TOTAL_GOALS', name: 'Total individual Sabah', period: 'fulltime',
+    selections: [{ name: 'Peste 2.5' }, { name: 'Sub 2.5' }],
+  }, CTX);
+  assert.equal(homeTotal.team, 'home', 'a real per-team total still names its side');
+
+  for (const name of ['Total goluri', 'Total goluri Peste/Sub', 'Total goluri (Timp regulamentar)']) {
+    const c = resolveContract({
+      key: 'HCTG', name, period: 'fulltime',
+      selections: [{ name: 'Peste 2.5' }, { name: 'Sub 2.5' }],
+    });
+    assert.ok(c, `HCTG "${name}" resolves`);
+    assert.equal(c.team, 'match', `HCTG "${name}" is the match total, not a team total`);
+    assert.equal(c.subject, 'goals', 'HCTG counts goals');
+    assert.notEqual(
+      bucketKeyForContract('ev1', c),
+      bucketKeyForContract('ev1', homeTotal),
+      `HCTG "${name}" must never share a bucket with a team total at the same line`,
+    );
+  }
+
+  // The keys the rule was written for keep their side, so the correction cannot
+  // be undone by deleting the key rule altogether. Their names deliberately do
+  // NOT name a side: only the key can answer, which is the rule under test.
+  // (Neither key appears in any live snapshot -- that is why narrowing the rule
+  // to them cost no coverage.)
+  assert.equal(resolveContract({
+    key: 'HTGOT', name: 'Total goluri Peste/Sub', period: 'fulltime',
+    selections: [{ name: 'Peste 1.5' }, { name: 'Sub 1.5' }],
+  }).team, 'home', 'HTGOT still resolves as the home team total by its key');
+  assert.equal(resolveContract({
+    key: 'ATGOT', name: 'Total goluri Peste/Sub', period: 'fulltime',
+    selections: [{ name: 'Peste 1.5' }, { name: 'Sub 1.5' }],
+  }).team, 'away', 'ATGOT still resolves as the away team total by its key');
+});
 test('basketball and tennis: 2-way moneyline, spreads, and totals resolution', () => {
   // 2-way moneyline with 2 selections
   const ml2way = resolveContract({
@@ -819,3 +868,50 @@ test('canonicalPeriod maps PR, SR, prima rep, and a doua rep with negative looka
   assert.notEqual(srBucket, ftBucket);
 });
 
+
+test('a team-named half-line handicap is keyed by which side holds the line, not by its sign', () => {
+  // betano publishes FAHC for handball as "CS Dinamo București +0.5" /
+  // "Skanderborg Aarhus -0.5" (captured 2026-10-20, ro.betano.com event
+  // 92496424). Neither leg begins with a side token, so the bucket key used to
+  // be built by sorting the two NUMBERS: the negative line belongs to the AWAY
+  // team, yet the pair sorted to '-0.5/0.5' — the signature of a HOME -0.5
+  // market. The engine reads side direction off that key (engine.mjs, the
+  // '-0.5/0.5' synthetic branch), so it recorded the away "must win" leg as
+  // `draw_or_away` and published a +69.74 "guaranteed" arbitrage against a home
+  // moneyline. A draw loses both legs.
+  const ctx = { homeTeam: 'CS Dinamo București', awayTeam: 'Skanderborg Aarhus', sport: 'Handball' };
+  const selections = [
+    { name: 'CS Dinamo București +0.5', odds: 1.88, handicap: 0.5 },
+    { name: 'Skanderborg Aarhus -0.5', odds: 1.93, handicap: -0.5 },
+  ];
+
+  const withCtx = resolveContract({ key: 'FAHC', period: 'fulltime', selections }, ctx);
+  assert.equal(withCtx.family, 'ASIAN_HANDICAP');
+  assert.equal(withCtx.lineKey, '0.5/-0.5', 'the HOME side holds +0.5, so home leads the key');
+  assert.equal(canonicalOutcomeFor('CS Dinamo București +0.5', withCtx, ctx), 'home');
+  assert.equal(canonicalOutcomeFor('Skanderborg Aarhus -0.5', withCtx, ctx), 'away');
+
+  // The same contract from a book that names its legs "1"/"2" must land on the
+  // same key, or the two can never be compared.
+  const netbet = resolveContract({
+    key: 'handicap',
+    period: 'fulltime',
+    selections: [{ name: '1 (0.5)', odds: 1.87 }, { name: '2 (-0.5)', odds: 1.83 }],
+  }, ctx);
+  assert.equal(netbet.lineKey, withCtx.lineKey);
+
+  // A bare spread names nobody, so the sign fallback still orders it — and it
+  // must keep doing so, because that shape has no other evidence to go on.
+  const bare = resolveContract({
+    key: 'ASIAN_HANDICAP',
+    period: 'fulltime',
+    selections: [{ name: '+ 1.5', odds: 1.9 }, { name: '- 1.5', odds: 1.9 }],
+  }, ctx);
+  assert.equal(bare.lineKey, '-1.5/1.5');
+
+  // Without the event there is no side evidence, and the sign fallback stands.
+  // This is what pins the context as the thing that fixes the direction rather
+  // than some incidental change in the resolver.
+  const noCtx = resolveContract({ key: 'FAHC', period: 'fulltime', selections }, { sport: 'Handball' });
+  assert.equal(noCtx.lineKey, '-0.5/0.5');
+});

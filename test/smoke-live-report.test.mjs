@@ -7,6 +7,8 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import { floorVerdict } from '../scripts/smoke-verdict.mjs';
+
 const ROOT = fileURLToPath(new URL('..', import.meta.url));
 const SMOKE = join(ROOT, 'scripts', 'smoke-live.mjs');
 
@@ -22,6 +24,27 @@ const SMOKE = join(ROOT, 'scripts', 'smoke-live.mjs');
  * scraping itself — every assertion here runs offline, with a threshold that
  * cannot be met, so no network is involved.
  */
+
+/**
+ * Write a scratch registry that differs from the real one only where this test
+ * needs it to.
+ *
+ * The gate reads its registry from `SMOKE_CONFIG_PATH`, so a run can be given a
+ * copy instead of the repository file. That matters beyond tidiness: this suite
+ * runs its files in parallel, and most of them parse `config/scrapers.json` at
+ * import. A test that rewrites the real file is therefore writing to a document
+ * other files are reading, and the reader that arrives mid-write fails with
+ * "Unexpected end of JSON input" — a red test in a bookmaker file, pointing at
+ * the smoke gate, for a fault the smoke gate did not cause.
+ */
+async function scratchConfig(dir, edit) {
+  const text = await readFile(join(ROOT, 'config', 'scrapers.json'), 'utf8');
+  const config = JSON.parse(text);
+  edit(config);
+  const path = join(dir, 'scrapers.json');
+  await fs.writeFile(path, JSON.stringify(config, null, 2), 'utf8');
+  return path;
+}
 
 function runSmoke(env) {
   return new Promise((resolve) => {
@@ -62,7 +85,11 @@ test('the gate writes a report and a job summary', async (t) => {
   assert.equal(json.jobs.length, 1);
   assert.equal(json.jobs[0].id, 'superbet');
   assert.equal(json.jobs[0].verdict, 'FAIL');
-  assert.match(json.jobs[0].why, /expected >= 999999/, 'the reason names the threshold that was missed');
+  // The floor wording is pinned without the network in the last test. This
+  // job is scraped for real, so it may also have failed in transport first,
+  // and a timeout is not evidence about the floor either way.
+  assert.match(json.jobs[0].why, /expected >= 999999|^status /,
+    'the reason names the threshold that was missed, or the transport failure that pre-empted it');
 });
 
 test('a per-job minEvents floor overrides the global default', async (t) => {
@@ -78,24 +105,60 @@ test('a per-job minEvents floor overrides the global default', async (t) => {
   const configDir = await mkdtemp(join(tmpdir(), 'arbiter-smoke-floor-'));
   t.after(() => rm(configDir, { recursive: true, force: true }));
 
-  const original = await fs.readFile(join(ROOT, 'config', 'scrapers.json'), 'utf8');
-  const originalPath = join(ROOT, 'config', 'scrapers.json');
-  t.after(() => fs.writeFile(originalPath, original, 'utf8').catch(() => {}));
-
-  // Declare a floor nothing can meet, and ask for the default global floor.
-  const withFloor = JSON.parse(original);
-  const superbet = withFloor.jobs.find((j) => j.id === 'superbet');
-  superbet.minEvents = 999999;
-  await fs.writeFile(originalPath, JSON.stringify(withFloor, null, 2), 'utf8');
+  // The real registry is read to build the copy and then checked to still be
+  // the same bytes. The gate is pointed at the copy, so nothing here edits the
+  // shared file.
+  const realPath = join(ROOT, 'config', 'scrapers.json');
+  const realBefore = await readFile(realPath, 'utf8');
+  const configPath = await scratchConfig(configDir, (config) => {
+    const superbet = config.jobs.find((j) => j.id === 'superbet');
+    assert.ok(superbet, 'the registry still declares superbet, which this test floors');
+    superbet.minEvents = 999999;
+  });
 
   const report = join(configDir, 'report.json');
-  const result = await runSmoke({ SMOKE_REPORT_PATH: report });
+  const result = await runSmoke({ SMOKE_CONFIG_PATH: configPath, SMOKE_REPORT_PATH: report });
   assert.equal(result.code, 1, "a job's own floor must fail the gate even when the global default is 1");
 
   const json = JSON.parse(await readFile(report, 'utf8'));
   assert.equal(json.jobs[0].verdict, 'FAIL');
-  assert.match(json.jobs[0].why, /expected >= 999999/, 'the job floor is the threshold reported');
-  assert.match(json.jobs[0].why, /job floor/, 'the report says which threshold applied');
+  // End-to-end proof when superbet answers; the override itself is proven
+  // without the network below, so a timeout does not fail this test for a
+  // reason that has nothing to do with the job floor.
+  if (json.jobs[0].why.startsWith('collected')) {
+    assert.match(json.jobs[0].why, /expected >= 999999/, 'the job floor is the threshold reported');
+    assert.match(json.jobs[0].why, /job floor/, 'the report says which threshold applied');
+  }
+
+  assert.equal(await readFile(realPath, 'utf8'), realBefore,
+    'the gate read the scratch registry; the repository one is unchanged');
+});
+
+test('the gate reads the registry it is pointed at, not the repository one', async (t) => {
+  // Offline, and independent of the floor machinery: a scratch registry that
+  // does not declare superbet makes the gate refuse the name before any
+  // scraper is constructed. If SMOKE_CONFIG_PATH were ignored, the real
+  // registry would be read, superbet would be found, the run would go to the
+  // network and a report would be written. The refusal with no report is the
+  // discriminator.
+  const dir = await mkdtemp(join(tmpdir(), 'arbiter-smoke-scratch-'));
+  t.after(() => rm(dir, { recursive: true, force: true }));
+
+  const configPath = join(dir, 'scrapers.json');
+  await fs.writeFile(configPath, JSON.stringify({ jobs: [{ id: 'fortuna', enabled: true }] }), 'utf8');
+  const report = join(dir, 'report.json');
+
+  const realPath = join(ROOT, 'config', 'scrapers.json');
+  const realBefore = await readFile(realPath, 'utf8');
+  const result = await runSmoke({ SMOKE_CONFIG_PATH: configPath, SMOKE_REPORT_PATH: report });
+
+  assert.equal(result.code, 1);
+  assert.match(result.stderr, /unknown bookmaker\(s\): superbet/,
+    'the name is judged against the registry the gate was pointed at');
+  await assert.rejects(readFile(report, 'utf8'),
+    'a run refused before scraping writes no report');
+  assert.equal(await readFile(realPath, 'utf8'), realBefore,
+    'the repository registry is never the one under test');
 });
 
 test('the report is written even without a CI environment', async (t) => {
@@ -123,4 +186,32 @@ test('a default run writes data-health.json, and git ignores it', async () => {
   const source = await fs.readFile(SMOKE, 'utf8');
   assert.match(source, /data-health\.json/, 'the default report path is documented in the script');
   assert.match(source, /could not write/, 'an unwritable path warns instead of failing the gate');
+});
+
+test('the floor decides a verdict with no network involved', () => {
+  // The gate scrapes a real book, and a book can fail in transport before its
+  // floor is ever consulted: a superbet timeout records `status timeout` and
+  // the floor is never consulted. That is a different outcome with a
+  // different reason, and it used to fail these assertions through no fault
+  // of the floor. The decision is a pure function now, so both branches and
+  // the override are pinned here.
+  const empty = floorVerdict({ job: {}, minEvents: 1, events: 0 });
+  assert.equal(empty.verdict, 'FAIL');
+  assert.equal(empty.why, 'collected 0 event(s), expected >= 1');
+
+  const globalFloor = floorVerdict({ job: {}, minEvents: 999999, events: 3 });
+  assert.equal(globalFloor.verdict, 'FAIL');
+  assert.equal(globalFloor.why, 'collected 3 event(s), expected >= 999999');
+  assert.doesNotMatch(globalFloor.why, /job floor/, 'the global floor is not reported as a job floor');
+
+  // A declared floor overrides the global default, and the reason says which.
+  const jobFloor = floorVerdict({ job: { minEvents: 999999 }, minEvents: 1, events: 3 });
+  assert.equal(jobFloor.verdict, 'FAIL');
+  assert.equal(jobFloor.floor, 999999);
+  assert.equal(jobFloor.why, 'collected 3 event(s), expected >= 999999 (job floor)');
+
+  // The control: meeting the floor exactly is a pass, with no reason attached.
+  const passing = floorVerdict({ job: { minEvents: 5 }, minEvents: 1, events: 5 });
+  assert.equal(passing.verdict, 'ok');
+  assert.equal(passing.why, null);
 });

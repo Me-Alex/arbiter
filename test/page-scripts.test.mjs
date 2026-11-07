@@ -56,7 +56,16 @@ function walk(dir, out = []) {
   return out;
 }
 
-const PAGES = walk('public').filter((p) => p.endsWith('.html'));
+/**
+ * The authored pages, excluding the Vite build output under `public/app/`.
+ *
+ * The bundle there is minified and its markup is rendered after load, so what
+ * this file measures about it — which formatter keys a page can reach — has no
+ * answer to give. Excluding it keeps the measurement about hand-written pages,
+ * which is the hazard the withdrawn report was about.
+ */
+const BUILD_OUTPUT = 'public/app/';
+const PAGES = walk('public').filter((p) => p.endsWith('.html') && !p.startsWith(BUILD_OUTPUT));
 const SCRIPTS_UNDER_JS = walk('public/js').filter((p) => p.endsWith('.js'));
 
 /** The `src` of every `<script>` a page loads, in document order. */
@@ -129,38 +138,54 @@ test('the guard detector tells the four kinds of guard apart, on cases it cannot
   // 60-character window that could not see a guard standing over an enclosing
   // `if`. Both errors pointed the same way — reporting a guarded read as bare —
   // and an instrument that only ever over-reports still reports a clean bill of
-  // health, so each kind is pinned to a known site, by line and key.
-  const at = (file, line, key) => CALLS.filter((c) => c.file === file && c.line === line && c.key === key);
+  // health, so each kind is pinned to a known site, named by its key and by what its line says.
+  // The sites below are named by what their line SAYS, not by its number. The
+  // rest of this file argues against pinning line numbers: dashboard.js grows, a
+  // number slides, and the assertion then reports a defect where none happened.
+  // They were pinned here anyway, and the middle/ROI split moved three of the
+  // five at once -- each reported `measured ''`, because the old matcher required line AND
+  // key and a stale number finds nothing at all. The text of the line does not
+  // move.
+  const lineText = (c) => read(c.file).split(/\r?\n/)[c.line - 1] || '';
+  const siteSaying = (file, key, fragment) => CALLS.filter((c) => c.file === file && c.key === key && lineText(c).includes(fragment));
   const shape = (site) => `${site.map((c) => c.guard).join('/')}${site.some((c) => c.optional) ? '+?' : ''}`;
+  const where = (site) => site.map((c) => `${c.file.replace(/^public\/js\//, '')}: ${lineText(c).trim()}`).join(' | ') || 'no such site found';
 
   // `key`: the condition names the key, the call sits after the closing paren on
   // the SAME line. The shape the character window could not see.
-  const sameLine = at('public/js/pages/dashboard.js', 513, 'formatKickoff');
+  const sameLine = siteSaying('public/js/pages/dashboard.js', 'formatKickoff',
+    'window.arbiterFormat.formatKickoff) return');
   assert.equal(shape(sameLine), 'receiver/key',
-    `expected a receiver probe and a key-guarded call at dashboard.js:513, measured ${shape(sameLine)}`);
+    `expected a receiver probe and a key-guarded call on one line, measured ${shape(sameLine)} at ${where(sameLine)}`);
 
   // `key`: the condition names the key and the call is inside the block it
-  // opened, two lines down. The other half of the same miss.
-  assert.equal(shape(at('public/js/pages/dashboard.js', 151, 'fmtStake')), 'key',
-    'the read inside the block opened at dashboard.js:150 is guarded by that block\'s condition');
+  // opened, on the line below. The other half of the same miss.
+  const inBlock = siteSaying('public/js/pages/dashboard.js', 'fmtStake', 'return window.arbiterFormat.fmtStake(n);');
+  assert.equal(shape(inBlock), 'key',
+    `the read inside the block that names the key is guarded by that block's condition, measured ${shape(inBlock)} at ${where(inBlock)}`);
 
   // `receiver`: guarded on the object only — safe against no object at all, not
-  // against no key. dashboard.js:555 is the only site in the tree.
-  assert.equal(shape(at('public/js/pages/dashboard.js', 555, 'timeAgo')), 'receiver',
-    'the `x && x.key(…)` form guards the object, not the key, and must not read as `key`');
+  // against no key. This form is the only one of its kind in the tree.
+  const objectOnly = siteSaying('public/js/pages/dashboard.js', 'timeAgo', '(window.arbiterFormat && window.arbiterFormat.timeAgo');
+  assert.equal(shape(objectOnly), 'receiver',
+    `the \`x && x.key(...)\` form guards the object, not the key, and must not read as \`key\`; measured ${shape(objectOnly)} at ${where(objectOnly)}`);
 
   // `optional`: `?.` short-circuits, so this cannot throw whatever the object
-  // holds. It is a flag and not a fourth level of strength, because dashboard.js:228
+  // holds. It is a flag and not a fourth level of strength, because the roiClass read
   // is BOTH optional-chained and covered by an enclosing condition — and a single
   // score had nowhere to put that, which is how `receiver` came to overwrite it.
-  assert.equal(shape(at('public/js/pages/dashboard.js', 228, 'roiClass')), 'none+?',
-    'window.arbiterFormat?.roiClass(…) keeps its `?.` — and it keeps it even when a condition also covers it, which is the case a single strength score had nowhere to put');
+  const optional = siteSaying('public/js/pages/dashboard.js', 'roiClass', 'window.arbiterFormat?.roiClass(');
+  assert.equal(shape(optional), 'none+?',
+    'window.arbiterFormat?.roiClass(...) keeps its `?.` -- and keeps it even when a condition also covers it, which is the case a single strength score had nowhere to put; measured '
+      + `${shape(optional)} at ${where(optional)}`);
 
   // `none`, and no `?.`: bare, and bare is only safe because event.html loads
   // format.js — which is the premise the page above is written on, so it is
   // asserted here too rather than assumed there.
-  assert.equal(shape(at('public/js/pages/event-detail.js', 51, 'formatKickoff')), 'none',
-    'the call at event-detail.js:51 is bare');
+  const bare = CALLS.filter((c) => c.file === 'public/js/pages/event-detail.js' && c.key === 'formatKickoff');
+  assert.ok(bare.length > 0, 'event-detail.js no longer calls formatKickoff at all, so this proves nothing');
+  assert.ok(bare.every((c) => c.guard === 'none' && !c.optional),
+    `every formatKickoff call in event-detail.js is bare, measured ${shape(bare)} at ${where(bare)}`);
   assert.ok(loads('public/event.html', '/js/format.js'), 'and event.html is one of the three pages that load format.js');
 });
 
@@ -194,10 +219,15 @@ test('the key lists are the ones they claim to be', () => {
 });
 
 test('the numbers the withdrawn report quoted still hold', () => {
-  // 11 pages, 8 without format.js, 23 reads, 3 bare, 0 hazardous. If a page is
+  // 12 pages, 9 without format.js, 23 reads, 3 bare, 0 hazardous. If a page is
   // added, a script is loaded onto an admin page, or a formatter is called for
   // the first time, one of them moves — and a measurement nobody re-checks is
   // the same as no measurement.
+  //
+  // The 11th page became 12 when `admin/workstation.html` joined the tree: a
+  // legacy URL that redirects to the React shell. It loads neither formatter,
+  // so it joins the no-format.js set and the neither-file set below, and it
+  // reads nothing from the object, which leaves the 23 reads unchanged.
   //
   // The four ArbEdge console pages are in the no-format.js set below, and they
   // are there for a stronger reason than the older admin pages: they never read
@@ -219,13 +249,15 @@ test('the numbers the withdrawn report quoted still hold', () => {
   // bare on purpose — a `|| {}` stands in for a missing object, not for a
   // missing key, and this file's hazard is a key called on a page that never
   // defined it.
-  assert.equal(PAGES.length, 11, `expected 11 pages, measured ${PAGES.length}`);
+  assert.equal(PAGES.length, 12, `expected 12 pages, measured ${PAGES.length}`);
   assert.deepEqual(PAGES_WITHOUT_FORMAT_JS.map((p) => p.replace(/^public\//, '')).sort(),
     ['admin/ai.html', 'admin/analytics.html', 'admin/arbitrage.html', 'admin/bookies.html',
-      'admin/live.html', 'admin/login.html', 'admin/scanner.html', 'admin/settings.html'],
+      'admin/live.html', 'admin/login.html', 'admin/scanner.html', 'admin/settings.html',
+      'admin/workstation.html'],
     'the set of pages without format.js changed');
-  assert.deepEqual(PAGES_WITHOUT_THE_OBJECT.map((p) => p.replace(/^public\//, '')), ['admin/login.html'],
-    'login.html loads neither format.js nor common.js, so window.arbiterFormat does not exist there at all');
+  assert.deepEqual(PAGES_WITHOUT_THE_OBJECT.map((p) => p.replace(/^public\//, '')),
+    ['admin/login.html', 'admin/workstation.html'],
+    'login.html and workstation.html load neither format.js nor common.js, so window.arbiterFormat does not exist there at all');
   assert.equal(CALLS.length, 23, `expected 23 reads of the object, measured ${CALLS.length}`);
   const byGuard = (g) => CALLS.filter((c) => c.guard === g);
   const bare = CALLS.filter((c) => c.guard === 'none' && !c.optional);

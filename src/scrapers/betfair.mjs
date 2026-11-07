@@ -342,14 +342,26 @@ export default class BetfairScraper extends ScraperBase {
       throw new ValidationError(`${this.id}: expected eventTypes array in byMarket payload`);
     }
 
+    const compByEvent = new Map();
+    const compAttachments = raw.search?.attachments?.competitions || {};
+    for (const r of raw.search?.results || []) {
+      if (r?.eventId && r?.competitionId && !compByEvent.has(String(r.eventId))) {
+        const compName = compAttachments[r.competitionId]?.name;
+        compByEvent.set(String(r.eventId), compName ? String(compName).trim() : String(r.competitionId));
+      }
+    }
+
     const out = [];
     for (const et of eventTypes) {
       const eventTypeId = Number(et?.eventType?.eventTypeId || et?.eventTypeId || 1);
       for (const en of et?.eventNodes || []) {
         if (!en || typeof en !== 'object') continue;
+        const evId = String(en.event?.eventId || en.eventId || '');
+        const competition = compByEvent.get(evId) || null;
         out.push({
           ...en,
           eventTypeId,
+          ...(competition ? { competition } : {}),
         });
       }
     }
@@ -384,6 +396,7 @@ export default class BetfairScraper extends ScraperBase {
       if (!kickoff || kickoff === 'Invalid Date') continue;
 
       const sport = EVENT_TYPE_ID_TO_SPORT[raw.eventTypeId] || 'football';
+      const league = String(raw.competition || eventNode.competitionName || 'Unknown').trim() || 'Unknown';
 
       let eventRecord = eventsById.get(eventId);
       if (!eventRecord) {
@@ -392,6 +405,7 @@ export default class BetfairScraper extends ScraperBase {
           sourceId: this.id,
           sourceUrl: `${this.sourceUrl}/plus/${sport}`,
           sport,
+          league,
           homeTeam,
           awayTeam,
           kickoff,

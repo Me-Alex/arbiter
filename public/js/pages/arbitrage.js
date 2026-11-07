@@ -69,7 +69,104 @@
     const names = [...new Set(legs)];
     return names.length ? names.join(' v ') : (extra || '\u2014');
   };
-  const namesOf = (row) => `${row.homeTeam || '?'} v ${row.awayTeam || '?'}`;
+  // The fixture a row belongs to. `? v ?` is not a placeholder: it is the claim
+  // that both teams are unnamed, and it was printed on every signal family that
+  // carried no team names at all. The EV and low-hold signals now publish them;
+  // for a feed that still omits one, name the half that is known, and print
+  // nothing when neither is. The eventKey line beneath it is the identity
+  // either way.
+  const namesOf = (row) => {
+    const home = String(row.homeTeam || '').trim();
+    const away = String(row.awayTeam || '').trim();
+    if (home && away) return `${home} v ${away}`;
+    return home || away || '';
+  };
+  // Market keys are the provider's own name for the market, so the console used
+  // to print whatever arrived. Measured on data/latest-scan.json: 11 distinct
+  // keys across the arbitrage table, 27 across +EV and 31 across low hold, and
+  // the opaque ones — `1`, `1x2`, `ufo:mtyp:00-00`, `MRES`, `MR12`, `HCTG`,
+  // `CNOU`, `TCOU`, `FTGO` — name nothing a reader can scan.
+  //
+  // Every label is the meaning the backend already recorded, never a guess:
+  // MRES/MR12/HCTG are documented in src/scrapers/betano.mjs, and CNOU/TCOU/
+  // FTGO appear in SUBJECT_BY_KEY in src/scanner/market-contracts.mjs. `1`,
+  // `1x2` and `ufo:mtyp:00-00` all resolve to family MATCH_ODDS with legs 1/X/2
+  // on this scan, so they are the same market under three provider spellings.
+  //
+  // The values are arrow functions rather than key names on purpose: `t('x')` written
+  // literally is what lets test/i18n-dictionary.test.mjs prove every one of these
+  // resolves, and a table of bare strings would print its own key name on a typo.
+  const MARKET_LABELS = {
+    '1': () => t('marketMatchResult'),
+    '1x2': () => t('marketMatchResult'),
+    '1X2': () => t('marketMatchResult'),
+    MATCH_ODDS: () => t('marketMatchResult'),
+    MATCH_WINNER: () => t('marketMatchResult'),
+    MRES: () => t('marketMatchResult'),
+    MR12: () => t('marketMatchResult'),
+    'ufo:mtyp:00-00': () => t('marketMatchResult'),
+    ASIAN_HANDICAP: () => t('marketAsianHandicap'),
+    BTTS: () => t('marketBothTeamsScore'),
+    BOTH_TEAMS_SCORE: () => t('marketBothTeamsScore'),
+    DOUBLE_CHANCE: () => t('marketDoubleChance'),
+    TOTAL: () => t('marketTotalGoals'),
+    TOTAL_GOALS: () => t('marketTotalGoals'),
+    HCTG: () => t('marketTotalGoals'),
+    FTGO: () => t('marketTotalGames'),
+    CNOU: () => t('marketTotalCorners'),
+    TCOU: () => t('marketTotalCards'),
+    TSMF: () => t('marketTotalCards'),
+    FTPO: () => t('marketTotalPoints'),
+    FOUT: () => t('marketTotalPoints'),
+    SET_WINNER: () => t('marketSetWinner'),
+    OVER_UNDER: () => t('marketOverUnder'),
+    SYNTHETIC_EQUIVALENCE: () => t('marketSyntheticEquivalence'),
+    SYNTHETIC_1X_VS_AWAY: () => t('marketSynthetic1xVsAway'),
+    SYNTHETIC_X2_VS_HOME: () => t('marketSyntheticX2VsHome'),
+  };
+
+  // `OVER_UNDER_2_5` is a family plus a line, not a code, so it is rendered
+  // rather than looked up. The shape is deliberately narrow: a line is a whole
+  // number or a quarter/half/three-quarter one, and no book quotes a goals total
+  // past 20. A key that does not fit keeps its raw text on purpose —
+  // `OVER_UNDER_1961` and `OVER_UNDER_29` are in the current scan, and dressing
+  // those up as "Over/Under 1961" would launder a line that was never quoted.
+  const OVER_UNDER_KEY = /^OVER_UNDER_(\d{1,2})(?:_(25|5|75))?(_1H)?$/;
+  const marketLabelOf = (key) => {
+    const raw = String(key || '');
+    if (!raw) return '';
+    const label = MARKET_LABELS[raw];
+    if (label) return label();
+    const ou = OVER_UNDER_KEY.exec(raw);
+    if (ou && Number(ou[1]) <= 20) {
+      const line = ou[2] ? `${ou[1]}.${ou[2]}` : ou[1];
+      return `${t('marketOverUnder')} ${line}${ou[3] ? ` · ${t('marketFirstHalf')}` : ''}`;
+    }
+    return MONO(raw);
+  };
+
+  // The side a total counts, when the backend resolved one.
+  //
+  // `team` is published only on a surebet or a middle, and only when it names a
+  // real side, so an empty string here means the ordinary match total rather than
+  // a missing value. The middles builder published the match total for every
+  // total, which titled a team's own line as the market's own line.
+  const sideLabel = (row) => {
+    const side = String((row && row.team) || '').toLowerCase();
+    if (side === 'home') return t('appSideHome');
+    if (side === 'away') return t('appSideAway');
+    return '';
+  };
+
+  // A row's market chip: the market, prefixed by the side it counts when there is
+  // one. One helper for both families that publish a team, so the two chips
+  // cannot drift apart.
+  const chipText = (row, key) => {
+    const market = marketLabelOf(key) || '\u2014';
+    const side = sideLabel(row);
+    return side ? `${side} \u00b7 ${market}` : market;
+  };
+
   const signed = (n) => (Number(n || 0) > 0 ? '+' : '') + Number(n || 0).toFixed(2);
   const pct = (n) => `${Number(n || 0).toFixed(2)}%`;
   const money = (n) => (n === null || n === undefined ? '\u2014' : stake(n));
@@ -245,8 +342,22 @@
     const middles = shown.middles;
     const evs = shown.evs;
     const splits = opps.map(plan);
-    const deployed = opps.reduce((sum, o, i) => sum + (Number(rescale(o, 'totalStake', splits[i])) || 0), 0);
-    const profit = opps.reduce((sum, o, i) => sum + (Number(rescale(o, 'guaranteedProfit', splits[i])) || 0), 0);
+    // The backend's own verdict, read the way the React shell reads it: a
+    // contract it rejected cannot be backed, so its margin is not money in hand
+    // and its profit does not belong in a total labelled "Guaranteed Profit".
+    // Summing every arb let the rail advertise a figure made mostly of contracts
+    // that the cards directly below it label "rejected: settlement equivalence
+    // not established" — the page contradicted itself inside one screen.
+    const placeable = (o) => !(o.verification && o.verification.status === 'rejected');
+    const blocked = opps.filter((o) => !placeable(o)).length;
+    // A third verdict sits between the two, and it used to fall through both
+    // counts: the backend attached a reason without rejecting the contract.
+    // Those carry a real margin and a real hazard, so they are neither
+    // placeable nor blocked, and the rail has to say so — otherwise the three
+    // numbers never add up to the count above them.
+    const hazard = opps.filter((o) => placeable(o) && o.verification && o.verification.reason).length;
+    const deployed = opps.reduce((sum, o, i) => (placeable(o) ? sum + (Number(rescale(o, 'totalStake', splits[i])) || 0) : sum), 0);
+    const profit = opps.reduce((sum, o, i) => (placeable(o) ? sum + (Number(rescale(o, 'guaranteedProfit', splits[i])) || 0) : sum), 0);
 
     setKpi($('k-arbs'), count(opps.length));
     setKpi($('k-profit'), signed(profit));
@@ -254,11 +365,26 @@
     setKpi($('k-middles'), count(middles.length));
     setKpi($('k-ev'), count(evs.length));
 
+    // "Guaranteed, result-independent" was a static claim sitting over a count
+    // that included rejected contracts, so it has to be computed from the same
+    // verdict the cards render rather than asserted once in the markup.
+    $('k-arbs-sub').textContent = !opps.length
+      ? t('noOpportunities')
+      : [count(opps.length - blocked - hazard) + ' ' + t('placeableNow')]
+          .concat(blocked ? [count(blocked) + ' ' + t('blockedByVerification')] : [])
+          .concat(hazard ? [count(hazard) + ' ' + t('ruleHazards')] : [])
+          .join(' · ');
+    $('k-profit-sub').textContent = profit > 0 ? t('overRuleSafeOnly') : t('noRuleSafeContract');
+    // The section kicker made the same blanket claim for the whole list; it now
+    // names the exception instead of implying there is none.
+    $('sec-arb-note').textContent = t('payoutIndependentOfResult')
+      + (blocked ? ' — ' + count(blocked) + ' ' + t('blockedByVerification') : '');
+
     // The middles tile used to double as the +EV tile, so the only number
     // on the page was the one that was not itself a middles count.
     const surebets = middles.filter((m) => m.arb).length;
     $('k-middles-sub').textContent = surebets
-      ? count(surebets) + ' ' + t('surebet') + ' \u00b7 risk-free if taken'
+      ? count(surebets) + ' ' + t('surebet') + ' \u00b7 ' + t('riskFreeIfTaken')
       : t('conditionalOnMargin');
   }
 
@@ -288,7 +414,7 @@
     const rawUrl = /^https?:\/\//i.test(String(leg.eventUrl || '')) ? String(leg.eventUrl) : null;
     const isCaptureFeed = rawUrl ? /api\/|jsonrpc|v2\/ro|offer\/structure|twapi|access-management|sportsbook-sm-distribution/i.test(rawUrl) : false;
     const bookLink = rawUrl
-      ? `<a class="text-[var(--edge-blue)] hover:underline ml-1" href="${escapeHtml(rawUrl)}" target="_blank" rel="noopener noreferrer" title="${escapeHtml(leg.eventUrl)}">${isCaptureFeed ? 'capture &#8599;' : 'page &#8599;'}</a>`
+      ? `<a class="text-[var(--edge-blue)] hover:underline ml-1" href="${escapeHtml(rawUrl)}" target="_blank" rel="noopener noreferrer" title="${escapeHtml(leg.eventUrl)}">${isCaptureFeed ? t('captureSourceLink') : t('pageSourceLink')} &#8599;</a>`
       : '';
     return `
       <div class="flex items-center justify-between gap-2 py-1 px-2 rounded bg-[var(--t-raise)] border border-[var(--t-line-2)] hover:border-[var(--t-line-hot)] transition-colors">
@@ -324,7 +450,7 @@
       <div class="signal signal--arb card p-4">
         <div class="flex items-center justify-between mb-3 gap-2">
           <div class="flex items-center gap-2 min-w-0 flex-1">
-            <span class="chip chip--arb shrink-0">${escapeHtml(MONO(o.marketKey) || '\u2014')}</span>
+            <span class="chip chip--arb shrink-0">${escapeHtml(chipText(o, o.marketKey))}</span>
             <a class="text-sm font-semibold text-[var(--edge-textBright)] truncate min-w-0 hover:underline" href="${escapeHtml(eventLink(o))}">${escapeHtml(namesOf(o))}</a>
           </div>
           <div class="flex items-center gap-1.5 shrink-0">
@@ -453,7 +579,7 @@
         <div class="flex items-center justify-between mb-3 gap-2">
           <div class="flex items-center gap-2 min-w-0 flex-1 flex-wrap">
             ${familyChip(m)}
-            ${m.arb ? `<span class="chip chip--arb shrink-0 font-bold" title="${escapeHtml(t('surebetHint'))}">★ ${escapeHtml(t('surebet'))} · RISK-FREE</span>` : `<span class="chip chip--middle shrink-0">MIDDLE</span>`}
+            ${m.arb ? `<span class="chip chip--arb shrink-0 font-bold" title="${escapeHtml(t('surebetHint'))}">★ ${escapeHtml(t('surebet'))} · ${escapeHtml(t('riskFree'))}</span>` : `<span class="chip chip--middle shrink-0">${escapeHtml(t('middleChip'))}</span>`}
             <a class="text-sm font-semibold text-[var(--edge-textBright)] truncate min-w-0 hover:underline" href="${escapeHtml(eventLink(m))}">${escapeHtml(namesOf(m))}${liveBadge(m)}</a>
           </div>
           <div class="flex items-center gap-1.5 shrink-0">
@@ -464,19 +590,19 @@
 
         <div class="window-box">
           <div class="window-header">
-            <span class="kicker text-[var(--edge-textDim)]">Line Window</span>
-            <span class="kicker text-[var(--t-conditional)] font-bold">Window · gap ${escapeHtml(gapStr)}</span>
+            <span class="kicker text-[var(--edge-textDim)]">${escapeHtml(t('lineWindow'))}</span>
+            <span class="kicker text-[var(--t-conditional)] font-bold">${escapeHtml(t('windowGap').replace('{gap}', escapeHtml(gapStr)))}</span>
           </div>
           <div class="window-track">
             <span class="window-pill window-pill--low">${escapeHtml(lowText)}</span>
-            <span class="window-pill window-pill--gap" title="Win both sides if margin lands in window">${escapeHtml(middleWindow(m))}</span>
+            <span class="window-pill window-pill--gap" title="${escapeHtml(t('middleWindowHint'))}">${escapeHtml(middleWindow(m))}</span>
             <span class="window-pill window-pill--high">${escapeHtml(highText)}</span>
           </div>
         </div>
 
         <div class="grid grid-cols-2 gap-3 mb-3">
           <div class="min-w-0">
-            <div class="text-xs text-[var(--edge-textMuted)]">Win-Both ROI</div>
+            <div class="text-xs text-[var(--edge-textMuted)]">${escapeHtml(t('winBothRoi'))}</div>
             <div class="text-sm font-semibold ${tone(m.roiPercent)} font-mono">${escapeHtml(signed(m.roiPercent))}%</div>
             <div class="statbar">${meter(m.roiPercent, 'middle')}</div>
           </div>
@@ -486,8 +612,8 @@
             <div class="statbar">${meter(m.marginPercent, 'middle')}</div>
           </div>
           <div class="min-w-0">
-            <div class="text-xs text-[var(--edge-textMuted)]">Max Downside Risk</div>
-            <div class="text-sm font-semibold font-mono ${m.arb ? 'text-[var(--t-guaranteed)]' : riskTone}">${m.arb ? '0.00% (Guaranteed)' : escapeHtml(pct(m.riskPercent))}</div>
+            <div class="text-xs text-[var(--edge-textMuted)]">${escapeHtml(t('maxDownsideRisk'))}</div>
+            <div class="text-sm font-semibold font-mono ${m.arb ? 'text-[var(--t-guaranteed)]' : riskTone}">${m.arb ? escapeHtml(t('guaranteedZero')) : escapeHtml(pct(m.riskPercent))}</div>
             <div class="statbar">${meter(m.arb ? 0 : m.riskPercent, 'lowhold')}</div>
           </div>
           <div class="min-w-0">
@@ -548,7 +674,7 @@
           <div class="text-xs text-[var(--edge-textMuted)] font-mono">${escapeHtml(String(e.eventKey || ''))}</div>
         </td>
         <td class="px-3 py-2.5 text-xs">
-          <span class="chip chip--ev mb-1">${escapeHtml(MONO(e.marketKey))}</span>
+          <span class="chip chip--ev mb-1">${escapeHtml(marketLabelOf(e.marketKey))}</span>
           ${e.selection ? `<div class="text-[var(--edge-textBright)] font-semibold mt-0.5">${escapeHtml(MONO(e.selection))}</div>` : ''}
         </td>
         <td class="px-3 py-2.5 font-mono text-xs text-[var(--edge-text)]"><span class="font-bold">${escapeHtml(book)}</span></td>
@@ -586,7 +712,7 @@
           ${escapeHtml(String(h.eventKey || ''))}${h.sport ? ` · ${escapeHtml(h.sport)}` : ''}
         </div>
       </td>
-      <td class="px-3 py-2.5 text-xs text-[var(--edge-textMuted)]">${escapeHtml(MONO(h.marketKey))}</td>
+      <td class="px-3 py-2.5 text-xs text-[var(--edge-textMuted)]">${escapeHtml(marketLabelOf(h.marketKey))}</td>
       <td class="px-3 py-2.5 font-mono text-xs text-[var(--edge-textMuted)]">${escapeHtml(h.sourceId || '')}</td>
       <td class="px-3 py-2.5 text-right text-[var(--edge-textBright)] font-mono">${escapeHtml(count(h.selectionCount))}</td>
       <td class="px-3 py-2.5 text-right">
@@ -610,7 +736,7 @@
   function familyChip(row) {
     const family = familyOf(row);
     return family
-      ? `<span class="chip chip--${classOf(row)}">${escapeHtml(MONO(family))}</span>`
+      ? `<span class="chip chip--${classOf(row)}">${escapeHtml(chipText(row, family))}</span>`
       : '<span class="chip">\u2014</span>';
   }
 
@@ -644,13 +770,13 @@
   function ageOf(scan) {
     const stamp = scan.scrapedAt || scan.scanStartedAt;
     const then = stamp ? new Date(stamp).getTime() : NaN;
-    if (!Number.isFinite(then)) return 'capture time unknown';
+    if (!Number.isFinite(then)) return t('captureTimeUnknown');
     const minutes = Math.max(0, Math.round((Date.now() - then) / 60000));
-    if (minutes < 1) return 'captured just now';
-    if (minutes < 60) return 'captured ' + minutes + 'm ago';
+    if (minutes < 1) return t('capturedJustNow');
+    if (minutes < 60) return t('capturedMinutesAgo').replace('{n}', String(minutes));
     const hours = Math.round(minutes / 60);
-    if (hours < 24) return 'captured ' + hours + 'h ago';
-    return 'captured ' + Math.round(hours / 24) + 'd ago';
+    if (hours < 24) return t('capturedHoursAgo').replace('{n}', String(hours));
+    return t('capturedDaysAgo').replace('{n}', String(Math.round(hours / 24)));
   }
   function renderFeedline(scan) {
     const el = $('feedline');
@@ -658,15 +784,15 @@
     const books = (scan.sources || []).map((s) => s.sourceId || s.id).filter(Boolean);
     el.innerHTML = books.length
       ? books.map((b) => `<span>${escapeHtml(b)}</span>`).join('')
-      : '<span>no books in this scan</span>';
+      : `<span>${escapeHtml(t('noBooksInScan'))}</span>`;
 
     // Provenance sits next to the books rather than in a tooltip: the
     // reader deciding whether to act needs the age of the data and its
     // breadth in the same glance.
     const sub = $('masthead-sub');
     if (sub) {
-      const scope = books.length + ' books \u00b7 '
-        + Number(scan.eventCount || 0).toLocaleString('en-GB') + ' events';
+      const scope = books.length + ' ' + t('books') + ' \u00b7 '
+        + Number(scan.eventCount || 0).toLocaleString('en-GB') + ' ' + t('events');
       sub.textContent = books.length
         ? ageOf(scan) + ' \u00b7 ' + scope
         : ageOf(scan);

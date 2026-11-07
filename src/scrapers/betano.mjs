@@ -4,6 +4,7 @@ import { ValidationError, UpstreamError } from '../shared/errors.mjs';
 import { liveCoverageFor, markMarketsLive } from './live-status.mjs';
 import { describeError, summariseReasons } from './feg-common.mjs';
 import { extractPeriodFromName } from '../scanner/market-contracts.mjs';
+import { getSport } from '../sports/registry.mjs';
 
 /** All known Betano sport IDs from sportCallerSportMapping + live layout. */
 const SPORT_IDS = ['FOOT', 'TENN', 'BASK', 'HANB', 'ICEH', 'VOLY', 'FUTS', 'DART', 'SNOO', 'MMA', 'RUGB', 'CRIC', 'ESPORTS', 'TABT', 'BADM', 'BASE', 'AMFO', 'MMAF', 'ESPS', 'VOLL', 'HAND', 'WTPL', 'TABL', 'BOXI', 'BCHV', 'VRTS', 'SWIM', 'FENC', 'TAEK', 'WINT', 'ATHL', 'GYMA', 'MOGP', 'RALL', 'MOTO', 'SPED', 'FRM1'];
@@ -44,8 +45,9 @@ const SPORT_IDS = ['FOOT', 'TENN', 'BASK', 'HANB', 'ICEH', 'VOLY', 'FUTS', 'DART
  * Football is nine shapes and no handicap: `MRES` result, `MR12` MegaCote
  * result, `HCTG` total goals, `OUH1` first-half goals, `BTSC` both teams to
  * score, `DBLC` double chance, `DNOB` draw no bet, `CNOU` corners, `TCOU`
- * cards. Corners and cards are withheld because the engine has no family for
- * them; double chance and draw-no-bet are catalogued and not arbitrable.
+ * cards. Corners and cards resolve as OVER_UNDER under their own measured
+ * `subject`, one bucket each; double chance and draw-no-bet are catalogued
+ * and not arbitrable.
  *
  * So this rewrite is a guard, not the live football path: it is correct, it is
  * tested, and it costs nothing, but the honest reading of the coverage table is
@@ -277,7 +279,26 @@ export default class BetanoScraper extends ScraperBase {
       if (!home || !away) continue;
       const kickoff = ev.startTime ? new Date(ev.startTime).toISOString() : new Date().toISOString();
       const league = leagues?.[String(ev.leagueId)]?.name || 'Unknown';
-      const sportName = SPORT_NAMES[ev.sportId] || ev.sportId || 'Unknown';
+      // The feed stamps its own sport CODE here, and only some of those codes
+      // have a display name in the map above. The rest used to be published
+      // verbatim, so the workspace carried HAND, VOLL, TABL, ESPS and WTPL as
+      // sports beside every other book's spelled-out name for the same one:
+      // measured over data/workspace/betano_events.json, 50 HAND, 42 VOLL, 23
+      // TABL, 28 ESPS and 10 WTPL events. Each pair became two filter options,
+      // and filtering by either silently hid the other's rows - the defect the
+      // registry's canonicalSportName already documents for Football/football.
+      //
+      // SPORT_CANON in shared/text.mjs knows these codes because the sport is
+      // part of the cross-book identity key; routing the code through it and
+      // then through the registry yields the sport's display name without a
+      // second table to keep in step. A code neither layer knows is still
+      // published unchanged rather than dropped, so a sport the registry has no
+      // entry for stays visible and filterable instead of vanishing.
+      const sportCode = String(ev.sportId ?? '');
+      const sportName = SPORT_NAMES[sportCode]
+        || getSport(canonicalSport(sportCode))?.name
+        || sportCode
+        || 'Unknown';
       if (this.sport && this.sport !== 'all' && canonicalSport(sportName) !== canonicalSport(this.sport)) continue;
       const isLive = Boolean(ev.isLive || ev.live || ev.inPlay || ev.state === 'LIVE' || ev.scoreboard);
       if (isLive && !this.includeLive) continue;
@@ -301,7 +322,20 @@ export default class BetanoScraper extends ScraperBase {
         let subject;
         if (sportName === 'Basketball') subject = 'points';
         else if (sportName === 'Tennis') subject = 'games';
-        else if (/^HCTG$|^OUH[12]$/.test(m.type) || (sportName === 'Football' && (m.type?.includes('OU') || m.type?.includes('TG') || m.type === 'HCTG'))) subject = 'goals';
+        // The football shapes that count goals: HCTG (the match total) and
+        // OUH1/OUH2 (the halves). The substring test that used to stand here,
+        // `m.type.includes('OU')`, also matched the cards total TCOU and the
+        // corners total CNOU, so both were stamped `subject: 'goals'`.
+        // `subjectFor` reads that field BEFORE the provider market name, so the
+        // stamp outranked "Total cartonașe Peste/Sub" and filed a cards line
+        // in the goals bucket, where it pairs with a real goals total of the
+        // same line. Measured on the live feed 2026-10-17: 15 such rows, each a
+        // betano TCOU leg against a favbet / unibet / cashpot goals leg,
+        // published with guaranteedProfit 437 on a 1000 stake. Naming the goals
+        // types removes the guess: an unstamped total resolves through the
+        // provider name in `subjectFor`, where "cartonașe" and "cornere" are
+        // the measured words.
+        else if (/^HCTG$|^OUH[12]$/.test(m.type)) subject = 'goals';
         else if (sportName === 'Handball' || sportName === 'Ice Hockey') subject = 'goals';
 
         const period = periodForBetano(m.type, m.name);

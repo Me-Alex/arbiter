@@ -312,7 +312,9 @@
       "name": "Stanleybet",
       "enabled": true,
       "supportedSports": [
-        "football"
+        "football",
+        "basketball",
+        "tennis"
       ],
       "engine": "nsoft-public-json",
       "transport": "nsoft-public-sports-json",
@@ -455,7 +457,12 @@
       "name": "ExcelBet",
       "enabled": true,
       "supportedSports": [
-        "football"
+        "football",
+        "basketball",
+        "tennis",
+        "ice-hockey",
+        "handball",
+        "volleyball"
       ],
       "engine": "exalogic-xsport",
       "transport": "exalogic-xsport-public-json",
@@ -519,7 +526,9 @@
       "name": "Admiral (NSoft public JSON)",
       "enabled": true,
       "supportedSports": [
-        "football"
+        "football",
+        "basketball",
+        "tennis"
       ],
       "engine": "nsoft-public-json",
       "transport": "bookmaker-public-json",
@@ -539,7 +548,12 @@
       "name": "WinBoss",
       "enabled": true,
       "supportedSports": [
-        "football"
+        "football",
+        "basketball",
+        "tennis",
+        "ice-hockey",
+        "handball",
+        "volleyball"
       ],
       "engine": "exalogic-xsport",
       "transport": "exalogic-xsport-public-json",
@@ -559,7 +573,9 @@
       "name": "MaxBet",
       "enabled": true,
       "supportedSports": [
-        "football"
+        "football",
+        "basketball",
+        "tennis"
       ],
       "engine": "nsoft",
       "transport": "nsoft-public-sports-json",
@@ -579,7 +595,12 @@
       "name": "Las Vegas",
       "enabled": true,
       "supportedSports": [
-        "football"
+        "football",
+        "basketball",
+        "tennis",
+        "ice-hockey",
+        "handball",
+        "volleyball"
       ],
       "engine": "exalogic-xsport",
       "transport": "exalogic-xsport-public-json",
@@ -898,7 +919,8 @@
       "validationReason": "EveryMatrix ODDS RealtimeDealer WAMP v2 feed (wss://api-online.getsbet.ro/v2, realm online.getsbet.ro, operator 2476) smoke-validated on 2026-09-02: tournaments via /sports/2476/ro/tournaments/1/187, match discovery via tournament-aggregator-groups-overview (groups 2794,2795), 1X2 (bettingTypeId 69) per event via match-odds/market-group/Populare. 33 complete 1X2 events, fresh.",
       "platform": "everymatrix-odds",
       "feedStatus": "verified",
-      "endpointVerifiedAt": "2026-09-01"
+      "endpointVerifiedAt": "2026-09-01",
+      "maxEvents": "all"
     },
     {
       "id": "favbet",
@@ -970,7 +992,12 @@
       "name": "MagnumBet",
       "enabled": true,
       "supportedSports": [
-        "football"
+        "football",
+        "basketball",
+        "tennis",
+        "ice-hockey",
+        "handball",
+        "volleyball"
       ],
       "engine": "exalogic-xsport",
       "transport": "exalogic-xsport-public-json",
@@ -1001,7 +1028,8 @@
       "validationReason": "EveryMatrix ODDS RealtimeDealer WAMP v2 feed (wss://api.conticazino.ro/v2, realm www.conticazino.ro, operator 2349) smoke-validated on 2026-09-02: same WAMP flow as getsbet. 33 complete 1X2 events, fresh.",
       "platform": "everymatrix-odds",
       "feedStatus": "verified",
-      "endpointVerifiedAt": "2026-09-01"
+      "endpointVerifiedAt": "2026-09-01",
+      "maxEvents": "all"
     },
     {
       "id": "vipbet",
@@ -1026,7 +1054,9 @@
       "name": "MrPlay",
       "enabled": true,
       "supportedSports": [
-        "football"
+        "football",
+        "basketball",
+        "tennis"
       ],
       "engine": "digitain",
       "transport": "digitain-public-json",
@@ -1044,7 +1074,9 @@
       "name": "888sport",
       "enabled": true,
       "supportedSports": [
-        "football"
+        "football",
+        "basketball",
+        "tennis"
       ],
       "engine": "digitain",
       "transport": "digitain-public-json",
@@ -1062,7 +1094,9 @@
       "name": "Bet7",
       "enabled": true,
       "supportedSports": [
-        "football"
+        "football",
+        "basketball",
+        "tennis"
       ],
       "engine": "digitain",
       "transport": "digitain-public-json",
@@ -1153,7 +1187,10 @@
       "name": "Frank Casino",
       "enabled": true,
       "supportedSports": [
-        "football"
+        "football",
+        "basketball",
+        "tennis",
+        "ice-hockey"
       ],
       "engine": "altenar-tenancy",
       "transport": "altenar-sb2-widget-json",
@@ -1162,8 +1199,9 @@
         "frankcasino"
       ],
       "validationStatus": "validated",
-      "validationReason": "Scaffolded 2026-10-11 from the endpoint recorded in data/endpoints/endpoints.json (platform altenar-sb2). Nothing is measured yet: no capture, no fixtures, no live smoke.",
-      "platform": "altenar-sb2"
+      "validationReason": "Altenar SB2 public GetUpcoming endpoint captured and smoke-validated on 2026-10-13 with 86 events; fixture and dedicated parser coverage added.",
+      "platform": "altenar-sb2",
+      "feedStatus": "verified"
     },
     {
       "id": "mrbit",
@@ -1171,7 +1209,10 @@
       "name": "Mr Bit",
       "enabled": true,
       "supportedSports": [
-        "football"
+        "football",
+        "basketball",
+        "tennis",
+        "ice-hockey"
       ],
       "engine": "altenar-tenancy",
       "transport": "altenar-sb2-widget-json",
@@ -1180,8 +1221,9 @@
         "mrbit"
       ],
       "validationStatus": "validated",
-      "validationReason": "Scaffolded 2026-10-11 from the endpoint recorded in data/endpoints/endpoints.json (platform altenar-sb2). Nothing is measured yet: no capture, no fixtures, no live smoke.",
-      "platform": "altenar-sb2"
+      "validationReason": "Altenar SB2 public GetUpcoming endpoint captured and smoke-validated on 2026-10-13 with 86 events; fixture and dedicated parser coverage added.",
+      "platform": "altenar-sb2",
+      "feedStatus": "verified"
     },
     {
       "id": "slotv",
@@ -1189,7 +1231,10 @@
       "name": "SlotV",
       "enabled": true,
       "supportedSports": [
-        "football"
+        "football",
+        "basketball",
+        "tennis",
+        "ice-hockey"
       ],
       "engine": "altenar-tenancy",
       "transport": "altenar-sb2-widget-json",
@@ -1198,8 +1243,9 @@
         "slotv"
       ],
       "validationStatus": "validated",
-      "validationReason": "Scaffolded 2026-10-11 from the endpoint recorded in data/endpoints/endpoints.json (platform altenar-sb2). Nothing is measured yet: no capture, no fixtures, no live smoke.",
-      "platform": "altenar-sb2"
+      "validationReason": "Altenar SB2 public GetUpcoming endpoint captured and smoke-validated on 2026-10-13 with 86 events; fixture and dedicated parser coverage added.",
+      "platform": "altenar-sb2",
+      "feedStatus": "verified"
     },
     {
       "id": "betinia",
@@ -1207,7 +1253,10 @@
       "name": "Betinia",
       "enabled": true,
       "supportedSports": [
-        "football"
+        "football",
+        "basketball",
+        "tennis",
+        "ice-hockey"
       ],
       "engine": "altenar-tenancy",
       "transport": "altenar-sb2-widget-json",
@@ -1225,7 +1274,10 @@
       "name": "Win2",
       "enabled": true,
       "supportedSports": [
-        "football"
+        "football",
+        "basketball",
+        "tennis",
+        "ice-hockey"
       ],
       "engine": "altenar-tenancy",
       "transport": "altenar-sb2-widget-json",
@@ -1243,7 +1295,10 @@
       "name": "Swiper",
       "enabled": true,
       "supportedSports": [
-        "football"
+        "football",
+        "basketball",
+        "tennis",
+        "ice-hockey"
       ],
       "engine": "altenar-tenancy",
       "transport": "altenar-sb2-widget-json",
@@ -1261,7 +1316,9 @@
       "name": "Elite Slots",
       "enabled": true,
       "supportedSports": [
-        "football"
+        "football",
+        "basketball",
+        "tennis"
       ],
       "engine": "digitain",
       "transport": "digitain-public-json",
@@ -1279,7 +1336,9 @@
       "name": "Lady Casino",
       "enabled": true,
       "supportedSports": [
-        "football"
+        "football",
+        "basketball",
+        "tennis"
       ],
       "engine": "digitain",
       "transport": "digitain-public-json",
@@ -1297,7 +1356,9 @@
       "name": "Pacanele",
       "enabled": true,
       "supportedSports": [
-        "football"
+        "football",
+        "basketball",
+        "tennis"
       ],
       "engine": "digitain",
       "transport": "digitain-public-json",
@@ -1315,7 +1376,9 @@
       "name": "HotSpins",
       "enabled": true,
       "supportedSports": [
-        "football"
+        "football",
+        "basketball",
+        "tennis"
       ],
       "engine": "digitain",
       "transport": "digitain-public-json",
@@ -1423,7 +1486,10 @@
       "name": "Rabona",
       "enabled": true,
       "supportedSports": [
-        "football"
+        "football",
+        "basketball",
+        "tennis",
+        "ice-hockey"
       ],
       "engine": "altenar-tenancy",
       "transport": "altenar-sb2-widget-json",
@@ -1441,7 +1507,10 @@
       "name": "CampoBet",
       "enabled": true,
       "supportedSports": [
-        "football"
+        "football",
+        "basketball",
+        "tennis",
+        "ice-hockey"
       ],
       "engine": "altenar-tenancy",
       "transport": "altenar-sb2-widget-json",
@@ -1459,7 +1528,10 @@
       "name": "LibraBet",
       "enabled": true,
       "supportedSports": [
-        "football"
+        "football",
+        "basketball",
+        "tennis",
+        "ice-hockey"
       ],
       "engine": "altenar-tenancy",
       "transport": "altenar-sb2-widget-json",
@@ -1477,7 +1549,10 @@
       "name": "Sportaza",
       "enabled": true,
       "supportedSports": [
-        "football"
+        "football",
+        "basketball",
+        "tennis",
+        "ice-hockey"
       ],
       "engine": "altenar-tenancy",
       "transport": "altenar-sb2-widget-json",
@@ -1495,7 +1570,10 @@
       "name": "GreatWin",
       "enabled": true,
       "supportedSports": [
-        "football"
+        "football",
+        "basketball",
+        "tennis",
+        "ice-hockey"
       ],
       "engine": "altenar-tenancy",
       "transport": "altenar-sb2-widget-json",
@@ -1513,7 +1591,10 @@
       "name": "FezBet",
       "enabled": true,
       "supportedSports": [
-        "football"
+        "football",
+        "basketball",
+        "tennis",
+        "ice-hockey"
       ],
       "engine": "altenar-tenancy",
       "transport": "altenar-sb2-widget-json",
@@ -1531,7 +1612,10 @@
       "name": "Wazamba",
       "enabled": true,
       "supportedSports": [
-        "football"
+        "football",
+        "basketball",
+        "tennis",
+        "ice-hockey"
       ],
       "engine": "altenar-tenancy",
       "transport": "altenar-sb2-widget-json",
@@ -1549,7 +1633,10 @@
       "name": "Nomini",
       "enabled": true,
       "supportedSports": [
-        "football"
+        "football",
+        "basketball",
+        "tennis",
+        "ice-hockey"
       ],
       "engine": "altenar-tenancy",
       "transport": "altenar-sb2-widget-json",
@@ -1567,7 +1654,10 @@
       "name": "Casinia",
       "enabled": true,
       "supportedSports": [
-        "football"
+        "football",
+        "basketball",
+        "tennis",
+        "ice-hockey"
       ],
       "engine": "altenar-tenancy",
       "transport": "altenar-sb2-widget-json",
@@ -1585,7 +1675,10 @@
       "name": "QuickWin",
       "enabled": true,
       "supportedSports": [
-        "football"
+        "football",
+        "basketball",
+        "tennis",
+        "ice-hockey"
       ],
       "engine": "altenar-tenancy",
       "transport": "altenar-sb2-widget-json",
@@ -1603,7 +1696,10 @@
       "name": "Stake",
       "enabled": true,
       "supportedSports": [
-        "football"
+        "football",
+        "basketball",
+        "tennis",
+        "ice-hockey"
       ],
       "engine": "altenar-tenancy",
       "transport": "altenar-sb2-widget-json",
@@ -1621,7 +1717,10 @@
       "name": "BC.Game",
       "enabled": true,
       "supportedSports": [
-        "football"
+        "football",
+        "basketball",
+        "tennis",
+        "ice-hockey"
       ],
       "engine": "altenar-tenancy",
       "transport": "altenar-sb2-widget-json",
@@ -1639,7 +1738,10 @@
       "name": "Sportsbet.io",
       "enabled": true,
       "supportedSports": [
-        "football"
+        "football",
+        "basketball",
+        "tennis",
+        "ice-hockey"
       ],
       "engine": "altenar-tenancy",
       "transport": "altenar-sb2-widget-json",
@@ -1657,7 +1759,10 @@
       "name": "Duelbits",
       "enabled": true,
       "supportedSports": [
-        "football"
+        "football",
+        "basketball",
+        "tennis",
+        "ice-hockey"
       ],
       "engine": "altenar-tenancy",
       "transport": "altenar-sb2-widget-json",
@@ -1675,7 +1780,10 @@
       "name": "Sol Casino",
       "enabled": true,
       "supportedSports": [
-        "football"
+        "football",
+        "basketball",
+        "tennis",
+        "ice-hockey"
       ],
       "engine": "altenar-tenancy",
       "transport": "altenar-sb2-widget-json",
@@ -1693,7 +1801,10 @@
       "name": "BetRiot",
       "enabled": true,
       "supportedSports": [
-        "football"
+        "football",
+        "basketball",
+        "tennis",
+        "ice-hockey"
       ],
       "engine": "altenar-tenancy",
       "transport": "altenar-sb2-widget-json",
@@ -1711,7 +1822,10 @@
       "name": "Spinanga",
       "enabled": true,
       "supportedSports": [
-        "football"
+        "football",
+        "basketball",
+        "tennis",
+        "ice-hockey"
       ],
       "engine": "altenar-tenancy",
       "transport": "altenar-sb2-widget-json",
@@ -1729,7 +1843,9 @@
       "name": "Seven Bet",
       "enabled": true,
       "supportedSports": [
-        "football"
+        "football",
+        "basketball",
+        "tennis"
       ],
       "engine": "nsoft-public-json",
       "transport": "nsoft-public-sports-json",
@@ -1749,7 +1865,9 @@
       "name": "Game World",
       "enabled": true,
       "supportedSports": [
-        "football"
+        "football",
+        "basketball",
+        "tennis"
       ],
       "engine": "nsoft-public-json",
       "transport": "nsoft-public-sports-json",
@@ -1789,7 +1907,13 @@
       "name": "TotalBet",
       "enabled": true,
       "supportedSports": [
-        "football"
+        "football",
+        "basketball",
+        "tennis",
+        "ice-hockey",
+        "handball",
+        "volleyball",
+        "table-tennis"
       ],
       "engine": "oddin-platform",
       "transport": "oddin-public-sports-json",
@@ -1805,11 +1929,16 @@
     },
     {
       "id": "cashpot",
-      "maxEvents": 500,
+      "maxEvents": "all",
       "name": "Cashpot",
       "enabled": true,
       "supportedSports": [
-        "football"
+        "football",
+        "basketball",
+        "tennis",
+        "ice-hockey",
+        "handball",
+        "volleyball"
       ],
       "engine": "exalogic-xsport",
       "transport": "exalogic-xsport-public-json",
@@ -1829,7 +1958,9 @@
       "name": "RedSevens",
       "enabled": true,
       "supportedSports": [
-        "football"
+        "football",
+        "basketball",
+        "tennis"
       ],
       "engine": "nsoft-public-json",
       "transport": "nsoft-public-sports-json",
@@ -1905,7 +2036,7 @@
     },
     {
       "id": "lvbet",
-      "maxEvents": 500,
+      "maxEvents": "all",
       "name": "LV BET",
       "enabled": true,
       "supportedSports": [
@@ -1928,7 +2059,7 @@
     },
     {
       "id": "betfan",
-      "maxEvents": 500,
+      "maxEvents": "all",
       "name": "BETFAN",
       "enabled": true,
       "supportedSports": [
@@ -2066,7 +2197,7 @@
     },
     {
       "id": "slotspalace",
-      "maxEvents": 500,
+      "maxEvents": "all",
       "name": "SlotsPalace",
       "enabled": true,
       "supportedSports": [
@@ -2089,7 +2220,7 @@
     },
     {
       "id": "malinacasino",
-      "maxEvents": 500,
+      "maxEvents": "all",
       "name": "MalinaCasino",
       "enabled": true,
       "supportedSports": [
@@ -2112,7 +2243,7 @@
     },
     {
       "id": "zet",
-      "maxEvents": 500,
+      "maxEvents": "all",
       "name": "ZetCasino",
       "enabled": true,
       "supportedSports": [
@@ -2135,7 +2266,7 @@
     },
     {
       "id": "kingmaker",
-      "maxEvents": 500,
+      "maxEvents": "all",
       "name": "Kingmaker",
       "enabled": true,
       "supportedSports": [
@@ -2158,7 +2289,7 @@
     },
     {
       "id": "crownplay",
-      "maxEvents": 500,
+      "maxEvents": "all",
       "name": "CrownPlay",
       "enabled": true,
       "supportedSports": [
@@ -2181,7 +2312,7 @@
     },
     {
       "id": "5gringos",
-      "maxEvents": 500,
+      "maxEvents": "all",
       "name": "5Gringos",
       "enabled": true,
       "supportedSports": [
@@ -2204,11 +2335,14 @@
     },
     {
       "id": "ohmyspins",
-      "maxEvents": 500,
+      "maxEvents": "all",
       "name": "Ohmyspins",
       "enabled": true,
       "supportedSports": [
-        "football"
+        "football",
+        "basketball",
+        "tennis",
+        "ice-hockey"
       ],
       "engine": "altenar-tenancy",
       "transport": "altenar-sb2-widget-json",
@@ -2224,11 +2358,14 @@
     },
     {
       "id": "boomerang",
-      "maxEvents": 500,
+      "maxEvents": "all",
       "name": "Boomerang",
       "enabled": true,
       "supportedSports": [
-        "football"
+        "football",
+        "basketball",
+        "tennis",
+        "ice-hockey"
       ],
       "engine": "altenar-tenancy",
       "transport": "altenar-sb2-widget-json",
@@ -2244,11 +2381,14 @@
     },
     {
       "id": "goldenbet",
-      "maxEvents": 500,
+      "maxEvents": "all",
       "name": "Goldenbet",
       "enabled": true,
       "supportedSports": [
-        "football"
+        "football",
+        "basketball",
+        "tennis",
+        "ice-hockey"
       ],
       "engine": "altenar-tenancy",
       "transport": "altenar-sb2-widget-json",
@@ -2264,11 +2404,14 @@
     },
     {
       "id": "casombie",
-      "maxEvents": 500,
+      "maxEvents": "all",
       "name": "Casombie",
       "enabled": true,
       "supportedSports": [
-        "football"
+        "football",
+        "basketball",
+        "tennis",
+        "ice-hockey"
       ],
       "engine": "altenar-tenancy",
       "transport": "altenar-sb2-widget-json",
@@ -2284,11 +2427,14 @@
     },
     {
       "id": "campeonbet",
-      "maxEvents": 500,
+      "maxEvents": "all",
       "name": "Campeonbet",
       "enabled": true,
       "supportedSports": [
-        "football"
+        "football",
+        "basketball",
+        "tennis",
+        "ice-hockey"
       ],
       "engine": "altenar-tenancy",
       "transport": "altenar-sb2-widget-json",
@@ -2304,11 +2450,14 @@
     },
     {
       "id": "betsamigo",
-      "maxEvents": 500,
+      "maxEvents": "all",
       "name": "Betsamigo",
       "enabled": true,
       "supportedSports": [
-        "football"
+        "football",
+        "basketball",
+        "tennis",
+        "ice-hockey"
       ],
       "engine": "altenar-tenancy",
       "transport": "altenar-sb2-widget-json",
@@ -2324,11 +2473,14 @@
     },
     {
       "id": "betalright",
-      "maxEvents": 500,
+      "maxEvents": "all",
       "name": "Betalright",
       "enabled": true,
       "supportedSports": [
-        "football"
+        "football",
+        "basketball",
+        "tennis",
+        "ice-hockey"
       ],
       "engine": "altenar-tenancy",
       "transport": "altenar-sb2-widget-json",
@@ -2344,11 +2496,14 @@
     },
     {
       "id": "fairspin",
-      "maxEvents": 500,
+      "maxEvents": "all",
       "name": "Fairspin",
       "enabled": true,
       "supportedSports": [
-        "football"
+        "football",
+        "basketball",
+        "tennis",
+        "ice-hockey"
       ],
       "engine": "altenar-tenancy",
       "transport": "altenar-sb2-widget-json",
@@ -2364,11 +2519,14 @@
     },
     {
       "id": "spinight",
-      "maxEvents": 500,
+      "maxEvents": "all",
       "name": "Spinight",
       "enabled": true,
       "supportedSports": [
-        "football"
+        "football",
+        "basketball",
+        "tennis",
+        "ice-hockey"
       ],
       "engine": "altenar-tenancy",
       "transport": "altenar-sb2-widget-json",
@@ -2384,11 +2542,14 @@
     },
     {
       "id": "goldspin",
-      "maxEvents": 500,
+      "maxEvents": "all",
       "name": "Goldspin",
       "enabled": true,
       "supportedSports": [
-        "football"
+        "football",
+        "basketball",
+        "tennis",
+        "ice-hockey"
       ],
       "engine": "altenar-tenancy",
       "transport": "altenar-sb2-widget-json",
@@ -2404,11 +2565,14 @@
     },
     {
       "id": "wildsino",
-      "maxEvents": 500,
+      "maxEvents": "all",
       "name": "Wildsino",
       "enabled": true,
       "supportedSports": [
-        "football"
+        "football",
+        "basketball",
+        "tennis",
+        "ice-hockey"
       ],
       "engine": "altenar-tenancy",
       "transport": "altenar-sb2-widget-json",
@@ -2424,11 +2588,14 @@
     },
     {
       "id": "betstro",
-      "maxEvents": 500,
+      "maxEvents": "all",
       "name": "Betstro",
       "enabled": true,
       "supportedSports": [
-        "football"
+        "football",
+        "basketball",
+        "tennis",
+        "ice-hockey"
       ],
       "engine": "altenar-tenancy",
       "transport": "altenar-sb2-widget-json",
@@ -2444,11 +2611,14 @@
     },
     {
       "id": "evobet",
-      "maxEvents": 500,
+      "maxEvents": "all",
       "name": "Evobet",
       "enabled": true,
       "supportedSports": [
-        "football"
+        "football",
+        "basketball",
+        "tennis",
+        "ice-hockey"
       ],
       "engine": "altenar-tenancy",
       "transport": "altenar-sb2-widget-json",
@@ -2464,11 +2634,14 @@
     },
     {
       "id": "svenbet",
-      "maxEvents": 500,
+      "maxEvents": "all",
       "name": "Svenbet",
       "enabled": true,
       "supportedSports": [
-        "football"
+        "football",
+        "basketball",
+        "tennis",
+        "ice-hockey"
       ],
       "engine": "altenar-tenancy",
       "transport": "altenar-sb2-widget-json",
@@ -2484,11 +2657,14 @@
     },
     {
       "id": "sonsofslots",
-      "maxEvents": 500,
+      "maxEvents": "all",
       "name": "SonsOfSlots",
       "enabled": true,
       "supportedSports": [
-        "football"
+        "football",
+        "basketball",
+        "tennis",
+        "ice-hockey"
       ],
       "engine": "altenar-tenancy",
       "transport": "altenar-sb2-widget-json",
@@ -2504,11 +2680,14 @@
     },
     {
       "id": "wallacebet",
-      "maxEvents": 500,
+      "maxEvents": "all",
       "name": "Wallacebet",
       "enabled": true,
       "supportedSports": [
-        "football"
+        "football",
+        "basketball",
+        "tennis",
+        "ice-hockey"
       ],
       "engine": "altenar-tenancy",
       "transport": "altenar-sb2-widget-json",
@@ -2524,11 +2703,14 @@
     },
     {
       "id": "betrebels",
-      "maxEvents": 500,
+      "maxEvents": "all",
       "name": "Betrebels",
       "enabled": true,
       "supportedSports": [
-        "football"
+        "football",
+        "basketball",
+        "tennis",
+        "ice-hockey"
       ],
       "engine": "altenar-tenancy",
       "transport": "altenar-sb2-widget-json",
@@ -2544,11 +2726,14 @@
     },
     {
       "id": "prontobet",
-      "maxEvents": 500,
+      "maxEvents": "all",
       "name": "Prontobet",
       "enabled": true,
       "supportedSports": [
-        "football"
+        "football",
+        "basketball",
+        "tennis",
+        "ice-hockey"
       ],
       "engine": "altenar-tenancy",
       "transport": "altenar-sb2-widget-json",
@@ -2564,11 +2749,14 @@
     },
     {
       "id": "betovo",
-      "maxEvents": 500,
+      "maxEvents": "all",
       "name": "Betovo",
       "enabled": true,
       "supportedSports": [
-        "football"
+        "football",
+        "basketball",
+        "tennis",
+        "ice-hockey"
       ],
       "engine": "altenar-tenancy",
       "transport": "altenar-sb2-widget-json",
@@ -2584,11 +2772,14 @@
     },
     {
       "id": "quickslot",
-      "maxEvents": 500,
+      "maxEvents": "all",
       "name": "Quickslot",
       "enabled": true,
       "supportedSports": [
-        "football"
+        "football",
+        "basketball",
+        "tennis",
+        "ice-hockey"
       ],
       "engine": "altenar-tenancy",
       "transport": "altenar-sb2-widget-json",
@@ -2604,11 +2795,14 @@
     },
     {
       "id": "betbeast",
-      "maxEvents": 500,
+      "maxEvents": "all",
       "name": "Betbeast",
       "enabled": true,
       "supportedSports": [
-        "football"
+        "football",
+        "basketball",
+        "tennis",
+        "ice-hockey"
       ],
       "engine": "altenar-tenancy",
       "transport": "altenar-sb2-widget-json",
@@ -2624,11 +2818,14 @@
     },
     {
       "id": "slotparadise",
-      "maxEvents": 500,
+      "maxEvents": "all",
       "name": "Slotparadise",
       "enabled": true,
       "supportedSports": [
-        "football"
+        "football",
+        "basketball",
+        "tennis",
+        "ice-hockey"
       ],
       "engine": "altenar-tenancy",
       "transport": "altenar-sb2-widget-json",
@@ -2644,11 +2841,14 @@
     },
     {
       "id": "joker8",
-      "maxEvents": 500,
+      "maxEvents": "all",
       "name": "Joker8",
       "enabled": true,
       "supportedSports": [
-        "football"
+        "football",
+        "basketball",
+        "tennis",
+        "ice-hockey"
       ],
       "engine": "altenar-tenancy",
       "transport": "altenar-sb2-widget-json",
@@ -2664,11 +2864,14 @@
     },
     {
       "id": "betway",
-      "maxEvents": 500,
+      "maxEvents": "all",
       "name": "Betway",
       "enabled": true,
       "supportedSports": [
-        "football"
+        "football",
+        "basketball",
+        "tennis",
+        "ice-hockey"
       ],
       "engine": "altenar-tenancy",
       "transport": "altenar-sb2-widget-json",
@@ -2681,6 +2884,103 @@
       "platform": "altenar-sb2",
       "feedStatus": "verified",
       "endpointVerifiedAt": "2026-10-13"
+    },
+    {
+      "id": "betking",
+      "maxEvents": "all",
+      "name": "Betking",
+      "enabled": true,
+      "supportedSports": [
+        "football",
+        "basketball",
+        "tennis",
+        "ice-hockey"
+      ],
+      "engine": "altenar-tenancy",
+      "transport": "altenar-sb2-widget-json",
+      "script": "altenar-sites.mjs",
+      "sourceIds": [
+        "betking"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Betking sportsbook on Altenar SB2 verified against live production endpoint on 2026-10-13.",
+      "platform": "altenar-sb2",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-10-13"
+    },
+    {
+      "id": "bet99",
+      "maxEvents": "all",
+      "name": "Bet99",
+      "enabled": true,
+      "supportedSports": [
+        "football",
+        "basketball",
+        "tennis",
+        "ice-hockey"
+      ],
+      "engine": "altenar-tenancy",
+      "transport": "altenar-sb2-widget-json",
+      "script": "altenar-sites.mjs",
+      "sourceIds": [
+        "bet99"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Bet99 sportsbook on Altenar SB2 verified against live production endpoint on 2026-10-13.",
+      "platform": "altenar-sb2",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-10-13"
+    },
+    {
+      "id": "luck",
+      "maxEvents": "all",
+      "name": "Luck",
+      "enabled": true,
+      "supportedSports": [
+        "football",
+        "basketball",
+        "tennis",
+        "ice-hockey",
+        "handball",
+        "volleyball"
+      ],
+      "engine": "exalogic-xsport",
+      "transport": "exalogic-xsport-public-json",
+      "script": "luck.mjs",
+      "sourceIds": [
+        "luck"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Discovered and verified via REA MCP browser evidence against luck.com/sport (systemCode LUCKY, Exalogic XSport platform).",
+      "platform": "exalogic-xsport",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-11-07"
+    },
+    {
+      "id": "victorybet",
+      "maxEvents": "all",
+      "name": "VictoryBet",
+      "enabled": true,
+      "supportedSports": [
+        "football",
+        "basketball",
+        "tennis",
+        "ice-hockey",
+        "handball",
+        "volleyball",
+        "table-tennis"
+      ],
+      "engine": "betconstruct-swarm",
+      "transport": "betconstruct-swarm-ws",
+      "script": "victorybet.mjs",
+      "sourceIds": [
+        "victorybet"
+      ],
+      "validationStatus": "validated",
+      "validationReason": "Discovered and verified via REA MCP browser evidence against victorybet.ro/rv/sport (site_id 18754351, BetConstruct Swarm WebSocket platform).",
+      "platform": "betconstruct-swarm",
+      "feedStatus": "verified",
+      "endpointVerifiedAt": "2026-11-07"
     }
   ]
 }

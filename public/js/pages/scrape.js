@@ -10,12 +10,20 @@ const MAX_LOG_LINES = 500;
 let _isFirstScrapeLoad = true;
 let _sse = null;
 
-const log = (line, level = 'info', tag = null) => {
+const log = (line, level = 'info', tag = null, detail = null) => {
   const el = document.createElement('div');
   el.className = 'line ' + level;
-  const t = escapeHtml(new Date().toLocaleTimeString());
+  // Named `stamp`, not `t`. It used to shadow the dictionary lookup, which is
+  // the one thing a line that wants to word its own summary cannot do without.
+  const stamp = escapeHtml(new Date().toLocaleTimeString());
   const tagEl = tag ? `<span class="tag">${escapeHtml(tag)}</span>` : '';
-  el.innerHTML = `<span class="time">${t}</span>${tagEl}<span class="log-line-flex">${escapeHtml(line)}</span>`;
+  // The original wording rides under the sentence in a collapsed <details>, not
+  // inside it. `err.message` is the server's own English, so a localized line
+  // that swallowed it would leave nobody able to match the log to the server.
+  const detailEl = detail
+    ? `<details class="log-detail"><summary>${escapeHtml(window.arbiterI18n.t('logDetailSummary'))}</summary><span>${escapeHtml(String(detail))}</span></details>`
+    : '';
+  el.innerHTML = `<span class="time">${stamp}</span>${tagEl}<span class="log-line-flex">${escapeHtml(line)}${detailEl}</span>`;
   const panel = $('log-panel');
   panel.appendChild(el);
   // Only a problem is worth pulling the user into the log for. The old `|| !tag`
@@ -327,7 +335,7 @@ function renderBookmakerChips() {
           <svg class="chev" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
           <span class="group-title">${escapeHtml(title)}</span> <span class="tabnum group-count">${items.length}</span>
         </button>
-        <label class="group-select${stateCls}" title="Toggle group">
+        <label class="group-select${stateCls}" title="${escapeHtml(t('toggleGroup'))}">
           <input type="checkbox" aria-label="${escapeHtml(title)}" data-group-check="${groupKey}" ${allChecked ? 'checked' : ''}>
           <span class="group-selected-count"></span>
         </label>
@@ -1871,13 +1879,18 @@ $('run-btn').addEventListener('click', async () => {
   updateRunControls();
   const scanOptions = currentScanOptions();
   try {
-    log(`starting scrape: ${bookIds.length} books, max events=${scanOptions.maxEvents}${scanOptions.sport ? `, sport=${scanOptions.sport}` : ''}`, 'info', 'orchestrator');
+    const startLine = window.arbiterI18n.t('logStartingScrape')
+      .replace('{books}', String(bookIds.length))
+      .replace('{maxEvents}', String(scanOptions.maxEvents));
+    log(scanOptions.sport
+      ? startLine + window.arbiterI18n.t('logScrapeSportSuffix').replace('{sport}', String(scanOptions.sport))
+      : startLine, 'info', 'orchestrator');
     const result = await arbiterApi.post('/api/scrape', { bookIds, scanOptions });
     if (result.state) renderState(result.state);
     const t = window.arbiterI18n.t.bind(window.arbiterI18n);
     if (typeof window.showToast === 'function') window.showToast(t('toastScrapeStarted'), 'success');
   } catch (err) {
-    log(`failed to launch: ${err.message}`, 'error', 'orchestrator');
+    log(window.arbiterI18n.t('logFailedLaunch'), 'error', 'orchestrator', `failed to launch: ${err.message}`);
     const t = window.arbiterI18n.t.bind(window.arbiterI18n);
     if (typeof window.showToast === 'function') window.showToast(t('failedShort'), 'error');
   } finally {
@@ -1891,14 +1904,14 @@ $('cancel-btn').addEventListener('click', async () => {
     if (result.state) renderState(result.state);
     const t = window.arbiterI18n.t.bind(window.arbiterI18n);
     if (result.cancelled) {
-      log('cancellation requested', 'warn', 'orchestrator');
+      log(window.arbiterI18n.t('logCancellationRequested'), 'warn', 'orchestrator');
       if (typeof window.showToast === 'function') window.showToast(t('toastScrapeCancelled'), 'warning');
     } else {
-      log('no active scrape to cancel', 'info', 'orchestrator');
+      log(window.arbiterI18n.t('toastNothingToCancel'), 'info', 'orchestrator');
       if (typeof window.showToast === 'function') window.showToast(t('toastNothingToCancel'), 'info');
     }
   } catch (err) {
-    log(err.message || 'unable to cancel scrape', 'error', 'orchestrator');
+    log(window.arbiterI18n.t('logUnableCancel'), 'error', 'orchestrator', err.message || 'unable to cancel scrape');
   }
 });
 $('save-btn').addEventListener('click', () => log(window.arbiterI18n.t('profileDefaultsNote'), 'info'));
@@ -1910,12 +1923,15 @@ $('sched-save').addEventListener('click', async () => {
   const scanOptions = currentScanOptions();
   try {
     await arbiterApi.post('/api/scheduler', { enabled, intervalMinutes, bookIds, scanOptions });
-    log(`scheduler ${enabled ? 'enabled' : 'disabled'} (${intervalMinutes}m)`, 'success', 'scheduler');
+    const schedLine = enabled
+      ? window.arbiterI18n.t('logSchedulerEnabled').replace('{minutes}', String(intervalMinutes))
+      : window.arbiterI18n.t('logSchedulerDisabled').replace('{minutes}', String(intervalMinutes));
+    log(schedLine, 'success', 'scheduler');
     const t = window.arbiterI18n.t.bind(window.arbiterI18n);
     if (typeof window.showToast === 'function') window.showToast(t('toastSchedulerSaved'), 'success');
     refreshScheduler();
   } catch (err) {
-    log(err.message || 'unable to save scheduler', 'error', 'scheduler');
+    log(window.arbiterI18n.t('logUnableSaveScheduler'), 'error', 'scheduler', err.message || 'unable to save scheduler');
   }
 });
 
@@ -1938,12 +1954,15 @@ $('live-save').addEventListener('click', async () => {
       bookIds: [],
       scanOptions: { ...currentScanOptions(), includeLive: true },
     });
-    log(`live poll ${enabled ? 'enabled' : 'disabled'} (${intervalSeconds}s)`, 'success', 'live');
+    const liveLine = enabled
+      ? window.arbiterI18n.t('logLivePollEnabled').replace('{seconds}', String(intervalSeconds))
+      : window.arbiterI18n.t('logLivePollDisabled').replace('{seconds}', String(intervalSeconds));
+    log(liveLine, 'success', 'live');
     const t = window.arbiterI18n.t.bind(window.arbiterI18n);
     if (typeof window.showToast === 'function') window.showToast(t('toastLiveSaved'), 'success');
     refreshLive();
   } catch (err) {
-    log(err.message || 'unable to save live poll', 'error', 'live');
+    log(window.arbiterI18n.t('logUnableSaveLive'), 'error', 'live', err.message || 'unable to save live poll');
   }
 });
 

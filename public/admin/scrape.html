@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
-  <title>Arbiter — Scrape Control</title>
+  <title data-i18n="titleScrape">Arbiter — Scrape Control</title>
   <script src="/js/theme.js"></script>
   <link rel="stylesheet" href="/css/theme.css">
   <link rel="stylesheet" href="/css/arbedge.css">
@@ -27,7 +27,7 @@
         <span class="sl-state" id="head-state">
           <i class="sl-dot" id="head-dot"></i><span id="head-status">idle</span>
         </span>
-        <button class="sl-ghost sl-lang" data-lang-toggle aria-label="Schimbă limba">RO</button>
+        <button class="sl-ghost sl-lang" data-lang-toggle data-i18n-aria-label="toggleLanguage" aria-label="Schimbă limba">RO</button>
       </div>
     </header>
 
@@ -81,10 +81,10 @@
           <span data-i18n="minMiddleRoi">ROI midd. min %</span>
           <input type="number" id="mid-roi" value="20" step="0.5">
         </label>
-        <label class="sl-check" title="Include meciurile aflate în desfășurare">
+        <label class="sl-check" title="Include meciurile aflate în desfășurare" data-i18n-title="includeLiveTitle">
           <input type="checkbox" id="inc-live"><span data-i18n="includeLive">live</span>
         </label>
-        <label class="sl-check" title="Include meciurile deja începute">
+        <label class="sl-check" title="Include meciurile deja începute" data-i18n-title="includePastTitle">
           <input type="checkbox" id="inc-past"><span data-i18n="includePast">trecut</span>
         </label>
       </div>
@@ -99,13 +99,13 @@
     <!-- ══ Sources ══════════════════════════════════════════════════════
          26 chips is a wall. Rows with a state read as a list of sources with
          a state, which is what it is. -->
-    <section class="sl-panel" aria-label="Case de pariuri">
+    <section class="sl-panel" aria-label="Case de pariuri" data-i18n-aria-label="bookmakers">
       <header class="sl-panel-head">
         <h2 class="sl-panel-title" data-i18n="bookmakers">Case de pariuri</h2>
         <div class="sl-panel-tools">
           <span class="sl-count"><b id="bm-selected">0</b><span class="sl-count-sep">/</span><span id="bm-total">0</span></span>
           <div class="sl-search">
-            <input type="search" id="bm-filter" placeholder="Filtrează…" data-i18n-placeholder="filterSources" aria-label="Filtrează casele">
+            <input type="search" id="bm-filter" placeholder="Filtrează…" data-i18n-placeholder="filterSources" aria-label="Filtrează casele" data-i18n-aria-label="filterSourcesLabel">
           </div>
           <button type="button" class="sl-ghost sl-quiet" id="btn-select-all" data-i18n="selectAll">Toate</button>
           <button type="button" class="sl-ghost sl-quiet" id="btn-select-validated" data-i18n="selectValidated">Validate</button>
@@ -118,7 +118,7 @@
     <!-- ══ Readouts ════════════════════════════════════════════════════
          Four numbers, one band. Each takes colour only when it has something
          to say, so a healthy run stays quiet. -->
-    <section class="sl-stats" aria-label="Starea rulării">
+    <section class="sl-stats" aria-label="Starea rulării" data-i18n-aria-label="runStatusLabel">
       <div class="sl-stat">
         <span class="sl-stat-label" data-i18n="status">Stare</span>
         <span class="sl-stat-value" id="m-status"><span class="status idle">idle</span></span>
@@ -182,18 +182,18 @@
          Five stages on one line with the live activity directly beneath —
          the two belong together, and separating them put the current work a
          scroll away from the stage it belongs to. -->
-    <section class="sl-panel" aria-label="Flux">
+    <section class="sl-panel" aria-label="Flux" data-i18n-aria-label="pipeline">
       <header class="sl-panel-head">
         <h2 class="sl-panel-title" data-i18n="pipeline">Flux</h2>
         <span class="sl-panel-note" data-i18n="pipelineMeta">5 etape · răzuire → scanare → verificare → catalogare → complet</span>
       </header>
 
-      <ol class="sl-stages" aria-label="Etapele fluxului">
+      <ol class="sl-stages" aria-label="Etapele fluxului" data-i18n-aria-label="pipelineSteps">
         <li class="sl-stage" data-step="0"><i>1</i><span data-i18n="scraping">Răzuire</span></li>
         <li class="sl-stage" data-step="1"><i>2</i><span data-i18n="scanning">Scanare</span></li>
         <li class="sl-stage" data-step="2"><i>3</i><span data-i18n="verifying">Verificare</span></li>
         <li class="sl-stage" data-step="3"><i>4</i><span data-i18n="cataloging">Catalogare</span></li>
-        <li class="sl-stage" data-step="4"><i>5</i><span id="step-complete">Complet</span></li>
+        <li class="sl-stage" data-step="4"><i>5</i><span id="step-complete" data-i18n="complete">Complet</span></li>
       </ol>
 
       <dl class="sl-live-grid">
@@ -224,11 +224,11 @@
             <tr>
               <th scope="col" data-i18n="bookmaker">Casă</th>
               <th scope="col" class="sl-num" data-i18n="events">Evenimente</th>
-              <th scope="col" class="sl-num">Timp</th>
+              <th scope="col" class="sl-num" data-i18n="timeColumn">Timp</th>
               <th scope="col" data-i18n="status">Stare</th>
             </tr>
           </thead>
-          <tbody id="job-rows" role="list" tabindex="-1" aria-label="Rezultate joburi"></tbody>
+          <tbody id="job-rows" role="list" tabindex="-1" aria-label="Rezultate joburi" data-i18n-aria-label="jobResults"></tbody>
         </table>
       </div>
     </section>
@@ -242,7 +242,7 @@
         <span class="sl-log-title"><i class="sl-dot sl-dot-live"></i><span data-i18n="liveLog">Jurnal live</span></span>
         <span class="sl-panel-note" data-i18n="streamingFrom">Flux din orchestrator</span>
       </summary>
-      <div class="sl-log-body log" id="log-panel" role="log" aria-live="polite" aria-label="Jurnal răzuire"></div>
+      <div class="sl-log-body log" id="log-panel" role="log" aria-live="polite" aria-label="Jurnal răzuire" data-i18n-aria-label="scrapeLogLabel"></div>
     </details>
 
     <!-- ══ History + scheduler ═════════════════════════════════════════ -->
@@ -267,7 +267,7 @@
         </header>
         <div class="sl-table-wrap">
           <table class="sl-table">
-            <caption class="visually-hidden">Rezultate ultimei rulări</caption>
+            <caption class="visually-hidden" data-i18n="lastRunResultsCaption">Rezultate ultimei rulări</caption>
             <thead>
               <tr>
                 <!-- `bookmaker`, not `runId`: this column has always held one

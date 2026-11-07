@@ -96,6 +96,8 @@ const GOALS_TOTAL_TEMPLATE = 50;
 const GOALS_HANDICAP_TEMPLATE = 190;
 /** template 1104 — full-time match corners total; team-corners use template 914. */
 const CORNERS_TOTAL_TEMPLATE = 1104;
+/** template 914 — "Peste / Sub cornere / Echipă", a per-team corners total; never published. */
+const TEAM_CORNERS_TEMPLATE = 914;
 export default class FavbetScraper extends ProviderContract {
   id = 'favbet';
   name = 'Favbet';
@@ -375,7 +377,7 @@ export default class FavbetScraper extends ProviderContract {
         markets: markMarketsLive([{
           key: 'MATCH_ODDS',
           name: matchOdds.market_name || (is3Way ? 'Match Odds' : 'Match Winner'),
-          period: 'fulltime',
+          period: favbetPeriod(matchOdds) === 'fulltime_ot' ? 'fulltime_ot' : 'fulltime',
           selections: mainSelections,
         }, ...measuredMarkets, ...additionalMarkets], () => isLive),
       };
@@ -413,6 +415,22 @@ export default class FavbetScraper extends ProviderContract {
 function mapFavbetMarket(market, sport = 'Football', home = '', away = '') {
   if (!market || !Array.isArray(market.outcomes)) return null;
   const name = String(market.market_name || market.market_type_name || '').trim();
+  // Template 914 is Favbet’s TEAM-corners total: "Peste / Sub cornere / Echipă"
+  // is ONE team’s corners, not the match’s. `cornersTotalMarket` excludes it by
+  // name (see its doc comment), so it fell through to this best-effort mapper and
+  // was published as a match total. The live board carried `OVER_UNDER_1961` and
+  // `OVER_UNDER_29` under that name, the "line" being digits out of the club name
+  // ("Peste (4.5) NK Istra 1961" read as the 1961 line).
+  //
+  // Reading the line correctly is not enough on its own. The engine names a side
+  // only when the market text names one ("Total goluri echipa Gazde"); this market
+  // names neither side, so a correctly-lined team total resolves as team="match"
+  // and shares a bucket with another book’s match corners total of the same line.
+  // Measured with resolveContract + bucketKeyForContract: "Peste / Sub cornere /
+  // Echipă" at 4.5 and "Cornere Peste/Sub" at 4.5 give the identical bucket key
+  // (...OVER_UNDER::fulltime::4.5::over+under::corners::match). A team total cannot
+  // share a contract with the match total, so it is refused rather than keyed.
+  if (Number(market.market_template_id) === TEAM_CORNERS_TEMPLATE) return null;
   const valid = market.outcomes
     .filter((s) => Number.isFinite(Number(s.outcome_coef)) && Number(s.outcome_coef) > 1)
     .map((s) => ({
@@ -430,6 +448,9 @@ function mapFavbetMarket(market, sport = 'Football', home = '', away = '') {
       // text and is stable ("Da"/"Nu"), so the yes/no match uses it.
       side: String(s.outcome_name ?? s.outcome_short_name ?? '').trim().toLowerCase(),
       odds: Number(s.outcome_coef),
+      // The provider's own threshold for this leg, kept so the line does not have
+      // to be re-parsed out of free text. See `legLine`.
+      param: String(s.outcome_param ?? '').trim(),
     }));
 
   // A sub-settlement market must say so. `period` is what the engine reads to
@@ -520,13 +541,13 @@ function mapFavbetMarket(market, sport = 'Football', home = '', away = '') {
       return { key: 'DRAW_NO_BET', name, period, selections: ['1', '2'].map((k) => ({ id: byKind.get(k).id, name: k, odds: byKind.get(k).odds, group: 'Main' })) };
     }
   }
-  if (/peste|sub|over|under|total/i.test(name)) {
+  if (/peste|sub|over|under|total/i.test(name) && !/cornere|corners|corner|cartona[sș]e|cards|yellow|red/i.test(name)) {
     if (valid.length < 2) return null;
     const over = valid.find((s) => /^(over|peste)\b/i.test(s.tag) || /^(over|peste)\b/i.test(s.side));
     const under = valid.find((s) => /^(under|sub)\b/i.test(s.tag) || /^(under|sub)\b/i.test(s.side));
     if (!over || !under) return null;
-    const overLine = legLine(over.side);
-    const underLine = legLine(under.side);
+    const overLine = legLine(over.side, over.param);
+    const underLine = legLine(under.side, under.param);
     const outcomeLine = (overLine !== null && overLine === underLine) ? overLine : null;
     const line = outcomeLine ?? extractNumber(name);
     if (line === null) return null;
@@ -627,24 +648,32 @@ function mapFavbetMarket(market, sport = 'Football', home = '', away = '') {
   }
   // Corners Over/Under
   if (/cornere|corners|corner/i.test(name)) {
-    const line = extractNumber(name);
-    if (line === null || valid.length < 2) return null;
+    if (valid.length < 2) return null;
     const over = valid.find((s) => /^(over|peste)\b/i.test(s.tag) || /^(over|peste)\b/i.test(s.side));
     const under = valid.find((s) => /^(under|sub)\b/i.test(s.tag) || /^(under|sub)\b/i.test(s.side));
     if (!over || !under) return null;
-    return { key: `CORNERS_OVER_UNDER_${String(line).replace('.', '_')}`, name, period, selections: [
+    const overLine = legLine(over.side, over.param);
+    const underLine = legLine(under.side, under.param);
+    const outcomeLine = (overLine !== null && overLine === underLine) ? overLine : null;
+    const line = outcomeLine ?? extractNumber(name);
+    if (line === null) return null;
+    return { key: `CORNERS_OVER_UNDER_${String(line).replace('.', '_')}`, name, period, subject: 'corners', selections: [
       { id: over.id, name: 'Over', odds: over.odds, handicap: line, group: 'Main' },
       { id: under.id, name: 'Under', odds: under.odds, handicap: line, group: 'Main' },
     ] };
   }
   // Cards Over/Under
-  if (/cartonase|cards|yellow|red/i.test(name)) {
-    const line = extractNumber(name);
-    if (line === null || valid.length < 2) return null;
+  if (/cartona[sș]e|cards|yellow|red/i.test(name)) {
+    if (valid.length < 2) return null;
     const over = valid.find((s) => /^(over|peste)\b/i.test(s.tag) || /^(over|peste)\b/i.test(s.side));
     const under = valid.find((s) => /^(under|sub)\b/i.test(s.tag) || /^(under|sub)\b/i.test(s.side));
     if (!over || !under) return null;
-    return { key: `CARDS_OVER_UNDER_${String(line).replace('.', '_')}`, name, period, selections: [
+    const overLine = legLine(over.side, over.param);
+    const underLine = legLine(under.side, under.param);
+    const outcomeLine = (overLine !== null && overLine === underLine) ? overLine : null;
+    const line = outcomeLine ?? extractNumber(name);
+    if (line === null) return null;
+    return { key: `CARDS_OVER_UNDER_${String(line).replace('.', '_')}`, name, period, subject: 'cards', selections: [
       { id: over.id, name: 'Over', odds: over.odds, handicap: line, group: 'Main' },
       { id: under.id, name: 'Under', odds: under.odds, handicap: line, group: 'Main' },
     ] };
@@ -658,15 +687,47 @@ function extractNumber(text) {
 }
 
 /**
- * The LAST number in a leg's own text, which is the threshold that leg is
- * quoted at: "peste (2.5)" is 2.5, and "Goluri Gazde (8 Meciuri) (-3.5)" is
- * -3.5 rather than 8. The first number would be the match count on an
- * aggregate market, so the last one is the only reading that can be the line.
+ * The line a leg is quoted at.
+ *
+ * The provider publishes it in its own field — `outcome_param` is "4.5" on a leg
+ * whose text reads "Peste (4.5) Letonia" — so that field is read first. The
+ * fallback is the LAST number in the leg’s text: "peste (2.5)" is 2.5, and
+ * "Goluri Gazde (8 Meciuri) (-3.5)" is -3.5 rather than the 8 match count. The
+ * fallback alone is not sound on every market, and that is not hypothetical: a
+ * team-corners leg reads "Peste (4.5) NK Istra 1961", whose last number is 1961,
+ * and the live board published `OVER_UNDER_1961` and `OVER_UNDER_29` (17 events)
+ * which reached the card as "Total Goals 1961".
+ *
+ * `outcome_param` is not trusted blindly either: on a DA/NU leg it is "0.0" while
+ * the text says "DA", so it is used only when the number it names is also spelled
+ * in that leg’s own text. Measured over the 2026-10-17 Favbet fixture: 826 legs
+ * carry a param, 591 of them numeric, 587 numeric AND spelled in the text, and the
+ * 4 that are numeric but unspelled are all that "0.0" on a DA/NU leg. The 15
+ * non-numeric params are "Draw", "1X", "X2", "Odd" and "Even".
  */
-function legLine(text) {
+function legLine(text, param) {
+  const spelled = spelledLine(param, text);
+  if (spelled !== null) return spelled;
   const all = String(text || '').match(/[-+]?\d+(?:[.,]\d+)?/g);
   if (!all) return null;
   return Number(all[all.length - 1].replace(',', '.'));
+}
+
+/**
+ * The number `param` names, or null unless `text` spells that same number.
+ *
+ * This is the cross-check that keeps a provider field from overriding a leg it
+ * does not describe. A parameter that is not numeric at all ("Draw", "1X", "X2",
+ * "Odd", "Even") and a numeric one the leg never spells ("0.0" beside "DA") both
+ * come back null, and the caller falls back to reading the text.
+ */
+function spelledLine(param, text) {
+  const match = /^[-+]?\d+(?:[.,]\d+)?$/.exec(String(param ?? '').trim());
+  if (!match) return null;
+  const value = Number(match[0].replace(',', '.'));
+  const body = String(text ?? '').replace(',', '.');
+  const literal = String(value).replace('.', '\\.');
+  return new RegExp(`(?:^|[^0-9.])${literal}(?:[^0-9]|$)`).test(body) ? value : null;
 }
 
 /**
@@ -727,7 +788,9 @@ function favbetPeriod(market) {
   if (label) {
     if (/prima\s*repriz|\brepriz\s*1|1st\s*half|first\s*half|\b1\b\s*repriz|\brp1\b|\b1r\b/i.test(label)) return 'half1';
     if (/a\s*doua\s*repriz|\brepriz\s*2|2nd\s*half|second\s*half|\b2\b\s*repriz|\brp2\b|\b2r\b/i.test(label)) return 'half2';
-    if (/timp\s*regulamentar|\btr\b|full\s*time|fulltime|match\s*time/i.test(label)) return 'fulltime';
+    if (/(?:cu|inclusiv|incl\.?)\s*(?:prelungiri|overtime|extra\s*time)|including\s*overtime|with\s*overtime|\bcp\b/i.test(label)
+      && !/f[aă]r[aă]\s*prelungiri|without\s*overtime/i.test(label)) return 'fulltime_ot';
+    if (/timp\s*regulamentar|\btr\b|full\s*time|fulltime|match\s*time|f[aă]r[aă]\s*prelungiri/i.test(label)) return 'fulltime';
     const qM = /(?:\b([1-4])q\b|\bq([1-4])\b|\bsf(?:ert(?:ul)?)?\s*([1-4])\b)/i.exec(label);
     if (qM) return `q${qM[1] || qM[2] || qM[3]}`;
     const sM = /(?:\b([1-5])s\b|\bs([1-5])\b|\bset(?:ul)?\s*([1-5])\b)/i.exec(label);
@@ -783,13 +846,13 @@ function isMultiMatchTie(marketOdds) {
  */
 function goalsTotalMarket(market, sport = 'Football') {
   const period = favbetPeriod(market);
-  if (period !== 'fulltime' && period !== 'half1') return null;
+  if (period !== 'fulltime' && period !== 'fulltime_ot' && period !== 'half1') return null;
   const legs = (market.outcomes || []).filter(isPriced);
   const over = legs.find((o) => /^(peste|over)\b/i.test(String(o.outcome_name ?? '').trim()));
   const under = legs.find((o) => /^(sub|under)\b/i.test(String(o.outcome_name ?? '').trim()));
   if (!over || !under) return null;
-  const overLine = legLine(over.outcome_name);
-  const underLine = legLine(under.outcome_name);
+  const overLine = legLine(over.outcome_name, over.outcome_param);
+  const underLine = legLine(under.outcome_name, under.outcome_param);
   // Two legs that disagree about the threshold are not one market.
   if (overLine === null || overLine !== underLine) return null;
   const line = halfGoalLine(overLine);
@@ -828,8 +891,8 @@ function cornersTotalMarket(market) {
   const over = legs.find((o) => /^(peste|over)\b/i.test(String(o.outcome_name ?? '').trim()));
   const under = legs.find((o) => /^(sub|under)\b/i.test(String(o.outcome_name ?? '').trim()));
   if (!over || !under) return null;
-  const overLine = legLine(over.outcome_name);
-  const underLine = legLine(under.outcome_name);
+  const overLine = legLine(over.outcome_name, over.outcome_param);
+  const underLine = legLine(under.outcome_name, under.outcome_param);
   if (overLine === null || overLine !== underLine) return null;
   const line = halfGoalLine(overLine);
   if (line === null) return null;
@@ -922,8 +985,8 @@ function goalsHandicapMarket(market, homeKey, awayKey) {
       if (tag !== side) return null;
     }
   }
-  const homeLine = legLine(home.outcome_name);
-  const awayLine = legLine(away.outcome_name);
+  const homeLine = legLine(home.outcome_name, home.outcome_param);
+  const awayLine = legLine(away.outcome_name, away.outcome_param);
   if (homeLine === null || awayLine === null) return null;
   if (Math.abs(homeLine + awayLine) > 1e-9) return null;
   const line = halfGoalLine(homeLine);

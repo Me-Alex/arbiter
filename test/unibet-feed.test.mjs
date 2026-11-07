@@ -741,6 +741,79 @@ test('Unibet multi-sport: tennis head-to-head and total games resolve cleanly', 
   assert.equal(gamesContract.lineKey, '22.5');
 });
 
+test('Unibet multi-sport: an MMA rounds total is named, not defaulted to goals', () => {
+  // The sport fallback has no entry for mma, so the bare else filed every MMA
+  // total as goals - measured 2026-10-17: 36 markets titled "Total runde". The
+  // display name proves the subject, so it outranks the sport map.
+  const mma = {
+    contestKey: 'mma_rounds',
+    contestType: 'MMA',
+    status: 'PreGame',
+    name: 'Joaquin Buckley vs Mike Malott',
+    startDateTimeUtc: { value: '2026-10-18T01:40:00.000Z' },
+    category: 'mma:ufc',
+    propositions: [
+      {
+        propositionKey: 'total',
+        propositionType: 'total',
+        displayName: 'Total runde',
+        options: [
+          { optionType: 'TotalOver', optionDisplayName: 'Peste', variantName: '2.5', price: 1.75, bettingOpen: true },
+          { optionType: 'TotalUnder', optionDisplayName: 'Sub', variantName: '2.5', price: 2.05, bettingOpen: true },
+        ],
+      },
+    ],
+  };
+  const s = new Unibet({ fullMarkets: true });
+  const [event] = s.extractEvents(s.normalize({ contests: [mma] }));
+  assert.ok(event, 'mma event extracted');
+  const total = event.markets.find((m) => m.key === 'TOTAL');
+  assert.ok(total, 'rounds total emitted');
+  assert.equal(total.subject, 'rounds', 'the display name outranks the sport map');
+  const contract = resolveContract(total);
+  assert.equal(contract.family, 'OVER_UNDER');
+  assert.equal(contract.subject, 'rounds');
+  assert.equal(contract.lineKey, '2.5');
+  const bucket = bucketKeyForContract(event.eventKey, contract);
+  assert.ok(bucket.includes('::rounds::'), `expected a rounds bucket, got ${bucket}`);
+});
+
+test('Unibet multi-sport: a rugby regulation-time points total is named, not defaulted to goals', () => {
+  // Same shape as the MMA case: rugby is absent from the sport map, so 24
+  // "Total puncte - timp regulamentar" markets were filed as goals. Note the
+  // qualifier - regulation time only - which the bucket key has no dimension
+  // for; see the settlement-scope note beside SUBJECT_BY_KEY.
+  const rugby = {
+    contestKey: 'rugby_points',
+    contestType: 'Rugby',
+    status: 'PreGame',
+    name: 'Australia vs Noua Zeelanda',
+    startDateTimeUtc: { value: '2026-10-17T05:00:00.000Z' },
+    category: 'rugby:international',
+    propositions: [
+      {
+        propositionKey: 'total',
+        propositionType: 'total',
+        displayName: 'Total puncte - timp regulamentar',
+        options: [
+          { optionType: 'TotalOver', optionDisplayName: 'Peste', variantName: '45.5', price: 1.90, bettingOpen: true },
+          { optionType: 'TotalUnder', optionDisplayName: 'Sub', variantName: '45.5', price: 1.90, bettingOpen: true },
+        ],
+      },
+    ],
+  };
+  const s = new Unibet({ fullMarkets: true });
+  const [event] = s.extractEvents(s.normalize({ contests: [rugby] }));
+  assert.ok(event, 'rugby event extracted');
+  const total = event.markets.find((m) => m.key === 'TOTAL');
+  assert.ok(total, 'points total emitted');
+  assert.equal(total.subject, 'points', 'the display name outranks the sport map');
+  const contract = resolveContract(total);
+  assert.equal(contract.family, 'OVER_UNDER');
+  assert.equal(contract.subject, 'points');
+  assert.equal(contract.lineKey, '45.5');
+});
+
 test('Unibet in-play handling honours includeLive flag', () => {
   const liveContest = {
     contestKey: 'live_789',

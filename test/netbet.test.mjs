@@ -448,6 +448,44 @@ test('total_games attaches subject games and resolves to OVER_UNDER games contra
   assert.equal(contract.lineKey, '22.5');
 });
 
+test('an american-football points total is not filed as games just because of its key', () => {
+  // netbet files its overtime-inclusive american-football total under the
+  // total_games key. Trusting the key put a market whose own name says points
+  // into the games bucket - measured 2026-10-17 on 68 live markets. Reading the
+  // provider name first is the fix; resolveContract already trusted the name.
+  const scraper = new NetBetScraper({ maxEvents: 10 });
+  scraper.observedAt = '2026-09-29T12:33:00.000Z';
+  const market = rawMarket('total_games', 'Total Puncte (Inclusiv Prelungiri)', 5503, [
+    { kind: 'Over', name: 'Peste (48.5)', odds: 1.90, handicap: 48.5, handicap_abs: 48.5 },
+    { kind: 'Under', name: 'Sub (48.5)', odds: 1.90, handicap: 48.5, handicap_abs: 48.5 },
+  ], { handicap: 48.5 });
+  const rawEvents = scraper.normalize({
+    tree: [{
+      name: 'fotbal-american',
+      competitions: [{
+        name: 'NFL',
+        events: [rawEvent([market], [
+          { name: 'Houston Texans', is_home: true },
+          { name: 'Jacksonville Jaguars', is_home: false },
+        ])],
+      }],
+    }],
+  });
+  const events = scraper.extractEvents(rawEvents);
+  assert.equal(events.length, 1);
+  const emitted = events[0].markets.find((m) => m.key === 'total_games');
+  assert.ok(emitted, 'the total survives');
+  assert.equal(emitted.subject, 'points', 'the provider name outranks the key');
+  const contract = resolveContract(emitted, { sport: 'American Football' });
+  assert.ok(contract);
+  assert.equal(contract.family, 'OVER_UNDER');
+  assert.equal(contract.subject, 'points');
+  assert.equal(contract.lineKey, '48.5');
+  const bucket = bucketKeyForContract(events[0].eventKey, contract);
+  assert.ok(bucket.includes('::points::'), `expected a points bucket, got ${bucket}`);
+  assert.ok(!bucket.includes('::games::'), `a points total must not sit in the games bucket: ${bucket}`);
+});
+
 test('includeLive: true admits live matches and stamps markets with live: true', () => {
   const liveMarket = rawMarket('default', 'Rezultat Final', 5498, [
     { kind: 'W1', name: '1', fullname: 'Arsenal', odds: 1.85 },

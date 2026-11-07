@@ -48,11 +48,16 @@ function report(verdicts) {
 async function withHistory(runs, run) {
   const dir = await mkdtemp(join(tmpdir(), 'arbiter-trend-'));
   try {
-    runs.forEach((r, i) => {
+    // Awaited, not fired and forgotten: `forEach` ignores the promise its
+    // callback returns, so the checker below could start against a directory
+    // the writes had not reached yet and report "nothing to trend-check".
+    // That is a test that passes for the wrong reason on a fast run and fails
+    // on a slow one, which is how this raced in the full suite.
+    await Promise.all(runs.map((r, i) => {
       // Portably stamped, so the fixture works on the platform writing it too.
       const stamp = `2030-02-${String(i + 1).padStart(2, '0')}T10-00-00Z.json`;
       return fs.writeFile(join(dir, stamp), report(r));
-    });
+    }));
     return await run(dir);
   } finally {
     await rm(dir, { recursive: true, force: true });

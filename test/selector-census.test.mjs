@@ -438,11 +438,45 @@ const dynamicIds = () => [...new Set(
  */
 const hasDynamicClass = (selector) => /\.(?=[@]@|\s|$)/.test(staticOf(selector));
 
+/**
+ * Build output from the Vite frontend, which is not authored source.
+ *
+ * This census reads selectors, ids and attributes out of scripts and checks the
+ * pages that load them carry the matching markup. That works only for scripts
+ * someone wrote: the strings in a script are the author's, and the markup is
+ * static. The React bundle under `public/app/` breaks both halves. It is
+ * minified, so its `querySelector` arguments are mostly built at runtime and
+ * read as `$r(…)` with no literal to inspect, and its markup is rendered after
+ * load, so no served page carries a `data-precedence` or a `modulepreload` link
+ * for it. Reading it produced five failures that all named React's own internals
+ * — `dataset` written twice but mentioned three times, `link[rel="modulepreload"]`
+ * — which say nothing about this codebase's pages.
+ *
+ * So the build output is excluded rather than the checks weakened: every
+ * authored page and script is still censused exactly as before, and the
+ * exclusion is asserted to contain nothing but `public/app/` so it cannot grow
+ * into a way of hiding hand-written markup. The React app's own DOM contracts
+ * are enforced by its TypeScript types and its build, not by string-scanning a
+ * minified artifact.
+ */
+const BUILD_OUTPUT = 'public/app/';
+
 /** Every page under public/, repository-relative and slash-flashed. */
-const pages = readdirSync(new URL('public/', ROOT), { recursive: true })
+const allPages = readdirSync(new URL('public/', ROOT), { recursive: true })
   .map(String)
   .filter((f) => f.endsWith('.html'))
   .map((f) => `public/${f.replace(/\\/g, '/')}`);
+
+/** The authored pages: every HTML page that is not build output. */
+const pages = allPages.filter((p) => !p.startsWith(BUILD_OUTPUT));
+
+// The exclusion must stay exactly what it claims to be. A hand-written page that
+// ended up behind this prefix would silently stop being censused.
+assert.deepEqual(
+  allPages.filter((p) => !pages.includes(p)).filter((p) => !p.startsWith(BUILD_OUTPUT)),
+  [],
+  'only build output may be excluded from the DOM census',
+);
 
 /** The scripts each page loads, and which pages load each script. */
 const scriptsOf = (page) => [...read(page).matchAll(/<script[^>]*\bsrc="([^"]+)"/g)].map((m) => m[1]);
@@ -866,6 +900,18 @@ const LOOKUPS = SCANNED.flatMap((s) => {
   const rawFor = (name) => [...code.matchAll(new RegExp(`${name.replace(/\$/g, '\\$')}\\(`, 'g'))].length;
 
   const take = (id, where) => { out.push({ src: s.src, loading: s.loading, id, where }); read += 1; };
+  // A ledger entry names its site by that site's own text rather than by its
+  // line number. Pinning the number meant an unrelated line inserted anywhere
+  // above it turned this census red for a reason that had nothing to do with
+  // the census -- and a guard that cries wolf is a guard its reader learns to
+  // skip. The text is also what actually tells two sites of the same call in
+  // the same file apart, which the number only ever did by accident.
+  const siteLine = (at) => {
+    const start = code.lastIndexOf('\n', at) + 1;
+    const end = code.indexOf('\n', at);
+    return code.slice(start, end === -1 ? undefined : end).trim().replace(/\s+/g, ' ').slice(0, 72);
+  };
+  const entry = (at, call) => `${s.src}  ${call}  in: ${siteLine(at)}`;
   const ledger = [];
 
   // EVERY occurrence, not only the ones whose argument happens to be a string.
@@ -909,7 +955,7 @@ const LOOKUPS = SCANNED.flatMap((s) => {
       if (bound) { resolvedCalls += 1; for (const id of bound) take(id, `getElementById(${arg}):${line}`); continue; }
     }
     named += 1;
-    ledger.push(`${s.src}:${line}  getElementById(${arg})`);
+    ledger.push(entry(at, `getElementById(${arg})`));
   }
 
   const perHelper = new Map();
@@ -929,11 +975,11 @@ const LOOKUPS = SCANNED.flatMap((s) => {
         const bound = boundIdsFor(code, arg, at);
         if (bound) { resolvedCalls += 1; for (const id of bound) take(id, `${name}(${arg}):${line}`); continue; }
         named += 1;
-        ledger.push(`${s.src}:${line}  ${name}(${arg})`);
+        ledger.push(entry(at, `${name}(${arg})`));
         continue;
       }
       named += 1;
-      ledger.push(`${s.src}:${line}  ${name}(${arg})`);
+      ledger.push(entry(at, `${name}(${arg})`));
     }
     perHelper.set(name, { raw: rawFor(name), classified: here });
   }
@@ -1050,23 +1096,25 @@ test('every id a script looks up is carried by a page that loads the script', ()
   // The lookups whose argument is not one string literal: a name bound
   // somewhere this census cannot follow, and one template. Each is named with
   // the site it is, so the claim is checkable rather than assumed, and a
-  // ninth of either shape turns this red. Deduplicated by text --
-  // `scanner.js:577` holds two of them on one line -- because the count of call
-  // SITES is reconciled above, and this list is a list of names.
+  // ninth of either shape turns this red. Deduplicated by text -- one line of
+  // scanner.js holds two of them -- because the count of call
+  // SITES is reconciled above, and this list is a list of names. Each entry
+  // carries the source line's own text, so adding a line above one of these
+  // sites does not move it -- and so a call whose text is rewritten does.
   //
   // Five of these were invisible until the reader stopped requiring a literal,
   // so this list is not bookkeeping: it is the first place `CONTAINER_ID`
   // appears anywhere in the suite, and `CONTAINER_ID` is an id this repo never
   // puts in markup because common.js:99-106 creates it on demand.
   assert.deepEqual([...new Set(LOOKUPS.flatMap((s) => s.ledger))].sort(), [
-    '/js/pages/common.js:28  getElementById(id)',
-    '/js/pages/common.js:98  getElementById(CONTAINER_ID)',
-    '/js/pages/dashboard.js:196  getElementById(id)',
-    '/js/pages/scanner.js:49  $(id)',
-    '/js/pages/scanner.js:577  $(id)',
-    '/js/pages/scrape.js:353  getElementById(groupId)',
-    '/js/pages/scrape.js:365  getElementById(`group-${groupId}`)',
-    '/js/pages/settings.js:187  $(id)',
+    '/js/pages/common.js  getElementById(CONTAINER_ID)  in: let el = document.getElementById(CONTAINER_ID);',
+    '/js/pages/common.js  getElementById(id)  in: const sel = document.getElementById(id);',
+    '/js/pages/dashboard.js  getElementById(id)  in: const el = document.getElementById(id);',
+    '/js/pages/scanner.js  $(id)  in: const el = $(id);',
+    '/js/pages/scanner.js  $(id)  in: if (value !== undefined && value !== null && $(id)) $(id).value = value;',
+    '/js/pages/scrape.js  getElementById(`group-${groupId}`)  in: const body = document.getElementById(`group-${groupId}`);',
+    '/js/pages/scrape.js  getElementById(groupId)  in: const body = document.getElementById(groupId);',
+    '/js/pages/settings.js  $(id)  in: const raw = $(id).value.trim();',
   ].sort(), 'lookups whose argument is a name bound somewhere this census cannot follow, or a template');
 });
 

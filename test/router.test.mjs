@@ -349,6 +349,128 @@ test('unknown path returns 404 JSON', async () => {
   } finally { await closeServer(server); }
 });
 
+// ---- static files -----------------------------------------------------------
+
+/**
+ * These run against the real `public/` tree rather than a fixture directory.
+ *
+ * The defect they pin is not a mockable behaviour — it is that this particular
+ * deployment puts the React shell in a subdirectory, so `/app/` is the natural
+ * URL for the product and is the one a user types. Only `/` had the
+ * serve-its-index rule; every other directory URL fell through to `readFile` on
+ * the directory object itself, which throws EISDIR and answered 500 with a JSON
+ * error body. A fixture tree would have kept passing while the real shell stayed
+ * unreachable at its own address.
+ */
+const PUBLIC_DIR = fileURLToPath(new URL('../public', import.meta.url));
+
+test('a directory URL serves its index, the way every static host does', async () => {
+  const { route } = makeServer({ publicDir: PUBLIC_DIR });
+  const server = await startServer(route);
+  try {
+    const dir = await fetchOnce(server, '/app/');
+    assert.equal(dir.status, 200);
+    // The same file by both spellings, so the fix is the index rule and not a
+    // redirect or a second copy of the shell.
+    const explicit = await fetchOnce(server, '/app/index.html');
+    assert.equal(dir.body, explicit.body);
+    assert.match(dir.headers['content-type'] ?? '', /html/);
+  } finally { await closeServer(server); }
+});
+
+test('a directory URL without the trailing slash is not a 500', async () => {
+  const { route } = makeServer({ publicDir: PUBLIC_DIR });
+  const server = await startServer(route);
+  try {
+    const res = await fetchOnce(server, '/app');
+    assert.equal(res.status, 200);
+    assert.match(res.body, /<div id="root"|<script/);
+  } finally { await closeServer(server); }
+});
+
+test('a directory with no index is a 404, not an EISDIR 500', async () => {
+  // `assets/` has no index.html. The point of the fix is that the directory is
+  // resolved and then genuinely looked for, so a miss reads as a miss.
+  const { route } = makeServer({ publicDir: PUBLIC_DIR });
+  const server = await startServer(route);
+  try {
+    const res = await fetchOnce(server, '/app/assets/');
+    assert.equal(res.status, 404);
+  } finally { await closeServer(server); }
+});
+
+test('the site root is the React shell, and the retired dashboard is unreachable', async () => {
+  // This assertion used to require that `/` served the vanilla dashboard. That
+  // is the claim that had to change, not a detail around it: leaving it green
+  // while the root moved would have pinned the retired entry point as if it were
+  // still the product. Both spellings of the old entry redirect, so the markup is
+  // unreachable rather than merely unlinked.
+  const { route } = makeServer({ publicDir: PUBLIC_DIR });
+  const server = await startServer(route);
+  try {
+    for (const path of ['/', '/index.html']) {
+      const res = await fetchOnce(server, path);
+      assert.equal(res.status, 302, `${path} must redirect, not serve the retired markup`);
+      assert.equal(res.headers.location, '/app/');
+    }
+    // The destination really is the shell, so the redirect does not trade one
+    // unreachable page for another.
+    const shell = await fetchOnce(server, '/app/');
+    assert.equal(shell.status, 200);
+    assert.match(shell.body, /<div id="root"/);
+  } finally { await closeServer(server); }
+});
+
+// ---- the operator console is loopback-only ---------------------------------
+
+/**
+ * `/admin/*` is the operator surface: it starts scrapes, rewrites settings and
+ * reads the whole registry. It was served by the same `serveStatic` call as the
+ * product pages, and the host guard above only ever ran for `/api/*` — so on a
+ * server bound off-loopback, `http://<lan-ip>:3022/admin/scrape.html` answered
+ * 200 to anyone who could reach the port. Nothing in the tree failed when that
+ * was true, which is why the check is here and not in a unit test of the guard.
+ *
+ * The refusal is pinned as 404 rather than 403 on purpose: a 403 on that exact
+ * path tells a scanner the console is there.
+ */
+test('the operator console answers 404 to a non-loopback request', async () => {
+  const { route } = makeServer({ publicDir: PUBLIC_DIR });
+  const server = await startServer(route);
+  try {
+    // The page exists — the same URL answers 200 when the host is loopback.
+    const local = await fetchOnce(server, '/admin/scrape.html', { headers: { Host: '127.0.0.1' } });
+    assert.equal(local.status, 200);
+    assert.match(local.headers['content-type'] ?? '', /html/);
+
+    const foreign = await fetchOnce(server, '/admin/scrape.html', { headers: { Host: 'evil.example.com' } });
+    assert.equal(foreign.status, 404);
+    const body = JSON.parse(foreign.body);
+    assert.equal(body.error.code, 'ENOTFOUND');
+    // The page itself must not leak through the error body either.
+    assert.doesNotMatch(foreign.body, /scrape|bookmaker|job-rows/i);
+  } finally { await closeServer(server); }
+});
+
+test('PUBLIC_HOSTS does not widen the operator console', async () => {
+  // PUBLIC_HOSTS is how a deployed site answers /api/* on its own domain. If it
+  // also opened /admin/*, then publishing the product would publish the console
+  // with it — the exact trade the env var must not make.
+  process.env.PUBLIC_HOSTS = 'arbiter.example.com';
+  const { route } = makeServer({ publicDir: PUBLIC_DIR });
+  const server = await startServer(route);
+  try {
+    const api = await fetchOnce(server, '/api/health', { headers: { Host: 'arbiter.example.com' } });
+    assert.equal(api.status, 200, 'the API guard is supposed to accept a configured public host');
+
+    const console_ = await fetchOnce(server, '/admin/scrape.html', { headers: { Host: 'arbiter.example.com' } });
+    assert.equal(console_.status, 404);
+  } finally {
+    delete process.env.PUBLIC_HOSTS;
+    await closeServer(server);
+  }
+});
+
 // ---- /api/event-detail keeps the in-play scope -----------------------------
 
 /**
@@ -725,3 +847,5 @@ test('the export route writes the family and the sport the links ask for', async
       'a sport no record carries exported rows the tables would not show');
   } finally { await closeServer(server); }
 });
+
+

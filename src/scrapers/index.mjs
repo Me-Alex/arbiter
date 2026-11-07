@@ -48,6 +48,8 @@ import Fuksiarz from './fuksiarz.mjs';
 import TotalBetPl from './totalbet-pl.mjs';
 import Lvbet from './lvbet.mjs';
 import Betfan from './betfan.mjs';
+import Luck from './luck.mjs';
+import VictoryBet from './victorybet.mjs';
 
 
 /**
@@ -118,6 +120,8 @@ const DIRECT = {
   pinnacle: Pinnacle,
   "lvbet": Lvbet,
   "betfan": Betfan,
+  "luck": Luck,
+  "victorybet": VictoryBet,
 };
 
 /**
@@ -176,6 +180,8 @@ const DIRECT_CONTRACTS = {
   pinnacle: { engine: "custom-json", transport: "custom-json", script: "pinnacle.mjs" },
   "lvbet": { engine: "custom-json", transport: "custom-json", script: "lvbet.mjs" },
   "betfan": { engine: "custom-json", transport: "custom-json", script: "betfan.mjs" },
+  "luck": { engine: "exalogic-xsport", transport: "exalogic-xsport-public-json", script: "luck.mjs" },
+  "victorybet": { engine: "betconstruct-swarm", transport: "betconstruct-swarm-ws", script: "victorybet.mjs" },
 };
 
 const ALTENAR_IDS = new Set(ALTENAR_TENANTS.map((t) => t.id));
@@ -201,7 +207,7 @@ export function instantiate(jobId, opts = {}) {
       throw err;
     }
     // A caller's explicit limit wins; otherwise use the measured per-job cap.
-    opts = { ...opts, maxEvents: opts.maxEvents ?? cfg.maxEvents };
+    opts = { ...opts, maxEvents: opts.maxEvents ?? cfg.maxEvents, sports: opts.sports ?? (opts.sport ? undefined : cfg.supportedSports) };
     // TinyFish scraping is disabled — reject any TinyFish configuration.
     if (cfg.engine === 'tinyfish' || cfg.transport === 'tinyfish-browser'
         || cfg.script === 'tinyfish-scraper.mjs') {

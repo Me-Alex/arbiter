@@ -3,6 +3,7 @@ import { ValidationError, UpstreamError, TimeoutError } from '../shared/errors.m
 import { eventLimit } from './event-limit.mjs';
 import { readBoundedJson } from '../shared/bounded-json.mjs';
 import { canonicalSport, eventIdentityKey, normalizeTeamName } from '../shared/text.mjs';
+import { extractPeriodFromName } from '../scanner/market-contracts.mjs';
 
 const BETFAN_API_BASE = 'https://betfan.pl/api/v2';
 
@@ -21,7 +22,7 @@ export const BETFAN_SPORT_MAP = Object.freeze({
   22: 'darts',
   19: 'snooker',
   31: 'badminton',
-  12: 'rugby-union',
+  12: 'rugby',
   70: 'counter-strike-2',
   71: 'league-of-legends',
   72: 'dota-2',
@@ -48,8 +49,11 @@ export default class Betfan extends ScraperBase {
     this.sourceUrl = this.endpoint;
     this.fetchImpl = opts.fetchImpl || globalThis.fetch;
     this.maxEvents = eventLimit(opts.maxEvents ?? opts.jobConfig?.maxEvents ?? 500);
-    this.sport = opts.sport || 'football';
-    this.sportFilter = opts.sport === 'all' ? null : canonicalSport(opts.sport || 'football');
+    this.sportSet = !opts.sport && Array.isArray(opts.sports) && opts.sports.length > 0
+      ? new Set(opts.sports.map((s) => canonicalSport(s)))
+      : null;
+    this.sport = opts.sport || (this.sportSet ? 'all' : 'football');
+    this.sportFilter = this.sport === 'all' ? null : canonicalSport(this.sport);
     this.includeLive = opts.includeLive === true;
     this.includePast = opts.includePast === true;
     this.windowHours = Number(opts.windowHours ?? 168);
@@ -171,7 +175,7 @@ export default class Betfan extends ScraperBase {
       const sportId = item.category1Id;
       const sport = canonicalSport(BETFAN_SPORT_MAP[sportId] || item.category1Name || 'football');
 
-      if (this.sportFilter && sport !== this.sportFilter) {
+      if (this.sportSet ? !this.sportSet.has(sport) : (this.sportFilter && sport !== this.sportFilter)) {
         continue;
       }
 
@@ -228,10 +232,13 @@ export default class Betfan extends ScraperBase {
               const p1 = Number(s1.odds);
               const p2 = Number(s2.odds);
               if (p1 > 1 && p2 > 1) {
+                const isOtWinner = !/\bbez\s+dogrywki\b/i.test(name)
+                  && (/\b(?:wraz\s+z|z)\s+dogrywk[aą]/i.test(name) || gType === 202 || gType === 2563);
+                const moPeriod = isOtWinner ? 'fulltime_ot' : (extractPeriodFromName(name) || 'fulltime');
                 markets.push({
                   key: 'MATCH_ODDS',
-                  name: 'Match Odds',
-                  period: 'fulltime',
+                  name: isOtWinner ? 'Match Odds (z dogrywką)' : (moPeriod !== 'fulltime' ? (name || 'Match Odds') : 'Match Odds'),
+                  period: moPeriod,
                   live: isLive,
                   selections: [
                     { id: `${matchId}:1`, name: '1', price: p1, odds: p1 },
@@ -271,6 +278,7 @@ export default class Betfan extends ScraperBase {
           gType === 8 ||
           gType === 203 ||
           gType === 257 ||
+          gType === 18004 ||
           gType === 18108 ||
           gType === 18109 ||
           gType === 18110 ||
@@ -292,10 +300,16 @@ export default class Betfan extends ScraperBase {
             const pOver = Number(overSel.odds);
             const pUnder = Number(underSel.odds);
             if (pOver > 1 && pUnder > 1) {
+              const isOtTotal = !/\bbez\s+dogrywki\b/i.test(name) && /\b(?:wraz\s+z|z)\s+dogrywk[aą]/i.test(name);
+              const ouPeriod = isOtTotal ? 'fulltime_ot' : (extractPeriodFromName(name) || 'fulltime');
+              const baseDisplayName = (gType === 203 || gType === 18004 || /punkt/i.test(name))
+                ? `Total Points Over/Under ${line}`
+                : ((gType === 257 || /gem/i.test(name)) ? `Total Games Over/Under ${line}` : `Total Over/Under ${line}`);
+              const displayName = isOtTotal ? `${baseDisplayName} (z dogrywką)` : (ouPeriod !== 'fulltime' ? (name || baseDisplayName) : baseDisplayName);
               markets.push({
                 key: 'OVER_UNDER',
-                name: `Total Over/Under ${line}`,
-                period: 'fulltime',
+                name: displayName,
+                period: ouPeriod,
                 line,
                 live: isLive,
                 selections: [
@@ -307,21 +321,136 @@ export default class Betfan extends ScraperBase {
           }
         }
 
-        // 4. Double Chance (type 4, 247, 18103 or name matches)
-        if (gType === 4 || gType === 247 || gType === 18103 || /^podw[oó]jna szansa$/i.test(name)) {
+        // 3b. 1st / 2nd Half 1X2 (type 3, 111)
+        if (gType === 3 || gType === 111 || /^[12]\.\s*po[łl]owa\s*-\s*(?:wynik|1x2)$/i.test(name)) {
+          if (g.outcomes.length >= 3) {
+            const halfPeriod = gType === 111 || /^2\./.test(name) ? 'half2' : 'half1';
+            const halfKey = halfPeriod === 'half2' ? 'MRH2' : 'MRH1';
+            const s1 = g.outcomes.find((o) => normalizeTeamName(o.name) === normalizeTeamName(homeTeam) || o.name === '1') || g.outcomes[0];
+            const sX = g.outcomes.find((o) => /^(?:x|remis|draw|tie)$/i.test(String(o.name || '').trim())) || g.outcomes[1];
+            const s2 = g.outcomes.find((o) => normalizeTeamName(o.name) === normalizeTeamName(awayTeam) || o.name === '2') || g.outcomes[2];
+            if (s1 && sX && s2 && s1 !== sX && sX !== s2 && s1 !== s2) {
+              const p1 = Number(s1.odds);
+              const pX = Number(sX.odds);
+              const p2 = Number(s2.odds);
+              if (p1 > 1 && pX > 1 && p2 > 1) {
+                markets.push({
+                  key: halfKey,
+                  name: halfPeriod === 'half2' ? '2nd Half Result' : '1st Half Result',
+                  period: halfPeriod,
+                  live: isLive,
+                  selections: [
+                    { id: `${matchId}:${halfKey}:1`, name: 'Home', price: p1, odds: p1 },
+                    { id: `${matchId}:${halfKey}:X`, name: 'Draw', price: pX, odds: pX },
+                    { id: `${matchId}:${halfKey}:2`, name: 'Away', price: p2, odds: p2 },
+                  ],
+                });
+              }
+            }
+          }
+        }
+
+        // 3c. 1st / 2nd Half BTTS (type 120, 121)
+        if (gType === 120 || gType === 121 || /^[12]\.\s*po[łl]owa\s*-\s*obie dru[zż]yny strzel/i.test(name)) {
+          const halfPeriod = gType === 121 || /^2\./.test(name) ? 'half2' : 'half1';
+          const halfKey = halfPeriod === 'half2' ? 'BTH2' : 'BTH1';
+          const yesSel = g.outcomes.find((o) => /^(?:tak|yes)$/i.test(String(o.name || '').trim()));
+          const noSel = g.outcomes.find((o) => /^(?:nie|no)$/i.test(String(o.name || '').trim()));
+          if (yesSel && noSel) {
+            const pYes = Number(yesSel.odds);
+            const pNo = Number(noSel.odds);
+            if (pYes > 1 && pNo > 1) {
+              markets.push({
+                key: halfKey,
+                name: halfPeriod === 'half2' ? '2nd Half Both Teams to Score' : '1st Half Both Teams to Score',
+                period: halfPeriod,
+                live: isLive,
+                selections: [
+                  { id: `${matchId}:${halfKey}:yes`, name: 'Yes', price: pYes, odds: pYes },
+                  { id: `${matchId}:${halfKey}:no`, name: 'No', price: pNo, odds: pNo },
+                ],
+              });
+            }
+          }
+        }
+
+        // 3d. Draw No Bet (type 93 or Remis = zwrot)
+        if (gType === 93 || /^(?:remis\s*=\s*zwrot|zak[łl]ad bez remisu)$/i.test(name)) {
+          if (g.outcomes.length === 2) {
+            const s1 = g.outcomes.find((o) => normalizeTeamName(o.name) === normalizeTeamName(homeTeam) || o.name === '1') || g.outcomes[0];
+            const s2 = g.outcomes.find((o) => normalizeTeamName(o.name) === normalizeTeamName(awayTeam) || o.name === '2') || g.outcomes[1];
+            const p1 = Number(s1?.odds);
+            const p2 = Number(s2?.odds);
+            if (s1 && s2 && s1 !== s2 && p1 > 1 && p2 > 1) {
+              markets.push({
+                key: 'DRAW_NO_BET',
+                name: 'Draw No Bet',
+                period: 'fulltime',
+                live: isLive,
+                selections: [
+                  { id: `${matchId}:dnb:1`, name: '1', price: p1, odds: p1 },
+                  { id: `${matchId}:dnb:2`, name: '2', price: p2, odds: p2 },
+                ],
+              });
+            }
+          }
+        }
+
+        // 3e. 1st Half & Team Totals (type -284, 52, 53)
+        if (gType === -284 || gType === 52 || gType === 53) {
+          const overSel = g.outcomes.find((o) => /^(?:powy[zż]ej|over)/i.test(String(o.name || '').trim()));
+          const underSel = g.outcomes.find((o) => /^(?:poni[zż]ej|under)/i.test(String(o.name || '').trim()));
+          const mLine = (name.match(/([0-9]+(?:\.[0-9]+)?)/) || String(overSel?.name || '').match(/([0-9]+(?:\.[0-9]+)?)/));
+          const line = mLine ? Number(mLine[1]) : NaN;
+          if (overSel && underSel && Number.isFinite(line) && line > 0) {
+            const pOver = Number(overSel.odds);
+            const pUnder = Number(underSel.odds);
+            if (pOver > 1 && pUnder > 1) {
+              const ouPeriod = gType === -284 ? 'half1' : 'fulltime';
+              const ouTeam = gType === 52 ? 'home' : (gType === 53 ? 'away' : null);
+              markets.push({
+                key: `OVER_UNDER:${ouPeriod}:${ouTeam || 'match'}:${line}`,
+                name: name || `Total Over/Under ${line}`,
+                period: ouPeriod,
+                ...(ouTeam ? { team: ouTeam } : {}),
+                line,
+                live: isLive,
+                selections: [
+                  { id: `${matchId}:ou:${ouPeriod}:${ouTeam || 'match'}:${line}:over`, name: `Over ${line}`, price: pOver, odds: pOver, line, handicap: line },
+                  { id: `${matchId}:ou:${ouPeriod}:${ouTeam || 'match'}:${line}:under`, name: `Under ${line}`, price: pUnder, odds: pUnder, line, handicap: line },
+                ],
+              });
+            }
+          }
+        }
+
+        // 4. Double Chance (type 4, 247, 18103, 27 [1H], -188 [2H] or name matches)
+        if (gType === 4 || gType === 247 || gType === 18103 || gType === 27 || gType === -188 || /^(?:[12]\.\s*po[łl]owa\s*-\s*)?podw[oó]jna szansa$/i.test(name)) {
           if (g.outcomes.length === 3) {
+            const dcPeriod = (gType === 27 || /^1\./.test(name)) ? 'half1' : ((gType === -188 || /^2\./.test(name)) ? 'half2' : 'fulltime');
+            const dcKey = dcPeriod === 'half1' ? 'DCH1' : (dcPeriod === 'half2' ? 'DCH2' : 'DOUBLE_CHANCE');
+            const normDc = (raw, idx) => {
+              const s = String(raw || '').trim();
+              if (/^(?:1x|1\/x)$/i.test(s)) return '1X';
+              if (/^(?:12|1\/2)$/i.test(s)) return '12';
+              if (/^(?:x2|x\/2)$/i.test(s)) return 'X2';
+              if (/\/x$/i.test(s) || idx === 0) return '1X';
+              if (/^x\//i.test(s) || idx === 2) return 'X2';
+              if (idx === 1) return '12';
+              return s;
+            };
             const sels = g.outcomes.map((o, idx) => ({
-              id: `${matchId}:dc:${idx}`,
-              name: o.name,
+              id: `${matchId}:${dcKey}:${idx}`,
+              name: normDc(o.name, idx),
               price: Number(o.odds),
               odds: Number(o.odds),
             })).filter((s) => s.price > 1);
 
             if (sels.length === 3) {
               markets.push({
-                key: 'DOUBLE_CHANCE',
-                name: 'Double Chance',
-                period: 'fulltime',
+                key: dcKey,
+                name: dcPeriod === 'fulltime' ? 'Double Chance' : `${dcPeriod === 'half1' ? '1st Half' : '2nd Half'} Double Chance`,
+                period: dcPeriod,
                 live: isLive,
                 selections: sels,
               });
@@ -330,14 +459,14 @@ export default class Betfan extends ScraperBase {
         }
 
         // 5. Asian Handicap
-        if (/^handicap(?:\s+([-+0-9.]+))?$/i.test(name)) {
+        if (gType === -458 || /^handicap(?:\s*\(?([-+0-9.\s/]+)\)?)?$/i.test(name)) {
           if (g.outcomes.length === 2) {
             const s1 = g.outcomes[0];
             const s2 = g.outcomes[1];
             const p1 = Number(s1.odds);
             const p2 = Number(s2.odds);
             if (p1 > 1 && p2 > 1) {
-              const mHandicap = name.match(/([-+0-9.]+)/);
+              const mHandicap = String(s1.name || name).match(/([-+][0-9]+(?:\.[0-9]+)?)/) || name.match(/([-+0-9.]+)/);
               const line = mHandicap ? Number(mHandicap[1]) : 0;
               markets.push({
                 key: 'ASIAN_HANDICAP',
@@ -346,8 +475,8 @@ export default class Betfan extends ScraperBase {
                 line,
                 live: isLive,
                 selections: [
-                  { id: `${matchId}:ah:${line}:1`, name: s1.name, price: p1, odds: p1, line },
-                  { id: `${matchId}:ah:${line}:2`, name: s2.name, price: p2, odds: p2, line },
+                  { id: `${matchId}:ah:${line}:1`, name: s1.name, price: p1, odds: p1, line, ...(line !== 0 ? { handicap: line } : {}) },
+                  { id: `${matchId}:ah:${line}:2`, name: s2.name, price: p2, odds: p2, line, ...(line !== 0 ? { handicap: -line } : {}) },
                 ],
               });
             }
@@ -356,6 +485,7 @@ export default class Betfan extends ScraperBase {
       }
 
       events.push({
+        id: matchId,
         eventKey,
         eventId: matchId,
         sourceId: this.id,

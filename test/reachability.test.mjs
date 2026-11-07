@@ -62,6 +62,11 @@ const UNREACHABLE_FROM_SERVER = new Set([
   // The platform catalogue read by `npm run new-book`. It describes how to
   // scaffold a book, so the server has no reason to load it and shipping it in
   // the server's graph would be dead weight; scripts/add-book.mjs is its importer.
+  // Staged identity module for invite-only auth, tested by test/identity.test.mjs.
+  // Reached once login/session endpoints and frontend callers land together.
+  'src/shared/identity.mjs',
+  'src/rea/mcp-client.mjs',
+  'src/rea/odds-inspector.mjs',
   'src/scrapers/platforms.mjs',
   'src/scrapers/tinyfish-scraper.mjs',
   'src/tinyfish/books.mjs',

@@ -8,6 +8,7 @@
  * No dependencies, no persistent state — a restart clears the buckets,
  * which is the desired behaviour for a local-only app.
  */
+import { isLoopbackAddress } from './security.mjs';
 
 export class RateLimiter {
   /**
@@ -111,16 +112,6 @@ export function peerKey(req) {
     return xff.split(',')[0].trim() || remote;
   }
   return remote;
-}
-
-function isLoopbackAddress(address) {
-  if (typeof address !== 'string') return false;
-  const host = address.startsWith('[') ? address.slice(1, address.indexOf(']')) : address;
-  // Strip an IPv4-mapped IPv6 prefix (::ffff:127.0.0.1) before the checks.
-  const bare = host.replace(/^::ffff:/i, '');
-  if (bare === '::1') return true;
-  if (/^127\.\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(bare)) return true;
-  return false;
 }
 
 /**

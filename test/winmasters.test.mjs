@@ -20,6 +20,24 @@ const fixture = JSON.parse(
   readFileSync(new URL('../data/endpoints/captures/winmasters-odds-2026-10-11.json', import.meta.url), 'utf8')
 );
 
+/**
+ * The capture was taken on 2026-10-11 and its fixtures kick off between the
+ * 11th and the 17th. Every assertion below is about which events the adapter
+ * admits, not about the day the suite happens to run, so the clock is pinned
+ * inside the capture's own validity window.
+ *
+ * Left on the wall clock, the five fixture-driven tests below began failing on
+ * 2026-10-16 with `extractEvents` returning 0 — not because the adapter
+ * changed, but because the fixture's "future" matches had become its past. The
+ * adapter's window arithmetic was correct throughout; only the test's premise
+ * had expired.
+ */
+const PINNED_NOW = '2026-10-12T00:00:00Z';
+function pinClock(t) {
+  t.mock.timers.enable({ apis: ['Date'], now: new Date(PINNED_NOW) });
+  t.after(() => t.mock.timers.reset());
+}
+
 test('winmasters: the candidate was written disabled and unvalidated', (t) => {
   if (JOB.enabled && JOB.validationStatus === 'validated') {
     return t.skip('promoted — this check described the candidate state');
@@ -77,7 +95,8 @@ test('winmasters: normalize fails closed on invalid or error payloads', () => {
   assert.throws(() => scraper.normalize({ status: 'error', error: 'Blocked by Cloudflare' }), { name: 'UpstreamError' });
 });
 
-test('winmasters: extractEvents collects pre-match football with complete 1X2 markets', () => {
+test('winmasters: extractEvents collects pre-match football with complete 1X2 markets', (t) => {
+  pinClock(t);
   const scraper = new Winmasters({
     // generous window so all future test dates are admitted
     windowHours: 24 * 30,
@@ -163,7 +182,8 @@ test('winmasters: extractEvents admits past matches when includePast is true', (
   assert.ok(pastMatch, 'past match admitted when includePast is true');
 });
 
-test('winmasters: malformed kickoff drops single row without throwing', () => {
+test('winmasters: malformed kickoff drops single row without throwing', (t) => {
+  pinClock(t);
   const scraper = new Winmasters({ windowHours: 24 * 30 });
   const badEvent = { ...fixture.raw[0], D: 'invalid-date-string' };
   const goodEvent = { ...fixture.raw[1] };
@@ -172,7 +192,8 @@ test('winmasters: malformed kickoff drops single row without throwing', () => {
   assert.equal(events[0].homeTeam, 'Sepsi OSK');
 });
 
-test('winmasters: maxEvents bounds extracted events', () => {
+test('winmasters: maxEvents bounds extracted events', (t) => {
+  pinClock(t);
   const scraper = new Winmasters({ maxEvents: 2, windowHours: 24 * 30 });
   const rawEvents = scraper.normalize(fixture);
   const events = scraper.extractEvents(rawEvents);
@@ -273,7 +294,8 @@ test('winmasters: WINMASTERS_SPORT_ID_MAP maps core sports and their IDs symmetr
   assert.equal(WINMASTERS_SPORT_NAME_TO_ID['tennis'], 3);
 });
 
-test('winmasters: extractEvents extracts 2-way basketball moneyline market', () => {
+test('winmasters: extractEvents extracts 2-way basketball moneyline market', (t) => {
+  pinClock(t);
   const scraper = new Winmasters({
     sport: 'basketball',
     windowHours: 24 * 30,
@@ -296,7 +318,8 @@ test('winmasters: extractEvents extracts 2-way basketball moneyline market', () 
   ]);
 });
 
-test('winmasters: extractEvents with sport: all admits both football and basketball', () => {
+test('winmasters: extractEvents with sport: all admits both football and basketball', (t) => {
+  pinClock(t);
   const scraper = new Winmasters({
     sport: 'all',
     windowHours: 24 * 30,
@@ -349,7 +372,8 @@ test('winmasters: 2-way matchBets format extracts correctly for basketball/tenni
   ]);
 });
 
-test('winmasters: extracts sub-window period markets from Digitain event.S with deterministic bucket keys', () => {
+test('winmasters: extracts sub-window period markets from Digitain event.S with deterministic bucket keys', (t) => {
+  pinClock(t);
   const scraper = new Winmasters({ sport: 'football', windowHours: 24 * 30 });
   const cardStakesEvent = {
     EId: 77881001,
@@ -395,7 +419,8 @@ test('winmasters: extracts sub-window period markets from Digitain event.S with 
   assert.notEqual(ftBucket, htBucket);
 });
 
-test('winmasters: extracts sub-window period markets from Digitain matchBets with deterministic bucket keys', () => {
+test('winmasters: extracts sub-window period markets from Digitain matchBets with deterministic bucket keys', (t) => {
+  pinClock(t);
   const scraper = new Winmasters({ sport: 'basketball', windowHours: 24 * 30 });
   const bballMbEvent = {
     idMatch: 77881002,

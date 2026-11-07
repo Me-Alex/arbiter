@@ -179,6 +179,7 @@ export const LIVE_EVIDENCE = Object.freeze({
   'totalbet-pl': { scope: 'event', field: 'type === "live"', started: 0 },
   lvbet: { scope: 'event', field: 'state.is_live === true', started: 0 },
   betfan: { scope: 'event', field: 'type === 2', started: 0 },
+  victorybet: { scope: 'event', field: 'type === 1', started: 0 },
   // Measured in the same window, no categorical field separating started from
   // future events. `started: 0` throughout: no in-play football in that hour.
   admiral: { scope: null, field: null, started: 0 },
@@ -267,6 +268,8 @@ export const LIVE_EVIDENCE = Object.freeze({
   slotparadise: { scope: null, field: null, started: 0 },
   joker8: { scope: null, field: null, started: 0 },
   betway: { scope: null, field: null, started: 0 },
+  betking: { scope: null, field: null, started: 0 },
+  bet99: { scope: null, field: null, started: 0 },
   eliteslots: { scope: null, field: null, started: 0 },
   ladycasino: { scope: null, field: null, started: 0 },
   pacanele: { scope: null, field: null, started: 0 },
@@ -278,6 +281,7 @@ export const LIVE_EVIDENCE = Object.freeze({
   vivabet: { scope: null, field: null, started: 0 },
   totalbet: { scope: null, field: null, started: 0 },
   cashpot: { scope: null, field: null, started: 0 },
+  luck: { scope: null, field: null, started: 0 },
 });
 
 /**

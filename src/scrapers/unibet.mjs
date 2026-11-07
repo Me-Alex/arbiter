@@ -3,7 +3,7 @@ import { normalizeTeamName } from '../shared/text.mjs';
 import { ValidationError, UpstreamError } from '../shared/errors.mjs';
 import { describeError, summariseReasons } from './feg-common.mjs';
 import { unibetEventIsLive, markMarketsLive, eventIsLive, liveCoverageFor } from './live-status.mjs';
-import { extractPeriodFromName } from '../scanner/market-contracts.mjs';
+import { extractPeriodFromName, subjectFor } from '../scanner/market-contracts.mjs';
 
 /**
  * Unibet (RO) — Kindred XNS sports BFF.
@@ -349,10 +349,20 @@ function normalizeVariant(proposition, variant, key, sport = '') {
   else if (/points?/.test(rawPropType)) subject = 'points';
   else if (/games?/.test(rawPropType)) subject = 'games';
   else if (key === 'TOTAL' || key === 'FTPO' || key === 'FTGO') {
-    const s = String(sport || '').toLowerCase();
-    if (s === 'basketball' || s === 'americanfootball' || s === 'baseball') subject = 'points';
-    else if (s === 'tennis' || s === 'tabletennis') subject = 'games';
-    else subject = 'goals';
+    // The display name outranks the sport fallback, exactly as the prop type does
+    // above. On `mma` a TOTAL is "Total runde" (rounds) and on `rugby` it is
+    // "Total puncte - timp regulamentar" (points); the sport map has no entry for
+    // either, so the bare `else` filed all 60 of those markets as goals.
+    // `subjectFor` reads the name first, so the two now agree instead of the
+    // stamp winning, and the bucket names what the book actually counts.
+    const namedTotal = subjectFor({ name: rawDisplayName });
+    if (namedTotal) subject = namedTotal;
+    else {
+      const s = String(sport || '').toLowerCase();
+      if (s === 'basketball' || s === 'americanfootball' || s === 'baseball') subject = 'points';
+      else if (s === 'tennis' || s === 'tabletennis') subject = 'games';
+      else subject = 'goals';
+    }
   }
 
   return {

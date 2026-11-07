@@ -89,8 +89,19 @@ function walk(node, fn, ancestors = []) {
   }
 }
 
-/** Every `.js`/`.mjs`/`.html` under public/, repo-relative and forward-slashed. */
+/**
+ * Every `.js`/`.mjs`/`.html` under public/, repo-relative and forward-slashed.
+ *
+ * `public/app/` is the Vite build output and is skipped. This census reads query
+ * keys out of a file to check they match what the router reads, which is a
+ * question about source someone wrote; the React bundle is minified and its
+ * key-building cannot be read from it, so including it would add a file to the
+ * walk that this census has no way to interpret. The authored surface — which
+ * is what the pinned count below describes — is unchanged.
+ */
+const BUILD_OUTPUT = 'public/app';
 function publicFiles(dir = 'public', out = []) {
+  if (dir === BUILD_OUTPUT || dir.startsWith(`${BUILD_OUTPUT}/`)) return out;
   for (const entry of readdirSync(join(ROOT, dir), { withFileTypes: true })) {
     const rel = `${dir}/${entry.name}`;
     if (entry.isDirectory()) publicFiles(rel, out);
@@ -540,7 +551,12 @@ test("the router's query reads all belong to a route, and only these routes read
 });
 
 test('the frontend can put exactly these query keys on the wire, file by file', () => {
-  assert.equal(FRONT.size, 32, 'public/ holds 32 js/html files and the walk reads every one');
+  // The walk reads every authored js/html file under public/, so this count is
+  // a control on the walk itself: a file that fell out of it would shrink the
+  // set and pass everything below while censusing nothing. It moved from 32 to
+  // 33 when `public/admin/workstation.html` joined the tree, and to 34 when
+  // that page's inline redirect moved out to `workstation-redirect.js`.
+  assert.equal(FRONT.size, 34, 'the authored js/html files under public/ are all read here');
   assert.ok(SENDERS.length > 0, 'the sender table is empty, so nothing below would run');
   const rowFiles = new Set(SENDERS.map((r) => r[0]));
   for (const file of rowFiles) {

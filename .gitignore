@@ -8,6 +8,9 @@ data/scrape-run-*.json
 data/latest-*.json
 data/bet-tracker.json
 data/alert-preferences.json
+data/live-state.json
+*-rescan.json
+rescan.json
 
 # Per-run evidence directories. Live smoke runs write these next to the
 # project; keeping them out of git stops `git status` drowning in throwaway

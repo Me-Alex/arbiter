@@ -41,6 +41,8 @@
  * 2-way where it is false.
  */
 
+import { canonicalSport } from '../shared/text.mjs';
+
 /** @typedef {{ id: string, name: string, hasDraw: boolean, markets: string[] }} SportDefinition */
 
 /** @type {SportDefinition[]} */
@@ -364,5 +366,7 @@ export function canonicalSportName(value) {
   const byId = BY_ID.get(trimmed.toLowerCase());
   if (byId) return byId.name;
   const byName = SPORTS.find((sport) => sport.name.toLowerCase() === trimmed.toLowerCase());
-  return byName ? byName.name : trimmed;
+  if (byName) return byName.name;
+  const byCanon = BY_ID.get(canonicalSport(trimmed));
+  return byCanon ? byCanon.name : trimmed;
 }

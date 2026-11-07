@@ -44,6 +44,12 @@ function renderInsights(scan) {
   // "verified opportunities" that renders a live price and a pre-match price
   // identically is a card a trader reads as the calm one. It never reads the
   // kickoff — a pre-match price whose kickoff has passed is stale, not running.
+  // The card's figure is `marginPercent` alone, and no longer falls back to
+  // `roiPercent`. Every row on this page comes from `scan.opportunities`, and a
+  // surebet publishes no ROI at all -- so the fallback could only ever print a
+  // zero, and it read as though a row could be described by either number. It
+  // cannot: a margin is guaranteed and an ROI is an expectation, and this card
+  // is titled with the first.
   const liveBadge = (item) => item.live === true
     ? `<span class="chip red live-badge" title="${escapeHtml(t('liveTooltip'))}">${escapeHtml(t('live'))}</span>`
     : '';
@@ -58,7 +64,7 @@ function renderInsights(scan) {
             <div class="match">${escapeHtml(item.homeTeam)} <span class="muted">${t('vs')}</span> ${escapeHtml(item.awayTeam)}</div>
             <div class="match-meta"><span class="chip green">${escapeHtml(t('confirmedLabel'))}</span>${liveBadge(item)}<span>${escapeHtml(item.marketKey)}</span></div>
           </div>
-          <div class="roi-wrap"><div class="roi" style="font-size:18px">+${Number(item.marginPercent || item.roiPercent || 0).toFixed(2)}%</div></div>
+          <div class="roi-wrap"><div class="roi" style="font-size:18px">+${Number(item.marginPercent ?? 0).toFixed(2)}%</div></div>
         </div>
         <div class="muted text-sm" style="margin-top:8px;position:relative;z-index:1">${escapeHtml(t('freshLegsFrom'))} ${escapeHtml((item.legs || []).map((leg) => leg.sourceId).join(' · '))}</div>
       </div>`).join('')

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ArbEdge — Bookies</title>
+  <title data-i18n="titleBookies">ArbEdge — Bookies</title>
   <link rel="icon" href="/favicon.svg">
   <script src="/js/theme.js"></script>
   <link rel="stylesheet" href="/css/theme.css">
@@ -17,29 +17,29 @@
 <!-- Main Content -->
   <main class="flex-1 p-4 lg:p-6 space-y-6">
     <div class="flex items-center justify-between">
-      <h1 class="text-xl lg:text-2xl font-bold text-[var(--edge-textBright)]">Console Bookies</h1>
-      <button id="btn-add" class="px-3 py-1.5 rounded-lg text-xs bg-[var(--edge-blue)] text-white hover:bg-[var(--edge-blue)]/90 transition-colors focus-ring">Add Bookmaker</button>
+      <h1 class="text-xl lg:text-2xl font-bold text-[var(--edge-textBright)]" data-i18n="bookiesTitle">Console Bookies</h1>
+      <button id="btn-add" class="px-3 py-1.5 rounded-lg text-xs bg-[var(--edge-blue)] text-white hover:bg-[var(--edge-blue)]/90 transition-colors focus-ring" data-i18n="addBookmaker">Add Bookmaker</button>
     </div>
 
     <!-- KPI Row -->
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">
       <div class="card p-4">
-        <div class="text-xs text-[var(--edge-textMuted)] mb-1">Bookmakers Tracked</div>
+        <div class="text-xs text-[var(--edge-textMuted)] mb-1" data-i18n="bookmakersTracked">Bookmakers Tracked</div>
         <div class="text-2xl font-bold text-[var(--edge-textBright)]" id="kpi-tracked">—</div>
         <div class="text-xs text-[var(--edge-textMuted)] mt-1" id="kpi-tracked-sub">—</div>
       </div>
       <div class="card p-4">
-        <div class="text-xs text-[var(--edge-textMuted)] mb-1">Events Captured</div>
+        <div class="text-xs text-[var(--edge-textMuted)] mb-1" data-i18n="eventsCaptured">Events Captured</div>
         <div class="text-2xl font-bold text-[var(--edge-textBright)]" id="kpi-events">—</div>
         <div class="text-xs text-[var(--edge-green)] mt-1" id="kpi-events-sub">—</div>
       </div>
       <div class="card p-4">
-        <div class="text-xs text-[var(--edge-textMuted)] mb-1">Feeds Responding</div>
+        <div class="text-xs text-[var(--edge-textMuted)] mb-1" data-i18n="feedsResponding">Feeds Responding</div>
         <div class="text-2xl font-bold text-[var(--edge-green)]" id="kpi-online">—</div>
-        <div class="text-xs text-[var(--edge-textMuted)] mt-1">Captured inside the freshness window</div>
+        <div class="text-xs text-[var(--edge-textMuted)] mt-1" data-i18n="feedsRespondingHint">Captured inside the freshness window</div>
       </div>
       <div class="card p-4">
-        <div class="text-xs text-[var(--edge-textMuted)] mb-1">Stale / Missing</div>
+        <div class="text-xs text-[var(--edge-textMuted)] mb-1" data-i18n="staleMissing">Stale / Missing</div>
         <div class="text-2xl font-bold text-[var(--edge-red)]" id="kpi-stale">—</div>
         <div class="text-xs text-[var(--edge-textMuted)] mt-1" id="kpi-stale-sub">—</div>
       </div>
@@ -55,14 +55,14 @@
     <div class="absolute inset-0 flex items-center justify-center p-4">
       <div class="bg-[var(--edge-surface)] border border-[var(--edge-border)] rounded-xl w-full max-w-md shadow-2xl" role="dialog" aria-modal="true" aria-labelledby="modal-title">
         <div class="flex items-center justify-between p-4 border-b border-[var(--edge-border)]">
-          <h3 class="text-base font-semibold text-[var(--edge-textBright)]" id="modal-title">Bookmaker</h3>
-          <button data-close class="text-[var(--edge-textMuted)] hover:text-[var(--edge-textBright)] focus-ring" aria-label="Close">
+          <h3 class="text-base font-semibold text-[var(--edge-textBright)]" id="modal-title" data-i18n="bookmakerColumn">Bookmaker</h3>
+          <button data-close class="text-[var(--edge-textMuted)] hover:text-[var(--edge-textBright)] focus-ring" aria-label="Close" data-i18n-aria-label="close">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
           </button>
         </div>
         <div class="p-4 space-y-3" id="modal-body"></div>
         <div class="p-4 border-t border-[var(--edge-border)] flex justify-end">
-          <button data-close class="px-3 py-1.5 rounded-lg text-xs text-[var(--edge-text)] hover:bg-[var(--edge-surface2)] transition-colors focus-ring">Close</button>
+          <button data-close class="px-3 py-1.5 rounded-lg text-xs text-[var(--edge-text)] hover:bg-[var(--edge-surface2)] transition-colors focus-ring" data-i18n="close">Close</button>
         </div>
       </div>
     </div>
@@ -75,27 +75,27 @@
     <div class="absolute inset-0 flex items-center justify-center p-4">
       <div class="bg-[var(--edge-surface)] border border-[var(--edge-border)] rounded-xl w-full max-w-md shadow-2xl" role="dialog" aria-modal="true" aria-labelledby="add-title">
         <div class="flex items-center justify-between p-4 border-b border-[var(--edge-border)]">
-          <h3 class="text-base font-semibold text-[var(--edge-textBright)]" id="add-title">Add Bookmaker</h3>
-          <button data-close-add class="text-[var(--edge-textMuted)] hover:text-[var(--edge-textBright)] focus-ring" aria-label="Close">
+          <h3 class="text-base font-semibold text-[var(--edge-textBright)]" id="add-title" data-i18n="addBookmaker">Add Bookmaker</h3>
+          <button data-close-add class="text-[var(--edge-textMuted)] hover:text-[var(--edge-textBright)] focus-ring" aria-label="Close" data-i18n-aria-label="close">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
           </button>
         </div>
         <form class="p-4 space-y-3" id="add-form">
           <div>
-            <label class="block text-xs text-[var(--edge-textMuted)] mb-1" for="add-id">Bookmaker key</label>
+            <label class="block text-xs text-[var(--edge-textMuted)] mb-1" for="add-id" data-i18n="bookmakerKey">Bookmaker key</label>
             <input type="text" id="add-id" class="w-full" placeholder="e.g. bet365" autocomplete="off">
           </div>
           <div>
-            <label class="block text-xs text-[var(--edge-textMuted)] mb-1" for="add-url">Feed URL</label>
+            <label class="block text-xs text-[var(--edge-textMuted)] mb-1" for="add-url" data-i18n="feedUrl">Feed URL</label>
             <input type="text" id="add-url" class="w-full" placeholder="https://…" autocomplete="off">
           </div>
           <p class="text-xs text-[var(--edge-textMuted)]">
-            A bookmaker is a scrape job in <code class="font-mono">config/scrapers.json</code>. Adding one here
-            writes that file, then it appears in the sidebar once the next scan starts.
+            <span data-i18n="bookmakerIsScrapeJob">A bookmaker is a scrape job in</span> <code class="font-mono">config/scrapers.json</code><span data-i18n="bookmakerAddNote">
+            . Adding one here writes that file, then it appears in the sidebar once the next scan starts.</span>
           </p>
           <div class="flex justify-end gap-2 pt-1">
-            <button type="button" data-close-add class="px-3 py-1.5 rounded-lg text-xs text-[var(--edge-text)] hover:bg-[var(--edge-surface2)] transition-colors focus-ring">Cancel</button>
-            <button type="submit" class="px-3 py-1.5 rounded-lg text-xs bg-[var(--edge-blue)] text-white hover:bg-[var(--edge-blue)]/90 transition-colors focus-ring">Add Bookmaker</button>
+            <button type="button" data-close-add class="px-3 py-1.5 rounded-lg text-xs text-[var(--edge-text)] hover:bg-[var(--edge-surface2)] transition-colors focus-ring" data-i18n="cancel">Cancel</button>
+            <button type="submit" class="px-3 py-1.5 rounded-lg text-xs bg-[var(--edge-blue)] text-white hover:bg-[var(--edge-blue)]/90 transition-colors focus-ring" data-i18n="addBookmaker">Add Bookmaker</button>
           </div>
         </form>
       </div>

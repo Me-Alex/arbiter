@@ -363,6 +363,8 @@ export default class ScraperBase {
       sourceId: this.id,
       capturedAt,
       observedAt: capturedAt,
+      sourceUrl: this.sourceUrl || this.endpoint || null,
+      transport: this.transport || null,
       dataStatus,
       discovery: raw?.discovery || null,
       extraction: raw?.extraction || null,

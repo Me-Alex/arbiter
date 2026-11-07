@@ -20,6 +20,22 @@ const fixture = JSON.parse(
   readFileSync(new URL('../data/endpoints/captures/pariuriplus-odds-2026-10-11.json', import.meta.url), 'utf8')
 );
 
+/**
+ * The capture was taken on 2026-10-11 and its fixtures kick off between the
+ * 11th and the 16th. The assertion below is about which events the adapter
+ * admits, not about the day the suite happens to run, so the clock is pinned
+ * inside the capture's own validity window — the same convention
+ * test/favbet.test.mjs already uses.
+ *
+ * Left on the wall clock, this test began failing on 2026-10-16 with 3 events
+ * instead of 5: the fixture's "future" football matches had become its past.
+ */
+const PINNED_NOW = '2026-10-12T00:00:00Z';
+function pinClock(t) {
+  t.mock.timers.enable({ apis: ['Date'], now: new Date(PINNED_NOW) });
+  t.after(() => t.mock.timers.reset());
+}
+
 test('pariuriplus: the candidate was written disabled and unvalidated', (t) => {
   if (JOB.enabled && JOB.validationStatus === 'validated') {
     return t.skip('promoted — this check described the candidate state');
@@ -77,7 +93,8 @@ test('pariuriplus: normalize fails closed on invalid or error payloads', () => {
   assert.throws(() => scraper.normalize({ status: 'error', error: 'Blocked by Cloudflare' }), { name: 'UpstreamError' });
 });
 
-test('pariuriplus: extractEvents collects pre-match football with complete 1X2 markets', () => {
+test('pariuriplus: extractEvents collects pre-match football with complete 1X2 markets', (t) => {
+  pinClock(t);
   const scraper = new Pariuriplus({
     // generous window so all future test dates are admitted
     windowHours: 24 * 30,
@@ -152,7 +169,8 @@ test('pariuriplus: extractEvents collects pre-match football with complete 1X2 m
   ]);
 });
 
-test('pariuriplus: extractEvents admits live events when includeLive is true', () => {
+test('pariuriplus: extractEvents admits live events when includeLive is true', (t) => {
+  pinClock(t);
   const scraper = new Pariuriplus({
     windowHours: 24 * 30,
     includeLive: true,
@@ -173,7 +191,12 @@ test('pariuriplus: extractEvents admits live events when includeLive is true', (
   ]);
 });
 
-test('pariuriplus: extractEvents admits past matches when includePast is true', () => {
+test('pariuriplus: extractEvents admits past matches when includePast is true', (t) => {
+  // Pinned for the same reason, and more sharply here: this one asserts that a
+  // PAST match is admitted, so on the day the fixture's matches are still in
+  // the future it would pass for the wrong reason -- the window admitted them
+  // anyway -- and the `includePast` branch would never be exercised.
+  pinClock(t);
   const scraper = new Pariuriplus({
     windowHours: 24 * 365,
     includePast: true,
@@ -206,7 +229,12 @@ test('pariuriplus: malformed kickoff drops single row without throwing', () => {
   assert.equal(events.length, 0);
 });
 
-test('pariuriplus: maxEvents bounds extracted events', () => {
+test('pariuriplus: maxEvents bounds extracted events', (t) => {
+  // Same reason as the two above: this is about how many events the cap keeps,
+  // not about the date the suite runs, and the capture's events are all in the
+  // past now. Left unpinned it read 1 instead of 2 from 2026-10-17 onward --
+  // the cap was never the thing under test, the calendar was.
+  pinClock(t);
   const scraper = new Pariuriplus({
     windowHours: 24 * 30,
     maxEvents: 2,
@@ -217,7 +245,8 @@ test('pariuriplus: maxEvents bounds extracted events', () => {
   assert.equal(events.length, 2);
 });
 
-test('pariuriplus: also extracts standard Digitain matchBets format', () => {
+test('pariuriplus: also extracts standard Digitain matchBets format', (t) => {
+  pinClock(t);
   const scraper = new Pariuriplus({ windowHours: 24 * 30 });
   const digitainMbEvent = {
     idMatch: 8881234,
@@ -304,7 +333,8 @@ test('pariuriplus: fetchRaw handles errors and bounds payload safely', async () 
   assert.deepEqual(res, [{ test: 1 }]);
 });
 
-test('pariuriplus: extracts sub-window period markets from Digitain event.S with deterministic bucket keys', () => {
+test('pariuriplus: extracts sub-window period markets from Digitain event.S with deterministic bucket keys', (t) => {
+  pinClock(t);
   const scraper = new Pariuriplus({ windowHours: 24 * 30 });
   const cardStakesEvent = {
     EId: 8891001,
@@ -350,7 +380,8 @@ test('pariuriplus: extracts sub-window period markets from Digitain event.S with
   assert.notEqual(ftBucket, htBucket);
 });
 
-test('pariuriplus: extracts sub-window period markets from Digitain matchBets with deterministic bucket keys', () => {
+test('pariuriplus: extracts sub-window period markets from Digitain matchBets with deterministic bucket keys', (t) => {
+  pinClock(t);
   const scraper = new Pariuriplus({ windowHours: 24 * 30 });
   const digitainMbEvent = {
     idMatch: 8891002,

@@ -376,6 +376,48 @@ test('findPositiveEV devigs counterparty consensus so un-devigged vig does not i
   assert.ok(legacyEvs.every((e) => e.evPercent > 2));
 });
 
+test('findPositiveEV never measures a first-half price against a full-time consensus', () => {
+  // The live defect, in the shape the feeds actually publish. One book prices
+  // UNDER 0.5 first half at 10.00 and the same key full time at 12.00, and the
+  // two windows settle at different times. Keyed without the period they were
+  // one bucket, so each was measured against the other's implied probability
+  // and published as a ~950% expected edge.
+  const event = makeEvent('a', 'k1', 'OVER_UNDER_0_5', [
+    { name: 'Under', odds: 10.0 },
+  ]);
+  event.markets = [
+    { key: 'OVER_UNDER_0_5', name: 'Peste / Sub', period: 'half1', line: undefined, selections: [{ name: 'Under', odds: 10.0 }] },
+    { key: 'OVER_UNDER_0_5', name: 'Peste / Sub', period: 'fulltime', line: undefined, selections: [{ name: 'Under', odds: 12.0 }] },
+  ];
+  // One leg per window is no consensus at all, so nothing is reported — which
+  // is the correct answer for two windows of one book.
+  const evs = findPositiveEV(groupByEvent([event]), { minEvPercent: 0 });
+  assert.deepEqual(evs, [], 'a settlement window is not a second opinion on another one');
+
+  // And the genuine cross-book case, both books on the same window, is kept.
+  const other = makeEvent('b', 'k1', 'OVER_UNDER_0_5', [{ name: 'Under', odds: 12.0 }]);
+  other.markets = [
+    { key: 'OVER_UNDER_0_5', name: 'Peste / Sub', period: 'fulltime', line: undefined, selections: [{ name: 'Under', odds: 12.0 }] },
+  ];
+  const agreed = findPositiveEV(groupByEvent([event, other]), { minEvPercent: 0 });
+  assert.equal(agreed.length, 0, 'two books quoting the same price carry no edge either');
+});
+
+test('findPositiveEV never measures an individual team total against the match total', () => {
+  // The second live defect. One book publishes the match total and both
+  // individual team totals under the literal key OVER_UNDER_1_5 with no line,
+  // telling them apart only by name. An individual team's price is not two
+  // prices for the match total.
+  const event = makeEvent('a', 'k1', 'OVER_UNDER_1_5', [{ name: 'Over', odds: 1.67 }]);
+  event.markets = [
+    { key: 'OVER_UNDER_1_5', name: 'Peste / Sub', period: 'fulltime', team: 'match', selections: [{ name: 'Over', odds: 1.25 }] },
+    { key: 'OVER_UNDER_1_5', name: 'Total individual Home', period: 'fulltime', team: 'home', selections: [{ name: 'Over', odds: 1.67 }] },
+    { key: 'OVER_UNDER_1_5', name: 'Total individual Away', period: 'fulltime', team: 'away', selections: [{ name: 'Over', odds: 3.86 }] },
+  ];
+  const evs = findPositiveEV(groupByEvent([event]), { minEvPercent: 0 });
+  assert.deepEqual(evs, [], 'a team total is not a second opinion on the match total');
+});
+
 test('findLowHold flags a thin-margin market', () => {
   const grouped = groupByEvent([
     makeEvent('a', 'k1', 'MATCH_ODDS', [

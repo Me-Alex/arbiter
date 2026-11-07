@@ -353,3 +353,82 @@ test('engine arbitrage pairing: generates cross-book proposition arbitrage oppor
   const ttSources = new Set(teamTotalArb.legs.map((l) => l.sourceId));
   assert.ok(ttSources.has('betano') && ttSources.has('unibet'), 'must pair Betano against Unibet for team total');
 });
+
+/**
+ * Side detection reads the team's name out of the market text, and the two
+ * spellings of that name do not have to agree. On the 2026-10-22 board favbet
+ * published "Total individual Osters IF" (ASCII) on an event whose own awayTeam
+ * is "Östers IF"; the exact, case-sensitive substring test failed, teamFor fell
+ * through to its `match` default, and a ONE-TEAM total was bucketed AS the match
+ * total. The engine then priced "Over @2.06" off that team total against
+ * excelbet's match "Under 1.5 @4.9", which is the published 31.05% "arbitrage"
+ * (and 8 more like it, up to 37.97%).
+ *
+ * Written against the engine rather than the resolver alone: a resolver that
+ * answers `away` while the engine still pairs them is exactly what published.
+ */
+test('a one-team total spelled differently from the event team cannot bucket as a match total', () => {
+  const eventKey = 'football|2026-10-24T15:00:00.000Z|ik brage|osters if';
+
+  // favbet: the away team's own goals, named without the diacritic.
+  const favbetTeamTotal = {
+    key: 'OVER_UNDER_1_5',
+    name: 'Total individual Osters IF',
+    period: 'fulltime',
+    selections: [
+      { id: 'fav_tt_o', name: 'Over', odds: 2.06, handicap: 1.5 },
+      { id: 'fav_tt_u', name: 'Under', odds: 1.73, handicap: 1.5 },
+    ],
+  };
+  // excelbet: the match total on the same line, spelled its own way.
+  const excelbetMatchTotal = {
+    key: 'TOTAL_GOALS',
+    name: 'TOTAL GOALS',
+    period: 'fulltime',
+    selections: [
+      { id: 'exb_mt_o', name: 'Over 1.5', odds: 1.12 },
+      { id: 'exb_mt_u', name: 'Under 1.5', odds: 4.9 },
+    ],
+  };
+
+  // The fixture must describe an arbitrage-SHAPED pair, or the negative
+  // assertion below would pass for the wrong reason.
+  assert.ok(1 / 2.06 + 1 / 4.9 < 1, 'fixture must be an arbitrage-shaped pair before the scope check');
+
+  const favbetCtx = { homeTeam: 'IK Brage', awayTeam: 'Östers IF' };
+  const excelbetCtx = { homeTeam: 'IK Brage', awayTeam: 'Osters IF' };
+
+  const teamContract = resolveContract(favbetTeamTotal, favbetCtx);
+  const matchContract = resolveContract(excelbetMatchTotal, excelbetCtx);
+  assert.ok(teamContract && matchContract);
+  assert.equal(teamContract.team, 'away', 'the one-team total must resolve to the side it counts');
+  assert.equal(teamContract.family, 'OVER_UNDER');
+  assert.equal(matchContract.team, 'match');
+  assert.notEqual(
+    bucketKeyForContract(eventKey, teamContract),
+    bucketKeyForContract(eventKey, matchContract),
+    'a one-team total must never share a bucket with the match total',
+  );
+
+  const favbetEvent = { id: 'fav_ev', eventKey, sourceId: 'favbet', sport: 'Football', league: 'Superettan', homeTeam: 'IK Brage', awayTeam: 'Östers IF', kickoff: '2026-10-24T15:00:00.000Z', markets: [favbetTeamTotal] };
+  const excelbetEvent = { id: 'exb_ev', eventKey, sourceId: 'excelbet', sport: 'Football', league: 'Superettan', homeTeam: 'IK Brage', awayTeam: 'Osters IF', kickoff: '2026-10-24T15:00:00.000Z', markets: [excelbetMatchTotal] };
+
+  const arbs = findArbitrage(groupByEvent([favbetEvent, excelbetEvent]));
+  assert.equal(arbs.length, 0, `a one-team total must not be priced against the match total, got ${arbs.length} arb(s)`);
+});
+
+test('a one-team total whose side cannot be named is refused, never defaulted to match', () => {
+  const selections = [{ name: 'Over', odds: 2.06 }, { name: 'Under', odds: 1.73 }];
+  // favbet's wording without a nameable side, and with no event context at all:
+  // the two ways the side used to come back as `match`.
+  const unnameable = resolveContract({ key: 'OVER_UNDER_1_5', name: 'Total individual', period: 'fulltime', selections }, { homeTeam: 'IK Brage', awayTeam: 'Östers IF' });
+  const noContext = resolveContract({ key: 'OVER_UNDER_1_5', name: 'Total individual Östers IF', period: 'fulltime', selections }, {});
+  assert.equal(unnameable, null, 'an unnameable one-team total must be refused, not filed as a match total');
+  assert.equal(noContext, null, 'a one-team total with no event context must be refused');
+
+  // The refusal must not swallow the genuine match total it used to collide with.
+  const match = resolveContract({ key: 'TOTAL_GOALS', name: 'Peste / Sub', period: 'fulltime', selections: [{ name: 'Over 1.5' }, { name: 'Under 1.5' }] }, { homeTeam: 'IK Brage', awayTeam: 'Östers IF' });
+  assert.ok(match, 'a plain match total must still resolve');
+  assert.equal(match.team, 'match');
+});
+

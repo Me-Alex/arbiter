@@ -2,6 +2,7 @@ import { eventIdentityKey, impliedProbability, teamsMatch, tokens } from '../sha
 import { round2, round4 } from '../shared/math.mjs';
 import {
   canonicalOutcome,
+  canonicalPeriod,
   supportedContractForMarket,
   isMatchResultMarket,
   isFullTimeMarket,
@@ -12,7 +13,7 @@ import {
   teamFor,
   isTradablePeriod,
 } from './market-contracts.mjs';
-import { isSharedFeed } from './feed-groups.mjs';
+import { feedGroupOf, isSharedFeed } from './feed-groups.mjs';
 import { leaguesMatch } from './league-aliases.mjs';
 
 /**
@@ -35,6 +36,33 @@ function pairingScope(market) {
   return market?.live === true ? 'live' : 'prematch';
 }
 
+/**
+ * The team scope a row names, or null when it names none.
+ *
+ * A resolved contract reports `match` for the match total, and that is the
+ * ABSENCE of a team scope rather than a scope of its own: `family` already says
+ * the row is a total and `subject` says what it counts, so `team: 'match'` only
+ * restates what the reader already has - and it would put the word "Match" in
+ * front of every ordinary total in the frontend. Both builders publish the field
+ * through here, so the arbitrage and middles families cannot come to mean
+ * different things by the same name.
+ *
+ * Re-measured 2026-10-20 on the 105-snapshot capture (40,717 events): of
+ * 109,044 OVER_UNDER contracts, 89,589 are match totals and 19,455 name a side
+ * (9,963 home, 9,492 away), so the case this field exists for is real - though
+ * no middle on that day's board carried one (all 33 published middles were
+ * match totals). The "12 of the 51 middles name a side" figure this comment
+ * used to quote predates the HCTG fix in market-contracts.mjs: HCTG resolved to
+ * `home`, so the rows it counted were match totals wearing a team's name.
+ *
+ * @param {{team?: (string|null)}|null|undefined} contract
+ * @returns {string|null}
+ */
+function namedTeam(contract) {
+  const team = contract?.team;
+  return team === 'home' || team === 'away' ? team : null;
+}
+
 export function buildSelectionIndex(events) {
   const index = new Map();
   for (const [eventKey, instances] of groupByEvent(events)) {
@@ -48,7 +76,14 @@ export function buildSelectionIndex(events) {
         // caused every non-MATCH_ODDS opportunity (including all four BTTS
         // arbs found on 2026-09-28) to be rejected as "leg missing" even
         // though the price was alive on the book.
-        const contract = resolveContract(market, { sport: event.sport });
+        // The event's team context, because that is what findArbitrage
+        // passes and this index has to resolve the market the SAME way or a
+        // leg can be indexed in one scope and priced in another. Without it
+        // `teamFor` cannot read a side off "Total individual Östers IF", and
+        // since it now refuses a per-team total whose side it cannot name,
+        // such a market would vanish from the index and every leg priced
+        // from it would be reported as missing from the re-scrape.
+        const contract = resolveContract(market, { homeTeam: event.homeTeam, awayTeam: event.awayTeam, sport: event.sport });
         if (!contract) continue;
         for (const selection of market.selections || []) {
           // The pairing scope travels with the key for the same reason it travels
@@ -58,7 +93,12 @@ export function buildSelectionIndex(events) {
           const candidates = index.get(key) || [];
           candidates.push({ sourceId: event.sourceId, odds: Number(selection.odds), handicap: selection.handicap ?? null,
             kickoff: event.kickoff, providerEventId: event.providerEventId || event.id,
-            marketId: market.id, selectionId: selection.id });
+            marketId: market.id, selectionId: selection.id,
+            // The scope this price belongs to, so verification can tell a
+            // re-quote of the same bet from a re-quote of a different one.
+            team: contract.team ?? null,
+            subject: contract.subject ?? null,
+            lineKey: contract.lineKey ?? null });
           index.set(key, candidates);
         }
       }
@@ -402,15 +442,15 @@ export function groupByEvent(events) {
  * - Double Chance 12 vs 3-Way Draw
  * - Draw No Bet <-> Asian Handicap 0.0 (Home/Away, void on tie)
  */
-function routeSyntheticDerivativeLegs(syntheticBuckets, eventKey, ev, m, contract) {
+function routeSyntheticDerivativeLegs(syntheticBuckets, eventKey, ev, m, contract, ah05Legs) {
   if (!contract || !m.selections || !Array.isArray(m.selections)) return;
   const subject = contract.subject || '_';
   if (subject !== '_' && subject !== 'goals') return;
   const period = contract.period || 'fulltime';
-  if (period !== 'fulltime' && period !== 'half1' && period !== 'half2' && period !== 'unknown') return;
+  if (period !== 'fulltime' && period !== 'half1' && period !== 'half2') return;
   const scope = pairingScope(m);
 
-  const getLeg = (s, outcome) => {
+  const getLeg = (s, outcome, fromAh05 = false) => {
     const leg = {
       sourceId: ev.sourceId,
       selection: s.name,
@@ -429,10 +469,11 @@ function routeSyntheticDerivativeLegs(syntheticBuckets, eventKey, ev, m, contrac
     if (s.liquidity !== undefined && s.liquidity !== null) leg.liquidity = s.liquidity;
     if (s.depth) leg.depth = s.depth;
     if (s.isExchange) leg.isExchange = true;
+    if (fromAh05 && ah05Legs) ah05Legs.add(leg);
     return leg;
   };
 
-  const record = (synthType, outcomes, targetOutcome, s) => {
+  const record = (synthType, outcomes, targetOutcome, s, fromAh05 = false) => {
     const odds = Number(s.odds);
     if (!Number.isFinite(odds) || odds <= 1) return;
     const bucketKey = `${eventKey}::SYNTHETIC::${synthType}::${period}::${scope}`;
@@ -456,8 +497,9 @@ function routeSyntheticDerivativeLegs(syntheticBuckets, eventKey, ev, m, contrac
     const choices = b.choices.get(targetOutcome);
     if (!choices) return;
     const cur = choices.get(ev.sourceId);
-    if (!cur || odds > cur.odds) {
-      choices.set(ev.sourceId, getLeg(s, targetOutcome));
+    const preferPlain1x2Tie = synthType === '1X2_AH05' && !fromAh05 && Boolean(cur && ah05Legs?.has(cur)) && odds === cur.odds;
+    if (!cur || odds > cur.odds || preferPlain1x2Tie) {
+      choices.set(ev.sourceId, getLeg(s, targetOutcome, fromAh05));
     }
   };
 
@@ -481,10 +523,13 @@ function routeSyntheticDerivativeLegs(syntheticBuckets, eventKey, ev, m, contrac
       const oc = canonicalOutcomeFor(s.name, contract, { homeTeam: ev.homeTeam, awayTeam: ev.awayTeam });
       if (oc === 'away') {
         record('1X_VS_AWAY', ['home_or_draw', 'away'], 'away', s);
+        record('1X2_AH05', ['home', 'draw', 'away'], 'away', s, false);
       } else if (oc === 'home') {
         record('X2_VS_HOME', ['draw_or_away', 'home'], 'home', s);
+        record('1X2_AH05', ['home', 'draw', 'away'], 'home', s, false);
       } else if (oc === 'draw') {
         record('12_VS_DRAW', ['home_or_away', 'draw'], 'draw', s);
+        record('1X2_AH05', ['home', 'draw', 'away'], 'draw', s, false);
       }
     }
   }
@@ -499,13 +544,26 @@ function routeSyntheticDerivativeLegs(syntheticBuckets, eventKey, ev, m, contrac
           record('1X_VS_AWAY', ['home_or_draw', 'away'], 'home_or_draw', s);
         } else if (oc === 'away') {
           record('1X_VS_AWAY', ['home_or_draw', 'away'], 'away', s);
+          record('1X2_AH05', ['home', 'draw', 'away'], 'away', s, true);
         }
       }
     } else if (lk === '-0.5/0.5') {
+      // Home -0.5 / away +0.5, by the signature handicapLineKey builds. The
+      // home side must win; the away side wins or draws. This branch reads SIDE
+      // DIRECTION off the key, so the key has to know it. It did not while a
+      // team-named pair was ordered by the numeric sign of its two lines: an
+      // away -0.5 market sorted onto this key, so betano FAHC
+      // ("CS Dinamo Bucuresti +0.5" / "Skanderborg Aarhus -0.5") booked the away
+      // leg as `draw_or_away` - pricing a draw that leg loses. Paired against a
+      // home moneyline it published a +69.74 "guaranteed" arbitrage whose two
+      // legs BOTH lose on a draw. The resolver now places a named leg by team
+      // identity, and the key this branch receives says which side holds the
+      // line. Do not reintroduce a sign-ordered key here.
       for (const s of m.selections) {
         const oc = canonicalOutcomeFor(s.name, contract, { homeTeam: ev.homeTeam, awayTeam: ev.awayTeam });
         if (oc === 'home') {
           record('X2_VS_HOME', ['draw_or_away', 'home'], 'home', s);
+          record('1X2_AH05', ['home', 'draw', 'away'], 'home', s, true);
         } else if (oc === 'away') {
           record('X2_VS_HOME', ['draw_or_away', 'home'], 'draw_or_away', s);
         }
@@ -540,6 +598,7 @@ export function findArbitrage(grouped, { minMarginPercent = 0, includeSynthetic 
   // Only model contracts whose outcomes are known to be mutually exclusive and complete.
   const buckets = new Map();
   const syntheticBuckets = new Map();
+  const ah05Legs = new WeakSet();
   for (const [eventKey, instances] of grouped) {
     for (const ev of instances) {
       for (const m of ev.markets || []) {
@@ -624,7 +683,7 @@ export function findArbitrage(grouped, { minMarginPercent = 0, includeSynthetic 
         // sum < 1 test on them would either silently miss or invent arbs.
         // DOUBLE_CHANCE (1X/12/X2) is recognized but excluded here.
         if (includeSynthetic && contract) {
-          routeSyntheticDerivativeLegs(syntheticBuckets, eventKey, ev, m, contract);
+          routeSyntheticDerivativeLegs(syntheticBuckets, eventKey, ev, m, contract, ah05Legs);
         }
         if (contract.arbEligible === false) continue;
         // Bucket by (event × family × period × line) so a half-time BTTS can
@@ -703,6 +762,7 @@ export function findArbitrage(grouped, { minMarginPercent = 0, includeSynthetic 
     let best = null;
     for (const legs of combinations) {
       if (new Set(legs.map((leg) => leg.sourceId)).size < 2) continue;
+      if (b.syntheticType === '1X2_AH05' && !legs.some((leg) => ah05Legs.has(leg))) continue;
       // An arbitrage needs legs that can disagree. Two brands resold from one
       // provider cannot: their prices are one feed, and any gap between the two
       // captured responses is a timing artifact, not an edge. See feed-groups.mjs.
@@ -733,7 +793,8 @@ export function findArbitrage(grouped, { minMarginPercent = 0, includeSynthetic 
       marginPercent: round2(best.marginPercent),
     };
     if (b.contract.subject && b.contract.subject !== '_') opp.subject = b.contract.subject;
-    if (b.contract.team && b.contract.team !== '_') opp.team = b.contract.team;
+    const named = namedTeam(b.contract);
+    if (named) opp.team = named;
     if (b.syntheticType) {
       opp.synthetic = true;
       opp.syntheticType = b.syntheticType;
@@ -741,6 +802,70 @@ export function findArbitrage(grouped, { minMarginPercent = 0, includeSynthetic 
     out.push(opp);
   }
   return out;
+}
+
+/**
+ * The identity every over/under market is bucketed by, resolved rather than
+ * spelled.
+ *
+ * `resolveContract` is the same call `findArbitrage` makes, so the two scans
+ * now agree on which markets exist. A market that resolves contributes its own
+ * family, period, subject and team; a market that resolves to another family -
+ * an Asian handicap, a match result - is refused, which is what keeps a
+ * push-capable spread out of a partition test that cannot see a push.
+ *
+ * A market the resolver refuses is admitted only when it is a clean two-sided
+ * total whose line the resolver could not name. Most feeds carry the line in
+ * the key or the selection name and the resolver reads both; a handful - betway,
+ * betinia, campobet on a `TOTAL_GOALS` key - put it in `selection.handicap`
+ * alone behind bare "Peste"/"Sub" labels. Those markets are real and this scan
+ * priced them before the identity changed, so they keep their place, on the one
+ * condition the resolver applies to an encoded key: every declared line must be
+ * present and on the half. A whole or quarter line is push-capable - betinia's
+ * `TOTAL_GOALS` at 2.25 is one - and the band a middle is priced from does not
+ * survive a push, so those are refused rather than handed a family the engine
+ * would then pair as if they could not push.
+ *
+ * @param {object} market
+ * @param {object} event
+ * @returns {{family:string,period:string,subject:(string|null),team:(string|null)}|null}
+ */
+function middleIdentity(market, event) {
+  const ctx = { homeTeam: event.homeTeam, awayTeam: event.awayTeam, sport: event.sport };
+  const contract = resolveContract(market, ctx);
+  if (contract) {
+    if (contract.family !== 'OVER_UNDER') return null;
+    return {
+      family: contract.family,
+      period: contract.period,
+      subject: contract.subject || null,
+      team: contract.team || null,
+      lineKey: contract.lineKey || null,
+    };
+  }
+  let seen = 0;
+  for (const s of market.selections) {
+    const { side, line } = parseSelection(s?.name, s?.handicap);
+    if (side !== 'over' && side !== 'under') return null;
+    if (line === null || !isHalfLine(line)) return null;
+    seen++;
+  }
+  if (!seen) return null;
+  return {
+    family: 'OVER_UNDER',
+    period: canonicalPeriod(market),
+    subject: subjectFor(market) || null,
+    team: teamFor(market, ctx) || null,
+  };
+}
+
+/**
+ * A line a two-sided total can be quoted on without a push. Whole lines push on
+ * the number and quarter lines half-push on it; either breaks the over/under
+ * partition the middle scan prices from.
+ */
+function isHalfLine(n) {
+  return Number.isFinite(n) && n % 1 !== 0 && Math.round(n * 2) === n * 2;
 }
 
 /**
@@ -773,13 +898,24 @@ export function findMiddles(grouped, {
     for (const ev of instances) {
       for (const m of ev.markets || []) {
         if (!m || !Array.isArray(m.selections)) continue;
-        if (!looksLikeTotalsOrHandicap(m.key)) continue;
-        const team = m.team || teamFor(m, { homeTeam: ev.homeTeam, awayTeam: ev.awayTeam }) || 'match';
-        const subject = m.subject || subjectFor(m) || 'goals';
-        const key = `${eventKey}::${String(m.key).split('_').slice(0, 2).join('_')}::${subject}::${team}::${pairingScope(m)}`;
+        // The bucket is the resolved contract, not the provider's key. The key
+        // was the identity until now, as a two-word prefix, and it does not
+        // survive a real capture: OVER_UNDER_2_5, TOTAL_GOALS, total_goals and
+        // TOTAL are one bet under four spellings, and each spelling was its own
+        // bucket, so a book writing one could only ever be paired with a book
+        // writing the same one. Measured on a 105-book capture, canonicalising
+        // that prefix took this scan from 2,050 rows to 10,628 and brought
+        // unibet, netbet, superbet, betano, fortuna and casa-pariurilor onto a
+        // board they had never appeared on. The contract also supplies the
+        // period, which the prefix never carried: 9,099 half1 and 3,813 half2
+        // totals shared buckets with the 73,703 full-time ones, so a first-half
+        // total could be paired against a full-time total on the same line.
+        const identity = middleIdentity(m, ev);
+        if (!identity) continue;
+        const key = `${eventKey}::${identity.family}::${identity.period}::${identity.subject || '_'}::${identity.team || '_'}::${pairingScope(m)}`;
         let bucket = buckets.get(key);
         if (!bucket) {
-          bucket = { eventKey, marketKey: m.key, legs: [], meta: { event: ev, market: m } };
+          bucket = { eventKey, marketKey: m.key, identity, legs: [], meta: { event: ev, market: m } };
           buckets.set(key, bucket);
         }
         for (const s of m.selections) {
@@ -790,14 +926,17 @@ export function findMiddles(grouped, {
           // one of them and the totals branch produced nothing at all. The
           // name is read first and the field is the fallback, so an adapter
           // that does fill it in is still honoured.
-          const { side, line } = parseSelection(s.name, s.handicap);
+          const fallbackLine = s.handicap ?? s.line ?? m.line ?? (identity.lineKey ? Number(identity.lineKey) : null);
+          const { side, line } = parseSelection(s.name, fallbackLine);
           if (side !== 'over' && side !== 'under') continue;
-          if (line === null || !Number.isFinite(line)) continue;
+          if (line === null || !isHalfLine(line)) continue;
+          const odds = Number(s.odds);
+          if (!Number.isFinite(odds) || odds <= 1) continue;
           bucket.legs.push({
             sourceId: ev.sourceId,
             selection: s.name,
             side,
-            odds: Number(s.odds),
+            odds,
             handicap: line,
             marketKey: m.key,
             eventKey,
@@ -812,10 +951,23 @@ export function findMiddles(grouped, {
   for (const b of buckets.values()) {
     if (b.legs.length < 2) continue;
 
+    // Collapse clone-feed resellers at the same (feedGroup, side, handicap) to
+    // the single best-priced leg so a multi-brand Altenar/Digitain/Exalogic
+    // cluster cannot multiply identical middle windows across clone brands.
+    const dedupedByFeed = new Map();
+    for (const leg of b.legs) {
+      const feedKey = `${feedGroupOf(leg.sourceId) || leg.sourceId}::${leg.side}::${leg.handicap}`;
+      const prev = dedupedByFeed.get(feedKey);
+      if (!prev || leg.odds > prev.odds) {
+        dedupedByFeed.set(feedKey, leg);
+      }
+    }
+    const uniqueLegs = [...dedupedByFeed.values()];
+
     // Over line X against Under line Y where Y > X: the band between them is
     // the window in which both pay.
-    const overLegs = b.legs.filter((l) => l.side === 'over');
-    const underLegs = b.legs.filter((l) => l.side === 'under');
+    const overLegs = uniqueLegs.filter((l) => l.side === 'over');
+    const underLegs = uniqueLegs.filter((l) => l.side === 'under');
     for (const low of overLegs) {
       for (const high of underLegs) {
         // A middle needs two lines that can disagree. The two sides of one
@@ -921,7 +1073,7 @@ function toLine(text) {
  * plain middle with its speculative both-win ROI and even-stake risk, still
  * gated by the caller's thresholds.
  *
- * @param {object} b      the bucket (eventKey, marketKey, meta.event)
+ * @param {object} b      the bucket (eventKey, marketKey, identity, meta.event)
  * @param {object} low    the lower-line leg (Over / negative spread)
  * @param {object} high   the higher-line leg (Under / positive spread)
  * @param {number} gap    high.handicap - low.handicap
@@ -929,24 +1081,6 @@ function toLine(text) {
  * @param {{maxMiddleRiskPercent:number,minMiddleRoiPercent:number}} opts
  * @returns {object|null} the middle signal, or null when it clears neither gate
  */
-/**
- * The market family a signal belongs to, taken from the market key the
- * selection was actually priced in.
- *
- * Every per-line market collapses to its family the same way the pairing
- * bucket does - OVER_UNDER_2_5 and OVER_UNDER_3_5 are both OVER_UNDER - so
- * a signal can be grouped by kind without a line number leaking into the
- * label. An unrecognised key is returned unchanged rather than guessed at.
- *
- * @param {string} marketKey
- * @returns {string}
- */
-function marketFamilyOf(marketKey) {
-  const key = String(marketKey || '');
-  if (!key) return '';
-  return key.split('_').slice(0, 2).join('_');
-}
-
 function buildMiddleSignal(b, low, high, gap, ev, opts) {
   const { maxMiddleRiskPercent = 15, minMiddleRoiPercent = 20 } = opts || {};
   const stake = 100;
@@ -973,13 +1107,13 @@ function buildMiddleSignal(b, low, high, gap, ev, opts) {
   const base = {
     type: SIGNAL_TYPES.MIDDLE,
     eventKey: b.eventKey,
-    // Derived from the legs' own market, not the bucket's. A bucket spans every
-    // line of a family (Over 2.5 and Over 3.5 share one), so `b.marketKey` is
-    // whichever market happened to open it - reporting that as this middle's
-    // market is how a totals pair came to be filed under ASIAN_HANDICAP.
-    // Middles carried no family at all, so the console could group arbitrages
-    // by market but had nothing to group middles by.
-    family: marketFamilyOf(low.marketKey || b.marketKey),
+    // The bucket's own resolved contract. The bucket spans every line of a
+    // family (Over 2.5 and Over 3.5 share one), so `b.marketKey` is whichever
+    // market happened to open it - reading a family off a provider key is how a
+    // totals pair came to be filed under ASIAN_HANDICAP. Every market in a
+    // bucket resolves to the same contract, so the row and its legs cannot
+    // disagree about what was priced.
+    family: b.identity.family,
     marketKey: b.marketKey,
     live: b.meta.market.live === true,
     sport: ev.sport,
@@ -992,6 +1126,18 @@ function buildMiddleSignal(b, low, high, gap, ev, opts) {
     roiPercent: round2(roiPercent),
     riskPercent: round2(riskPercent),
   };
+
+  // Subject and team travel with the row, exactly as the arbitrage builder
+  // publishes them. The middles builder carried neither, so a team's own total
+  // was titled as the match total and a home total could not be told from an
+  // away one - each of those names the wrong bet to a trader. Re-measured
+  // 2026-10-20: 19,455 of the 109,044 OVER_UNDER contracts on the capture name a
+  // side (9,963 home, 9,492 away) and 89,589 are match totals, so this is the
+  // case the field exists for - while the 33 middles published that day were
+  // all match totals and publish no team at all.
+  if (b.identity.subject && b.identity.subject !== '_') base.subject = b.identity.subject;
+  const named = namedTeam(b.identity);
+  if (named) base.team = named;
 
   if (isArb) {
     // Proportional (Dutch) allocation over 100 staked: each leg returns the
@@ -1016,15 +1162,6 @@ function buildMiddleSignal(b, low, high, gap, ev, opts) {
   return base;
 }
 
-function looksLikeTotalsOrHandicap(key) {
-  if (!key) return false;
-  const k = key.toUpperCase();
-  return k.startsWith('OVER_UNDER')
-      || k.startsWith('TOTAL')
-      || k.startsWith('AH_')
-      || k.includes('HANDICAP');
-}
-
 /**
  * Positive EV scan: per-leg, implied probability vs the consensus probability
  * (median of the *other* books' implied probabilities for the same selection).
@@ -1042,6 +1179,61 @@ function looksLikeTotalsOrHandicap(key) {
  *   consensusProbability, evPercent,
  * }>}
  */
+/**
+ * A complete 2- or 3-way market whose inverse-odds sum is far above any real
+ * book's hold is not a price, it is an empty ladder.
+ *
+ * Measured on the live capture: Betfair published Tatung v Taipei
+ * "Over 0.5 @ 1.08 / Under 0.5 @ 1.15" — an inverse sum of 1.79, i.e. a 79%
+ * hold. Both sides are the exchange's floor quote on an unmatched ladder, not a
+ * market. As a counterparty vote it moved the Under 0.5 consensus to 0.48, and
+ * every Digitain brand quoting the real 6.60 was published at +219% EV (197
+ * such rows across the capture). The worst genuine retail holds sit near 12%
+ * on a two-way line and near 20% on a three-way one, so the ceilings below
+ * leave a wide margin above every real price and cut only the empty ladders.
+ *
+ * Only complete markets are judged: a partial or multi-outcome market (correct
+ * score, outrights) legitimately sums higher and is left alone.
+ */
+const MAX_PLAUSIBLE_INVERSE_SUM = { 2: 1.25, 3: 1.35 };
+
+function hasImplausibleOverround(market, contract) {
+  if (contract?.degraded) return true;
+  const n = Array.isArray(contract?.outcomes) ? contract.outcomes.length : 0;
+  const ceiling = contract?.family === 'DOUBLE_CHANCE' ? 2.45 : MAX_PLAUSIBLE_INVERSE_SUM[n];
+  if (!ceiling || !Array.isArray(market?.selections) || market.selections.length !== n) return false;
+  let inverse = 0;
+  for (const s of market.selections) {
+    const o = Number(s?.odds);
+    if (!Number.isFinite(o) || o <= 1) return false;
+    inverse += 1 / o;
+  }
+  return inverse > ceiling;
+}
+
+/**
+ * Power-method devigging exponent k >= 1 such that sum_i (q_i ^ k) = 1.
+ *
+ * Proportional devigging (`q_i / sum(q)`) divides a 1.01 heavy favorite and a
+ * capped 14.00 longshot by the same factor, hallucinating a ~93% favorite and a
+ * ~6.7% longshot (+236% false EV against Betfair 50.0). Raising implied
+ * probabilities to a common power k > 1 concentrates vig removal on longshots
+ * (favorite-longshot bias) while remaining identical to 0.50/0.50 on even lines.
+ */
+function solvePowerDevigExponent(rawProbs) {
+  let hi = 2;
+  const sumAt = (k) => rawProbs.reduce((acc, q) => acc + (q ** k), 0);
+  while (hi < 64 && sumAt(hi) > 1) hi *= 2;
+  if (sumAt(hi) > 1) return null;
+  let lo = 1;
+  for (let i = 0; i < 32; i++) {
+    const mid = (lo + hi) / 2;
+    if (sumAt(mid) > 1) lo = mid;
+    else hi = mid;
+  }
+  return (lo + hi) / 2;
+}
+
 export function findPositiveEV(grouped, { minEvPercent = 2, devig = false } = {}) {
   const out = [];
   // Step 1: collect (eventKey, marketKey, selectionKey) → all legs across books.
@@ -1050,60 +1242,100 @@ export function findPositiveEV(grouped, { minEvPercent = 2, devig = false } = {}
     for (const ev of instances) {
       for (const m of ev.markets || []) {
         if (!m || !Array.isArray(m.selections)) continue;
-        // When devig is requested, compute market overround across valid selections
-        // to enable fair (devigged) probability calculation.
+        const ctx = { homeTeam: ev.homeTeam, awayTeam: ev.awayTeam, sport: ev.sport };
+        const contract = resolveContract(m, ctx);
+        if (contract && !isTradablePeriod(contract.period)) continue;
+        if (contract && hasImplausibleOverround(m, contract)) continue;
+        // When devig is requested, compute fair probabilities across valid selections
+        // using Power Devigging (or 2.0-partition scaling for Double Chance).
         let marketOverround = 0;
-        let validSelections = 0;
+        const validImplied = [];
         if (devig) {
           for (const sel of m.selections) {
             const o = Number(sel?.odds);
-            if (Number.isFinite(o) && o > 1) {
-              marketOverround += 1 / o;
-              validSelections += 1;
+            if (Number.isFinite(o) && o > 1 && o !== Infinity) {
+              const q = 1 / o;
+              marketOverround += q;
+              validImplied.push(q);
             }
           }
         }
+        const isDoubleChance = contract?.family === 'DOUBLE_CHANCE';
+        const powerExponent = devig && !isDoubleChance && validImplied.length >= 2 && marketOverround > 1
+          ? solvePowerDevigExponent(validImplied)
+          : null;
         for (const s of m.selections) {
-          const selKey = `${m.key}::${pairingScope(m)}::${String(s.name || '').toLowerCase().trim()}`;
-          const k = `${eventKey}::${selKey}`;
+          const odds = Number(s.odds);
+          if (!Number.isFinite(odds) || odds <= 1) continue;
+          let k;
+          if (contract) {
+            const outcome = canonicalOutcomeFor(s.name, contract, ctx)
+              ?? canonicalOutcome(s.name, { marketKey: m.key, homeTeam: ev.homeTeam, awayTeam: ev.awayTeam });
+            if (!outcome) continue;
+            k = `${bucketKeyForContract(eventKey, contract)}::${pairingScope(m)}::${outcome}`;
+          } else {
+            const period = canonicalPeriod(m);
+            if (!isTradablePeriod(period)) continue;
+            const evTeam = teamFor(m, ctx);
+            if (evTeam === null) continue;
+            const selKey = `${m.key}::${period}::${evTeam}::${pairingScope(m)}::${String(s.name || '').toLowerCase().trim()}`;
+            k = `${eventKey}::${selKey}`;
+          }
           let b = buckets.get(k);
           if (!b) {
-            b = { eventKey, marketKey: m.key, selection: s.name, legs: [], meta: { event: ev, market: m } };
+            b = { eventKey, marketKey: m.key, selection: s.name, legsBySource: new Map(), meta: { event: ev, market: m } };
             buckets.set(k, b);
           }
-          const odds = Number(s.odds);
-          const rawImplied = Number.isFinite(odds) && odds > 1 ? 1 / odds : null;
-          // Devigged (fair) probability: if devig is true, the market is complete and overround > 1,
-          // strip the bookmaker vig proportionally so the consensus reflects true fair probabilities.
-          const deviggedProb = devig && rawImplied && validSelections >= 2 && marketOverround > 1
-            ? rawImplied / marketOverround
-            : rawImplied;
-          b.legs.push({
-            sourceId: ev.sourceId,
-            odds: s.odds,
-            handicap: s.handicap ?? null,
-            eventUrl: ev.sourceUrl || null,
-            deviggedProb,
-          });
+          const rawImplied = 1 / odds;
+          let deviggedProb = rawImplied;
+          if (devig && validImplied.length >= 2) {
+            if (isDoubleChance && validImplied.length === 3 && marketOverround > 2) {
+              deviggedProb = (rawImplied / marketOverround) * 2;
+            } else if (!isDoubleChance && marketOverround > 1) {
+              deviggedProb = powerExponent !== null ? (rawImplied ** powerExponent) : (rawImplied / marketOverround);
+            }
+          }
+          const prev = b.legsBySource.get(ev.sourceId);
+          if (!prev || odds > Number(prev.odds)) {
+            b.legsBySource.set(ev.sourceId, {
+              sourceId: ev.sourceId,
+              selection: s.name,
+              marketKey: m.key,
+              odds: s.odds,
+              handicap: s.handicap ?? null,
+              eventUrl: ev.sourceUrl || null,
+              deviggedProb,
+            });
+          }
         }
       }
     }
   }
   for (const b of buckets.values()) {
-    if (b.legs.length < 2) continue;
-    for (const l of b.legs) {
-      // The consensus must be built from the *other* books. Including the leg
-      // under test makes every leg at least as likely as the median that
-      // contains it, so with the default minMarginPercent of 0 each market would
-      // report its own legs back as non-negative EV. Brands sharing a feed are
-      // excluded too: a consensus drawn from one provider's resold copies is not
-      // an independent market view. See feed-groups.mjs.
-      // When devig is requested, consensus is built from fair probabilities stripped of vig.
-      const probs = b.legs
-        .filter((other) => other !== l && !isSharedFeed(l.sourceId, other.sourceId))
-        .map((other) => (devig ? other.deviggedProb : impliedProbability(other.odds)))
-        .filter(Number.isFinite);
-      if (probs.length < 1) continue;
+    const legs = [...b.legsBySource.values()];
+    if (legs.length < 2) continue;
+    for (const l of legs) {
+      // Consensus must be built strictly from *other* independent feeds:
+      // 1. Exclude same sourceId (prevents self-comparison across duplicate keys).
+      // 2. Exclude shared-feed peers of `l.sourceId`.
+      // 3. Collapse remaining counterparties to one vote per independent feed
+      //    group so an 8-brand clone cluster cannot outvote independent books.
+      const probsByFeed = new Map();
+      for (const other of legs) {
+        if (other.sourceId === l.sourceId || isSharedFeed(l.sourceId, other.sourceId)) continue;
+        const prob = devig ? other.deviggedProb : impliedProbability(other.odds);
+        if (!Number.isFinite(prob)) continue;
+        const feedKey = feedGroupOf(other.sourceId) || other.sourceId;
+        const list = probsByFeed.get(feedKey);
+        if (list) list.push(prob);
+        else probsByFeed.set(feedKey, [prob]);
+      }
+      if (probsByFeed.size < 1) continue;
+      const probs = [];
+      for (const list of probsByFeed.values()) {
+        list.sort((x, y) => x - y);
+        probs.push(list[Math.floor(list.length / 2)]);
+      }
       probs.sort((x, y) => x - y);
       const consensus = probs[Math.floor(probs.length / 2)];
       if (!Number.isFinite(consensus) || consensus <= 0) continue;
@@ -1119,9 +1351,11 @@ export function findPositiveEV(grouped, { minEvPercent = 2, devig = false } = {}
         type: SIGNAL_TYPES.POSITIVE_EV,
         eventKey: b.eventKey,
         sport: b.meta.event.sport,
-        marketKey: b.marketKey,
+        homeTeam: b.meta.event.homeTeam,
+        awayTeam: b.meta.event.awayTeam,
+        marketKey: l.marketKey || b.marketKey,
         live: b.meta.market.live === true,
-        selection: b.selection,
+        selection: l.selection || b.selection,
         sourceId: l.sourceId,
         odds: l.odds,
         consensusProbability: round4(consensus),
@@ -1142,6 +1376,11 @@ export function findLowHold(grouped, { maxHoldPercent = 4 } = {}) {
     for (const ev of instances) {
       for (const m of ev.markets || []) {
         if (!m || !Array.isArray(m.selections) || m.selections.length < 2) continue;
+        const contract = resolveContract(m, { homeTeam: ev.homeTeam, awayTeam: ev.awayTeam, sport: ev.sport });
+        if (contract && (contract.degraded || contract.family === 'DOUBLE_CHANCE'
+          || (Array.isArray(contract.outcomes) && m.selections.length !== contract.outcomes.length))) {
+          continue;
+        }
         // A missing or malformed odds makes the sum NaN, and NaN fails both
         // comparisons below — which would publish a low-hold signal with a
         // null hold. Drop the market instead of reporting garbage.
@@ -1156,6 +1395,10 @@ export function findLowHold(grouped, { maxHoldPercent = 4 } = {}) {
           // Same reason as the positive-EV signal above: the market belongs to
           // one event, so the record names the competition it came from.
           sport: ev.sport,
+          // And the same fixture reason: this row draws the names above the
+          // key too, and it had none to draw.
+          homeTeam: ev.homeTeam,
+          awayTeam: ev.awayTeam,
           marketKey: m.key,
           sourceId: ev.sourceId,
           selectionCount: m.selections.length,

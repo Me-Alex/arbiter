@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ArbEdge — Settings</title>
+  <title data-i18n="titleSettings">ArbEdge — Settings</title>
   <link rel="icon" href="/favicon.svg">
   <script src="/js/theme.js"></script>
   <link rel="stylesheet" href="/css/theme.css">
@@ -15,7 +15,7 @@
 <!-- Main Content -->
   <main class="flex-1 p-4 lg:p-6 space-y-6">
     <div class="flex items-center justify-between">
-      <h1 class="text-xl lg:text-2xl font-bold text-[var(--edge-textBright)]">Settings</h1>
+      <h1 class="text-xl lg:text-2xl font-bold text-[var(--edge-textBright)]" data-i18n="settings">Settings</h1>
       <span id="save-state" class="text-xs text-[var(--edge-textMuted)]" aria-live="polite"></span>
     </div>
 
@@ -23,25 +23,25 @@
          an email; there is no auth in this app (admin/login.html says so), so
          this slot holds the run the engine is actually configured to perform. -->
     <div class="card p-4 lg:p-5">
-      <h2 class="text-sm font-semibold text-[var(--edge-textBright)] mb-4">Scanner Engine</h2>
+      <h2 class="text-sm font-semibold text-[var(--edge-textBright)] mb-4" data-i18n="scannerEngine">Scanner Engine</h2>
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <div>
-          <label class="block text-xs text-[var(--edge-textMuted)] mb-1" for="set-interval">Interval (minutes)</label>
+          <label class="block text-xs text-[var(--edge-textMuted)] mb-1" for="set-interval" data-i18n="interval">Interval (minutes)</label>
           <input type="number" id="set-interval" class="w-full" min="1" step="1">
         </div>
         <div>
-          <label class="block text-xs text-[var(--edge-textMuted)] mb-1" for="set-book">Bookmaker</label>
+          <label class="block text-xs text-[var(--edge-textMuted)] mb-1" for="set-book" data-i18n="bookmakerColumn">Bookmaker</label>
           <select id="set-book" class="w-full"></select>
         </div>
         <div class="flex items-end gap-3">
           <div class="flex-1">
-            <label class="block text-xs text-[var(--edge-textMuted)] mb-1" for="set-profile">Scan profile</label>
+            <label class="block text-xs text-[var(--edge-textMuted)] mb-1" for="set-profile" data-i18n="profile">Scan profile</label>
             <select id="set-profile" class="w-full"></select>
           </div>
-          <button id="btn-scrape-now" class="px-3 py-2 rounded-lg text-xs bg-[var(--edge-surface2)] border border-[var(--edge-border)] text-[var(--edge-text)] hover:text-[var(--edge-textBright)] hover:border-[var(--edge-border2)] transition-colors focus-ring">Scan now</button>
+          <button id="btn-scrape-now" class="px-3 py-2 rounded-lg text-xs bg-[var(--edge-surface2)] border border-[var(--edge-border)] text-[var(--edge-text)] hover:text-[var(--edge-textBright)] hover:border-[var(--edge-border2)] transition-colors focus-ring" data-i18n="scanNow">Scan now</button>
         </div>
         <div>
-          <span class="block text-xs text-[var(--edge-textMuted)] mb-1">Engine state</span>
+          <span class="block text-xs text-[var(--edge-textMuted)] mb-1" data-i18n="engineState">Engine state</span>
           <div class="w-full px-3 py-2 rounded-lg bg-[var(--edge-blueDim)] border border-[var(--edge-blue)]/15 text-[var(--edge-blue)] text-sm font-medium flex items-center gap-2">
             <span class="status-dot bg-[var(--edge-blue)]" id="engine-dot" aria-hidden="true"></span>
             <span id="engine-state">—</span>
@@ -53,56 +53,56 @@
     <!-- Scan parameters. Stands in for the mockup's "Trading Preferences" card:
          same slot, same grid, but every field here is one the scanner reads. -->
     <div class="card p-4 lg:p-5">
-      <h2 class="text-sm font-semibold text-[var(--edge-textBright)] mb-4">Scan Parameters</h2>
+      <h2 class="text-sm font-semibold text-[var(--edge-textBright)] mb-4" data-i18n="scanParams">Scan Parameters</h2>
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <div>
-          <label class="block text-xs text-[var(--edge-textMuted)] mb-1" for="set-bankroll">Bankroll (EUR)</label>
+          <label class="block text-xs text-[var(--edge-textMuted)] mb-1" for="set-bankroll" data-i18n="settingsBankroll">Bankroll (EUR)</label>
           <input type="number" id="set-bankroll" class="w-full" min="0" step="10">
         </div>
         <div>
-          <label class="block text-xs text-[var(--edge-textMuted)] mb-1" for="set-min-ev">Minimum EV (%)</label>
+          <label class="block text-xs text-[var(--edge-textMuted)] mb-1" for="set-min-ev" data-i18n="minEv">Minimum EV (%)</label>
           <input type="number" id="set-min-ev" class="w-full" min="0" step="0.1">
         </div>
         <div>
-          <label class="block text-xs text-[var(--edge-textMuted)] mb-1" for="set-max-stake">Max stake per signal (EUR)</label>
+          <label class="block text-xs text-[var(--edge-textMuted)] mb-1" for="set-max-stake" data-i18n="maxStakePerSignal">Max stake per signal (EUR)</label>
           <input type="number" id="set-max-stake" class="w-full" min="0" step="10">
         </div>
         <div>
-          <label class="block text-xs text-[var(--edge-textMuted)] mb-1" for="set-min-margin">Minimum margin (%)</label>
+          <label class="block text-xs text-[var(--edge-textMuted)] mb-1" for="set-min-margin" data-i18n="minMargin">Minimum margin (%)</label>
           <input type="number" id="set-min-margin" class="w-full" min="0" step="0.1">
         </div>
         <div>
-          <label class="block text-xs text-[var(--edge-textMuted)] mb-1" for="set-max-age">Max age (minutes)</label>
+          <label class="block text-xs text-[var(--edge-textMuted)] mb-1" for="set-max-age" data-i18n="maxAge">Max age (minutes)</label>
           <input type="number" id="set-max-age" class="w-full" min="1" step="1">
         </div>
         <div class="flex items-center justify-between lg:justify-start lg:gap-4">
           <div class="flex-1 lg:flex-none">
-            <label class="block text-xs text-[var(--edge-textMuted)] mb-1" for="set-include-past">Include past matches</label>
+            <label class="block text-xs text-[var(--edge-textMuted)] mb-1" for="set-include-past" data-i18n="includePastMatches">Include past matches</label>
             <div class="flex items-center gap-2">
               <input type="checkbox" class="toggle" id="set-include-past">
-              <span class="text-xs text-[var(--edge-textMuted)]" id="set-include-past-label">Disabled</span>
+              <span class="text-xs text-[var(--edge-textMuted)]" id="set-include-past-label" data-i18n="disabled">Disabled</span>
             </div>
           </div>
         </div>
       </div>
       <p class="text-xs text-[var(--edge-textMuted)] mt-4">
-        Saved onto the scheduler record. The engine reads them on the next scan, and only
-        <code class="font-mono">enable()</code> can write them — so turn the scheduler on to apply a change.
+        <span data-i18n="schedulerSavedNote">Saved onto the scheduler record. The engine reads them on the next scan, and only</span>
+        <code class="font-mono">enable()</code><span data-i18n="schedulerSavedNoteTail"> can write them — so turn the scheduler on to apply a change.</span>
       </p>
     </div>
 
     <!-- Sources. Stands in for the mockup's "Bookmaker APIs" table: same table
          shape, and the columns are the ones a scrape job actually has. -->
     <div class="card p-4 lg:p-5">
-      <h2 class="text-sm font-semibold text-[var(--edge-textBright)] mb-4">Bookmaker Sources</h2>
+      <h2 class="text-sm font-semibold text-[var(--edge-textBright)] mb-4" data-i18n="bookmakerSources">Bookmaker Sources</h2>
       <div class="overflow-x-auto">
         <table class="w-full text-sm">
           <thead>
             <tr class="border-b border-[var(--edge-border)] text-left text-xs text-[var(--edge-textMuted)] uppercase tracking-wider">
-              <th class="px-3 py-2 font-medium">Bookmaker</th>
-              <th class="px-3 py-2 font-medium">Events</th>
-              <th class="px-3 py-2 font-medium">Last capture</th>
-              <th class="px-3 py-2 font-medium text-right">Action</th>
+              <th class="px-3 py-2 font-medium" data-i18n="bookmakerColumn">Bookmaker</th>
+              <th class="px-3 py-2 font-medium" data-i18n="events">Events</th>
+              <th class="px-3 py-2 font-medium" data-i18n="lastCapture">Last capture</th>
+              <th class="px-3 py-2 font-medium text-right" data-i18n="actionColumn">Action</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-[var(--edge-border)]" id="table-sources"></tbody>
@@ -113,16 +113,16 @@
     <!-- Housekeeping. Stands in for "Display": the only per-operator display
          choice this app has is the interface language, and it is real. -->
     <div class="card p-4 lg:p-5">
-      <h2 class="text-sm font-semibold text-[var(--edge-textBright)] mb-4">Display</h2>
+      <h2 class="text-sm font-semibold text-[var(--edge-textBright)] mb-4" data-i18n="displaySection">Display</h2>
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <div>
-          <label class="block text-xs text-[var(--edge-textMuted)] mb-1" for="set-lang">Language</label>
+          <label class="block text-xs text-[var(--edge-textMuted)] mb-1" for="set-lang" data-i18n="languageSetting">Language</label>
           <select id="set-lang" class="w-full"></select>
         </div>
         <div class="flex items-center justify-between">
           <div>
-            <label class="block text-sm text-[var(--edge-textBright)]" for="set-compact">Compact tables</label>
-            <div class="text-xs text-[var(--edge-textMuted)]">Reduce row padding across the console</div>
+            <label class="block text-sm text-[var(--edge-textBright)]" for="set-compact" data-i18n="compactTables">Compact tables</label>
+            <div class="text-xs text-[var(--edge-textMuted)]" data-i18n="compactTablesHint">Reduce row padding across the console</div>
           </div>
           <input type="checkbox" class="toggle" id="set-compact">
         </div>
@@ -131,13 +131,13 @@
 
     <!-- Danger Zone -->
     <div class="card p-4 lg:p-5 border-[var(--edge-red)]/20">
-      <h2 class="text-sm font-semibold text-[var(--edge-red)] mb-4">Danger Zone</h2>
+      <h2 class="text-sm font-semibold text-[var(--edge-red)] mb-4" data-i18n="dangerZone">Danger Zone</h2>
       <div class="flex items-center justify-between">
         <div>
-          <div class="text-sm text-[var(--edge-textBright)]">Delete stored data</div>
-          <div class="text-xs text-[var(--edge-textMuted)]">Remove every capture, scan and log from the data directory</div>
+          <div class="text-sm text-[var(--edge-textBright)]" data-i18n="deleteStoredData">Delete stored data</div>
+          <div class="text-xs text-[var(--edge-textMuted)]" data-i18n="deleteStoredDataHint">Remove every capture, scan and log from the data directory</div>
         </div>
-        <button id="btn-purge" class="px-3 py-1.5 rounded-lg text-xs text-[var(--edge-red)] border border-[var(--edge-red)]/20 hover:bg-[var(--edge-red)]/10 transition-colors focus-ring">Delete Data</button>
+        <button id="btn-purge" class="px-3 py-1.5 rounded-lg text-xs text-[var(--edge-red)] border border-[var(--edge-red)]/20 hover:bg-[var(--edge-red)]/10 transition-colors focus-ring" data-i18n="deleteData">Delete Data</button>
       </div>
       <div id="purge-command" class="hidden mt-4 px-3 py-2 rounded-lg bg-[var(--edge-surface2)] border border-[var(--edge-border)]">
         <div class="text-xs text-[var(--edge-textMuted)] mb-1" data-i18n="purgeCommand">Removing stored data is a CLI operation:</div>

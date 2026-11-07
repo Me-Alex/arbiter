@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
-  <title>Arbiter — Scanner</title>
+  <title data-i18n="titleScanner">Arbiter — Scanner</title>
   <script src="/js/theme.js"></script>
   <link rel="stylesheet" href="/css/theme.css">
   <link rel="stylesheet" href="/css/arbedge.css">
@@ -24,7 +24,7 @@
     </div>
 
     <div id="scan-empty" class="hidden"></div>
-    <section class="scan-summary" aria-label="Scan overview">
+    <section class="scan-summary" aria-label="Scan overview" data-i18n-aria-label="scanOverview">
       <div class="summary-item"><span class="summary-label" data-i18n="dataHealth">Data health</span><strong id="health-state">—</strong><span id="health-detail" class="summary-detail">—</span></div>
       <div class="summary-item"><span class="summary-label" data-i18n="lastUpdated">Last updated</span><strong id="scan-updated">—</strong><span id="scan-events" class="summary-detail">—</span></div>
       <div class="summary-item"><span class="summary-label" data-i18n="signalMix">Signal mix</span><strong id="signal-mix">—</strong><span class="summary-detail" data-i18n="sortedByMargin">Margin-sorted opportunities</span></div>
@@ -60,7 +60,7 @@
       </div>
       <div class="table-wrap table-clean mt-3">
         <table class="compact" id="alerts-table">
-          <caption class="sr-only">Signals clearing the alert thresholds</caption>
+          <caption class="sr-only" data-i18n="alertSignalsHint">Signals clearing the alert thresholds</caption>
           <thead><tr>
             <th scope="col" data-i18n="match">Match</th>
             <th scope="col" data-i18n="market">Market</th>
@@ -75,7 +75,7 @@
     </div>
 
     <!-- Scan parameters -->
-    <div class="card scan-controls mb-5" aria-label="Scan parameters">
+    <div class="card scan-controls mb-5" aria-label="Scan parameters" data-i18n-aria-label="scanParams">
           <h3>
           <span data-i18n="scanParams">Scan parameters</span>
           <span class="h3-meta" data-i18n="previewOnly">Preview only · does not replace the published run</span>
@@ -108,7 +108,7 @@
         </h3>
         <div class="table-wrap table-clean">
           <table class="compact" id="arb-table">
-            <caption class="sr-only">Cross-book arbitrage opportunities</caption>
+            <caption class="sr-only" data-i18n="arbSectionHint">Cross-book arbitrage opportunities</caption>
             <thead><tr>
               <th scope="col" data-i18n="match">Match</th>
               <th scope="col" data-i18n="market">Market</th>
@@ -129,7 +129,7 @@
         </h3>
         <div class="table-wrap table-clean">
           <table class="compact" id="mid-table">
-            <caption class="sr-only">Cross-book middle opportunities</caption>
+            <caption class="sr-only" data-i18n="middlesSectionHint">Cross-book middle opportunities</caption>
             <thead><tr>
               <th scope="col" data-i18n="match">Match</th>
               <th scope="col" data-i18n="lines">Lines</th>
@@ -152,7 +152,7 @@
       </h3>
       <div class="table-wrap table-clean">
         <table class="compact" id="ev-table">
-          <caption class="sr-only">Top 100 selections by expected value</caption>
+          <caption class="sr-only" data-i18n="evSectionTitle">Top 100 selections by expected value</caption>
           <thead><tr>
             <th scope="col" data-i18n="match">Match</th>
             <th scope="col" data-i18n="selection">Selection</th>
@@ -179,7 +179,7 @@
       </h3>
       <div class="table-wrap table-clean">
         <table class="compact" id="low-table">
-          <caption class="sr-only">Markets priced below the usual margin</caption>
+          <caption class="sr-only" data-i18n="lowHoldSectionHint">Markets priced below the usual margin</caption>
           <thead><tr>
             <th scope="col" data-i18n="match">Match</th>
             <th scope="col" data-i18n="market">Market</th>

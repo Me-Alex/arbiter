@@ -99,7 +99,12 @@ test('totalbet: normalize and extract handles flat homePageEvents shape', () => 
   const flatFixture = [
     {
       eventName: 'Everton vs. Liverpool',
-      eventDate: new Date(Date.now() + 7200000).toISOString(),
+      // Anchored on the scraper's own window rather than Date.now(): setup()
+      // pins from/to to the capture's capturedAt, so a clock-derived kickoff
+      // drifts outside a window that closes seven days after the capture. This
+      // assertion went red on 2026-10-19 12:42Z for exactly that reason, with
+      // no code change behind it.
+      eventDate: new Date(scraper.from + 7200000).toISOString(),
       fixtureId: '99887766',
       outcomes: [
         { marketName: 'Final', marketId: '1', name: '1', odds: 4.10 },
@@ -117,4 +122,106 @@ test('totalbet: normalize and extract handles flat homePageEvents shape', () => 
   assert.equal(m.selections.find((s) => s.name === '1').odds, 4.10);
   assert.equal(m.selections.find((s) => s.name === 'X').odds, 3.65);
   assert.equal(m.selections.find((s) => s.name === '2').odds, 1.85);
+});
+
+test('totalbet: extracts Double Chance, merged BTTS, and rich detail fixture markets', () => {
+  const scraper = setup();
+  const richFixture = [
+    {
+      eventName: 'Arsenal vs. Chelsea',
+      eventDate: new Date(scraper.from + 7200000).toISOString(),
+      fixtureId: '77665544',
+      markets: [
+        {
+          marketId: '1',
+          marketName: 'Final',
+          outcomes: [
+            { outcomeId: '1', outcomeName: '1', value: '2.00' },
+            { outcomeId: '2', outcomeName: 'X', value: '3.40' },
+            { outcomeId: '3', outcomeName: '2', value: '3.60' },
+          ],
+        },
+        {
+          marketId: '10',
+          marketName: 'Double Chance',
+          outcomes: [
+            { outcomeId: '9', outcomeName: '1X', value: '1.25' },
+            { outcomeId: '10', outcomeName: '12', value: '1.30' },
+            { outcomeId: '11', outcomeName: 'X2', value: '1.75' },
+          ],
+        },
+        // Split BTTS market entries
+        {
+          marketId: '29',
+          marketName: 'Da gol nu da gol',
+          outcomes: [{ outcomeId: '74', outcomeName: 'GG', value: '1.80' }],
+        },
+        {
+          marketId: '29',
+          marketName: 'Da gol nu da gol',
+          outcomes: [{ outcomeId: '76', outcomeName: 'NG', value: '1.95' }],
+        },
+      ],
+      detailMarkets: [
+        {
+          marketId: '11',
+          marketName: 'Winner (RF)',
+          outcomes: [
+            { outcomeId: '4', marketId: '11', outcomeOdd: 1.50 },
+            { outcomeId: '5', marketId: '11', outcomeOdd: 2.50 },
+          ],
+        },
+        {
+          marketId: 'dm1351',
+          marketName: 'Total goluri',
+          outcomes: [
+            { outcomeId: '12', marketId: '18', specifier: 'total=2.5|', outcomeOdd: 1.85 },
+            { outcomeId: '13', marketId: '18', specifier: 'total=2.5|', outcomeOdd: 1.95 },
+          ],
+        },
+        {
+          marketId: '166',
+          marketName: 'Cornere total',
+          outcomes: [
+            { outcomeId: '12', marketId: '166', specifier: 'total=9.5|', outcomeOdd: 1.80 },
+            { outcomeId: '13', marketId: '166', specifier: 'total=9.5|', outcomeOdd: 2.00 },
+          ],
+        },
+        {
+          marketId: '16',
+          marketName: 'Handicap asiatic',
+          outcomes: [
+            { outcomeId: '1714', marketId: '16', specifier: 'hcp=-1.5|', outcomeOdd: 3.50 },
+            { outcomeId: '1715', marketId: '16', specifier: 'hcp=-1.5|', outcomeOdd: 1.25 },
+          ],
+        },
+      ],
+    },
+  ];
+
+  const raw = scraper.normalize(richFixture);
+  const events = scraper.extractEvents(raw);
+  assert.equal(events.length, 1);
+  const ev = events[0];
+
+  const dc = ev.markets.find((m) => m.key === 'DOUBLE_CHANCE');
+  assert.ok(dc, 'Double Chance market must exist');
+  assert.deepEqual(dc.selections.map((s) => s.name), ['1X', '12', 'X2']);
+
+  const btts = ev.markets.find((m) => m.key === 'BTTS');
+  assert.ok(btts, 'Merged BTTS market must exist');
+  assert.deepEqual(btts.selections.map((s) => s.name), ['Yes', 'No']);
+
+  const dnb = ev.markets.find((m) => m.key === 'DRAW_NO_BET');
+  assert.ok(dnb, 'DRAW_NO_BET market must exist');
+
+  const ou = ev.markets.find((m) => m.key === 'OVER_UNDER' && m.line === 2.5);
+  assert.ok(ou, 'OVER_UNDER 2.5 market must exist');
+
+  const cn = ev.markets.find((m) => m.key === 'CNOU' && m.line === 9.5);
+  assert.ok(cn, 'Corners Over/Under 9.5 market must exist');
+
+  const ah = ev.markets.find((m) => m.key === 'ASIAN_HANDICAP');
+  assert.ok(ah, 'Asian Handicap market must exist');
+  assert.equal(ah.line, -1.5);
 });

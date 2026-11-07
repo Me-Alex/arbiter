@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
-  <title>Arbiter — Analytics</title>
+  <title data-i18n="titleAnalytics">Arbiter — Analytics</title>
   <script src="/js/theme.js"></script>
   <link rel="stylesheet" href="/css/theme.css">
   <link rel="stylesheet" href="/css/arbedge.css">
@@ -28,7 +28,7 @@
 
     <!-- Signals -->
     <section id="signals" class="mb-5">
-      <div class="grid cols-4 analytics-kpis" aria-label="Scan signal summary">
+      <div class="grid cols-4 analytics-kpis" aria-label="Scan signal summary" data-i18n-aria-label="scanSignalSummary">
         <a class="card card-hover kpi-card" href="/admin/scanner.html">
           <div class="kpi"><div class="label" data-i18n="oppsVerified">Opps (verified)</div><div class="value tabnum green" id="k-opps">—</div><div class="kpi-hint">verified opportunities</div></div>
         </a>
@@ -62,7 +62,7 @@
         </div>
         <div class="table-wrap table-clean">
           <table class="compact" id="tracker-table">
-            <caption class="sr-only">Bet tracker entries and settlement actions</caption>
+            <caption class="sr-only" data-i18n="trackerSubtitle">Bet tracker entries and settlement actions</caption>
             <thead><tr>
               <th scope="col" data-i18n="placed">Placed</th>
               <th scope="col" data-i18n="event">Event</th>
@@ -95,12 +95,12 @@
           <div class="field flex-1 m-0 max-w-320">
             <label class="sr-only" for="cat-search" data-i18n="filterPlaceholder">Filter source / market...</label>
             <input type="text" id="cat-search" data-i18n-placeholder="filterPlaceholder" placeholder="Filter source / market..." autocomplete="off" aria-describedby="catalog-help">
-          <div id="catalog-help" class="muted text-xs">Shows every market collected from the public feeds.</div>
+          <div id="catalog-help" class="muted text-xs" data-i18n="marketCatalogHint">Shows every market collected from the public feeds.</div>
           </div>
         </div>
         <div class="table-wrap table-clean">
           <table class="compact" id="catalog-table">
-            <caption class="sr-only">Discovered market catalog by source</caption>
+            <caption class="sr-only" data-i18n="marketCatalogTitle">Discovered market catalog by source</caption>
             <thead><tr>
               <th scope="col" data-i18n="bookmaker">Source</th>
               <th scope="col" data-i18n="market">Market</th>
@@ -129,12 +129,12 @@
           <div class="field flex-1 m-0 max-w-320">
             <label class="sr-only" for="event-search" data-i18n="eventFilterPlaceholder">Filter team / league...</label>
             <input type="text" id="event-search" data-i18n-placeholder="eventFilterPlaceholder" placeholder="Filter team / league..." autocomplete="off" aria-describedby="event-coverage-help">
-          <div id="event-coverage-help" class="muted text-xs">How many books quote each event, and on how many markets.</div>
+          <div id="event-coverage-help" class="muted text-xs" data-i18n="eventCoverageHint">How many books quote each event, and on how many markets.</div>
           </div>
         </div>
         <div class="table-wrap table-clean">
           <table class="compact" id="event-coverage-table">
-            <caption class="sr-only">Event coverage across books</caption>
+            <caption class="sr-only" data-i18n="eventCoverageTitle">Event coverage across books</caption>
             <thead><tr>
               <th scope="col" data-i18n="event">Event</th>
               <th scope="col" class="num" data-i18n="books">Books</th>

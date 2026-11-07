@@ -23,6 +23,7 @@ export const EXALOGIC_SPORT_NAME_TO_ID = Object.freeze({
   soccer: 1,
   basketball: 2,
   'ice hockey': 4,
+  'ice-hockey': 4,
   ice_hockey: 4,
   tennis: 5,
   handball: 6,
